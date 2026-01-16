@@ -1,0 +1,102 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper function to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Helper function to check if user owns the document
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Children collection - users can only access their own children
+    // Note: field is userRef (camelCase) in Firestore, not user_ref
+    match /childern/{childId} {
+      allow read, write: if isAuthenticated() &&
+        (resource == null || resource.data.userRef == /databases/$(database)/documents/users/$(request.auth.uid));
+      allow create: if isAuthenticated();
+    }
+
+    // Learning paths - users can only access their own
+    match /learning_path/{pathId} {
+      allow read, write: if isAuthenticated() &&
+        (resource == null || resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid));
+      allow create: if isAuthenticated();
+    }
+
+    // Learning path tasks - users can only access their own
+    match /learning_path_tasks/{taskId} {
+      allow read, write: if isAuthenticated() &&
+        (resource == null || resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid));
+      allow create: if isAuthenticated();
+    }
+
+    // Accomplished milestones - users can read/write if authenticated
+    match /children_accomlished_milestones/{id} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // Static milestones - read only for authenticated users
+    match /satic_milestones/{id} {
+      allow read: if isAuthenticated();
+      allow write: if false; // Admin only via Firebase Console
+    }
+
+    // Meals - users can read any meal (their own or curated), write only their own
+    match /meal/{mealId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() &&
+        (resource == null || resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid));
+      allow create: if isAuthenticated();
+    }
+
+    // Meal plans - users can only access their own
+    match /meal_plan/{planId} {
+      allow read, write: if isAuthenticated() &&
+        (resource == null || resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid));
+      allow create: if isAuthenticated();
+    }
+
+    // Meal combos - read for all authenticated users (shared recipes)
+    match /meal_combo/{comboId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() &&
+        (resource == null || resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid));
+      allow create: if isAuthenticated();
+    }
+
+    // Events and tasks - users can only access their own
+    match /event_and_task/{eventId} {
+      allow read, write: if isAuthenticated() &&
+        (resource == null || resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid));
+      allow create: if isAuthenticated();
+    }
+
+    // Activities - read for all authenticated, write restricted
+    match /activity/{activityId} {
+      allow read: if isAuthenticated();
+      allow write: if false; // Admin only
+    }
+
+    // Favourite meals - users can only access their own
+    match /favourit_meal/{favId} {
+      allow read, write: if isAuthenticated() &&
+        (resource == null || resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid));
+      allow create: if isAuthenticated();
+    }
+
+    // Users collection
+    match /users/{userId} {
+      allow read, write: if isOwner(userId);
+      allow create: if isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Default deny for everything else
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

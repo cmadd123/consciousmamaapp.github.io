@@ -1,0 +1,14 @@
+{
+  "parameters": {
+    "openai_api_key": {
+      "defaultValue": {
+        "value": "YOUR_OPENAI_API_KEY_HERE"
+      },
+      "description": "OpenAI API key for AI-powered learning path generation",
+      "valueType": "STRING"
+    }
+  },
+  "version": {
+    "versionNumber": "1"
+  }
+}

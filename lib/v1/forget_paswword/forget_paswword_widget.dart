@@ -1,0 +1,293 @@
+import '/auth/firebase_auth/auth_util.dart';
+import '/flutter_flow/flutter_flow_theme.dart';
+import '/flutter_flow/flutter_flow_util.dart';
+import '/flutter_flow/flutter_flow_widgets.dart';
+import 'dart:ui';
+import '/index.dart';
+import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import 'forget_paswword_model.dart';
+export 'forget_paswword_model.dart';
+
+class ForgetPaswwordWidget extends StatefulWidget {
+  const ForgetPaswwordWidget({
+    super.key,
+    this.email,
+  });
+
+  final String? email;
+
+  static String routeName = 'ForgetPaswword';
+  static String routePath = '/forgetPaswword';
+
+  @override
+  State<ForgetPaswwordWidget> createState() => _ForgetPaswwordWidgetState();
+}
+
+class _ForgetPaswwordWidgetState extends State<ForgetPaswwordWidget> {
+  late ForgetPaswwordModel _model;
+
+  final scaffoldKey = GlobalKey<ScaffoldState>();
+
+  @override
+  void initState() {
+    super.initState();
+    _model = createModel(context, () => ForgetPaswwordModel());
+
+    _model.emailTextController ??= TextEditingController(text: widget!.email);
+    _model.textFieldFocusNode ??= FocusNode();
+  }
+
+  @override
+  void dispose() {
+    _model.dispose();
+
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+        FocusManager.instance.primaryFocus?.unfocus();
+      },
+      child: Scaffold(
+        key: scaffoldKey,
+        backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
+        body: Container(
+          width: double.infinity,
+          height: double.infinity,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFFECE5E5), Color(0xFFEDFFFD)],
+              stops: [0.0, 1.0],
+              begin: AlignmentDirectional(0.0, 1.0),
+              end: AlignmentDirectional(0, -1.0),
+            ),
+          ),
+          child: Padding(
+            padding: EdgeInsetsDirectional.fromSTEB(24.0, 50.0, 24.0, 0.0),
+            child: SingleChildScrollView(
+              primary: false,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Align(
+                    alignment: AlignmentDirectional(-1.0, 0.0),
+                    child: Padding(
+                      padding:
+                          EdgeInsetsDirectional.fromSTEB(0.0, 100.0, 0.0, 0.0),
+                      child: ClipOval(
+                        child: Container(
+                          width: 64.0,
+                          height: 64.0,
+                          decoration: BoxDecoration(
+                            color: FlutterFlowTheme.of(context).primary,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Align(
+                            alignment: AlignmentDirectional(0.0, 0.0),
+                            child: FaIcon(
+                              FontAwesomeIcons.fire,
+                              color: FlutterFlowTheme.of(context)
+                                  .secondaryBackground,
+                              size: 32.0,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding:
+                        EdgeInsetsDirectional.fromSTEB(0.0, 32.0, 0.0, 0.0),
+                    child: Text(
+                      'Reset Password',
+                      style: FlutterFlowTheme.of(context).bodyMedium.override(
+                            fontFamily: 'Andika New Basic',
+                            fontSize: 32.0,
+                            letterSpacing: 0.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                  ),
+                  Padding(
+                    padding:
+                        EdgeInsetsDirectional.fromSTEB(0.0, 22.0, 0.0, 65.0),
+                    child: Text(
+                      'Enter your email and we\'ll send you instructions to reset your password.',
+                      style: FlutterFlowTheme.of(context).bodyMedium.override(
+                            fontFamily: 'Andika New Basic',
+                            color: FlutterFlowTheme.of(context).secondaryText,
+                            fontSize: 16.0,
+                            letterSpacing: 0.0,
+                          ),
+                    ),
+                  ),
+                  Padding(
+                    padding:
+                        EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 40.0),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: double.infinity,
+                          child: TextFormField(
+                            controller: _model.emailTextController,
+                            focusNode: _model.textFieldFocusNode,
+                            autofocus: false,
+                            obscureText: false,
+                            decoration: InputDecoration(
+                              isDense: true,
+                              labelStyle: FlutterFlowTheme.of(context)
+                                  .labelMedium
+                                  .override(
+                                    fontFamily: 'Andika New Basic',
+                                    letterSpacing: 0.0,
+                                  ),
+                              hintText: 'Enter your email',
+                              hintStyle: FlutterFlowTheme.of(context)
+                                  .labelMedium
+                                  .override(
+                                    fontFamily: 'Andika New Basic',
+                                    letterSpacing: 0.0,
+                                  ),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Color(0x00000000),
+                                  width: 1.0,
+                                ),
+                                borderRadius: BorderRadius.circular(27.0),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Color(0x00000000),
+                                  width: 1.0,
+                                ),
+                                borderRadius: BorderRadius.circular(27.0),
+                              ),
+                              errorBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Color(0x00000000),
+                                  width: 1.0,
+                                ),
+                                borderRadius: BorderRadius.circular(27.0),
+                              ),
+                              focusedErrorBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Color(0x00000000),
+                                  width: 1.0,
+                                ),
+                                borderRadius: BorderRadius.circular(27.0),
+                              ),
+                              filled: true,
+                              fillColor: FlutterFlowTheme.of(context)
+                                  .secondaryBackground,
+                              contentPadding: EdgeInsetsDirectional.fromSTEB(
+                                  20.0, 20.0, 0.0, 20.0),
+                            ),
+                            style: FlutterFlowTheme.of(context)
+                                .bodyMedium
+                                .override(
+                                  fontFamily: 'Andika New Basic',
+                                  letterSpacing: 0.0,
+                                ),
+                            keyboardType: TextInputType.emailAddress,
+                            validator: _model.emailTextControllerValidator
+                                .asValidator(context),
+                          ),
+                        ),
+                        FFButtonWidget(
+                          onPressed: () async {
+                            if (_model.emailTextController.text.isEmpty) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    'Email required!',
+                                  ),
+                                ),
+                              );
+                              return;
+                            }
+                            await authManager.resetPassword(
+                              email: _model.emailTextController.text,
+                              context: context,
+                            );
+                          },
+                          text: 'Send Reset Link',
+                          options: FFButtonOptions(
+                            width: double.infinity,
+                            height: 56.0,
+                            padding: EdgeInsets.all(8.0),
+                            iconPadding: EdgeInsetsDirectional.fromSTEB(
+                                0.0, 0.0, 0.0, 0.0),
+                            color: FlutterFlowTheme.of(context).primary,
+                            textStyle: FlutterFlowTheme.of(context)
+                                .titleSmall
+                                .override(
+                                  fontFamily: 'Andika New Basic',
+                                  color: Colors.white,
+                                  letterSpacing: 0.0,
+                                ),
+                            elevation: 0.0,
+                            borderRadius: BorderRadius.circular(28.0),
+                          ),
+                        ),
+                      ].divide(SizedBox(height: 24.0)),
+                    ),
+                  ),
+                  Padding(
+                    padding:
+                        EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 40.0),
+                    child: InkWell(
+                      splashColor: Colors.transparent,
+                      focusColor: Colors.transparent,
+                      hoverColor: Colors.transparent,
+                      highlightColor: Colors.transparent,
+                      onTap: () async {
+                        context.pushNamed(Loginv2Widget.routeName);
+                      },
+                      child: RichText(
+                        textScaler: MediaQuery.of(context).textScaler,
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text: 'Remember your password? ',
+                              style: FlutterFlowTheme.of(context)
+                                  .bodyMedium
+                                  .override(
+                                    fontFamily: 'Andika New Basic',
+                                    letterSpacing: 0.0,
+                                  ),
+                            ),
+                            TextSpan(
+                              text: 'Login',
+                              style: TextStyle(
+                                color: FlutterFlowTheme.of(context).primary,
+                              ),
+                            )
+                          ],
+                          style:
+                              FlutterFlowTheme.of(context).bodyMedium.override(
+                                    fontFamily: 'Andika New Basic',
+                                    letterSpacing: 0.0,
+                                  ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
