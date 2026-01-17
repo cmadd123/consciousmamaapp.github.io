@@ -10,10 +10,10 @@
     <link rel="icon" type="image/png" href="assets/images/image_22_original.png">
     <link rel="apple-touch-icon" href="assets/images/image_22_original.png">
 
-    <!-- Fonts -->
+    <!-- Fonts - Using Andika to match the app -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
     <style>
         :root {
@@ -22,6 +22,8 @@
             --primary-light: #39D2C0;
             --background: #EDFFFD;
             --background-soft: #F5FFFE;
+            --gradient-top: #D7F2EB;
+            --gradient-bottom: #FFE9E1;
             --white: #FFFFFF;
             --black: #000000;
             --text-secondary: #666666;
@@ -35,15 +37,16 @@
         }
 
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Andika', sans-serif;
             color: var(--black);
-            background-color: var(--background);
+            background: linear-gradient(180deg, var(--gradient-top) 0%, var(--gradient-bottom) 100%);
+            background-attachment: fixed;
             line-height: 1.6;
         }
 
         h1, h2, h3, h4 {
-            font-family: 'Playfair Display', serif;
-            font-weight: 600;
+            font-family: 'Andika', sans-serif;
+            font-weight: 700;
         }
 
         .container {
@@ -72,18 +75,17 @@
         .logo {
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-family: 'Playfair Display', serif;
-            font-size: 24px;
+            gap: 12px;
+            font-family: 'Andika', sans-serif;
+            font-size: 22px;
             font-weight: 700;
             color: var(--primary);
             text-decoration: none;
         }
 
         .logo-img {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
+            height: 44px;
+            width: auto;
         }
 
         .nav-links {
@@ -119,7 +121,7 @@
         /* Hero Section */
         .hero {
             padding: 160px 0 80px;
-            background: linear-gradient(180deg, var(--white) 0%, var(--background) 100%);
+            background: transparent;
         }
 
         .hero-content {
@@ -220,7 +222,7 @@
         /* Product Showcase Section */
         .product-showcase {
             padding: 100px 0;
-            background: var(--white);
+            background: rgba(255, 255, 255, 0.7);
         }
 
         .showcase-grid {
@@ -297,7 +299,7 @@
         /* Features Section */
         .features {
             padding: 100px 0;
-            background: var(--background);
+            background: transparent;
         }
 
         .section-header {
@@ -363,7 +365,7 @@
         /* How It Works */
         .how-it-works {
             padding: 100px 0;
-            background: var(--white);
+            background: rgba(255, 255, 255, 0.7);
         }
 
         .steps {
@@ -391,7 +393,7 @@
             font-size: 24px;
             font-weight: 700;
             margin: 0 auto 20px;
-            font-family: 'Playfair Display', serif;
+            font-family: 'Andika', sans-serif;
         }
 
         .step h3 {
@@ -409,7 +411,7 @@
         /* Testimonials */
         .testimonials {
             padding: 100px 0;
-            background: var(--background);
+            background: transparent;
         }
 
         .testimonials-grid {
@@ -529,7 +531,7 @@
         /* FAQ Section */
         .faq {
             padding: 100px 0;
-            background: var(--white);
+            background: rgba(255, 255, 255, 0.7);
         }
 
         .faq-list {
@@ -813,7 +815,7 @@
     </section>
 
     <!-- Product Showcase: Calendar -->
-    <section class="product-showcase" style="background: var(--background);">
+    <section class="product-showcase">
         <div class="container">
             <div class="showcase-grid reverse">
                 <div class="showcase-image">
