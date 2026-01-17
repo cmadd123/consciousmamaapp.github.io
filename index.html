@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Conscious Mama - Mindful Parenting Made Simple</title>
-    <meta name="description" content="A mobile app for moms to help relieve the mental load. Track milestones, plan activities, and create personalized learning paths for your children.">
+    <title>Conscious Mama - Find Peace Through Planning</title>
+    <meta name="description" content="A mobile app for busy moms to find calm in the chaos. Plan meals, organize your family calendar, and finally feel in control of your week.">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -66,11 +66,20 @@
         }
 
         .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
             font-family: 'Playfair Display', serif;
             font-size: 24px;
             font-weight: 700;
             color: var(--primary);
             text-decoration: none;
+        }
+
+        .logo-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
         }
 
         .nav-links {
@@ -171,19 +180,23 @@
             background: var(--background);
         }
 
-        .btn img {
-            height: 20px;
-        }
-
         .hero-image {
             display: flex;
             justify-content: center;
         }
 
         .phone-mockup {
-            width: 320px;
-            height: auto;
+            width: 300px;
+            height: 600px;
+            background: linear-gradient(180deg, var(--primary) 0%, var(--primary-dark) 100%);
             border-radius: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 16px;
+            text-align: center;
+            padding: 40px;
             box-shadow: 0 40px 80px rgba(82, 160, 151, 0.3);
         }
 
@@ -200,10 +213,87 @@
             font-weight: 500;
         }
 
+        /* Product Showcase Section */
+        .product-showcase {
+            padding: 100px 0;
+            background: var(--white);
+        }
+
+        .showcase-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+        }
+
+        .showcase-grid.reverse {
+            direction: rtl;
+        }
+
+        .showcase-grid.reverse > * {
+            direction: ltr;
+        }
+
+        .showcase-image {
+            display: flex;
+            justify-content: center;
+        }
+
+        .showcase-phone {
+            width: 280px;
+            height: 560px;
+            background: linear-gradient(180deg, var(--background-soft) 0%, var(--background) 100%);
+            border-radius: 36px;
+            border: 3px solid var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 14px;
+            text-align: center;
+            padding: 30px;
+            box-shadow: 0 30px 60px rgba(82, 160, 151, 0.2);
+        }
+
+        .showcase-content h2 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        .showcase-content h2 span {
+            color: var(--primary);
+        }
+
+        .showcase-content p {
+            font-size: 17px;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+            line-height: 1.8;
+        }
+
+        .showcase-features {
+            list-style: none;
+        }
+
+        .showcase-features li {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 16px;
+            font-size: 15px;
+        }
+
+        .showcase-features li::before {
+            content: "✓";
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 18px;
+        }
+
         /* Features Section */
         .features {
             padding: 100px 0;
-            background: var(--white);
+            background: var(--background);
         }
 
         .section-header {
@@ -230,7 +320,7 @@
         }
 
         .feature-card {
-            background: var(--background-soft);
+            background: var(--white);
             padding: 40px 32px;
             border-radius: 24px;
             text-align: center;
@@ -269,7 +359,7 @@
         /* How It Works */
         .how-it-works {
             padding: 100px 0;
-            background: var(--background);
+            background: var(--white);
         }
 
         .steps {
@@ -315,7 +405,7 @@
         /* Testimonials */
         .testimonials {
             padding: 100px 0;
-            background: var(--white);
+            background: var(--background);
         }
 
         .testimonials-grid {
@@ -325,7 +415,7 @@
         }
 
         .testimonial-card {
-            background: var(--background-soft);
+            background: var(--white);
             padding: 40px;
             border-radius: 24px;
             border-left: 4px solid var(--primary);
@@ -389,15 +479,6 @@
             margin-right: auto;
         }
 
-        .cta .btn-primary {
-            background: var(--white);
-            color: var(--primary);
-        }
-
-        .cta .btn-primary:hover {
-            background: var(--background);
-        }
-
         .store-buttons {
             display: flex;
             justify-content: center;
@@ -444,7 +525,7 @@
         /* FAQ Section */
         .faq {
             padding: 100px 0;
-            background: var(--background);
+            background: var(--white);
         }
 
         .faq-list {
@@ -453,7 +534,7 @@
         }
 
         .faq-item {
-            background: var(--white);
+            background: var(--background-soft);
             border-radius: 16px;
             margin-bottom: 16px;
             overflow: hidden;
@@ -577,12 +658,18 @@
 
         /* Mobile Responsive */
         @media (max-width: 968px) {
-            .hero-content {
+            .hero-content,
+            .showcase-grid {
                 grid-template-columns: 1fr;
                 text-align: center;
             }
 
-            .hero-text p {
+            .showcase-grid.reverse {
+                direction: ltr;
+            }
+
+            .hero-text p,
+            .showcase-content {
                 margin-left: auto;
                 margin-right: auto;
             }
@@ -610,6 +697,14 @@
             .nav-links {
                 display: none;
             }
+
+            .showcase-content {
+                text-align: center;
+            }
+
+            .showcase-features li {
+                justify-content: center;
+            }
         }
 
         @media (max-width: 600px) {
@@ -617,7 +712,8 @@
                 font-size: 36px;
             }
 
-            .section-header h2 {
+            .section-header h2,
+            .showcase-content h2 {
                 font-size: 32px;
             }
 
@@ -645,7 +741,10 @@
     <!-- Navigation -->
     <nav>
         <div class="container nav-content">
-            <a href="#" class="logo">Conscious Mama</a>
+            <a href="#" class="logo">
+                <img src="assets/images/app_launcher_icon.png" alt="Conscious Mama Logo" class="logo-img">
+                Conscious Mama
+            </a>
             <ul class="nav-links">
                 <li><a href="#features">Features</a></li>
                 <li><a href="#how-it-works">How It Works</a></li>
@@ -660,8 +759,8 @@
     <section class="hero">
         <div class="container hero-content">
             <div class="hero-text">
-                <h1>Parent with <span>presence</span>, not pressure</h1>
-                <p>A mobile app designed for moms who want to be intentional about their children's development without the overwhelm.</p>
+                <h1>Find <span>peace</span> through planning</h1>
+                <p>Finally feel in control of your week. Plan meals, organize schedules, and manage your busy family life without the overwhelm.</p>
                 <div class="hero-buttons">
                     <a href="#download" class="btn btn-primary">
                         Download Free
@@ -672,8 +771,7 @@
                 </div>
             </div>
             <div class="hero-image">
-                <!-- Replace with actual app screenshot -->
-                <div style="width: 300px; height: 600px; background: linear-gradient(180deg, var(--primary) 0%, var(--primary-dark) 100%); border-radius: 40px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; text-align: center; padding: 40px;">
+                <div class="phone-mockup">
                     App Screenshot<br>Goes Here
                 </div>
             </div>
@@ -687,43 +785,89 @@
         </div>
     </section>
 
+    <!-- Product Showcase: Meal Planning -->
+    <section class="product-showcase">
+        <div class="container">
+            <div class="showcase-grid">
+                <div class="showcase-image">
+                    <div class="showcase-phone">
+                        Meal Planner<br>Screenshot<br>Goes Here
+                    </div>
+                </div>
+                <div class="showcase-content">
+                    <h2>Meal planning made <span>simple</span></h2>
+                    <p>No more standing in front of the fridge wondering what to make. Plan your family's meals for the entire week in minutes, not hours.</p>
+                    <ul class="showcase-features">
+                        <li>Weekly meal planning at a glance</li>
+                        <li>Save your family's favorite recipes</li>
+                        <li>Quick-add meals from your recipe library</li>
+                        <li>Never forget an ingredient again</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Product Showcase: Calendar -->
+    <section class="product-showcase" style="background: var(--background);">
+        <div class="container">
+            <div class="showcase-grid reverse">
+                <div class="showcase-image">
+                    <div class="showcase-phone">
+                        Family Calendar<br>Screenshot<br>Goes Here
+                    </div>
+                </div>
+                <div class="showcase-content">
+                    <h2>Your family's <span>command center</span></h2>
+                    <p>Soccer practice, doctor appointments, school events. Keep everyone's schedule in one place and know exactly what's coming up.</p>
+                    <ul class="showcase-features">
+                        <li>See your whole week at a glance</li>
+                        <li>Assign events to family members</li>
+                        <li>Color-coded for each child</li>
+                        <li>Never double-book again</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Features Section -->
     <section class="features" id="features">
         <div class="container">
             <div class="section-header">
-                <h2>Everything you need, nothing you don't</h2>
-                <p>Simple tools to help you stay connected with your child's growth and development.</p>
+                <h2>Everything in one place</h2>
+                <p>Simple tools that actually make your life easier, not more complicated.</p>
             </div>
             <div class="features-grid">
                 <div class="feature-card">
-                    <div class="feature-icon">📚</div>
-                    <h3>Learning Paths</h3>
-                    <p>Personalized activities tailored to your child's age and specific challenges. Step-by-step guidance when you need it.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🎯</div>
-                    <h3>Milestone Tracking</h3>
-                    <p>Track developmental milestones with a beautiful, visual checklist. Celebrate every achievement, big or small.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🎨</div>
-                    <h3>Activity Ideas</h3>
-                    <p>Stuck on what to do? Get age-appropriate activity suggestions based on mood, energy level, and available time.</p>
-                </div>
-                <div class="feature-card">
                     <div class="feature-icon">🍽️</div>
                     <h3>Meal Planning</h3>
-                    <p>Plan nutritious meals for your family. Save favorites and organize your weekly menu effortlessly.</p>
+                    <p>Plan breakfast, lunch, and dinner for the whole week. Save time, reduce stress, and eat better as a family.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">📅</div>
                     <h3>Family Calendar</h3>
-                    <p>Keep track of activities, appointments, and family events all in one place. Assign tasks to family members.</p>
+                    <p>Keep track of appointments, activities, and events. See who needs to be where and when.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">👨‍👩‍👧‍👦</div>
-                    <h3>Multiple Children</h3>
-                    <p>Managing more than one? Track each child's unique journey with their own profile and progress.</p>
+                    <h3>Family Profiles</h3>
+                    <p>Add profiles for each child and family member. Color-coded and easy to identify at a glance.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎨</div>
+                    <h3>Activity Ideas</h3>
+                    <p>Stuck on what to do? Get fun activity suggestions based on your mood and available time.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📋</div>
+                    <h3>Task Assignment</h3>
+                    <p>Assign tasks to Mom, Dad, or any family member. Everyone knows their responsibilities.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🧘</div>
+                    <h3>Mental Load Relief</h3>
+                    <p>Get everything out of your head and into the app. Finally have the mental space to just be present.</p>
                 </div>
             </div>
         </div>
@@ -734,23 +878,23 @@
         <div class="container">
             <div class="section-header">
                 <h2>Getting started is easy</h2>
-                <p>You're three steps away from a calmer, more intentional parenting journey.</p>
+                <p>You're three steps away from a calmer, more organized week.</p>
             </div>
             <div class="steps">
                 <div class="step">
                     <div class="step-number">1</div>
-                    <h3>Add Your Children</h3>
-                    <p>Create profiles for each child with their name, birthday, and photo. The app personalizes everything based on their age.</p>
+                    <h3>Add Your Family</h3>
+                    <p>Create profiles for each family member. The app keeps everything organized by person.</p>
                 </div>
                 <div class="step">
                     <div class="step-number">2</div>
-                    <h3>Set Your Goals</h3>
-                    <p>Tell us what challenges you're facing — potty training, learning colors, managing emotions — we'll help you tackle them.</p>
+                    <h3>Plan Your Week</h3>
+                    <p>Add meals, events, and appointments. See your entire week at a glance and feel prepared.</p>
                 </div>
                 <div class="step">
                     <div class="step-number">3</div>
-                    <h3>Follow Your Path</h3>
-                    <p>Get personalized learning paths with daily activities, tips, and encouragement. Watch your child grow with confidence.</p>
+                    <h3>Breathe Easy</h3>
+                    <p>With everything planned, you can finally relax knowing nothing will slip through the cracks.</p>
                 </div>
             </div>
         </div>
@@ -761,11 +905,11 @@
         <div class="container">
             <div class="section-header">
                 <h2>Moms like you love it</h2>
-                <p>Join thousands of conscious parents on their intentional parenting journey.</p>
+                <p>Join thousands of moms who finally feel in control of their week.</p>
             </div>
             <div class="testimonials-grid">
                 <div class="testimonial-card">
-                    <p class="testimonial-text">"Finally, an app that doesn't make me feel like I'm failing. The learning paths gave me confidence and my daughter actually looks forward to our 'practice time' now."</p>
+                    <p class="testimonial-text">"Sunday meal planning used to stress me out. Now I open the app, plan the whole week in 10 minutes, and actually enjoy grocery shopping."</p>
                     <div class="testimonial-author">
                         <div class="author-avatar">S</div>
                         <div class="author-info">
@@ -775,27 +919,27 @@
                     </div>
                 </div>
                 <div class="testimonial-card">
-                    <p class="testimonial-text">"Potty training felt impossible until I found Conscious Mama. The step-by-step guidance and 'what to do if they resist' tips were lifesavers!"</p>
+                    <p class="testimonial-text">"I finally stopped forgetting appointments. The family calendar saved me from showing up to soccer practice on the wrong day!"</p>
                     <div class="testimonial-author">
                         <div class="author-avatar">J</div>
                         <div class="author-info">
                             <h4>Jessica L.</h4>
-                            <p>Mom of 1</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="testimonial-card">
-                    <p class="testimonial-text">"I love that I can track all three kids in one app. Each has their own milestones and activities. It keeps me organized without feeling overwhelming."</p>
-                    <div class="testimonial-author">
-                        <div class="author-avatar">A</div>
-                        <div class="author-info">
-                            <h4>Amanda K.</h4>
                             <p>Mom of 3</p>
                         </div>
                     </div>
                 </div>
                 <div class="testimonial-card">
-                    <p class="testimonial-text">"The activity suggestions are brilliant. When I'm exhausted and have no idea what to do with a cranky toddler, this app has my back."</p>
+                    <p class="testimonial-text">"My husband and I can both see what's happening when. No more 'I thought YOU were picking them up' moments."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">A</div>
+                        <div class="author-info">
+                            <h4>Amanda K.</h4>
+                            <p>Mom of 2</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"The mental load is real. This app is like having a second brain that remembers everything so I don't have to."</p>
                     <div class="testimonial-author">
                         <div class="author-avatar">M</div>
                         <div class="author-info">
@@ -811,8 +955,8 @@
     <!-- CTA Section -->
     <section class="cta" id="download">
         <div class="container">
-            <h2>Ready to parent with intention?</h2>
-            <p>Download Conscious Mama for free and start your journey toward calmer, more connected parenting.</p>
+            <h2>Ready to feel more in control?</h2>
+            <p>Download Conscious Mama for free and start planning your way to a calmer week.</p>
             <div class="store-buttons">
                 <a href="#" class="store-btn">
                     <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
@@ -845,25 +989,25 @@
                         <span>+</span>
                     </div>
                     <div class="faq-answer">
-                        Yes! Conscious Mama is free to download and use. We believe every parent deserves access to helpful tools without financial barriers.
+                        Yes! Conscious Mama is free to download and use. We believe every busy parent deserves access to helpful tools without financial barriers.
                     </div>
                 </div>
                 <div class="faq-item">
                     <div class="faq-question">
-                        How are learning paths personalized?
+                        Can my partner use it too?
                         <span>+</span>
                     </div>
                     <div class="faq-answer">
-                        When you describe a challenge you're facing, Conscious Mama creates a personalized learning path based on your child's age and developmental stage. Each path includes step-by-step activities, parent tips, and guidance for when things don't go as planned.
+                        Each family member can have their own profile, and you can assign tasks and events to Mom, Dad, or anyone else. Everyone stays on the same page.
                     </div>
                 </div>
                 <div class="faq-item">
                     <div class="faq-question">
-                        Can I track multiple children?
+                        How is this different from a regular calendar app?
                         <span>+</span>
                     </div>
                     <div class="faq-answer">
-                        Absolutely! You can add as many children as you need. Each child gets their own profile with personalized milestones, activities, and learning paths based on their individual age and needs.
+                        Regular calendars show events, but Conscious Mama is designed specifically for family life. Meal planning, child profiles with color coding, task assignment to family members - it's built for how families actually work.
                     </div>
                 </div>
                 <div class="faq-item">
@@ -877,11 +1021,11 @@
                 </div>
                 <div class="faq-item">
                     <div class="faq-question">
-                        What ages is this app designed for?
+                        Can I add multiple children?
                         <span>+</span>
                     </div>
                     <div class="faq-answer">
-                        Conscious Mama is designed for children from birth through elementary school (ages 0-8). The app automatically adjusts activities and milestones based on your child's age.
+                        Absolutely! Add as many children as you have. Each child gets their own color-coded profile so you can see at a glance who has what going on.
                     </div>
                 </div>
             </div>
@@ -893,8 +1037,11 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-brand">
-                    <a href="#" class="logo">Conscious Mama</a>
-                    <p>Helping parents raise happy, healthy children with intention and without the overwhelm.</p>
+                    <a href="#" class="logo">
+                        <img src="assets/images/app_launcher_icon.png" alt="Conscious Mama Logo" class="logo-img">
+                        Conscious Mama
+                    </a>
+                    <p>Helping busy families find peace through planning and organization.</p>
                     <div class="social-links">
                         <a href="#" aria-label="Instagram">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
