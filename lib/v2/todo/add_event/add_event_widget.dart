@@ -166,94 +166,294 @@ class _AddEventWidgetState extends State<AddEventWidget> {
                                   scrollDirection: Axis.horizontal,
                                   child: Row(
                                     mainAxisSize: MainAxisSize.max,
-                                    children: List.generate(
-                                        rowChildernRecordList.length,
-                                        (rowIndex) {
-                                      final rowChildernRecord =
-                                          rowChildernRecordList[rowIndex];
-                                      return Align(
-                                        alignment:
-                                            AlignmentDirectional(-1.0, 0.0),
+                                    children: [
+                                      // Children selection (multi-select)
+                                      ...List.generate(
+                                          rowChildernRecordList.length,
+                                          (rowIndex) {
+                                        final rowChildernRecord =
+                                            rowChildernRecordList[rowIndex];
+                                        final isSelected = _model.selectedChildren
+                                            .contains(rowChildernRecord.reference);
+                                        return Align(
+                                          alignment:
+                                              AlignmentDirectional(-1.0, 0.0),
+                                          child: InkWell(
+                                            splashColor: Colors.transparent,
+                                            focusColor: Colors.transparent,
+                                            hoverColor: Colors.transparent,
+                                            highlightColor: Colors.transparent,
+                                            onTap: () async {
+                                              // Toggle selection for multi-select
+                                              if (isSelected) {
+                                                _model.selectedChildren.remove(rowChildernRecord.reference);
+                                              } else {
+                                                _model.selectedChildren.add(rowChildernRecord.reference);
+                                              }
+                                              // Keep selectedChild for backwards compatibility
+                                              _model.selectedChild = _model.selectedChildren.isNotEmpty
+                                                  ? _model.selectedChildren.first
+                                                  : null;
+                                              safeSetState(() {});
+                                            },
+                                            child: Container(
+                                              width: 110.0,
+                                              height: 134.0,
+                                              decoration: BoxDecoration(
+                                                color: isSelected
+                                                    ? Color(0x1D52A097)
+                                                    : Colors.transparent,
+                                                borderRadius:
+                                                    BorderRadius.circular(14.0),
+                                                border: Border.all(
+                                                  color: isSelected
+                                                      ? FlutterFlowTheme.of(context).primary
+                                                      : FlutterFlowTheme.of(context).alternate,
+                                                  width: isSelected ? 2.0 : 1.0,
+                                                ),
+                                              ),
+                                              child: Stack(
+                                                children: [
+                                                  Column(
+                                                    mainAxisSize: MainAxisSize.max,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.center,
+                                                    children: [
+                                                      Container(
+                                                        width: 66.0,
+                                                        height: 66.0,
+                                                        decoration: BoxDecoration(
+                                                          color: rowChildernRecord
+                                                              .selectedColor,
+                                                          shape: BoxShape.circle,
+                                                        ),
+                                                        child: Center(
+                                                          child: Text(
+                                                            rowChildernRecord.name.isNotEmpty
+                                                                ? rowChildernRecord.name[0].toUpperCase()
+                                                                : 'C',
+                                                            style: const TextStyle(
+                                                              color: Colors.white,
+                                                              fontSize: 28.0,
+                                                              fontWeight: FontWeight.bold,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      Text(
+                                                        valueOrDefault<String>(
+                                                          rowChildernRecord.name,
+                                                          'child name',
+                                                        ),
+                                                        style: FlutterFlowTheme.of(
+                                                                context)
+                                                            .bodyMedium
+                                                            .override(
+                                                              fontFamily:
+                                                                  'Andika New Basic',
+                                                              letterSpacing: 0.0,
+                                                            ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  // Checkmark for selected
+                                                  if (isSelected)
+                                                    Positioned(
+                                                      top: 8,
+                                                      right: 8,
+                                                      child: Container(
+                                                        width: 20,
+                                                        height: 20,
+                                                        decoration: BoxDecoration(
+                                                          color: FlutterFlowTheme.of(context).primary,
+                                                          shape: BoxShape.circle,
+                                                        ),
+                                                        child: const Icon(
+                                                          Icons.check,
+                                                          color: Colors.white,
+                                                          size: 14,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      }),
+                                      const SizedBox(width: 16.0),
+                                      // Mom selection
+                                      Align(
+                                        alignment: AlignmentDirectional(-1.0, 0.0),
                                         child: InkWell(
                                           splashColor: Colors.transparent,
                                           focusColor: Colors.transparent,
                                           hoverColor: Colors.transparent,
                                           highlightColor: Colors.transparent,
-                                          onTap: () async {
-                                            _model.selectedChild =
-                                                rowChildernRecord.reference;
+                                          onTap: () {
+                                            _model.assignedToMom = !_model.assignedToMom;
                                             safeSetState(() {});
                                           },
                                           child: Container(
-                                            width: 150.0,
+                                            width: 110.0,
                                             height: 134.0,
                                             decoration: BoxDecoration(
-                                              color:
-                                                  rowChildernRecord.reference ==
-                                                          _model.selectedChild
-                                                      ? Color(0x1D52A097)
-                                                      : Colors.transparent,
-                                              borderRadius:
-                                                  BorderRadius.circular(14.0),
+                                              color: _model.assignedToMom
+                                                  ? const Color(0xFFE91E63).withOpacity(0.15)
+                                                  : Colors.transparent,
+                                              borderRadius: BorderRadius.circular(14.0),
                                               border: Border.all(
-                                                color: rowChildernRecord
-                                                            .reference ==
-                                                        _model.selectedChild
-                                                    ? FlutterFlowTheme.of(
-                                                            context)
-                                                        .primary
-                                                    : FlutterFlowTheme.of(
-                                                            context)
-                                                        .alternate,
-                                                width: 1.0,
+                                                color: _model.assignedToMom
+                                                    ? const Color(0xFFE91E63)
+                                                    : FlutterFlowTheme.of(context).alternate,
+                                                width: _model.assignedToMom ? 2.0 : 1.0,
                                               ),
                                             ),
-                                            child: Column(
-                                              mainAxisSize: MainAxisSize.max,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
+                                            child: Stack(
                                               children: [
-                                                Container(
-                                                  width: 66.0,
-                                                  height: 66.0,
-                                                  decoration: BoxDecoration(
-                                                    color: rowChildernRecord
-                                                        .selectedColor,
-                                                    shape: BoxShape.circle,
-                                                  ),
-                                                  child: Center(
-                                                    child: Text(
-                                                      rowChildernRecord.name.isNotEmpty
-                                                          ? rowChildernRecord.name[0].toUpperCase()
-                                                          : 'C',
-                                                      style: const TextStyle(
+                                                Column(
+                                                  mainAxisSize: MainAxisSize.max,
+                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  children: [
+                                                    Container(
+                                                      width: 66.0,
+                                                      height: 66.0,
+                                                      decoration: const BoxDecoration(
+                                                        color: Color(0xFFE91E63),
+                                                        shape: BoxShape.circle,
+                                                      ),
+                                                      child: const Center(
+                                                        child: Text(
+                                                          'M',
+                                                          style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontSize: 28.0,
+                                                            fontWeight: FontWeight.bold,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      'Mom',
+                                                      style: FlutterFlowTheme.of(context)
+                                                          .bodyMedium
+                                                          .override(
+                                                            fontFamily: 'Andika New Basic',
+                                                            letterSpacing: 0.0,
+                                                          ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                if (_model.assignedToMom)
+                                                  Positioned(
+                                                    top: 8,
+                                                    right: 8,
+                                                    child: Container(
+                                                      width: 20,
+                                                      height: 20,
+                                                      decoration: const BoxDecoration(
+                                                        color: Color(0xFFE91E63),
+                                                        shape: BoxShape.circle,
+                                                      ),
+                                                      child: const Icon(
+                                                        Icons.check,
                                                         color: Colors.white,
-                                                        fontSize: 28.0,
-                                                        fontWeight: FontWeight.bold,
+                                                        size: 14,
                                                       ),
                                                     ),
                                                   ),
-                                                ),
-                                                Text(
-                                                  valueOrDefault<String>(
-                                                    rowChildernRecord.name,
-                                                    'child name',
-                                                  ),
-                                                  style: FlutterFlowTheme.of(
-                                                          context)
-                                                      .bodyMedium
-                                                      .override(
-                                                        fontFamily:
-                                                            'Andika New Basic',
-                                                        letterSpacing: 0.0,
-                                                      ),
-                                                ),
                                               ],
                                             ),
                                           ),
                                         ),
-                                      );
-                                    }).divide(SizedBox(width: 16.0)),
+                                      ),
+                                      const SizedBox(width: 16.0),
+                                      // Dad selection
+                                      Align(
+                                        alignment: AlignmentDirectional(-1.0, 0.0),
+                                        child: InkWell(
+                                          splashColor: Colors.transparent,
+                                          focusColor: Colors.transparent,
+                                          hoverColor: Colors.transparent,
+                                          highlightColor: Colors.transparent,
+                                          onTap: () {
+                                            _model.assignedToDad = !_model.assignedToDad;
+                                            safeSetState(() {});
+                                          },
+                                          child: Container(
+                                            width: 110.0,
+                                            height: 134.0,
+                                            decoration: BoxDecoration(
+                                              color: _model.assignedToDad
+                                                  ? const Color(0xFF2196F3).withOpacity(0.15)
+                                                  : Colors.transparent,
+                                              borderRadius: BorderRadius.circular(14.0),
+                                              border: Border.all(
+                                                color: _model.assignedToDad
+                                                    ? const Color(0xFF2196F3)
+                                                    : FlutterFlowTheme.of(context).alternate,
+                                                width: _model.assignedToDad ? 2.0 : 1.0,
+                                              ),
+                                            ),
+                                            child: Stack(
+                                              children: [
+                                                Column(
+                                                  mainAxisSize: MainAxisSize.max,
+                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  children: [
+                                                    Container(
+                                                      width: 66.0,
+                                                      height: 66.0,
+                                                      decoration: const BoxDecoration(
+                                                        color: Color(0xFF2196F3),
+                                                        shape: BoxShape.circle,
+                                                      ),
+                                                      child: const Center(
+                                                        child: Text(
+                                                          'D',
+                                                          style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontSize: 28.0,
+                                                            fontWeight: FontWeight.bold,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      'Dad',
+                                                      style: FlutterFlowTheme.of(context)
+                                                          .bodyMedium
+                                                          .override(
+                                                            fontFamily: 'Andika New Basic',
+                                                            letterSpacing: 0.0,
+                                                          ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                if (_model.assignedToDad)
+                                                  Positioned(
+                                                    top: 8,
+                                                    right: 8,
+                                                    child: Container(
+                                                      width: 20,
+                                                      height: 20,
+                                                      decoration: const BoxDecoration(
+                                                        color: Color(0xFF2196F3),
+                                                        shape: BoxShape.circle,
+                                                      ),
+                                                      child: const Icon(
+                                                        Icons.check,
+                                                        color: Colors.white,
+                                                        size: 14,
+                                                      ),
+                                                    ),
+                                                  ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 );
                               },
@@ -587,6 +787,7 @@ class _AddEventWidgetState extends State<AddEventWidget> {
                                   .doc()
                                   .set(createEventAndTaskRecordData(
                                     selectedChild: _model.selectedChild ?? FFAppState().selectedChildForMilestone,
+                                    selectedChildren: _model.selectedChildren.toList(),
                                     name: _model.textController1.text,
                                     description: _model.textController2.text,
                                     isrecurring: false,
@@ -594,6 +795,8 @@ class _AddEventWidgetState extends State<AddEventWidget> {
                                     date: _model.selectedDate,
                                     typ: 'Event',
                                     isCompleted: false,
+                                    assignedToMom: _model.assignedToMom,
+                                    assignedToDad: _model.assignedToDad,
                                   ));
                               FFAppState().todocash = true;
                               safeSetState(() {});

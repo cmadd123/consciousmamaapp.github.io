@@ -17,6 +17,13 @@ class AddEventModel extends FlutterFlowModel<AddEventWidget> {
 
   DocumentReference? selectedChild;
 
+  // Support for multiple children selection
+  Set<DocumentReference> selectedChildren = {};
+
+  // Mom and Dad assignment
+  bool assignedToMom = false;
+  bool assignedToDad = false;
+
   DateTime? selectedDate;
 
   bool isSelecedDate = true;

@@ -682,13 +682,21 @@ class _ChildrenWidgetState extends State<ChildrenWidget> {
           StreamBuilder<List<EventAndTaskRecord>>(
             stream: queryEventAndTaskRecord(
               queryBuilder: (q) => q
-                  .where('selected_child', isEqualTo: child.reference)
-                  .where('date', isGreaterThanOrEqualTo: DateTime.now())
-                  .orderBy('date')
-                  .limit(3),
+                  .where('user_ref', isEqualTo: currentUserReference)
+                  .where('is_completed', isEqualTo: false),
             ),
             builder: (context, eventSnapshot) {
-              if (!eventSnapshot.hasData || eventSnapshot.data!.isEmpty) {
+              // Filter events for this child and upcoming dates in code
+              final now = DateTime.now();
+              final todayStart = DateTime(now.year, now.month, now.day);
+              final filteredEvents = (eventSnapshot.data ?? [])
+                  .where((e) => e.selectedChild == child.reference)
+                  .where((e) => e.date != null && e.date!.isAfter(todayStart.subtract(const Duration(seconds: 1))))
+                  .toList()
+                ..sort((a, b) => (a.date ?? DateTime(2099)).compareTo(b.date ?? DateTime(2099)));
+              final upcomingEvents = filteredEvents.take(3).toList();
+
+              if (!eventSnapshot.hasData || upcomingEvents.isEmpty) {
                 return Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
@@ -708,7 +716,7 @@ class _ChildrenWidgetState extends State<ChildrenWidget> {
               }
 
               return Column(
-                children: eventSnapshot.data!.map((event) {
+                children: upcomingEvents.map((event) {
                   return Container(
                     margin: const EdgeInsets.only(bottom: 8),
                     padding: const EdgeInsets.all(12),
@@ -754,6 +762,97 @@ class _ChildrenWidgetState extends State<ChildrenWidget> {
                                   style: theme.bodySmall.override(
                                     fontFamily: 'Andika New Basic',
                                     color: theme.secondaryText,
+                                  ),
+                                ),
+                              // Show assigned family members
+                              if (event.assignedToMom || event.assignedToDad)
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 4),
+                                  child: Row(
+                                    children: [
+                                      if (event.assignedToMom)
+                                        Container(
+                                          margin: const EdgeInsets.only(right: 6),
+                                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xFFE91E63).withOpacity(0.15),
+                                            borderRadius: BorderRadius.circular(10),
+                                          ),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Container(
+                                                width: 14,
+                                                height: 14,
+                                                decoration: const BoxDecoration(
+                                                  color: Color(0xFFE91E63),
+                                                  shape: BoxShape.circle,
+                                                ),
+                                                child: const Center(
+                                                  child: Text(
+                                                    'M',
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 8,
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              const SizedBox(width: 4),
+                                              Text(
+                                                'Mom',
+                                                style: theme.bodySmall.override(
+                                                  fontFamily: 'Andika New Basic',
+                                                  color: const Color(0xFFE91E63),
+                                                  fontSize: 10,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      if (event.assignedToDad)
+                                        Container(
+                                          margin: const EdgeInsets.only(right: 6),
+                                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xFF2196F3).withOpacity(0.15),
+                                            borderRadius: BorderRadius.circular(10),
+                                          ),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Container(
+                                                width: 14,
+                                                height: 14,
+                                                decoration: const BoxDecoration(
+                                                  color: Color(0xFF2196F3),
+                                                  shape: BoxShape.circle,
+                                                ),
+                                                child: const Center(
+                                                  child: Text(
+                                                    'D',
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 8,
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              const SizedBox(width: 4),
+                                              Text(
+                                                'Dad',
+                                                style: theme.bodySmall.override(
+                                                  fontFamily: 'Andika New Basic',
+                                                  color: const Color(0xFF2196F3),
+                                                  fontSize: 10,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                    ],
                                   ),
                                 ),
                             ],

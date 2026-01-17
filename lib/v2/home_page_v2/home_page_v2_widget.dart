@@ -74,6 +74,141 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> {
     super.dispose();
   }
 
+  // Helper method to build assigned people circles for calendar cards
+  Widget _buildAssignedPeopleCircles(BuildContext context, EventAndTaskRecord event) {
+    // Collect all children refs - prefer selectedChildren list, fallback to single selectedChild
+    final childRefs = event.selectedChildren.isNotEmpty
+        ? event.selectedChildren
+        : (event.selectedChild != null ? [event.selectedChild!] : <DocumentReference>[]);
+
+    final bool hasMom = event.assignedToMom;
+    final bool hasDad = event.assignedToDad;
+    final int totalCircles = childRefs.length + (hasMom ? 1 : 0) + (hasDad ? 1 : 0);
+
+    // If no one assigned, show a calendar icon
+    if (totalCircles == 0) {
+      return Container(
+        width: 28.0,
+        height: 28.0,
+        decoration: BoxDecoration(
+          color: FlutterFlowTheme.of(context).primary.withAlpha(50),
+          shape: BoxShape.circle,
+        ),
+        child: Icon(
+          Icons.event,
+          size: 16.0,
+          color: FlutterFlowTheme.of(context).primary,
+        ),
+      );
+    }
+
+    // Build list of circle widgets
+    List<Widget> circles = [];
+
+    // Add child circles
+    for (int i = 0; i < childRefs.length; i++) {
+      circles.add(
+        StreamBuilder<ChildernRecord>(
+          stream: ChildernRecord.getDocument(childRefs[i]),
+          builder: (context, snapshot) {
+            final color = snapshot.data?.selectedColor ?? FlutterFlowTheme.of(context).primary;
+            final initial = (snapshot.data?.name.isNotEmpty ?? false)
+                ? snapshot.data!.name[0].toUpperCase()
+                : 'C';
+            return Container(
+              width: 28.0,
+              height: 28.0,
+              decoration: BoxDecoration(
+                color: color,
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.white, width: 2.0),
+              ),
+              child: Center(
+                child: Text(
+                  initial,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 12.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+      );
+    }
+
+    // Add Mom circle
+    if (hasMom) {
+      circles.add(
+        Container(
+          width: 28.0,
+          height: 28.0,
+          decoration: BoxDecoration(
+            color: const Color(0xFFE91E63),
+            shape: BoxShape.circle,
+            border: Border.all(color: Colors.white, width: 2.0),
+          ),
+          child: const Center(
+            child: Text(
+              'M',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 12.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    // Add Dad circle
+    if (hasDad) {
+      circles.add(
+        Container(
+          width: 28.0,
+          height: 28.0,
+          decoration: BoxDecoration(
+            color: const Color(0xFF2196F3),
+            shape: BoxShape.circle,
+            border: Border.all(color: Colors.white, width: 2.0),
+          ),
+          child: const Center(
+            child: Text(
+              'D',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 12.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    // If only one circle, return it directly
+    if (circles.length == 1) {
+      return circles.first;
+    }
+
+    // Stack multiple circles with overlap
+    return SizedBox(
+      width: 28.0 + (circles.length - 1) * 16.0,
+      height: 28.0,
+      child: Stack(
+        children: circles.asMap().entries.map((entry) {
+          return Positioned(
+            left: entry.key * 16.0,
+            child: entry.value,
+          );
+        }).toList(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     context.watch<FFAppState>();
@@ -2003,7 +2138,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> {
                                     StreamBuilder<List<EventAndTaskRecord>>(
                                       stream: FFAppState().toList(
                                         uniqueQueryKey:
-                                            'todo::${currentUserUid}',
+                                            'todo_all::${currentUserUid}',
                                         overrideCache: FFAppState().todocash,
                                         requestFn: () =>
                                             queryEventAndTaskRecord(
@@ -2013,10 +2148,6 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> {
                                                     'user_ref',
                                                     isEqualTo:
                                                         currentUserReference,
-                                                  )
-                                                  .where(
-                                                    'is_completed',
-                                                    isEqualTo: false,
                                                   ),
                                         ),
                                       ),
@@ -2165,43 +2296,8 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> {
                                                                         mainAxisSize:
                                                                             MainAxisSize.max,
                                                                         children: [
-                                                                          Builder(
-                                                                            builder:
-                                                                                (context) {
-                                                                              if (false) {
-                                                                                return ClipRRect(
-                                                                                  borderRadius: BorderRadius.circular(8.0),
-                                                                                  child: Image.asset(
-                                                                                    'assets/images/Check_circle.png',
-                                                                                    width: 22.0,
-                                                                                    height: 22.0,
-                                                                                    fit: BoxFit.cover,
-                                                                                  ),
-                                                                                );
-                                                                              } else {
-                                                                                return InkWell(
-                                                                                  splashColor: Colors.transparent,
-                                                                                  focusColor: Colors.transparent,
-                                                                                  hoverColor: Colors.transparent,
-                                                                                  highlightColor: Colors.transparent,
-                                                                                  onTap: () async {
-                                                                                    await containerVarItem.reference.update(createEventAndTaskRecordData(
-                                                                                      isCompleted: true,
-                                                                                    ));
-                                                                                  },
-                                                                                  child: Container(
-                                                                                    width: 22.0,
-                                                                                    height: 22.0,
-                                                                                    decoration: BoxDecoration(
-                                                                                      border: Border.all(
-                                                                                        color: FlutterFlowTheme.of(context).primary,
-                                                                                      ),
-                                                                                    ),
-                                                                                  ),
-                                                                                );
-                                                                              }
-                                                                            },
-                                                                          ),
+                                                                          // Assigned people circles using helper method
+                                                                          _buildAssignedPeopleCircles(context, containerVarItem),
                                                                           Padding(
                                                                             padding: EdgeInsetsDirectional.fromSTEB(
                                                                                 12.0,

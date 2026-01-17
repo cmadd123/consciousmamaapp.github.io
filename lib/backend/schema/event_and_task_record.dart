@@ -37,6 +37,11 @@ class EventAndTaskRecord extends FirestoreRecord {
   DocumentReference? get selectedChild => _selectedChild;
   bool hasSelectedChild() => _selectedChild != null;
 
+  // "selected_children" field - list for multiple children
+  List<DocumentReference>? _selectedChildren;
+  List<DocumentReference> get selectedChildren => _selectedChildren ?? const [];
+  bool hasSelectedChildren() => _selectedChildren != null;
+
   // "user_ref" field.
   DocumentReference? _userRef;
   DocumentReference? get userRef => _userRef;
@@ -77,6 +82,7 @@ class EventAndTaskRecord extends FirestoreRecord {
     _description = snapshotData['description'] as String?;
     _isrecurring = snapshotData['isrecurring'] as bool?;
     _selectedChild = snapshotData['selected_child'] as DocumentReference?;
+    _selectedChildren = getDataList(snapshotData['selected_children']);
     _userRef = snapshotData['user_ref'] as DocumentReference?;
     _date = snapshotData['date'] as DateTime?;
     _typ = snapshotData['typ'] as String?;
@@ -125,6 +131,7 @@ Map<String, dynamic> createEventAndTaskRecordData({
   String? description,
   bool? isrecurring,
   DocumentReference? selectedChild,
+  List<DocumentReference>? selectedChildren,
   DocumentReference? userRef,
   DateTime? date,
   String? typ,
@@ -139,6 +146,7 @@ Map<String, dynamic> createEventAndTaskRecordData({
       'description': description,
       'isrecurring': isrecurring,
       'selected_child': selectedChild,
+      'selected_children': selectedChildren,
       'user_ref': userRef,
       'date': date,
       'typ': typ,
@@ -158,10 +166,12 @@ class EventAndTaskRecordDocumentEquality
 
   @override
   bool equals(EventAndTaskRecord? e1, EventAndTaskRecord? e2) {
+    const listEquality = ListEquality();
     return e1?.name == e2?.name &&
         e1?.description == e2?.description &&
         e1?.isrecurring == e2?.isrecurring &&
         e1?.selectedChild == e2?.selectedChild &&
+        listEquality.equals(e1?.selectedChildren, e2?.selectedChildren) &&
         e1?.userRef == e2?.userRef &&
         e1?.date == e2?.date &&
         e1?.typ == e2?.typ &&
@@ -177,6 +187,7 @@ class EventAndTaskRecordDocumentEquality
         e?.description,
         e?.isrecurring,
         e?.selectedChild,
+        e?.selectedChildren,
         e?.userRef,
         e?.date,
         e?.typ,

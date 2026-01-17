@@ -65,11 +65,12 @@ workflows:
           failure: true
 
       app_store_connect:
-        # Uncomment below after setting up App Store Connect credentials
-        # api_key: $APP_STORE_CONNECT_PRIVATE_KEY
-        # key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
-        # issuer_id: $APP_STORE_CONNECT_ISSUER_ID
+        api_key: $APP_STORE_CONNECT_PRIVATE_KEY
+        key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
+        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
         submit_to_testflight: true
+        beta_groups:
+          - Internal Testers  # Create this group in App Store Connect
         # submit_to_app_store: false  # Enable for production releases
 
   android-workflow:

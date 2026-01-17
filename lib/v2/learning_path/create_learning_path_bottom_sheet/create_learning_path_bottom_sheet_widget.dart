@@ -43,6 +43,9 @@ class _CreateLearningPathBottomSheetState
   bool _isLoading = false;
   double _loadingProgress = 0.0;
 
+  // Key to control the loading widget
+  final GlobalKey<LoadingLearnPassWidgetState> _loadingKey = GlobalKey<LoadingLearnPassWidgetState>();
+
   // Template challenges
   final List<String> _templateChallenges = [
     'Potty training',
@@ -138,15 +141,7 @@ class _CreateLearningPathBottomSheetState
       // Get child document
       final childDoc = await ChildernRecord.getDocumentOnce(_selectedChild!);
 
-      // Animate progress
-      for (var i = 2; i <= 8; i++) {
-        await Future.delayed(const Duration(milliseconds: 500));
-        if (mounted) {
-          setState(() => _loadingProgress = i * 0.1);
-        }
-      }
-
-      // Call AI to build learning path
+      // Call AI to build learning path (the loading widget handles its own animation)
       await actions.buildLearningPath(
         _challengeController.text,
         childDoc.birthDay,
@@ -159,19 +154,25 @@ class _CreateLearningPathBottomSheetState
       );
 
       if (mounted) {
-        setState(() => _loadingProgress = 1.0);
+        // Signal the loading widget to complete
+        _loadingKey.currentState?.completeLoading();
         FFAppState().leariningpathchashBool = true;
 
-        // Close bottom sheet and navigate
-        Navigator.of(context).pop();
-        context.pushNamed(LearnPathWidget.routeName);
+        // Wait a moment for the completion animation
+        await Future.delayed(const Duration(milliseconds: 500));
+
+        if (mounted) {
+          // Close bottom sheet and navigate
+          Navigator.of(context).pop();
+          context.pushNamed(LearnPathWidget.routeName);
+        }
       }
     } catch (e) {
       if (mounted) {
         setState(() => _isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to create learning path. Please try again.'),
+            content: Text('Failed to create learning path: ${e.toString()}'),
             backgroundColor: Colors.red,
           ),
         );
@@ -194,6 +195,7 @@ class _CreateLearningPathBottomSheetState
           child: Padding(
             padding: const EdgeInsets.all(24.0),
             child: LoadingLearnPassWidget(
+              key: _loadingKey,
               title: 'Creating your learning path...',
               puzzleTheme: _selectedPuzzleTheme,
             ),
