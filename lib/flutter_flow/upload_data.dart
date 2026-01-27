@@ -89,9 +89,10 @@ Future<List<SelectedFile>?> selectMediaWithSourceBottomSheet({
       context: context,
       backgroundColor: backgroundColor,
       builder: (context) {
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
             if (!kIsWeb) ...[
               Padding(
                 padding: EdgeInsets.fromLTRB(0, 8, 0, 0),
@@ -139,6 +140,7 @@ Future<List<SelectedFile>?> selectMediaWithSourceBottomSheet({
             ],
             const SizedBox(height: 10),
           ],
+          ),
         );
       });
   if (mediaSource == null) {

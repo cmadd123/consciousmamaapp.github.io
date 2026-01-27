@@ -301,7 +301,8 @@ class _FlutterFlowDropDownState<T> extends State<FlutterFlowDropDown<T>> {
         elevation: widget.elevation.toInt(),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(4.0),
-          color: widget.fillColor,
+          // Use opaque version of fill color for dropdown menu
+          color: widget.fillColor?.withAlpha(255) ?? Colors.white,
         ),
         isOverButton: widget.isOverButton,
         offset: widget.menuOffset ?? Offset.zero,

@@ -23,7 +23,6 @@ Future buildLearningPath(
   DocumentReference? childId,
   String? frequency,
   String? preferredTime,
-  [String? puzzleTheme]
 ) async {
   if (challengeDescription == null ||
       childBirthDate == null ||
@@ -34,9 +33,6 @@ Future buildLearningPath(
       preferredTime == null) {
     throw Exception("Missing required parameters");
   }
-
-  // Default puzzle theme if not provided
-  final selectedPuzzleTheme = puzzleTheme ?? 'dinosaurs';
 
   final db = FirebaseFirestore.instance;
 
@@ -74,14 +70,14 @@ Create a realistic learning program. Consider:
 3. Include variety to keep the child engaged
 4. Be specific enough that a tired parent can follow the instructions
 
-For each task, provide ALL of these fields:
-- "title": Short, friendly name (e.g., "Potty Time Practice" not "Task 1")
+For each lesson, provide ALL of these fields:
+- "title": Short, friendly name (e.g., "Potty Time Practice" not "Lesson 1")
 - "description": Clear instructions for the PARENT including:
   * What to do step by step
   * What to say to the child (use quotes for exact phrases)
   * How to make it fun/engaging
 - "duration": Realistic time in minutes (usually 5-20 min for young children)
-- "parent_tip": A helpful, encouraging tip for this specific task (see examples below)
+- "parent_tip": A helpful, encouraging tip for this specific lesson (see examples below)
 - "success_signs": What progress looks like (so parent knows it's working)
 - "if_resistant": Specific strategies if the child refuses or struggles (see examples below)
 
@@ -92,7 +88,7 @@ GUIDELINES:
 - Preschool (3-5): Can follow 2-3 step instructions, likes to help
 - School age (5+): Can understand explanations, likes earning rewards
 
-Create 5-14 tasks depending on the complexity of the skill. Potty training might need 10-14 days, learning colors might need 5-7.
+Create 5-14 lessons depending on the complexity of the skill. Potty training might need 10-14 days, learning colors might need 5-7.
 
 EXAMPLES OF GOOD parent_tip VALUES:
 - "Your calm energy matters more than perfection. Children pick up on stress, so take a deep breath before starting."
@@ -133,7 +129,50 @@ Example format:
 ]
 """;
 
-  // 🧠 Step 2 — OpenAI API Call
+  // 🧠 Step 2 — Safety Controls & OpenAI API Call
+
+  // SAFETY 1: Daily Limit Check (max 7 learning paths per day)
+  // Get all learning paths for this user and filter in memory to avoid composite index
+  final todayStart = DateTime(now.year, now.month, now.day);
+
+  final userPathsQuery = await db
+      .collection("learning_path")
+      .where("user_ref", isEqualTo: userRef)
+      .get();
+
+  // Filter today's paths in memory
+  final todayPaths = userPathsQuery.docs.where((doc) {
+    final createdAt = (doc.data()['created_at'] as Timestamp?)?.toDate();
+    if (createdAt == null) return false;
+    return createdAt.isAfter(todayStart) && createdAt.isBefore(todayStart.add(const Duration(days: 1)));
+  }).toList();
+
+  if (todayPaths.length >= 7) {
+    throw Exception("Daily limit reached. You can create up to 7 learning paths per day. Please try again tomorrow.");
+  }
+
+  // SAFETY 2: Duplicate Detection
+  // Check if identical learning path exists (same challenge + child within last 7 days)
+  // Filter in memory to avoid composite index
+  final sevenDaysAgo = now.subtract(const Duration(days: 7));
+
+  final recentDuplicates = userPathsQuery.docs.where((doc) {
+    final data = doc.data();
+    final createdAt = (data['created_at'] as Timestamp?)?.toDate();
+    final docChildRef = data['child_ref'] as DocumentReference?;
+    final docChallenge = data['challenge'] as String?;
+
+    if (createdAt == null || docChildRef == null || docChallenge == null) return false;
+
+    return docChildRef.path == childId!.path &&
+           docChallenge.toLowerCase().trim() == challengeDescription!.toLowerCase().trim() &&
+           createdAt.isAfter(sevenDaysAgo);
+  }).toList();
+
+  if (recentDuplicates.isNotEmpty) {
+    throw Exception("You recently created a similar learning path for this challenge. Please check your existing learning paths.");
+  }
+
   // Use centralized API key from app state (fetched from Firebase Remote Config)
   final openAiKey = FFAppState().openAiKey.trim();
   if (openAiKey.isEmpty) {
@@ -141,6 +180,8 @@ Example format:
   }
 
   print('DEBUG: OpenAI key length: ${openAiKey.length}, starts with: ${openAiKey.substring(0, openAiKey.length > 10 ? 10 : openAiKey.length)}...');
+
+  // SAFETY 3: Request Timeout (30 seconds)
   final response = await http.post(
     Uri.parse('https://api.openai.com/v1/chat/completions'),
     headers: {
@@ -159,6 +200,11 @@ Example format:
       "max_tokens": 3000,
       "temperature": 0.7
     }),
+  ).timeout(
+    const Duration(seconds: 30),
+    onTimeout: () {
+      throw Exception("Request timed out. Please check your internet connection and try again.");
+    },
   );
 
   if (response.statusCode != 200) {
@@ -259,7 +305,7 @@ Example format:
     "created_at": Timestamp.now(),
     "user_ref": userRef,
     "child_ref": childId,
-    "tasks_count": tasks.length,
+    "lessons_count": tasks.length,
     "start_date": Timestamp.fromDate(firstTaskDate),
     "end_date": Timestamp.fromDate(
       firstTaskDate.add(Duration(days: daysStep * (tasks.length - 1))),
@@ -267,10 +313,9 @@ Example format:
     "is_completed": false,
     "frequency": frequency,
     "preferred_time": preferredTime,
-    "puzzle_theme": selectedPuzzleTheme,
   });
 
-  // ✅ Step 7 — Save each task (FORCE all tasks to use preferredTime)
+  // ✅ Step 7 — Save each lesson (FORCE all lessons to use preferredTime)
   for (int i = 0; i < tasks.length; i++) {
     final task = tasks[i];
 
@@ -283,7 +328,7 @@ Example format:
     );
 
     await db.collection("learning_path_tasks").add({
-      "title": task["title"] ?? "Task ${i + 1}",
+      "title": task["title"] ?? "Lesson ${i + 1}",
       "description": task["description"] ?? "",
       "duration": task["duration"] ?? 10,
       "parent_tip": task["parent_tip"] ?? "",
@@ -296,7 +341,7 @@ Example format:
       "created_at": Timestamp.now(),
       "is_completed": false,
       "was_skipped": false,
-      "task_order": i + 1,
+      "lesson_order": i + 1,
     });
   }
 }

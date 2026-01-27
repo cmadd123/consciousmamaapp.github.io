@@ -1,8 +1,10 @@
 import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
+import '/components/home_nav_bar_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/v2/week_plan/create_grocery_list/grocery_list_bottom_sheet.dart';
+import '/custom_code/actions/instacart_affiliate_service.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -194,6 +196,7 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: const Color(0xFFF3EFF5), // Light purple/lavender to match Grocery button
+        bottomNavigationBar: const HomeNavBarWidget(currentPage: HomeNavPage.meals),
         body: SafeArea(
           top: true,
           child: _model.isSelectionMode
@@ -205,6 +208,8 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
                     _buildHeader(context),
                     // Summary bar
                     if (groceryItems.isNotEmpty) _buildSummaryBar(context, groceryItems, hasCheckedItems),
+                    // Instacart button
+                    if (groceryItems.isNotEmpty) _buildInstacartButton(context, groceryItems),
                     // Main list
                     Expanded(
                       child: groceryItems.isEmpty
@@ -250,7 +255,7 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
                 padding: const EdgeInsets.all(8.0),
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(12.0),
+                  borderRadius: BorderRadius.circular(14.0),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.05),
@@ -303,7 +308,7 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
               padding: const EdgeInsets.all(8.0),
               decoration: BoxDecoration(
                 color: const Color(0xFF9B8AA0),
-                borderRadius: BorderRadius.circular(12.0),
+                borderRadius: BorderRadius.circular(14.0),
                 boxShadow: [
                   BoxShadow(
                     color: const Color(0xFF9B8AA0).withOpacity(0.3),
@@ -367,7 +372,7 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(16.0),
+        borderRadius: BorderRadius.circular(14.0),
         border: Border.all(
           color: FlutterFlowTheme.of(context).primary.withOpacity(0.2),
           width: 1.0,
@@ -382,7 +387,7 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
                 padding: const EdgeInsets.all(8.0),
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(10.0),
+                  borderRadius: BorderRadius.circular(14.0),
                 ),
                 child: Icon(
                   Icons.shopping_basket_outlined,
@@ -465,6 +470,95 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
     );
   }
 
+  Widget _buildInstacartButton(BuildContext context, List<GroceryItemStruct> items) {
+    final uncheckedItems = items.where((item) => !item.isChecked).toList();
+    final itemCount = uncheckedItems.length;
+
+    return Container(
+      margin: const EdgeInsets.fromLTRB(20.0, 12.0, 20.0, 0.0),
+      child: InkWell(
+        onTap: () async {
+          // Import the custom action
+          await openInstacartWithGroceryList(uncheckedItems);
+        },
+        borderRadius: BorderRadius.circular(14.0),
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Color(0xFF00A862), Color(0xFF00C878)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(14.0),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF00A862).withOpacity(0.3),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8.0),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                child: const Icon(
+                  Icons.shopping_cart_rounded,
+                  color: Colors.white,
+                  size: 22.0,
+                ),
+              ),
+              const SizedBox(width: 12.0),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Shop on Instacart',
+                    style: TextStyle(
+                      fontFamily: 'Andika New Basic',
+                      color: Colors.white,
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 2.0),
+                  Text(
+                    '$itemCount item${itemCount != 1 ? 's' : ''} ready to shop',
+                    style: TextStyle(
+                      fontFamily: 'Andika New Basic',
+                      color: Colors.white.withOpacity(0.9),
+                      fontSize: 12.0,
+                    ),
+                  ),
+                ],
+              ),
+              const Spacer(),
+              Container(
+                padding: const EdgeInsets.all(6.0),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.2),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.arrow_forward_rounded,
+                  color: Colors.white,
+                  size: 18.0,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildEmptyState(BuildContext context) {
     return Center(
       child: Padding(
@@ -524,7 +618,7 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
             padding: const EdgeInsets.all(12.0),
             decoration: BoxDecoration(
               color: const Color(0xFFF0F7FF),
-              borderRadius: BorderRadius.circular(12.0),
+              borderRadius: BorderRadius.circular(14.0),
               border: Border.all(
                 color: const Color(0xFFBBDEFB),
                 width: 1.0,
@@ -568,7 +662,7 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
         margin: const EdgeInsets.only(bottom: 12.0),
         decoration: BoxDecoration(
           color: const Color(0xFFFFEBEE),
-          borderRadius: BorderRadius.circular(16.0),
+          borderRadius: BorderRadius.circular(14.0),
         ),
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 20.0),
@@ -588,7 +682,7 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
         margin: const EdgeInsets.only(bottom: 12.0),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(16.0),
+          borderRadius: BorderRadius.circular(14.0),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.04),
@@ -600,7 +694,7 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
         child: Material(
           color: Colors.transparent,
           child: InkWell(
-            borderRadius: BorderRadius.circular(16.0),
+            borderRadius: BorderRadius.circular(14.0),
             onTap: () {
               // Toggle checked state
               FFAppState().toggleGroceryItemChecked(index);
@@ -763,7 +857,7 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
         padding: const EdgeInsets.symmetric(vertical: 14.0),
         decoration: BoxDecoration(
           color: const Color(0xFFF5F0F7),
-          borderRadius: BorderRadius.circular(16.0),
+          borderRadius: BorderRadius.circular(14.0),
           border: Border.all(
             color: const Color(0xFFE8DFE9),
             width: 1.5,
@@ -809,7 +903,7 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
           child: Container(
             decoration: BoxDecoration(
               color: const Color(0xFFF5F0F7),
-              borderRadius: BorderRadius.circular(16.0),
+              borderRadius: BorderRadius.circular(14.0),
             ),
             child: TextFormField(
               controller: _model.textController,
@@ -919,7 +1013,7 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
                   padding: const EdgeInsets.all(8.0),
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(12.0),
+                    borderRadius: BorderRadius.circular(14.0),
                   ),
                   child: const Icon(
                     Icons.arrow_back_ios_new_rounded,
@@ -1007,7 +1101,7 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
                     padding: const EdgeInsets.symmetric(vertical: 14.0),
                     decoration: BoxDecoration(
                       color: const Color(0xFFF5F0F7),
-                      borderRadius: BorderRadius.circular(16.0),
+                      borderRadius: BorderRadius.circular(14.0),
                     ),
                     child: Center(
                       child: Text(
@@ -1066,7 +1160,7 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
                       color: _model.selectedMealPlanIds.isEmpty
                           ? const Color(0xFFCCCCCC)
                           : FlutterFlowTheme.of(context).primary,
-                      borderRadius: BorderRadius.circular(16.0),
+                      borderRadius: BorderRadius.circular(14.0),
                     ),
                     child: Center(
                       child: Text(
@@ -1182,7 +1276,7 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
           margin: const EdgeInsets.only(bottom: 12.0),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(16.0),
+            borderRadius: BorderRadius.circular(14.0),
             border: Border.all(
               color: isSelected
                   ? FlutterFlowTheme.of(context).primary
@@ -1200,7 +1294,7 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
           child: Material(
             color: Colors.transparent,
             child: InkWell(
-              borderRadius: BorderRadius.circular(16.0),
+              borderRadius: BorderRadius.circular(14.0),
               onTap: () {
                 setState(() {
                   if (isSelected) {
@@ -1296,9 +1390,19 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
     );
   }
 
-  void _submitItem() {
+  Future<void> _submitItem() async {
     final text = _model.textController?.text.trim() ?? '';
     if (text.isEmpty) return;
+
+    // Dismiss keyboard immediately
+    FocusScope.of(context).unfocus();
+
+    // Clear input and reset state immediately for better UX
+    _model.isAddIteam = false;
+    _model.index = null;
+    safeSetState(() {
+      _model.textController?.clear();
+    });
 
     if (_model.index != null) {
       // Edit existing item
@@ -1307,14 +1411,111 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
         (_) => text,
       );
     } else {
-      // Add new item with smart aggregation
-      FFAppState().addToUserGroceryList(text);
-    }
+      // Show loading state
+      ScaffoldMessengerState? messenger;
+      if (mounted) {
+        messenger = ScaffoldMessenger.of(context);
+        messenger.showSnackBar(
+          SnackBar(
+            content: Center(
+              child: _AnimatedDots(),
+            ),
+            duration: const Duration(seconds: 30),
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
 
-    _model.isAddIteam = false;
-    _model.index = null;
-    safeSetState(() {
-      _model.textController?.clear();
-    });
+      // Add new item with smart aggregation (with AI fallback)
+      final debugMessage = await FFAppState().addToUserGroceryList(text);
+
+      // Hide loading and show result
+      if (mounted) {
+        messenger?.hideCurrentSnackBar();
+        messenger?.showSnackBar(
+          SnackBar(
+            content: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: FlutterFlowTheme.of(context).primary,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                debugMessage,
+                style: const TextStyle(color: Colors.white),
+              ),
+            ),
+            duration: const Duration(seconds: 2),
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    }
+  }
+}
+
+/// Animated three dots loading indicator
+class _AnimatedDots extends StatefulWidget {
+  @override
+  _AnimatedDotsState createState() => _AnimatedDotsState();
+}
+
+class _AnimatedDotsState extends State<_AnimatedDots> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 1400),
+      vsync: this,
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        return Row(
+          mainAxisSize: MainAxisSize.min,
+          children: List.generate(3, (index) {
+            // Stagger the animation for each dot
+            final delay = index * 0.2;
+            final value = (_controller.value - delay) % 1.0;
+
+            // Create a fade in/out effect
+            final opacity = value < 0.5
+              ? value * 2  // Fade in
+              : 2 - (value * 2);  // Fade out
+
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 2),
+              child: Opacity(
+                opacity: opacity.clamp(0.2, 1.0),
+                child: Text(
+                  '•',
+                  style: TextStyle(
+                    fontSize: 32,
+                    color: FlutterFlowTheme.of(context).primary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            );
+          }),
+        );
+      },
+    );
   }
 }

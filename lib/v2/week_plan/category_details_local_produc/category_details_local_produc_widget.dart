@@ -4,6 +4,7 @@ import '/backend/schema/enums/enums.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
+import '/components/share_content_bottom_sheet.dart';
 import 'dart:ui';
 import '/index.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -268,7 +269,7 @@ class _CategoryDetailsLocalProducWidgetState
               padding: EdgeInsets.all(24.0),
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(12.0),
+                borderRadius: BorderRadius.circular(14.0),
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -593,7 +594,7 @@ class _CategoryDetailsLocalProducWidgetState
                   style: ElevatedButton.styleFrom(
                     backgroundColor: FlutterFlowTheme.of(context).primary,
                     padding: EdgeInsets.symmetric(vertical: 16.0),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.0)),
                   ),
                   child: Text(
                     'Save Tags',
@@ -617,7 +618,7 @@ class _CategoryDetailsLocalProducWidgetState
       },
       child: Scaffold(
         key: scaffoldKey,
-        backgroundColor: Color(0xFFFFF5F2),
+        backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
         body: SafeArea(
           top: true,
           child: Column(
@@ -636,18 +637,48 @@ class _CategoryDetailsLocalProducWidgetState
                         size: 24.0,
                       ),
                     ),
-                    // Delete button (hidden for curated recipes)
-                    if (!_isCuratedRecipe)
-                      InkWell(
-                        onTap: () => _showDeleteConfirmation(context),
-                        child: Icon(
-                          Icons.delete_outline,
-                          color: Colors.red.shade400,
-                          size: 24.0,
+                    // Action buttons row
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // Share button
+                        InkWell(
+                          onTap: () {
+                            if (widget.itemDetails != null) {
+                              showShareRecipeBottomSheet(
+                                context: context,
+                                recipe: widget.itemDetails!,
+                              );
+                            }
+                          },
+                          borderRadius: BorderRadius.circular(14.0),
+                          child: Container(
+                            padding: EdgeInsets.all(8.0),
+                            decoration: BoxDecoration(
+                              color: FlutterFlowTheme.of(context).secondary.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(14.0),
+                            ),
+                            child: Icon(
+                              Icons.share,
+                              color: FlutterFlowTheme.of(context).secondary,
+                              size: 20.0,
+                            ),
+                          ),
                         ),
-                      )
-                    else
-                      SizedBox(width: 24.0), // Placeholder for layout balance
+                        // Delete button (hidden for curated recipes)
+                        if (!_isCuratedRecipe) ...[
+                          SizedBox(width: 12.0),
+                          InkWell(
+                            onTap: () => _showDeleteConfirmation(context),
+                            child: Icon(
+                              Icons.delete_outline,
+                              color: Colors.red.shade400,
+                              size: 24.0,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
                   ],
                 ),
               ),
@@ -661,7 +692,7 @@ class _CategoryDetailsLocalProducWidgetState
                     color: _isReplaceMode
                         ? Color(0xFFFF9800).withOpacity(0.15)
                         : FlutterFlowTheme.of(context).primary.withOpacity(0.15),
-                    borderRadius: BorderRadius.circular(12.0),
+                    borderRadius: BorderRadius.circular(14.0),
                     border: Border.all(
                       color: _isReplaceMode
                           ? Color(0xFFFF9800)
@@ -702,7 +733,7 @@ class _CategoryDetailsLocalProducWidgetState
                             color: _isReplaceMode
                                 ? Color(0xFFFF9800)
                                 : FlutterFlowTheme.of(context).primary,
-                            borderRadius: BorderRadius.circular(8.0),
+                            borderRadius: BorderRadius.circular(14.0),
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -740,7 +771,7 @@ class _CategoryDetailsLocalProducWidgetState
                       children: [
                         // Recipe Image
                         ClipRRect(
-                          borderRadius: BorderRadius.circular(12.0),
+                          borderRadius: BorderRadius.circular(14.0),
                           child: Container(
                             width: double.infinity,
                             height: 220.0,
@@ -970,7 +1001,7 @@ class _CategoryDetailsLocalProducWidgetState
       padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 8.0),
       decoration: BoxDecoration(
         color: FlutterFlowTheme.of(context).secondaryBackground,
-        borderRadius: BorderRadius.circular(12.0),
+        borderRadius: BorderRadius.circular(14.0),
         boxShadow: [
           BoxShadow(
             blurRadius: 4.0,
@@ -1020,14 +1051,17 @@ class _CategoryDetailsLocalProducWidgetState
             label: 'Grocery',
             color: Color(0xFF9B8AA0),
             showPlusBadge: true,
-            onTap: () {
+            onTap: () async {
               final ingredients = widget.itemDetails?.ingredients ?? [];
+              final navigator = Navigator.of(context);
+              final messenger = ScaffoldMessenger.of(context);
+
               for (final ingredient in ingredients) {
-                FFAppState().addToUserGroceryList(ingredient);
+                await FFAppState().addToUserGroceryList(ingredient);
               }
               // Show confirmation
               if (ingredients.isNotEmpty) {
-                ScaffoldMessenger.of(context).showSnackBar(
+                messenger.showSnackBar(
                   SnackBar(
                     content: Text('Added ${ingredients.length} ingredients to your grocery list'),
                     backgroundColor: const Color(0xFF9B8AA0),
@@ -1037,11 +1071,11 @@ class _CategoryDetailsLocalProducWidgetState
                   ),
                 );
               }
-              context.pushNamed(
+              navigator.pushNamed(
                 AddToGroceryWidget.routeName,
-                queryParameters: {
-                  'skipToList': serializeParam(true, ParamType.bool),
-                }.withoutNulls,
+                arguments: {
+                  'skipToList': true,
+                },
               );
             },
           ),
@@ -1122,7 +1156,7 @@ class _CategoryDetailsLocalProducWidgetState
   }) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(8.0),
+      borderRadius: BorderRadius.circular(14.0),
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
         child: Column(
@@ -1184,7 +1218,7 @@ class _CategoryDetailsLocalProducWidgetState
       width: double.infinity,
       decoration: BoxDecoration(
         color: FlutterFlowTheme.of(context).secondaryBackground,
-        borderRadius: BorderRadius.circular(12.0),
+        borderRadius: BorderRadius.circular(14.0),
         boxShadow: [
           BoxShadow(
             blurRadius: 4.0,
@@ -1295,7 +1329,7 @@ class _CategoryDetailsLocalProducWidgetState
       width: double.infinity,
       decoration: BoxDecoration(
         color: FlutterFlowTheme.of(context).secondaryBackground,
-        borderRadius: BorderRadius.circular(12.0),
+        borderRadius: BorderRadius.circular(14.0),
         boxShadow: [
           BoxShadow(
             blurRadius: 4.0,
@@ -1381,7 +1415,7 @@ class _CategoryDetailsLocalProducWidgetState
       padding: EdgeInsets.all(24.0),
       decoration: BoxDecoration(
         color: FlutterFlowTheme.of(context).secondaryBackground,
-        borderRadius: BorderRadius.circular(12.0),
+        borderRadius: BorderRadius.circular(14.0),
         boxShadow: [
           BoxShadow(
             blurRadius: 4.0,

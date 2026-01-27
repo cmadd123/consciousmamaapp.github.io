@@ -1,5 +1,6 @@
 import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
+import '/components/onboarding_progress_indicator_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
@@ -13,12 +14,7 @@ import 'o_boarding_step2_model.dart';
 export 'o_boarding_step2_model.dart';
 
 class OBoardingStep2Widget extends StatefulWidget {
-  const OBoardingStep2Widget({
-    super.key,
-    required this.childrean,
-  });
-
-  final DocumentReference? childrean;
+  const OBoardingStep2Widget({super.key});
 
   static String routeName = 'oBoardingStep2';
   static String routePath = '/oBoardingStep2';
@@ -62,8 +58,8 @@ class _OBoardingStep2WidgetState extends State<OBoardingStep2Widget> {
             gradient: LinearGradient(
               colors: [Color(0xFFD7F2EB), Color(0xFFFFE9E1)],
               stops: [0.0, 1.0],
-              begin: AlignmentDirectional(0.0, 1.0),
-              end: AlignmentDirectional(0, -1.0),
+              begin: AlignmentDirectional(0.0, -1.0),
+              end: AlignmentDirectional(0, 1.0),
             ),
           ),
           child: SafeArea(
@@ -72,16 +68,43 @@ class _OBoardingStep2WidgetState extends State<OBoardingStep2Widget> {
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 children: [
+                  // Back button and progress indicator
+                  Padding(
+                    padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        IconButton(
+                          icon: Icon(
+                            Icons.arrow_back_ios_rounded,
+                            color: FlutterFlowTheme.of(context).primary,
+                            size: 24,
+                          ),
+                          onPressed: () {
+                            context.pop();
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Progress indicator
+                  const Padding(
+                    padding: EdgeInsetsDirectional.fromSTEB(0.0, 8.0, 0.0, 16.0),
+                    child: OnboardingProgressIndicator(
+                      currentStep: 2,
+                      totalSteps: 7,
+                    ),
+                  ),
                   Align(
                     alignment: AlignmentDirectional(0.0, 0.0),
                     child: Container(
                       width: 182.0,
-                      height: 156.0,
+                      height: 140.0,
                       decoration: BoxDecoration(),
                       child: Align(
                         alignment: AlignmentDirectional(-1.0, 0.0),
                         child: ClipRRect(
-                          borderRadius: BorderRadius.circular(8.0),
+                          borderRadius: BorderRadius.circular(14.0),
                           child: Image.asset(
                             'assets/images/image_22.png',
                             width: 200.0,
@@ -104,16 +127,16 @@ class _OBoardingStep2WidgetState extends State<OBoardingStep2Widget> {
                           style:
                               FlutterFlowTheme.of(context).bodyMedium.override(
                                     fontFamily: 'Andika New Basic',
-                                    fontSize: 30.0,
+                                    fontSize: 26.0,
                                     letterSpacing: 0.0,
                                     fontWeight: FontWeight.w600,
                                   ),
                         ),
                         Padding(
                           padding: EdgeInsetsDirectional.fromSTEB(
-                              0.0, 4.0, 0.0, 30.0),
+                              0.0, 4.0, 0.0, 20.0),
                           child: Text(
-                            'Select all that apply. ',
+                            'Select all that apply',
                             style: FlutterFlowTheme.of(context)
                                 .bodyMedium
                                 .override(
@@ -134,37 +157,40 @@ class _OBoardingStep2WidgetState extends State<OBoardingStep2Widget> {
                               child: Padding(
                                 padding: EdgeInsetsDirectional.fromSTEB(
                                     2.0, 0.0, 0.0, 0.0),
-                                child: Wrap(
-                                  spacing: 6.0,
-                                  runSpacing: 16.0,
-                                  alignment: WrapAlignment.start,
-                                  crossAxisAlignment: WrapCrossAlignment.start,
-                                  direction: Axis.horizontal,
-                                  runAlignment: WrapAlignment.start,
-                                  verticalDirection: VerticalDirection.down,
-                                  clipBehavior: Clip.none,
-                                  children: [
+                                child: LayoutBuilder(
+                                  builder: (context, constraints) {
+                                    final itemWidth = (constraints.maxWidth - 6.0) / 2;
+                                    return Wrap(
+                                      spacing: 6.0,
+                                      runSpacing: 16.0,
+                                      alignment: WrapAlignment.start,
+                                      crossAxisAlignment: WrapCrossAlignment.start,
+                                      direction: Axis.horizontal,
+                                      runAlignment: WrapAlignment.start,
+                                      verticalDirection: VerticalDirection.down,
+                                      clipBehavior: Clip.none,
+                                      children: [
                                     InkWell(
                                       splashColor: Colors.transparent,
                                       focusColor: Colors.transparent,
                                       hoverColor: Colors.transparent,
                                       highlightColor: Colors.transparent,
                                       onTap: () async {
-                                        _model.selectedMealTime =
-                                            'I forget to meal plan';
+                                        _model.toggleMealTime(
+                                            'I forget to meal plan');
                                         safeSetState(() {});
                                       },
                                       child: Container(
-                                        width: 155.0,
+                                        width: itemWidth,
                                         height: 133.0,
                                         decoration: BoxDecoration(
                                           color: FlutterFlowTheme.of(context)
                                               .secondaryBackground,
                                           borderRadius:
-                                              BorderRadius.circular(27.0),
+                                              BorderRadius.circular(14.0),
                                           border: Border.all(
-                                            color: _model.selectedMealTime ==
-                                                    'I forget to meal plan'
+                                            color: _model.isSelected(
+                                                    'I forget to meal plan')
                                                 ? FlutterFlowTheme.of(context)
                                                     .primary
                                                 : Colors.transparent,
@@ -235,21 +261,21 @@ class _OBoardingStep2WidgetState extends State<OBoardingStep2Widget> {
                                       hoverColor: Colors.transparent,
                                       highlightColor: Colors.transparent,
                                       onTap: () async {
-                                        _model.selectedMealTime =
-                                            'I don’t have easy recipes';
+                                        _model.toggleMealTime(
+                                            'I don\'t have easy recipes');
                                         safeSetState(() {});
                                       },
                                       child: Container(
-                                        width: 155.0,
+                                        width: itemWidth,
                                         height: 133.0,
                                         decoration: BoxDecoration(
                                           color: FlutterFlowTheme.of(context)
                                               .secondaryBackground,
                                           borderRadius:
-                                              BorderRadius.circular(27.0),
+                                              BorderRadius.circular(14.0),
                                           border: Border.all(
-                                            color: _model.selectedMealTime ==
-                                                    'I don’t have easy recipes'
+                                            color: _model.isSelected(
+                                                    'I don\'t have easy recipes')
                                                 ? FlutterFlowTheme.of(context)
                                                     .primary
                                                 : Colors.transparent,
@@ -320,21 +346,21 @@ class _OBoardingStep2WidgetState extends State<OBoardingStep2Widget> {
                                       hoverColor: Colors.transparent,
                                       highlightColor: Colors.transparent,
                                       onTap: () async {
-                                        _model.selectedMealTime =
-                                            'I forget things on mygrocery list';
+                                        _model.toggleMealTime(
+                                            'I forget things on mygrocery list');
                                         safeSetState(() {});
                                       },
                                       child: Container(
-                                        width: 155.0,
+                                        width: itemWidth,
                                         height: 133.0,
                                         decoration: BoxDecoration(
                                           color: FlutterFlowTheme.of(context)
                                               .secondaryBackground,
                                           borderRadius:
-                                              BorderRadius.circular(27.0),
+                                              BorderRadius.circular(14.0),
                                           border: Border.all(
-                                            color: _model.selectedMealTime ==
-                                                    'I forget things on mygrocery list'
+                                            color: _model.isSelected(
+                                                    'I forget things on mygrocery list')
                                                 ? FlutterFlowTheme.of(context)
                                                     .primary
                                                 : Colors.transparent,
@@ -405,21 +431,21 @@ class _OBoardingStep2WidgetState extends State<OBoardingStep2Widget> {
                                       hoverColor: Colors.transparent,
                                       highlightColor: Colors.transparent,
                                       onTap: () async {
-                                        _model.selectedMealTime =
-                                            'All of these apply';
+                                        _model.toggleMealTime(
+                                            'All of these apply');
                                         safeSetState(() {});
                                       },
                                       child: Container(
-                                        width: 155.0,
+                                        width: itemWidth,
                                         height: 133.0,
                                         decoration: BoxDecoration(
                                           color: FlutterFlowTheme.of(context)
                                               .secondaryBackground,
                                           borderRadius:
-                                              BorderRadius.circular(27.0),
+                                              BorderRadius.circular(14.0),
                                           border: Border.all(
-                                            color: _model.selectedMealTime ==
-                                                    'All of these apply'
+                                            color: _model.isSelected(
+                                                    'All of these apply')
                                                 ? FlutterFlowTheme.of(context)
                                                     .primary
                                                 : Colors.transparent,
@@ -484,6 +510,8 @@ class _OBoardingStep2WidgetState extends State<OBoardingStep2Widget> {
                                       ),
                                     ),
                                   ],
+                                    );
+                                  },
                                 ),
                               ),
                             ),
@@ -499,20 +527,12 @@ class _OBoardingStep2WidgetState extends State<OBoardingStep2Widget> {
                                 preventingMealTimes: _model.selectedMealTime,
                               ));
 
-                              context.pushNamed(
-                                OBoardingStep3Widget.routeName,
-                                queryParameters: {
-                                  'childrean': serializeParam(
-                                    widget!.childrean,
-                                    ParamType.DocumentReference,
-                                  ),
-                                }.withoutNulls,
-                              );
+                              context.pushNamed(OBoardingStep3Widget.routeName);
                             },
                             text: 'Next',
                             options: FFButtonOptions(
                               width: double.infinity,
-                              height: 47.0,
+                              height: 48.0,
                               padding: EdgeInsetsDirectional.fromSTEB(
                                   16.0, 0.0, 16.0, 0.0),
                               iconPadding: EdgeInsetsDirectional.fromSTEB(

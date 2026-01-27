@@ -1,11 +1,10 @@
 import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
 import '/components/custom_date_time_picker.dart';
-import '/flutter_flow/flutter_flow_drop_down.dart';
+import '/components/onboarding_progress_indicator_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
-import '/flutter_flow/form_field_controller.dart';
 import 'dart:ui';
 import '/index.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -59,7 +58,7 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
     final selectedDate = await showCustomDateTimePicker(
       context: context,
       initialDateTime: initialDate,
-      minimumDate: DateTime(2010),
+      minimumDate: DateTime(1950),
       maximumDate: DateTime.now(),
       showTime: false, // Birthday doesn't need time
       title: 'Birth Date',
@@ -93,8 +92,8 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
               gradient: LinearGradient(
                 colors: [Color(0xFFD7F2EB), Color(0xFFFFE9E1)],
                 stops: [0.0, 1.0],
-                begin: AlignmentDirectional(0.0, 1.0),
-              end: AlignmentDirectional(0, -1.0),
+                begin: AlignmentDirectional(0.0, -1.0),
+              end: AlignmentDirectional(0, 1.0),
             ),
           ),
           child: Padding(
@@ -104,6 +103,41 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
                 mainAxisSize: MainAxisSize.max,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Back arrow (only if not first child)
+                  if (!widget.isFirst)
+                    Padding(
+                      padding: const EdgeInsetsDirectional.fromSTEB(0.0, 8.0, 0.0, 0.0),
+                      child: Align(
+                        alignment: AlignmentDirectional(-1.0, 0.0),
+                        child: InkWell(
+                          splashColor: Colors.transparent,
+                          focusColor: Colors.transparent,
+                          hoverColor: Colors.transparent,
+                          highlightColor: Colors.transparent,
+                          onTap: () => context.safePop(),
+                          child: Container(
+                            padding: const EdgeInsets.all(8.0),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.5),
+                              borderRadius: BorderRadius.circular(14.0),
+                            ),
+                            child: Icon(
+                              Icons.arrow_back,
+                              color: FlutterFlowTheme.of(context).primaryText,
+                              size: 24.0,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  // Progress indicator
+                  const Padding(
+                    padding: EdgeInsetsDirectional.fromSTEB(0.0, 8.0, 0.0, 16.0),
+                    child: OnboardingProgressIndicator(
+                      currentStep: 5,
+                      totalSteps: 7,
+                    ),
+                  ),
                   Align(
                     alignment: AlignmentDirectional(0.0, 0.0),
                     child: Container(
@@ -113,7 +147,7 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
                       child: Align(
                         alignment: AlignmentDirectional(-1.0, 0.0),
                         child: ClipRRect(
-                          borderRadius: BorderRadius.circular(8.0),
+                          borderRadius: BorderRadius.circular(14.0),
                           child: Image.asset(
                             'assets/images/image_22.png',
                             width: 200.0,
@@ -179,35 +213,35 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
                                   ),
                               enabledBorder: OutlineInputBorder(
                                 borderSide: BorderSide(
-                                  color: Color(0x00000000),
+                                  color: Color(0xFFCBE3E0), // Teal border
                                   width: 1.0,
                                 ),
-                                borderRadius: BorderRadius.circular(27.0),
+                                borderRadius: BorderRadius.circular(14.0),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderSide: BorderSide(
-                                  color: Color(0x00000000),
-                                  width: 1.0,
+                                  color: FlutterFlowTheme.of(context).primary,
+                                  width: 1.5,
                                 ),
-                                borderRadius: BorderRadius.circular(27.0),
+                                borderRadius: BorderRadius.circular(14.0),
                               ),
                               errorBorder: OutlineInputBorder(
                                 borderSide: BorderSide(
                                   color: FlutterFlowTheme.of(context).error,
                                   width: 1.0,
                                 ),
-                                borderRadius: BorderRadius.circular(27.0),
+                                borderRadius: BorderRadius.circular(14.0),
                               ),
                               focusedErrorBorder: OutlineInputBorder(
                                 borderSide: BorderSide(
                                   color: FlutterFlowTheme.of(context).error,
                                   width: 1.0,
                                 ),
-                                borderRadius: BorderRadius.circular(27.0),
+                                borderRadius: BorderRadius.circular(14.0),
                               ),
                               filled: true,
                               fillColor: FlutterFlowTheme.of(context)
-                                  .secondaryBackground,
+                                  .prim30, // Teal background
                               contentPadding: EdgeInsetsDirectional.fromSTEB(
                                   20.0, 20.0, 20.0, 20.0),
                             ),
@@ -230,84 +264,94 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
                             mainAxisSize: MainAxisSize.max,
                             children: [
                               Expanded(
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(27.0),
-                                  child: Container(
-                                    width: 200.0,
-                                    height: 57.0,
-                                    decoration: BoxDecoration(
-                                      color: FlutterFlowTheme.of(context)
-                                          .secondaryBackground,
-                                      borderRadius: BorderRadius.circular(27.0),
-                                    ),
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.max,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Expanded(
-                                          child: Padding(
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    8.0, 8.0, 0.0, 6.0),
-                                            child: FlutterFlowDropDown<String>(
-                                              controller: _model
-                                                      .genderDropDownValueController ??=
-                                                  FormFieldController<String>(
-                                                      null),
-                                              options: ['Male', 'Female'],
-                                              onChanged: (val) async {
-                                                safeSetState(() => _model
-                                                    .genderDropDownValue = val);
-                                                _model.gender =
-                                                    _model.genderDropDownValue;
-                                                safeSetState(() {});
-                                              },
-                                              width: 200.0,
-                                              height: 40.0,
-                                              textStyle:
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodyMedium
-                                                      .override(
-                                                        fontFamily:
-                                                            'Andika New Basic',
-                                                        color:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .secondaryText,
-                                                        letterSpacing: 0.0,
-                                                      ),
-                                              hintText: 'Gender',
-                                              icon: Icon(
-                                                Icons
-                                                    .keyboard_arrow_down_rounded,
-                                                color:
-                                                    FlutterFlowTheme.of(context)
-                                                        .secondaryText,
-                                                size: 24.0,
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    // Male chip
+                                    Expanded(
+                                      child: InkWell(
+                                        splashColor: Colors.transparent,
+                                        focusColor: Colors.transparent,
+                                        hoverColor: Colors.transparent,
+                                        highlightColor: Colors.transparent,
+                                        onTap: () async {
+                                          _model.gender = 'Male';
+                                          _model.genderDropDownValue = 'Male';
+                                          safeSetState(() {});
+                                        },
+                                        child: Container(
+                                          height: 57.0,
+                                          decoration: BoxDecoration(
+                                            color: FlutterFlowTheme.of(context).prim30,
+                                            borderRadius: BorderRadius.circular(14.0),
+                                            border: Border.all(
+                                              color: _model.gender == 'Male'
+                                                  ? FlutterFlowTheme.of(context).primary
+                                                  : const Color(0xFFCBE3E0),
+                                              width: _model.gender == 'Male' ? 2.0 : 1.0,
+                                            ),
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              'Male',
+                                              style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                fontFamily: 'Andika New Basic',
+                                                color: FlutterFlowTheme.of(context).secondaryText,
+                                                letterSpacing: 0.0,
+                                                fontWeight: _model.gender == 'Male'
+                                                    ? FontWeight.w600
+                                                    : FontWeight.normal,
                                               ),
-                                              fillColor:
-                                                  FlutterFlowTheme.of(context)
-                                                      .secondaryBackground,
-                                              elevation: 2.0,
-                                              borderColor: Colors.transparent,
-                                              borderWidth: 0.0,
-                                              borderRadius: 8.0,
-                                              margin: EdgeInsetsDirectional
-                                                  .fromSTEB(
-                                                      12.0, 0.0, 12.0, 0.0),
-                                              hidesUnderline: true,
-                                              isOverButton: false,
-                                              isSearchable: false,
-                                              isMultiSelect: false,
                                             ),
                                           ),
                                         ),
-                                      ],
+                                      ),
                                     ),
-                                  ),
+                                    const SizedBox(width: 8.0),
+                                    // Female chip
+                                    Expanded(
+                                      child: InkWell(
+                                        splashColor: Colors.transparent,
+                                        focusColor: Colors.transparent,
+                                        hoverColor: Colors.transparent,
+                                        highlightColor: Colors.transparent,
+                                        onTap: () async {
+                                          _model.gender = 'Female';
+                                          _model.genderDropDownValue = 'Female';
+                                          safeSetState(() {});
+                                        },
+                                        child: Container(
+                                          height: 57.0,
+                                          decoration: BoxDecoration(
+                                            color: FlutterFlowTheme.of(context).prim30,
+                                            borderRadius: BorderRadius.circular(14.0),
+                                            border: Border.all(
+                                              color: _model.gender == 'Female'
+                                                  ? FlutterFlowTheme.of(context).primary
+                                                  : const Color(0xFFCBE3E0),
+                                              width: _model.gender == 'Female' ? 2.0 : 1.0,
+                                            ),
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              'Female',
+                                              style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                fontFamily: 'Andika New Basic',
+                                                color: FlutterFlowTheme.of(context).secondaryText,
+                                                letterSpacing: 0.0,
+                                                fontWeight: _model.gender == 'Female'
+                                                    ? FontWeight.w600
+                                                    : FontWeight.normal,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
+                              const SizedBox(width: 8.0),
                               Expanded(
                                 child: InkWell(
                                   splashColor: Colors.transparent,
@@ -322,61 +366,56 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
                                     height: 57.0,
                                     decoration: BoxDecoration(
                                       color: FlutterFlowTheme.of(context)
-                                          .secondaryBackground,
-                                      borderRadius: BorderRadius.circular(27.0),
+                                          .prim30, // Teal background
+                                      borderRadius: BorderRadius.circular(14.0),
+                                      border: Border.all(
+                                        color: const Color(0xFFCBE3E0),
+                                        width: 1.0,
+                                      ),
                                     ),
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.max,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Padding(
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  20.0, 16.0, 20.0, 16.0),
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.max,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text(
-                                                valueOrDefault<String>(
-                                                  _model.datePicked != null
-                                                      ? dateTimeFormat(
-                                                          "M/d/yy",
-                                                          _model.datePicked,
-                                                          locale:
-                                                              FFLocalizations.of(
-                                                                      context)
-                                                                  .languageCode,
-                                                        )
-                                                      : 'Birth date',
-                                                  '- -',
-                                                ),
-                                                style:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMedium
-                                                        .override(
-                                                          fontFamily:
-                                                              'Andika New Basic',
-                                                          color: FlutterFlowTheme
-                                                                  .of(context)
-                                                              .black60,
-                                                          letterSpacing: 0.0,
-                                                        ),
-                                              ),
-                                              Icon(
-                                                Icons
-                                                    .keyboard_arrow_down_rounded,
-                                                color:
-                                                    FlutterFlowTheme.of(context)
-                                                        .primaryText,
-                                                size: 24.0,
-                                              ),
-                                            ],
+                                    child: Padding(
+                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                          20.0, 0.0, 12.0, 0.0),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.max,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            valueOrDefault<String>(
+                                              _model.datePicked != null
+                                                  ? dateTimeFormat(
+                                                      "M/d/yy",
+                                                      _model.datePicked,
+                                                      locale:
+                                                          FFLocalizations.of(
+                                                                  context)
+                                                              .languageCode,
+                                                    )
+                                                  : 'Birth date',
+                                              '- -',
+                                            ),
+                                            style:
+                                                FlutterFlowTheme.of(context)
+                                                    .bodyMedium
+                                                    .override(
+                                                      fontFamily:
+                                                          'Andika New Basic',
+                                                      color: FlutterFlowTheme
+                                                              .of(context)
+                                                          .black60,
+                                                      letterSpacing: 0.0,
+                                                    ),
                                           ),
-                                        ),
-                                      ],
+                                          Icon(
+                                            Icons.keyboard_arrow_down_rounded,
+                                            color:
+                                                FlutterFlowTheme.of(context)
+                                                    .primaryText,
+                                            size: 24.0,
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -450,7 +489,7 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
                                             decoration: BoxDecoration(
                                               color: Color(0xFF81C784),
                                               borderRadius:
-                                                  BorderRadius.circular(8.0),
+                                                  BorderRadius.circular(14.0),
                                               border: Border.all(
                                                 color: _model.selectedCOolor ==
                                                         Color(0xFF81C784)
@@ -480,7 +519,7 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
                                             decoration: BoxDecoration(
                                               color: Color(0xFFB39DDB),
                                               borderRadius:
-                                                  BorderRadius.circular(8.0),
+                                                  BorderRadius.circular(14.0),
                                               border: Border.all(
                                                 color: _model.selectedCOolor ==
                                                         Color(0xFFB39DDB)
@@ -510,7 +549,7 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
                                             decoration: BoxDecoration(
                                               color: Color(0xFFFFB74D),
                                               borderRadius:
-                                                  BorderRadius.circular(8.0),
+                                                  BorderRadius.circular(14.0),
                                               border: Border.all(
                                                 color: _model.selectedCOolor ==
                                                         Color(0xFFFFB74D)
@@ -540,7 +579,7 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
                                             decoration: BoxDecoration(
                                               color: Color(0xFF4DB6AC),
                                               borderRadius:
-                                                  BorderRadius.circular(8.0),
+                                                  BorderRadius.circular(14.0),
                                               border: Border.all(
                                                 color: _model.selectedCOolor ==
                                                         Color(0xFF4DB6AC)
@@ -570,7 +609,7 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
                                             decoration: BoxDecoration(
                                               color: Color(0xFFFFD54F),
                                               borderRadius:
-                                                  BorderRadius.circular(8.0),
+                                                  BorderRadius.circular(14.0),
                                               border: Border.all(
                                                 color: _model.selectedCOolor ==
                                                         Color(0xFFFFD54F)
@@ -600,10 +639,190 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
                                             decoration: BoxDecoration(
                                               color: Color(0xFFFF8A65),
                                               borderRadius:
-                                                  BorderRadius.circular(8.0),
+                                                  BorderRadius.circular(14.0),
                                               border: Border.all(
                                                 color: _model.selectedCOolor ==
                                                         Color(0xFFFF8A65)
+                                                    ? FlutterFlowTheme.of(
+                                                            context)
+                                                        .primary
+                                                    : Colors.transparent,
+                                                width: 2.0,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        // Red - bold, vibrant
+                                        InkWell(
+                                          splashColor: Colors.transparent,
+                                          focusColor: Colors.transparent,
+                                          hoverColor: Colors.transparent,
+                                          highlightColor: Colors.transparent,
+                                          onTap: () async {
+                                            _model.selectedCOolor =
+                                                Color(0xFFFF6B6B);
+                                            safeSetState(() {});
+                                          },
+                                          child: Container(
+                                            width: 48.0,
+                                            height: 48.0,
+                                            decoration: BoxDecoration(
+                                              color: Color(0xFFFF6B6B),
+                                              borderRadius:
+                                                  BorderRadius.circular(14.0),
+                                              border: Border.all(
+                                                color: _model.selectedCOolor ==
+                                                        Color(0xFFFF6B6B)
+                                                    ? FlutterFlowTheme.of(
+                                                            context)
+                                                        .primary
+                                                    : Colors.transparent,
+                                                width: 2.0,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        // Light Orange - soft, peachy
+                                        InkWell(
+                                          splashColor: Colors.transparent,
+                                          focusColor: Colors.transparent,
+                                          hoverColor: Colors.transparent,
+                                          highlightColor: Colors.transparent,
+                                          onTap: () async {
+                                            _model.selectedCOolor =
+                                                Color(0xFFFFA07A);
+                                            safeSetState(() {});
+                                          },
+                                          child: Container(
+                                            width: 48.0,
+                                            height: 48.0,
+                                            decoration: BoxDecoration(
+                                              color: Color(0xFFFFA07A),
+                                              borderRadius:
+                                                  BorderRadius.circular(14.0),
+                                              border: Border.all(
+                                                color: _model.selectedCOolor ==
+                                                        Color(0xFFFFA07A)
+                                                    ? FlutterFlowTheme.of(
+                                                            context)
+                                                        .primary
+                                                    : Colors.transparent,
+                                                width: 2.0,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        // Primary Teal - app primary color
+                                        InkWell(
+                                          splashColor: Colors.transparent,
+                                          focusColor: Colors.transparent,
+                                          hoverColor: Colors.transparent,
+                                          highlightColor: Colors.transparent,
+                                          onTap: () async {
+                                            _model.selectedCOolor =
+                                                Color(0xFF52A097);
+                                            safeSetState(() {});
+                                          },
+                                          child: Container(
+                                            width: 48.0,
+                                            height: 48.0,
+                                            decoration: BoxDecoration(
+                                              color: Color(0xFF52A097),
+                                              borderRadius:
+                                                  BorderRadius.circular(14.0),
+                                              border: Border.all(
+                                                color: _model.selectedCOolor ==
+                                                        Color(0xFF52A097)
+                                                    ? FlutterFlowTheme.of(
+                                                            context)
+                                                        .primary
+                                                    : Colors.transparent,
+                                                width: 2.0,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        // Light Teal - soft, airy
+                                        InkWell(
+                                          splashColor: Colors.transparent,
+                                          focusColor: Colors.transparent,
+                                          hoverColor: Colors.transparent,
+                                          highlightColor: Colors.transparent,
+                                          onTap: () async {
+                                            _model.selectedCOolor =
+                                                Color(0xFF95E1D3);
+                                            safeSetState(() {});
+                                          },
+                                          child: Container(
+                                            width: 48.0,
+                                            height: 48.0,
+                                            decoration: BoxDecoration(
+                                              color: Color(0xFF95E1D3),
+                                              borderRadius:
+                                                  BorderRadius.circular(14.0),
+                                              border: Border.all(
+                                                color: _model.selectedCOolor ==
+                                                        Color(0xFF95E1D3)
+                                                    ? FlutterFlowTheme.of(
+                                                            context)
+                                                        .primary
+                                                    : Colors.transparent,
+                                                width: 2.0,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        // Blue - sky, ocean
+                                        InkWell(
+                                          splashColor: Colors.transparent,
+                                          focusColor: Colors.transparent,
+                                          hoverColor: Colors.transparent,
+                                          highlightColor: Colors.transparent,
+                                          onTap: () async {
+                                            _model.selectedCOolor =
+                                                Color(0xFF5DADE2);
+                                            safeSetState(() {});
+                                          },
+                                          child: Container(
+                                            width: 48.0,
+                                            height: 48.0,
+                                            decoration: BoxDecoration(
+                                              color: Color(0xFF5DADE2),
+                                              borderRadius:
+                                                  BorderRadius.circular(14.0),
+                                              border: Border.all(
+                                                color: _model.selectedCOolor ==
+                                                        Color(0xFF5DADE2)
+                                                    ? FlutterFlowTheme.of(
+                                                            context)
+                                                        .primary
+                                                    : Colors.transparent,
+                                                width: 2.0,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        // Violet - whimsical, unique
+                                        InkWell(
+                                          splashColor: Colors.transparent,
+                                          focusColor: Colors.transparent,
+                                          hoverColor: Colors.transparent,
+                                          highlightColor: Colors.transparent,
+                                          onTap: () async {
+                                            _model.selectedCOolor =
+                                                Color(0xFFEE82EE);
+                                            safeSetState(() {});
+                                          },
+                                          child: Container(
+                                            width: 48.0,
+                                            height: 48.0,
+                                            decoration: BoxDecoration(
+                                              color: Color(0xFFEE82EE),
+                                              borderRadius:
+                                                  BorderRadius.circular(14.0),
+                                              border: Border.all(
+                                                color: _model.selectedCOolor ==
+                                                        Color(0xFFEE82EE)
                                                     ? FlutterFlowTheme.of(
                                                             context)
                                                         .primary
@@ -621,105 +840,103 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
                             ),
                           ),
                         ),
-                        Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
-                              0.0, 0.0, 0.0, 16.0),
-                          child: FFButtonWidget(
-                            onPressed: () async {
-                              if (_model.formKey.currentState == null ||
-                                  !_model.formKey.currentState!.validate()) {
-                                return;
-                              }
-                              if ((_model.isBirthDaySelected != null) &&
-                                  (_model.selectedDate != null) &&
-                                  (_model.gender != null &&
-                                      _model.gender != '')) {
-                                var childernRecordReference =
-                                    ChildernRecord.collection.doc();
-                                await childernRecordReference
-                                    .set(createChildernRecordData(
-                                  name: _model.textController.text,
-                                  birthDay: _model.selectedDate,
-                                  selectedColor: _model.selectedCOolor,
-                                  userRef: currentUserReference,
-                                  id: '',
-                                  gender: _model.genderDropDownValue,
-                                ));
-                                _model.childedDoc =
-                                    ChildernRecord.getDocumentFromData(
-                                        createChildernRecordData(
-                                          name: _model.textController.text,
-                                          birthDay: _model.selectedDate,
-                                          selectedColor: _model.selectedCOolor,
-                                          userRef: currentUserReference,
-                                          id: '',
-                                          gender: _model.genderDropDownValue,
-                                        ),
-                                        childernRecordReference);
+                        // Spacer before buttons
+                        SizedBox(height: 24.0),
+                        // Primary button - Add child and continue
+                        FFButtonWidget(
+                          onPressed: () async {
+                            if (_model.formKey.currentState == null ||
+                                !_model.formKey.currentState!.validate()) {
+                              return;
+                            }
+                            if ((_model.isBirthDaySelected != null) &&
+                                (_model.selectedDate != null) &&
+                                (_model.gender != null &&
+                                    _model.gender != '')) {
+                              var childernRecordReference =
+                                  ChildernRecord.collection.doc();
+                              await childernRecordReference
+                                  .set(createChildernRecordData(
+                                name: _model.textController.text,
+                                birthDay: _model.selectedDate,
+                                selectedColor: _model.selectedCOolor,
+                                userRef: currentUserReference,
+                                id: '',
+                                gender: _model.genderDropDownValue,
+                              ));
+                              _model.childedDoc =
+                                  ChildernRecord.getDocumentFromData(
+                                      createChildernRecordData(
+                                        name: _model.textController.text,
+                                        birthDay: _model.selectedDate,
+                                        selectedColor: _model.selectedCOolor,
+                                        userRef: currentUserReference,
+                                        id: '',
+                                        gender: _model.genderDropDownValue,
+                                      ),
+                                      childernRecordReference);
 
-                                await currentUserReference!
-                                    .update(createUsersRecordData(
-                                  firstChildCreated: true,
-                                ));
-                                FFAppState().selectedChildForMilestone =
-                                    _model.childedDoc?.reference;
-                                safeSetState(() {});
-
-                                // Show success message
-                                if (mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text('${_model.textController.text} has been added!'),
-                                      backgroundColor: FlutterFlowTheme.of(context).primary,
-                                      behavior: SnackBarBehavior.floating,
-                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                                      duration: const Duration(seconds: 2),
-                                    ),
-                                  );
-                                }
-
-                                context.pushNamed(
-                                  OBoardingStep1Widget.routeName,
-                                  queryParameters: {
-                                    'childrean': serializeParam(
-                                      _model.childedDoc?.reference,
-                                      ParamType.DocumentReference,
-                                    ),
-                                  }.withoutNulls,
-                                );
-                              } else {
-                                _model.isBirthDaySelected = false;
-                                safeSetState(() {});
-                              }
-
+                              await currentUserReference!
+                                  .update(createUsersRecordData(
+                                firstChildCreated: true,
+                              ));
+                              FFAppState().selectedChildForMilestone =
+                                  _model.childedDoc?.reference;
                               safeSetState(() {});
-                            },
-                            text: 'Add child and continue',
-                            options: FFButtonOptions(
-                              width: double.infinity,
-                              height: 56.0,
-                              padding: EdgeInsetsDirectional.fromSTEB(
-                                  16.0, 0.0, 16.0, 0.0),
-                              iconPadding: EdgeInsetsDirectional.fromSTEB(
-                                  0.0, 0.0, 0.0, 0.0),
-                              color: FlutterFlowTheme.of(context).primary,
-                              textStyle: FlutterFlowTheme.of(context)
-                                  .titleSmall
-                                  .override(
-                                    fontFamily: 'Andika New Basic',
-                                    color: Colors.white,
-                                    letterSpacing: 0.0,
-                                    fontWeight: FontWeight.normal,
+
+                              // Show success message
+                              if (mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('${_model.textController.text} has been added!'),
+                                    backgroundColor: FlutterFlowTheme.of(context).primary,
+                                    behavior: SnackBarBehavior.floating,
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                    duration: const Duration(seconds: 2),
                                   ),
-                              elevation: 0.0,
-                              borderRadius: BorderRadius.circular(28.0),
-                            ),
+                                );
+                              }
+
+                              // Navigate based on whether this is first-time onboarding or adding another child
+                              if (widget.isFirst) {
+                                // First child - continue to parent setup
+                                context.pushNamed(ParentSetupWidget.routeName);
+                              } else {
+                                // Adding another child - go back to My Kids page
+                                context.safePop();
+                              }
+                            } else {
+                              _model.isBirthDaySelected = false;
+                              safeSetState(() {});
+                            }
+
+                            safeSetState(() {});
+                          },
+                          text: 'Add child and continue',
+                          options: FFButtonOptions(
+                            width: double.infinity,
+                            height: 56.0,
+                            padding: EdgeInsetsDirectional.fromSTEB(
+                                16.0, 0.0, 16.0, 0.0),
+                            iconPadding: EdgeInsetsDirectional.fromSTEB(
+                                0.0, 0.0, 0.0, 0.0),
+                            color: FlutterFlowTheme.of(context).primary,
+                            textStyle: FlutterFlowTheme.of(context)
+                                .titleSmall
+                                .override(
+                                  fontFamily: 'Andika New Basic',
+                                  color: Colors.white,
+                                  letterSpacing: 0.0,
+                                  fontWeight: FontWeight.normal,
+                                ),
+                            elevation: 0.0,
+                            borderRadius: BorderRadius.circular(28.0),
                           ),
                         ),
-                        Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
-                              0.0, 0.0, 0.0, 16.0),
-                          child: FFButtonWidget(
+                        // Spacing between buttons
+                        SizedBox(height: 12.0),
+                        // Secondary button - Add another child (outlined style)
+                        FFButtonWidget(
                             onPressed: () async {
                               if (_model.formKey.currentState == null ||
                                   !_model.formKey.currentState!.validate()) {
@@ -806,9 +1023,10 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
                               elevation: 0.0,
                               borderRadius: BorderRadius.circular(28.0),
                             ),
-                          ),
                         ),
-                      ].divide(SizedBox(height: 16.0)),
+                        // Bottom padding
+                        SizedBox(height: 24.0),
+                      ].divide(const SizedBox(height: 16.0)),
                     ),
                   ),
                 ],

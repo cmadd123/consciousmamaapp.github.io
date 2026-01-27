@@ -211,7 +211,7 @@ class _NotificationSettingsWidgetState
                         padding: const EdgeInsets.all(16.0),
                         decoration: BoxDecoration(
                           color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12.0),
+                          borderRadius: BorderRadius.circular(14.0),
                           border: Border.all(
                             color: FlutterFlowTheme.of(context).primary,
                           ),
@@ -438,7 +438,7 @@ class _NotificationSettingsWidgetState
       child: Container(
         decoration: BoxDecoration(
           color: FlutterFlowTheme.of(context).secondaryBackground,
-          borderRadius: BorderRadius.circular(12.0),
+          borderRadius: BorderRadius.circular(14.0),
         ),
         child: ListTile(
           leading: Container(
@@ -446,7 +446,7 @@ class _NotificationSettingsWidgetState
             height: 40.0,
             decoration: BoxDecoration(
               color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(10.0),
+              borderRadius: BorderRadius.circular(14.0),
             ),
             child: Icon(
               icon,
@@ -489,12 +489,12 @@ class _NotificationSettingsWidgetState
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(12.0),
+        borderRadius: BorderRadius.circular(14.0),
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
           decoration: BoxDecoration(
             color: FlutterFlowTheme.of(context).secondaryBackground,
-            borderRadius: BorderRadius.circular(12.0),
+            borderRadius: BorderRadius.circular(14.0),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

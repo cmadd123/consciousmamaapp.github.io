@@ -53,7 +53,7 @@ class _KindofActivitystep2WidgetState extends State<KindofActivitystep2Widget> {
       },
       child: Scaffold(
         key: scaffoldKey,
-        backgroundColor: Color(0xFFFFF5F2),
+        backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
         body: SafeArea(
           top: true,
           child: SingleChildScrollView(
@@ -128,7 +128,7 @@ class _KindofActivitystep2WidgetState extends State<KindofActivitystep2Widget> {
                                       decoration: BoxDecoration(),
                                       child: ClipRRect(
                                         borderRadius:
-                                            BorderRadius.circular(8.0),
+                                            BorderRadius.circular(14.0),
                                         child: Image.asset(
                                           'assets/images/Rectangle_378.png',
                                           width: 200.0,
@@ -188,7 +188,7 @@ class _KindofActivitystep2WidgetState extends State<KindofActivitystep2Widget> {
                                       decoration: BoxDecoration(),
                                       child: ClipRRect(
                                         borderRadius:
-                                            BorderRadius.circular(8.0),
+                                            BorderRadius.circular(14.0),
                                         child: Image.asset(
                                           'assets/images/Rectangle_379.png',
                                           width: 200.0,
@@ -246,7 +246,7 @@ class _KindofActivitystep2WidgetState extends State<KindofActivitystep2Widget> {
                                             letterSpacing: 0.0,
                                           ),
                                       elevation: 0.0,
-                                      borderRadius: BorderRadius.circular(8.0),
+                                      borderRadius: BorderRadius.circular(14.0),
                                     ),
                                   ),
                                 ),
@@ -290,7 +290,7 @@ class _KindofActivitystep2WidgetState extends State<KindofActivitystep2Widget> {
                                             letterSpacing: 0.0,
                                           ),
                                       elevation: 0.0,
-                                      borderRadius: BorderRadius.circular(8.0),
+                                      borderRadius: BorderRadius.circular(14.0),
                                     ),
                                   ),
                                 ),

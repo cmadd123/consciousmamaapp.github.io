@@ -48,7 +48,7 @@ class _LoadinglearnPathCopyWidgetState
       },
       child: Scaffold(
         key: scaffoldKey,
-        backgroundColor: Color(0xFFFFF5F2),
+        backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
         body: SafeArea(
           top: true,
           child: Column(
@@ -83,7 +83,7 @@ class _LoadinglearnPathCopyWidgetState
                             padding: EdgeInsetsDirectional.fromSTEB(
                                 15.0, 0.0, 0.0, 0.0),
                             child: ClipRRect(
-                              borderRadius: BorderRadius.circular(8.0),
+                              borderRadius: BorderRadius.circular(14.0),
                               child: Image.asset(
                                 'assets/images/321.png',
                                 width: 79.0,

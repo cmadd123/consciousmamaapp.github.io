@@ -4,13 +4,18 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/v2/learning_path/loading_learn_pass/loading_learn_pass_widget.dart';
-import '/components/puzzle_progress_widget.dart';
 import '/custom_code/actions/index.dart' as actions;
 import '/index.dart';
 import 'package:flutter/material.dart';
 
 class CreateLearningPathBottomSheet extends StatefulWidget {
-  const CreateLearningPathBottomSheet({super.key});
+  const CreateLearningPathBottomSheet({
+    super.key,
+    this.initialChallenge,
+  });
+
+  /// Optional initial challenge text (e.g., from a milestone)
+  final String? initialChallenge;
 
   @override
   State<CreateLearningPathBottomSheet> createState() =>
@@ -19,7 +24,7 @@ class CreateLearningPathBottomSheet extends StatefulWidget {
 
 class _CreateLearningPathBottomSheetState
     extends State<CreateLearningPathBottomSheet> {
-  // Current step (0-4)
+  // Current step (0-3)
   int _currentStep = 0;
 
   // Step 1: Challenge description
@@ -35,9 +40,6 @@ class _CreateLearningPathBottomSheetState
   // Step 4: Time of day
   String _selectedTimeOfDay = 'Morning';
   String _selectedTime = '09:00 AM';
-
-  // Step 5: Puzzle theme
-  String _selectedPuzzleTheme = 'dinosaurs';
 
   // Loading state
   bool _isLoading = false;
@@ -76,24 +78,33 @@ class _CreateLearningPathBottomSheetState
       'label': 'Morning',
       'icon': Icons.wb_sunny_outlined,
       'color': Color(0xFFFFB74D),
-      'times': ['07:00 AM', '08:00 AM', '09:00 AM', '10:00 AM', '11:00 AM'],
+      'times': ['07:00 AM', '07:15 AM', '07:30 AM', '07:45 AM', '08:00 AM', '08:15 AM', '08:30 AM', '08:45 AM', '09:00 AM', '09:15 AM', '09:30 AM', '09:45 AM', '10:00 AM', '10:15 AM', '10:30 AM', '10:45 AM', '11:00 AM', '11:15 AM', '11:30 AM', '11:45 AM'],
       'description': '7 AM - 12 PM',
     },
     {
       'label': 'Afternoon',
       'icon': Icons.wb_cloudy_outlined,
       'color': Color(0xFF4FC3F7),
-      'times': ['12:00 PM', '01:00 PM', '02:00 PM', '03:00 PM', '04:00 PM'],
+      'times': ['12:00 PM', '12:15 PM', '12:30 PM', '12:45 PM', '01:00 PM', '01:15 PM', '01:30 PM', '01:45 PM', '02:00 PM', '02:15 PM', '02:30 PM', '02:45 PM', '03:00 PM', '03:15 PM', '03:30 PM', '03:45 PM', '04:00 PM', '04:15 PM', '04:30 PM', '04:45 PM'],
       'description': '12 PM - 5 PM',
     },
     {
       'label': 'Evening',
       'icon': Icons.nights_stay_outlined,
       'color': Color(0xFF7E57C2),
-      'times': ['05:00 PM', '06:00 PM', '07:00 PM', '08:00 PM'],
+      'times': ['05:00 PM', '05:15 PM', '05:30 PM', '05:45 PM', '06:00 PM', '06:15 PM', '06:30 PM', '06:45 PM', '07:00 PM', '07:15 PM', '07:30 PM', '07:45 PM', '08:00 PM', '08:15 PM', '08:30 PM', '08:45 PM'],
       'description': '5 PM - 9 PM',
     },
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    // If an initial challenge was provided (e.g., from a milestone), set it
+    if (widget.initialChallenge != null && widget.initialChallenge!.isNotEmpty) {
+      _challengeController.text = widget.initialChallenge!;
+    }
+  }
 
   @override
   void dispose() {
@@ -103,7 +114,7 @@ class _CreateLearningPathBottomSheetState
   }
 
   void _nextStep() {
-    if (_currentStep < 4) {
+    if (_currentStep < 3) {
       setState(() => _currentStep++);
     }
   }
@@ -124,8 +135,6 @@ class _CreateLearningPathBottomSheetState
         return _selectedFrequency.isNotEmpty;
       case 3:
         return _selectedTime.isNotEmpty;
-      case 4:
-        return _selectedPuzzleTheme.isNotEmpty;
       default:
         return false;
     }
@@ -150,7 +159,6 @@ class _CreateLearningPathBottomSheetState
         _selectedChild,
         _selectedFrequency,
         _selectedTime,
-        _selectedPuzzleTheme,
       );
 
       if (mounted) {
@@ -188,7 +196,7 @@ class _CreateLearningPathBottomSheetState
       return Container(
         height: MediaQuery.of(context).size.height * 0.6,
         decoration: BoxDecoration(
-          color: PuzzleTheme.getTheme(_selectedPuzzleTheme).backgroundColor,
+          color: theme.secondaryBackground,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         ),
         child: Center(
@@ -197,7 +205,6 @@ class _CreateLearningPathBottomSheetState
             child: LoadingLearnPassWidget(
               key: _loadingKey,
               title: 'Creating your learning path...',
-              puzzleTheme: _selectedPuzzleTheme,
             ),
           ),
         ),
@@ -287,14 +294,14 @@ class _CreateLearningPathBottomSheetState
             child: FFButtonWidget(
               onPressed: _canProceed()
                   ? () {
-                      if (_currentStep == 4) {
+                      if (_currentStep == 3) {
                         _createLearningPath();
                       } else {
                         _nextStep();
                       }
                     }
                   : null,
-              text: _currentStep == 4 ? 'Create Learning Path' : 'Continue',
+              text: _currentStep == 3 ? 'Create Learning Path' : 'Continue',
               options: FFButtonOptions(
                 width: double.infinity,
                 height: 50,
@@ -313,26 +320,184 @@ class _CreateLearningPathBottomSheetState
   }
 
   Widget _buildProgressIndicator(FlutterFlowTheme theme) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: List.generate(5, (index) {
-        final isActive = index == _currentStep;
-        final isCompleted = index < _currentStep;
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 4),
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            width: isActive ? 24 : 8,
-            height: 8,
-            decoration: BoxDecoration(
-              color: isActive || isCompleted
-                  ? theme.primary
-                  : theme.primary.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(4),
+    return Column(
+      children: [
+        // Progress dots
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: List.generate(4, (index) {
+            final isActive = index == _currentStep;
+            final isCompleted = index < _currentStep;
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                width: isActive ? 24 : 8,
+                height: 8,
+                decoration: BoxDecoration(
+                  color: isActive || isCompleted
+                      ? theme.primary
+                      : theme.primary.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+            );
+          }),
+        ),
+        // Show selected options summary
+        if (_currentStep > 0) ...[
+          const SizedBox(height: 12),
+          _buildSelectionsSummary(theme),
+        ],
+      ],
+    );
+  }
+
+  // Build a summary of selections made so far
+  Widget _buildSelectionsSummary(FlutterFlowTheme theme) {
+    List<Widget> items = [];
+
+    // Helper to add arrow between items
+    void addArrow() {
+      if (items.isNotEmpty) {
+        items.add(
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 2),
+            child: Icon(
+              Icons.arrow_forward_ios,
+              size: 10,
+              color: theme.primary.withOpacity(0.5),
             ),
           ),
         );
-      }),
+      }
+    }
+
+    // Step 0 completed: Challenge
+    if (_currentStep > 0 && _challengeController.text.isNotEmpty) {
+      String challengeText = _challengeController.text;
+      // Shorten for display
+      if (challengeText.startsWith('My child needs help with ')) {
+        challengeText = challengeText.substring(25);
+      }
+      if (challengeText.length > 15) {
+        challengeText = '${challengeText.substring(0, 15)}...';
+      }
+      items.add(_buildSummaryChip(
+        theme,
+        Icons.lightbulb_outline,
+        challengeText,
+        0,
+      ));
+    }
+
+    // Step 1 completed: Child
+    if (_currentStep > 1 && _selectedChild != null) {
+      addArrow();
+      items.add(
+        StreamBuilder<ChildernRecord>(
+          stream: ChildernRecord.getDocument(_selectedChild!),
+          builder: (context, snapshot) {
+            final childName = snapshot.data?.name ?? 'Child';
+            return _buildSummaryChip(
+              theme,
+              Icons.child_care,
+              childName,
+              1,
+              childColor: snapshot.data?.selectedColor,
+            );
+          },
+        ),
+      );
+    }
+
+    // Step 2 completed: Frequency
+    if (_currentStep > 2 && _selectedFrequency.isNotEmpty) {
+      addArrow();
+      items.add(_buildSummaryChip(
+        theme,
+        Icons.repeat,
+        _selectedFrequency,
+        2,
+      ));
+    }
+
+    // Step 3: Time (only if on step 3 and time selected)
+    if (_currentStep >= 3 && _selectedTime.isNotEmpty) {
+      addArrow();
+      items.add(_buildSummaryChip(
+        theme,
+        Icons.schedule,
+        _selectedTime,
+        3,
+      ));
+    }
+
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: items,
+      ),
+    );
+  }
+
+  Widget _buildSummaryChip(
+    FlutterFlowTheme theme,
+    IconData icon,
+    String label,
+    int stepIndex, {
+    Color? childColor,
+  }) {
+    return InkWell(
+      onTap: () {
+        // Allow tapping to go back to that step
+        setState(() => _currentStep = stepIndex);
+      },
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        decoration: BoxDecoration(
+          color: theme.primary.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: theme.primary.withOpacity(0.3),
+            width: 1,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (childColor != null)
+              Container(
+                width: 14,
+                height: 14,
+                margin: const EdgeInsets.only(right: 4),
+                decoration: BoxDecoration(
+                  color: childColor,
+                  shape: BoxShape.circle,
+                ),
+              )
+            else
+              Icon(
+                icon,
+                size: 14,
+                color: theme.primary,
+              ),
+            const SizedBox(width: 4),
+            Text(
+              label,
+              style: theme.bodySmall.override(
+                fontFamily: 'Andika New Basic',
+                color: theme.primary,
+                fontSize: 11,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -346,8 +511,6 @@ class _CreateLearningPathBottomSheetState
         return _buildFrequencyStep(theme);
       case 3:
         return _buildTimeStep(theme);
-      case 4:
-        return _buildPuzzleStep(theme);
       default:
         return const SizedBox.shrink();
     }
@@ -617,7 +780,7 @@ class _CreateLearningPathBottomSheetState
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                "How often would you like tasks?",
+                "How often would you like lessons?",
                 style: theme.titleMedium.override(
                   fontFamily: 'Andika New Basic',
                   fontSize: 18,
@@ -714,7 +877,7 @@ class _CreateLearningPathBottomSheetState
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                "What time works best for activities?",
+                "What time works best for lessons?",
                 style: theme.titleMedium.override(
                   fontFamily: 'Andika New Basic',
                   fontSize: 18,
@@ -819,7 +982,7 @@ class _CreateLearningPathBottomSheetState
             final isSelected = _selectedTime == time;
             return InkWell(
               onTap: () => setState(() => _selectedTime = time),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(14),
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
                 padding: const EdgeInsets.symmetric(
@@ -830,7 +993,7 @@ class _CreateLearningPathBottomSheetState
                   color: isSelected
                       ? theme.primary
                       : theme.primary.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(14),
                   border: Border.all(
                     color: isSelected
                         ? theme.primary
@@ -866,7 +1029,7 @@ class _CreateLearningPathBottomSheetState
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  'Tasks will be scheduled for $_selectedTime, $_selectedFrequency',
+                  'Lessons will be scheduled for $_selectedTime, $_selectedFrequency',
                   style: theme.bodyMedium.override(
                     fontFamily: 'Andika New Basic',
                     color: theme.primary,
@@ -880,89 +1043,6 @@ class _CreateLearningPathBottomSheetState
     );
   }
 
-  // Step 5: Puzzle theme selection
-  Widget _buildPuzzleStep(FlutterFlowTheme theme) {
-    return Column(
-      key: const ValueKey('step4'),
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Image.asset(
-                'assets/images/321.png',
-                width: 60,
-                height: 66,
-                fit: BoxFit.contain,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                "Pick a reward puzzle!",
-                style: theme.titleMedium.override(
-                  fontFamily: 'Andika New Basic',
-                  fontSize: 18,
-                ),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        Text(
-          'As your child completes tasks, puzzle pieces will be revealed!',
-          style: theme.bodyMedium.override(
-            fontFamily: 'Andika New Basic',
-            color: theme.secondaryText,
-          ),
-        ),
-        const SizedBox(height: 24),
-
-        // Puzzle theme picker
-        PuzzleThemePicker(
-          selectedThemeId: _selectedPuzzleTheme,
-          onThemeSelected: (themeId) {
-            setState(() => _selectedPuzzleTheme = themeId);
-          },
-        ),
-
-        const SizedBox(height: 24),
-
-        // Preview of the puzzle
-        Center(
-          child: Column(
-            children: [
-              Text(
-                'Preview:',
-                style: theme.bodySmall.override(
-                  fontFamily: 'Andika New Basic',
-                  color: theme.secondaryText,
-                ),
-              ),
-              const SizedBox(height: 8),
-              PuzzleProgressWidget(
-                themeId: _selectedPuzzleTheme,
-                completedTasks: 5,
-                totalTasks: 9,
-                size: 160,
-                showLabel: false,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                '5 of 9 tasks completed (example)',
-                style: theme.bodySmall.override(
-                  fontFamily: 'Andika New Basic',
-                  color: theme.secondaryText,
-                  fontStyle: FontStyle.italic,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
 }
 
 /// Helper function to show the bottom sheet

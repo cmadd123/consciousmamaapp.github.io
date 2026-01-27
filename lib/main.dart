@@ -16,6 +16,7 @@ import 'flutter_flow/flutter_flow_util.dart';
 import 'flutter_flow/internationalization.dart';
 import 'flutter_flow/nav/nav.dart';
 import 'flutter_flow/share_intent_handler.dart';
+import 'flutter_flow/deep_link_handler.dart';
 import 'custom_code/actions/notification_service.dart';
 import 'index.dart';
 
@@ -97,14 +98,33 @@ class _MyAppState extends State<MyApp> {
 
     _appStateNotifier = AppStateNotifier.instance;
     _router = createRouter(_appStateNotifier);
+
+    // Initialize deep link handler with router
+    deepLinkHandler.initialize(_router);
+
     userStream = momeCoachFirebaseUserStream()
       ..listen((user) {
         _appStateNotifier.update(user);
+        // Handle pending deep links after user is logged in
+        if (user.loggedIn && deepLinkHandler.hasPendingUri) {
+          // Small delay to ensure navigation is ready
+          Future.delayed(const Duration(milliseconds: 500), () {
+            deepLinkHandler.handlePendingDeepLink();
+          });
+        }
       });
     jwtTokenStream.listen((_) {});
     Future.delayed(
-      Duration(milliseconds: 1000),
-      () => _appStateNotifier.stopShowingSplashImage(),
+      Duration(milliseconds: 4500),
+      () {
+        _appStateNotifier.stopShowingSplashImage();
+        // Check for pending deep links after splash finishes
+        if (deepLinkHandler.hasPendingUri && _appStateNotifier.loggedIn) {
+          Future.delayed(const Duration(milliseconds: 200), () {
+            deepLinkHandler.handlePendingDeepLink();
+          });
+        }
+      },
     );
 
     // Listen for shared URLs from other apps
@@ -136,6 +156,7 @@ class _MyAppState extends State<MyApp> {
   void dispose() {
     authUserSub.cancel();
     _shareIntentSubscription?.cancel();
+    deepLinkHandler.dispose();
     super.dispose();
   }
 
@@ -151,7 +172,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
-      title: 'Conscious Mama',
+      title: 'MomRise',
       localizationsDelegates: [
         FFLocalizationsDelegate(),
         GlobalMaterialLocalizations.delegate,

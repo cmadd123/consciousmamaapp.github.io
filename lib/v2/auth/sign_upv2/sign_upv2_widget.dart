@@ -95,7 +95,7 @@ class _SignUpv2WidgetState extends State<SignUpv2Widget> {
                             child: Align(
                               alignment: AlignmentDirectional(-1.0, 0.0),
                               child: ClipRRect(
-                                borderRadius: BorderRadius.circular(8.0),
+                                borderRadius: BorderRadius.circular(14.0),
                                 child: Image.asset(
                                   'assets/images/image_22.png',
                                   width: 200.0,
@@ -159,7 +159,7 @@ class _SignUpv2WidgetState extends State<SignUpv2Widget> {
                                                 .secondaryText,
                                             letterSpacing: 0.0,
                                           ),
-                                      hintText: 'Username',
+                                      hintText: 'First name',
                                       hintStyle: FlutterFlowTheme.of(context)
                                           .labelMedium
                                           .override(
@@ -172,7 +172,7 @@ class _SignUpv2WidgetState extends State<SignUpv2Widget> {
                                           width: 1.0,
                                         ),
                                         borderRadius:
-                                            BorderRadius.circular(27.0),
+                                            BorderRadius.circular(14.0),
                                       ),
                                       focusedBorder: OutlineInputBorder(
                                         borderSide: BorderSide(
@@ -180,7 +180,7 @@ class _SignUpv2WidgetState extends State<SignUpv2Widget> {
                                           width: 1.0,
                                         ),
                                         borderRadius:
-                                            BorderRadius.circular(27.0),
+                                            BorderRadius.circular(14.0),
                                       ),
                                       errorBorder: OutlineInputBorder(
                                         borderSide: BorderSide(
@@ -189,7 +189,7 @@ class _SignUpv2WidgetState extends State<SignUpv2Widget> {
                                           width: 1.0,
                                         ),
                                         borderRadius:
-                                            BorderRadius.circular(27.0),
+                                            BorderRadius.circular(14.0),
                                       ),
                                       focusedErrorBorder: OutlineInputBorder(
                                         borderSide: BorderSide(
@@ -198,7 +198,7 @@ class _SignUpv2WidgetState extends State<SignUpv2Widget> {
                                           width: 1.0,
                                         ),
                                         borderRadius:
-                                            BorderRadius.circular(27.0),
+                                            BorderRadius.circular(14.0),
                                       ),
                                       filled: true,
                                       fillColor: FlutterFlowTheme.of(context)
@@ -253,7 +253,7 @@ class _SignUpv2WidgetState extends State<SignUpv2Widget> {
                                           width: 1.0,
                                         ),
                                         borderRadius:
-                                            BorderRadius.circular(27.0),
+                                            BorderRadius.circular(14.0),
                                       ),
                                       focusedBorder: OutlineInputBorder(
                                         borderSide: BorderSide(
@@ -261,7 +261,7 @@ class _SignUpv2WidgetState extends State<SignUpv2Widget> {
                                           width: 1.0,
                                         ),
                                         borderRadius:
-                                            BorderRadius.circular(27.0),
+                                            BorderRadius.circular(14.0),
                                       ),
                                       errorBorder: OutlineInputBorder(
                                         borderSide: BorderSide(
@@ -270,7 +270,7 @@ class _SignUpv2WidgetState extends State<SignUpv2Widget> {
                                           width: 1.0,
                                         ),
                                         borderRadius:
-                                            BorderRadius.circular(27.0),
+                                            BorderRadius.circular(14.0),
                                       ),
                                       focusedErrorBorder: OutlineInputBorder(
                                         borderSide: BorderSide(
@@ -279,7 +279,7 @@ class _SignUpv2WidgetState extends State<SignUpv2Widget> {
                                           width: 1.0,
                                         ),
                                         borderRadius:
-                                            BorderRadius.circular(27.0),
+                                            BorderRadius.circular(14.0),
                                       ),
                                       filled: true,
                                       fillColor: FlutterFlowTheme.of(context)
@@ -335,7 +335,7 @@ class _SignUpv2WidgetState extends State<SignUpv2Widget> {
                                           width: 1.0,
                                         ),
                                         borderRadius:
-                                            BorderRadius.circular(27.0),
+                                            BorderRadius.circular(14.0),
                                       ),
                                       focusedBorder: OutlineInputBorder(
                                         borderSide: BorderSide(
@@ -343,7 +343,7 @@ class _SignUpv2WidgetState extends State<SignUpv2Widget> {
                                           width: 1.0,
                                         ),
                                         borderRadius:
-                                            BorderRadius.circular(27.0),
+                                            BorderRadius.circular(14.0),
                                       ),
                                       errorBorder: OutlineInputBorder(
                                         borderSide: BorderSide(
@@ -352,7 +352,7 @@ class _SignUpv2WidgetState extends State<SignUpv2Widget> {
                                           width: 1.0,
                                         ),
                                         borderRadius:
-                                            BorderRadius.circular(27.0),
+                                            BorderRadius.circular(14.0),
                                       ),
                                       focusedErrorBorder: OutlineInputBorder(
                                         borderSide: BorderSide(
@@ -361,7 +361,7 @@ class _SignUpv2WidgetState extends State<SignUpv2Widget> {
                                           width: 1.0,
                                         ),
                                         borderRadius:
-                                            BorderRadius.circular(27.0),
+                                            BorderRadius.circular(14.0),
                                       ),
                                       filled: true,
                                       fillColor: FlutterFlowTheme.of(context)

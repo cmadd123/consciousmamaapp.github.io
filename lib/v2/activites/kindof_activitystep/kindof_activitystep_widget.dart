@@ -52,7 +52,7 @@ class _KindofActivitystepWidgetState extends State<KindofActivitystepWidget> {
         key: scaffoldKey,
         backgroundColor: FFAppState().isComfortMode
             ? const Color(0xFF2C3E50)
-            : const Color(0xFFFFF5F2),
+            : FlutterFlowTheme.of(context).secondaryBackground,
         body: SafeArea(
           top: true,
           child: Column(
@@ -96,7 +96,7 @@ class _KindofActivitystepWidgetState extends State<KindofActivitystepWidget> {
                                   padding: EdgeInsetsDirectional.fromSTEB(
                                       15.0, 150.0, 0.0, 0.0),
                                   child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(8.0),
+                                    borderRadius: BorderRadius.circular(14.0),
                                     child: Image.asset(
                                       'assets/images/321.png',
                                       width: 79.0,
@@ -304,7 +304,7 @@ class _KindofActivitystepWidgetState extends State<KindofActivitystepWidget> {
                                           letterSpacing: 0.0,
                                         ),
                                     elevation: 0.0,
-                                    borderRadius: BorderRadius.circular(8.0),
+                                    borderRadius: BorderRadius.circular(14.0),
                                   ),
                                 ),
                               ),
@@ -342,7 +342,7 @@ class _KindofActivitystepWidgetState extends State<KindofActivitystepWidget> {
                                           letterSpacing: 0.0,
                                         ),
                                     elevation: 0.0,
-                                    borderRadius: BorderRadius.circular(8.0),
+                                    borderRadius: BorderRadius.circular(14.0),
                                   ),
                                 ),
                               ),

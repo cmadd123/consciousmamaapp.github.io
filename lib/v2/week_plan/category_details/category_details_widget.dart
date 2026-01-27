@@ -108,7 +108,7 @@ class _CategoryDetailsWidgetState extends State<CategoryDetailsWidget> {
       },
       child: Scaffold(
         key: scaffoldKey,
-        backgroundColor: Color(0xFFFFF5F2),
+        backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
         body: SafeArea(
           top: true,
           child: Padding(
@@ -117,10 +117,10 @@ class _CategoryDetailsWidgetState extends State<CategoryDetailsWidget> {
               color: Colors.transparent,
               elevation: 2.0,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0),
+                borderRadius: BorderRadius.circular(14.0),
               ),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(10.0),
+                borderRadius: BorderRadius.circular(14.0),
                 child: Container(
                   width: double.infinity,
                   constraints: BoxConstraints(
@@ -138,7 +138,7 @@ class _CategoryDetailsWidgetState extends State<CategoryDetailsWidget> {
                         ),
                       )
                     ],
-                    borderRadius: BorderRadius.circular(10.0),
+                    borderRadius: BorderRadius.circular(14.0),
                     border: Border.all(
                       color: Color(0xFF999999),
                       width: 1.0,

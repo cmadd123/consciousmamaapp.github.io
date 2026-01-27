@@ -134,13 +134,13 @@ class _GroceryOption extends StatelessWidget {
 
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(16.0),
+      borderRadius: BorderRadius.circular(14.0),
       child: Container(
         width: double.infinity,
         padding: EdgeInsets.all(16.0),
         decoration: BoxDecoration(
           color: isPrimary ? primaryColor.withValues(alpha: 0.1) : Color(0xFFFAFAFA),
-          borderRadius: BorderRadius.circular(12.0),
+          borderRadius: BorderRadius.circular(14.0),
           border: Border.all(
             color: isPrimary ? primaryColor : Color(0xFFE0E0E0),
             width: isPrimary ? 2.0 : 1.0,
@@ -153,7 +153,7 @@ class _GroceryOption extends StatelessWidget {
               height: 48.0,
               decoration: BoxDecoration(
                 color: isPrimary ? primaryColor.withValues(alpha: 0.15) : Color(0xFFF5F5F5),
-                borderRadius: BorderRadius.circular(12.0),
+                borderRadius: BorderRadius.circular(14.0),
               ),
               child: Icon(
                 icon,

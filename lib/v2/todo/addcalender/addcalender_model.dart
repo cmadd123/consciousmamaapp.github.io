@@ -3,6 +3,7 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/flutter_flow/form_field_controller.dart';
+import '/components/parent_circle_widget.dart';
 import 'dart:ui';
 import '/index.dart';
 import 'addcalender_widget.dart' show AddcalenderWidget;
@@ -13,15 +14,28 @@ import 'package:provider/provider.dart';
 class AddcalenderModel extends FlutterFlowModel<AddcalenderWidget> {
   ///  Local state fields for this page.
 
-  String selectedType = 'Task';
+  String selectedType = 'Event';
   DateTime? selectedDate;
+  DateTime? endDate; // For multi-day events
   bool isDateSelected = false;
+  bool isEndDateSelected = false;
   bool showDateError = false;
   String? recurringPattern = 'None';
   List<ChildernRecord>? userChildren;
   DocumentReference? selectedChild;
+  // Support for multiple children selection
+  Set<DocumentReference> selectedChildren = {};
   bool assignToMom = false;
   bool assignToDad = false;
+
+  // Parent display info (loaded from current user)
+  ParentDisplayInfo parentInfo = ParentDisplayInfo.defaults();
+
+  // Store the editing record for Activity type to display read-only details
+  EventAndTaskRecord? editingRecord;
+
+  // Duplicate prevention: processing flag to prevent double-tap submissions
+  bool isSubmitting = false;
 
   ///  State fields for stateful widgets in this page.
 

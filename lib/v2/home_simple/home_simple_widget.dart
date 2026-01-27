@@ -330,7 +330,7 @@ class _HomeSimpleWidgetState extends State<HomeSimpleWidget> {
                       Center(
                         child: InkWell(
                           onTap: () => _showMoreSheet(context),
-                          borderRadius: BorderRadius.circular(8.0),
+                          borderRadius: BorderRadius.circular(14.0),
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
                             child: Text(

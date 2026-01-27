@@ -4,7 +4,6 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/v2/learning_path/loading_learn_pass/loading_learn_pass_widget.dart';
-import '/components/puzzle_progress_widget.dart';
 import 'dart:ui';
 import '/custom_code/actions/index.dart' as actions;
 import '/index.dart';
@@ -203,7 +202,7 @@ class _LearnPathSteponStep4WidgetState
                                                     15.0, 60.0, 0.0, 0.0),
                                             child: ClipRRect(
                                               borderRadius:
-                                                  BorderRadius.circular(8.0),
+                                                  BorderRadius.circular(14.0),
                                               child: Image.asset(
                                                 'assets/images/321.png',
                                                 width: 79.0,
@@ -218,7 +217,7 @@ class _LearnPathSteponStep4WidgetState
                                               EdgeInsetsDirectional.fromSTEB(
                                                   24.0, 0.0, 24.0, 0.0),
                                           child: Text(
-                                            'What time works best for these activities ',
+                                            'What time works best for these lessons?',
                                             textAlign: TextAlign.start,
                                             style: FlutterFlowTheme.of(context)
                                                 .bodyMedium
@@ -288,18 +287,6 @@ class _LearnPathSteponStep4WidgetState
                                         ],
                                       ),
                                     ),
-                                    // Puzzle theme picker section
-                                    Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          24.0, 24.0, 24.0, 0.0),
-                                      child: PuzzleThemePicker(
-                                        selectedThemeId: _model.selectedPuzzleTheme,
-                                        onThemeSelected: (themeId) {
-                                          _model.selectedPuzzleTheme = themeId;
-                                          safeSetState(() {});
-                                        },
-                                      ),
-                                    ),
                                     Align(
                                       alignment: AlignmentDirectional(0.0, 1.0),
                                       child: Padding(
@@ -355,7 +342,7 @@ class _LearnPathSteponStep4WidgetState
                                                     .fromSTEB(
                                                         20.0, 10.0, 20.0, 20.0),
                                                 child: FFButtonWidget(
-                                                  onPressed: () async {
+                                                  onPressed: _model.selectedTime == null ? null : () async {
                                                     // Show loading UI - the widget handles its own animation
                                                     _model.isloading = true;
                                                     safeSetState(() {});
@@ -371,7 +358,6 @@ class _LearnPathSteponStep4WidgetState
                                                         widget!.childerRef,
                                                         widget!.frequanceTime,
                                                         _model.selectedTime,
-                                                        _model.selectedPuzzleTheme,
                                                       );
 
                                                       // Complete the loading animation
@@ -391,7 +377,7 @@ class _LearnPathSteponStep4WidgetState
                                                       if (context.mounted) {
                                                         ScaffoldMessenger.of(context).showSnackBar(
                                                           SnackBar(
-                                                            content: Text('Path creation failed. Please try again.'),
+                                                            content: Text(e.toString().replaceFirst('Exception: ', '')),
                                                             backgroundColor: Colors.red,
                                                             duration: Duration(seconds: 4),
                                                           ),
@@ -449,7 +435,6 @@ class _LearnPathSteponStep4WidgetState
                                         key: _loadingKey,
                                         title:
                                             'Hold on. We are generating your learning path.',
-                                        puzzleTheme: _model.selectedPuzzleTheme,
                                       ),
                                     ),
                                   ],
@@ -480,14 +465,14 @@ class _LearnPathSteponStep4WidgetState
     return Expanded(
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(16.0),
+        borderRadius: BorderRadius.circular(14.0),
         child: Container(
           padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 8.0),
           decoration: BoxDecoration(
             color: isSelected
                 ? FlutterFlowTheme.of(context).primary.withOpacity(0.15)
                 : Colors.white,
-            borderRadius: BorderRadius.circular(16.0),
+            borderRadius: BorderRadius.circular(14.0),
             border: Border.all(
               color: isSelected
                   ? FlutterFlowTheme.of(context).primary

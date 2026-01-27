@@ -104,7 +104,7 @@ class _MealDetailWidgetState extends State<MealDetailWidget> {
     final mealTypeName = widget.mealPlan.typ?.name ?? 'Meal';
 
     return Scaffold(
-      backgroundColor: Color(0xFFFFF5F2),
+      backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
       body: SafeArea(
         child: _isLoading
             ? Center(child: CircularProgressIndicator())
@@ -199,7 +199,7 @@ class _MealDetailWidgetState extends State<MealDetailWidget> {
               padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 4.0),
               decoration: BoxDecoration(
                 color: Color(0xFFFF9800),
-                borderRadius: BorderRadius.circular(12.0),
+                borderRadius: BorderRadius.circular(14.0),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -229,7 +229,7 @@ class _MealDetailWidgetState extends State<MealDetailWidget> {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16.0),
+        borderRadius: BorderRadius.circular(14.0),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.08),
@@ -319,7 +319,7 @@ class _MealDetailWidgetState extends State<MealDetailWidget> {
                         padding: EdgeInsets.symmetric(horizontal: 14.0, vertical: 10.0),
                         decoration: BoxDecoration(
                           color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(8.0),
+                          borderRadius: BorderRadius.circular(14.0),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -350,7 +350,7 @@ class _MealDetailWidgetState extends State<MealDetailWidget> {
                         padding: EdgeInsets.symmetric(horizontal: 14.0, vertical: 10.0),
                         decoration: BoxDecoration(
                           color: Color(0xFFFF9800).withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(8.0),
+                          borderRadius: BorderRadius.circular(14.0),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -387,7 +387,7 @@ class _MealDetailWidgetState extends State<MealDetailWidget> {
                         padding: EdgeInsets.symmetric(horizontal: 14.0, vertical: 10.0),
                         decoration: BoxDecoration(
                           color: Color(0xFF4CAF50).withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(8.0),
+                          borderRadius: BorderRadius.circular(14.0),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -465,18 +465,18 @@ class _MealDetailWidgetState extends State<MealDetailWidget> {
           'mealDoc': serializeParam(side.reference, ParamType.DocumentReference),
         }.withoutNulls,
       ),
-      borderRadius: BorderRadius.circular(12.0),
+      borderRadius: BorderRadius.circular(14.0),
       child: Container(
         padding: EdgeInsets.all(12.0),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(12.0),
+          borderRadius: BorderRadius.circular(14.0),
           border: Border.all(color: Color(0xFFE0E0E0)),
         ),
         child: Row(
           children: [
             ClipRRect(
-              borderRadius: BorderRadius.circular(8.0),
+              borderRadius: BorderRadius.circular(14.0),
               child: Container(
                 width: 50.0,
                 height: 50.0,
@@ -540,7 +540,7 @@ class _MealDetailWidgetState extends State<MealDetailWidget> {
             padding: EdgeInsets.all(16.0),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(12.0),
+              borderRadius: BorderRadius.circular(14.0),
               border: Border.all(color: Color(0xFFE0E0E0)),
             ),
             child: Row(
@@ -550,7 +550,7 @@ class _MealDetailWidgetState extends State<MealDetailWidget> {
                   height: 50.0,
                   decoration: BoxDecoration(
                     color: Color(0xFF64B5F6).withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(8.0),
+                    borderRadius: BorderRadius.circular(14.0),
                   ),
                   child: Icon(Icons.local_cafe, color: Color(0xFF64B5F6), size: 24.0),
                 ),
@@ -572,13 +572,13 @@ class _MealDetailWidgetState extends State<MealDetailWidget> {
   Widget _buildEmptySlot(String text, IconData icon, Color color, {VoidCallback? onTap}) {
     return InkWell(
       onTap: onTap ?? _navigateToEditMealCombo,
-      borderRadius: BorderRadius.circular(12.0),
+      borderRadius: BorderRadius.circular(14.0),
       child: Container(
         width: double.infinity,
         padding: EdgeInsets.all(20.0),
         decoration: BoxDecoration(
           color: color.withOpacity(0.05),
-          borderRadius: BorderRadius.circular(12.0),
+          borderRadius: BorderRadius.circular(14.0),
           border: Border.all(color: color.withOpacity(0.2), style: BorderStyle.solid),
         ),
         child: Row(
@@ -862,7 +862,7 @@ class _MealDetailWidgetState extends State<MealDetailWidget> {
                 foregroundColor: Colors.white,
                 elevation: 0,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12.0),
+                  borderRadius: BorderRadius.circular(14.0),
                 ),
               ),
             ),
@@ -880,7 +880,7 @@ class _MealDetailWidgetState extends State<MealDetailWidget> {
               foregroundColor: Colors.red,
               side: BorderSide(color: Colors.red.withOpacity(0.5)),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12.0),
+                borderRadius: BorderRadius.circular(14.0),
               ),
             ),
           ),
@@ -916,7 +916,7 @@ class _MealDetailWidgetState extends State<MealDetailWidget> {
               decoration: InputDecoration(
                 hintText: 'Enter meal name',
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.0),
+                  borderRadius: BorderRadius.circular(14.0),
                 ),
                 contentPadding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 12.0),
               ),
@@ -994,7 +994,7 @@ class _MealDetailWidgetState extends State<MealDetailWidget> {
       padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(16.0),
+        borderRadius: BorderRadius.circular(14.0),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -1092,12 +1092,12 @@ class _SidePickerSheet extends StatelessWidget {
                       }.withoutNulls,
                     );
                   },
-                  borderRadius: BorderRadius.circular(8.0),
+                  borderRadius: BorderRadius.circular(14.0),
                   child: Container(
                     padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
                     decoration: BoxDecoration(
                       color: Color(0xFF81C784).withOpacity(0.15),
-                      borderRadius: BorderRadius.circular(8.0),
+                      borderRadius: BorderRadius.circular(14.0),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -1178,7 +1178,7 @@ class _SidePickerSheet extends StatelessWidget {
                         padding: EdgeInsets.all(12.0),
                         decoration: BoxDecoration(
                           color: Color(0xFFFAFAFA),
-                          borderRadius: BorderRadius.circular(10.0),
+                          borderRadius: BorderRadius.circular(14.0),
                         ),
                         child: Row(
                           children: [
@@ -1262,7 +1262,7 @@ class _DrinkPickerSheet extends StatelessWidget {
                     padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
                     decoration: BoxDecoration(
                       color: isSelected ? FlutterFlowTheme.of(context).primary : Color(0xFFFAFAFA),
-                      borderRadius: BorderRadius.circular(10.0),
+                      borderRadius: BorderRadius.circular(14.0),
                       border: Border.all(
                         color: isSelected ? FlutterFlowTheme.of(context).primary : Color(0xFFE0E0E0),
                       ),

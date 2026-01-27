@@ -15,7 +15,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.1.142+142
+version: 1.2.328+328
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
@@ -130,10 +130,12 @@ dependencies:
   video_player_platform_interface: 6.3.0
   video_player_web: 2.3.5
   receive_sharing_intent: ^1.8.1
+  share_plus: ^7.2.2
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.0
+  app_links: ^7.0.0
 
 dependency_overrides:
   http: 1.4.0
@@ -160,14 +162,15 @@ flutter_launcher_icons:
   adaptive_icon_background: '#FFFFFF'
 
 flutter_native_splash:
-  color: "#FFF5F2"
-  image: assets/images/image_22.png
-  color_dark: "#FFF5F2"
-  image_dark: assets/images/image_22.png
+  # Use app gradient top color (mint) - no logo for cleaner transition
+  color: "#D7F2EB"
+  color_dark: "#D7F2EB"
+  # No image - let animated Flutter splash handle the logo reveal
+  # Android 12+ splash
   android_12:
-    color: "#FFF5F2"
-    icon_background_color: "#FFF5F2"
-    image: assets/images/image_22.png
+    color: "#D7F2EB"
+    icon_background_color: "#D7F2EB"
+    # No image for cleaner transition to animated splash
   ios: true
   android: true
   web: true

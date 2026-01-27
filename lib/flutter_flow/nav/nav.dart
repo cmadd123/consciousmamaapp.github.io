@@ -18,6 +18,7 @@ import '/flutter_flow/flutter_flow_util.dart';
 import 'serialization_util.dart';
 
 import '/index.dart';
+import '/components/animated_splash_screen.dart';
 
 export 'package:go_router/go_router.dart';
 export 'serialization_util.dart';
@@ -186,6 +187,16 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           builder: (context, params) => NotificationSettingsWidget(),
         ),
         FFRoute(
+          name: 'UploadActivities',
+          path: '/upload-activities',
+          builder: (context, params) => UploadActivitiesPage(),
+        ),
+        FFRoute(
+          name: CleanupDuplicatesPage.routeName,
+          path: CleanupDuplicatesPage.routePath,
+          builder: (context, params) => CleanupDuplicatesPage(),
+        ),
+        FFRoute(
           name: FirstChildWidget.routeName,
           path: FirstChildWidget.routePath,
           builder: (context, params) => FirstChildWidget(
@@ -203,7 +214,14 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: ChildrenWidget.routeName,
           path: ChildrenWidget.routePath,
-          builder: (context, params) => ChildrenWidget(),
+          builder: (context, params) => ChildrenWidget(
+            childRef: params.getParam(
+              'childRef',
+              ParamType.DocumentReference,
+              isList: false,
+              collectionNamePath: ['childern'],
+            ),
+          ),
         ),
         FFRoute(
           name: PaimentWidget.routeName,
@@ -416,14 +434,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: OBoardingStep1Widget.routeName,
           path: OBoardingStep1Widget.routePath,
-          builder: (context, params) => OBoardingStep1Widget(
-            childrean: params.getParam(
-              'childrean',
-              ParamType.DocumentReference,
-              isList: false,
-              collectionNamePath: ['childern'],
-            ),
-          ),
+          builder: (context, params) => const OBoardingStep1Widget(),
         ),
         FFRoute(
           name: AuthPageWidget.routeName,
@@ -451,6 +462,11 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           builder: (context, params) => PreparationWidget(),
         ),
         FFRoute(
+          name: FamilySetupIntroWidget.routeName,
+          path: FamilySetupIntroWidget.routePath,
+          builder: (context, params) => const FamilySetupIntroWidget(),
+        ),
+        FFRoute(
           name: AddChildxWidget.routeName,
           path: AddChildxWidget.routePath,
           builder: (context, params) => AddChildxWidget(
@@ -461,40 +477,29 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           ),
         ),
         FFRoute(
+          name: ParentSetupWidget.routeName,
+          path: ParentSetupWidget.routePath,
+          builder: (context, params) => ParentSetupWidget(),
+        ),
+        FFRoute(
+          name: FamilyPreviewWidget.routeName,
+          path: FamilyPreviewWidget.routePath,
+          builder: (context, params) => FamilyPreviewWidget(),
+        ),
+        FFRoute(
           name: OBoardingStep2Widget.routeName,
           path: OBoardingStep2Widget.routePath,
-          builder: (context, params) => OBoardingStep2Widget(
-            childrean: params.getParam(
-              'childrean',
-              ParamType.DocumentReference,
-              isList: false,
-              collectionNamePath: ['childern'],
-            ),
-          ),
+          builder: (context, params) => const OBoardingStep2Widget(),
         ),
         FFRoute(
           name: OBoardingStep3Widget.routeName,
           path: OBoardingStep3Widget.routePath,
-          builder: (context, params) => OBoardingStep3Widget(
-            childrean: params.getParam(
-              'childrean',
-              ParamType.DocumentReference,
-              isList: false,
-              collectionNamePath: ['childern'],
-            ),
-          ),
+          builder: (context, params) => const OBoardingStep3Widget(),
         ),
         FFRoute(
           name: OBoardingStep4Widget.routeName,
           path: OBoardingStep4Widget.routePath,
-          builder: (context, params) => OBoardingStep4Widget(
-            childrean: params.getParam(
-              'childrean',
-              ParamType.DocumentReference,
-              isList: false,
-              collectionNamePath: ['childern'],
-            ),
-          ),
+          builder: (context, params) => const OBoardingStep4Widget(),
         ),
         FFRoute(
           name: OnBoadrdingLastV2Widget.routeName,
@@ -613,6 +618,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
             date: params.getParam('date', ParamType.DateTime) ?? DateTime.now(),
             mealType: params.getParam<MealTyp>('mealType', ParamType.Enum) ?? MealTyp.Dinner,
             existingMealPlan: params.getParam('existingMealPlan', ParamType.Document),
+            editTemplateId: params.getParam('editTemplateId', ParamType.String),
           ),
         ),
         FFRoute(
@@ -1150,6 +1156,26 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
             ),
           ),
         ),
+        FFRoute(
+          name: ImportSharedContentWidget.routeName,
+          path: ImportSharedContentWidget.routePath,
+          builder: (context, params) => ImportSharedContentWidget(
+            shareCode: params.getParam(
+              'shareCode',
+              ParamType.String,
+            ) ?? '',
+          ),
+        ),
+        FFRoute(
+          name: TodosPageWidget.routeName,
+          path: TodosPageWidget.routePath,
+          builder: (context, params) => const TodosPageWidget(),
+        ),
+        FFRoute(
+          name: MyActivitiesWidget.routeName,
+          path: MyActivitiesWidget.routePath,
+          builder: (context, params) => const MyActivitiesWidget(),
+        ),
       ].map((r) => r.toRoute(appStateNotifier)).toList(),
     );
 
@@ -1335,17 +1361,7 @@ class FFRoute {
                 )
               : builder(context, ffParams);
           final child = appStateNotifier.loading
-              ? Center(
-                  child: SizedBox(
-                    width: 50.0,
-                    height: 50.0,
-                    child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        FlutterFlowTheme.of(context).primary,
-                      ),
-                    ),
-                  ),
-                )
+              ? const AnimatedSplashScreen()
               : page;
 
           final transitionInfo = state.transitionInfo;

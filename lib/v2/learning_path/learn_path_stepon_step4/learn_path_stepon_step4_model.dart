@@ -18,7 +18,7 @@ class LearnPathSteponStep4Model
     extends FlutterFlowModel<LearnPathSteponStep4Widget> {
   ///  Local state fields for this page.
 
-  String? selectedTime;
+  String? selectedTime = 'Morning';
 
   bool isloading = false;
 

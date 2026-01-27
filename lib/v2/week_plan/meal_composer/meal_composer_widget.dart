@@ -4,6 +4,7 @@ import '/backend/schema/enums/enums.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/index.dart';
+import '/components/share_content_bottom_sheet.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
@@ -18,11 +19,13 @@ class MealComposerWidget extends StatefulWidget {
     required this.date,
     required this.mealType,
     this.existingMealPlan,
+    this.editTemplateId,
   });
 
   final DateTime date;
   final MealTyp mealType;
   final MealPlanRecord? existingMealPlan;
+  final String? editTemplateId; // If set, we're editing a template instead of a meal plan
 
   static String routeName = 'MealComposer';
   static String routePath = '/meal-composer';
@@ -52,9 +55,14 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
   List<MealRecord> _userRecipes = [];
   List<MealRecord> _curatedRecipes = [];
 
+  // For template creation - allow selecting meal type
+  MealTyp? _selectedMealType;
+
   @override
   void initState() {
     super.initState();
+    // Initialize selected meal type (for template creation, start with widget.mealType)
+    _selectedMealType = widget.mealType;
     _loadExistingMeal();
     _loadRecipes();
   }
@@ -66,6 +74,37 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
   }
 
   Future<void> _loadExistingMeal() async {
+    // Check if we're editing a template directly
+    if (widget.editTemplateId != null) {
+      try {
+        final comboDoc = await MealComboRecord.collection.doc(widget.editTemplateId).get();
+        if (comboDoc.exists) {
+          final combo = MealComboRecord.fromSnapshot(comboDoc);
+
+          if (combo.entreeRef != null) {
+            final entreeDoc = await combo.entreeRef!.get();
+            if (entreeDoc.exists) {
+              _selectedEntree = MealRecord.fromSnapshot(entreeDoc);
+            }
+          }
+
+          for (final sideRef in combo.sideRefs) {
+            final sideDoc = await sideRef.get();
+            if (sideDoc.exists) {
+              _selectedSides.add(MealRecord.fromSnapshot(sideDoc));
+            }
+          }
+
+          _selectedDrinkType = combo.drinkType;
+          _customDrinkName = combo.drinkCustom;
+        }
+      } catch (e) {
+        debugPrint('Error loading template for editing: $e');
+      }
+      return;
+    }
+
+    // Otherwise load from existing meal plan
     if (widget.existingMealPlan == null) return;
 
     // Load existing notes
@@ -167,31 +206,42 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
     final isSnacks = widget.mealType == MealTyp.Snacks;
 
     return Scaffold(
-      backgroundColor: Color(0xFFFFF5F2), // Light pink - default
-      body: SafeArea(
-        bottom: false, // Don't add safe area at bottom - we handle it in bottom actions
-        child: Column(
-          children: [
-            _buildAppBar(context, theme),
-            Expanded(
-              child: _isLoading
-                  ? Center(child: CircularProgressIndicator(color: theme.primary))
-                  : SingleChildScrollView(
-                      padding: EdgeInsets.all(16.0),
-                      child: isSnacks ? _buildSnacksLayout(context) : _buildMealLayout(context),
-                    ),
-            ),
-            _buildBottomActions(context),
-          ],
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFFFAF8F5), Color(0xFFF5EDE6)],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: SafeArea(
+          bottom: false,
+          child: Column(
+            children: [
+              _buildAppBar(context, theme),
+              Expanded(
+                child: _isLoading
+                    ? Center(child: CircularProgressIndicator(color: theme.primary))
+                    : SingleChildScrollView(
+                        padding: EdgeInsets.all(16.0),
+                        child: isSnacks ? _buildSnacksLayout(context) : _buildMealLayout(context),
+                      ),
+              ),
+              _buildBottomActions(context),
+            ],
+          ),
         ),
       ),
     );
   }
 
   Widget _buildAppBar(BuildContext context, FlutterFlowTheme theme) {
+    // Check if there's something to share
+    final hasContent = widget.existingMealPlan != null;
+
     return Container(
-      color: Colors.white,
-      padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+      color: Colors.transparent,
+      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
       child: Row(
         children: [
           IconButton(
@@ -202,27 +252,158 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  widget.mealType.name.toUpperCase(),
-                  style: theme.titleMedium.override(
-                    fontFamily: 'Andika New Basic',
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 1.0,
+                // Show meal type chips when creating new template, otherwise show fixed title
+                if (widget.editTemplateId == 'new')
+                  Wrap(
+                    spacing: 8.0,
+                    runSpacing: 8.0,
+                    children: [
+                      for (final mealType in [MealTyp.Breakfast, MealTyp.Lunch, MealTyp.Dinner, MealTyp.Snacks])
+                        ChoiceChip(
+                          label: Text(mealType.name),
+                          selected: _selectedMealType == mealType,
+                          onSelected: (selected) {
+                            if (selected) {
+                              setState(() {
+                                _selectedMealType = mealType;
+                              });
+                            }
+                          },
+                          selectedColor: theme.primary,
+                          backgroundColor: Colors.white,
+                          side: BorderSide(
+                            color: _selectedMealType == mealType ? theme.primary : Color(0xFFE0E0E0),
+                            width: 1.0,
+                          ),
+                          labelStyle: TextStyle(
+                            color: _selectedMealType == mealType ? Colors.white : theme.primaryText,
+                            fontFamily: 'Andika New Basic',
+                            fontSize: 13.0,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                    ],
+                  )
+                else
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.mealType.name.toUpperCase(),
+                        style: theme.titleMedium.override(
+                          fontFamily: 'Andika New Basic',
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 1.0,
+                        ),
+                      ),
+                      if (widget.editTemplateId == null) // Hide date when editing template
+                        Text(
+                          dateTimeFormat('EEEE, MMMM d', widget.date),
+                          style: theme.bodySmall.override(
+                            fontFamily: 'Andika New Basic',
+                            color: theme.secondaryText,
+                          ),
+                        ),
+                    ],
                   ),
-                ),
-                Text(
-                  dateTimeFormat('EEEE, MMMM d', widget.date),
-                  style: theme.bodySmall.override(
-                    fontFamily: 'Andika New Basic',
-                    color: theme.secondaryText,
-                  ),
-                ),
               ],
             ),
           ),
+          // Share button (only if meal exists)
+          if (hasContent)
+            InkWell(
+              onTap: () => _shareMeal(context),
+              borderRadius: BorderRadius.circular(14.0),
+              child: Container(
+                padding: EdgeInsets.all(8.0),
+                decoration: BoxDecoration(
+                  color: theme.secondary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(14.0),
+                ),
+                child: Icon(
+                  Icons.share,
+                  color: theme.secondary,
+                  size: 20.0,
+                ),
+              ),
+            ),
         ],
       ),
     );
+  }
+
+  /// Share the current meal
+  void _shareMeal(BuildContext context) async {
+    if (widget.existingMealPlan == null) return;
+
+    final mealPlan = widget.existingMealPlan!;
+
+    // Show loading
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)),
+            SizedBox(width: 12),
+            Text('Preparing to share...'),
+          ],
+        ),
+        duration: Duration(seconds: 5),
+      ),
+    );
+
+    try {
+      MealRecord? meal;
+      MealComboRecord? combo;
+      List<MealRecord>? comboMeals;
+
+      // Check if it's a combo or single meal
+      if (mealPlan.mealComboRef != null) {
+        combo = await MealComboRecord.getDocumentOnce(mealPlan.mealComboRef!);
+
+        // Fetch combo meals (entree + sides)
+        comboMeals = [];
+        if (combo.entreeRef != null) {
+          try {
+            final entree = await MealRecord.getDocumentOnce(combo.entreeRef!);
+            comboMeals.add(entree);
+          } catch (e) {
+            debugPrint('Error fetching entree: $e');
+          }
+        }
+        for (final sideRef in combo.sideRefs) {
+          try {
+            final side = await MealRecord.getDocumentOnce(sideRef);
+            comboMeals.add(side);
+          } catch (e) {
+            debugPrint('Error fetching side: $e');
+          }
+        }
+      } else if (mealPlan.userFirebasemeal != null) {
+        meal = await MealRecord.getDocumentOnce(mealPlan.userFirebasemeal!);
+      }
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+
+      // Show share bottom sheet
+      showShareMealBottomSheet(
+        context: context,
+        mealPlan: mealPlan,
+        meal: meal,
+        combo: combo,
+        comboMeals: comboMeals,
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error loading meal data'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   Widget _buildOldScaffold(BuildContext context, FlutterFlowTheme theme, bool isSnacks) {
@@ -379,15 +560,22 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
       children: [
         Row(
           children: [
-            Icon(Icons.note_alt_outlined, size: 18.0, color: theme.primary),
-            SizedBox(width: 8.0),
+            Container(
+              padding: EdgeInsets.all(8.0),
+              decoration: BoxDecoration(
+                color: theme.primary.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              child: Icon(Icons.lightbulb_outline_rounded, size: 18.0, color: theme.primary),
+            ),
+            SizedBox(width: 12.0),
             Text(
-              'NOTES',
-              style: theme.bodySmall.override(
+              'Notes',
+              style: theme.bodyLarge.override(
                 fontFamily: 'Andika New Basic',
                 fontWeight: FontWeight.w600,
-                color: theme.primary,
-                letterSpacing: 1.0,
+                color: Color(0xFF5D4E60),
+                letterSpacing: 0.0,
               ),
             ),
             SizedBox(width: 8.0),
@@ -395,33 +583,34 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
               '(optional)',
               style: theme.bodySmall.override(
                 fontFamily: 'Andika New Basic',
-                color: theme.secondaryText,
-                fontSize: 11.0,
+                color: Color(0xFF9B8A9E),
+                fontSize: 12.0,
               ),
             ),
           ],
         ),
-        SizedBox(height: 12.0),
+        SizedBox(height: 14.0),
         Container(
           decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12.0),
-            border: Border.all(color: Color(0xFFE0E0E0)),
+            color: Color(0xFFFAF8F5),
+            borderRadius: BorderRadius.circular(14.0),
+            border: Border.all(color: Color(0xFFE8DDD5)),
           ),
           child: TextField(
             controller: _notesController,
             maxLines: 2,
             decoration: InputDecoration(
-              hintText: 'e.g., Make extra for leftovers, try new seasoning...',
+              hintText: 'Any thoughts? e.g., Make extra for tomorrow...',
               hintStyle: theme.bodySmall.override(
                 fontFamily: 'Andika New Basic',
-                color: theme.secondaryText.withValues(alpha: 0.6),
+                color: Color(0xFF9B8A9E).withValues(alpha: 0.7),
               ),
               border: InputBorder.none,
-              contentPadding: EdgeInsets.all(12.0),
+              contentPadding: EdgeInsets.all(14.0),
             ),
             style: theme.bodyMedium.override(
               fontFamily: 'Andika New Basic',
+              color: Color(0xFF5D4E60),
             ),
           ),
         ),
@@ -435,25 +624,37 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
     required Widget child,
   }) {
     final theme = FlutterFlowTheme.of(context);
+    // Convert ALL CAPS to Title Case for warmth
+    final friendlyTitle = title.length > 1
+        ? title[0].toUpperCase() + title.substring(1).toLowerCase()
+        : title;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            Icon(icon, size: 18.0, color: theme.primary),
-            SizedBox(width: 8.0),
+            Container(
+              padding: EdgeInsets.all(8.0),
+              decoration: BoxDecoration(
+                color: theme.primary.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              child: Icon(icon, size: 18.0, color: theme.primary),
+            ),
+            SizedBox(width: 12.0),
             Text(
-              title,
-              style: theme.bodySmall.override(
+              friendlyTitle,
+              style: theme.bodyLarge.override(
                 fontFamily: 'Andika New Basic',
                 fontWeight: FontWeight.w600,
-                color: theme.primary,
-                letterSpacing: 1.0,
+                color: Color(0xFF5D4E60), // Warm purple-grey
+                letterSpacing: 0.0,
               ),
             ),
           ],
         ),
-        SizedBox(height: 12.0),
+        SizedBox(height: 14.0),
         child,
       ],
     );
@@ -470,24 +671,37 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
     if (item == null) {
       return InkWell(
         onTap: () => _showRecipePicker(slotType),
-        borderRadius: BorderRadius.circular(12.0),
+        borderRadius: BorderRadius.circular(14.0),
         child: Container(
           width: double.infinity,
-          padding: EdgeInsets.symmetric(vertical: 32.0, horizontal: 16.0),
+          padding: EdgeInsets.symmetric(vertical: 28.0, horizontal: 16.0),
           decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12.0),
-            border: Border.all(color: Color(0xFFE0E0E0), width: 1.5),
+            // Transparent to let page gradient show through
+            color: Colors.transparent,
+            borderRadius: BorderRadius.circular(14.0),
+            border: Border.all(
+              color: theme.primary.withValues(alpha: 0.25),
+              width: 1.5,
+              strokeAlign: BorderSide.strokeAlignInside,
+            ),
           ),
           child: Column(
             children: [
-              Icon(Icons.add_circle_outline, size: 32.0, color: theme.primary),
-              SizedBox(height: 8.0),
+              Container(
+                padding: EdgeInsets.all(12.0),
+                decoration: BoxDecoration(
+                  color: theme.primary.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(Icons.add_rounded, size: 28.0, color: theme.primary),
+              ),
+              SizedBox(height: 10.0),
               Text(
                 placeholder,
                 style: theme.bodyMedium.override(
                   fontFamily: 'Andika New Basic',
-                  color: theme.secondaryText,
+                  color: Color(0xFF5D4E60),
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ],
@@ -498,12 +712,12 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
 
     return InkWell(
       onTap: () => _showRecipePicker(slotType), // Tap to change the recipe
-      borderRadius: BorderRadius.circular(12.0),
+      borderRadius: BorderRadius.circular(14.0),
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(12.0),
+          borderRadius: BorderRadius.circular(14.0),
           border: Border.all(color: theme.primary.withValues(alpha: 0.3)),
         ),
         child: Row(
@@ -601,12 +815,12 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
 
     return InkWell(
       onTap: () => _showRecipePickerForReplace(slotType, index), // Tap to change
-      borderRadius: BorderRadius.circular(10.0),
+      borderRadius: BorderRadius.circular(14.0),
       child: Container(
         width: 100.0,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(10.0),
+          borderRadius: BorderRadius.circular(14.0),
           border: Border.all(color: theme.primary.withValues(alpha: 0.3)),
         ),
         child: Column(
@@ -660,14 +874,14 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
     if (_selectedDrinkType == null) {
       return InkWell(
         onTap: _showDrinkPicker,
-        borderRadius: BorderRadius.circular(10.0),
+        borderRadius: BorderRadius.circular(14.0),
         child: Container(
           width: 100.0,
           height: 80.0,
           decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(10.0),
-            border: Border.all(color: Color(0xFFE0E0E0)),
+            color: Colors.transparent,
+            borderRadius: BorderRadius.circular(14.0),
+            border: Border.all(color: theme.primary.withValues(alpha: 0.25)),
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -694,8 +908,8 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10.0),
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(14.0),
         border: Border.all(color: theme.primary.withValues(alpha: 0.3)),
       ),
       child: Row(
@@ -727,15 +941,15 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
     final theme = FlutterFlowTheme.of(context);
     return InkWell(
       onTap: () => _showRecipePicker(slotType),
-      borderRadius: BorderRadius.circular(10.0),
+      borderRadius: BorderRadius.circular(14.0),
       child: Container(
         width: 100.0,
         height: 140.0,
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10.0),
+          color: Colors.transparent,
+          borderRadius: BorderRadius.circular(14.0),
           border: Border.all(
-            color: theme.primary.withValues(alpha: 0.3),
+            color: theme.primary.withValues(alpha: 0.25),
             style: BorderStyle.solid,
           ),
         ),
@@ -1008,61 +1222,84 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
             ],
           ),
 
-          // Save as meal button (conditional)
-          if (_canSaveAsMeal) ...[
+          // Action buttons row: Save as Meal, Done, Remove (horizontal layout)
+          if (_hasAnyItems || widget.existingMealPlan != null) ...[
             SizedBox(height: 12.0),
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton.icon(
-                onPressed: _showSaveAsMealDialog,
-                icon: Icon(Icons.bookmark_add_outlined),
-                label: Text('Save as Meal'),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: theme.primary,
-                  side: BorderSide(color: theme.primary),
-                  padding: EdgeInsets.symmetric(vertical: 12.0),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-                ),
-              ),
-            ),
-          ],
+            Row(
+              children: [
+                // When creating/editing template, show only Save Template button
+                if (widget.editTemplateId != null) ...[
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: _isSaving ? null : _showSaveAsMealDialog,
+                      icon: Icon(Icons.bookmark_add_outlined, size: 18.0),
+                      label: _isSaving
+                          ? SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                          : Text('Save Template'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: theme.primary,
+                        foregroundColor: Colors.white,
+                        padding: EdgeInsets.symmetric(vertical: 12.0),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.0)),
+                      ),
+                    ),
+                  ),
+                ] else ...[
+                  // Normal meal planning mode - show Save as Template button (conditional)
+                  if (_canSaveAsMeal) ...[
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: _showSaveAsMealDialog,
+                        icon: Icon(Icons.bookmark_add_outlined, size: 18.0),
+                        label: Text('Save Template', style: TextStyle(fontSize: 12.0)),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: theme.primary,
+                          side: BorderSide(color: theme.primary),
+                          padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 6.0),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.0)),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 8.0),
+                  ],
 
-          // Done button
-          if (_hasAnyItems) ...[
-            SizedBox(height: 12.0),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: _isSaving ? null : _saveMealPlan,
-                child: _isSaving
-                    ? SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                    : Text('Done'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: theme.primary,
-                  foregroundColor: Colors.white,
-                  padding: EdgeInsets.symmetric(vertical: 14.0),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
-                ),
-              ),
-            ),
-          ],
+                  // Done button
+                  if (_hasAnyItems)
+                    Expanded(
+                      flex: _canSaveAsMeal ? 1 : 2,
+                      child: ElevatedButton(
+                        onPressed: _isSaving ? null : _saveMealPlan,
+                        child: _isSaving
+                            ? SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                            : Text('Done'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: theme.primary,
+                          foregroundColor: Colors.white,
+                          padding: EdgeInsets.symmetric(vertical: 12.0),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.0)),
+                        ),
+                      ),
+                    ),
+                ],
 
-          // Remove from Plan button (only when editing existing meal)
-          if (widget.existingMealPlan != null) ...[
-            SizedBox(height: 12.0),
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton.icon(
-                onPressed: _deleteMealPlan,
-                icon: Icon(Icons.delete_outline),
-                label: Text('Remove from Plan'),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: Colors.red,
-                  side: BorderSide(color: Colors.red.withValues(alpha: 0.5)),
-                  padding: EdgeInsets.symmetric(vertical: 12.0),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-                ),
-              ),
+                // Remove from Plan button (only when editing existing meal)
+                if (widget.existingMealPlan != null) ...[
+                  SizedBox(width: 8.0),
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: _deleteMealPlan,
+                      icon: Icon(Icons.delete_outline, size: 18.0),
+                      label: Text('Remove', style: TextStyle(fontSize: 13.0)),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.red,
+                        side: BorderSide(color: Colors.red.withValues(alpha: 0.5)),
+                        padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 8.0),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.0)),
+                      ),
+                    ),
+                  ),
+                ],
+              ],
             ),
           ],
         ],
@@ -1134,14 +1371,14 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
 
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(10.0),
+      borderRadius: BorderRadius.circular(14.0),
       child: Opacity(
         opacity: isDisabled ? 0.5 : 1.0,
         child: Container(
           padding: EdgeInsets.symmetric(vertical: 10.0),
           decoration: BoxDecoration(
             color: displayColor.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(10.0),
+            borderRadius: BorderRadius.circular(14.0),
             border: Border.all(color: displayColor.withValues(alpha: 0.3)),
           ),
           child: Column(
@@ -1248,18 +1485,11 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
             padding: EdgeInsets.all(12.0),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(12.0),
+              borderRadius: BorderRadius.circular(14.0),
               border: Border.all(color: Color(0xFFE0E0E0)),
             ),
             child: Row(
               children: [
-                Container(
-                  width: 50.0,
-                  height: 50.0,
-                  decoration: BoxDecoration(color: Color(0xFFFF9800).withValues(alpha: 0.1), borderRadius: BorderRadius.circular(10.0)),
-                  child: Icon(Icons.restaurant_menu, color: Color(0xFFFF9800)),
-                ),
-                SizedBox(width: 12.0),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -1393,28 +1623,48 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
-        title: Text('Save as Meal'),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.0)),
+        title: Text('Save as Meal Template'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Name this meal:', style: theme.bodyMedium),
+            Text('Give this meal template a name:', style: theme.bodyMedium),
             SizedBox(height: 8.0),
             TextField(
               controller: nameController,
               decoration: InputDecoration(
                 hintText: 'e.g., Taco Tuesday',
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.0)),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(14.0)),
               ),
               autofocus: true,
             ),
             SizedBox(height: 16.0),
-            Text('Includes:', style: theme.bodySmall.override(fontFamily: 'Andika New Basic', color: theme.secondaryText)),
+            Text('This template includes:', style: theme.bodySmall.override(fontFamily: 'Andika New Basic', color: theme.secondaryText)),
             SizedBox(height: 4.0),
-            if (_selectedEntree != null) Text('  ${_selectedEntree!.recipeName} (entree)'),
+            if (_selectedEntree != null) Text('  ${_selectedEntree!.recipeName} (entrée)'),
             ..._selectedSides.map((s) => Text('  ${s.recipeName} (side)')),
             if (_selectedDrinkType != null) Text('  ${_selectedDrinkType == DrinkType.Other ? _customDrinkName : _selectedDrinkType!.name} (drink)'),
+            SizedBox(height: 12.0),
+            Container(
+              padding: EdgeInsets.all(8.0),
+              decoration: BoxDecoration(
+                color: theme.primary.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.info_outline, size: 16.0, color: theme.primary),
+                  SizedBox(width: 8.0),
+                  Expanded(
+                    child: Text(
+                      'You can reuse this template from the Meal Templates tab in your cookbook!',
+                      style: theme.bodySmall.override(fontFamily: 'Andika New Basic', color: theme.primary, fontSize: 11.0),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
         actions: [
@@ -1425,7 +1675,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
               await _saveAsMealCombo(nameController.text);
             },
             style: ElevatedButton.styleFrom(backgroundColor: theme.primary),
-            child: Text('Save'),
+            child: Text('Save Template'),
           ),
         ],
       ),
@@ -1439,18 +1689,40 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
         entreeRef: _selectedEntree?.reference,
         drinkType: _selectedDrinkType,
         drinkCustom: _customDrinkName,
-        mealTyp: widget.mealType,
+        mealTyp: _selectedMealType ?? widget.mealType,
         userRef: currentUserReference,
         createdTime: DateTime.now(),
       );
       comboData['side_refs'] = _selectedSides.map((s) => s.reference).toList();
 
-      await MealComboRecord.collection.doc().set(comboData);
+      // If editing an existing template, update it
+      if (widget.editTemplateId != null && widget.editTemplateId != 'new') {
+        await MealComboRecord.collection.doc(widget.editTemplateId).update(comboData);
 
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Meal saved!'), backgroundColor: Colors.green, behavior: SnackBarBehavior.floating),
-        );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Template updated!'),
+              backgroundColor: Colors.green,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+          Navigator.pop(context);
+        }
+      } else {
+        // Creating a new template
+        await MealComboRecord.collection.doc().set(comboData);
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Meal template saved! Find it in the Meal Templates tab.'),
+              backgroundColor: Colors.green,
+              behavior: SnackBarBehavior.floating,
+              duration: Duration(seconds: 4),
+            ),
+          );
+        }
       }
     } catch (e) {
       debugPrint('Error saving meal combo: $e');
@@ -1509,6 +1781,30 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
             ),
           );
         }
+      } else if (_selectedSides.isNotEmpty) {
+        // Saving just sides without an entree - create a combo with only sides
+        final comboData = createMealComboRecordData(
+          name: '',
+          entreeRef: null,  // No entree
+          drinkType: _selectedDrinkType,
+          drinkCustom: _customDrinkName,
+          mealTyp: widget.mealType,
+          userRef: currentUserReference,
+          createdTime: DateTime.now(),
+        );
+        comboData['side_refs'] = _selectedSides.map((s) => s.reference).toList();
+
+        final comboRef = await MealComboRecord.collection.add(comboData);
+
+        await MealPlanRecord.collection.doc().set(
+          createMealPlanRecordData(
+            date: widget.date,
+            typ: widget.mealType,
+            userRef: currentUserReference,
+            mealComboRef: comboRef,
+            notes: notes.isNotEmpty ? notes : null,
+          ),
+        );
       } else if (_selectedSnackItems.isNotEmpty) {
         // For snacks, only the first one gets the notes
         for (int i = 0; i < _selectedSnackItems.length; i++) {
@@ -1602,7 +1898,7 @@ class _DrinkPickerSheet extends StatelessWidget {
                     padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
                     decoration: BoxDecoration(
                       color: isSelected ? drinkColor : drinkColor.withOpacity(0.15),
-                      borderRadius: BorderRadius.circular(10.0),
+                      borderRadius: BorderRadius.circular(14.0),
                       border: Border.all(color: isSelected ? drinkColor : drinkColor.withOpacity(0.4)),
                     ),
                     child: Row(
@@ -1729,7 +2025,7 @@ class _RecipePickerSheetState extends State<_RecipePickerSheet> {
               margin: EdgeInsets.symmetric(horizontal: 16.0),
               decoration: BoxDecoration(
                 color: Color(0xFFF5F5F5),
-                borderRadius: BorderRadius.circular(10.0),
+                borderRadius: BorderRadius.circular(14.0),
               ),
               child: Row(
                 children: [
@@ -1761,7 +2057,7 @@ class _RecipePickerSheetState extends State<_RecipePickerSheet> {
         padding: EdgeInsets.symmetric(vertical: 10.0),
         decoration: BoxDecoration(
           color: isSelected ? Colors.white : Colors.transparent,
-          borderRadius: BorderRadius.circular(8.0),
+          borderRadius: BorderRadius.circular(14.0),
           boxShadow: isSelected
               ? [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 4)]
               : null,
@@ -1782,7 +2078,7 @@ class _RecipePickerSheetState extends State<_RecipePickerSheet> {
               padding: EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
               decoration: BoxDecoration(
                 color: isSelected ? theme.primary.withValues(alpha: 0.1) : Color(0xFFE0E0E0),
-                borderRadius: BorderRadius.circular(10.0),
+                borderRadius: BorderRadius.circular(14.0),
               ),
               child: Text(
                 '$count',
@@ -1844,11 +2140,11 @@ class _RecipePickerSheetState extends State<_RecipePickerSheet> {
     return InkWell(
       onTap: () => widget.onSelect(recipe),
       onLongPress: () => _showRecipeDetails(recipe),
-      borderRadius: BorderRadius.circular(10.0),
+      borderRadius: BorderRadius.circular(14.0),
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(10.0),
+          borderRadius: BorderRadius.circular(14.0),
           border: Border.all(color: Color(0xFFE0E0E0)),
         ),
         child: Column(

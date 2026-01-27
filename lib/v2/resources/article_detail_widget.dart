@@ -128,7 +128,7 @@ class _ArticleDetailWidgetState extends State<ArticleDetailWidget> {
                     padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
                     decoration: BoxDecoration(
                       color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12.0),
+                      borderRadius: BorderRadius.circular(14.0),
                     ),
                     child: Text(
                       ArticleCategory.displayNames[_article!.category] ?? _article!.category!,

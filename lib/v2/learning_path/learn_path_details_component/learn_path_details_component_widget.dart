@@ -175,13 +175,13 @@ class _LearnPathDetailsComponentWidgetState
                         ),
                       ),
                     ),
-                // Header with task title
+                // Header with lesson title
                 Padding(
                   padding: EdgeInsetsDirectional.fromSTEB(24.0, 16.0, 24.0, 0.0),
                   child: Text(
                     valueOrDefault<String>(
                       widget!.learningTask?.title,
-                      'Task Details',
+                      'Lesson Details',
                     ),
                     textAlign: TextAlign.center,
                     style: FlutterFlowTheme.of(context).bodyMedium.override(
@@ -200,7 +200,7 @@ class _LearnPathDetailsComponentWidgetState
                   FlutterFlowTheme.of(context).primary,
                   valueOrDefault<String>(
                     widget!.learningTask?.description,
-                    'Follow the instructions for this task.',
+                    'Follow the instructions for this lesson.',
                   ),
                 ),
                 // Parent Tip section (if available)
@@ -474,7 +474,7 @@ class _LearnPathDetailsComponentWidgetState
                           child: Center(
                             child: Text(
                               containerChildernRecord.name.isNotEmpty
-                                  ? containerChildernRecord.name[0].toUpperCase()
+                                  ? containerChildernRecord.name[0].toLowerCase()
                                   : 'C',
                               style: const TextStyle(
                                 color: Colors.white,
@@ -522,19 +522,26 @@ class _LearnPathDetailsComponentWidgetState
                               updateData['completion_note'] = result.note;
                             }
 
+                            // Update local state first
+                            _model.iscompleted = true;
+
+                            // Update Firestore
                             await widget!.learningTask!.reference.update(updateData);
 
+                            // Check if this completes the entire learning path
                             if (widget!.filterlist == widget!.notfilteredlist) {
                               await widget!.learningTask!.programRef!
                                   .update(createLearningPathRecordData(
                                 isCompleted: true,
                               ));
                             }
-                            _model.iscompleted = true;
-                            safeSetState(() {});
-                          }
 
-                          safeSetState(() {});
+                            // Close the bottom sheet after Firestore updates complete
+                            if (context.mounted) {
+                              Navigator.pop(context);
+                            }
+                            return;
+                          }
                         },
                         text: 'Mark Complete',
                         icon: const Icon(
@@ -557,7 +564,7 @@ class _LearnPathDetailsComponentWidgetState
                                     letterSpacing: 0.0,
                                   ),
                           elevation: 0.0,
-                          borderRadius: BorderRadius.circular(8.0),
+                          borderRadius: BorderRadius.circular(14.0),
                         ),
                       ),
                     ),
@@ -578,9 +585,9 @@ class _LearnPathDetailsComponentWidgetState
                                 context: context,
                                 builder: (dialogContext) {
                                   return AlertDialog(
-                                    title: Text('Skip Task?'),
+                                    title: Text('Skip Lesson?'),
                                     content: Text(
-                                      'This will mark the task as skipped. You can still complete it later if needed.',
+                                      'This will mark the lesson as skipped. You can still complete it later if needed.',
                                     ),
                                     actions: [
                                       TextButton(
@@ -630,7 +637,7 @@ class _LearnPathDetailsComponentWidgetState
                               borderSide: BorderSide(
                                 color: Color(0xFFFF9800),
                               ),
-                              borderRadius: BorderRadius.circular(8.0),
+                              borderRadius: BorderRadius.circular(14.0),
                             ),
                           ),
                         ),
@@ -671,7 +678,7 @@ class _LearnPathDetailsComponentWidgetState
                                 Navigator.pop(context);
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
-                                    content: Text('Task rescheduled to ${dateTimeFormat("MMMEd", newDateTime)}'),
+                                    content: Text('Lesson rescheduled to ${dateTimeFormat("MMMEd", newDateTime)}'),
                                     backgroundColor: FlutterFlowTheme.of(context).primary,
                                   ),
                                 );
@@ -701,7 +708,7 @@ class _LearnPathDetailsComponentWidgetState
                               borderSide: BorderSide(
                                 color: FlutterFlowTheme.of(context).secondary,
                               ),
-                              borderRadius: BorderRadius.circular(8.0),
+                              borderRadius: BorderRadius.circular(14.0),
                             ),
                           ),
                         ),
@@ -738,7 +745,7 @@ class _LearnPathDetailsComponentWidgetState
                             borderSide: BorderSide(
                               color: FlutterFlowTheme.of(context).primary,
                             ),
-                            borderRadius: BorderRadius.circular(8.0),
+                            borderRadius: BorderRadius.circular(14.0),
                           ),
                         ),
                       ),
@@ -774,7 +781,7 @@ class _LearnPathDetailsComponentWidgetState
                                   letterSpacing: 0.0,
                                 ),
                             elevation: 0.0,
-                            borderRadius: BorderRadius.circular(8.0),
+                            borderRadius: BorderRadius.circular(14.0),
                           ),
                         ),
                       ),

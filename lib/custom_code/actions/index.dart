@@ -8,3 +8,4 @@ export 'delete_all_learning_paths.dart' show deleteAllLearningPaths;
 export 'delete_learning_path.dart' show deleteLearningPath;
 export 'seed_milestones.dart' show seedMilestones;
 export 'notification_service.dart' show NotificationService, notificationService;
+export 'check_ingredients_match.dart' show checkIngredientsMatch;

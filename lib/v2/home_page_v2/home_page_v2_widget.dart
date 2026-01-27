@@ -371,7 +371,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> {
         padding: EdgeInsets.symmetric(vertical: 24.0, horizontal: 24.0),
         decoration: BoxDecoration(
           color: Colors.transparent,
-          borderRadius: BorderRadius.circular(16.0),
+          borderRadius: BorderRadius.circular(14.0),
           border: Border.all(
             color: Colors.white.withOpacity(0.3),
             width: 1.0,
@@ -448,7 +448,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> {
           color: FFAppState().isComfortMode
             ? Colors.transparent
             : Colors.grey[300],
-          borderRadius: BorderRadius.circular(8.0),
+          borderRadius: BorderRadius.circular(14.0),
           border: FFAppState().isComfortMode
             ? Border.all(color: Colors.white.withOpacity(0.3), width: 1.0)
             : null,
@@ -598,7 +598,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> {
                                   height: 132.0,
                                   decoration: BoxDecoration(),
                                   child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(8.0),
+                                    borderRadius: BorderRadius.circular(14.0),
                                     child: Image.asset(
                                       'assets/images/image_22.png',
                                       width: double.infinity,
@@ -622,7 +622,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> {
                               decoration: BoxDecoration(
                                 color: FlutterFlowTheme.of(context)
                                     .secondaryBackground,
-                                borderRadius: BorderRadius.circular(10.0),
+                                borderRadius: BorderRadius.circular(14.0),
                               ),
                               child: Column(
                                 mainAxisSize: MainAxisSize.max,
@@ -656,7 +656,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> {
                                                     5.0, 5.0, 5.0, 5.0),
                                             child: ClipRRect(
                                               borderRadius:
-                                                  BorderRadius.circular(8.0),
+                                                  BorderRadius.circular(14.0),
                                               child: Image.asset(
                                                 'assets/images/fluent_food-28-regular_(1).png',
                                                 width: 200.0,
@@ -2083,7 +2083,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> {
                               decoration: BoxDecoration(
                                 color: FlutterFlowTheme.of(context)
                                     .secondaryBackground,
-                                borderRadius: BorderRadius.circular(10.0),
+                                borderRadius: BorderRadius.circular(14.0),
                               ),
                               child: Padding(
                                 padding: EdgeInsetsDirectional.fromSTEB(
@@ -2487,7 +2487,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> {
                                   decoration: BoxDecoration(
                                     color: FlutterFlowTheme.of(context)
                                         .secondaryBackground,
-                                    borderRadius: BorderRadius.circular(10.0),
+                                    borderRadius: BorderRadius.circular(14.0),
                                   ),
                                   child: Padding(
                                     padding: EdgeInsetsDirectional.fromSTEB(
@@ -2813,7 +2813,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> {
                                   decoration: BoxDecoration(
                                     color: FlutterFlowTheme.of(context)
                                         .secondaryBackground,
-                                    borderRadius: BorderRadius.circular(10.0),
+                                    borderRadius: BorderRadius.circular(14.0),
                                   ),
                                   child: Padding(
                                     padding: EdgeInsetsDirectional.fromSTEB(

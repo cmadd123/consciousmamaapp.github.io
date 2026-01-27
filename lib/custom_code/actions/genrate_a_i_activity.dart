@@ -82,6 +82,11 @@ Example format:
       ],
       "max_tokens": 700,
     }),
+  ).timeout(
+    const Duration(seconds: 30),
+    onTimeout: () {
+      throw Exception("Request timed out. Please check your internet connection and try again.");
+    },
   );
 
   if (response.statusCode != 200) {

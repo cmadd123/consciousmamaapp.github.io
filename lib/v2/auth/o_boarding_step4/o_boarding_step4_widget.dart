@@ -1,8 +1,10 @@
 import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
+import '/components/onboarding_progress_indicator_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
+import '/v2/auth/family_setup_intro/family_setup_intro_widget.dart';
 import 'dart:ui';
 import '/index.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -13,12 +15,7 @@ import 'o_boarding_step4_model.dart';
 export 'o_boarding_step4_model.dart';
 
 class OBoardingStep4Widget extends StatefulWidget {
-  const OBoardingStep4Widget({
-    super.key,
-    required this.childrean,
-  });
-
-  final DocumentReference? childrean;
+  const OBoardingStep4Widget({super.key});
 
   static String routeName = 'oBoardingStep4';
   static String routePath = '/oBoardingStep4';
@@ -62,8 +59,8 @@ class _OBoardingStep4WidgetState extends State<OBoardingStep4Widget> {
             gradient: LinearGradient(
               colors: [Color(0xFFD7F2EB), Color(0xFFFFE9E1)],
               stops: [0.0, 1.0],
-              begin: AlignmentDirectional(0.0, 1.0),
-              end: AlignmentDirectional(0, -1.0),
+              begin: AlignmentDirectional(0.0, -1.0),
+              end: AlignmentDirectional(0, 1.0),
             ),
           ),
           child: SafeArea(
@@ -72,6 +69,14 @@ class _OBoardingStep4WidgetState extends State<OBoardingStep4Widget> {
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 children: [
+                  // Progress indicator
+                  const Padding(
+                    padding: EdgeInsetsDirectional.fromSTEB(0.0, 8.0, 0.0, 16.0),
+                    child: OnboardingProgressIndicator(
+                      currentStep: 4,
+                      totalSteps: 7,
+                    ),
+                  ),
                   Align(
                     alignment: AlignmentDirectional(0.0, 0.0),
                     child: Container(
@@ -81,7 +86,7 @@ class _OBoardingStep4WidgetState extends State<OBoardingStep4Widget> {
                       child: Align(
                         alignment: AlignmentDirectional(-1.0, 0.0),
                         child: ClipRRect(
-                          borderRadius: BorderRadius.circular(8.0),
+                          borderRadius: BorderRadius.circular(14.0),
                           child: Image.asset(
                             'assets/images/image_22.png',
                             width: 200.0,
@@ -129,16 +134,19 @@ class _OBoardingStep4WidgetState extends State<OBoardingStep4Widget> {
                           decoration: BoxDecoration(),
                           child: Align(
                             alignment: AlignmentDirectional(0.0, -1.0),
-                            child: Wrap(
-                              spacing: 10.0,
-                              runSpacing: 16.0,
-                              alignment: WrapAlignment.start,
-                              crossAxisAlignment: WrapCrossAlignment.start,
-                              direction: Axis.horizontal,
-                              runAlignment: WrapAlignment.start,
-                              verticalDirection: VerticalDirection.down,
-                              clipBehavior: Clip.none,
-                              children: [
+                            child: LayoutBuilder(
+                              builder: (context, constraints) {
+                                final itemWidth = (constraints.maxWidth - 10.0) / 2;
+                                return Wrap(
+                                  spacing: 10.0,
+                                  runSpacing: 16.0,
+                                  alignment: WrapAlignment.start,
+                                  crossAxisAlignment: WrapCrossAlignment.start,
+                                  direction: Axis.horizontal,
+                                  runAlignment: WrapAlignment.start,
+                                  verticalDirection: VerticalDirection.down,
+                                  clipBehavior: Clip.none,
+                                  children: [
                                 InkWell(
                                   splashColor: Colors.transparent,
                                   focusColor: Colors.transparent,
@@ -150,12 +158,12 @@ class _OBoardingStep4WidgetState extends State<OBoardingStep4Widget> {
                                     safeSetState(() {});
                                   },
                                   child: Container(
-                                    width: 155.0,
+                                    width: itemWidth,
                                     height: 144.0,
                                     decoration: BoxDecoration(
                                       color: FlutterFlowTheme.of(context)
                                           .secondaryBackground,
-                                      borderRadius: BorderRadius.circular(27.0),
+                                      borderRadius: BorderRadius.circular(14.0),
                                       border: Border.all(
                                         color: _model.selectedHousework ==
                                                 'I feel overwhelmed bymy to-do list'
@@ -183,7 +191,7 @@ class _OBoardingStep4WidgetState extends State<OBoardingStep4Widget> {
                                                   .fromSTEB(8.0, 8.0, 8.0, 8.0),
                                               child: ClipRRect(
                                                 borderRadius:
-                                                    BorderRadius.circular(8.0),
+                                                    BorderRadius.circular(14.0),
                                                 child: Image.asset(
                                                   'assets/images/image_23_(1).png',
                                                   width: double.infinity,
@@ -229,12 +237,12 @@ class _OBoardingStep4WidgetState extends State<OBoardingStep4Widget> {
                                     safeSetState(() {});
                                   },
                                   child: Container(
-                                    width: 155.0,
+                                    width: itemWidth,
                                     height: 144.0,
                                     decoration: BoxDecoration(
                                       color: FlutterFlowTheme.of(context)
                                           .secondaryBackground,
-                                      borderRadius: BorderRadius.circular(27.0),
+                                      borderRadius: BorderRadius.circular(14.0),
                                       border: Border.all(
                                         color: _model.selectedHousework ==
                                                 'Establishing'
@@ -263,7 +271,7 @@ class _OBoardingStep4WidgetState extends State<OBoardingStep4Widget> {
                                                       12.0, 12.0, 12.0, 12.0),
                                               child: ClipRRect(
                                                 borderRadius:
-                                                    BorderRadius.circular(8.0),
+                                                    BorderRadius.circular(14.0),
                                                 child: Image.asset(
                                                   'assets/images/Rectangle_285.png',
                                                   width: double.infinity,
@@ -310,12 +318,12 @@ class _OBoardingStep4WidgetState extends State<OBoardingStep4Widget> {
                                     safeSetState(() {});
                                   },
                                   child: Container(
-                                    width: 155.0,
+                                    width: itemWidth,
                                     height: 144.0,
                                     decoration: BoxDecoration(
                                       color: FlutterFlowTheme.of(context)
                                           .secondaryBackground,
-                                      borderRadius: BorderRadius.circular(27.0),
+                                      borderRadius: BorderRadius.circular(14.0),
                                       border: Border.all(
                                         color: _model.selectedHousework ==
                                                 'Establishing a routine'
@@ -343,7 +351,7 @@ class _OBoardingStep4WidgetState extends State<OBoardingStep4Widget> {
                                                   .fromSTEB(8.0, 8.0, 8.0, 8.0),
                                               child: ClipRRect(
                                                 borderRadius:
-                                                    BorderRadius.circular(8.0),
+                                                    BorderRadius.circular(14.0),
                                                 child: Image.asset(
                                                   'assets/images/222.png',
                                                   width: double.infinity,
@@ -389,12 +397,12 @@ class _OBoardingStep4WidgetState extends State<OBoardingStep4Widget> {
                                     safeSetState(() {});
                                   },
                                   child: Container(
-                                    width: 155.0,
+                                    width: itemWidth,
                                     height: 144.0,
                                     decoration: BoxDecoration(
                                       color: FlutterFlowTheme.of(context)
                                           .secondaryBackground,
-                                      borderRadius: BorderRadius.circular(27.0),
+                                      borderRadius: BorderRadius.circular(14.0),
                                       border: Border.all(
                                         color: _model.selectedHousework ==
                                                 'All the above'
@@ -422,7 +430,7 @@ class _OBoardingStep4WidgetState extends State<OBoardingStep4Widget> {
                                                   .fromSTEB(8.0, 8.0, 8.0, 8.0),
                                               child: ClipRRect(
                                                 borderRadius:
-                                                    BorderRadius.circular(8.0),
+                                                    BorderRadius.circular(14.0),
                                                 child: Image.asset(
                                                   'assets/images/image_26_(2).png',
                                                   width: double.infinity,
@@ -458,6 +466,8 @@ class _OBoardingStep4WidgetState extends State<OBoardingStep4Widget> {
                                   ),
                                 ),
                               ],
+                                );
+                              },
                             ),
                           ),
                         ),
@@ -472,19 +482,13 @@ class _OBoardingStep4WidgetState extends State<OBoardingStep4Widget> {
                               ));
 
                               context.pushNamed(
-                                OnBoadrdingLastV2Widget.routeName,
-                                queryParameters: {
-                                  'childrean': serializeParam(
-                                    widget!.childrean,
-                                    ParamType.DocumentReference,
-                                  ),
-                                }.withoutNulls,
+                                FamilySetupIntroWidget.routeName,
                               );
                             },
                             text: 'Next',
                             options: FFButtonOptions(
                               width: double.infinity,
-                              height: 47.0,
+                              height: 48.0,
                               padding: EdgeInsetsDirectional.fromSTEB(
                                   16.0, 0.0, 16.0, 0.0),
                               iconPadding: EdgeInsetsDirectional.fromSTEB(

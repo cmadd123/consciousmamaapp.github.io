@@ -125,7 +125,7 @@ class _DeleteGraceConfirmtionWidgetState
                           color: FlutterFlowTheme.of(context).alternate,
                           width: 1.0,
                         ),
-                        borderRadius: BorderRadius.circular(8.0),
+                        borderRadius: BorderRadius.circular(14.0),
                       ),
                     ),
                     FFButtonWidget(
@@ -151,7 +151,7 @@ class _DeleteGraceConfirmtionWidgetState
                           color: Colors.transparent,
                           width: 1.0,
                         ),
-                        borderRadius: BorderRadius.circular(8.0),
+                        borderRadius: BorderRadius.circular(14.0),
                       ),
                     ),
                   ].divide(SizedBox(width: 12.0)),

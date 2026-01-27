@@ -48,13 +48,20 @@ class _ProfileWidgetState extends State<ProfileWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        FocusScope.of(context).unfocus();
-        FocusManager.instance.primaryFocus?.unfocus();
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) {
+          context.goNamed(HomeHybridWidget.routeName);
+        }
       },
-      child: Scaffold(
-        key: scaffoldKey,
+      child: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).unfocus();
+          FocusManager.instance.primaryFocus?.unfocus();
+        },
+        child: Scaffold(
+          key: scaffoldKey,
         body: Stack(
           children: [
             Container(
@@ -68,12 +75,14 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                   end: AlignmentDirectional(0, -1.0),
                 ),
               ),
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Padding(
-                    padding:
-                        EdgeInsetsDirectional.fromSTEB(20.0, 50.0, 20.0, 0.0),
+              child: SafeArea(
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                    Padding(
+                      padding:
+                          EdgeInsetsDirectional.fromSTEB(20.0, 20.0, 20.0, 0.0),
                     child: Row(
                       mainAxisSize: MainAxisSize.max,
                       children: [
@@ -153,7 +162,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                                         currentUserPhoto != '') {
                                       return ClipRRect(
                                         borderRadius:
-                                            BorderRadius.circular(8.0),
+                                            BorderRadius.circular(14.0),
                                         child: Image.network(
                                           currentUserPhoto,
                                           width: double.infinity,
@@ -164,7 +173,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                                     } else {
                                       return ClipRRect(
                                         borderRadius:
-                                            BorderRadius.circular(8.0),
+                                            BorderRadius.circular(14.0),
                                         child: Image.asset(
                                           'assets/images/woman.png',
                                           width: double.infinity,
@@ -276,7 +285,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                         decoration: BoxDecoration(
                           color:
                               FlutterFlowTheme.of(context).secondaryBackground,
-                          borderRadius: BorderRadius.circular(27.0),
+                          borderRadius: BorderRadius.circular(14.0),
                         ),
                         child: Visibility(
                           visible: false,
@@ -366,7 +375,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                       height: 60.0,
                       decoration: BoxDecoration(
                         color: FlutterFlowTheme.of(context).secondaryBackground,
-                        borderRadius: BorderRadius.circular(27.0),
+                        borderRadius: BorderRadius.circular(14.0),
                       ),
                       child: InkWell(
                         splashColor: Colors.transparent,
@@ -430,7 +439,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                   //     height: 60.0,
                   //     decoration: BoxDecoration(
                   //       color: FlutterFlowTheme.of(context).secondaryBackground,
-                  //       borderRadius: BorderRadius.circular(27.0),
+                  //       borderRadius: BorderRadius.circular(14.0),
                   //     ),
                   //     child: Padding(
                   //       padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
@@ -487,7 +496,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                       height: 60.0,
                       decoration: BoxDecoration(
                         color: FlutterFlowTheme.of(context).secondaryBackground,
-                        borderRadius: BorderRadius.circular(27.0),
+                        borderRadius: BorderRadius.circular(14.0),
                       ),
                       child: InkWell(
                         splashColor: Colors.transparent,
@@ -558,7 +567,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                       height: 60.0,
                       decoration: BoxDecoration(
                         color: FlutterFlowTheme.of(context).secondaryBackground,
-                        borderRadius: BorderRadius.circular(27.0),
+                        borderRadius: BorderRadius.circular(14.0),
                       ),
                       child: InkWell(
                         splashColor: Colors.transparent,
@@ -621,7 +630,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                       height: 60.0,
                       decoration: BoxDecoration(
                         color: FlutterFlowTheme.of(context).secondaryBackground,
-                        borderRadius: BorderRadius.circular(27.0),
+                        borderRadius: BorderRadius.circular(14.0),
                       ),
                       child: InkWell(
                         splashColor: Colors.transparent,
@@ -699,7 +708,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                         decoration: BoxDecoration(
                           color:
                               FlutterFlowTheme.of(context).secondaryBackground,
-                          borderRadius: BorderRadius.circular(27.0),
+                          borderRadius: BorderRadius.circular(14.0),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.max,
@@ -782,7 +791,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                           decoration: BoxDecoration(
                             color: FlutterFlowTheme.of(context)
                                 .secondaryBackground,
-                            borderRadius: BorderRadius.circular(27.0),
+                            borderRadius: BorderRadius.circular(14.0),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.max,
@@ -830,17 +839,108 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                       ),
                     ),
                   ),
-                ],
+                  // Clean up duplicates button (temporary - for clearing all duplicates)
+                  Builder(
+                    builder: (context) => Padding(
+                      padding:
+                          EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),
+                      child: InkWell(
+                        splashColor: Colors.transparent,
+                        focusColor: Colors.transparent,
+                        hoverColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                        onTap: () async {
+                          context.pushNamed(CleanupDuplicatesPage.routeName);
+                        },
+                        child: Container(
+                          width: double.infinity,
+                          height: 60.0,
+                          decoration: BoxDecoration(
+                            color: FlutterFlowTheme.of(context)
+                                .secondaryBackground,
+                            borderRadius: BorderRadius.circular(14.0),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                        16.0, 0.0, 16.0, 0.0),
+                                    child: Icon(
+                                      Icons.cleaning_services,
+                                      color: FlutterFlowTheme.of(context).primary,
+                                      size: 24.0,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Clean Up Duplicates',
+                                    style: FlutterFlowTheme.of(context)
+                                        .bodyMedium
+                                        .override(
+                                          fontFamily: 'Andika New Basic',
+                                          fontSize: 16.0,
+                                          letterSpacing: 0.0,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                  ),
+                                ],
+                              ),
+                              Padding(
+                                padding: EdgeInsetsDirectional.fromSTEB(
+                                    16.0, 0.0, 16.0, 0.0),
+                                child: Icon(
+                                  Icons.arrow_forward_ios,
+                                  color:
+                                      FlutterFlowTheme.of(context).primaryText,
+                                  size: 18.0,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  // Add bottom padding to account for navigation bar
+                  const SizedBox(height: 120.0),
+                  ],
+                ),
+                ),
+              ),
+            ),
+            // Add bottom safe area
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                height: 80,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: const Alignment(0, -1),
+                    end: const Alignment(0, 1),
+                    colors: [
+                      Color(0xFFEDFFFD).withValues(alpha: 0.0),
+                      const Color(0xFFEDFFFD),
+                    ],
+                  ),
+                ),
               ),
             ),
             const Align(
               alignment: AlignmentDirectional(0.0, 1.0),
               child: HomeNavBarWidget(
-                currentPage: HomeNavPage.home,
+                currentPage: HomeNavPage.settings,
               ),
             ),
           ],
         ),
+      ),
       ),
     );
   }

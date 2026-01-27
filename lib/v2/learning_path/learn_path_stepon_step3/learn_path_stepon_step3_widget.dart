@@ -176,7 +176,7 @@ class _LearnPathSteponStep3WidgetState
                                     padding: EdgeInsetsDirectional.fromSTEB(
                                         15.0, 0.0, 0.0, 0.0),
                                     child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(8.0),
+                                      borderRadius: BorderRadius.circular(14.0),
                                       child: Image.asset(
                                         'assets/images/321.png',
                                         width: 79.0,
@@ -852,7 +852,7 @@ class _LearnPathSteponStep3WidgetState
                                             ),
                                         elevation: 0.0,
                                         borderRadius:
-                                            BorderRadius.circular(8.0),
+                                            BorderRadius.circular(14.0),
                                       ),
                                     ),
                                   ),
@@ -901,7 +901,7 @@ class _LearnPathSteponStep3WidgetState
                                             ),
                                         elevation: 0.0,
                                         borderRadius:
-                                            BorderRadius.circular(8.0),
+                                            BorderRadius.circular(14.0),
                                       ),
                                     ),
                                   ),

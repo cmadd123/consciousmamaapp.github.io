@@ -71,7 +71,7 @@ class _CongForANewMealWidgetState extends State<CongForANewMealWidget> {
                 spreadRadius: 0.0,
               )
             ],
-            borderRadius: BorderRadius.circular(16.0),
+            borderRadius: BorderRadius.circular(14.0),
           ),
           child: Padding(
             padding: EdgeInsets.all(16.0),
@@ -188,7 +188,11 @@ class _CongForANewMealWidgetState extends State<CongForANewMealWidget> {
                           context.pushNamed(GenrateFormCookWidget.routeName);
                         }
                       } else {
-                        context.pushNamed(HomeHybridWidget.routeName);
+                        // Recipe saved to cookbook - navigate to cookbook
+                        if (Navigator.of(context).canPop()) {
+                          context.pop();
+                        }
+                        context.pushNamed(CreateBookCategoryWidget.routeName);
                       }
                     },
                     text: 'Continue',

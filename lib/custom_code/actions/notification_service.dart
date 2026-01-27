@@ -434,7 +434,7 @@ class NotificationService {
     await _notifications.show(
       0,
       '🎉 Notifications Working!',
-      'Conscious Mama can now send you reminders.',
+      'MomRise can now send you reminders.',
       NotificationDetails(
         android: AndroidNotificationDetails(
           mealChannelId,

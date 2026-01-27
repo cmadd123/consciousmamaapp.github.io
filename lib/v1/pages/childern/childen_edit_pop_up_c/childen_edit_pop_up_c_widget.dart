@@ -1,11 +1,10 @@
 import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
 import '/backend/schema/structs/index.dart';
-import '/backend/firebase_storage/storage.dart';
+import '/components/custom_date_time_picker.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
-import '/flutter_flow/upload_data.dart';
 import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
@@ -31,8 +30,23 @@ class ChildenEditPopUpCWidget extends StatefulWidget {
 
 class _ChildenEditPopUpCWidgetState extends State<ChildenEditPopUpCWidget> {
   late ChildenEditPopUpCModel _model;
-  String? _newAvatarUrl;
-  bool _isUploadingImage = false;
+  Color? _selectedColor;
+
+  // Available color options (same as add child page)
+  final List<Color> _colorOptions = [
+    Color(0xFF81C784), // Green
+    Color(0xFFB39DDB), // Purple
+    Color(0xFFFFB74D), // Orange
+    Color(0xFF4DB6AC), // Teal
+    Color(0xFFFFD54F), // Yellow
+    Color(0xFFFF8A65), // Coral
+    Color(0xFFFF6B6B), // Red
+    Color(0xFFFFA07A), // Light Orange
+    Color(0xFF52A097), // Primary Teal
+    Color(0xFF95E1D3), // Light Teal
+    Color(0xFF5DADE2), // Blue
+    Color(0xFFEE82EE), // Violet
+  ];
 
   @override
   void setState(VoidCallback callback) {
@@ -47,43 +61,13 @@ class _ChildenEditPopUpCWidgetState extends State<ChildenEditPopUpCWidget> {
 
     // On component load action.
     SchedulerBinding.instance.addPostFrameCallback((_) async {
-      _model.selectedAvtar = widget!.childRow?.avatar;
-      _newAvatarUrl = widget!.childRow?.avatar;
+      _selectedColor = widget!.childRow?.selectedColor ?? FlutterFlowTheme.of(context).primary;
       safeSetState(() {});
     });
 
     _model.textController ??=
         TextEditingController(text: widget!.childRow?.name);
     _model.textFieldFocusNode ??= FocusNode();
-  }
-
-  Future<void> _pickAndUploadImage() async {
-    setState(() => _isUploadingImage = true);
-
-    try {
-      final selectedMedia = await selectMediaWithSourceBottomSheet(
-        context: context,
-        allowPhoto: true,
-        allowVideo: false,
-        maxWidth: 500,
-        maxHeight: 500,
-        imageQuality: 80,
-      );
-
-      if (selectedMedia != null && selectedMedia.isNotEmpty) {
-        final file = selectedMedia.first;
-        final downloadUrl = await uploadData(
-          'users/$currentUserUid/children/${widget.childRow?.reference.id}/avatar.${file.storagePath.split('.').last}',
-          file.bytes,
-        );
-
-        if (downloadUrl != null) {
-          setState(() => _newAvatarUrl = downloadUrl);
-        }
-      }
-    } finally {
-      setState(() => _isUploadingImage = false);
-    }
   }
 
   Widget _buildInitialAvatar() {
@@ -97,6 +81,81 @@ class _ChildenEditPopUpCWidgetState extends State<ChildenEditPopUpCWidget> {
           fontWeight: FontWeight.bold,
         ),
       ),
+    );
+  }
+
+  void _showColorPicker() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return Container(
+          decoration: BoxDecoration(
+            color: FlutterFlowTheme.of(context).secondaryBackground,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          padding: EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                margin: const EdgeInsets.only(bottom: 12),
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              Text(
+                'Choose Color',
+                style: FlutterFlowTheme.of(context).titleMedium.override(
+                  fontFamily: 'Andika New Basic',
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0.0,
+                ),
+              ),
+              SizedBox(height: 20),
+              Wrap(
+                spacing: 16,
+                runSpacing: 16,
+                children: _colorOptions.map((color) {
+                  final isSelected = _selectedColor == color;
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() => _selectedColor = color);
+                      Navigator.pop(context);
+                    },
+                    child: Container(
+                      width: 60,
+                      height: 60,
+                      decoration: BoxDecoration(
+                        color: color,
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: isSelected ? FlutterFlowTheme.of(context).primaryText : Colors.transparent,
+                          width: 3,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 4,
+                            offset: Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: isSelected
+                          ? Icon(Icons.check, color: Colors.white, size: 30)
+                          : null,
+                    ),
+                  );
+                }).toList(),
+              ),
+              SizedBox(height: 20),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -156,11 +215,11 @@ class _ChildenEditPopUpCWidgetState extends State<ChildenEditPopUpCWidget> {
                         ),
                   ),
                 ),
-                // Avatar picker
+                // Color picker
                 Align(
                   alignment: AlignmentDirectional(0.0, 0.0),
                   child: InkWell(
-                    onTap: _isUploadingImage ? null : _pickAndUploadImage,
+                    onTap: _showColorPicker,
                     borderRadius: BorderRadius.circular(50.0),
                     child: Stack(
                       alignment: Alignment.center,
@@ -169,70 +228,42 @@ class _ChildenEditPopUpCWidgetState extends State<ChildenEditPopUpCWidget> {
                           width: 100.0,
                           height: 100.0,
                           decoration: BoxDecoration(
-                            color: widget.childRow?.selectedColor ??
-                                FlutterFlowTheme.of(context).primary,
+                            color: _selectedColor ?? FlutterFlowTheme.of(context).primary,
                             shape: BoxShape.circle,
                             border: Border.all(
                               color: FlutterFlowTheme.of(context).primary,
                               width: 3.0,
                             ),
                           ),
-                          child: _newAvatarUrl != null && _newAvatarUrl!.isNotEmpty
-                              ? ClipOval(
-                                  child: Image.network(
-                                    _newAvatarUrl!,
-                                    fit: BoxFit.cover,
-                                    width: 100.0,
-                                    height: 100.0,
-                                    errorBuilder: (context, error, stackTrace) =>
-                                        _buildInitialAvatar(),
-                                  ),
-                                )
-                              : _buildInitialAvatar(),
+                          child: _buildInitialAvatar(),
                         ),
-                        if (_isUploadingImage)
-                          Container(
-                            width: 100.0,
-                            height: 100.0,
+                        Positioned(
+                          bottom: 0,
+                          right: 0,
+                          child: Container(
+                            padding: EdgeInsets.all(6.0),
                             decoration: BoxDecoration(
-                              color: Colors.black.withOpacity(0.5),
+                              color: FlutterFlowTheme.of(context).primary,
                               shape: BoxShape.circle,
-                            ),
-                            child: Center(
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
-                                strokeWidth: 2.0,
+                              border: Border.all(
+                                color: FlutterFlowTheme.of(context)
+                                    .secondaryBackground,
+                                width: 2.0,
                               ),
                             ),
-                          )
-                        else
-                          Positioned(
-                            bottom: 0,
-                            right: 0,
-                            child: Container(
-                              padding: EdgeInsets.all(6.0),
-                              decoration: BoxDecoration(
-                                color: FlutterFlowTheme.of(context).primary,
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: FlutterFlowTheme.of(context)
-                                      .secondaryBackground,
-                                  width: 2.0,
-                                ),
-                              ),
-                              child: Icon(
-                                Icons.camera_alt,
-                                color: Colors.white,
-                                size: 16.0,
-                              ),
+                            child: Icon(
+                              Icons.palette,
+                              color: Colors.white,
+                              size: 16.0,
                             ),
                           ),
+                        ),
                       ],
                     ),
                   ),
                 ),
                 Text(
-                  'Tap to change photo',
+                  'Tap to change color',
                   style: FlutterFlowTheme.of(context).bodySmall.override(
                         fontFamily: 'Andika New Basic',
                         color: FlutterFlowTheme.of(context).secondaryText,
@@ -314,59 +345,22 @@ class _ChildenEditPopUpCWidgetState extends State<ChildenEditPopUpCWidget> {
                   hoverColor: Colors.transparent,
                   highlightColor: Colors.transparent,
                   onTap: () async {
-                    // Date-PickerAction
-                    final _datePickedDate = await showDatePicker(
+                    // Custom wheel date picker
+                    final selectedDate = await showCustomDateTimePicker(
                       context: context,
-                      initialDate:
-                          (widget!.childRow?.birthDay ?? DateTime.now()),
-                      firstDate: DateTime(1900),
-                      lastDate: (widget!.childRow?.birthDay ?? DateTime.now()),
-                      builder: (context, child) {
-                        return wrapInMaterialDatePickerTheme(
-                          context,
-                          child!,
-                          headerBackgroundColor:
-                              FlutterFlowTheme.of(context).primary,
-                          headerForegroundColor:
-                              FlutterFlowTheme.of(context).info,
-                          headerTextStyle: FlutterFlowTheme.of(context)
-                              .headlineLarge
-                              .override(
-                                fontFamily: 'Andika New Basic',
-                                fontSize: 32.0,
-                                letterSpacing: 0.0,
-                                fontWeight: FontWeight.w600,
-                              ),
-                          pickerBackgroundColor:
-                              FlutterFlowTheme.of(context).secondaryBackground,
-                          pickerForegroundColor:
-                              FlutterFlowTheme.of(context).primaryText,
-                          selectedDateTimeBackgroundColor:
-                              FlutterFlowTheme.of(context).primary,
-                          selectedDateTimeForegroundColor:
-                              FlutterFlowTheme.of(context).info,
-                          actionButtonForegroundColor:
-                              FlutterFlowTheme.of(context).primaryText,
-                          iconSize: 24.0,
-                        );
-                      },
+                      initialDateTime: widget!.childRow?.birthDay ?? DateTime.now(),
+                      minimumDate: DateTime(1950),
+                      maximumDate: DateTime.now(),
+                      showTime: false, // Birthday doesn't need time
+                      title: 'Birth Date',
                     );
 
-                    if (_datePickedDate != null) {
+                    if (selectedDate != null) {
                       safeSetState(() {
-                        _model.datePicked = DateTime(
-                          _datePickedDate.year,
-                          _datePickedDate.month,
-                          _datePickedDate.day,
-                        );
-                      });
-                    } else if (_model.datePicked != null) {
-                      safeSetState(() {
-                        _model.datePicked = widget!.childRow?.birthDay;
+                        _model.datePicked = selectedDate;
+                        _model.datepickerValue = selectedDate;
                       });
                     }
-                    _model.datepickerValue = _model.datePicked;
-                    safeSetState(() {});
                   },
                   child: Container(
                     width: double.infinity,
@@ -474,7 +468,7 @@ class _ChildenEditPopUpCWidgetState extends State<ChildenEditPopUpCWidget> {
                               birthDay: _model.datePicked != null
                                   ? _model.datePicked
                                   : widget!.childRow?.birthDay,
-                              avatar: _newAvatarUrl,
+                              selectedColor: _selectedColor,
                             ));
                             FFAppState().editing =
                                 !(FFAppState().editing ?? true);

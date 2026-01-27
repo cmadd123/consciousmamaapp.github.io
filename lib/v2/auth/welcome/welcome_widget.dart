@@ -106,6 +106,30 @@ class _WelcomeWidgetState extends State<WelcomeWidget>
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    // Back button
+                    Align(
+                      alignment: AlignmentDirectional(-1.0, 0.0),
+                      child: InkWell(
+                        splashColor: Colors.transparent,
+                        focusColor: Colors.transparent,
+                        hoverColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                        onTap: () => context.safePop(),
+                        child: Container(
+                          padding: EdgeInsets.all(8.0),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.5),
+                            borderRadius: BorderRadius.circular(14.0),
+                          ),
+                          child: Icon(
+                            Icons.arrow_back,
+                            color: FlutterFlowTheme.of(context).primaryText,
+                            size: 24.0,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 20.0),
                     // Logo with fade animation
                     FadeTransition(
                       opacity: _fadeAnimation,
@@ -129,7 +153,7 @@ class _WelcomeWidgetState extends State<WelcomeWidget>
                         child: Column(
                           children: [
                             Text(
-                              'Welcome to\nConscious Mama',
+                              'Welcome to\nMomRise',
                               textAlign: TextAlign.center,
                               style: FlutterFlowTheme.of(context)
                                   .headlineLarge
@@ -143,7 +167,7 @@ class _WelcomeWidgetState extends State<WelcomeWidget>
                             ),
                             SizedBox(height: 12.0),
                             Text(
-                              'Your partner in parenting',
+                              'mom life, simplified',
                               textAlign: TextAlign.center,
                               style: FlutterFlowTheme.of(context)
                                   .titleMedium
@@ -164,7 +188,7 @@ class _WelcomeWidgetState extends State<WelcomeWidget>
                               Color(0xFFFF9800), // Orange
                               Color(0xFFFFF3E0), // Light orange bg
                             ),
-                            SizedBox(height: 12.0),
+                            _buildStepArrow(),
                             _buildFeatureItem(
                               context,
                               Icons.child_care,
@@ -173,7 +197,7 @@ class _WelcomeWidgetState extends State<WelcomeWidget>
                               Color(0xFF9C27B0), // Purple
                               Color(0xFFF3E5F5), // Light purple bg
                             ),
-                            SizedBox(height: 12.0),
+                            _buildStepArrow(),
                             _buildFeatureItem(
                               context,
                               Icons.calendar_today,
@@ -276,6 +300,17 @@ class _WelcomeWidgetState extends State<WelcomeWidget>
     );
   }
 
+  Widget _buildStepArrow() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6.0),
+      child: Icon(
+        Icons.keyboard_arrow_down_rounded,
+        color: Color(0xFF9B8A9E),
+        size: 24.0,
+      ),
+    );
+  }
+
   Widget _buildFeatureItem(
     BuildContext context,
     IconData icon,
@@ -288,7 +323,7 @@ class _WelcomeWidgetState extends State<WelcomeWidget>
       padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
       decoration: BoxDecoration(
         color: bgColor.withOpacity(0.8),
-        borderRadius: BorderRadius.circular(16.0),
+        borderRadius: BorderRadius.circular(14.0),
         border: Border.all(color: iconColor.withOpacity(0.2), width: 1.0),
       ),
       child: Row(
@@ -298,7 +333,7 @@ class _WelcomeWidgetState extends State<WelcomeWidget>
             height: 44.0,
             decoration: BoxDecoration(
               color: iconColor.withOpacity(0.15),
-              borderRadius: BorderRadius.circular(12.0),
+              borderRadius: BorderRadius.circular(14.0),
             ),
             child: Icon(
               icon,

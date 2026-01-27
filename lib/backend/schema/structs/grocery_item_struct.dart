@@ -68,18 +68,101 @@ class GroceryItemStruct extends FFFirebaseStruct {
   /// Returns a display string like "2 cups flour" or just "flour" if no quantity
   String get displayText {
     if (quantity > 0 && hasUnit()) {
-      // Format quantity nicely (remove .0 for whole numbers)
-      String qtyStr = quantity == quantity.truncateToDouble()
-          ? quantity.toInt().toString()
-          : quantity.toStringAsFixed(2).replaceAll(RegExp(r'\.?0+$'), '');
-      return '$qtyStr $unit $name'.trim();
+      String qtyStr = _formatQuantity(quantity);
+      String displayUnit = _pluralizeUnit(unit, quantity);
+      return '$qtyStr $displayUnit $name'.trim();
     } else if (quantity > 0) {
-      String qtyStr = quantity == quantity.truncateToDouble()
-          ? quantity.toInt().toString()
-          : quantity.toStringAsFixed(2).replaceAll(RegExp(r'\.?0+$'), '');
+      String qtyStr = _formatQuantity(quantity);
       return '$qtyStr $name'.trim();
     }
     return name;
+  }
+
+  /// Pluralize unit based on quantity (e.g., "1 cup" vs "2 cups")
+  static String _pluralizeUnit(String unit, double quantity) {
+    // Don't pluralize if quantity is exactly 1
+    if (quantity == 1.0) {
+      return unit;
+    }
+
+    // Units that need 's' for plural
+    final needsS = ['cup', 'tablespoon', 'teaspoon', 'stick', 'ounce', 'pound',
+                    'gram', 'kilogram', 'milliliter', 'liter', 'pint', 'quart',
+                    'gallon', 'package', 'can', 'piece', 'slice'];
+
+    if (needsS.contains(unit)) {
+      return '${unit}s';
+    }
+
+    // Units already plural or don't change
+    return unit;
+  }
+
+  /// Format quantity as fraction or decimal
+  static String _formatQuantity(double qty) {
+    // Whole numbers - just return as int
+    if (qty == qty.truncateToDouble()) {
+      return qty.toInt().toString();
+    }
+
+    // Try to represent as a simple fraction
+    final fraction = _toFraction(qty);
+    if (fraction != null) {
+      return fraction;
+    }
+
+    // Fall back to decimal (max 2 decimal places, trim trailing zeros)
+    return qty.toStringAsFixed(2).replaceAll(RegExp(r'\.?0+$'), '');
+  }
+
+  /// Convert decimal to common cooking fraction (e.g., 1.333... -> "1 1/3")
+  static String? _toFraction(double value) {
+    final whole = value.truncate();
+    final decimal = value - whole;
+
+    // If very close to whole number, just return whole
+    if (decimal.abs() < 0.02) {
+      return whole.toString();
+    }
+
+    // Common cooking fractions (tolerance 0.02 for better matching)
+    // Sorted by value for easier reading
+    final fractions = {
+      0.0625: '1/16',
+      0.125: '1/8',
+      0.1667: '1/6',
+      0.1875: '3/16',
+      0.200: '1/5',
+      0.250: '1/4',
+      0.3125: '5/16',
+      0.3333: '1/3',
+      0.375: '3/8',
+      0.400: '2/5',
+      0.4375: '7/16',
+      0.500: '1/2',
+      0.5625: '9/16',
+      0.600: '3/5',
+      0.625: '5/8',
+      0.6667: '2/3',
+      0.6875: '11/16',
+      0.750: '3/4',
+      0.800: '4/5',
+      0.8125: '13/16',
+      0.8333: '5/6',
+      0.875: '7/8',
+      0.9375: '15/16',
+    };
+
+    for (var entry in fractions.entries) {
+      if ((decimal - entry.key).abs() < 0.02) {
+        if (whole == 0) {
+          return entry.value;
+        }
+        return '$whole ${entry.value}';
+      }
+    }
+
+    return null; // No simple fraction found
   }
 
   /// Unique key for aggregation - combines normalized name and unit
@@ -88,8 +171,173 @@ class GroceryItemStruct extends FFFirebaseStruct {
   }
 
   /// Check if this item can be aggregated with another
+  /// Returns true if same ingredient and compatible units
   bool canAggregateWith(GroceryItemStruct other) {
-    return aggregationKey == other.aggregationKey;
+    // Same ingredient name?
+    if (_normalizeIngredientName(name) != _normalizeIngredientName(other.name)) {
+      return false;
+    }
+
+    // Same unit or compatible units?
+    final myUnit = _normalizeUnit(unit);
+    final otherUnit = _normalizeUnit(other.unit);
+
+    return myUnit == otherUnit || _areUnitsCompatible(myUnit, otherUnit);
+  }
+
+  /// Check if two units are compatible for conversion
+  static bool _areUnitsCompatible(String unit1, String unit2) {
+    // Volume conversions (stick is volume for butter)
+    const volumeUnits = ['teaspoon', 'tablespoon', 'cup', 'stick', 'milliliter', 'liter'];
+    if (volumeUnits.contains(unit1) && volumeUnits.contains(unit2)) {
+      return true;
+    }
+
+    // Weight conversions
+    const weightUnits = ['ounce', 'pound', 'gram', 'kilogram'];
+    if (weightUnits.contains(unit1) && weightUnits.contains(unit2)) {
+      return true;
+    }
+
+    return false;
+  }
+
+  /// Convert quantity to a standard unit and return converted value
+  /// Returns a tuple of (quantity, standardUnit)
+  static Map<String, dynamic> _convertToStandardUnit(double quantity, String unit) {
+    final normalized = _normalizeUnit(unit);
+
+    // Volume conversions (standard: tablespoon)
+    switch (normalized) {
+      case 'teaspoon':
+        return {'quantity': quantity / 3, 'unit': 'tablespoon'};
+      case 'tablespoon':
+        return {'quantity': quantity, 'unit': 'tablespoon'};
+      case 'stick':
+        return {'quantity': quantity * 8, 'unit': 'tablespoon'}; // 1 stick = 8 tbsp
+      case 'cup':
+        return {'quantity': quantity * 16, 'unit': 'tablespoon'};
+      case 'milliliter':
+        return {'quantity': quantity / 14.787, 'unit': 'tablespoon'};
+      case 'liter':
+        return {'quantity': quantity * 67.628, 'unit': 'tablespoon'};
+    }
+
+    // Weight conversions (standard: ounce)
+    switch (normalized) {
+      case 'ounce':
+        return {'quantity': quantity, 'unit': 'ounce'};
+      case 'pound':
+        return {'quantity': quantity * 16, 'unit': 'ounce'};
+      case 'gram':
+        return {'quantity': quantity / 28.35, 'unit': 'ounce'};
+      case 'kilogram':
+        return {'quantity': quantity * 35.274, 'unit': 'ounce'};
+    }
+
+    // No conversion needed
+    return {'quantity': quantity, 'unit': normalized};
+  }
+
+  /// Get the preferred display unit for an ingredient based on cooking conventions
+  static String _getPreferredUnit(String ingredientName, double quantity, String currentUnit) {
+    final normalized = _normalizeIngredientName(ingredientName).toLowerCase();
+
+    // Butter, margarine, shortening - prefer tablespoons, then sticks
+    if (normalized.contains('butter') || normalized.contains('margarine') || normalized.contains('shortening')) {
+      if (currentUnit == 'tablespoon') {
+        // 8 tbsp = 1 stick, keep as tablespoons unless it's a clean stick count
+        if (quantity >= 8 && quantity % 8 == 0) {
+          return 'stick';
+        }
+        return 'tablespoon';
+      }
+      return currentUnit;
+    }
+
+    // Sugar, flour - prefer cups for larger amounts, tablespoons for small
+    if (normalized.contains('sugar') || normalized.contains('flour')) {
+      if (currentUnit == 'tablespoon' && quantity >= 4) {
+        return 'cup';
+      }
+      return currentUnit;
+    }
+
+    // Liquids (milk, water, broth, stock, juice, oil) - prefer cups
+    if (normalized.contains('milk') || normalized.contains('water') || normalized.contains('broth') ||
+        normalized.contains('stock') || normalized.contains('juice') || normalized.contains('oil') ||
+        normalized.contains('cream')) {
+      if (currentUnit == 'tablespoon' && quantity >= 4) {
+        return 'cup';
+      }
+      return currentUnit;
+    }
+
+    // Spices, extracts, small seasonings - prefer teaspoons
+    if (normalized.contains('extract') || normalized.contains('vanilla') || normalized.contains('cinnamon') ||
+        normalized.contains('salt') || normalized.contains('pepper') || normalized.contains('spice') ||
+        normalized.contains('baking powder') || normalized.contains('baking soda')) {
+      if (currentUnit == 'tablespoon' && quantity < 3) {
+        return 'teaspoon';
+      }
+      return currentUnit;
+    }
+
+    // Cheese - prefer cups when shredded/grated, ounces when in blocks
+    if (normalized.contains('cheese')) {
+      if (currentUnit == 'tablespoon') {
+        return 'cup'; // Shredded cheese
+      }
+      return currentUnit;
+    }
+
+    // Default: no preference
+    return currentUnit;
+  }
+
+  /// Combine this item with another, handling unit conversion
+  void combineWith(GroceryItemStruct other) {
+    // Convert both to standard units
+    final myConverted = _convertToStandardUnit(quantity, unit);
+    final otherConverted = _convertToStandardUnit(other.quantity, other.unit);
+
+    // Add quantities in standard unit
+    var totalQuantity = (myConverted['quantity'] as double) + (otherConverted['quantity'] as double);
+    var displayUnit = myConverted['unit'] as String;
+
+    // Apply ingredient-specific preferred units
+    final preferredUnit = _getPreferredUnit(name, totalQuantity, displayUnit);
+
+    if (preferredUnit != displayUnit) {
+      // Convert to preferred unit
+      if (displayUnit == 'tablespoon' && preferredUnit == 'cup') {
+        totalQuantity = totalQuantity / 16;
+        displayUnit = 'cup';
+      } else if (displayUnit == 'tablespoon' && preferredUnit == 'teaspoon') {
+        totalQuantity = totalQuantity * 3;
+        displayUnit = 'teaspoon';
+      } else if (displayUnit == 'tablespoon' && preferredUnit == 'stick') {
+        totalQuantity = totalQuantity / 8;
+        displayUnit = 'stick';
+      }
+    } else {
+      // Generic fallback for non-specific ingredients
+      // For volume: if tablespoons >= 3, convert to cups for easier reading
+      if (displayUnit == 'tablespoon' && totalQuantity >= 3) {
+        totalQuantity = totalQuantity / 16;
+        displayUnit = 'cup';
+      }
+
+      // For weight: if ounces >= 16, convert to pounds for easier reading
+      if (displayUnit == 'ounce' && totalQuantity >= 16) {
+        totalQuantity = totalQuantity / 16;
+        displayUnit = 'pound';
+      }
+    }
+
+    // Update this item with combined quantity in best display unit
+    _quantity = totalQuantity;
+    _unit = displayUnit;
   }
 
   /// Create a new GroceryItemStruct by parsing an ingredient string
@@ -219,6 +467,7 @@ class GroceryItemStruct extends FFFirebaseStruct {
       'c': 'cup', 'cups': 'cup',
       'tbsp': 'tablespoon', 'tbsps': 'tablespoon', 'tbs': 'tablespoon', 'tablespoons': 'tablespoon',
       'tsp': 'teaspoon', 'tsps': 'teaspoon', 't': 'teaspoon', 'teaspoons': 'teaspoon',
+      'sticks': 'stick', // 1 stick butter = 8 tbsp = 1/2 cup
       'oz': 'ounce', 'ounces': 'ounce',
       'lb': 'pound', 'lbs': 'pound', 'pounds': 'pound',
       'g': 'gram', 'grams': 'gram',
@@ -292,7 +541,82 @@ class GroceryItemStruct extends FFFirebaseStruct {
     normalized = normalized.replaceAll(RegExp(r'[\s,]+$'), '');
     normalized = normalized.replaceAll(RegExp(r'^of\s+'), '');
 
+    // Normalize plurals to singular form
+    normalized = _singularize(normalized);
+
     return normalized;
+  }
+
+  /// Convert plural ingredient names to singular for better matching
+  static String _singularize(String word) {
+    if (word.isEmpty) return word;
+
+    // Common irregular plurals
+    final irregularPlurals = {
+      'tomatoes': 'tomato',
+      'potatoes': 'potato',
+      'cherries': 'cherry',
+      'strawberries': 'strawberry',
+      'blueberries': 'blueberry',
+      'raspberries': 'raspberry',
+      'blackberries': 'blackberry',
+      'cranberries': 'cranberry',
+      'loaves': 'loaf',
+      'halves': 'half',
+      'knives': 'knife',
+      'leaves': 'leaf',
+    };
+
+    // Check for exact irregular plural match
+    if (irregularPlurals.containsKey(word)) {
+      return irregularPlurals[word]!;
+    }
+
+    // Check for irregular plurals in the last word (for multi-word ingredients)
+    final words = word.split(' ');
+    if (words.length > 1) {
+      final lastWord = words.last;
+      if (irregularPlurals.containsKey(lastWord)) {
+        words[words.length - 1] = irregularPlurals[lastWord]!;
+        return words.join(' ');
+      }
+    }
+
+    // Regular plural rules (apply to last word only for multi-word ingredients)
+    String processWord(String w) {
+      // Words ending in "ies" -> "y" (berries -> berry)
+      if (w.endsWith('ies') && w.length > 4) {
+        return w.substring(0, w.length - 3) + 'y';
+      }
+      // Words ending in "oes" -> "o" (tomatoes -> tomato)
+      if (w.endsWith('oes') && w.length > 4) {
+        return w.substring(0, w.length - 2);
+      }
+      // Words ending in "ses" -> "s" (glasses -> glass)
+      if (w.endsWith('ses') && w.length > 4) {
+        return w.substring(0, w.length - 2);
+      }
+      // Words ending in "xes" -> "x" (boxes -> box)
+      if (w.endsWith('xes') && w.length > 4) {
+        return w.substring(0, w.length - 2);
+      }
+      // Words ending in "ches", "shes" -> remove "es"
+      if ((w.endsWith('ches') || w.endsWith('shes')) && w.length > 5) {
+        return w.substring(0, w.length - 2);
+      }
+      // Words ending in "s" but not "ss" -> remove "s"
+      if (w.endsWith('s') && !w.endsWith('ss') && w.length > 2) {
+        return w.substring(0, w.length - 1);
+      }
+      return w;
+    }
+
+    if (words.length > 1) {
+      words[words.length - 1] = processWord(words.last);
+      return words.join(' ');
+    }
+
+    return processWord(word);
   }
 
   /// Decode HTML entities that might be in ingredient strings

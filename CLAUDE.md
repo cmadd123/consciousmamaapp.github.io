@@ -1,7 +1,10 @@
 # Mome Coach - Project Notes
 
 ## Project Overview
-Mome Coach is a Flutter-based parenting app that helps parents track their children's development, create learning paths, manage meals, activities, and milestones.
+Mome Coach (App Name: **MomRise**) is a Flutter-based parenting app that helps parents track their children's development, create learning paths, manage meals, activities, and milestones.
+
+**Current Version**: v1.2.314
+**Firebase Project**: parenting-plus-7szrif
 
 ## Key Project Structure
 ```
@@ -256,3 +259,199 @@ parenting,conscious,mindful,baby,toddler,milestones,development,activities,mama,
 - 6.5" (iPhone 11 Pro Max) - 1242 x 2688
 - 5.5" (iPhone 8 Plus) - 1242 x 2208
 - iPad Pro 12.9" - 2048 x 2732
+
+---
+
+## 🚀 PRE-LAUNCH TODOS
+
+### **CRITICAL PATH (Blockers for Launch)**
+
+#### 1. **Google Play Testing** ⏰ STARTED
+- [x] Create Play Console account ($25)
+- [x] Build signed AAB release
+- [ ] Fill out Play Store listing (in progress)
+- [ ] Upload AAB to internal testing track
+- [ ] Recruit 12 testers (family, friends, beta testing groups)
+- [ ] **14-day testing period** (longest blocker)
+- [ ] Address any critical bugs from testing
+- [ ] Submit for production review
+
+#### 2. **Apple App Store** ⏰ WAITING
+- [ ] Wait for Apple Developer account approval (48 hours max from 2026-01-17)
+- [ ] Create app listing in App Store Connect
+- [ ] Upload build to TestFlight
+- [ ] Internal testing (optional, no time requirement)
+- [ ] Submit for App Review
+- [ ] Production release
+
+#### 3. **Instacart Affiliate Integration** (Revenue Stream)
+- [x] Integration built and deployed
+- [ ] Apply to Instacart Affiliate Program via Impact.com (1-2 days approval)
+- [ ] Get affiliate tracking URL from Impact.com
+- [ ] Add tracking URL to Firebase Remote Config (`instacart_affiliate_url`)
+- [ ] Test commission tracking
+- [ ] Start earning! 💰
+
+---
+
+### **HIGH PRIORITY (Improves UX)**
+
+#### 4. **Welcome Page Improvements** - "Under-promise, Over-deliver"
+**Current Issue**: Welcome page may set expectations too high
+**Goal**: Lower initial expectations, let the app surprise and delight
+
+**Proposed Changes**:
+- [ ] Simplify feature descriptions (less "AI-powered", more "helpful tools")
+- [ ] Reduce scope of promises (don't promise "all your parenting needs")
+- [ ] Add realistic disclaimers ("Great for busy parents" not "Perfect solution")
+- [ ] Focus on 2-3 core features, not everything
+- [ ] Consider softer language: "Helps you" not "Solves"
+
+**Discussion Questions**:
+- What specific features should we highlight?
+- Should we mention limitations upfront?
+- How can we make it feel warm/supportive vs overpromising?
+
+#### 5. **Meal Planner Reminders** 🔔
+**Feature**: Push notifications for upcoming meals
+
+**Implementation Needed**:
+- [ ] Add "Remind me" toggle to meal planning
+- [ ] Default reminder time (e.g., "30 min before dinner")
+- [ ] Store notification preferences in Firestore
+- [ ] Schedule local notifications via notification_service.dart
+- [ ] Handle timezone edge cases
+- [ ] Add settings page to manage reminder times
+- [ ] Test notifications on Android/iOS
+
+**Questions**:
+- Default reminder time? (30 min? 1 hour?)
+- Reminder for every meal or just dinner?
+- Allow custom times per meal?
+
+#### 6. **Activities Content Upload** 📚
+- [ ] Audit existing activities (check for duplicates, quality issues)
+- [ ] Upload 190 new activities to Firestore
+- [ ] Categorize by: age, difficulty, indoor/outdoor, energy level
+- [ ] Add emoji icons for each activity
+- [ ] Add tags for filtering
+- [ ] Verify all activities display correctly in app
+
+---
+
+### **MEDIUM PRIORITY (Polish & Monetization)**
+
+#### 7. **UI Fixes**
+- [x] Gender dropdown color (already correct in code - may be visual bug)
+- [ ] Verify all forms have consistent styling
+- [ ] Test on different screen sizes
+- [ ] Dark mode support (optional)
+
+#### 8. **Payment/Paywall Strategy** 💳
+**Decision Needed**: Launch free or freemium?
+
+**Option A - Launch Free** (Recommended):
+- Build user base quickly
+- Get feedback before monetizing
+- Add premium tier later based on usage data
+- Lower barrier to entry
+
+**Option B - Freemium from Day 1**:
+- Basic features free
+- Premium features: unlimited learning paths, advanced meal planning, etc.
+- 7-day free trial
+- $4.99/month or $49/year
+
+**Implementation** (if freemium):
+- [ ] Integrate RevenueCat or Stripe
+- [ ] Design paywall UI
+- [ ] Determine free vs premium features
+- [ ] Set up subscription products in App/Play Store
+- [ ] Test payment flow end-to-end
+
+#### 9. **App Store Assets**
+- [ ] Take 6-8 screenshots per platform
+- [ ] Create feature graphic (1024x500 for Play Store)
+- [ ] Record app preview video (optional but recommended)
+- [ ] Design promotional graphics
+- [ ] Write app store description (already drafted)
+
+#### 10. **Terminology Changes** (User Feedback Pending)
+- [ ] Rename "Puzzle" to something else (TBD)
+- [ ] Rename "Task" to "Lesson" in learning paths
+- [ ] Update all UI references
+- [ ] Update Firebase field names if needed
+
+---
+
+### **LOW PRIORITY (Post-Launch)**
+
+#### 11. **Learning Path Enhancements**
+- [ ] Add "Expectations vs Reality" section to lessons
+- [ ] Help parents understand realistic outcomes
+- [ ] Include common challenges and solutions
+
+#### 12. **Analytics & Monitoring**
+- [ ] Add Firebase Analytics events
+- [ ] Track key user actions (onboarding completion, learning path creation, etc.)
+- [ ] Set up crash reporting (Crashlytics)
+- [ ] Monitor performance metrics
+
+#### 13. **Bundle ID Updates** (Before Production)
+- [ ] Change from `com.mycompany.momecoach` to proper domain
+- [ ] Update Android applicationId
+- [ ] Update iOS bundle identifier
+- [ ] Regenerate signing if needed
+
+---
+
+## 📱 Play Console Store Listing Fields
+
+**Where to fill these in**: Play Console → Your App → Store Presence → Main Store Listing
+
+### Required Fields:
+
+1. **App name**: MomRise
+2. **Short description** (80 chars): Your AI-powered parenting companion for meals, activities, and milestones
+3. **Full description**: (See App Store Description section above - copy/paste)
+4. **App icon**: 512x512 PNG (`assets/images/image_22.png`)
+5. **Feature graphic**: 1024x500 PNG (needs creation)
+6. **Screenshots**: 2-8 phone screenshots (needs capture from device)
+7. **App category**: Lifestyle
+8. **Content rating**: Fill out questionnaire (will be PEGI 3 / Everyone)
+9. **Contact email**: (Your email)
+10. **Privacy policy URL**: https://cmadd123.github.io/privacy.html
+11. **Target age**: 18+ (app is for parents, not children)
+
+---
+
+## 🔄 Deployment Process
+
+**For Testing Changes** (Quick iteration):
+```bash
+flutter install --device-id=192.168.1.224:44443
+```
+
+**For Production Release** (App stores):
+```bash
+# Android
+flutter build appbundle --release
+
+# iOS (when Apple account ready)
+flutter build ipa --release
+```
+
+**Current keystore**: `android/upload-keystore.jks`
+- Alias: upload
+- Password: consciousmama2026 (⚠️ CHANGE BEFORE PUBLIC LAUNCH)
+
+---
+
+## ✅ Recently Completed (2026-01-22)
+
+- [x] App name changed to "MomRise" throughout
+- [x] Onboarding flow reordered (questions before child setup)
+- [x] Instacart affiliate integration built
+- [x] Version updated to v1.2.314
+- [x] Production release build created
+- [x] Gender dropdown styling reviewed (already correct)

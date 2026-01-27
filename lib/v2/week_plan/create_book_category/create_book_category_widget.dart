@@ -129,7 +129,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
       },
       child: Scaffold(
         key: scaffoldKey,
-        backgroundColor: Color(0xFFFFF5F2),
+        backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
         body: SafeArea(
           top: true,
           child: Padding(
@@ -145,10 +145,10 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                       color: Colors.transparent,
                       elevation: 2.0,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
+                        borderRadius: BorderRadius.circular(14.0),
                       ),
                       child: ClipRRect(
-                        borderRadius: BorderRadius.circular(10.0),
+                        borderRadius: BorderRadius.circular(14.0),
                         child: Container(
                           width: double.infinity,
                           decoration: BoxDecoration(
@@ -164,7 +164,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                 ),
                               )
                             ],
-                            borderRadius: BorderRadius.circular(10.0),
+                            borderRadius: BorderRadius.circular(14.0),
                             border: Border.all(
                               color: Color(0xFF999999),
                               width: 1.0,
@@ -543,7 +543,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                                 child:
                                                                     Container(
                                                                   width: 50.0,
-                                                                  height: 47.0,
+                                                                  height: 48.0,
                                                                   decoration:
                                                                       BoxDecoration(
                                                                     color: FlutterFlowTheme.of(
@@ -860,7 +860,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                                 child:
                                                                     Container(
                                                                   width: 50.0,
-                                                                  height: 47.0,
+                                                                  height: 48.0,
                                                                   decoration:
                                                                       BoxDecoration(
                                                                     color: FlutterFlowTheme.of(
@@ -1186,7 +1186,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                                 child:
                                                                     Container(
                                                                   width: 50.0,
-                                                                  height: 47.0,
+                                                                  height: 48.0,
                                                                   decoration:
                                                                       BoxDecoration(
                                                                     color: FlutterFlowTheme.of(
@@ -1512,7 +1512,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                                 child:
                                                                     Container(
                                                                   width: 50.0,
-                                                                  height: 47.0,
+                                                                  height: 48.0,
                                                                   decoration:
                                                                       BoxDecoration(
                                                                     color: FlutterFlowTheme.of(
@@ -1838,7 +1838,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                                 child:
                                                                     Container(
                                                                   width: 50.0,
-                                                                  height: 47.0,
+                                                                  height: 48.0,
                                                                   decoration:
                                                                       BoxDecoration(
                                                                     color: FlutterFlowTheme.of(
@@ -2164,7 +2164,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                                 child:
                                                                     Container(
                                                                   width: 50.0,
-                                                                  height: 47.0,
+                                                                  height: 48.0,
                                                                   decoration:
                                                                       BoxDecoration(
                                                                     color: FlutterFlowTheme.of(
@@ -2490,7 +2490,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                                 child:
                                                                     Container(
                                                                   width: 50.0,
-                                                                  height: 47.0,
+                                                                  height: 48.0,
                                                                   decoration:
                                                                       BoxDecoration(
                                                                     color: FlutterFlowTheme.of(
@@ -2816,7 +2816,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                                 child:
                                                                     Container(
                                                                   width: 50.0,
-                                                                  height: 47.0,
+                                                                  height: 48.0,
                                                                   decoration:
                                                                       BoxDecoration(
                                                                     color: FlutterFlowTheme.of(

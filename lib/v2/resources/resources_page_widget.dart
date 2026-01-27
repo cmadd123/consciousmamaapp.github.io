@@ -176,12 +176,12 @@ class _ResourcesPageWidgetState extends State<ResourcesPageWidget> {
             },
           );
         },
-        borderRadius: BorderRadius.circular(16.0),
+        borderRadius: BorderRadius.circular(14.0),
         child: Container(
           padding: const EdgeInsets.all(16.0),
           decoration: BoxDecoration(
             color: FlutterFlowTheme.of(context).secondaryBackground,
-            borderRadius: BorderRadius.circular(16.0),
+            borderRadius: BorderRadius.circular(14.0),
           ),
           child: Row(
             children: [
@@ -191,7 +191,7 @@ class _ResourcesPageWidgetState extends State<ResourcesPageWidget> {
                 height: 48.0,
                 decoration: BoxDecoration(
                   color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12.0),
+                  borderRadius: BorderRadius.circular(14.0),
                 ),
                 child: Icon(
                   _getIconData(article.iconName),
@@ -251,7 +251,7 @@ class _ResourcesPageWidgetState extends State<ResourcesPageWidget> {
                             padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
                             decoration: BoxDecoration(
                               color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(8.0),
+                              borderRadius: BorderRadius.circular(14.0),
                             ),
                             child: Text(
                               ArticleCategory.displayNames[article.category] ?? article.category!,

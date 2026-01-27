@@ -45,6 +45,12 @@ service cloud.firestore {
       allow write: if false; // Admin only via Firebase Console
     }
 
+    // Static Milestones (correct collection name) - read only for authenticated users
+    match /Static_Milestones/{id} {
+      allow read: if isAuthenticated();
+      allow write: if false; // Admin only via Firebase Console
+    }
+
     // Meals - users can read any meal (their own or curated), write only their own
     match /meal/{mealId} {
       allow read: if isAuthenticated();
@@ -75,10 +81,32 @@ service cloud.firestore {
       allow create: if isAuthenticated();
     }
 
-    // Activities - read for all authenticated, write restricted
+    // Todos - users can only access their own
+    match /todos/{todoId} {
+      allow read, write: if isAuthenticated() &&
+        (resource == null || resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid));
+      allow create: if isAuthenticated();
+    }
+
+    // Planned activities - users can only access their own
+    match /planned_activities/{activityId} {
+      allow read, write: if isAuthenticated() &&
+        (resource == null || resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid));
+      allow create: if isAuthenticated();
+    }
+
+    // Activities - read for all authenticated, write allowed for cleanup
     match /activity/{activityId} {
       allow read: if isAuthenticated();
-      allow write: if false; // Admin only
+      allow write: if isAuthenticated(); // Temporarily allow for cleanup, change back to false after upload
+      allow delete: if isAuthenticated(); // Allow deletion for cleanup
+    }
+
+    // User Activities - users can only access their own custom activities
+    match /user_activities/{activityId} {
+      allow read, write: if isAuthenticated() &&
+        (resource == null || resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid));
+      allow create: if isAuthenticated();
     }
 
     // Favourite meals - users can only access their own
@@ -92,6 +120,20 @@ service cloud.firestore {
     match /users/{userId} {
       allow read, write: if isOwner(userId);
       allow create: if isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Shared content - publicly readable by share_code, writable by owner
+    match /shared_content/{contentId} {
+      // Anyone authenticated can read shared content (for import)
+      allow read: if isAuthenticated();
+      // Only the owner can write/update their shared content
+      allow write: if isAuthenticated() &&
+        (resource == null || resource.data.shared_by_user == /databases/$(database)/documents/users/$(request.auth.uid));
+      // Authenticated users can create shared content
+      allow create: if isAuthenticated();
+      // Allow incrementing view/import counts by anyone
+      allow update: if isAuthenticated() &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['view_count', 'import_count']);
     }
 
     // Default deny for everything else

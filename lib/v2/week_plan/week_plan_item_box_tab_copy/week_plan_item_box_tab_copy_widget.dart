@@ -61,7 +61,7 @@ class _WeekPlanItemBoxTabCopyWidgetState
       },
       child: Scaffold(
         key: scaffoldKey,
-        backgroundColor: Color(0xFFFFF5F2),
+        backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
         body: SafeArea(
           top: true,
           child: SingleChildScrollView(
@@ -205,7 +205,7 @@ class _WeekPlanItemBoxTabCopyWidgetState
                                       decoration: BoxDecoration(),
                                       child: ClipRRect(
                                         borderRadius:
-                                            BorderRadius.circular(8.0),
+                                            BorderRadius.circular(14.0),
                                         child: Image.asset(
                                           'assets/images/m1vhl_.png',
                                           width: 200.0,
@@ -285,7 +285,7 @@ class _WeekPlanItemBoxTabCopyWidgetState
                                       decoration: BoxDecoration(),
                                       child: ClipRRect(
                                         borderRadius:
-                                            BorderRadius.circular(8.0),
+                                            BorderRadius.circular(14.0),
                                         child: Image.asset(
                                           'assets/images/a707161f10f26b33bd2c06caac81707ad9435736.png',
                                           width: 200.0,

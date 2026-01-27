@@ -1,22 +1,19 @@
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import '/components/puzzle_progress_widget.dart';
 import 'package:flutter/material.dart';
 import 'loading_learn_pass_model.dart';
 export 'loading_learn_pass_model.dart';
 
-/// A loading widget that shows a 3x3 puzzle being revealed piece by piece
-/// as the API call progresses. Uses internal animation for smooth progress.
+/// A loading widget that shows progress as the learning path is generated.
+/// Uses a clean, adult-friendly design with a progress indicator.
 class LoadingLearnPassWidget extends StatefulWidget {
   const LoadingLearnPassWidget({
     super.key,
     required this.title,
-    this.puzzleTheme,
     this.onComplete,
   });
 
   final String title;
-  final String? puzzleTheme;
   final VoidCallback? onComplete;
 
   @override
@@ -26,33 +23,34 @@ class LoadingLearnPassWidget extends StatefulWidget {
 class LoadingLearnPassWidgetState extends State<LoadingLearnPassWidget>
     with TickerProviderStateMixin {
   late LoadingLearnPassModel _model;
-  late AnimationController _progressController;
   late AnimationController _pulseController;
   late Animation<double> _pulseAnimation;
 
   double _currentProgress = 0.0;
   bool _apiComplete = false;
-  int _revealedPieces = 0;
+  int _currentStep = 0;
+
+  final List<String> _loadingMessages = [
+    'Analyzing your child\'s needs...',
+    'Creating personalized lessons...',
+    'Adding helpful parent tips...',
+    'Scheduling activities...',
+    'Finishing up...',
+  ];
 
   @override
   void initState() {
     super.initState();
     _model = createModel(context, () => LoadingLearnPassModel());
 
-    // Pulse animation for the puzzle container
+    // Pulse animation for the icon
     _pulseController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1500),
     )..repeat(reverse: true);
 
-    _pulseAnimation = Tween<double>(begin: 1.0, end: 1.05).animate(
+    _pulseAnimation = Tween<double>(begin: 1.0, end: 1.1).animate(
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
-    );
-
-    // Progress animation - runs continuously
-    _progressController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 100),
     );
 
     // Start the smooth progress animation
@@ -60,18 +58,15 @@ class LoadingLearnPassWidgetState extends State<LoadingLearnPassWidget>
   }
 
   void _startProgressAnimation() async {
-    // Animate progress smoothly from 0 to ~90% over time
-    // Each piece takes roughly the same amount of time to reveal
     while (mounted && !_apiComplete) {
       await Future.delayed(const Duration(milliseconds: 200));
 
       if (!mounted) return;
 
       if (_apiComplete) {
-        // API is done - complete the progress quickly
         setState(() {
           _currentProgress = 1.0;
-          _revealedPieces = 9;
+          _currentStep = _loadingMessages.length - 1;
         });
         break;
       }
@@ -81,8 +76,7 @@ class LoadingLearnPassWidgetState extends State<LoadingLearnPassWidget>
         final targetProgress = _currentProgress + 0.02;
         setState(() {
           _currentProgress = targetProgress.clamp(0.0, 0.9);
-          // Reveal pieces based on progress (9 pieces total)
-          _revealedPieces = (_currentProgress * 10).floor().clamp(0, 8);
+          _currentStep = (_currentProgress * _loadingMessages.length).floor().clamp(0, _loadingMessages.length - 1);
         });
       }
     }
@@ -93,14 +87,13 @@ class LoadingLearnPassWidgetState extends State<LoadingLearnPassWidget>
     _apiComplete = true;
     setState(() {
       _currentProgress = 1.0;
-      _revealedPieces = 9;
+      _currentStep = _loadingMessages.length - 1;
     });
     widget.onComplete?.call();
   }
 
   @override
   void dispose() {
-    _progressController.dispose();
     _pulseController.dispose();
     _model.maybeDispose();
     super.dispose();
@@ -109,39 +102,42 @@ class LoadingLearnPassWidgetState extends State<LoadingLearnPassWidget>
   @override
   Widget build(BuildContext context) {
     final theme = FlutterFlowTheme.of(context);
-    final puzzleThemeId = widget.puzzleTheme ?? 'dinosaurs';
-    final puzzleTheme = PuzzleTheme.getTheme(puzzleThemeId);
 
     return Container(
       decoration: BoxDecoration(
-        color: puzzleTheme.backgroundColor,
+        color: theme.secondaryBackground,
         borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: theme.primary.withOpacity(0.1),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
       ),
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(32),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Animated puzzle
+          // Animated icon
           ScaleTransition(
             scale: _pulseAnimation,
             child: Container(
-              padding: const EdgeInsets.all(16),
+              width: 100,
+              height: 100,
               decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: puzzleTheme.primaryColor.withOpacity(0.2),
-                    blurRadius: 20,
-                    offset: const Offset(0, 10),
-                  ),
-                ],
+                color: theme.primary.withOpacity(0.1),
+                shape: BoxShape.circle,
               ),
-              child: _buildAnimatedPuzzle(puzzleTheme),
+              child: Icon(
+                Icons.menu_book,
+                size: 48,
+                color: theme.primary,
+              ),
             ),
           ),
 
-          const SizedBox(height: 24),
+          const SizedBox(height: 32),
 
           // Loading text
           Text(
@@ -149,8 +145,9 @@ class LoadingLearnPassWidgetState extends State<LoadingLearnPassWidget>
             textAlign: TextAlign.center,
             style: theme.titleMedium.override(
               fontFamily: 'Andika New Basic',
-              color: puzzleTheme.primaryColor,
+              color: theme.primaryText,
               fontWeight: FontWeight.bold,
+              letterSpacing: 0.0,
             ),
           ),
 
@@ -160,102 +157,68 @@ class LoadingLearnPassWidgetState extends State<LoadingLearnPassWidget>
             '${(_currentProgress * 100).round()}% complete',
             style: theme.bodyMedium.override(
               fontFamily: 'Andika New Basic',
-              color: puzzleTheme.primaryColor.withOpacity(0.7),
+              color: theme.secondaryText,
+              letterSpacing: 0.0,
             ),
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: 24),
 
-          // Progress bar with theme color
+          // Progress bar
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
             child: LinearProgressIndicator(
               value: _currentProgress,
               minHeight: 8,
-              backgroundColor: puzzleTheme.primaryColor.withOpacity(0.2),
-              valueColor: AlwaysStoppedAnimation(puzzleTheme.primaryColor),
+              backgroundColor: theme.primary.withOpacity(0.15),
+              valueColor: AlwaysStoppedAnimation(theme.primary),
             ),
           ),
 
+          const SizedBox(height: 24),
+
+          // Step indicators
+          _buildStepIndicators(theme),
+
           const SizedBox(height: 16),
 
-          // Fun loading messages
-          _buildLoadingMessage(puzzleTheme),
+          // Current loading message
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 300),
+            child: Text(
+              _loadingMessages[_currentStep],
+              key: ValueKey(_currentStep),
+              style: theme.bodyMedium.override(
+                fontFamily: 'Andika New Basic',
+                color: theme.primary,
+                letterSpacing: 0.0,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildAnimatedPuzzle(PuzzleTheme puzzleTheme) {
-    return SizedBox(
-      width: 180,
-      height: 180,
-      child: GridView.builder(
-        physics: const NeverScrollableScrollPhysics(),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-          mainAxisSpacing: 6,
-          crossAxisSpacing: 6,
-        ),
-        itemCount: 9,
-        itemBuilder: (context, index) {
-          final isRevealed = index < _revealedPieces;
+  Widget _buildStepIndicators(FlutterFlowTheme theme) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: List.generate(_loadingMessages.length, (index) {
+        final isActive = index <= _currentStep;
+        final isCurrent = index == _currentStep;
 
-          return AnimatedContainer(
-            duration: Duration(milliseconds: 300 + (index * 50)),
-            curve: Curves.bounceOut,
-            decoration: BoxDecoration(
-              color: isRevealed
-                  ? puzzleTheme.primaryColor.withOpacity(0.15)
-                  : Colors.grey[200],
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: isRevealed
-                    ? puzzleTheme.primaryColor.withOpacity(0.3)
-                    : Colors.grey[300]!,
-                width: 2,
-              ),
-            ),
-            child: AnimatedScale(
-              duration: const Duration(milliseconds: 300),
-              scale: isRevealed ? 1.0 : 0.5,
-              child: Center(
-                child: Text(
-                  isRevealed ? puzzleTheme.pieceEmojis[index] : '?',
-                  style: TextStyle(
-                    fontSize: isRevealed ? 36 : 24,
-                    color: isRevealed ? null : Colors.grey[400],
-                  ),
-                ),
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildLoadingMessage(PuzzleTheme puzzleTheme) {
-    String message;
-    if (_revealedPieces < 2) {
-      message = 'Gathering puzzle pieces...';
-    } else if (_revealedPieces < 4) {
-      message = 'Creating activities for your child...';
-    } else if (_revealedPieces < 6) {
-      message = 'Adding fun challenges...';
-    } else if (_revealedPieces < 8) {
-      message = 'Almost there...';
-    } else {
-      message = 'Finishing touches...';
-    }
-
-    return Text(
-      message,
-      style: FlutterFlowTheme.of(context).bodySmall.override(
-            fontFamily: 'Andika New Basic',
-            color: puzzleTheme.primaryColor.withOpacity(0.8),
+        return AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          margin: const EdgeInsets.symmetric(horizontal: 4),
+          width: isCurrent ? 24 : 8,
+          height: 8,
+          decoration: BoxDecoration(
+            color: isActive ? theme.primary : theme.primary.withOpacity(0.2),
+            borderRadius: BorderRadius.circular(4),
           ),
-      textAlign: TextAlign.center,
+        );
+      }),
     );
   }
 }

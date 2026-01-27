@@ -34,6 +34,7 @@ class _LearnPathWidgetState extends State<LearnPathWidget>
   late LearnPathModel _model;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
+  bool _completedPathsExpanded = false;
 
   @override
   void initState() {
@@ -59,7 +60,7 @@ class _LearnPathWidgetState extends State<LearnPathWidget>
       builder: (ctx) => AlertDialog(
         title: const Text('Delete Learning Path?'),
         content: Text(
-          'Are you sure you want to delete "$title"? This will also delete all tasks associated with this learning path. This cannot be undone.',
+          'Are you sure you want to delete "$title"? This will also delete all lessons associated with this learning path. This cannot be undone.',
         ),
         actions: [
           TextButton(
@@ -129,7 +130,7 @@ class _LearnPathWidgetState extends State<LearnPathWidget>
                         ),
                   ),
                   Text(
-                    'No tasks scheduled for today',
+                    'No lessons scheduled for today',
                     style: FlutterFlowTheme.of(context).bodySmall.override(
                           fontFamily: 'Andika New Basic',
                           color: Color(0xB71B1F26),
@@ -196,7 +197,33 @@ class _LearnPathWidgetState extends State<LearnPathWidget>
                       ),
                     ],
                   ),
-                  child: Column(
+                  child: Builder(
+                    builder: (context) {
+                      // Determine if task is for today
+                      final now = DateTime.now();
+                      final taskDate = task.taskTime;
+                      final isToday = taskDate != null &&
+                          taskDate.year == now.year &&
+                          taskDate.month == now.month &&
+                          taskDate.day == now.day;
+                      final isTomorrow = taskDate != null &&
+                          taskDate.year == now.year &&
+                          taskDate.month == now.month &&
+                          taskDate.day == now.day + 1;
+                      final isPast = taskDate != null && taskDate.isBefore(DateTime(now.year, now.month, now.day));
+
+                      String headerLabel;
+                      if (isToday) {
+                        headerLabel = "TODAY'S LESSON";
+                      } else if (isTomorrow) {
+                        headerLabel = "TOMORROW";
+                      } else if (isPast) {
+                        headerLabel = "OVERDUE";
+                      } else {
+                        headerLabel = dateTimeFormat('MMMd', taskDate!, locale: FFLocalizations.of(context).languageCode).toUpperCase();
+                      }
+
+                      return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Header row
@@ -206,16 +233,16 @@ class _LearnPathWidgetState extends State<LearnPathWidget>
                           Row(
                             children: [
                               Icon(
-                                Icons.play_circle_filled,
-                                color: Colors.white,
+                                isPast ? Icons.warning_amber_rounded : Icons.play_circle_filled,
+                                color: isPast ? Colors.orange : Colors.white,
                                 size: 20.0,
                               ),
                               SizedBox(width: 6.0),
                               Text(
-                                "TODAY'S TASK",
+                                headerLabel,
                                 style: FlutterFlowTheme.of(context).bodySmall.override(
                                       fontFamily: 'Andika New Basic',
-                                      color: Colors.white.withOpacity(0.9),
+                                      color: isPast ? Colors.orange : Colors.white.withOpacity(0.9),
                                       fontSize: 11.0,
                                       fontWeight: FontWeight.w600,
                                       letterSpacing: 1.0,
@@ -312,7 +339,7 @@ class _LearnPathWidgetState extends State<LearnPathWidget>
                         padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
                         decoration: BoxDecoration(
                           color: Colors.white.withOpacity(0.15),
-                          borderRadius: BorderRadius.circular(8.0),
+                          borderRadius: BorderRadius.circular(14.0),
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -331,6 +358,8 @@ class _LearnPathWidgetState extends State<LearnPathWidget>
                         ),
                       ),
                     ],
+                  );
+                    },
                   ),
                 ),
               ),
@@ -338,6 +367,400 @@ class _LearnPathWidgetState extends State<LearnPathWidget>
           },
         );
       },
+    );
+  }
+
+  // Build a single learning path card
+  Widget _buildPathCard(BuildContext context, LearningPathRecord pathItem, bool isCompleted) {
+    return Padding(
+      padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 16.0),
+      child: StreamBuilder<List<LearningPathTasksRecord>>(
+        stream: queryLearningPathTasksRecord(
+          queryBuilder: (q) => q
+              .where('user_ref', isEqualTo: currentUserReference)
+              .where('program_ref', isEqualTo: pathItem.reference),
+        ),
+        builder: (context, taskSnapshot) {
+          if (!taskSnapshot.hasData) {
+            return Center(
+              child: SizedBox(
+                width: 50.0,
+                height: 50.0,
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    FlutterFlowTheme.of(context).primary,
+                  ),
+                ),
+              ),
+            );
+          }
+          final tasks = taskSnapshot.data!;
+          final completedCount = tasks.where((e) => e.isCompleted).length;
+          final progress = tasks.isNotEmpty ? completedCount / tasks.length : 0.0;
+          final isFullyComplete = tasks.isNotEmpty && completedCount == tasks.length;
+
+          return InkWell(
+            splashColor: Colors.transparent,
+            focusColor: Colors.transparent,
+            hoverColor: Colors.transparent,
+            highlightColor: Colors.transparent,
+            onTap: () async {
+              context.pushNamed(
+                LearnPathDetialsWidget.routeName,
+                queryParameters: {
+                  'leRef': serializeParam(
+                    pathItem.reference,
+                    ParamType.DocumentReference,
+                  ),
+                }.withoutNulls,
+              );
+            },
+            onLongPress: () {
+              _showDeleteLearningPathDialog(
+                context,
+                pathItem.reference,
+                pathItem.title,
+              );
+            },
+            child: Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: isFullyComplete ? Color(0xFF4CAF50).withOpacity(0.1) : Color(0x5AFFD8E4),
+                borderRadius: BorderRadius.circular(14.0),
+                border: Border.all(
+                  color: isFullyComplete ? Color(0xFF4CAF50) : FlutterFlowTheme.of(context).primary,
+                  width: 1.0,
+                ),
+              ),
+              child: Stack(
+                children: [
+                  // Completion badge
+                  if (isFullyComplete)
+                    Positioned(
+                      top: 8,
+                      right: 8,
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: Color(0xFF4CAF50),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.check, color: Colors.white, size: 14),
+                            SizedBox(width: 4),
+                            Text(
+                              'Complete!',
+                              style: FlutterFlowTheme.of(context).bodySmall.override(
+                                fontFamily: 'Andika New Basic',
+                                color: Colors.white,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  Padding(
+                    padding: EdgeInsetsDirectional.fromSTEB(8.0, 16.0, 8.0, 16.0),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        // Add extra top padding when complete to make room for badge
+                        if (isFullyComplete) SizedBox(height: 20),
+                        Padding(
+                          padding: EdgeInsetsDirectional.fromSTEB(0.0, 7.0, 0.0, 0.0),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              // Child avatar on the left for completed paths
+                              if (isFullyComplete && pathItem.childRef != null)
+                                StreamBuilder<ChildernRecord>(
+                                  stream: ChildernRecord.getDocument(pathItem.childRef!),
+                                  builder: (context, childSnapshot) {
+                                    if (!childSnapshot.hasData) {
+                                      return SizedBox(width: 24.0, height: 24.0);
+                                    }
+                                    final child = childSnapshot.data!;
+                                    return Padding(
+                                      padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 8.0, 0.0),
+                                      child: Container(
+                                        width: 24.0,
+                                        height: 24.0,
+                                        decoration: BoxDecoration(
+                                          color: child.selectedColor ?? FlutterFlowTheme.of(context).primary,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            child.name.isNotEmpty ? child.name[0].toLowerCase() : '?',
+                                            style: FlutterFlowTheme.of(context).bodySmall.override(
+                                              fontFamily: 'Andika New Basic',
+                                              color: Colors.white,
+                                              fontSize: 11.0,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              Expanded(
+                                child: Padding(
+                                  padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 5.0, 0.0),
+                                  child: Text(
+                                    valueOrDefault<String>(
+                                      pathItem.title,
+                                      'Learning Path',
+                                    ),
+                                    style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                          fontFamily: 'Andika New Basic',
+                                          letterSpacing: 0.0,
+                                        ),
+                                  ),
+                                ),
+                              ),
+                              Row(
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  // Child avatar indicator (only for non-complete paths)
+                                  if (!isFullyComplete && pathItem.childRef != null)
+                                    StreamBuilder<ChildernRecord>(
+                                      stream: ChildernRecord.getDocument(pathItem.childRef!),
+                                      builder: (context, childSnapshot) {
+                                        if (!childSnapshot.hasData) {
+                                          return SizedBox(width: 24.0, height: 24.0);
+                                        }
+                                        final child = childSnapshot.data!;
+                                        return Padding(
+                                          padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 8.0, 0.0),
+                                          child: Container(
+                                            width: 24.0,
+                                            height: 24.0,
+                                            decoration: BoxDecoration(
+                                              color: child.selectedColor ?? FlutterFlowTheme.of(context).primary,
+                                              shape: BoxShape.circle,
+                                            ),
+                                            child: Center(
+                                              child: Text(
+                                                child.name.isNotEmpty ? child.name[0].toLowerCase() : '?',
+                                                style: FlutterFlowTheme.of(context).bodySmall.override(
+                                                  fontFamily: 'Andika New Basic',
+                                                  color: Colors.white,
+                                                  fontSize: 11.0,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  // Only show lesson count if not fully complete (avoid overlap with Complete! badge)
+                                  if (!isFullyComplete) ...[
+                                    Icon(
+                                      Icons.content_paste,
+                                      color: FlutterFlowTheme.of(context).primaryText,
+                                      size: 18.0,
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsetsDirectional.fromSTEB(5.0, 0.0, 0.0, 0.0),
+                                      child: RichText(
+                                        textScaler: MediaQuery.of(context).textScaler,
+                                        text: TextSpan(
+                                          children: [
+                                            TextSpan(
+                                              text: valueOrDefault<String>(
+                                                pathItem.tasksCount.toString(),
+                                                '0',
+                                              ),
+                                              style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                    fontFamily: 'Andika New Basic',
+                                                    color: Color(0xAB000000),
+                                                    letterSpacing: 0.0,
+                                                  ),
+                                            ),
+                                            TextSpan(
+                                              text: ' lessons',
+                                              style: TextStyle(),
+                                            )
+                                          ],
+                                          style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                fontFamily: 'Andika New Basic',
+                                                color: Color(0xAB000000),
+                                                letterSpacing: 0.0,
+                                              ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsetsDirectional.fromSTEB(0.0, 5.0, 0.0, 0.0),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              Icon(
+                                Icons.calendar_today_outlined,
+                                color: FlutterFlowTheme.of(context).primaryText,
+                                size: 17.0,
+                              ),
+                              Padding(
+                                padding: EdgeInsetsDirectional.fromSTEB(3.0, 0.0, 0.0, 0.0),
+                                child: Text(
+                                  'Start: ${dateTimeFormat(
+                                    "M/d/yy",
+                                    pathItem.startDate,
+                                    locale: FFLocalizations.of(context).languageCode,
+                                  )}',
+                                  style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                        fontFamily: 'Andika New Basic',
+                                        fontSize: 10.0,
+                                        letterSpacing: 0.0,
+                                      ),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsetsDirectional.fromSTEB(9.0, 0.0, 0.0, 0.0),
+                                child: Icon(
+                                  Icons.calendar_today_outlined,
+                                  color: FlutterFlowTheme.of(context).primaryText,
+                                  size: 17.0,
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsetsDirectional.fromSTEB(3.0, 0.0, 0.0, 0.0),
+                                child: Text(
+                                  'End: ${dateTimeFormat(
+                                    "M/d/yy",
+                                    pathItem.endDate,
+                                    locale: FFLocalizations.of(context).languageCode,
+                                  )}',
+                                  style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                        fontFamily: 'Andika New Basic',
+                                        fontSize: 10.0,
+                                        letterSpacing: 0.0,
+                                      ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Row(
+                          mainAxisSize: MainAxisSize.max,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: Padding(
+                                padding: EdgeInsetsDirectional.fromSTEB(0.0, 20.0, 0.0, 0.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      valueOrDefault<String>(
+                                        pathItem.description,
+                                        'Personalized learning path',
+                                      ),
+                                      style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                            fontFamily: 'Andika New Basic',
+                                            color: Color(0xC2000000),
+                                            letterSpacing: 0.0,
+                                          ),
+                                    ),
+                                    // Completion celebration message
+                                    if (isFullyComplete) ...[
+                                      SizedBox(height: 12),
+                                      Container(
+                                        padding: EdgeInsets.all(12),
+                                        decoration: BoxDecoration(
+                                          color: Color(0xFF4CAF50).withOpacity(0.15),
+                                          borderRadius: BorderRadius.circular(10),
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            Text('🎉', style: TextStyle(fontSize: 20)),
+                                            SizedBox(width: 8),
+                                            Expanded(
+                                              child: Text(
+                                                'Amazing job! You completed all ${tasks.length} lessons!',
+                                                style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                  fontFamily: 'Andika New Basic',
+                                                  color: Color(0xFF2E7D32),
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ],
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 12),
+                            // Progress circle with more space
+                            SizedBox(
+                              width: 100,
+                              height: 100,
+                              child: Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  SizedBox(
+                                    width: 95,
+                                    height: 95,
+                                    child: CircularProgressIndicator(
+                                      value: progress,
+                                      strokeWidth: 9,
+                                      backgroundColor: isFullyComplete
+                                          ? Color(0xFF4CAF50).withOpacity(0.2)
+                                          : Color(0x5CFFD8E4),
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                        isFullyComplete ? Color(0xFF4CAF50) : FlutterFlowTheme.of(context).primary,
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    width: 70,
+                                    height: 70,
+                                    decoration: BoxDecoration(
+                                      color: FlutterFlowTheme.of(context).secondaryBackground,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        '${functions.formatNumbers(progress * 100).toString()}%',
+                                        style: FlutterFlowTheme.of(context).headlineSmall.override(
+                                              fontFamily: 'Andika New Basic',
+                                              color: isFullyComplete ? Color(0xFF4CAF50) : FlutterFlowTheme.of(context).primary,
+                                              fontSize: 18,
+                                              letterSpacing: 0.0,
+                                            ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 
@@ -483,288 +906,96 @@ class _LearnPathWidgetState extends State<LearnPathWidget>
                                       );
                                     }
 
+                                    // Separate active and completed paths
+                                    final activePaths = allPaths.where((p) =>
+                                        p.isCompleted != true &&
+                                        functions.compareTime(getCurrentTimestamp, p.endDate) == true
+                                    ).toList();
+                                    final completedPaths = allPaths.where((p) =>
+                                        p.isCompleted == true ||
+                                        functions.compareTime(getCurrentTimestamp, p.endDate) != true
+                                    ).toList();
+
                                     return SingleChildScrollView(
                                       padding: EdgeInsets.only(top: 16.0),
                                       child: Column(
                                         mainAxisSize: MainAxisSize.max,
-                                        children: List.generate(
-                                          allPaths.length,
-                                          (index) {
-                                            final pathItem = allPaths[index];
-                                            // Check if completed or expired
-                                            final isCompletedOrExpired =
-                                                pathItem.isCompleted == true ||
-                                                !functions.compareTime(getCurrentTimestamp, pathItem.endDate)!;
-
-                                            return Padding(
-                                              padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
-                                              child: StreamBuilder<List<LearningPathTasksRecord>>(
-                                                stream: queryLearningPathTasksRecord(
-                                                  queryBuilder: (q) => q
-                                                      .where('user_ref', isEqualTo: currentUserReference)
-                                                      .where('program_ref', isEqualTo: pathItem.reference),
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          // Active Learning Paths
+                                          if (activePaths.isNotEmpty) ...[
+                                            Padding(
+                                              padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 8.0),
+                                              child: Text(
+                                                'Active Learning Paths',
+                                                style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                  fontFamily: 'Andika New Basic',
+                                                  fontSize: 16.0,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: FlutterFlowTheme.of(context).primaryText,
                                                 ),
-                                                builder: (context, taskSnapshot) {
-                                                  if (!taskSnapshot.hasData) {
-                                                    return Center(
-                                                      child: SizedBox(
-                                                        width: 50.0,
-                                                        height: 50.0,
-                                                        child: CircularProgressIndicator(
-                                                          valueColor: AlwaysStoppedAnimation<Color>(
-                                                            FlutterFlowTheme.of(context).primary,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    );
-                                                  }
-                                                  final tasks = taskSnapshot.data!;
-                                                  final completedCount = tasks.where((e) => e.isCompleted).length;
-                                                  final progress = tasks.isNotEmpty ? completedCount / tasks.length : 0.0;
-
-                                                  return InkWell(
-                                                    splashColor: Colors.transparent,
-                                                    focusColor: Colors.transparent,
-                                                    hoverColor: Colors.transparent,
-                                                    highlightColor: Colors.transparent,
-                                                    onTap: () async {
-                                                      context.pushNamed(
-                                                        LearnPathDetialsWidget.routeName,
-                                                        queryParameters: {
-                                                          'leRef': serializeParam(
-                                                            pathItem.reference,
-                                                            ParamType.DocumentReference,
-                                                          ),
-                                                        }.withoutNulls,
-                                                      );
-                                                    },
-                                                    onLongPress: () {
-                                                      _showDeleteLearningPathDialog(
-                                                        context,
-                                                        pathItem.reference,
-                                                        pathItem.title,
-                                                      );
-                                                    },
-                                                    child: Opacity(
-                                                      opacity: isCompletedOrExpired ? 0.6 : 1.0,
-                                                      child: Container(
-                                                        width: double.infinity,
-                                                        decoration: BoxDecoration(
-                                                          color: Color(0x5AFFD8E4),
-                                                          borderRadius: BorderRadius.circular(14.0),
-                                                          border: Border.all(
-                                                            color: FlutterFlowTheme.of(context).primary,
-                                                            width: 1.0,
-                                                          ),
-                                                        ),
-                                                        child: Stack(
-                                                          children: [
-                                                            Padding(
-                                                              padding: EdgeInsetsDirectional.fromSTEB(8.0, 16.0, 8.0, 16.0),
-                                                              child: Column(
-                                                                mainAxisSize: MainAxisSize.max,
-                                                                children: [
-                                                                  Padding(
-                                                                    padding: EdgeInsetsDirectional.fromSTEB(0.0, 7.0, 0.0, 0.0),
-                                                                    child: Row(
-                                                                      mainAxisSize: MainAxisSize.max,
-                                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                      children: [
-                                                                        Expanded(
-                                                                          child: Padding(
-                                                                            padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 5.0, 0.0),
-                                                                            child: Text(
-                                                                              valueOrDefault<String>(
-                                                                                pathItem.title,
-                                                                                'Learning Path',
-                                                                              ),
-                                                                              style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                    fontFamily: 'Andika New Basic',
-                                                                                    letterSpacing: 0.0,
-                                                                                  ),
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                        Row(
-                                                                          mainAxisSize: MainAxisSize.max,
-                                                                          children: [
-                                                                            // Child avatar indicator
-                                                                            if (pathItem.childRef != null)
-                                                                              StreamBuilder<ChildernRecord>(
-                                                                                stream: ChildernRecord.getDocument(pathItem.childRef!),
-                                                                                builder: (context, childSnapshot) {
-                                                                                  if (!childSnapshot.hasData) {
-                                                                                    return SizedBox(width: 24.0, height: 24.0);
-                                                                                  }
-                                                                                  final child = childSnapshot.data!;
-                                                                                  return Padding(
-                                                                                    padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 8.0, 0.0),
-                                                                                    child: Container(
-                                                                                      width: 24.0,
-                                                                                      height: 24.0,
-                                                                                      decoration: BoxDecoration(
-                                                                                        color: child.selectedColor ?? FlutterFlowTheme.of(context).primary,
-                                                                                        shape: BoxShape.circle,
-                                                                                      ),
-                                                                                      child: Center(
-                                                                                        child: Text(
-                                                                                          child.name.isNotEmpty ? child.name[0].toUpperCase() : '?',
-                                                                                          style: FlutterFlowTheme.of(context).bodySmall.override(
-                                                                                            fontFamily: 'Andika New Basic',
-                                                                                            color: Colors.white,
-                                                                                            fontSize: 11.0,
-                                                                                            fontWeight: FontWeight.w600,
-                                                                                          ),
-                                                                                        ),
-                                                                                      ),
-                                                                                    ),
-                                                                                  );
-                                                                                },
-                                                                              ),
-                                                                            Icon(
-                                                                              Icons.content_paste,
-                                                                              color: FlutterFlowTheme.of(context).primaryText,
-                                                                              size: 18.0,
-                                                                            ),
-                                                                            Padding(
-                                                                              padding: EdgeInsetsDirectional.fromSTEB(5.0, 0.0, 0.0, 0.0),
-                                                                              child: RichText(
-                                                                                textScaler: MediaQuery.of(context).textScaler,
-                                                                                text: TextSpan(
-                                                                                  children: [
-                                                                                    TextSpan(
-                                                                                      text: valueOrDefault<String>(
-                                                                                        pathItem.tasksCount.toString(),
-                                                                                        '0',
-                                                                                      ),
-                                                                                      style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                            fontFamily: 'Andika New Basic',
-                                                                                            color: Color(0xAB000000),
-                                                                                            letterSpacing: 0.0,
-                                                                                          ),
-                                                                                    ),
-                                                                                    TextSpan(
-                                                                                      text: ' sessions',
-                                                                                      style: TextStyle(),
-                                                                                    )
-                                                                                  ],
-                                                                                  style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                        fontFamily: 'Andika New Basic',
-                                                                                        color: Color(0xAB000000),
-                                                                                        letterSpacing: 0.0,
-                                                                                      ),
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                  Padding(
-                                                                    padding: EdgeInsetsDirectional.fromSTEB(0.0, 5.0, 0.0, 0.0),
-                                                                    child: Row(
-                                                                      mainAxisSize: MainAxisSize.max,
-                                                                      children: [
-                                                                        Icon(
-                                                                          Icons.calendar_today_outlined,
-                                                                          color: FlutterFlowTheme.of(context).primaryText,
-                                                                          size: 17.0,
-                                                                        ),
-                                                                        Padding(
-                                                                          padding: EdgeInsetsDirectional.fromSTEB(3.0, 0.0, 0.0, 0.0),
-                                                                          child: Text(
-                                                                            'Start: ${dateTimeFormat(
-                                                                              "M/d/yy",
-                                                                              pathItem.startDate,
-                                                                              locale: FFLocalizations.of(context).languageCode,
-                                                                            )}',
-                                                                            style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                  fontFamily: 'Andika New Basic',
-                                                                                  fontSize: 10.0,
-                                                                                  letterSpacing: 0.0,
-                                                                                ),
-                                                                          ),
-                                                                        ),
-                                                                        Padding(
-                                                                          padding: EdgeInsetsDirectional.fromSTEB(9.0, 0.0, 0.0, 0.0),
-                                                                          child: Icon(
-                                                                            Icons.calendar_today_outlined,
-                                                                            color: FlutterFlowTheme.of(context).primaryText,
-                                                                            size: 17.0,
-                                                                          ),
-                                                                        ),
-                                                                        Padding(
-                                                                          padding: EdgeInsetsDirectional.fromSTEB(3.0, 0.0, 0.0, 0.0),
-                                                                          child: Text(
-                                                                            'End: ${dateTimeFormat(
-                                                                              "M/d/yy",
-                                                                              pathItem.endDate,
-                                                                              locale: FFLocalizations.of(context).languageCode,
-                                                                            )}',
-                                                                            style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                  fontFamily: 'Andika New Basic',
-                                                                                  fontSize: 10.0,
-                                                                                  letterSpacing: 0.0,
-                                                                                ),
-                                                                          ),
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                  Row(
-                                                                    mainAxisSize: MainAxisSize.max,
-                                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                                    children: [
-                                                                      Expanded(
-                                                                        child: Padding(
-                                                                          padding: EdgeInsetsDirectional.fromSTEB(0.0, 20.0, 0.0, 0.0),
-                                                                          child: Text(
-                                                                            valueOrDefault<String>(
-                                                                              pathItem.description,
-                                                                              'Personalized learning path',
-                                                                            ),
-                                                                            style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                  fontFamily: 'Andika New Basic',
-                                                                                  color: Color(0xC2000000),
-                                                                                  letterSpacing: 0.0,
-                                                                                ),
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                      CircularPercentIndicator(
-                                                                        percent: progress,
-                                                                        radius: 47.5,
-                                                                        lineWidth: 9.0,
-                                                                        animation: true,
-                                                                        animateFromLastPercent: true,
-                                                                        progressColor: FlutterFlowTheme.of(context).primary,
-                                                                        backgroundColor: Color(0x5CFFD8E4),
-                                                                        center: Text(
-                                                                          '${functions.formatNumbers(progress * 100).toString()}%',
-                                                                          style: FlutterFlowTheme.of(context).headlineSmall.override(
-                                                                                fontFamily: 'Andika New Basic',
-                                                                                color: FlutterFlowTheme.of(context).primary,
-                                                                                letterSpacing: 0.0,
-                                                                              ),
-                                                                        ),
-                                                                        startAngle: 90.0,
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  );
-                                                },
                                               ),
-                                            );
-                                          },
-                                        ).divide(SizedBox(height: 16.0)).addToEnd(SizedBox(height: 90.0)),
+                                            ),
+                                            ...activePaths.map((pathItem) => _buildPathCard(context, pathItem, false)),
+                                          ],
+                                          // Completed Learning Paths (Collapsible)
+                                          if (completedPaths.isNotEmpty) ...[
+                                            Padding(
+                                              padding: EdgeInsetsDirectional.fromSTEB(16.0, 16.0, 16.0, 0.0),
+                                              child: InkWell(
+                                                onTap: () {
+                                                  setState(() {
+                                                    _completedPathsExpanded = !_completedPathsExpanded;
+                                                  });
+                                                },
+                                                borderRadius: BorderRadius.circular(14.0),
+                                                child: Container(
+                                                  padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 12.0),
+                                                  decoration: BoxDecoration(
+                                                    color: Color(0xFF4CAF50).withOpacity(0.1),
+                                                    borderRadius: BorderRadius.circular(14.0),
+                                                    border: Border.all(color: Color(0xFF4CAF50).withOpacity(0.3)),
+                                                  ),
+                                                  child: Row(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: [
+                                                      Row(
+                                                        children: [
+                                                          Icon(
+                                                            Icons.check_circle,
+                                                            color: Color(0xFF4CAF50),
+                                                            size: 20.0,
+                                                          ),
+                                                          SizedBox(width: 8.0),
+                                                          Text(
+                                                            'Completed (${completedPaths.length})',
+                                                            style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                              fontFamily: 'Andika New Basic',
+                                                              fontSize: 15.0,
+                                                              fontWeight: FontWeight.w600,
+                                                              color: Color(0xFF4CAF50),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      Icon(
+                                                        _completedPathsExpanded
+                                                            ? Icons.keyboard_arrow_up
+                                                            : Icons.keyboard_arrow_down,
+                                                        color: Color(0xFF4CAF50),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            if (_completedPathsExpanded) ...[
+                                              SizedBox(height: 8.0),
+                                              ...completedPaths.map((pathItem) => _buildPathCard(context, pathItem, true)),
+                                            ],
+                                          ],
+                                          SizedBox(height: 90.0),
+                                        ],
                                       ),
                                     );
                                   },
@@ -781,7 +1012,7 @@ class _LearnPathWidgetState extends State<LearnPathWidget>
               const Align(
                 alignment: AlignmentDirectional(0.0, 1.0),
                 child: HomeNavBarWidget(
-                  currentPage: HomeNavPage.home,
+                  currentPage: HomeNavPage.homeSubpage,
                 ),
               ),
             ],

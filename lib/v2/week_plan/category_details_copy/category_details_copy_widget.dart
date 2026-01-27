@@ -53,7 +53,7 @@ class _CategoryDetailsCopyWidgetState extends State<CategoryDetailsCopyWidget> {
       },
       child: Scaffold(
         key: scaffoldKey,
-        backgroundColor: Color(0xFFFFF5F2),
+        backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
         body: SafeArea(
           top: true,
           child: Padding(
@@ -90,10 +90,10 @@ class _CategoryDetailsCopyWidgetState extends State<CategoryDetailsCopyWidget> {
                       color: Colors.transparent,
                       elevation: 2.0,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
+                        borderRadius: BorderRadius.circular(14.0),
                       ),
                       child: ClipRRect(
-                        borderRadius: BorderRadius.circular(10.0),
+                        borderRadius: BorderRadius.circular(14.0),
                         child: Container(
                           width: double.infinity,
                           decoration: BoxDecoration(
@@ -109,7 +109,7 @@ class _CategoryDetailsCopyWidgetState extends State<CategoryDetailsCopyWidget> {
                                 ),
                               )
                             ],
-                            borderRadius: BorderRadius.circular(10.0),
+                            borderRadius: BorderRadius.circular(14.0),
                             border: Border.all(
                               color: Color(0xFF999999),
                               width: 1.0,
@@ -242,6 +242,8 @@ class _CategoryDetailsCopyWidgetState extends State<CategoryDetailsCopyWidget> {
                                               highlightColor:
                                                   Colors.transparent,
                                               onTap: () async {
+                                                final navigator = Navigator.of(context);
+
                                                 for (int loop1Index = 0;
                                                     loop1Index <
                                                         widget!
@@ -253,22 +255,18 @@ class _CategoryDetailsCopyWidgetState extends State<CategoryDetailsCopyWidget> {
                                                           .itemDetails!
                                                           .extendedIngredients[
                                                       loop1Index];
-                                                  FFAppState()
+                                                  await FFAppState()
                                                       .addToUserGroceryList(
                                                           currentLoop1Item
                                                               .toString());
                                                   safeSetState(() {});
                                                 }
 
-                                                context.pushNamed(
+                                                navigator.pushNamed(
                                                   AddToGroceryWidget.routeName,
-                                                  queryParameters: {
-                                                    'isellectAll':
-                                                        serializeParam(
-                                                      true,
-                                                      ParamType.bool,
-                                                    ),
-                                                  }.withoutNulls,
+                                                  arguments: {
+                                                    'isellectAll': true,
+                                                  },
                                                 );
                                               },
                                               child: Container(

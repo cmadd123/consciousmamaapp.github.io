@@ -387,7 +387,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                     Padding(
                       padding: EdgeInsetsDirectional.fromSTEB(16.0, 4.0, 16.0, 0.0),
                       child: Text(
-                        'Works best with recipe blogs. Sites like Instagram, TikTok, and Etsy don\'t share recipe data — this is a limitation of those platforms, not Conscious Mama.',
+                        'Works best with recipe blogs. Sites like Instagram, TikTok, and Etsy don\'t share recipe data — this is a limitation of those platforms, not MomRise.',
                         textAlign: TextAlign.center,
                         style: FlutterFlowTheme.of(context).bodySmall.override(
                               fontFamily: 'Andika New Basic',
@@ -398,7 +398,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                       ),
                     ),
                     // Visual share flow - show when URL field is empty and not extracted
-                    // Flow: Share → Conscious Mama (house) → Recipe saved
+                    // Flow: Share → MomRise (house) → Recipe saved
                     if (!_model.hasExtracted && (_model.urlTextFieldTextController?.text.isEmpty ?? true))
                       Padding(
                         padding: const EdgeInsetsDirectional.fromSTEB(0.0, 20.0, 0.0, 0.0),
@@ -410,7 +410,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                               padding: const EdgeInsets.all(10.0),
                               decoration: BoxDecoration(
                                 color: const Color(0xFF999999).withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(10.0),
+                                borderRadius: BorderRadius.circular(14.0),
                               ),
                               child: const Icon(
                                 Icons.share,
@@ -422,16 +422,16 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                               padding: EdgeInsets.symmetric(horizontal: 10.0),
                               child: Icon(Icons.arrow_forward, size: 18.0, color: Color(0xFF999999)),
                             ),
-                            // Conscious Mama app logo
+                            // MomRise app logo
                             Container(
                               width: 44.0,
                               height: 44.0,
                               decoration: BoxDecoration(
                                 color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(10.0),
+                                borderRadius: BorderRadius.circular(14.0),
                               ),
                               child: ClipRRect(
-                                borderRadius: BorderRadius.circular(8.0),
+                                borderRadius: BorderRadius.circular(14.0),
                                 child: Image.asset(
                                   'assets/images/image_22.png',
                                   width: 44.0,
@@ -450,7 +450,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                               padding: const EdgeInsets.all(10.0),
                               decoration: BoxDecoration(
                                 color: const Color(0xFF9B8AA0).withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(10.0),
+                                borderRadius: BorderRadius.circular(14.0),
                               ),
                               child: const Icon(
                                 Icons.restaurant_menu,
@@ -467,7 +467,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                       child: Container(
                         decoration: BoxDecoration(
                           color: FlutterFlowTheme.of(context).prim30,
-                          borderRadius: BorderRadius.circular(10.0),
+                          borderRadius: BorderRadius.circular(14.0),
                           border: Border.all(
                             color: Color(0xFFCBE3E0),
                             width: 1.0,
@@ -491,19 +491,19 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                                       ),
                                   enabledBorder: OutlineInputBorder(
                                     borderSide: BorderSide(color: Color(0x00000000), width: 1.0),
-                                    borderRadius: BorderRadius.circular(8.0),
+                                    borderRadius: BorderRadius.circular(14.0),
                                   ),
                                   focusedBorder: OutlineInputBorder(
                                     borderSide: BorderSide(color: Color(0x00000000), width: 1.0),
-                                    borderRadius: BorderRadius.circular(8.0),
+                                    borderRadius: BorderRadius.circular(14.0),
                                   ),
                                   errorBorder: OutlineInputBorder(
                                     borderSide: BorderSide(color: FlutterFlowTheme.of(context).error, width: 1.0),
-                                    borderRadius: BorderRadius.circular(8.0),
+                                    borderRadius: BorderRadius.circular(14.0),
                                   ),
                                   focusedErrorBorder: OutlineInputBorder(
                                     borderSide: BorderSide(color: FlutterFlowTheme.of(context).error, width: 1.0),
-                                    borderRadius: BorderRadius.circular(8.0),
+                                    borderRadius: BorderRadius.circular(14.0),
                                   ),
                                 ),
                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
@@ -529,7 +529,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                                         letterSpacing: 0.0,
                                       ),
                                   elevation: 0.0,
-                                  borderRadius: BorderRadius.circular(8.0),
+                                  borderRadius: BorderRadius.circular(14.0),
                                   disabledColor: const Color(0xFFCCCCCC),
                                   disabledTextColor: Colors.white,
                                 ),
@@ -549,7 +549,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                             color: _model.hasExtracted
                                 ? const Color(0xFFFFF3E0)  // Light amber for warnings
                                 : const Color(0xFFFFEBEE), // Light red for errors
-                            borderRadius: BorderRadius.circular(8.0),
+                            borderRadius: BorderRadius.circular(14.0),
                           ),
                           child: Row(
                             children: [
@@ -609,7 +609,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                         Padding(
                           padding: EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
                           child: ClipRRect(
-                            borderRadius: BorderRadius.circular(10.0),
+                            borderRadius: BorderRadius.circular(14.0),
                             child: Image.network(
                               _model.mealImage!,
                               width: double.infinity,
@@ -776,7 +776,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                           width: double.infinity,
                           decoration: BoxDecoration(
                             color: FlutterFlowTheme.of(context).prim30,
-                            borderRadius: BorderRadius.circular(10.0),
+                            borderRadius: BorderRadius.circular(14.0),
                             border: Border.all(color: Color(0xFFCBE3E0), width: 1.0),
                           ),
                           child: Column(
@@ -874,7 +874,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                           width: double.infinity,
                           decoration: BoxDecoration(
                             color: FlutterFlowTheme.of(context).prim30,
-                            borderRadius: BorderRadius.circular(10.0),
+                            borderRadius: BorderRadius.circular(14.0),
                             border: Border.all(color: const Color(0xFFCBE3E0), width: 1.0),
                           ),
                           child: Column(
@@ -1176,7 +1176,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                                                         ? FlutterFlowTheme.of(context).primary
                                                         : const Color(0xFFCCCCCC),
                                                   ),
-                                                  borderRadius: BorderRadius.circular(8.0),
+                                                  borderRadius: BorderRadius.circular(14.0),
                                                 ),
                                                 child: Column(
                                                   mainAxisSize: MainAxisSize.min,
@@ -1281,7 +1281,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                                   color: FlutterFlowTheme.of(context).primary,
                                   width: 1.0,
                                 ),
-                                borderRadius: BorderRadius.circular(8.0),
+                                borderRadius: BorderRadius.circular(14.0),
                               ),
                             ),
                           ),
@@ -1304,7 +1304,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                                       letterSpacing: 0.0,
                                     ),
                                 elevation: 0.0,
-                                borderRadius: BorderRadius.circular(8.0),
+                                borderRadius: BorderRadius.circular(14.0),
                                 disabledColor: const Color(0xFFCCCCCC),
                               ),
                             ),

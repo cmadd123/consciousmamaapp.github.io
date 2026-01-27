@@ -203,7 +203,7 @@ class _ChildSummaryWidgetState extends State<ChildSummaryWidget> {
                       )
                     : Center(
                         child: Text(
-                          child.name.isNotEmpty ? child.name[0].toUpperCase() : 'C',
+                          child.name.isNotEmpty ? child.name[0].toLowerCase() : 'C',
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 32,
@@ -296,7 +296,7 @@ class _ChildSummaryWidgetState extends State<ChildSummaryWidget> {
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(14),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -304,7 +304,7 @@ class _ChildSummaryWidgetState extends State<ChildSummaryWidget> {
                           const Icon(Icons.star, color: Colors.white, size: 16),
                           const SizedBox(width: 4),
                           Text(
-                            "Today's Task",
+                            "Today's Lesson",
                             style: theme.bodySmall.override(
                               fontFamily: 'Andika New Basic',
                               color: Colors.white,
@@ -367,7 +367,7 @@ class _ChildSummaryWidgetState extends State<ChildSummaryWidget> {
                       backgroundColor: Colors.white,
                       foregroundColor: theme.primary,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(14),
                       ),
                     ),
                     child: const Text('Start Activity'),
@@ -597,7 +597,7 @@ class _ChildSummaryWidgetState extends State<ChildSummaryWidget> {
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       color: theme.secondaryBackground,
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(14),
                     ),
                     child: Row(
                       children: [

@@ -60,7 +60,7 @@ class _TasksWidgetState extends State<TasksWidget>
       },
       child: Scaffold(
         key: scaffoldKey,
-        backgroundColor: Color(0xFFFFF5F2),
+        backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
         body: SafeArea(
           top: true,
           child: Stack(
@@ -1207,7 +1207,7 @@ class _TasksWidgetState extends State<TasksWidget>
                                 letterSpacing: 0.0,
                               ),
                       elevation: 0.0,
-                      borderRadius: BorderRadius.circular(8.0),
+                      borderRadius: BorderRadius.circular(14.0),
                     ),
                   ),
                 ),

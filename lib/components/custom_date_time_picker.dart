@@ -9,6 +9,7 @@ class CustomDateTimePicker extends StatefulWidget {
   final DateTime? maximumDate;
   final bool showTime;
   final String title;
+  final int minuteInterval; // e.g., 1 for every minute, 5 for 5-minute increments, 15 for 15-minute increments
   final void Function(DateTime) onDateTimeChanged;
 
   const CustomDateTimePicker({
@@ -18,6 +19,7 @@ class CustomDateTimePicker extends StatefulWidget {
     this.maximumDate,
     this.showTime = true,
     this.title = 'Select Date & Time',
+    this.minuteInterval = 1,
     required this.onDateTimeChanged,
   });
 
@@ -55,13 +57,15 @@ class _CustomDateTimePickerState extends State<CustomDateTimePicker> {
     int hour24 = widget.initialDateTime.hour;
     _isPM = hour24 >= 12;
     _selectedHour = hour24 == 0 ? 12 : (hour24 > 12 ? hour24 - 12 : hour24);
-    _selectedMinute = widget.initialDateTime.minute;
+    // Round minute to nearest interval
+    _selectedMinute = (widget.initialDateTime.minute / widget.minuteInterval).round() * widget.minuteInterval;
+    if (_selectedMinute >= 60) _selectedMinute = 0;
 
     _monthController = FixedExtentScrollController(initialItem: _selectedMonth - 1);
     _dayController = FixedExtentScrollController(initialItem: _selectedDay - 1);
     _yearController = FixedExtentScrollController(initialItem: _selectedYear - _startYear);
     _hourController = FixedExtentScrollController(initialItem: _selectedHour - 1);
-    _minuteController = FixedExtentScrollController(initialItem: _selectedMinute);
+    _minuteController = FixedExtentScrollController(initialItem: _selectedMinute ~/ widget.minuteInterval);
     _ampmController = FixedExtentScrollController(initialItem: _isPM ? 1 : 0);
   }
 
@@ -114,16 +118,18 @@ class _CustomDateTimePickerState extends State<CustomDateTimePicker> {
       height: 200,
       child: Stack(
         children: [
-          // Selection highlight
-          Positioned(
-            top: 80,
-            left: 0,
-            right: 0,
+          // Selection highlight - moved to center properly
+          Center(
             child: Container(
-              height: 40,
+              height: 44,
+              margin: const EdgeInsets.symmetric(horizontal: 4),
               decoration: BoxDecoration(
-                color: FlutterFlowTheme.of(context).primary.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(8),
+                color: FlutterFlowTheme.of(context).primary.withOpacity(0.12),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                  color: FlutterFlowTheme.of(context).primary.withOpacity(0.3),
+                  width: 1.5,
+                ),
               ),
             ),
           ),
@@ -145,11 +151,11 @@ class _CustomDateTimePickerState extends State<CustomDateTimePicker> {
                     textAlign: centerText ? TextAlign.center : TextAlign.left,
                     style: FlutterFlowTheme.of(context).bodyLarge.override(
                       fontFamily: 'Andika New Basic',
-                      fontSize: isSelected ? 20 : 16,
-                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                      fontSize: isSelected ? 20 : 15,
+                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                       color: isSelected
                           ? FlutterFlowTheme.of(context).primary
-                          : FlutterFlowTheme.of(context).secondaryText,
+                          : FlutterFlowTheme.of(context).secondaryText.withOpacity(0.6),
                       letterSpacing: 0.0,
                     ),
                   ),
@@ -174,8 +180,9 @@ class _CustomDateTimePickerState extends State<CustomDateTimePicker> {
       });
     }
 
+    final bottomPadding = MediaQuery.of(context).viewPadding.bottom;
     return Container(
-      height: widget.showTime ? 400 : 340,
+      height: (widget.showTime ? 400 : 340) + bottomPadding,
       decoration: BoxDecoration(
         color: FlutterFlowTheme.of(context).secondaryBackground,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
@@ -349,12 +356,12 @@ class _CustomDateTimePickerState extends State<CustomDateTimePicker> {
                   // Minute wheel
                   _buildWheelPicker(
                     controller: _minuteController,
-                    itemCount: 60,
+                    itemCount: 60 ~/ widget.minuteInterval,
                     width: 60,
-                    itemBuilder: (index) => index.toString().padLeft(2, '0'),
+                    itemBuilder: (index) => (index * widget.minuteInterval).toString().padLeft(2, '0'),
                     onSelectedItemChanged: (index) {
                       setState(() {
-                        _selectedMinute = index;
+                        _selectedMinute = index * widget.minuteInterval;
                       });
                     },
                   ),
@@ -390,6 +397,7 @@ Future<DateTime?> showCustomDateTimePicker({
   DateTime? maximumDate,
   bool showTime = true,
   String title = 'Select Date & Time',
+  int minuteInterval = 1,
 }) async {
   DateTime selectedDateTime = initialDateTime;
 
@@ -404,6 +412,7 @@ Future<DateTime?> showCustomDateTimePicker({
         maximumDate: maximumDate,
         showTime: showTime,
         title: title,
+        minuteInterval: minuteInterval,
         onDateTimeChanged: (dateTime) {
           selectedDateTime = dateTime;
         },

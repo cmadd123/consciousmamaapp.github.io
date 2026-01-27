@@ -2,6 +2,7 @@ import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
 import '/backend/schema/enums/enums.dart';
 import '/components/empty_widget_component_widget.dart';
+import '/components/parent_circle_widget.dart';
 import '/flutter_flow/flutter_flow_calendar.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -30,6 +31,9 @@ class CalendarpageModel extends FlutterFlowModel<CalendarpageWidget> {
   // Parent filters
   bool filterByMom = false;
   bool filterByDad = false;
+
+  // Parent display info (loaded from current user)
+  ParentDisplayInfo parentInfo = ParentDisplayInfo.defaults();
 
   ///  State fields for stateful widgets in this page.
 

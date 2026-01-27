@@ -355,7 +355,7 @@ class _CreateMealComboWidgetState extends State<CreateMealComboWidget> {
       },
       child: Scaffold(
         key: scaffoldKey,
-        backgroundColor: Color(0xFFFFF5F2),
+        backgroundColor: FlutterFlowTheme.of(context).secondaryBackground, // White
         body: SafeArea(
           child: Stack(
             children: [
@@ -393,7 +393,7 @@ class _CreateMealComboWidgetState extends State<CreateMealComboWidget> {
                       padding: EdgeInsets.all(12.0),
                       decoration: BoxDecoration(
                         color: FlutterFlowTheme.of(context).primary.withOpacity(0.08),
-                        borderRadius: BorderRadius.circular(8.0),
+                        borderRadius: BorderRadius.circular(14.0),
                       ),
                       child: Row(
                         children: [
@@ -439,18 +439,18 @@ class _CreateMealComboWidgetState extends State<CreateMealComboWidget> {
                             decoration: InputDecoration(
                               hintText: 'e.g., Taco Tuesday',
                               filled: true,
-                              fillColor: Colors.white,
+                              fillColor: FlutterFlowTheme.of(context).prim30, // Teal
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12.0),
-                                borderSide: BorderSide(color: Color(0xFFE0E0E0)),
+                                borderRadius: BorderRadius.circular(14.0),
+                                borderSide: BorderSide(color: Color(0xFFCBE3E0)), // Teal border
                               ),
                               enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12.0),
-                                borderSide: BorderSide(color: Color(0xFFE0E0E0)),
+                                borderRadius: BorderRadius.circular(14.0),
+                                borderSide: BorderSide(color: Color(0xFFCBE3E0)),
                               ),
                               focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12.0),
-                                borderSide: BorderSide(color: FlutterFlowTheme.of(context).primary),
+                                borderRadius: BorderRadius.circular(14.0),
+                                borderSide: BorderSide(color: FlutterFlowTheme.of(context).primary, width: 1.5),
                               ),
                             ),
                           ),
@@ -536,7 +536,7 @@ class _CreateMealComboWidgetState extends State<CreateMealComboWidget> {
                                 color: _isLoading
                                     ? Colors.grey
                                     : FlutterFlowTheme.of(context).primary,
-                                borderRadius: BorderRadius.circular(12.0),
+                                borderRadius: BorderRadius.circular(14.0),
                               ),
                               child: Center(
                                 child: _isLoading
@@ -641,12 +641,12 @@ class _CreateMealComboWidgetState extends State<CreateMealComboWidget> {
   }) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(12.0),
+      borderRadius: BorderRadius.circular(14.0),
       child: Container(
         padding: EdgeInsets.all(16.0),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(12.0),
+          borderRadius: BorderRadius.circular(14.0),
           border: Border.all(
             color: isSelected ? FlutterFlowTheme.of(context).primary : Color(0xFFE0E0E0),
             width: isSelected ? 2.0 : 1.0,
@@ -871,7 +871,7 @@ class _RecipePickerSheet extends StatelessWidget {
                         padding: EdgeInsets.all(12.0),
                         decoration: BoxDecoration(
                           color: Color(0xFFFAFAFA),
-                          borderRadius: BorderRadius.circular(10.0),
+                          borderRadius: BorderRadius.circular(14.0),
                         ),
                         child: Row(
                           children: [
@@ -970,7 +970,7 @@ class _DrinkPickerSheet extends StatelessWidget {
                     padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
                     decoration: BoxDecoration(
                       color: isSelected ? FlutterFlowTheme.of(context).primary : Color(0xFFFAFAFA),
-                      borderRadius: BorderRadius.circular(10.0),
+                      borderRadius: BorderRadius.circular(14.0),
                       border: Border.all(
                         color: isSelected ? FlutterFlowTheme.of(context).primary : Color(0xFFE0E0E0),
                       ),

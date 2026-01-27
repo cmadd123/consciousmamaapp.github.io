@@ -287,7 +287,7 @@ class _FavoriteActivitiesWidgetState extends State<FavoriteActivitiesWidget> {
       padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
       decoration: BoxDecoration(
         color: isComfortMode ? Colors.transparent : backgroundColor,
-        borderRadius: BorderRadius.circular(12.0),
+        borderRadius: BorderRadius.circular(14.0),
         border: isComfortMode
           ? Border.all(color: Colors.white.withOpacity(0.3), width: 1.0)
           : null,
@@ -311,7 +311,7 @@ class _FavoriteActivitiesWidgetState extends State<FavoriteActivitiesWidget> {
       padding: EdgeInsets.all(20.0),
       decoration: BoxDecoration(
         color: isComfortMode ? Colors.transparent : FlutterFlowTheme.of(context).secondaryBackground,
-        borderRadius: BorderRadius.circular(16.0),
+        borderRadius: BorderRadius.circular(14.0),
         border: isComfortMode
           ? Border.all(color: Colors.white.withOpacity(0.3), width: 1.0)
           : null,

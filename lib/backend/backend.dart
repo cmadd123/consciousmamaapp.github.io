@@ -24,6 +24,10 @@ import 'schema/fav_activity_record.dart';
 import 'schema/favourit_meal_record.dart';
 import 'schema/event_and_task_record.dart';
 import 'schema/meal_combo_record.dart';
+import 'schema/shared_content_record.dart';
+import 'schema/todo_record.dart';
+import 'schema/planned_activity_record.dart';
+import 'schema/user_activity_record.dart';
 
 export 'dart:async' show StreamSubscription;
 export 'package:cloud_firestore/cloud_firestore.dart' hide Order;
@@ -51,6 +55,10 @@ export 'schema/fav_activity_record.dart';
 export 'schema/favourit_meal_record.dart';
 export 'schema/event_and_task_record.dart';
 export 'schema/meal_combo_record.dart';
+export 'schema/shared_content_record.dart';
+export 'schema/todo_record.dart';
+export 'schema/planned_activity_record.dart';
+export 'schema/user_activity_record.dart';
 
 /// Functions to query UsersRecords (as a Stream and as a Future).
 Future<int> queryUsersRecordCount({
@@ -755,6 +763,117 @@ Future<List<MealComboRecord>> queryMealComboRecordOnce({
     queryCollectionOnce(
       MealComboRecord.collection,
       MealComboRecord.fromSnapshot,
+      queryBuilder: queryBuilder,
+      limit: limit,
+      singleRecord: singleRecord,
+    );
+
+/// Functions to query TodoRecords (as a Stream and as a Future).
+Future<int> queryTodoRecordCount({
+  Query Function(Query)? queryBuilder,
+  int limit = -1,
+}) =>
+    queryCollectionCount(
+      TodoRecord.collection,
+      queryBuilder: queryBuilder,
+      limit: limit,
+    );
+
+Stream<List<TodoRecord>> queryTodoRecord({
+  Query Function(Query)? queryBuilder,
+  int limit = -1,
+  bool singleRecord = false,
+}) =>
+    queryCollection(
+      TodoRecord.collection,
+      TodoRecord.fromSnapshot,
+      queryBuilder: queryBuilder,
+      limit: limit,
+      singleRecord: singleRecord,
+    );
+
+Future<List<TodoRecord>> queryTodoRecordOnce({
+  Query Function(Query)? queryBuilder,
+  int limit = -1,
+  bool singleRecord = false,
+}) =>
+    queryCollectionOnce(
+      TodoRecord.collection,
+      TodoRecord.fromSnapshot,
+      queryBuilder: queryBuilder,
+      limit: limit,
+      singleRecord: singleRecord,
+    );
+
+/// Functions to query PlannedActivityRecords (as a Stream and as a Future).
+Future<int> queryPlannedActivityRecordCount({
+  Query Function(Query)? queryBuilder,
+  int limit = -1,
+}) =>
+    queryCollectionCount(
+      PlannedActivityRecord.collection,
+      queryBuilder: queryBuilder,
+      limit: limit,
+    );
+
+Stream<List<PlannedActivityRecord>> queryPlannedActivityRecord({
+  Query Function(Query)? queryBuilder,
+  int limit = -1,
+  bool singleRecord = false,
+}) =>
+    queryCollection(
+      PlannedActivityRecord.collection,
+      PlannedActivityRecord.fromSnapshot,
+      queryBuilder: queryBuilder,
+      limit: limit,
+      singleRecord: singleRecord,
+    );
+
+Future<List<PlannedActivityRecord>> queryPlannedActivityRecordOnce({
+  Query Function(Query)? queryBuilder,
+  int limit = -1,
+  bool singleRecord = false,
+}) =>
+    queryCollectionOnce(
+      PlannedActivityRecord.collection,
+      PlannedActivityRecord.fromSnapshot,
+      queryBuilder: queryBuilder,
+      limit: limit,
+      singleRecord: singleRecord,
+    );
+
+/// Functions to query UserActivityRecords (as a Stream and as a Future).
+Future<int> queryUserActivityRecordCount({
+  Query Function(Query)? queryBuilder,
+  int limit = -1,
+}) =>
+    queryCollectionCount(
+      UserActivityRecord.collection,
+      queryBuilder: queryBuilder,
+      limit: limit,
+    );
+
+Stream<List<UserActivityRecord>> queryUserActivityRecord({
+  Query Function(Query)? queryBuilder,
+  int limit = -1,
+  bool singleRecord = false,
+}) =>
+    queryCollection(
+      UserActivityRecord.collection,
+      UserActivityRecord.fromSnapshot,
+      queryBuilder: queryBuilder,
+      limit: limit,
+      singleRecord: singleRecord,
+    );
+
+Future<List<UserActivityRecord>> queryUserActivityRecordOnce({
+  Query Function(Query)? queryBuilder,
+  int limit = -1,
+  bool singleRecord = false,
+}) =>
+    queryCollectionOnce(
+      UserActivityRecord.collection,
+      UserActivityRecord.fromSnapshot,
       queryBuilder: queryBuilder,
       limit: limit,
       singleRecord: singleRecord,

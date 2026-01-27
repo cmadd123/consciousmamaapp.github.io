@@ -61,7 +61,7 @@ class _ActivitiesV2WidgetState extends State<ActivitiesV2Widget>
         key: scaffoldKey,
         backgroundColor: FFAppState().isComfortMode
             ? const Color(0xFF2C3E50)
-            : const Color(0xFFFFF5F2),
+            : FlutterFlowTheme.of(context).secondaryBackground,
         floatingActionButton: Padding(
           padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 32.0, 50.0),
           child: FloatingActionButton(
@@ -381,7 +381,7 @@ class _ActivitiesV2WidgetState extends State<ActivitiesV2Widget>
               const Align(
                 alignment: AlignmentDirectional(0.0, 1.0),
                 child: HomeNavBarWidget(
-                  currentPage: HomeNavPage.activities,
+                  currentPage: HomeNavPage.home,
                 ),
               ),
             ],

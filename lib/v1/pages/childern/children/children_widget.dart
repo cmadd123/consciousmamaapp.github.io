@@ -5,10 +5,9 @@ import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/v1/empty_list_view_component/empty_list_view_component_widget.dart';
 import '/components/home_nav_bar_widget.dart';
-import '/v1/pages/childern/add_new_child/add_new_child_widget.dart';
 import '/v1/pages/childern/childen_edit_pop_up_c/childen_edit_pop_up_c_widget.dart';
 import '/v1/pages/childern/childend_delet_pop_up/childend_delet_pop_up_widget.dart';
-import '/components/puzzle_progress_widget.dart';
+// Puzzle widget removed - using simple progress bar instead
 import '/components/milestone_category_progress_widget.dart';
 import '/index.dart';
 import 'dart:ui';
@@ -21,7 +20,12 @@ import 'children_model.dart';
 export 'children_model.dart';
 
 class ChildrenWidget extends StatefulWidget {
-  const ChildrenWidget({super.key});
+  const ChildrenWidget({
+    super.key,
+    this.childRef,
+  });
+
+  final DocumentReference? childRef;
 
   static String routeName = 'Children';
   static String routePath = '/children';
@@ -65,27 +69,11 @@ class _ChildrenWidgetState extends State<ChildrenWidget> {
             padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 75.0),
             child: FloatingActionButton(
               onPressed: () async {
-                await showDialog(
-                  context: context,
-                  builder: (dialogContext) {
-                    return Dialog(
-                      elevation: 0,
-                      insetPadding: EdgeInsets.zero,
-                      backgroundColor: Colors.transparent,
-                      alignment: const AlignmentDirectional(0.0, 0.0)
-                          .resolve(Directionality.of(context)),
-                      child: GestureDetector(
-                        onTap: () {
-                          FocusScope.of(dialogContext).unfocus();
-                          FocusManager.instance.primaryFocus?.unfocus();
-                        },
-                        child: Container(
-                          height: 500.0,
-                          width: 500.0,
-                          child: AddNewChildWidget(),
-                        ),
-                      ),
-                    );
+                // Navigate to full-page Add Child flow
+                context.pushNamed(
+                  AddChildxWidget.routeName,
+                  queryParameters: {
+                    'isFirst': serializeParam(false, ParamType.bool),
                   },
                 );
               },
@@ -133,6 +121,16 @@ class _ChildrenWidgetState extends State<ChildrenWidget> {
                   // Ensure selected index is valid
                   if (_selectedChildIndex >= children.length) {
                     _selectedChildIndex = 0;
+                  }
+
+                  // If a specific child was requested, find and select them
+                  if (widget.childRef != null && _selectedChildIndex == 0) {
+                    final requestedIndex = children.indexWhere(
+                      (c) => c.reference.path == widget.childRef!.path,
+                    );
+                    if (requestedIndex >= 0) {
+                      _selectedChildIndex = requestedIndex;
+                    }
                   }
 
                   final selectedChild = children[_selectedChildIndex];
@@ -264,7 +262,7 @@ class _ChildrenWidgetState extends State<ChildrenWidget> {
                                     onTap: () {
                                       // Set the selected child for milestones page
                                       FFAppState().selectedChildForMilestone = selectedChild.reference;
-                                      context.pushNamed(MilestonessWidget.routeName);
+                                      context.pushNamed(MilstonesWidget.routeName);
                                     },
                                   ),
                                 ),
@@ -278,9 +276,9 @@ class _ChildrenWidgetState extends State<ChildrenWidget> {
               ),
 
               // Bottom navbar
-              Align(
+              const Align(
                 alignment: Alignment.bottomCenter,
-                child: HomeNavBarWidget(currentPage: HomeNavPage.activities),
+                child: HomeNavBarWidget(currentPage: HomeNavPage.home),
               ),
             ],
           ),
@@ -479,7 +477,7 @@ class _ChildrenWidgetState extends State<ChildrenWidget> {
                           const Icon(Icons.star, color: Colors.white, size: 16),
                           const SizedBox(width: 4),
                           Text(
-                            "Today's Task",
+                            "Today's Lesson",
                             style: theme.bodySmall.override(
                               fontFamily: 'Andika New Basic',
                               color: Colors.white,
@@ -624,12 +622,44 @@ class _ChildrenWidgetState extends State<ChildrenWidget> {
             ),
             child: Row(
               children: [
-                PuzzleProgressWidget(
-                  themeId: path.puzzleTheme,
-                  completedTasks: completedCount,
-                  totalTasks: path.tasksCount,
-                  size: 60,
-                  showLabel: false,
+                // Progress circle instead of puzzle
+                SizedBox(
+                  width: 56,
+                  height: 56,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      SizedBox(
+                        width: 56,
+                        height: 56,
+                        child: CircularProgressIndicator(
+                          value: path.tasksCount > 0 ? completedCount / path.tasksCount : 0,
+                          strokeWidth: 5,
+                          backgroundColor: theme.primary.withOpacity(0.15),
+                          valueColor: AlwaysStoppedAnimation<Color>(theme.primary),
+                        ),
+                      ),
+                      Container(
+                        width: 42,
+                        height: 42,
+                        decoration: BoxDecoration(
+                          color: theme.secondaryBackground,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Center(
+                          child: Text(
+                            '${((path.tasksCount > 0 ? completedCount / path.tasksCount : 0) * 100).round()}%',
+                            style: theme.bodySmall.override(
+                              fontFamily: 'Andika New Basic',
+                              color: theme.primary,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
@@ -647,7 +677,7 @@ class _ChildrenWidgetState extends State<ChildrenWidget> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '$completedCount of ${path.tasksCount} tasks',
+                        '$completedCount of ${path.tasksCount} lessons',
                         style: theme.bodySmall.override(
                           fontFamily: 'Andika New Basic',
                           color: theme.secondaryText,

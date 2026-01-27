@@ -26,11 +26,25 @@ Future<void> clearAndReuploadActivities() async {
 
     // Step 2: Upload new activities with complete data
     print('\n--- Uploading new activities ---');
+    print('📂 Loading JSON file: assets/jsons/activities_complete.json');
     final String jsonString = await rootBundle.loadString('assets/jsons/activities_complete.json');
+    print('📄 JSON file loaded, size: ${jsonString.length} characters');
+
     final Map<String, dynamic> data = json.decode(jsonString);
     final List<dynamic> activities = data['activities'];
 
-    print('Found ${activities.length} activities to upload');
+    print('📊 Found ${activities.length} activities to upload from JSON');
+
+    if (activities.isEmpty) {
+      print('❌ ERROR: No activities found in JSON!');
+      return;
+    }
+
+    // Print first few activity titles for verification
+    print('📝 First 3 activities:');
+    for (int i = 0; i < 3 && i < activities.length; i++) {
+      print('   ${i + 1}. ${activities[i]['title']}');
+    }
 
     int successCount = 0;
     int errorCount = 0;
@@ -44,13 +58,9 @@ Future<void> clearAndReuploadActivities() async {
           print('⚠ Warning: Activity ${activity['title']} has no description');
         }
 
-        // Map field names to match Firestore schema
-        // The schema expects 'Description' (capital D) but JSON has 'description' (lowercase)
+        // Upload as-is - activity_record.dart already handles both lowercase and capitalized fields
+        // Keep lowercase for consistency with JSON source
         final Map<String, dynamic> firestoreData = Map.from(activity);
-        if (firestoreData.containsKey('description')) {
-          firestoreData['Description'] = firestoreData['description'];
-          firestoreData.remove('description');
-        }
 
         await activityCollection.add(firestoreData);
         successCount++;

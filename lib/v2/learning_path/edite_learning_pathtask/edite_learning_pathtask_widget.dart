@@ -1,5 +1,6 @@
 import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
+import '/components/custom_date_time_picker.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
@@ -114,7 +115,7 @@ class _EditeLearningPathtaskWidgetState
                         padding:
                             EdgeInsetsDirectional.fromSTEB(0.0, 20.0, 0.0, 0.0),
                         child: Text(
-                          'Edit your task details below to update',
+                          'Edit your lesson details below to update',
                           style:
                               FlutterFlowTheme.of(context).bodyMedium.override(
                                     fontFamily: 'Andika New Basic',
@@ -132,7 +133,7 @@ class _EditeLearningPathtaskWidgetState
                         height: 52.0,
                         decoration: BoxDecoration(
                           color: FlutterFlowTheme.of(context).prim30,
-                          borderRadius: BorderRadius.circular(29.0),
+                          borderRadius: BorderRadius.circular(14.0),
                           border: Border.all(
                             color: Color(0xFFCBE3E0),
                             width: 1.0,
@@ -171,28 +172,28 @@ class _EditeLearningPathtaskWidgetState
                                   color: Color(0x00000000),
                                   width: 1.0,
                                 ),
-                                borderRadius: BorderRadius.circular(8.0),
+                                borderRadius: BorderRadius.circular(14.0),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderSide: BorderSide(
                                   color: Color(0x00000000),
                                   width: 1.0,
                                 ),
-                                borderRadius: BorderRadius.circular(8.0),
+                                borderRadius: BorderRadius.circular(14.0),
                               ),
                               errorBorder: OutlineInputBorder(
                                 borderSide: BorderSide(
                                   color: FlutterFlowTheme.of(context).error,
                                   width: 1.0,
                                 ),
-                                borderRadius: BorderRadius.circular(8.0),
+                                borderRadius: BorderRadius.circular(14.0),
                               ),
                               focusedErrorBorder: OutlineInputBorder(
                                 borderSide: BorderSide(
                                   color: FlutterFlowTheme.of(context).error,
                                   width: 1.0,
                                 ),
-                                borderRadius: BorderRadius.circular(8.0),
+                                borderRadius: BorderRadius.circular(14.0),
                               ),
                             ),
                             style: FlutterFlowTheme.of(context)
@@ -224,58 +225,18 @@ class _EditeLearningPathtaskWidgetState
                               hoverColor: Colors.transparent,
                               highlightColor: Colors.transparent,
                               onTap: () async {
-                                final _datePickedDate = await showDatePicker(
+                                final selectedDate = await showCustomDateTimePicker(
                                   context: context,
-                                  initialDate: getCurrentTimestamp,
-                                  firstDate:
-                                      (getCurrentTimestamp ?? DateTime(1900)),
-                                  lastDate: DateTime(2050),
-                                  builder: (context, child) {
-                                    return wrapInMaterialDatePickerTheme(
-                                      context,
-                                      child!,
-                                      headerBackgroundColor:
-                                          FlutterFlowTheme.of(context).primary,
-                                      headerForegroundColor:
-                                          FlutterFlowTheme.of(context).info,
-                                      headerTextStyle:
-                                          FlutterFlowTheme.of(context)
-                                              .headlineLarge
-                                              .override(
-                                                fontFamily: 'Andika New Basic',
-                                                fontSize: 32.0,
-                                                letterSpacing: 0.0,
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                      pickerBackgroundColor:
-                                          FlutterFlowTheme.of(context)
-                                              .secondaryBackground,
-                                      pickerForegroundColor:
-                                          FlutterFlowTheme.of(context)
-                                              .primaryText,
-                                      selectedDateTimeBackgroundColor:
-                                          FlutterFlowTheme.of(context).primary,
-                                      selectedDateTimeForegroundColor:
-                                          FlutterFlowTheme.of(context).info,
-                                      actionButtonForegroundColor:
-                                          FlutterFlowTheme.of(context)
-                                              .primaryText,
-                                      iconSize: 24.0,
-                                    );
-                                  },
+                                  initialDateTime: _model.datePicked ?? getCurrentTimestamp,
+                                  minimumDate: DateTime(2020),
+                                  maximumDate: DateTime(2050),
+                                  showTime: false, // Date only for learning path tasks
+                                  title: 'Select Date',
                                 );
 
-                                if (_datePickedDate != null) {
+                                if (selectedDate != null) {
                                   safeSetState(() {
-                                    _model.datePicked = DateTime(
-                                      _datePickedDate.year,
-                                      _datePickedDate.month,
-                                      _datePickedDate.day,
-                                    );
-                                  });
-                                } else if (_model.datePicked != null) {
-                                  safeSetState(() {
-                                    _model.datePicked = getCurrentTimestamp;
+                                    _model.datePicked = selectedDate;
                                   });
                                 }
                                 _model.selectedDate = _model.datePicked;
@@ -286,7 +247,7 @@ class _EditeLearningPathtaskWidgetState
                                 height: 52.0,
                                 decoration: BoxDecoration(
                                   color: FlutterFlowTheme.of(context).prim30,
-                                  borderRadius: BorderRadius.circular(29.0),
+                                  borderRadius: BorderRadius.circular(14.0),
                                   border: Border.all(
                                     color: Color(0xFFCBE3E0),
                                     width: 1.0,
@@ -349,7 +310,7 @@ class _EditeLearningPathtaskWidgetState
                       child: Container(
                         decoration: BoxDecoration(
                           color: FlutterFlowTheme.of(context).prim30,
-                          borderRadius: BorderRadius.circular(29.0),
+                          borderRadius: BorderRadius.circular(14.0),
                           border: Border.all(
                             color: Color(0xFFCBE3E0),
                             width: 1.0,
@@ -389,28 +350,28 @@ class _EditeLearningPathtaskWidgetState
                                   color: Color(0x00000000),
                                   width: 1.0,
                                 ),
-                                borderRadius: BorderRadius.circular(8.0),
+                                borderRadius: BorderRadius.circular(14.0),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderSide: BorderSide(
                                   color: Color(0x00000000),
                                   width: 1.0,
                                 ),
-                                borderRadius: BorderRadius.circular(8.0),
+                                borderRadius: BorderRadius.circular(14.0),
                               ),
                               errorBorder: OutlineInputBorder(
                                 borderSide: BorderSide(
                                   color: FlutterFlowTheme.of(context).error,
                                   width: 1.0,
                                 ),
-                                borderRadius: BorderRadius.circular(8.0),
+                                borderRadius: BorderRadius.circular(14.0),
                               ),
                               focusedErrorBorder: OutlineInputBorder(
                                 borderSide: BorderSide(
                                   color: FlutterFlowTheme.of(context).error,
                                   width: 1.0,
                                 ),
-                                borderRadius: BorderRadius.circular(8.0),
+                                borderRadius: BorderRadius.circular(14.0),
                               ),
                             ),
                             style: FlutterFlowTheme.of(context)
@@ -437,7 +398,7 @@ class _EditeLearningPathtaskWidgetState
                         height: 52.0,
                         decoration: BoxDecoration(
                           color: FlutterFlowTheme.of(context).prim30,
-                          borderRadius: BorderRadius.circular(29.0),
+                          borderRadius: BorderRadius.circular(14.0),
                           border: Border.all(
                             color: Color(0xFFCBE3E0),
                             width: 1.0,
@@ -476,28 +437,28 @@ class _EditeLearningPathtaskWidgetState
                                   color: Color(0x00000000),
                                   width: 1.0,
                                 ),
-                                borderRadius: BorderRadius.circular(8.0),
+                                borderRadius: BorderRadius.circular(14.0),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderSide: BorderSide(
                                   color: Color(0x00000000),
                                   width: 1.0,
                                 ),
-                                borderRadius: BorderRadius.circular(8.0),
+                                borderRadius: BorderRadius.circular(14.0),
                               ),
                               errorBorder: OutlineInputBorder(
                                 borderSide: BorderSide(
                                   color: FlutterFlowTheme.of(context).error,
                                   width: 1.0,
                                 ),
-                                borderRadius: BorderRadius.circular(8.0),
+                                borderRadius: BorderRadius.circular(14.0),
                               ),
                               focusedErrorBorder: OutlineInputBorder(
                                 borderSide: BorderSide(
                                   color: FlutterFlowTheme.of(context).error,
                                   width: 1.0,
                                 ),
-                                borderRadius: BorderRadius.circular(8.0),
+                                borderRadius: BorderRadius.circular(14.0),
                               ),
                             ),
                             style: FlutterFlowTheme.of(context)
@@ -527,7 +488,7 @@ class _EditeLearningPathtaskWidgetState
                         ),
                         decoration: BoxDecoration(
                           color: FlutterFlowTheme.of(context).prim30,
-                          borderRadius: BorderRadius.circular(29.0),
+                          borderRadius: BorderRadius.circular(14.0),
                           border: Border.all(
                             color: Color(0xFFCBE3E0),
                             width: 1.0,
@@ -774,7 +735,7 @@ class _EditeLearningPathtaskWidgetState
                                   color: FlutterFlowTheme.of(context).primary,
                                   width: 1.0,
                                 ),
-                                borderRadius: BorderRadius.circular(8.0),
+                                borderRadius: BorderRadius.circular(14.0),
                               ),
                             ),
                           ),
@@ -832,7 +793,7 @@ class _EditeLearningPathtaskWidgetState
                                       letterSpacing: 0.0,
                                     ),
                                 elevation: 0.0,
-                                borderRadius: BorderRadius.circular(8.0),
+                                borderRadius: BorderRadius.circular(14.0),
                               ),
                             ),
                           ),

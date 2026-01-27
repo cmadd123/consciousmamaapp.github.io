@@ -82,7 +82,7 @@ class _GetStartedWidgetState extends State<GetStartedWidget> {
                           child: Align(
                             alignment: AlignmentDirectional(-1.0, 0.0),
                             child: ClipRRect(
-                              borderRadius: BorderRadius.circular(8.0),
+                              borderRadius: BorderRadius.circular(14.0),
                               child: Image.asset(
                                 'assets/images/image_22.png',
                                 width: 200.0,

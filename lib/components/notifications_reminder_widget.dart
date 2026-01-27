@@ -54,7 +54,7 @@ class _NotificationsReminderWidgetState
         height: 210.0,
         decoration: BoxDecoration(
           color: Color(0xFFFFF5F2),
-          borderRadius: BorderRadius.circular(8.0),
+          borderRadius: BorderRadius.circular(14.0),
         ),
         child: Padding(
           padding: EdgeInsetsDirectional.fromSTEB(21.0, 21.0, 21.0, 21.0),

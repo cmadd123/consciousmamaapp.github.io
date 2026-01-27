@@ -88,7 +88,7 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget> {
                             child: Container(
                               decoration: BoxDecoration(
                                 color: Colors.white,
-                                borderRadius: BorderRadius.circular(27.0),
+                                borderRadius: BorderRadius.circular(14.0),
                               ),
                             ),
                           ),
@@ -397,7 +397,7 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget> {
                                               ),
                                               child: ClipRRect(
                                                 borderRadius:
-                                                    BorderRadius.circular(8.0),
+                                                    BorderRadius.circular(14.0),
                                                 child: Image.asset(
                                                   'assets/images/Item.png',
                                                   width: 200.0,
@@ -511,7 +511,7 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget> {
                                               ),
                                               child: ClipRRect(
                                                 borderRadius:
-                                                    BorderRadius.circular(8.0),
+                                                    BorderRadius.circular(14.0),
                                                 child: Image.asset(
                                                   'assets/images/Item.png',
                                                   width: 200.0,
@@ -625,7 +625,7 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget> {
                                               ),
                                               child: ClipRRect(
                                                 borderRadius:
-                                                    BorderRadius.circular(8.0),
+                                                    BorderRadius.circular(14.0),
                                                 child: Image.asset(
                                                   'assets/images/Item.png',
                                                   width: 200.0,

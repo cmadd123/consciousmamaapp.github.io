@@ -62,6 +62,7 @@ class _AddEventWidgetState extends State<AddEventWidget> {
       maximumDate: DateTime(2050),
       showTime: true,
       title: 'Select Date & Time',
+      minuteInterval: 5,
     );
 
     if (selectedDate != null) {
@@ -230,7 +231,7 @@ class _AddEventWidgetState extends State<AddEventWidget> {
                                                         child: Center(
                                                           child: Text(
                                                             rowChildernRecord.name.isNotEmpty
-                                                                ? rowChildernRecord.name[0].toUpperCase()
+                                                                ? rowChildernRecord.name[0].toLowerCase()
                                                                 : 'C',
                                                             style: const TextStyle(
                                                               color: Colors.white,
@@ -466,7 +467,7 @@ class _AddEventWidgetState extends State<AddEventWidget> {
                             height: 52.0,
                             decoration: BoxDecoration(
                               color: FlutterFlowTheme.of(context).prim30,
-                              borderRadius: BorderRadius.circular(29.0),
+                              borderRadius: BorderRadius.circular(14.0),
                               border: Border.all(
                                 color: Color(0xFFCBE3E0),
                                 width: 1.0,
@@ -505,28 +506,28 @@ class _AddEventWidgetState extends State<AddEventWidget> {
                                       color: Color(0x00000000),
                                       width: 1.0,
                                     ),
-                                    borderRadius: BorderRadius.circular(8.0),
+                                    borderRadius: BorderRadius.circular(14.0),
                                   ),
                                   focusedBorder: OutlineInputBorder(
                                     borderSide: BorderSide(
                                       color: Color(0x00000000),
                                       width: 1.0,
                                     ),
-                                    borderRadius: BorderRadius.circular(8.0),
+                                    borderRadius: BorderRadius.circular(14.0),
                                   ),
                                   errorBorder: OutlineInputBorder(
                                     borderSide: BorderSide(
                                       color: FlutterFlowTheme.of(context).error,
                                       width: 1.0,
                                     ),
-                                    borderRadius: BorderRadius.circular(8.0),
+                                    borderRadius: BorderRadius.circular(14.0),
                                   ),
                                   focusedErrorBorder: OutlineInputBorder(
                                     borderSide: BorderSide(
                                       color: FlutterFlowTheme.of(context).error,
                                       width: 1.0,
                                     ),
-                                    borderRadius: BorderRadius.circular(8.0),
+                                    borderRadius: BorderRadius.circular(14.0),
                                   ),
                                 ),
                                 style: FlutterFlowTheme.of(context)
@@ -566,7 +567,7 @@ class _AddEventWidgetState extends State<AddEventWidget> {
                                     decoration: BoxDecoration(
                                       color:
                                           FlutterFlowTheme.of(context).prim30,
-                                      borderRadius: BorderRadius.circular(29.0),
+                                      borderRadius: BorderRadius.circular(14.0),
                                       border: Border.all(
                                         color: Color(0xFFCBE3E0),
                                         width: 1.0,
@@ -644,7 +645,7 @@ class _AddEventWidgetState extends State<AddEventWidget> {
                           child: Container(
                             decoration: BoxDecoration(
                               color: FlutterFlowTheme.of(context).prim30,
-                              borderRadius: BorderRadius.circular(29.0),
+                              borderRadius: BorderRadius.circular(14.0),
                               border: Border.all(
                                 color: Color(0xFFCBE3E0),
                                 width: 1.0,
@@ -683,28 +684,28 @@ class _AddEventWidgetState extends State<AddEventWidget> {
                                       color: Color(0x00000000),
                                       width: 1.0,
                                     ),
-                                    borderRadius: BorderRadius.circular(8.0),
+                                    borderRadius: BorderRadius.circular(14.0),
                                   ),
                                   focusedBorder: OutlineInputBorder(
                                     borderSide: BorderSide(
                                       color: Color(0x00000000),
                                       width: 1.0,
                                     ),
-                                    borderRadius: BorderRadius.circular(8.0),
+                                    borderRadius: BorderRadius.circular(14.0),
                                   ),
                                   errorBorder: OutlineInputBorder(
                                     borderSide: BorderSide(
                                       color: FlutterFlowTheme.of(context).error,
                                       width: 1.0,
                                     ),
-                                    borderRadius: BorderRadius.circular(8.0),
+                                    borderRadius: BorderRadius.circular(14.0),
                                   ),
                                   focusedErrorBorder: OutlineInputBorder(
                                     borderSide: BorderSide(
                                       color: FlutterFlowTheme.of(context).error,
                                       width: 1.0,
                                     ),
-                                    borderRadius: BorderRadius.circular(8.0),
+                                    borderRadius: BorderRadius.circular(14.0),
                                   ),
                                 ),
                                 style: FlutterFlowTheme.of(context)
@@ -764,7 +765,7 @@ class _AddEventWidgetState extends State<AddEventWidget> {
                               color: FlutterFlowTheme.of(context).primary,
                               width: 1.0,
                             ),
-                            borderRadius: BorderRadius.circular(8.0),
+                            borderRadius: BorderRadius.circular(14.0),
                           ),
                         ),
                       ),
@@ -823,7 +824,7 @@ class _AddEventWidgetState extends State<AddEventWidget> {
                                   letterSpacing: 0.0,
                                 ),
                             elevation: 0.0,
-                            borderRadius: BorderRadius.circular(8.0),
+                            borderRadius: BorderRadius.circular(14.0),
                           ),
                         ),
                       ),

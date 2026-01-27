@@ -92,7 +92,7 @@ class _WeekPlanItemBoxTabWidgetState extends State<WeekPlanItemBoxTabWidget> {
       },
       child: Scaffold(
         key: scaffoldKey,
-        backgroundColor: Color(0xFFFFF5F2),
+        backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
         body: SafeArea(
           top: true,
           child: Center(
@@ -188,7 +188,7 @@ class _WeekPlanItemBoxTabWidgetState extends State<WeekPlanItemBoxTabWidget> {
                               height: MediaQuery.sizeOf(context).height * 0.16,
                               decoration: BoxDecoration(
                                 color: FlutterFlowTheme.of(context).primary.withOpacity(0.08),
-                                borderRadius: BorderRadius.circular(16.0),
+                                borderRadius: BorderRadius.circular(14.0),
                                 border: Border.all(
                                   color: FlutterFlowTheme.of(context).primary.withOpacity(0.3),
                                 ),
@@ -241,7 +241,7 @@ class _WeekPlanItemBoxTabWidgetState extends State<WeekPlanItemBoxTabWidget> {
                               height: MediaQuery.sizeOf(context).height * 0.16,
                               decoration: BoxDecoration(
                                 color: FlutterFlowTheme.of(context).primary.withOpacity(0.08),
-                                borderRadius: BorderRadius.circular(16.0),
+                                borderRadius: BorderRadius.circular(14.0),
                                 border: Border.all(
                                   color: FlutterFlowTheme.of(context).primary.withOpacity(0.3),
                                 ),
@@ -296,7 +296,7 @@ class _WeekPlanItemBoxTabWidgetState extends State<WeekPlanItemBoxTabWidget> {
                               height: MediaQuery.sizeOf(context).height * 0.16,
                               decoration: BoxDecoration(
                                 color: FlutterFlowTheme.of(context).primary.withOpacity(0.08),
-                                borderRadius: BorderRadius.circular(16.0),
+                                borderRadius: BorderRadius.circular(14.0),
                                 border: Border.all(
                                   color: FlutterFlowTheme.of(context).primary.withOpacity(0.3),
                                 ),

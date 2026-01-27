@@ -53,7 +53,7 @@ class _GenrateFormCookWidgetState extends State<GenrateFormCookWidget> {
       },
       child: Scaffold(
         key: scaffoldKey,
-        backgroundColor: Color(0xFFFFF5F2),
+        backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
         body: SafeArea(
           top: true,
           child: Stack(
@@ -82,7 +82,7 @@ class _GenrateFormCookWidgetState extends State<GenrateFormCookWidget> {
                                 ),
                               )
                             ],
-                            borderRadius: BorderRadius.circular(10.0),
+                            borderRadius: BorderRadius.circular(14.0),
                             border: Border.all(
                               color: Color(0x76999999),
                             ),
@@ -220,7 +220,7 @@ class _GenrateFormCookWidgetState extends State<GenrateFormCookWidget> {
                                             fontWeight: FontWeight.normal,
                                           ),
                                       elevation: 0.0,
-                                      borderRadius: BorderRadius.circular(8.0),
+                                      borderRadius: BorderRadius.circular(14.0),
                                     ),
                                   ),
                                 ),
@@ -282,10 +282,10 @@ class _GenrateFormCookWidgetState extends State<GenrateFormCookWidget> {
                                     color: Colors.transparent,
                                     elevation: 2.0,
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10.0),
+                                      borderRadius: BorderRadius.circular(14.0),
                                     ),
                                     child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(10.0),
+                                      borderRadius: BorderRadius.circular(14.0),
                                       child: Container(
                                         width: double.infinity,
                                         decoration: BoxDecoration(
@@ -302,7 +302,7 @@ class _GenrateFormCookWidgetState extends State<GenrateFormCookWidget> {
                                             )
                                           ],
                                           borderRadius:
-                                              BorderRadius.circular(10.0),
+                                              BorderRadius.circular(14.0),
                                           border: Border.all(
                                             color: Color(0xFF999999),
                                             width: 1.0,

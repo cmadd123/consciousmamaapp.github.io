@@ -5,7 +5,6 @@ import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/v2/learning_path/compele_taskpopup/compele_taskpopup_widget.dart';
 import '/v2/learning_path/learn_path_details_component/learn_path_details_component_widget.dart';
-import '/components/puzzle_progress_widget.dart';
 import 'dart:ui';
 import '/flutter_flow/custom_functions.dart' as functions;
 import '/index.dart';
@@ -32,22 +31,318 @@ class LearnPathDetialsWidget extends StatefulWidget {
   State<LearnPathDetialsWidget> createState() => _LearnPathDetialsWidgetState();
 }
 
-class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget> {
+class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget>
+    with TickerProviderStateMixin {
   late LearnPathDetialsModel _model;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
+
+  // Completion celebration state
+  bool _showCelebration = false;
+  bool _hasShownCelebration = false;
+  int? _previousCompletedCount; // Track previous count to detect transition to complete
+  late AnimationController _celebrationController;
+  late Animation<double> _scaleAnimation;
+  late Animation<double> _fadeAnimation;
+  late AnimationController _confettiController;
 
   @override
   void initState() {
     super.initState();
     _model = createModel(context, () => LearnPathDetialsModel());
+
+    // Setup celebration animations
+    _celebrationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    );
+
+    _scaleAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _celebrationController,
+        curve: Curves.elasticOut,
+      ),
+    );
+
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _celebrationController,
+        curve: const Interval(0.0, 0.5, curve: Curves.easeIn),
+      ),
+    );
+
+    _confettiController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 3000),
+    );
   }
 
   @override
   void dispose() {
+    _celebrationController.dispose();
+    _confettiController.dispose();
     _model.dispose();
 
     super.dispose();
+  }
+
+  void _triggerCelebration() {
+    if (!_hasShownCelebration) {
+      _hasShownCelebration = true;
+      setState(() => _showCelebration = true);
+      _celebrationController.forward();
+      _confettiController.repeat();
+
+      // Auto-dismiss after 4 seconds
+      Future.delayed(const Duration(seconds: 4), () {
+        if (mounted) {
+          _dismissCelebration();
+        }
+      });
+    }
+  }
+
+  void _dismissCelebration() {
+    _celebrationController.reverse().then((_) {
+      if (mounted) {
+        setState(() => _showCelebration = false);
+        _confettiController.stop();
+      }
+    });
+  }
+
+  // Show edit learning path dialog
+  void _showEditLearningPathDialog(BuildContext context, LearningPathRecord learningPath) {
+    final titleController = TextEditingController(text: learningPath.title);
+    final descriptionController = TextEditingController(text: learningPath.description);
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(
+          'Edit Learning Path',
+          style: FlutterFlowTheme.of(context).titleMedium.override(
+            fontFamily: 'Andika New Basic',
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: titleController,
+                decoration: InputDecoration(
+                  labelText: 'Title',
+                  labelStyle: FlutterFlowTheme.of(context).bodyMedium.override(
+                    fontFamily: 'Andika New Basic',
+                    color: FlutterFlowTheme.of(context).secondaryText,
+                  ),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: FlutterFlowTheme.of(context).primary),
+                  ),
+                ),
+                style: FlutterFlowTheme.of(context).bodyMedium.override(
+                  fontFamily: 'Andika New Basic',
+                ),
+              ),
+              SizedBox(height: 16),
+              TextField(
+                controller: descriptionController,
+                decoration: InputDecoration(
+                  labelText: 'Description',
+                  labelStyle: FlutterFlowTheme.of(context).bodyMedium.override(
+                    fontFamily: 'Andika New Basic',
+                    color: FlutterFlowTheme.of(context).secondaryText,
+                  ),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: FlutterFlowTheme.of(context).primary),
+                  ),
+                ),
+                style: FlutterFlowTheme.of(context).bodyMedium.override(
+                  fontFamily: 'Andika New Basic',
+                ),
+                maxLines: 3,
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(
+              'Cancel',
+              style: FlutterFlowTheme.of(context).bodyMedium.override(
+                fontFamily: 'Andika New Basic',
+                color: FlutterFlowTheme.of(context).secondaryText,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: () async {
+              // Update the learning path
+              await learningPath.reference.update({
+                'title': titleController.text,
+                'description': descriptionController.text,
+              });
+              Navigator.pop(ctx);
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Learning path updated'),
+                    backgroundColor: FlutterFlowTheme.of(context).primary,
+                  ),
+                );
+              }
+            },
+            child: Text(
+              'Save',
+              style: FlutterFlowTheme.of(context).bodyMedium.override(
+                fontFamily: 'Andika New Basic',
+                color: FlutterFlowTheme.of(context).primary,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Build the celebration overlay
+  Widget _buildCelebrationOverlay(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _celebrationController,
+      builder: (context, child) {
+        return Stack(
+          children: [
+            // Semi-transparent backdrop
+            GestureDetector(
+              onTap: _dismissCelebration,
+              child: Container(
+                color: Colors.black.withOpacity(_fadeAnimation.value * 0.6),
+              ),
+            ),
+            // Animated confetti particles
+            ...List.generate(20, (index) {
+              final random = index * 0.05;
+              return AnimatedBuilder(
+                animation: _confettiController,
+                builder: (context, child) {
+                  final progress = (_confettiController.value + random) % 1.0;
+                  final xOffset = (index % 5 - 2) * 80.0 + (progress * 50 * (index % 2 == 0 ? 1 : -1));
+                  return Positioned(
+                    top: progress * MediaQuery.of(context).size.height,
+                    left: MediaQuery.of(context).size.width / 2 + xOffset,
+                    child: Transform.rotate(
+                      angle: progress * 6.28 * (index % 2 == 0 ? 1 : -1),
+                      child: Opacity(
+                        opacity: (1 - progress) * _fadeAnimation.value,
+                        child: Text(
+                          ['🎉', '⭐', '🌟', '✨', '🎊', '💫'][index % 6],
+                          style: TextStyle(fontSize: 24 + (index % 3) * 8.0),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              );
+            }),
+            // Main celebration card
+            Center(
+              child: Transform.scale(
+                scale: _scaleAnimation.value,
+                child: Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 32),
+                  padding: const EdgeInsets.all(32),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(24),
+                    boxShadow: [
+                      BoxShadow(
+                        color: FlutterFlowTheme.of(context).primary.withOpacity(0.3),
+                        blurRadius: 30,
+                        spreadRadius: 5,
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Trophy/star icon with pulse
+                      TweenAnimationBuilder<double>(
+                        tween: Tween(begin: 1.0, end: 1.2),
+                        duration: const Duration(milliseconds: 500),
+                        curve: Curves.easeInOut,
+                        builder: (context, scale, child) {
+                          return Transform.scale(
+                            scale: scale,
+                            child: Text(
+                              '🏆',
+                              style: TextStyle(fontSize: 72),
+                            ),
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'Congratulations!',
+                        style: FlutterFlowTheme.of(context).headlineMedium.override(
+                          fontFamily: 'Andika New Basic',
+                          color: FlutterFlowTheme.of(context).primary,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 0.0,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        'You completed all lessons\nin this learning path!',
+                        textAlign: TextAlign.center,
+                        style: FlutterFlowTheme.of(context).bodyLarge.override(
+                          fontFamily: 'Andika New Basic',
+                          color: FlutterFlowTheme.of(context).secondaryText,
+                          letterSpacing: 0.0,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Amazing job! 🎉',
+                        style: FlutterFlowTheme.of(context).titleMedium.override(
+                          fontFamily: 'Andika New Basic',
+                          color: const Color(0xFF4CAF50),
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 0.0,
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      FFButtonWidget(
+                        onPressed: _dismissCelebration,
+                        text: 'Continue',
+                        options: FFButtonOptions(
+                          width: 160,
+                          height: 48,
+                          color: FlutterFlowTheme.of(context).primary,
+                          textStyle: FlutterFlowTheme.of(context).titleSmall.override(
+                            fontFamily: 'Andika New Basic',
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          borderRadius: BorderRadius.circular(24),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -62,7 +357,9 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget> {
         backgroundColor: Color(0xFFEDFFFD),
         body: SafeArea(
           top: true,
-          child: StreamBuilder<LearningPathRecord>(
+          child: Stack(
+            children: [
+              StreamBuilder<LearningPathRecord>(
             stream: LearningPathRecord.getDocument(widget.leRef!),
             builder: (context, pathSnapshot) {
               if (!pathSnapshot.hasData) {
@@ -107,12 +404,55 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget> {
                   List<LearningPathTasksRecord> tasksList = snapshot.data!;
                   final completedCount = tasksList.where((e) => e.isCompleted).length;
 
+                  // Check if the path just became fully complete (not on initial load if already complete)
+                  // Only trigger celebration if: tasks exist, all complete, not shown before,
+                  // and we've seen a previous count that was less than total
+                  if (tasksList.isNotEmpty &&
+                      completedCount == tasksList.length &&
+                      !_hasShownCelebration &&
+                      _previousCompletedCount != null &&
+                      _previousCompletedCount! < tasksList.length) {
+                    // Use addPostFrameCallback to avoid calling setState during build
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      _triggerCelebration();
+                    });
+                  }
+                  // Update previous count for next comparison
+                  _previousCompletedCount = completedCount;
+
                   return Column(
                     mainAxisSize: MainAxisSize.max,
                     children: [
+                      // Back button
+                      Padding(
+                        padding: const EdgeInsetsDirectional.fromSTEB(12.0, 8.0, 12.0, 0.0),
+                        child: Row(
+                          children: [
+                            InkWell(
+                              splashColor: Colors.transparent,
+                              focusColor: Colors.transparent,
+                              hoverColor: Colors.transparent,
+                              highlightColor: Colors.transparent,
+                              onTap: () => context.safePop(),
+                              child: Container(
+                                padding: const EdgeInsets.all(8.0),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withValues(alpha: 0.8),
+                                  borderRadius: BorderRadius.circular(12.0),
+                                ),
+                                child: Icon(
+                                  Icons.arrow_back,
+                                  color: FlutterFlowTheme.of(context).primaryText,
+                                  size: 24.0,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                       // Header card with puzzle
                       Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(12.0, 20.0, 12.0, 0.0),
+                        padding: EdgeInsetsDirectional.fromSTEB(12.0, 12.0, 12.0, 0.0),
                         child: Material(
                           color: Colors.transparent,
                           elevation: 1.0,
@@ -164,55 +504,83 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget> {
                                               ),
                                         ),
                                       ),
-                                      InkWell(
-                                        splashColor: Colors.transparent,
-                                        focusColor: Colors.transparent,
-                                        hoverColor: Colors.transparent,
-                                        highlightColor: Colors.transparent,
-                                        onTap: () async {
-                                          final confirm = await showDialog<bool>(
-                                            context: context,
-                                            builder: (ctx) => AlertDialog(
-                                              title: const Text('Delete Learning Path?'),
-                                              content: Text(
-                                                'Are you sure you want to delete "${learningPath.title}"? This will also delete all tasks. This cannot be undone.',
+                                      Row(
+                                        children: [
+                                          // Edit button
+                                          InkWell(
+                                            splashColor: Colors.transparent,
+                                            focusColor: Colors.transparent,
+                                            hoverColor: Colors.transparent,
+                                            highlightColor: Colors.transparent,
+                                            onTap: () async {
+                                              _showEditLearningPathDialog(context, learningPath);
+                                            },
+                                            child: Padding(
+                                              padding: EdgeInsets.only(right: 12.0),
+                                              child: Icon(
+                                                Icons.edit_outlined,
+                                                color: FlutterFlowTheme.of(context).primary,
+                                                size: 24.0,
                                               ),
-                                              actions: [
-                                                TextButton(
-                                                  onPressed: () => Navigator.pop(ctx, false),
-                                                  child: const Text('Cancel'),
-                                                ),
-                                                TextButton(
-                                                  onPressed: () => Navigator.pop(ctx, true),
-                                                  child: Text(
-                                                    'Delete',
-                                                    style: TextStyle(color: FlutterFlowTheme.of(context).error),
-                                                  ),
-                                                ),
-                                              ],
                                             ),
-                                          );
-                                          if (confirm == true) {
-                                            // Delete all tasks for this path
-                                            for (final task in tasksList) {
-                                              await task.reference.delete();
-                                            }
-                                            // Delete the learning path
-                                            await widget.leRef!.delete();
-                                            if (context.mounted) {
-                                              ScaffoldMessenger.of(context).showSnackBar(
-                                                const SnackBar(content: Text('Learning path deleted')),
+                                          ),
+                                          // Delete button
+                                          InkWell(
+                                            splashColor: Colors.transparent,
+                                            focusColor: Colors.transparent,
+                                            hoverColor: Colors.transparent,
+                                            highlightColor: Colors.transparent,
+                                            onTap: () async {
+                                              final confirm = await showDialog<bool>(
+                                                context: context,
+                                                builder: (ctx) => AlertDialog(
+                                                  title: const Text('Delete Learning Path?'),
+                                                  content: Text(
+                                                    'Are you sure you want to delete "${learningPath.title}"? This will also delete all lessons. This cannot be undone.',
+                                                  ),
+                                                  actions: [
+                                                    TextButton(
+                                                      onPressed: () => Navigator.pop(ctx, false),
+                                                      child: const Text('Cancel'),
+                                                    ),
+                                                    TextButton(
+                                                      onPressed: () => Navigator.pop(ctx, true),
+                                                      child: Text(
+                                                        'Delete',
+                                                        style: TextStyle(color: FlutterFlowTheme.of(context).error),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
                                               );
-                                              // Use goNamed to replace current page instead of pushing
-                                              context.goNamed(LearnPathWidget.routeName);
-                                            }
-                                          }
-                                        },
-                                        child: Icon(
-                                          Icons.delete_outline,
-                                          color: FlutterFlowTheme.of(context).error,
-                                          size: 24.0,
-                                        ),
+                                              if (confirm == true) {
+                                                // Navigate away FIRST to avoid stream errors
+                                                if (context.mounted) {
+                                                  context.goNamed(LearnPathWidget.routeName);
+                                                  // Brief delay to let navigation happen
+                                                  await Future.delayed(const Duration(milliseconds: 100));
+                                                }
+                                                // Then delete all lessons for this path
+                                                for (final task in tasksList) {
+                                                  await task.reference.delete();
+                                                }
+                                                // Delete the learning path
+                                                await widget.leRef!.delete();
+                                                // Show snackbar (will show on the new page)
+                                                if (context.mounted) {
+                                                  ScaffoldMessenger.of(context).showSnackBar(
+                                                    const SnackBar(content: Text('Learning path deleted')),
+                                                  );
+                                                }
+                                              }
+                                            },
+                                            child: Icon(
+                                              Icons.delete_outline,
+                                              color: FlutterFlowTheme.of(context).error,
+                                              size: 24.0,
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),
@@ -235,94 +603,57 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget> {
                                     ),
                                   ),
                                 ),
-                                // Description and puzzle
+                                // Description
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(20.0, 0.0, 16.0, 12.0),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.max,
+                                  padding: EdgeInsetsDirectional.fromSTEB(20.0, 8.0, 20.0, 12.0),
+                                  child: Text(
+                                    learningPath.description.isNotEmpty
+                                        ? learningPath.description
+                                        : 'A personalized program designed to help your child develop new skills.',
+                                    textAlign: TextAlign.start,
+                                    style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                          fontFamily: 'Andika New Basic',
+                                          color: Color(0xBD000000),
+                                          letterSpacing: 0.0,
+                                        ),
+                                  ),
+                                ),
+                                // Progress indicator
+                                Padding(
+                                  padding: EdgeInsetsDirectional.fromSTEB(20.0, 0.0, 20.0, 16.0),
+                                  child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Expanded(
-                                        child: Padding(
-                                          padding: EdgeInsetsDirectional.fromSTEB(0.0, 8.0, 16.0, 0.0),
-                                          child: Text(
-                                            learningPath.description.isNotEmpty
-                                                ? learningPath.description
-                                                : 'A personalized program designed to help your child develop new skills.',
-                                            textAlign: TextAlign.start,
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            '$completedCount of ${tasksList.length} lessons complete',
                                             style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                  fontFamily: 'Andika New Basic',
-                                                  color: Color(0xBD000000),
-                                                  letterSpacing: 0.0,
-                                                ),
-                                          ),
-                                        ),
-                                      ),
-                                      // Full puzzle grid - tap to expand
-                                      GestureDetector(
-                                        onTap: () {
-                                          showModalBottomSheet(
-                                            context: context,
-                                            backgroundColor: Colors.transparent,
-                                            isScrollControlled: true,
-                                            enableDrag: true,
-                                            builder: (ctx) => Container(
-                                              padding: EdgeInsets.all(24),
-                                              decoration: BoxDecoration(
-                                                color: PuzzleTheme.getTheme(learningPath.puzzleTheme).backgroundColor,
-                                                borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-                                              ),
-                                              child: Column(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  Container(
-                                                    width: 40,
-                                                    height: 4,
-                                                    margin: EdgeInsets.only(bottom: 16),
-                                                    decoration: BoxDecoration(
-                                                      color: Colors.grey[400],
-                                                      borderRadius: BorderRadius.circular(2),
-                                                    ),
-                                                  ),
-                                                  Text(
-                                                    'Puzzle Progress',
-                                                    style: FlutterFlowTheme.of(context).titleMedium.override(
-                                                      fontFamily: 'Andika New Basic',
-                                                      color: PuzzleTheme.getTheme(learningPath.puzzleTheme).primaryColor,
-                                                      fontWeight: FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                  SizedBox(height: 16),
-                                                  PuzzleProgressWidget(
-                                                    themeId: learningPath.puzzleTheme,
-                                                    completedTasks: completedCount,
-                                                    totalTasks: tasksList.length,
-                                                    size: 250,
-                                                    showLabel: true,
-                                                  ),
-                                                  SizedBox(height: 16),
-                                                  Text(
-                                                    completedCount == tasksList.length
-                                                        ? 'Puzzle Complete! Great job!'
-                                                        : 'Complete tasks to reveal more pieces!',
-                                                    style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                      fontFamily: 'Andika New Basic',
-                                                      color: PuzzleTheme.getTheme(learningPath.puzzleTheme).primaryColor,
-                                                    ),
-                                                    textAlign: TextAlign.center,
-                                                  ),
-                                                  SizedBox(height: 24),
-                                                ],
-                                              ),
+                                              fontFamily: 'Andika New Basic',
+                                              color: FlutterFlowTheme.of(context).primary,
+                                              fontWeight: FontWeight.w600,
+                                              letterSpacing: 0.0,
                                             ),
-                                          );
-                                        },
-                                        child: PuzzleProgressWidget(
-                                          themeId: learningPath.puzzleTheme,
-                                          completedTasks: completedCount,
-                                          totalTasks: tasksList.length,
-                                          size: 90,
-                                          showLabel: false,
+                                          ),
+                                          if (completedCount == tasksList.length)
+                                            Icon(
+                                              Icons.check_circle,
+                                              color: Color(0xFF4CAF50),
+                                              size: 20.0,
+                                            ),
+                                        ],
+                                      ),
+                                      SizedBox(height: 8.0),
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(8.0),
+                                        child: LinearProgressIndicator(
+                                          value: tasksList.length > 0 ? completedCount / tasksList.length : 0,
+                                          minHeight: 8.0,
+                                          backgroundColor: FlutterFlowTheme.of(context).primary.withOpacity(0.15),
+                                          valueColor: AlwaysStoppedAnimation<Color>(
+                                            FlutterFlowTheme.of(context).primary,
+                                          ),
                                         ),
                                       ),
                                     ],
@@ -353,11 +684,13 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget> {
                                 ),
                               ),
                               child: ListView.builder(
+                                key: ValueKey('tasks_${tasksList.map((t) => '${t.reference.id}_${t.isCompleted}').join('_')}'),
                                 padding: EdgeInsets.symmetric(vertical: 12.0),
                                 itemCount: tasksList.length,
                                 itemBuilder: (context, index) {
                                   final task = tasksList[index];
                                   return Padding(
+                                    key: ValueKey('task_${task.reference.id}_${task.isCompleted}'),
                                     padding: EdgeInsetsDirectional.fromSTEB(24.0, 8.0, 20.0, 8.0),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.max,
@@ -436,10 +769,14 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget> {
                                               },
                                               child: Container(
                                                 decoration: BoxDecoration(
-                                                  color: Color(0x5AFFD8E4),
+                                                  color: task.isCompleted
+                                                      ? Color(0xFF4CAF50).withOpacity(0.1)
+                                                      : Color(0x5AFFD8E4),
                                                   borderRadius: BorderRadius.circular(14.0),
                                                   border: Border.all(
-                                                    color: FlutterFlowTheme.of(context).primary,
+                                                    color: task.isCompleted
+                                                        ? Color(0xFF4CAF50)
+                                                        : FlutterFlowTheme.of(context).primary,
                                                     width: 1.0,
                                                   ),
                                                 ),
@@ -455,7 +792,7 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget> {
                                                           crossAxisAlignment: CrossAxisAlignment.start,
                                                           children: [
                                                             Text(
-                                                              task.title ?? 'Task',
+                                                              task.title ?? 'Lesson',
                                                               style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                     fontFamily: 'Andika New Basic',
                                                                     color: Colors.black,
@@ -465,10 +802,12 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget> {
                                                               overflow: TextOverflow.ellipsis,
                                                             ),
                                                             Text(
-                                                              'View Details',
+                                                              task.isCompleted ? 'View Notes' : 'View Details',
                                                               style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                     fontFamily: 'Andika New Basic',
-                                                                    color: Colors.black,
+                                                                    color: task.isCompleted
+                                                                        ? Color(0xFF4CAF50)
+                                                                        : Colors.black,
                                                                     letterSpacing: 0.0,
                                                                     decoration: TextDecoration.underline,
                                                                   ),
@@ -529,6 +868,8 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget> {
                                                                       await widget.leRef!.update(
                                                                         createLearningPathRecordData(isCompleted: true),
                                                                       );
+                                                                      // Trigger celebration!
+                                                                      _triggerCelebration();
                                                                     }
                                                                   }
                                                                   safeSetState(() {});
@@ -562,75 +903,18 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget> {
                           ),
                         ),
                       ),
-                      // Compact puzzle at the bottom for parent to show child
-                      Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(12.0, 8.0, 12.0, 12.0),
-                        child: Container(
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            color: PuzzleTheme.getTheme(learningPath.puzzleTheme).backgroundColor,
-                            borderRadius: BorderRadius.circular(16.0),
-                            boxShadow: [
-                              BoxShadow(
-                                color: PuzzleTheme.getTheme(learningPath.puzzleTheme).primaryColor.withOpacity(0.15),
-                                blurRadius: 6,
-                                offset: Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                // Puzzle
-                                PuzzleProgressWidget(
-                                  themeId: learningPath.puzzleTheme,
-                                  completedTasks: completedCount,
-                                  totalTasks: tasksList.length,
-                                  size: 110,
-                                  showLabel: false,
-                                ),
-                                SizedBox(width: 16),
-                                // Text column
-                                Expanded(
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        completedCount == tasksList.length
-                                            ? 'Puzzle Complete!'
-                                            : '$completedCount/${tasksList.length} done',
-                                        style: FlutterFlowTheme.of(context).titleSmall.override(
-                                          fontFamily: 'Andika New Basic',
-                                          color: PuzzleTheme.getTheme(learningPath.puzzleTheme).primaryColor,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      SizedBox(height: 4),
-                                      Text(
-                                        completedCount == tasksList.length
-                                            ? 'Great job!'
-                                            : 'What\'s next?',
-                                        style: FlutterFlowTheme.of(context).bodySmall.override(
-                                          fontFamily: 'Andika New Basic',
-                                          color: PuzzleTheme.getTheme(learningPath.puzzleTheme).primaryColor.withOpacity(0.7),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
+                      // Bottom padding
+                      SizedBox(height: 12.0),
                     ],
                   );
                 },
               );
             },
+          ),
+              // Celebration overlay
+              if (_showCelebration)
+                _buildCelebrationOverlay(context),
+            ],
           ),
         ),
       ),

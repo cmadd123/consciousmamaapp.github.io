@@ -279,7 +279,7 @@ class PuzzleThemePicker extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Choose a reward puzzle:',
+          'Choose a reward theme:',
           style: ffTheme.bodyMedium.override(
             fontFamily: 'Andika New Basic',
             color: ffTheme.secondaryText,

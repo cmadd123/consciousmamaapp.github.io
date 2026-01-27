@@ -34,7 +34,7 @@ class FavMealPageModel extends FlutterFlowModel<FavMealPageWidget> {
   // Track if we've loaded all recipes (vs just favorites)
   bool loadedAllRecipes = false;
 
-  // Track which recipe source tab is selected: 'my' or 'discover'
+  // Track which recipe source tab is selected: 'my', 'discover', or 'templates'
   String recipeSourceTab = 'my';
 
   // Curated recipes (from Pinterest imports with is_curated=true)
@@ -42,6 +42,12 @@ class FavMealPageModel extends FlutterFlowModel<FavMealPageWidget> {
 
   // Track if curated recipes have been loaded
   bool loadedCuratedRecipes = false;
+
+  // Meal templates (user-created combos)
+  List<MealComboRecord> mealTemplates = [];
+
+  // Track if meal templates have been loaded
+  bool loadedMealTemplates = false;
 
   /// userMeal
   List<MealRecord> userMeal = [];

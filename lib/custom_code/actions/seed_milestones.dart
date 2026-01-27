@@ -1,17 +1,28 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '/backend/schema/enums/enums.dart';
 
-/// Seeds the Satic_Milestones collection with developmental milestones
+/// Seeds the Static_Milestones collection with developmental milestones
 /// for ages 0-6 across all 5 categories.
 /// Returns the number of milestones created.
-Future<int> seedMilestones() async {
-  final collection = FirebaseFirestore.instance.collection('Satic_Milestones');
+/// Set forceReseed to true to delete existing and reseed.
+Future<int> seedMilestones({bool forceReseed = false}) async {
+  final collection = FirebaseFirestore.instance.collection('Static_Milestones');
 
   // Check if already seeded
   final existing = await collection.limit(1).get();
-  if (existing.docs.isNotEmpty) {
+  if (existing.docs.isNotEmpty && !forceReseed) {
     print('Milestones already seeded. Skipping.');
     return 0;
+  }
+
+  // If force reseed, delete all existing documents first
+  if (forceReseed && existing.docs.isNotEmpty) {
+    print('Force reseed: deleting existing milestones...');
+    final allDocs = await collection.get();
+    for (final doc in allDocs.docs) {
+      await doc.reference.delete();
+    }
+    print('Deleted ${allDocs.docs.length} existing milestones.');
   }
 
   final milestones = _getMilestoneData();

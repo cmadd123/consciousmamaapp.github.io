@@ -52,6 +52,21 @@ class MealPlanRecord extends FirestoreRecord {
   String get notes => _notes ?? '';
   bool hasNotes() => _notes != null && _notes!.isNotEmpty;
 
+  // "side_refs" field - List of side recipe references (for ad-hoc meal compositions)
+  List<DocumentReference>? _sideRefs;
+  List<DocumentReference> get sideRefs => _sideRefs ?? const [];
+  bool hasSideRefs() => _sideRefs != null && _sideRefs!.isNotEmpty;
+
+  // "drink_type" field - Drink selection (for ad-hoc meal compositions)
+  DrinkType? _drinkType;
+  DrinkType? get drinkType => _drinkType;
+  bool hasDrinkType() => _drinkType != null;
+
+  // "drink_custom" field - Custom drink name if drink_type is Other
+  String? _drinkCustom;
+  String get drinkCustom => _drinkCustom ?? '';
+  bool hasDrinkCustom() => _drinkCustom != null;
+
   // Helper to check if this is a meal combo vs single recipe
   bool get isMealCombo => _mealComboRef != null;
 
@@ -65,6 +80,11 @@ class MealPlanRecord extends FirestoreRecord {
     _userFirebasemeal = snapshotData['user_firebasemeal'] as DocumentReference?;
     _mealComboRef = snapshotData['meal_combo_ref'] as DocumentReference?;
     _notes = snapshotData['notes'] as String?;
+    _sideRefs = getDataList(snapshotData['side_refs']);
+    _drinkType = snapshotData['drink_type'] is DrinkType
+        ? snapshotData['drink_type']
+        : deserializeEnum<DrinkType>(snapshotData['drink_type']);
+    _drinkCustom = snapshotData['drink_custom'] as String?;
   }
 
   static CollectionReference get collection =>
@@ -109,6 +129,8 @@ Map<String, dynamic> createMealPlanRecordData({
   DocumentReference? userFirebasemeal,
   DocumentReference? mealComboRef,
   String? notes,
+  DrinkType? drinkType,
+  String? drinkCustom,
 }) {
   final firestoreData = mapToFirestore(
     <String, dynamic>{
@@ -119,6 +141,8 @@ Map<String, dynamic> createMealPlanRecordData({
       'user_firebasemeal': userFirebasemeal,
       'meal_combo_ref': mealComboRef,
       'notes': notes,
+      'drink_type': drinkType,
+      'drink_custom': drinkCustom,
     }.withoutNulls,
   );
 
@@ -130,18 +154,22 @@ class MealPlanRecordDocumentEquality implements Equality<MealPlanRecord> {
 
   @override
   bool equals(MealPlanRecord? e1, MealPlanRecord? e2) {
+    const listEquality = ListEquality();
     return e1?.date == e2?.date &&
         e1?.mealId == e2?.mealId &&
         e1?.typ == e2?.typ &&
         e1?.userRef == e2?.userRef &&
         e1?.userFirebasemeal == e2?.userFirebasemeal &&
         e1?.mealComboRef == e2?.mealComboRef &&
-        e1?.notes == e2?.notes;
+        e1?.notes == e2?.notes &&
+        listEquality.equals(e1?.sideRefs, e2?.sideRefs) &&
+        e1?.drinkType == e2?.drinkType &&
+        e1?.drinkCustom == e2?.drinkCustom;
   }
 
   @override
   int hash(MealPlanRecord? e) => const ListEquality()
-      .hash([e?.date, e?.mealId, e?.typ, e?.userRef, e?.userFirebasemeal, e?.mealComboRef, e?.notes]);
+      .hash([e?.date, e?.mealId, e?.typ, e?.userRef, e?.userFirebasemeal, e?.mealComboRef, e?.notes, e?.sideRefs, e?.drinkType, e?.drinkCustom]);
 
   @override
   bool isValidKey(Object? o) => o is MealPlanRecord;

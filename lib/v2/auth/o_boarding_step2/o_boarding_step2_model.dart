@@ -14,7 +14,23 @@ import 'package:provider/provider.dart';
 class OBoardingStep2Model extends FlutterFlowModel<OBoardingStep2Widget> {
   ///  Local state fields for this page.
 
-  String? selectedMealTime = 'I forget to meal plan';
+  // Changed to List for multi-select support
+  List<String> selectedMealTimes = [];
+
+  // Legacy field for compatibility
+  String? get selectedMealTime => selectedMealTimes.isNotEmpty ? selectedMealTimes.join(', ') : null;
+
+  void toggleMealTime(String mealTime) {
+    if (selectedMealTimes.contains(mealTime)) {
+      selectedMealTimes.remove(mealTime);
+    } else {
+      selectedMealTimes.add(mealTime);
+    }
+  }
+
+  bool isSelected(String mealTime) {
+    return selectedMealTimes.contains(mealTime);
+  }
 
   @override
   void initState(BuildContext context) {}

@@ -14,7 +14,23 @@ import 'package:provider/provider.dart';
 class OBoardingStep1Model extends FlutterFlowModel<OBoardingStep1Widget> {
   ///  Local state fields for this page.
 
-  String? selectedSupport = 'Help with meal planning';
+  // Changed to List for multi-select support
+  List<String> selectedSupports = [];
+
+  // Legacy field for compatibility
+  String? get selectedSupport => selectedSupports.isNotEmpty ? selectedSupports.join(', ') : null;
+
+  void toggleSupport(String support) {
+    if (selectedSupports.contains(support)) {
+      selectedSupports.remove(support);
+    } else {
+      selectedSupports.add(support);
+    }
+  }
+
+  bool isSelected(String support) {
+    return selectedSupports.contains(support);
+  }
 
   @override
   void initState(BuildContext context) {}

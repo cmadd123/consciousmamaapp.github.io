@@ -50,6 +50,14 @@ enum RecipeType {
   Drink,
 }
 
+/// Types of shareable content
+enum SharedContentType {
+  mealPlan,
+  learningPath,
+  activity,
+  activityPlan,
+}
+
 extension FFEnumExtensions<T extends Enum> on T {
   String serialize() => name;
 }
@@ -73,6 +81,8 @@ T? deserializeEnum<T>(String? value) {
       return DrinkType.values.deserialize(value) as T?;
     case (RecipeType):
       return RecipeType.values.deserialize(value) as T?;
+    case (SharedContentType):
+      return SharedContentType.values.deserialize(value) as T?;
     default:
       return null;
   }

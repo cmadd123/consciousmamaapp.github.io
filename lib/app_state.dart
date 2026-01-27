@@ -9,6 +9,7 @@ import '/backend/schema/enums/enums.dart';
 import '/backend/api_requests/api_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'flutter_flow/flutter_flow_util.dart';
+import '/custom_code/actions/index.dart';
 
 class FFAppState extends ChangeNotifier {
   static FFAppState _instance = FFAppState._internal();
@@ -377,27 +378,88 @@ class FFAppState extends ChangeNotifier {
   /// Add an ingredient string with smart aggregation.
   /// If "2 cups flour" exists and you add "3 cups flour",
   /// the result will be "5 cups flour".
-  void addToUserGroceryList(String value) {
-    addGroceryItemWithAggregation(
+  /// Returns debug message for UI display
+  Future<String> addToUserGroceryList(String value) async {
+    return await addGroceryItemWithAggregation(
         GroceryItemStruct.fromIngredientString(value));
   }
 
-  /// Add a GroceryItemStruct with smart aggregation
-  void addGroceryItemWithAggregation(GroceryItemStruct newItem) {
-    // Look for an existing item with the same name and unit
+  /// Add a GroceryItemStruct with smart aggregation (3-tier matching)
+  /// Tier 1: Exact normalized match (instant, free)
+  /// Tier 2: Already included in Tier 1 (pluralization normalization)
+  /// Tier 3: AI fallback for intelligent matching (costs pennies)
+  /// Returns debug message for UI display
+  Future<String> addGroceryItemWithAggregation(GroceryItemStruct newItem) async {
+    print('🛒 GROCERY: Adding item: "${newItem.displayText}"');
+    print('   - Parsed: qty=${newItem.quantity}, unit="${newItem.unit}", name="${newItem.name}"');
+    print('   - Aggregation key: "${newItem.aggregationKey}"');
+
+    String debugMessage = '';
+
+    // TIER 1 & 2: Look for exact normalized match (includes pluralization)
     final existingIndex = _groceryItems.indexWhere(
         (item) => item.canAggregateWith(newItem));
 
     if (existingIndex != -1) {
-      // Aggregate quantities
+      // Aggregate quantities with unit conversion
       final existing = _groceryItems[existingIndex];
-      existing.quantity = existing.quantity + newItem.quantity;
+      print('   ✅ MATCHED existing item: "${existing.displayText}"');
+      print('   - Combining: ${existing.quantity} ${existing.unit} + ${newItem.quantity} ${newItem.unit}');
+
+      existing.combineWith(newItem);
       _groceryItems[existingIndex] = existing;
+
+      debugMessage = 'Added to existing ${existing.name}\nNow ${existing.displayText}';
+      print('   - New display: "${existing.displayText}"');
     } else {
-      // Add as new item
-      _groceryItems.add(newItem);
+      // TIER 3: Try AI fallback for intelligent matching
+      print('   🤖 No exact match - trying AI fallback...');
+      bool aiMatch = false;
+      int aiMatchIndex = -1;
+
+      for (int i = 0; i < _groceryItems.length; i++) {
+        final existing = _groceryItems[i];
+        // Check if units are compatible (same or convertible)
+        if (existing.canAggregateWith(newItem)) {
+          // Skip - already caught by tier 1
+          continue;
+        }
+        // Try AI matching (for ingredient name variations)
+        print('   - Checking AI: "${existing.name}" vs "${newItem.name}"');
+        final matched = await checkIngredientsMatch(
+          existing.name,
+          newItem.name,
+        );
+        if (matched) {
+          aiMatch = true;
+          aiMatchIndex = i;
+          print('   ✅ AI MATCHED: "${existing.name}" = "${newItem.name}"');
+          break;
+        }
+      }
+
+      if (aiMatch) {
+        // AI confirmed match, combine with unit conversion
+        final existing = _groceryItems[aiMatchIndex];
+        print('   - AI Combining: ${existing.quantity} ${existing.unit} + ${newItem.quantity} ${newItem.unit}');
+
+        existing.combineWith(newItem);
+        _groceryItems[aiMatchIndex] = existing;
+
+        debugMessage = 'Added to existing ${existing.name}\nNow ${existing.displayText}';
+        print('   - New display: "${existing.displayText}"');
+      } else {
+        // Add as new item
+        print('   ➕ NO MATCH - Adding as new item');
+
+        debugMessage = 'Added ${newItem.displayText}';
+
+        _groceryItems.add(newItem);
+      }
     }
     _persistGroceryItems();
+
+    return debugMessage;
   }
 
   /// Add multiple ingredients from a recipe with aggregation

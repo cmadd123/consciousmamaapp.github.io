@@ -60,7 +60,7 @@ class _KindofActivitystep3WidgetState extends State<KindofActivitystep3Widget> {
       },
       child: Scaffold(
         key: scaffoldKey,
-        backgroundColor: Color(0xFFFFF5F2),
+        backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
         body: SafeArea(
           top: true,
           child: SingleChildScrollView(
@@ -294,7 +294,7 @@ class _KindofActivitystep3WidgetState extends State<KindofActivitystep3Widget> {
                                                     ),
                                             elevation: 0.0,
                                             borderRadius:
-                                                BorderRadius.circular(8.0),
+                                                BorderRadius.circular(14.0),
                                           ),
                                         ),
                                       ),
@@ -406,7 +406,7 @@ class _KindofActivitystep3WidgetState extends State<KindofActivitystep3Widget> {
                                                     ),
                                             elevation: 0.0,
                                             borderRadius:
-                                                BorderRadius.circular(8.0),
+                                                BorderRadius.circular(14.0),
                                           ),
                                         ),
                                       ),

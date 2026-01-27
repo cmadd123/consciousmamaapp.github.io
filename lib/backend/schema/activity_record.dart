@@ -98,6 +98,11 @@ class ActivityRecord extends FirestoreRecord {
   bool get supervisionNeeded => _supervisionNeeded ?? true;
   bool hasSupervisionNeeded() => _supervisionNeeded != null;
 
+  // "category" field - situation category (sibling, transition, energy, etc.)
+  String? _category;
+  String get category => _category ?? '';
+  bool hasCategory() => _category != null;
+
   // ============ BUBBLE SCORES (1-10) ============
 
   // "bubble_calm" field
@@ -167,6 +172,7 @@ class ActivityRecord extends FirestoreRecord {
     _setupTime = snapshotData['setup_time'] as String? ?? snapshotData['Setup_time'] as String?;
     _cleanupDifficulty = snapshotData['cleanup_difficulty'] as String? ?? snapshotData['Cleanup_difficulty'] as String?;
     _supervisionNeeded = snapshotData['supervision_needed'] as bool? ?? snapshotData['Supervision_needed'] as bool?;
+    _category = snapshotData['category'] as String? ?? snapshotData['Category'] as String?;
 
     // Bubble scores - check multiple naming conventions
     _bubbleCalm = castToType<int>(snapshotData['bubble_calm']) ?? castToType<int>(snapshotData['Bubble_calm']);
@@ -229,6 +235,7 @@ Map<String, dynamic> createActivityRecordData({
   String? setupTime,
   String? cleanupDifficulty,
   bool? supervisionNeeded,
+  String? category,
   int? bubbleCalm,
   int? bubbleNeedToMove,
   int? bubbleLearning,
@@ -255,6 +262,7 @@ Map<String, dynamic> createActivityRecordData({
       'setup_time': setupTime,
       'cleanup_difficulty': cleanupDifficulty,
       'supervision_needed': supervisionNeeded,
+      'category': category,
       'bubble_calm': bubbleCalm,
       'bubble_need_to_move': bubbleNeedToMove,
       'bubble_learning': bubbleLearning,

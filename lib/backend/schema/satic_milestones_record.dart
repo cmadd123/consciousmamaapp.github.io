@@ -47,7 +47,7 @@ class SaticMilestonesRecord extends FirestoreRecord {
   }
 
   static CollectionReference get collection =>
-      FirebaseFirestore.instance.collection('Satic_Milestones');
+      FirebaseFirestore.instance.collection('Static_Milestones');
 
   static Stream<SaticMilestonesRecord> getDocument(DocumentReference ref) =>
       ref.snapshots().map((s) => SaticMilestonesRecord.fromSnapshot(s));

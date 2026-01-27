@@ -3,6 +3,8 @@ import '/backend/backend.dart';
 import '/backend/schema/enums/enums.dart';
 import '/components/empty_widget_component_widget.dart';
 import '/components/home_nav_bar_widget.dart';
+import '/components/share_content_bottom_sheet.dart';
+import '/components/parent_circle_widget.dart';
 import '/flutter_flow/flutter_flow_calendar.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -32,12 +34,15 @@ class CalendarItem {
   final String name;
   final String description;
   final DateTime? date;
-  final String type; // 'Task', 'Event', or 'Learning'
+  final String type; // 'Todo', 'Event', 'Activity', or 'Learning'
   final bool isCompleted;
   final DocumentReference reference;
-  final DocumentReference? childRef;
-  final String? childName; // Child name for display
-  final Color? childColor; // Child color for display
+  final DocumentReference? childRef; // Single child (for backwards compatibility / learning tasks)
+  final String? childName; // Single child name for display
+  final Color? childColor; // Single child color for display
+  final List<DocumentReference> childRefs; // Multiple children
+  final List<String> childNames; // Multiple child names for display
+  final List<Color> childColors; // Multiple child colors for display
   final bool isRecurring;
   final bool assignedToMom;
   final bool assignedToDad;
@@ -54,6 +59,9 @@ class CalendarItem {
     this.childRef,
     this.childName,
     this.childColor,
+    this.childRefs = const [],
+    this.childNames = const [],
+    this.childColors = const [],
     this.isRecurring = false,
     this.assignedToMom = false,
     this.assignedToDad = false,
@@ -61,18 +69,28 @@ class CalendarItem {
     this.learningTask,
   });
 
-  // Create from EventAndTaskRecord with child info
-  factory CalendarItem.fromEventAndTask(EventAndTaskRecord record, {String? childName, Color? childColor}) {
+  // Create from EventAndTaskRecord with child info (supports multiple children)
+  factory CalendarItem.fromEventAndTask(
+    EventAndTaskRecord record, {
+    String? childName,
+    Color? childColor,
+    List<String> childNames = const [],
+    List<Color> childColors = const [],
+    List<DocumentReference> childRefs = const [],
+  }) {
     return CalendarItem(
       name: record.name,
       description: record.description,
       date: record.date,
-      type: (record.typ == 'Task' || record.typ == 'Tasks') ? 'Task' : 'Event',
+      type: (record.typ == 'Task' || record.typ == 'Tasks') ? 'Todo' : (record.typ == 'Activity' ? 'Activity' : 'Event'),
       isCompleted: record.isCompleted,
       reference: record.reference,
       childRef: record.selectedChild,
       childName: childName,
       childColor: childColor,
+      childRefs: childRefs.isNotEmpty ? childRefs : record.selectedChildren,
+      childNames: childNames,
+      childColors: childColors,
       isRecurring: record.isrecurring,
       assignedToMom: record.assignedToMom,
       assignedToDad: record.assignedToDad,
@@ -116,12 +134,23 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
   void initState() {
     super.initState();
     _model = createModel(context, () => CalendarpageModel());
+    _loadParentInfo();
 
     // On page load action.
     SchedulerBinding.instance.addPostFrameCallback((_) async {
       _model.selecteddate = getCurrentTimestamp;
       safeSetState(() {});
     });
+  }
+
+  Future<void> _loadParentInfo() async {
+    if (currentUserReference == null) return;
+    final user = await UsersRecord.getDocumentOnce(currentUserReference!);
+    if (mounted) {
+      setState(() {
+        _model.parentInfo = ParentDisplayInfo.fromUser(user);
+      });
+    }
   }
 
   @override
@@ -145,9 +174,10 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
           FocusScope.of(context).unfocus();
           FocusManager.instance.primaryFocus?.unfocus();
         },
+        behavior: HitTestBehavior.translucent,
         child: Scaffold(
         key: scaffoldKey,
-        backgroundColor: FFAppState().isComfortMode ? Color(0xFF2C3E50) : Color(0xFFFFF5F2),
+        backgroundColor: FFAppState().isComfortMode ? Color(0xFF2C3E50) : FlutterFlowTheme.of(context).secondaryBackground,
         body: SafeArea(
           top: true,
           child: Stack(
@@ -156,7 +186,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
                   children: [
-                    // Child filter chips
+                    // Person filter circles (colored circles with letters)
                     StreamBuilder<List<ChildernRecord>>(
                       stream: queryChildernRecord(
                         queryBuilder: (childernRecord) => childernRecord
@@ -165,13 +195,9 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                       builder: (context, snapshot) {
                         final children = snapshot.data ?? [];
 
-                        if (children.isEmpty) {
-                          return SizedBox.shrink();
-                        }
-
                         return Container(
                           width: double.infinity,
-                          padding: EdgeInsetsDirectional.fromSTEB(16.0, 32.0, 16.0, 32.0),
+                          padding: EdgeInsetsDirectional.fromSTEB(16.0, 16.0, 16.0, 8.0),
                           decoration: BoxDecoration(
                             color: FFAppState().isComfortMode
                                 ? Color(0xFF2C3E50)
@@ -184,9 +210,9 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                // "All" chip
+                                // "All" circle
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(0, 0, 8.0, 0),
+                                  padding: EdgeInsetsDirectional.fromSTEB(0, 0, 10.0, 0),
                                   child: InkWell(
                                     onTap: () {
                                       setState(() {
@@ -196,37 +222,36 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                                       });
                                     },
                                     child: Container(
-                                      padding: EdgeInsetsDirectional.fromSTEB(16.0, 10.0, 16.0, 10.0),
+                                      width: 40.0,
+                                      height: 40.0,
                                       decoration: BoxDecoration(
                                         color: (_model.selectedChildFilters.isEmpty && !_model.filterByMom && !_model.filterByDad)
-                                            ? (FFAppState().isComfortMode ? Color(0xFF7F8C8D) : FlutterFlowTheme.of(context).primary)
-                                            : (FFAppState().isComfortMode ? Color(0xFF34495E) : FlutterFlowTheme.of(context).primaryBackground),
-                                        borderRadius: BorderRadius.circular(20.0),
-                                        border: Border.all(
-                                          color: FFAppState().isComfortMode ? Color(0xFF7F8C8D) : FlutterFlowTheme.of(context).primary,
-                                          width: 1.5,
-                                        ),
+                                            ? FlutterFlowTheme.of(context).primary
+                                            : (FFAppState().isComfortMode ? Color(0xFF34495E) : Colors.white),
+                                        shape: BoxShape.circle,
+                                        border: (_model.selectedChildFilters.isEmpty && !_model.filterByMom && !_model.filterByDad)
+                                            ? null
+                                            : Border.all(color: FlutterFlowTheme.of(context).primary, width: 2),
                                       ),
-                                      child: Text(
-                                        'All',
-                                        style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                          fontFamily: 'Andika New Basic',
-                                          fontSize: 14.0,
-                                          fontWeight: FontWeight.w600,
-                                          color: FFAppState().isComfortMode
-                                              ? Color(0xFFECF0F1)
-                                              : ((_model.selectedChildFilters.isEmpty && !_model.filterByMom && !_model.filterByDad)
-                                                  ? Colors.white
-                                                  : FlutterFlowTheme.of(context).primaryText),
-                                          letterSpacing: 0.0,
+                                      child: Center(
+                                        child: Text(
+                                          'All',
+                                          style: TextStyle(
+                                            fontFamily: 'Andika New Basic',
+                                            fontSize: 12.0,
+                                            fontWeight: FontWeight.bold,
+                                            color: (_model.selectedChildFilters.isEmpty && !_model.filterByMom && !_model.filterByDad)
+                                                ? Colors.white
+                                                : FlutterFlowTheme.of(context).primary,
+                                          ),
                                         ),
                                       ),
                                     ),
                                   ),
                                 ),
-                                // Mom chip
+                                // "Me" circle
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(0, 0, 8.0, 0),
+                                  padding: EdgeInsetsDirectional.fromSTEB(0, 0, 10.0, 0),
                                   child: InkWell(
                                     onTap: () {
                                       setState(() {
@@ -234,35 +259,34 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                                       });
                                     },
                                     child: Container(
-                                      padding: EdgeInsetsDirectional.fromSTEB(16.0, 10.0, 16.0, 10.0),
+                                      width: 40.0,
+                                      height: 40.0,
                                       decoration: BoxDecoration(
                                         color: _model.filterByMom
-                                            ? (FFAppState().isComfortMode ? Color(0xFF7F8C8D) : Color(0xFFE57373))
-                                            : (FFAppState().isComfortMode ? Color(0xFF34495E) : FlutterFlowTheme.of(context).primaryBackground),
-                                        borderRadius: BorderRadius.circular(20.0),
-                                        border: Border.all(
-                                          color: FFAppState().isComfortMode ? Color(0xFF7F8C8D) : Color(0xFFE57373),
-                                          width: 1.5,
-                                        ),
+                                            ? _model.parentInfo.myColor
+                                            : (FFAppState().isComfortMode ? Color(0xFF34495E) : Colors.white),
+                                        shape: BoxShape.circle,
+                                        border: _model.filterByMom
+                                            ? null
+                                            : Border.all(color: _model.parentInfo.myColor, width: 2),
                                       ),
-                                      child: Text(
-                                        'Mom',
-                                        style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                          fontFamily: 'Andika New Basic',
-                                          fontSize: 14.0,
-                                          fontWeight: FontWeight.w600,
-                                          color: FFAppState().isComfortMode
-                                              ? Color(0xFFECF0F1)
-                                              : (_model.filterByMom ? Colors.white : FlutterFlowTheme.of(context).primaryText),
-                                          letterSpacing: 0.0,
+                                      child: Center(
+                                        child: Text(
+                                          _model.parentInfo.myInitial,
+                                          style: TextStyle(
+                                            fontFamily: 'Andika New Basic',
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.bold,
+                                            color: _model.filterByMom ? Colors.white : _model.parentInfo.myColor,
+                                          ),
                                         ),
                                       ),
                                     ),
                                   ),
                                 ),
-                                // Dad chip
+                                // Partner circle
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(0, 0, 8.0, 0),
+                                  padding: EdgeInsetsDirectional.fromSTEB(0, 0, 10.0, 0),
                                   child: InkWell(
                                     onTap: () {
                                       setState(() {
@@ -270,37 +294,38 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                                       });
                                     },
                                     child: Container(
-                                      padding: EdgeInsetsDirectional.fromSTEB(16.0, 10.0, 16.0, 10.0),
+                                      width: 40.0,
+                                      height: 40.0,
                                       decoration: BoxDecoration(
                                         color: _model.filterByDad
-                                            ? (FFAppState().isComfortMode ? Color(0xFF7F8C8D) : Color(0xFF64B5F6))
-                                            : (FFAppState().isComfortMode ? Color(0xFF34495E) : FlutterFlowTheme.of(context).primaryBackground),
-                                        borderRadius: BorderRadius.circular(20.0),
-                                        border: Border.all(
-                                          color: FFAppState().isComfortMode ? Color(0xFF7F8C8D) : Color(0xFF64B5F6),
-                                          width: 1.5,
-                                        ),
+                                            ? _model.parentInfo.partnerColor
+                                            : (FFAppState().isComfortMode ? Color(0xFF34495E) : Colors.white),
+                                        shape: BoxShape.circle,
+                                        border: _model.filterByDad
+                                            ? null
+                                            : Border.all(color: _model.parentInfo.partnerColor, width: 2),
                                       ),
-                                      child: Text(
-                                        'Dad',
-                                        style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                          fontFamily: 'Andika New Basic',
-                                          fontSize: 14.0,
-                                          fontWeight: FontWeight.w600,
-                                          color: FFAppState().isComfortMode
-                                              ? Color(0xFFECF0F1)
-                                              : (_model.filterByDad ? Colors.white : FlutterFlowTheme.of(context).primaryText),
-                                          letterSpacing: 0.0,
+                                      child: Center(
+                                        child: Text(
+                                          _model.parentInfo.partnerInitial,
+                                          style: TextStyle(
+                                            fontFamily: 'Andika New Basic',
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.bold,
+                                            color: _model.filterByDad ? Colors.white : _model.parentInfo.partnerColor,
+                                          ),
                                         ),
                                       ),
                                     ),
                                   ),
                                 ),
-                                // Child chips
+                                // Child circles
                                 ...children.map((child) {
                                   final isSelected = _model.selectedChildFilters.contains(child.reference);
+                                  final childColor = child.selectedColor ?? FlutterFlowTheme.of(context).primary;
+                                  final initial = child.name.isNotEmpty ? child.name[0].toLowerCase() : '?';
                                   return Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(0, 0, 8.0, 0),
+                                    padding: EdgeInsetsDirectional.fromSTEB(0, 0, 10.0, 0),
                                     child: InkWell(
                                       onTap: () {
                                         setState(() {
@@ -312,31 +337,26 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                                         });
                                       },
                                       child: Container(
-                                        padding: EdgeInsetsDirectional.fromSTEB(16.0, 10.0, 16.0, 10.0),
+                                        width: 40.0,
+                                        height: 40.0,
                                         decoration: BoxDecoration(
-                                          color: FFAppState().isComfortMode
-                                              ? (isSelected ? Color(0xFF7F8C8D) : Color(0xFF34495E))
-                                              : (isSelected ? child.selectedColor : FlutterFlowTheme.of(context).primaryBackground),
-                                          borderRadius: BorderRadius.circular(20.0),
-                                          border: Border.all(
-                                            color: FFAppState().isComfortMode
-                                                ? Color(0xFF7F8C8D)
-                                                : (child.selectedColor ?? FlutterFlowTheme.of(context).primary),
-                                            width: 1.5,
-                                          ),
+                                          color: isSelected
+                                              ? childColor
+                                              : (FFAppState().isComfortMode ? Color(0xFF34495E) : Colors.white),
+                                          shape: BoxShape.circle,
+                                          border: isSelected
+                                              ? null
+                                              : Border.all(color: childColor, width: 2),
                                         ),
-                                        child: Text(
-                                          child.name,
-                                          style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                            fontFamily: 'Andika New Basic',
-                                            fontSize: 14.0,
-                                            fontWeight: FontWeight.w600,
-                                            color: FFAppState().isComfortMode
-                                                ? Color(0xFFECF0F1)
-                                                : (isSelected
-                                                    ? Colors.white
-                                                    : FlutterFlowTheme.of(context).primaryText),
-                                            letterSpacing: 0.0,
+                                        child: Center(
+                                          child: Text(
+                                            initial,
+                                            style: TextStyle(
+                                              fontFamily: 'Andika New Basic',
+                                              fontSize: 16.0,
+                                              fontWeight: FontWeight.bold,
+                                              color: isSelected ? Colors.white : childColor,
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -469,12 +489,13 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                                     .toList();
                               }
 
-                              // Build colored marker items
+                              // Build colored marker items - only for Events (not Tasks or Learning)
                               List<CalendarMarkerItem> markers = [];
 
-                              // Add markers for events/tasks
-                              // Mom: rose/pink, Dad: blue - more saturated for visibility on calendar
-                              for (var event in dayEvents) {
+                              // Only add markers for Events (typ == 'Event')
+                              final eventOnlyItems = dayEvents.where((e) => e.typ == 'Event').toList();
+
+                              for (var event in eventOnlyItems) {
                                 if (event.assignedToMom) {
                                   markers.add(CalendarMarkerItem(color: const Color(0xFFE57373), type: 'mom'));
                                 }
@@ -491,13 +512,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                                 }
                               }
 
-                              // Add markers for learning tasks (use child's color since all learning paths are connected to a child)
-                              for (var task in dayLearningTasks) {
-                                if (task.childRef != null) {
-                                  final childColor = childColorMap[task.childRef!.path] ?? FlutterFlowTheme.of(context).primary;
-                                  markers.add(CalendarMarkerItem(color: childColor, type: 'child'));
-                                }
-                              }
+                              // Learning tasks no longer show markers on calendar (per user request)
 
                               // Remove duplicates by type to avoid too many dots
                               final uniqueMarkers = <String, CalendarMarkerItem>{};
@@ -511,23 +526,16 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                             markerBuilder: (context, day, events) {
                               if (events.isEmpty) return const SizedBox.shrink();
 
-                              final markers = events.cast<CalendarMarkerItem>();
-
+                              // Simple single dot - industry standard (like iOS/Google Calendar)
                               return Positioned(
                                 bottom: 4,
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: markers.take(4).map((marker) {
-                                    return Container(
-                                      margin: const EdgeInsets.symmetric(horizontal: 1.0),
-                                      width: 6.0,
-                                      height: 6.0,
-                                      decoration: BoxDecoration(
-                                        color: marker.color,
-                                        shape: BoxShape.circle,
-                                      ),
-                                    );
-                                  }).toList(),
+                                child: Container(
+                                  width: 6.0,
+                                  height: 6.0,
+                                  decoration: BoxDecoration(
+                                    color: FlutterFlowTheme.of(context).primary,
+                                    shape: BoxShape.circle,
+                                  ),
                                 ),
                               );
                             },
@@ -579,7 +587,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                     if (!FFAppState().isComfortMode)
                       Padding(
                         padding: EdgeInsetsDirectional.fromSTEB(
-                            0.0, 16.0, 0.0, 30.0),
+                            0.0, 4.0, 0.0, 30.0),
                         child: Column(
                           children: [
                             Container(
@@ -614,11 +622,11 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                                 children: [
                                   _buildFilterChip('All'),
                                   SizedBox(width: 8.0),
-                                  _buildFilterChip('Task'),
-                                  SizedBox(width: 8.0),
                                   _buildFilterChip('Event'),
                                   SizedBox(width: 8.0),
                                   _buildFilterChip('Learning'),
+                                  SizedBox(width: 8.0),
+                                  _buildFilterChip('Activity'),
                                 ],
                               ),
                             ),
@@ -661,19 +669,21 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                               // Handle errors (including missing index errors)
                               if (eventSnapshot.hasError && learningSnapshot.hasError) {
                                 debugPrint('Error querying ${eventSnapshot.error}');
-                                // Show empty state on error instead of spinner
-                                return Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(12.0, 20.0, 12.0, 20.0),
-                                  child: EmptyWidgetComponentWidget(
-                                    titleParams: 'No tasks or events for this day\nTap + to add one',
-                                    actionParam: () async {
-                                      context.pushNamed(
-                                        AddcalenderWidget.routeName,
-                                        queryParameters: {
-                                          'fromPage': serializeParam('Calender', ParamType.String),
-                                        }.withoutNulls,
-                                      );
-                                    },
+                                // Show empty state on error
+                                return Center(
+                                  child: Padding(
+                                    padding: EdgeInsetsDirectional.fromSTEB(12.0, 12.0, 12.0, 12.0),
+                                    child: EmptyWidgetComponentWidget(
+                                      titleParams: 'Nothing planned for this day\nTap + to add something',
+                                      actionParam: () async {
+                                        context.pushNamed(
+                                          AddcalenderWidget.routeName,
+                                          queryParameters: {
+                                            'fromPage': serializeParam('Calender', ParamType.String),
+                                          }.withoutNulls,
+                                        );
+                                      },
+                                    ),
                                   ),
                                 );
                               }
@@ -683,32 +693,37 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                                 if (eventSnapshot.connectionState == ConnectionState.waiting ||
                                     learningSnapshot.connectionState == ConnectionState.waiting) {
                                   return Center(
-                                    child: SizedBox(
-                                      width: 50.0,
-                                      height: 50.0,
-                                      child: CircularProgressIndicator(
-                                        valueColor:
-                                            AlwaysStoppedAnimation<Color>(
-                                          FlutterFlowTheme.of(context)
-                                              .primary,
+                                    child: Padding(
+                                      padding: EdgeInsets.symmetric(vertical: 40.0),
+                                      child: SizedBox(
+                                        width: 50.0,
+                                        height: 50.0,
+                                        child: CircularProgressIndicator(
+                                          valueColor:
+                                              AlwaysStoppedAnimation<Color>(
+                                            FlutterFlowTheme.of(context)
+                                                .primary,
+                                          ),
                                         ),
                                       ),
                                     ),
                                   );
                                 }
                                 // If not waiting and no data, treat as empty
-                                return Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(12.0, 20.0, 12.0, 20.0),
-                                  child: EmptyWidgetComponentWidget(
-                                    titleParams: 'No tasks or events for this day\nTap + to add one',
-                                    actionParam: () async {
-                                      context.pushNamed(
-                                        AddcalenderWidget.routeName,
-                                        queryParameters: {
-                                          'fromPage': serializeParam('Calender', ParamType.String),
-                                        }.withoutNulls,
-                                      );
-                                    },
+                                return Center(
+                                  child: Padding(
+                                    padding: EdgeInsetsDirectional.fromSTEB(12.0, 12.0, 12.0, 12.0),
+                                    child: EmptyWidgetComponentWidget(
+                                      titleParams: 'Nothing planned for this day\nTap + to add something',
+                                      actionParam: () async {
+                                        context.pushNamed(
+                                          AddcalenderWidget.routeName,
+                                          queryParameters: {
+                                            'fromPage': serializeParam('Calender', ParamType.String),
+                                          }.withoutNulls,
+                                        );
+                                      },
+                                    ),
                                   ),
                                 );
                               }
@@ -718,16 +733,37 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
 
                               // Add events/tasks with child info
                               if (eventSnapshot.hasData) {
+                                debugPrint('=== Standard Mode Calendar Data ===');
+                                debugPrint('Total EventAndTask records: ${eventSnapshot.data!.length}');
+                                for (final e in eventSnapshot.data!) {
+                                  debugPrint('Record: ${e.name}, typ: ${e.typ}, date: ${e.date}');
+                                }
                                 allCalendarItems.addAll(
                                   eventSnapshot.data!.map((e) {
                                     final childPath = e.selectedChild?.path;
+                                    // Build lists for multiple children
+                                    final List<String> multiChildNames = [];
+                                    final List<Color> multiChildColors = [];
+                                    final List<DocumentReference> multiChildRefs = [];
+                                    for (final childRef in e.selectedChildren) {
+                                      final path = childRef.path;
+                                      if (childNameMap.containsKey(path)) {
+                                        multiChildNames.add(childNameMap[path]!);
+                                        multiChildColors.add(childColorMap[path] ?? FlutterFlowTheme.of(context).primary);
+                                        multiChildRefs.add(childRef);
+                                      }
+                                    }
                                     return CalendarItem.fromEventAndTask(
                                       e,
                                       childName: childPath != null ? childNameMap[childPath] : null,
                                       childColor: childPath != null ? childColorMap[childPath] : null,
+                                      childNames: multiChildNames,
+                                      childColors: multiChildColors,
+                                      childRefs: multiChildRefs,
                                     );
                                   })
                                 );
+                                debugPrint('CalendarItems created: ${allCalendarItems.length}');
                               }
 
                               // Add learning path tasks with child info
@@ -762,25 +798,56 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                               return Container(
                                 decoration: BoxDecoration(),
                                 child: Column(
-                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    if (dayItems.isEmpty)
-                                      Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            12.0, 20.0, 12.0, 20.0),
-                                        child: EmptyWidgetComponentWidget(
-                                          titleParams: 'No tasks or events for this day\nTap + to add one',
-                                          actionParam: () async {
-                                            context.pushNamed(
-                                              AddcalenderWidget.routeName,
-                                              queryParameters: {
-                                                'fromPage': serializeParam(
-                                                  'Calender',
-                                                  ParamType.String,
-                                                ),
-                                              }.withoutNulls,
-                                            );
-                                          },
+                                    // Show empty state when no items for Learning filter
+                                    if (dayItems.isEmpty && _model.selectedFilter == 'Learning')
+                                      Center(
+                                        child: Padding(
+                                          padding: EdgeInsetsDirectional.fromSTEB(
+                                              12.0, 12.0, 12.0, 12.0),
+                                          child: EmptyWidgetComponentWidget(
+                                            titleParams: 'No lessons planned for this day\nTap + to create a learning path',
+                                            actionParam: () async {
+                                              context.pushNamed(LearnPathWidget.routeName);
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                    // Show empty state for Activity filter
+                                    if (dayItems.isEmpty && _model.selectedFilter == 'Activity')
+                                      Center(
+                                        child: Padding(
+                                          padding: EdgeInsetsDirectional.fromSTEB(
+                                              12.0, 12.0, 12.0, 12.0),
+                                          child: EmptyWidgetComponentWidget(
+                                            titleParams: 'No activities planned for this day\nTap + to add an activity',
+                                            actionParam: () async {
+                                              context.pushNamed(FeelingBubblesWidget.routeName);
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                    // Show empty state for All and other filters
+                                    if (dayItems.isEmpty && _model.selectedFilter != 'Learning' && _model.selectedFilter != 'Activity')
+                                      Center(
+                                        child: Padding(
+                                          padding: EdgeInsetsDirectional.fromSTEB(
+                                              12.0, 12.0, 12.0, 12.0),
+                                          child: EmptyWidgetComponentWidget(
+                                            titleParams: 'Nothing planned for this day\nTap + to add something',
+                                            actionParam: () async {
+                                              context.pushNamed(
+                                                AddcalenderWidget.routeName,
+                                                queryParameters: {
+                                                  'fromPage': serializeParam(
+                                                    'Calender',
+                                                    ParamType.String,
+                                                  ),
+                                                }.withoutNulls,
+                                              );
+                                            },
+                                          ),
                                         ),
                                       ),
                                     if (dayItems.isNotEmpty)
@@ -789,15 +856,20 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                                           var allItems = dayItems
                                               ..sort((a, b) => (a.date ?? DateTime.now()).compareTo(b.date ?? DateTime.now()));
 
-                                          // Apply type filter
+                                          // Exclude Todos from calendar entirely
+                                          allItems = allItems
+                                              .where((e) => e.type != 'Todo')
+                                              .toList();
+
+                                          // Apply type filter (if not All)
                                           if (_model.selectedFilter != 'All') {
-                                            if (_model.selectedFilter == 'Task') {
-                                              allItems = allItems
-                                                  .where((e) => e.type == 'Task')
-                                                  .toList();
-                                            } else if (_model.selectedFilter == 'Learning') {
+                                            if (_model.selectedFilter == 'Learning') {
                                               allItems = allItems
                                                   .where((e) => e.type == 'Learning')
+                                                  .toList();
+                                            } else if (_model.selectedFilter == 'Activity') {
+                                              allItems = allItems
+                                                  .where((e) => e.type == 'Activity')
                                                   .toList();
                                             } else {
                                               allItems = allItems
@@ -831,28 +903,83 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                                           final activeItems = allItems.where((e) => !e.isCompleted).toList();
                                           final completedItems = allItems.where((e) => e.isCompleted).toList();
 
-                                          if (allItems.isEmpty) {
-                                            return EmptyWidgetComponentWidget(
-                                              titleParams:
-                                                  'No To do list Yet',
-                                              actionParam: () async {
-                                                context.pushNamed(
-                                                  AddcalenderWidget
-                                                      .routeName,
-                                                  queryParameters: {
-                                                    'fromPage':
-                                                        serializeParam(
-                                                      'Calender',
-                                                      ParamType.String,
-                                                    ),
-                                                  }.withoutNulls,
-                                                );
-                                              },
+                                          // Treat days with only completed items (or no items) as empty
+                                          if (allItems.isEmpty || activeItems.isEmpty) {
+                                            // Learning filter - link to learning path page
+                                            if (_model.selectedFilter == 'Learning') {
+                                              return Center(
+                                                child: Padding(
+                                                  padding: EdgeInsets.symmetric(vertical: 12.0),
+                                                  child: EmptyWidgetComponentWidget(
+                                                    titleParams:
+                                                        'No lessons planned for this day\nTap + to create a learning path',
+                                                    actionParam: () async {
+                                                      context.pushNamed(LearnPathWidget.routeName);
+                                                    },
+                                                  ),
+                                                ),
+                                              );
+                                            }
+                                            // Activity filter - link to activities page
+                                            if (_model.selectedFilter == 'Activity') {
+                                              return Center(
+                                                child: Padding(
+                                                  padding: EdgeInsets.symmetric(vertical: 12.0),
+                                                  child: EmptyWidgetComponentWidget(
+                                                    titleParams:
+                                                        'No activities planned for this day\nTap + to add an activity',
+                                                    actionParam: () async {
+                                                      context.pushNamed(FeelingBubblesWidget.routeName);
+                                                    },
+                                                  ),
+                                                ),
+                                              );
+                                            }
+                                            // All filter or other filters - link to add calendar
+                                            return Center(
+                                              child: Padding(
+                                                padding: EdgeInsets.symmetric(vertical: 12.0),
+                                                child: EmptyWidgetComponentWidget(
+                                                  titleParams:
+                                                      'Nothing planned for this day\nTap + to add something',
+                                                  actionParam: () async {
+                                                    context.pushNamed(
+                                                      AddcalenderWidget
+                                                          .routeName,
+                                                      queryParameters: {
+                                                        'fromPage':
+                                                            serializeParam(
+                                                          'Calender',
+                                                          ParamType.String,
+                                                        ),
+                                                      }.withoutNulls,
+                                                    );
+                                                  },
+                                                ),
+                                              ),
                                             );
                                           }
 
                                           return Column(
                                             children: [
+                                              // Swipe hint
+                                              if (activeItems.isNotEmpty || completedItems.isNotEmpty)
+                                                Padding(
+                                                  padding: const EdgeInsets.only(bottom: 8.0),
+                                                  child: Center(
+                                                    child: Text(
+                                                      'Swipe right to complete • Swipe left to delete',
+                                                      style: FlutterFlowTheme.of(context).bodySmall.override(
+                                                        fontFamily: 'Andika New Basic',
+                                                        color: FFAppState().isComfortMode
+                                                            ? const Color(0xFF95A5A6)
+                                                            : const Color(0xFFBBBBBB),
+                                                        fontSize: 11.0,
+                                                        fontStyle: FontStyle.italic,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
                                               // Active items list
                                               ListView.builder(
                                                 padding: EdgeInsets.zero,
@@ -958,11 +1085,13 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                                                   child: Container(
                                                     width: double.infinity,
                                                     decoration: BoxDecoration(
-                                                      color: containerVarItem.type == 'Task'
-                                                        ? Color(0xFFE3F2FD)
+                                                      color: containerVarItem.type == 'Todo'
+                                                        ? Color(0xFFE3F2FD) // Blue for todos
                                                         : containerVarItem.type == 'Learning'
                                                           ? (containerVarItem.childColor ?? FlutterFlowTheme.of(context).primary).withValues(alpha: 0.15)
-                                                          : Color(0xFFE6F5F3),
+                                                          : containerVarItem.type == 'Activity'
+                                                            ? Color(0xFFFFF3E0) // Orange for activities
+                                                            : Color(0xFFE6F5F3), // Teal for events
                                                       borderRadius:
                                                           BorderRadius
                                                               .circular(12.0),
@@ -991,22 +1120,26 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                                                               Container(
                                                                 padding: EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
                                                                 decoration: BoxDecoration(
-                                                                  color: containerVarItem.type == 'Task'
-                                                                      ? Color(0xFF1976D2)
+                                                                  color: containerVarItem.type == 'Todo'
+                                                                      ? Color(0xFF1976D2) // Blue for todos
                                                                       : containerVarItem.type == 'Learning'
                                                                         ? Color(0xFF7C4DFF) // Purple for learning
-                                                                        : Color(0xFF00897B),
-                                                                  borderRadius: BorderRadius.circular(12.0),
+                                                                        : containerVarItem.type == 'Activity'
+                                                                          ? Color(0xFFFF9800) // Orange for activities
+                                                                          : Color(0xFF00897B), // Teal for events
+                                                                  borderRadius: BorderRadius.circular(14.0),
                                                                 ),
                                                                 child: Row(
                                                                   mainAxisSize: MainAxisSize.min,
                                                                   children: [
                                                                     Icon(
-                                                                      containerVarItem.type == 'Task'
+                                                                      containerVarItem.type == 'Todo'
                                                                           ? Icons.check_box_outlined
                                                                           : containerVarItem.type == 'Learning'
                                                                             ? Icons.school_outlined
-                                                                            : Icons.event_outlined,
+                                                                            : containerVarItem.type == 'Activity'
+                                                                              ? Icons.play_circle_outline
+                                                                              : Icons.event_outlined,
                                                                       size: 14.0,
                                                                       color: Colors.white,
                                                                     ),
@@ -1117,7 +1250,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                                                           ),
                                                         ),
                                                         // Assignment badges
-                                                        if (containerVarItem.assignedToMom || containerVarItem.assignedToDad || containerVarItem.childName != null)
+                                                        if (containerVarItem.assignedToMom || containerVarItem.assignedToDad || containerVarItem.childName != null || containerVarItem.childNames.isNotEmpty)
                                                           Padding(
                                                             padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 10.0),
                                                             child: Wrap(
@@ -1129,7 +1262,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                                                                     padding: EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
                                                                     decoration: BoxDecoration(
                                                                       color: Color(0xFFE57373),
-                                                                      borderRadius: BorderRadius.circular(10.0),
+                                                                      borderRadius: BorderRadius.circular(14.0),
                                                                     ),
                                                                     child: Text(
                                                                       'Mom',
@@ -1147,7 +1280,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                                                                     padding: EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
                                                                     decoration: BoxDecoration(
                                                                       color: Color(0xFF64B5F6),
-                                                                      borderRadius: BorderRadius.circular(10.0),
+                                                                      borderRadius: BorderRadius.circular(14.0),
                                                                     ),
                                                                     child: Text(
                                                                       'Dad',
@@ -1160,12 +1293,35 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                                                                       ),
                                                                     ),
                                                                   ),
-                                                                if (containerVarItem.childName != null)
+                                                                // Show multiple children if available, otherwise fallback to single child
+                                                                if (containerVarItem.childNames.isNotEmpty)
+                                                                  ...List.generate(containerVarItem.childNames.length, (i) {
+                                                                    return Container(
+                                                                      padding: EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
+                                                                      decoration: BoxDecoration(
+                                                                        color: i < containerVarItem.childColors.length
+                                                                            ? containerVarItem.childColors[i]
+                                                                            : FlutterFlowTheme.of(context).primary,
+                                                                        borderRadius: BorderRadius.circular(14.0),
+                                                                      ),
+                                                                      child: Text(
+                                                                        containerVarItem.childNames[i],
+                                                                        style: FlutterFlowTheme.of(context).bodySmall.override(
+                                                                          fontFamily: 'Andika New Basic',
+                                                                          fontSize: 11.0,
+                                                                          fontWeight: FontWeight.w600,
+                                                                          color: Colors.white,
+                                                                          letterSpacing: 0.0,
+                                                                        ),
+                                                                      ),
+                                                                    );
+                                                                  })
+                                                                else if (containerVarItem.childName != null)
                                                                   Container(
                                                                     padding: EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
                                                                     decoration: BoxDecoration(
                                                                       color: containerVarItem.childColor ?? FlutterFlowTheme.of(context).primary,
-                                                                      borderRadius: BorderRadius.circular(10.0),
+                                                                      borderRadius: BorderRadius.circular(14.0),
                                                                     ),
                                                                     child: Text(
                                                                       containerVarItem.childName!,
@@ -1264,10 +1420,12 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                                                           onDismissed: (direction) async {
                                                             if (direction == DismissDirection.endToStart) {
                                                               // Left swipe - delete
+                                                              final messenger = ScaffoldMessenger.maybeOf(context);
+                                                              final itemName = containerVarItem.name;
                                                               await containerVarItem.reference.delete();
-                                                              ScaffoldMessenger.of(context).showSnackBar(
+                                                              messenger?.showSnackBar(
                                                                 SnackBar(
-                                                                  content: Text('${containerVarItem.name} deleted'),
+                                                                  content: Text('$itemName deleted'),
                                                                   duration: Duration(seconds: 2),
                                                                 ),
                                                               );
@@ -1310,12 +1468,14 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                                                               child: Container(
                                                                 width: double.infinity,
                                                                 decoration: BoxDecoration(
-                                                                  color: containerVarItem.type == 'Task'
-                                                                    ? Color(0xFFE3F2FD)
+                                                                  color: containerVarItem.type == 'Todo'
+                                                                    ? Color(0xFFE3F2FD) // Blue for todos
                                                                     : containerVarItem.type == 'Learning'
                                                                       ? (containerVarItem.childColor ?? FlutterFlowTheme.of(context).primary).withValues(alpha: 0.15)
-                                                                      : Color(0xFFE6F5F3),
-                                                                  borderRadius: BorderRadius.circular(12.0),
+                                                                      : containerVarItem.type == 'Activity'
+                                                                        ? Color(0xFFFFF3E0) // Orange for activities
+                                                                        : Color(0xFFE6F5F3), // Teal for events
+                                                                  borderRadius: BorderRadius.circular(14.0),
                                                                 ),
                                                                 child: Column(
                                                                   mainAxisSize: MainAxisSize.max,
@@ -1330,22 +1490,26 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                                                                           Container(
                                                                             padding: EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
                                                                             decoration: BoxDecoration(
-                                                                              color: containerVarItem.type == 'Task'
-                                                                                  ? Color(0xFF1976D2)
+                                                                              color: containerVarItem.type == 'Todo'
+                                                                                  ? Color(0xFF1976D2) // Blue for todos
                                                                                   : containerVarItem.type == 'Learning'
                                                                                     ? Color(0xFF7C4DFF) // Purple for learning
-                                                                                    : Color(0xFF00897B),
-                                                                              borderRadius: BorderRadius.circular(12.0),
+                                                                                    : containerVarItem.type == 'Activity'
+                                                                                      ? Color(0xFFFF9800) // Orange for activities
+                                                                                      : Color(0xFF00897B), // Teal for events
+                                                                              borderRadius: BorderRadius.circular(14.0),
                                                                             ),
                                                                             child: Row(
                                                                               mainAxisSize: MainAxisSize.min,
                                                                               children: [
                                                                                 Icon(
-                                                                                  containerVarItem.type == 'Task'
+                                                                                  containerVarItem.type == 'Todo'
                                                                                       ? Icons.check_box_outlined
                                                                                       : containerVarItem.type == 'Learning'
                                                                                         ? Icons.school_outlined
-                                                                                        : Icons.event_outlined,
+                                                                                        : containerVarItem.type == 'Activity'
+                                                                                          ? Icons.play_circle_outline
+                                                                                          : Icons.event_outlined,
                                                                                   size: 14.0,
                                                                                   color: Colors.white,
                                                                                 ),
@@ -1442,7 +1606,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                                                                       ),
                                                                     ),
                                                                     // Assignment badges for completed items
-                                                                    if (containerVarItem.assignedToMom || containerVarItem.assignedToDad || containerVarItem.childName != null)
+                                                                    if (containerVarItem.assignedToMom || containerVarItem.assignedToDad || containerVarItem.childName != null || containerVarItem.childNames.isNotEmpty)
                                                                       Padding(
                                                                         padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 10.0),
                                                                         child: Wrap(
@@ -1454,7 +1618,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                                                                                 padding: EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
                                                                                 decoration: BoxDecoration(
                                                                                   color: Color(0xFFE57373),
-                                                                                  borderRadius: BorderRadius.circular(10.0),
+                                                                                  borderRadius: BorderRadius.circular(14.0),
                                                                                 ),
                                                                                 child: Text(
                                                                                   'Mom',
@@ -1472,7 +1636,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                                                                                 padding: EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
                                                                                 decoration: BoxDecoration(
                                                                                   color: Color(0xFF64B5F6),
-                                                                                  borderRadius: BorderRadius.circular(10.0),
+                                                                                  borderRadius: BorderRadius.circular(14.0),
                                                                                 ),
                                                                                 child: Text(
                                                                                   'Dad',
@@ -1485,12 +1649,35 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                                                                                   ),
                                                                                 ),
                                                                               ),
-                                                                            if (containerVarItem.childName != null)
+                                                                            // Show multiple children if available, otherwise fallback to single child
+                                                                            if (containerVarItem.childNames.isNotEmpty)
+                                                                              ...List.generate(containerVarItem.childNames.length, (i) {
+                                                                                return Container(
+                                                                                  padding: EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
+                                                                                  decoration: BoxDecoration(
+                                                                                    color: i < containerVarItem.childColors.length
+                                                                                        ? containerVarItem.childColors[i]
+                                                                                        : FlutterFlowTheme.of(context).primary,
+                                                                                    borderRadius: BorderRadius.circular(14.0),
+                                                                                  ),
+                                                                                  child: Text(
+                                                                                    containerVarItem.childNames[i],
+                                                                                    style: FlutterFlowTheme.of(context).bodySmall.override(
+                                                                                      fontFamily: 'Andika New Basic',
+                                                                                      fontSize: 11.0,
+                                                                                      fontWeight: FontWeight.w600,
+                                                                                      color: Colors.white,
+                                                                                      letterSpacing: 0.0,
+                                                                                    ),
+                                                                                  ),
+                                                                                );
+                                                                              })
+                                                                            else if (containerVarItem.childName != null)
                                                                               Container(
                                                                                 padding: EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
                                                                                 decoration: BoxDecoration(
                                                                                   color: containerVarItem.childColor ?? FlutterFlowTheme.of(context).primary,
-                                                                                  borderRadius: BorderRadius.circular(10.0),
+                                                                                  borderRadius: BorderRadius.circular(14.0),
                                                                                 ),
                                                                                 child: Text(
                                                                                   containerVarItem.childName!,
@@ -1589,17 +1776,26 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
 
                             var allEvents = snapshot.data!;
 
-                            // Apply filters
+                            // Debug: Print all event types
+                            debugPrint('=== Comfort Mode Calendar Data ===');
+                            debugPrint('Total events before filter: ${allEvents.length}');
+                            for (final e in allEvents) {
+                              debugPrint('Event: ${e.name}, typ: ${e.typ}, date: ${e.date}');
+                            }
+
+                            // Exclude Todos (Task type) from calendar entirely
+                            allEvents = allEvents
+                                .where((e) => e.typ != 'Task' && e.typ != 'Tasks')
+                                .toList();
+                            debugPrint('Events after Task exclusion: ${allEvents.length}');
+
+                            // Apply type filters (if not All)
                             if (_model.selectedFilter != 'All') {
-                              if (_model.selectedFilter == 'Task') {
-                                allEvents = allEvents
-                                    .where((e) => e.typ == 'Task' || e.typ == 'Tasks')
-                                    .toList();
-                              } else {
-                                allEvents = allEvents
-                                    .where((e) => e.typ == _model.selectedFilter)
-                                    .toList();
-                              }
+                              debugPrint('Applying filter: ${_model.selectedFilter}');
+                              allEvents = allEvents
+                                  .where((e) => e.typ == _model.selectedFilter)
+                                  .toList();
+                              debugPrint('Events after type filter: ${allEvents.length}');
                             }
 
                             // Apply multi-select child filter
@@ -1649,7 +1845,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                               return Padding(
                                 padding: EdgeInsetsDirectional.fromSTEB(16.0, 50.0, 16.0, 50.0),
                                 child: EmptyWidgetComponentWidget(
-                                  titleParams: 'No tasks or events\nTap + to add one',
+                                  titleParams: 'Nothing planned\nTap + to add something',
                                   actionParam: () async {
                                     context.pushNamed(
                                       AddcalenderWidget.routeName,
@@ -1824,7 +2020,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
         background: Container(
           decoration: BoxDecoration(
             color: Colors.green,
-            borderRadius: BorderRadius.circular(16.0),
+            borderRadius: BorderRadius.circular(14.0),
           ),
           alignment: Alignment.centerLeft,
           padding: EdgeInsetsDirectional.fromSTEB(20.0, 0, 0, 0),
@@ -1837,7 +2033,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
         secondaryBackground: Container(
           decoration: BoxDecoration(
             color: Colors.red,
-            borderRadius: BorderRadius.circular(16.0),
+            borderRadius: BorderRadius.circular(14.0),
           ),
           alignment: Alignment.centerRight,
           padding: EdgeInsetsDirectional.fromSTEB(0, 0, 20.0, 0),
@@ -1884,7 +2080,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
             width: double.infinity,
             decoration: BoxDecoration(
               color: Color(0xFF34495E),
-              borderRadius: BorderRadius.circular(16.0),
+              borderRadius: BorderRadius.circular(14.0),
               border: Border.all(
                 color: Color(0xFF7F8C8D),
                 width: 1.0,
@@ -1904,7 +2100,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                         padding: EdgeInsetsDirectional.fromSTEB(12.0, 6.0, 12.0, 6.0),
                         decoration: BoxDecoration(
                           color: Color(0xFF7F8C8D),
-                          borderRadius: BorderRadius.circular(12.0),
+                          borderRadius: BorderRadius.circular(14.0),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -1918,7 +2114,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                             ),
                             SizedBox(width: 6.0),
                             Text(
-                              (event.typ == 'Task' || event.typ == 'Tasks') ? 'Task' : 'Event',
+                              (event.typ == 'Task' || event.typ == 'Tasks') ? 'Task' : (event.typ == 'Activity' ? 'Activity' : 'Event'),
                               style: FlutterFlowTheme.of(context).bodyMedium.override(
                                 fontFamily: 'Andika New Basic',
                                 fontSize: 14.0,

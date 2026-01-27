@@ -2,6 +2,7 @@ import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
 import '/backend/schema/enums/enums.dart';
 import '/components/home_nav_bar_widget.dart';
+import '/components/parent_circle_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/custom_functions.dart' as functions;
@@ -10,9 +11,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:collection/collection.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // App version for tracking updates
-const String _appVersion = 'v1.1.135'; // Custom date/time picker matching app style
+const String _appVersion = 'v1.2.320';
 
 /// Primary Home Page
 /// Combines the simplicity of comfort mode with the warm colors of standard mode
@@ -37,8 +39,14 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
   // Quote visibility state
   bool _showQuote = true;
 
+  // Track todos being completed for fade animation
+  final Set<String> _completingTodos = {};
+
   // Data from Firebase
   List<ChildernRecord>? _userChildren;
+
+  // Parent display info
+  ParentDisplayInfo _parentInfo = ParentDisplayInfo.defaults();
 
 
   @override
@@ -51,8 +59,8 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
       vsync: this,
     );
 
-    // Create staggered animations for each card (5 cards + pills)
-    _cardAnimations = List.generate(6, (index) {
+    // Create staggered animations for each card (6 cards + pills)
+    _cardAnimations = List.generate(7, (index) {
       final start = index * 0.1;
       final end = start + 0.4;
       return CurvedAnimation(
@@ -63,9 +71,16 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
 
     // Start animation after frame is built
     SchedulerBinding.instance.addPostFrameCallback((_) async {
+      // Check if quote was dismissed today
+      await _checkQuoteDismissed();
+
       // Check if user has completed onboarding
       if (currentUserReference != null) {
         final userDoc = await UsersRecord.getDocumentOnce(currentUserReference!);
+
+        // Load parent info from user doc
+        _parentInfo = ParentDisplayInfo.fromUser(userDoc);
+
         if (!userDoc.onboardingCompleted) {
           // User hasn't completed onboarding, redirect to preparation
           if (mounted) {
@@ -82,6 +97,16 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
           isEqualTo: currentUserReference,
         ),
       );
+
+      // Sort children by birthdate (oldest to youngest)
+      if (_userChildren != null && _userChildren!.isNotEmpty) {
+        _userChildren!.sort((a, b) {
+          if (a.birthDay == null && b.birthDay == null) return 0;
+          if (a.birthDay == null) return 1;
+          if (b.birthDay == null) return -1;
+          return a.birthDay!.compareTo(b.birthDay!);
+        });
+      }
 
       // If no children, redirect to add child
       if (_userChildren == null || _userChildren!.isEmpty) {
@@ -173,20 +198,24 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                     _animatedCard(0, _buildMealsCard(context)),
                     const SizedBox(height: 16.0),
 
-                    // Today's Schedule Card (animated)
+                    // Today's Events Card (animated)
                     _animatedCard(1, _buildScheduleCard(context)),
                     const SizedBox(height: 16.0),
 
+                    // Todos Card (animated)
+                    _animatedCard(2, _buildTodosCard(context)),
+                    const SizedBox(height: 16.0),
+
                     // Learning Path Card (animated)
-                    _animatedCard(2, _buildLearningPathCard(context)),
+                    _animatedCard(3, _buildLearningPathCard(context)),
                     const SizedBox(height: 16.0),
 
                     // Activities Card (animated)
-                    _animatedCard(3, _buildActivitiesCard(context)),
+                    _animatedCard(4, _buildActivitiesCard(context)),
                     const SizedBox(height: 16.0),
 
-                    // Quick Access Pills (animated)
-                    _animatedCard(4, _buildQuickAccessPills(context)),
+                    // Milestones Card (animated)
+                    _animatedCard(5, _buildMilestonesCard(context)),
                     const SizedBox(height: 24.0),
                   ],
                 ),
@@ -210,7 +239,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
             padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
             decoration: BoxDecoration(
               color: Colors.white.withOpacity(0.6),
-              borderRadius: BorderRadius.circular(12.0),
+              borderRadius: BorderRadius.circular(14.0),
             ),
             child: Text(
               _appVersion,
@@ -248,7 +277,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
     }
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         AuthUserStreamWidget(
           builder: (context) {
@@ -286,12 +315,50 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
     );
   }
 
+  /// Check if quote was dismissed today
+  Future<void> _checkQuoteDismissed() async {
+    final prefs = await SharedPreferences.getInstance();
+    final dismissedDate = prefs.getString('quote_dismissed_date');
+    final today = DateTime.now();
+    final todayString = '${today.year}-${today.month}-${today.day}';
+
+    if (dismissedDate == todayString) {
+      // Quote was dismissed today, keep it hidden
+      if (mounted) {
+        setState(() {
+          _showQuote = false;
+        });
+      }
+    } else {
+      // New day, show the quote again
+      if (mounted) {
+        setState(() {
+          _showQuote = true;
+        });
+      }
+    }
+  }
+
+  /// Save that the quote was dismissed today
+  Future<void> _dismissQuote() async {
+    final prefs = await SharedPreferences.getInstance();
+    final today = DateTime.now();
+    final todayString = '${today.year}-${today.month}-${today.day}';
+    await prefs.setString('quote_dismissed_date', todayString);
+
+    if (mounted) {
+      setState(() {
+        _showQuote = false;
+      });
+    }
+  }
+
   Widget _buildQuote(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.5),
-        borderRadius: BorderRadius.circular(12.0),
+        borderRadius: BorderRadius.circular(14.0),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -325,11 +392,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
           ),
           // Dismiss button
           GestureDetector(
-            onTap: () {
-              setState(() {
-                _showQuote = false;
-              });
-            },
+            onTap: _dismissQuote,
             child: Padding(
               padding: const EdgeInsets.only(left: 8.0),
               child: Icon(
@@ -369,7 +432,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                 child: InkWell(
                   onTap: () {
                     context.pushNamed(
-                      ChildSummaryWidget.routeName,
+                      ChildrenWidget.routeName,
                       queryParameters: {
                         'childRef': serializeParam(
                           child.reference,
@@ -378,7 +441,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                       },
                     );
                   },
-                  borderRadius: BorderRadius.circular(16.0),
+                  borderRadius: BorderRadius.circular(14.0),
                   child: Column(
                     children: [
                       Container(
@@ -403,7 +466,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                                   fit: BoxFit.cover,
                                   errorBuilder: (_, __, ___) => Center(
                                     child: Text(
-                                      child.name.isNotEmpty ? child.name[0].toUpperCase() : 'C',
+                                      child.name.isNotEmpty ? child.name[0].toLowerCase() : 'c',
                                       style: const TextStyle(
                                         color: Colors.white,
                                         fontSize: 22.0,
@@ -415,14 +478,14 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                               )
                             : Center(
                                 child: Text(
-                                  child.name.isNotEmpty ? child.name[0].toUpperCase() : 'C',
+                                  child.name.isNotEmpty ? child.name[0].toLowerCase() : 'c',
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 22.0,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
-                              ),
+                              )
                       ),
                       const SizedBox(height: 6.0),
                       Text(
@@ -539,12 +602,12 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                           }.withoutNulls,
                         );
                       },
-                      borderRadius: BorderRadius.circular(12.0),
+                      borderRadius: BorderRadius.circular(14.0),
                       child: Container(
                         padding: const EdgeInsets.all(8.0),
                         decoration: BoxDecoration(
                           color: const Color(0xFF9B8AA0).withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12.0),
+                          borderRadius: BorderRadius.circular(14.0),
                         ),
                         child: const Icon(
                           Icons.shopping_cart_outlined,
@@ -690,19 +753,495 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
             .where('user_ref', isEqualTo: currentUserReference)
             .orderBy('date'),
       ),
-      builder: (context, snapshot) {
-        // Filter to today's incomplete tasks locally
+      builder: (context, eventSnapshot) {
+        // Filter to today's incomplete EVENTS only (not tasks - those go in Todos card)
         final today = DateTime.now();
-        final allTasks = snapshot.data ?? [];
-        final tasks = allTasks.where((task) {
-          if (task.isCompleted) return false;
-          if (task.date == null) return false;
-          return dateTimeFormat('yMd', task.date!) == dateTimeFormat('yMd', today);
+        final allRecords = eventSnapshot.data ?? [];
+        final events = allRecords.where((record) {
+          if (record.isCompleted) return false;
+          if (record.date == null) return false;
+          if (record.typ != 'Event') return false; // Only events, not tasks
+          return dateTimeFormat('yMd', record.date!) == dateTimeFormat('yMd', today);
         }).toList();
-        final hasItems = tasks.isNotEmpty;
+
+        // Also stream planned activities for today
+        return StreamBuilder<List<PlannedActivityRecord>>(
+          stream: queryPlannedActivityRecord(
+            queryBuilder: (plannedActivityRecord) => plannedActivityRecord
+                .where('user_ref', isEqualTo: currentUserReference),
+          ),
+          builder: (context, activitySnapshot) {
+            // Filter to today's incomplete planned activities
+            final allPlannedActivities = activitySnapshot.data ?? [];
+            final plannedActivities = allPlannedActivities.where((activity) {
+              if (activity.isCompleted) return false;
+              if (activity.date == null) return false;
+              return dateTimeFormat('yMd', activity.date!) == dateTimeFormat('yMd', today);
+            }).toList();
+
+            final totalItems = events.length + plannedActivities.length;
+            final hasItems = totalItems > 0;
+
+            return InkWell(
+              onTap: () => context.pushNamed(CalendarpageWidget.routeName),
+              borderRadius: BorderRadius.circular(20.0),
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(20.0),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.calendar_today_rounded,
+                          color: FlutterFlowTheme.of(context).primary,
+                          size: 22.0,
+                        ),
+                        const SizedBox(width: 8.0),
+                        Text(
+                          hasItems
+                              ? "Today's Events"
+                              : 'No events today',
+                          style: FlutterFlowTheme.of(context).bodyLarge.override(
+                            fontFamily: 'Andika New Basic',
+                            color: const Color(0xFF5D4E60),
+                            fontSize: 18.0,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 0.0,
+                          ),
+                        ),
+                        if (hasItems) ...[
+                          const SizedBox(width: 8.0),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
+                            decoration: BoxDecoration(
+                              color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(14.0),
+                            ),
+                            child: Text(
+                              '$totalItems',
+                              style: FlutterFlowTheme.of(context).bodySmall.override(
+                                fontFamily: 'Andika New Basic',
+                                color: FlutterFlowTheme.of(context).primary,
+                                fontSize: 12.0,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
+                        const Spacer(),
+                        // Add Event button
+                        InkWell(
+                          onTap: () => context.pushNamed(
+                            AddcalenderWidget.routeName,
+                            queryParameters: {'fromPage': 'Home'},
+                          ),
+                          borderRadius: BorderRadius.circular(14.0),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
+                            decoration: BoxDecoration(
+                              color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(14.0),
+                              border: Border.all(
+                                color: FlutterFlowTheme.of(context).primary.withOpacity(0.3),
+                                width: 1.0,
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.add,
+                                  color: FlutterFlowTheme.of(context).primary,
+                                  size: 16.0,
+                                ),
+                                const SizedBox(width: 4.0),
+                                Text(
+                                  'Add',
+                                  style: FlutterFlowTheme.of(context).bodySmall.override(
+                                    fontFamily: 'Andika New Basic',
+                                    color: FlutterFlowTheme.of(context).primary,
+                                    fontSize: 13.0,
+                                    fontWeight: FontWeight.w600,
+                                    letterSpacing: 0.0,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    if (hasItems) ...[
+                      const SizedBox(height: 12.0),
+                      // Show events first
+                      ...events.take(3).map((event) => _buildEventRow(context, event)),
+                      // Show planned activities (if room)
+                      if (events.length < 3)
+                        ...plannedActivities.take(3 - events.length).map(
+                          (activity) => _buildPlannedActivityRow(context, activity),
+                        ),
+                      // Show "more" indicator if there are more items
+                      if (totalItems > 3)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 4.0),
+                          child: Text(
+                            '+${totalItems - 3} more',
+                            style: FlutterFlowTheme.of(context).bodySmall.override(
+                              fontFamily: 'Andika New Basic',
+                              color: const Color(0xFF9B8A9E),
+                              fontSize: 12.0,
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  /// Builds a single event row for the schedule card
+  Widget _buildEventRow(BuildContext context, EventAndTaskRecord event) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 12.0,
+          vertical: 10.0,
+        ),
+        decoration: BoxDecoration(
+          color: const Color(0xFFE6F5F3), // Teal for events
+          borderRadius: BorderRadius.circular(14.0),
+        ),
+        child: Row(
+          children: [
+            // Show assignee icons (child/mom/dad circles)
+            _buildAssigneeIcons(event),
+            const SizedBox(width: 10.0),
+            Expanded(
+              child: Text(
+                event.name,
+                style: FlutterFlowTheme.of(context).bodyMedium.override(
+                  fontFamily: 'Andika New Basic',
+                  color: const Color(0xFF5D4E60),
+                  fontSize: 14.0,
+                  fontWeight: FontWeight.w500,
+                  letterSpacing: 0.0,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            if (event.date != null) ...[
+              const SizedBox(width: 8.0),
+              Icon(
+                Icons.access_time_rounded,
+                size: 14.0,
+                color: const Color(0xFF9B8A9E),
+              ),
+              const SizedBox(width: 4.0),
+              Text(
+                dateTimeFormat('jm', event.date!),
+                style: FlutterFlowTheme.of(context).bodySmall.override(
+                  fontFamily: 'Andika New Basic',
+                  color: const Color(0xFF9B8A9E),
+                  fontSize: 12.0,
+                  letterSpacing: 0.0,
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Builds a single planned activity row for the schedule card
+  Widget _buildPlannedActivityRow(BuildContext context, PlannedActivityRecord activity) {
+    return FutureBuilder<ActivityRecord?>(
+      future: activity.activityRef != null
+          ? ActivityRecord.getDocumentOnce(activity.activityRef!)
+          : Future.value(null),
+      builder: (context, snapshot) {
+        final activityData = snapshot.data;
+        final activityName = activityData?.title ?? 'Activity';
+
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 8.0),
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 12.0,
+              vertical: 10.0,
+            ),
+            decoration: BoxDecoration(
+              color: const Color(0xFFFFF3E0), // Orange-ish for planned activities
+              borderRadius: BorderRadius.circular(14.0),
+            ),
+            child: Row(
+              children: [
+                // Show assignee icons for planned activities
+                _buildPlannedActivityAssigneeIcons(activity),
+                const SizedBox(width: 10.0),
+                // Activity icon
+                Container(
+                  padding: const EdgeInsets.all(4.0),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFF9800).withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(6.0),
+                  ),
+                  child: const Icon(
+                    Icons.play_circle_outline,
+                    size: 14.0,
+                    color: Color(0xFFFF9800),
+                  ),
+                ),
+                const SizedBox(width: 8.0),
+                Expanded(
+                  child: Text(
+                    activityName,
+                    style: FlutterFlowTheme.of(context).bodyMedium.override(
+                      fontFamily: 'Andika New Basic',
+                      color: const Color(0xFF5D4E60),
+                      fontSize: 14.0,
+                      fontWeight: FontWeight.w500,
+                      letterSpacing: 0.0,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  /// Builds assignee icons for events - shows all assigned children and parents
+  Widget _buildAssigneeIcons(EventAndTaskRecord event) {
+    final List<Widget> icons = [];
+
+    // Add mom icon if assigned
+    if (event.assignedToMom) {
+      icons.add(_buildMomIcon());
+    }
+
+    // Add dad icon if assigned
+    if (event.assignedToDad) {
+      icons.add(_buildDadIcon());
+    }
+
+    // Add child icons for selected children
+    if (event.selectedChildren.isNotEmpty) {
+      // Show up to 2 children, then +N indicator
+      for (var i = 0; i < event.selectedChildren.length && i < 2; i++) {
+        icons.add(_buildChildIcon(event.selectedChildren[i]));
+      }
+      if (event.selectedChildren.length > 2) {
+        icons.add(_buildMoreIndicator(event.selectedChildren.length - 2));
+      }
+    } else if (event.selectedChild != null) {
+      // Legacy single child support
+      icons.add(_buildChildIcon(event.selectedChild!));
+    }
+
+    // Default icon if no assignment
+    if (icons.isEmpty) {
+      return Container(
+        width: 24.0,
+        height: 24.0,
+        decoration: BoxDecoration(
+          color: const Color(0xFF52A097).withOpacity(0.15),
+          shape: BoxShape.circle,
+        ),
+        child: const Icon(
+          Icons.event_rounded,
+          size: 16.0,
+          color: Color(0xFF52A097),
+        ),
+      );
+    }
+
+    // Stack icons with slight overlap
+    return SizedBox(
+      width: 24.0 + (icons.length - 1) * 14.0,
+      height: 24.0,
+      child: Stack(
+        children: icons.asMap().entries.map((entry) {
+          return Positioned(
+            left: entry.key * 14.0,
+            child: entry.value,
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  /// Builds assignee icons for planned activities
+  Widget _buildPlannedActivityAssigneeIcons(PlannedActivityRecord activity) {
+    final List<Widget> icons = [];
+
+    // Add child icons for selected children
+    if (activity.selectedChildren.isNotEmpty) {
+      for (var i = 0; i < activity.selectedChildren.length && i < 2; i++) {
+        icons.add(_buildChildIcon(activity.selectedChildren[i]));
+      }
+      if (activity.selectedChildren.length > 2) {
+        icons.add(_buildMoreIndicator(activity.selectedChildren.length - 2));
+      }
+    }
+
+    if (icons.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return SizedBox(
+      width: 24.0 + (icons.length - 1) * 14.0,
+      height: 24.0,
+      child: Stack(
+        children: icons.asMap().entries.map((entry) {
+          return Positioned(
+            left: entry.key * 14.0,
+            child: entry.value,
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  Widget _buildMomIcon() {
+    return Container(
+      width: 24.0,
+      height: 24.0,
+      decoration: BoxDecoration(
+        color: _parentInfo.myColor,
+        shape: BoxShape.circle,
+        border: Border.all(color: Colors.white, width: 2.0),
+      ),
+      child: Center(
+        child: Text(
+          _parentInfo.myInitial,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 11.0,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDadIcon() {
+    return Container(
+      width: 24.0,
+      height: 24.0,
+      decoration: BoxDecoration(
+        color: _parentInfo.partnerColor,
+        shape: BoxShape.circle,
+        border: Border.all(color: Colors.white, width: 2.0),
+      ),
+      child: Center(
+        child: Text(
+          _parentInfo.partnerInitial,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 11.0,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildChildIcon(DocumentReference childRef) {
+    return FutureBuilder<ChildernRecord>(
+      future: ChildernRecord.getDocumentOnce(childRef),
+      builder: (context, snapshot) {
+        final child = snapshot.data;
+        final color = child?.selectedColor ?? const Color(0xFF52A097);
+
+        return Container(
+          width: 24.0,
+          height: 24.0,
+          decoration: BoxDecoration(
+            color: color,
+            shape: BoxShape.circle,
+            border: Border.all(color: Colors.white, width: 2.0),
+          ),
+          child: Center(
+            child: Text(
+              (child?.name.isNotEmpty == true) ? child!.name[0].toLowerCase() : 'c',
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 11.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildMoreIndicator(int count) {
+    return Container(
+      width: 24.0,
+      height: 24.0,
+      decoration: BoxDecoration(
+        color: const Color(0xFF9B8A9E),
+        shape: BoxShape.circle,
+        border: Border.all(color: Colors.white, width: 2.0),
+      ),
+      child: Center(
+        child: Text(
+          '+$count',
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 9.0,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTodosCard(BuildContext context) {
+    return StreamBuilder<List<TodoRecord>>(
+      stream: queryTodoRecord(
+        queryBuilder: (todoRecord) => todoRecord
+            .where('user_ref', isEqualTo: currentUserReference),
+      ),
+      builder: (context, snapshot) {
+        final todos = snapshot.data ?? [];
+        // Filter and sort locally to avoid needing composite Firestore index
+        final incompleteTodos = todos
+            .where((t) => !t.isCompleted)
+            .toList()
+          ..sort((a, b) => a.sortOrder.compareTo(b.sortOrder));
+        final displayTodos = incompleteTodos.take(3).toList();
+        final remainingCount = incompleteTodos.length > 3 ? incompleteTodos.length - 3 : 0;
 
         return InkWell(
-          onTap: () => context.pushNamed(CalendarpageWidget.routeName),
+          onTap: () => context.pushNamed(TodosPageWidget.routeName),
           borderRadius: BorderRadius.circular(20.0),
           child: Container(
             width: double.infinity,
@@ -724,15 +1263,13 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                 Row(
                   children: [
                     Icon(
-                      Icons.calendar_today_rounded,
+                      Icons.check_circle_outline_rounded,
                       color: FlutterFlowTheme.of(context).primary,
                       size: 22.0,
                     ),
                     const SizedBox(width: 8.0),
                     Text(
-                      hasItems
-                          ? '${tasks.length} thing${tasks.length == 1 ? '' : 's'} today'
-                          : 'Nothing scheduled',
+                      "Today's To-Do List",
                       style: FlutterFlowTheme.of(context).bodyLarge.override(
                         fontFamily: 'Andika New Basic',
                         color: const Color(0xFF5D4E60),
@@ -741,69 +1278,82 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                         letterSpacing: 0.0,
                       ),
                     ),
-                  ],
-                ),
-                if (hasItems) ...[
-                  const SizedBox(height: 12.0),
-                  ...tasks.take(3).map((task) {
-                    final isTask = task.typ == 'Task';
-                    final bgColor = isTask
-                        ? const Color(0xFFE3F2FD) // Blue for tasks
-                        : const Color(0xFFE6F5F3); // Teal for events
-
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12.0,
-                          vertical: 10.0,
-                        ),
+                    if (incompleteTodos.isNotEmpty) ...[
+                      const SizedBox(width: 8.0),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
                         decoration: BoxDecoration(
-                          color: bgColor,
-                          borderRadius: BorderRadius.circular(12.0),
+                          color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(14.0),
                         ),
-                        child: Row(
-                          children: [
-                            // Show child icon, or parent icon if assigned to mom/dad
-                            _buildAssigneeIcon(task),
-                            const SizedBox(width: 10.0),
-                            Expanded(
-                              child: Text(
-                                task.name,
-                                style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                  fontFamily: 'Andika New Basic',
-                                  color: const Color(0xFF5D4E60),
-                                  fontSize: 14.0,
-                                  fontWeight: FontWeight.w500,
-                                  letterSpacing: 0.0,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            if (task.date != null) ...[
-                              const SizedBox(width: 8.0),
-                              Icon(
-                                Icons.access_time_rounded,
-                                size: 14.0,
-                                color: const Color(0xFF9B8A9E),
-                              ),
-                              const SizedBox(width: 4.0),
-                              Text(
-                                dateTimeFormat('jm', task.date!),
-                                style: FlutterFlowTheme.of(context).bodySmall.override(
-                                  fontFamily: 'Andika New Basic',
-                                  color: const Color(0xFF9B8A9E),
-                                  fontSize: 12.0,
-                                  letterSpacing: 0.0,
-                                ),
-                              ),
-                            ],
-                          ],
+                        child: Text(
+                          '${incompleteTodos.length}',
+                          style: FlutterFlowTheme.of(context).bodySmall.override(
+                            fontFamily: 'Andika New Basic',
+                            color: FlutterFlowTheme.of(context).primary,
+                            fontSize: 12.0,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
-                    );
-                  }),
+                    ],
+                    const Spacer(),
+                    // Add button
+                    InkWell(
+                      onTap: () => context.pushNamed(TodosPageWidget.routeName),
+                      borderRadius: BorderRadius.circular(14.0),
+                      child: Container(
+                        padding: const EdgeInsets.all(6.0),
+                        decoration: BoxDecoration(
+                          color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(14.0),
+                        ),
+                        child: Icon(
+                          Icons.add_rounded,
+                          color: FlutterFlowTheme.of(context).primary,
+                          size: 18.0,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                if (displayTodos.isNotEmpty) ...[
+                  const SizedBox(height: 12.0),
+                  ...displayTodos.map((todo) => _buildTodoRow(context, todo)),
+                  if (remainingCount > 0)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4.0),
+                      child: Text(
+                        '+$remainingCount more',
+                        style: FlutterFlowTheme.of(context).bodySmall.override(
+                          fontFamily: 'Andika New Basic',
+                          color: const Color(0xFF9B8A9E),
+                          fontSize: 12.0,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    ),
+                ] else ...[
+                  const SizedBox(height: 12.0),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.add_circle_outline,
+                        color: const Color(0xFF9B8A9E),
+                        size: 20.0,
+                      ),
+                      const SizedBox(width: 8.0),
+                      Text(
+                        'Add a to-do',
+                        style: FlutterFlowTheme.of(context).bodyMedium.override(
+                          fontFamily: 'Andika New Basic',
+                          color: const Color(0xFF9B8A9E),
+                          fontSize: 14.0,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ],
             ),
@@ -813,90 +1363,492 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
     );
   }
 
-  /// Builds the assignee icon for a task/event
-  /// Shows: child's face icon if a child is assigned,
-  /// mom icon if assigned to mom, dad icon if assigned to dad,
-  /// or calendar icon if no assignment
-  Widget _buildAssigneeIcon(EventAndTaskRecord task) {
-    // Check if assigned to parent
-    if (task.assignedToMom) {
-      return Container(
-        width: 24.0,
-        height: 24.0,
-        decoration: BoxDecoration(
-          color: const Color(0xFFEC407A).withValues(alpha: 0.15),
-          shape: BoxShape.circle,
-        ),
-        child: const Icon(
-          Icons.face_3_rounded, // Mom icon
-          size: 16.0,
-          color: Color(0xFFEC407A),
-        ),
-      );
-    }
-    if (task.assignedToDad) {
-      return Container(
-        width: 24.0,
-        height: 24.0,
-        decoration: BoxDecoration(
-          color: const Color(0xFF1976D2).withValues(alpha: 0.15),
-          shape: BoxShape.circle,
-        ),
-        child: const Icon(
-          Icons.face_rounded, // Dad icon
-          size: 16.0,
-          color: Color(0xFF1976D2),
-        ),
-      );
-    }
-    // Check if assigned to a child
-    if (task.selectedChild != null) {
-      return FutureBuilder<ChildernRecord>(
-        future: ChildernRecord.getDocumentOnce(task.selectedChild!),
-        builder: (context, childSnapshot) {
-          final childColor = childSnapshot.data?.selectedColor ?? const Color(0xFF52A097);
-          final childName = childSnapshot.data?.name ?? '';
-          final initial = childName.isNotEmpty ? childName[0].toUpperCase() : 'C';
-          return Container(
-            width: 24.0,
-            height: 24.0,
-            decoration: BoxDecoration(
-              color: childColor,
-              shape: BoxShape.circle,
-            ),
-            child: Center(
-              child: Text(
-                initial,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 12.0,
-                  fontWeight: FontWeight.bold,
+  Widget _buildTodoRow(BuildContext context, TodoRecord todo) {
+    final todoId = todo.reference.id;
+    final isCompleting = _completingTodos.contains(todoId);
+
+    return AnimatedOpacity(
+      opacity: isCompleting ? 0.0 : 1.0,
+      duration: const Duration(milliseconds: 300),
+      child: AnimatedSlide(
+        offset: isCompleting ? const Offset(0.3, 0.0) : Offset.zero,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 8.0),
+          child: Row(
+            children: [
+              // Checkbox circle
+              GestureDetector(
+                onTap: isCompleting ? null : () async {
+                  // Start fade animation
+                  setState(() {
+                    _completingTodos.add(todoId);
+                  });
+                  // Wait for animation, then update Firestore
+                  await Future.delayed(const Duration(milliseconds: 250));
+                  await todo.reference.update({'is_completed': true});
+                  // Clean up after Firestore updates
+                  if (mounted) {
+                    setState(() {
+                      _completingTodos.remove(todoId);
+                    });
+                  }
+                },
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  width: 22.0,
+                  height: 22.0,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: isCompleting ? FlutterFlowTheme.of(context).primary : Colors.transparent,
+                    border: Border.all(
+                      color: FlutterFlowTheme.of(context).primary,
+                      width: 2.0,
+                    ),
+                  ),
+                  child: isCompleting
+                      ? const Icon(Icons.check, size: 14.0, color: Colors.white)
+                      : null,
                 ),
               ),
-            ),
-          );
-        },
-      );
-    }
-    // Default: event icon
-    return Container(
-      width: 24.0,
-      height: 24.0,
-      decoration: BoxDecoration(
-        color: const Color(0xFF52A097).withValues(alpha: 0.15),
-        shape: BoxShape.circle,
+              const SizedBox(width: 12.0),
+              // Todo title
+              Expanded(
+                child: Text(
+                  todo.title,
+                  style: FlutterFlowTheme.of(context).bodyMedium.override(
+                    fontFamily: 'Andika New Basic',
+                    color: isCompleting ? const Color(0xFF9B8A9E) : const Color(0xFF5D4E60),
+                    fontSize: 14.0,
+                    fontWeight: FontWeight.w500,
+                    letterSpacing: 0.0,
+                    decoration: isCompleting ? TextDecoration.lineThrough : null,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              // Show assignee icons on the right
+              _buildTodoAssigneeIcons(todo),
+            ],
+          ),
+        ),
       ),
-      child: const Icon(
-        Icons.event_rounded,
-        size: 16.0,
-        color: Color(0xFF52A097),
+    );
+  }
+
+  Widget _buildTodoAssigneeIcons(TodoRecord todo) {
+    final List<Widget> icons = [];
+
+    // Add mom icon if assigned
+    if (todo.assignedToMom) {
+      icons.add(_buildMomIcon());
+    }
+
+    // Add dad icon if assigned
+    if (todo.assignedToDad) {
+      icons.add(_buildDadIcon());
+    }
+
+    // Add child icons for selected children
+    if (todo.selectedChildren.isNotEmpty) {
+      for (var i = 0; i < todo.selectedChildren.length && i < 2; i++) {
+        icons.add(_buildChildIcon(todo.selectedChildren[i]));
+      }
+      if (todo.selectedChildren.length > 2) {
+        icons.add(_buildMoreIndicator(todo.selectedChildren.length - 2));
+      }
+    }
+
+    if (icons.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return SizedBox(
+      width: 24.0 + (icons.length - 1) * 14.0,
+      height: 24.0,
+      child: Stack(
+        children: icons.asMap().entries.map((entry) {
+          return Positioned(
+            left: entry.key * 14.0,
+            child: entry.value,
+          );
+        }).toList(),
       ),
     );
   }
 
   Widget _buildActivitiesCard(BuildContext context) {
+    // Query today's activities (Tasks from calendar)
+    return StreamBuilder<List<EventAndTaskRecord>>(
+      stream: queryEventAndTaskRecord(
+        queryBuilder: (eventAndTaskRecord) => eventAndTaskRecord
+            .where('user_ref', isEqualTo: currentUserReference),
+      ),
+      builder: (context, snapshot) {
+        // Filter to today's incomplete activities (Task or Activity type, not Events)
+        final today = DateTime.now();
+        final allRecords = snapshot.data ?? [];
+        final todaysActivities = allRecords.where((record) {
+          if (record.isCompleted) return false;
+          if (record.date == null) return false;
+          // Include both Task and Activity types
+          if (record.typ != 'Task' && record.typ != 'Activity') return false;
+          return dateTimeFormat('yMd', record.date!) == dateTimeFormat('yMd', today);
+        }).toList();
+
+        final hasActivities = todaysActivities.isNotEmpty;
+        final displayActivities = todaysActivities.take(3).toList();
+        final remainingCount = todaysActivities.length > 3 ? todaysActivities.length - 3 : 0;
+
+        return InkWell(
+          onTap: () => context.pushNamed(FeelingBubblesWidget.routeName),
+          borderRadius: BorderRadius.circular(20.0),
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(20.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20.0),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      Icons.play_circle_outline_rounded,
+                      color: FlutterFlowTheme.of(context).primary,
+                      size: 22.0,
+                    ),
+                    const SizedBox(width: 8.0),
+                    Text(
+                      hasActivities ? "Today's Activities" : 'Find an activity',
+                      style: FlutterFlowTheme.of(context).bodyLarge.override(
+                        fontFamily: 'Andika New Basic',
+                        color: const Color(0xFF5D4E60),
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.0,
+                      ),
+                    ),
+                    if (hasActivities) ...[
+                      const SizedBox(width: 8.0),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
+                        decoration: BoxDecoration(
+                          color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(14.0),
+                        ),
+                        child: Text(
+                          '${todaysActivities.length}',
+                          style: FlutterFlowTheme.of(context).bodySmall.override(
+                            fontFamily: 'Andika New Basic',
+                            color: FlutterFlowTheme.of(context).primary,
+                            fontSize: 12.0,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
+                    const Spacer(),
+                    // Add/Find button
+                    InkWell(
+                      onTap: () => context.pushNamed(FeelingBubblesWidget.routeName),
+                      borderRadius: BorderRadius.circular(14.0),
+                      child: Container(
+                        padding: const EdgeInsets.all(6.0),
+                        decoration: BoxDecoration(
+                          color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(14.0),
+                        ),
+                        child: Icon(
+                          hasActivities ? Icons.add_rounded : Icons.search_rounded,
+                          color: FlutterFlowTheme.of(context).primary,
+                          size: 18.0,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                if (hasActivities) ...[
+                  const SizedBox(height: 12.0),
+                  // Show today's activities
+                  ...displayActivities.map((activity) => _buildActivityRow(context, activity)),
+                  // Show "more" indicator if there are more items
+                  if (remainingCount > 0)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4.0),
+                      child: Text(
+                        '+$remainingCount more',
+                        style: FlutterFlowTheme.of(context).bodySmall.override(
+                          fontFamily: 'Andika New Basic',
+                          color: const Color(0xFF9B8A9E),
+                          fontSize: 12.0,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    ),
+                ],
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  /// Builds a single activity row for the activities card
+  Widget _buildActivityRow(BuildContext context, EventAndTaskRecord activity) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              activity.name,
+              style: FlutterFlowTheme.of(context).bodyMedium.override(
+                fontFamily: 'Andika New Basic',
+                color: const Color(0xFF5D4E60),
+                fontSize: 14.0,
+                fontWeight: FontWeight.w500,
+                letterSpacing: 0.0,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          const SizedBox(width: 8.0),
+          // Show assignee icons on the right (child/mom/dad circles)
+          _buildAssigneeIcons(activity),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLearningPathCard(BuildContext context) {
+    // Get today's date boundaries for filtering
+    final now = DateTime.now();
+    final todayStart = DateTime(now.year, now.month, now.day);
+    final todayEnd = DateTime(now.year, now.month, now.day, 23, 59, 59);
+
+    return StreamBuilder<List<LearningPathTasksRecord>>(
+      stream: queryLearningPathTasksRecord(
+        queryBuilder: (q) => q
+            .where('user_ref', isEqualTo: currentUserReference)
+            .where('is_completed', isEqualTo: false)
+            .where('task_time', isGreaterThanOrEqualTo: todayStart)
+            .where('task_time', isLessThanOrEqualTo: todayEnd)
+            .orderBy('task_time')
+            .limit(5),
+      ),
+      builder: (context, taskSnapshot) {
+        final todaysTasks = taskSnapshot.data ?? [];
+        final displayTasks = todaysTasks.take(3).toList();
+        final remainingCount = todaysTasks.length > 3 ? todaysTasks.length - 3 : 0;
+
+        return InkWell(
+          onTap: () => context.pushNamed(LearnPathWidget.routeName),
+          borderRadius: BorderRadius.circular(20.0),
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(20.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20.0),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header row matching Todos card pattern
+                Row(
+                  children: [
+                    Icon(
+                      Icons.school_outlined,
+                      color: FlutterFlowTheme.of(context).primary,
+                      size: 22.0,
+                    ),
+                    const SizedBox(width: 8.0),
+                    Text(
+                      "Today's Learning",
+                      style: FlutterFlowTheme.of(context).bodyLarge.override(
+                        fontFamily: 'Andika New Basic',
+                        color: const Color(0xFF5D4E60),
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.0,
+                      ),
+                    ),
+                    if (todaysTasks.isNotEmpty) ...[
+                      const SizedBox(width: 8.0),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
+                        decoration: BoxDecoration(
+                          color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(14.0),
+                        ),
+                        child: Text(
+                          '${todaysTasks.length}',
+                          style: FlutterFlowTheme.of(context).bodySmall.override(
+                            fontFamily: 'Andika New Basic',
+                            color: FlutterFlowTheme.of(context).primary,
+                            fontSize: 12.0,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
+                    const Spacer(),
+                    // Add button
+                    InkWell(
+                      onTap: () => context.pushNamed(LearnPathWidget.routeName),
+                      borderRadius: BorderRadius.circular(14.0),
+                      child: Container(
+                        padding: const EdgeInsets.all(6.0),
+                        decoration: BoxDecoration(
+                          color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(14.0),
+                        ),
+                        child: Icon(
+                          Icons.add_rounded,
+                          color: FlutterFlowTheme.of(context).primary,
+                          size: 18.0,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                if (displayTasks.isNotEmpty) ...[
+                  const SizedBox(height: 12.0),
+                  ...displayTasks.map((task) => _buildLearningTaskRow(context, task)),
+                  if (remainingCount > 0)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4.0),
+                      child: Text(
+                        '+$remainingCount more',
+                        style: FlutterFlowTheme.of(context).bodySmall.override(
+                          fontFamily: 'Andika New Basic',
+                          color: const Color(0xFF9B8A9E),
+                          fontSize: 12.0,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    ),
+                ] else ...[
+                  const SizedBox(height: 12.0),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.check_circle_outline,
+                        color: const Color(0xFF4CAF50),
+                        size: 20.0,
+                      ),
+                      const SizedBox(width: 8.0),
+                      Text(
+                        'No lessons scheduled for today',
+                        style: FlutterFlowTheme.of(context).bodyMedium.override(
+                          fontFamily: 'Andika New Basic',
+                          color: const Color(0xFF9B8A9E),
+                          fontSize: 14.0,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildLearningTaskRow(BuildContext context, LearningPathTasksRecord task) {
+    return StreamBuilder<ChildernRecord>(
+      stream: task.childRef != null ? ChildernRecord.getDocument(task.childRef!) : null,
+      builder: (context, childSnapshot) {
+        final childName = childSnapshot.data?.name ?? '';
+        final childColor = childSnapshot.data?.selectedColor ?? FlutterFlowTheme.of(context).primary;
+
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 8.0),
+          child: Row(
+            children: [
+              // Circle indicator (like checkbox in todos) - removed hat icon per user request
+              Container(
+                width: 22.0,
+                height: 22.0,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: FlutterFlowTheme.of(context).primary,
+                    width: 2.0,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12.0),
+              // Task title
+              Expanded(
+                child: Text(
+                  task.title,
+                  style: FlutterFlowTheme.of(context).bodyMedium.override(
+                    fontFamily: 'Andika New Basic',
+                    color: const Color(0xFF5D4E60),
+                    fontSize: 14.0,
+                    fontWeight: FontWeight.w500,
+                    letterSpacing: 0.0,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              // Child avatar on the right (like assignee icons in todos)
+              if (childName.isNotEmpty)
+                Container(
+                  width: 22.0,
+                  height: 22.0,
+                  decoration: BoxDecoration(
+                    color: childColor,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Center(
+                    child: Text(
+                      childName[0].toLowerCase(),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 11.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  // Milestones Card
+  Widget _buildMilestonesCard(BuildContext context) {
     return InkWell(
-      onTap: () => context.pushNamed(FeelingBubblesWidget.routeName),
+      onTap: () => context.pushNamed(MilstonesWidget.routeName),
       borderRadius: BorderRadius.circular(20.0),
       child: Container(
         width: double.infinity,
@@ -912,348 +1864,133 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
             ),
           ],
         ),
-        child: Row(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(
-              Icons.play_circle_outline_rounded,
-              color: FlutterFlowTheme.of(context).primary,
-              size: 22.0,
+            // Header row
+            Row(
+              children: [
+                Icon(
+                  Icons.emoji_events_outlined,
+                  color: const Color(0xFFFF9800),
+                  size: 22.0,
+                ),
+                const SizedBox(width: 8.0),
+                Text(
+                  'Milestones',
+                  style: FlutterFlowTheme.of(context).bodyLarge.override(
+                    fontFamily: 'Andika New Basic',
+                    color: const Color(0xFF5D4E60),
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.0,
+                  ),
+                ),
+                const Spacer(),
+                Icon(
+                  Icons.arrow_forward_ios,
+                  color: const Color(0xFF9B8A9E),
+                  size: 16.0,
+                ),
+              ],
             ),
-            const SizedBox(width: 8.0),
+            const SizedBox(height: 12.0),
+            // Description text
             Text(
-              'Find an activity',
-              style: FlutterFlowTheme.of(context).bodyLarge.override(
+              'Track your child\'s developmental milestones',
+              style: FlutterFlowTheme.of(context).bodyMedium.override(
                 fontFamily: 'Andika New Basic',
-                color: const Color(0xFF5D4E60),
-                fontSize: 18.0,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 0.0,
+                color: const Color(0xFF9B8A9E),
+                fontSize: 14.0,
               ),
             ),
-            const Spacer(),
-            const Icon(
-              Icons.arrow_forward_ios_rounded,
-              color: Color(0xFFDADADA),
-              size: 16.0,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildLearningPathCard(BuildContext context) {
-    return StreamBuilder<List<LearningPathTasksRecord>>(
-      stream: queryLearningPathTasksRecord(
-        queryBuilder: (q) => q
-            .where('user_ref', isEqualTo: currentUserReference)
-            .where('is_completed', isEqualTo: false)
-            .orderBy('task_time')
-            .limit(1),
-      ),
-      builder: (context, taskSnapshot) {
-        final todaysTask = taskSnapshot.data?.firstOrNull;
-
-        return StreamBuilder<List<LearningPathRecord>>(
-          stream: queryLearningPathRecord(
-            queryBuilder: (q) => q
-                .where('user_ref', isEqualTo: currentUserReference)
-                .where('is_completed', isEqualTo: false)
-                .orderBy('start_date')
-                .limit(3),
-          ),
-          builder: (context, pathSnapshot) {
-            // Filter paths to only show those not past end date (same logic as learn_path_widget)
-            final activePaths = (pathSnapshot.data ?? [])
-                .where((e) => functions.compareTime(getCurrentTimestamp, e.endDate) == true)
-                .toList();
-            final hasActivePaths = activePaths.isNotEmpty;
-
-            return InkWell(
-              onTap: () => context.pushNamed(LearnPathWidget.routeName),
-              borderRadius: BorderRadius.circular(20.0),
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(20.0),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20.0),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
+            const SizedBox(height: 12.0),
+            // Milestone categories preview
+            if (_userChildren != null && _userChildren!.isNotEmpty)
+              StreamBuilder<List<ChildrenAccomlishedMilestonesRecord>>(
+                stream: queryChildrenAccomlishedMilestonesRecord(
+                  queryBuilder: (q) => q
+                      .where('child', isEqualTo: _userChildren!.first.reference)
+                      .limit(10),
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Header
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
+                builder: (context, snapshot) {
+                  final accomplishedCount = snapshot.data?.length ?? 0;
+                  return Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFF9800).withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(14.0),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
                           children: [
                             Icon(
-                              Icons.school_outlined,
-                              color: FlutterFlowTheme.of(context).primary,
-                              size: 22.0,
+                              Icons.check_circle,
+                              color: const Color(0xFFFF9800),
+                              size: 16.0,
                             ),
-                            const SizedBox(width: 8.0),
+                            const SizedBox(width: 6.0),
                             Text(
-                              'Learning Paths',
-                              style: FlutterFlowTheme.of(context).bodyLarge.override(
+                              '$accomplishedCount achieved',
+                              style: FlutterFlowTheme.of(context).bodySmall.override(
                                 fontFamily: 'Andika New Basic',
-                                color: const Color(0xFF5D4E60),
-                                fontSize: 18.0,
+                                color: const Color(0xFFFF9800),
+                                fontSize: 12.0,
                                 fontWeight: FontWeight.w600,
-                                letterSpacing: 0.0,
                               ),
                             ),
                           ],
                         ),
-                        if (hasActivePaths)
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                            decoration: BoxDecoration(
-                              color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(12.0),
-                            ),
-                            child: Text(
-                              '${activePaths.length} active',
-                              style: FlutterFlowTheme.of(context).bodySmall.override(
-                                fontFamily: 'Andika New Basic',
-                                color: FlutterFlowTheme.of(context).primary,
-                                fontSize: 11.0,
-                                fontWeight: FontWeight.w500,
-                              ),
+                      ),
+                      const SizedBox(width: 8.0),
+                      // Child avatar
+                      Container(
+                        width: 24.0,
+                        height: 24.0,
+                        decoration: BoxDecoration(
+                          color: _userChildren!.first.selectedColor ?? FlutterFlowTheme.of(context).primary,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Center(
+                          child: Text(
+                            _userChildren!.first.name.isNotEmpty
+                                ? _userChildren!.first.name[0].toLowerCase()
+                                : 'c',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 11.0,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
-                      ],
-                    ),
-                    const SizedBox(height: 16.0),
-                    // Today's Task or empty state
-                    if (todaysTask != null)
-                      _buildTodaysTaskRow(context, todaysTask)
-                    else if (hasActivePaths)
-                      _buildActivePathsPreview(context, activePaths)
-                    else
-                      _buildEmptyLearningPathState(context),
-                  ],
-                ),
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
-
-  Widget _buildTodaysTaskRow(BuildContext context, LearningPathTasksRecord task) {
-    return StreamBuilder<ChildernRecord>(
-      stream: task.childRef != null ? ChildernRecord.getDocument(task.childRef!) : null,
-      builder: (context, childSnapshot) {
-        final childName = childSnapshot.data?.name ?? '';
-        final childColor = childSnapshot.data?.selectedColor ?? FlutterFlowTheme.of(context).primary;
-
-        return Container(
-          padding: const EdgeInsets.all(12.0),
-          decoration: BoxDecoration(
-            color: FlutterFlowTheme.of(context).primary.withOpacity(0.08),
-            borderRadius: BorderRadius.circular(14.0),
-            border: Border.all(
-              color: FlutterFlowTheme.of(context).primary.withOpacity(0.2),
-            ),
-          ),
-          child: Row(
-            children: [
-              // Child avatar
-              if (childName.isNotEmpty)
-                Container(
-                  width: 36.0,
-                  height: 36.0,
-                  margin: const EdgeInsets.only(right: 12.0),
-                  decoration: BoxDecoration(
-                    color: childColor,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Center(
-                    child: Text(
-                      childName[0].toUpperCase(),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 16.0,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ),
-              // Task info
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.play_circle_filled,
-                          color: FlutterFlowTheme.of(context).primary,
-                          size: 14.0,
                         ),
-                        const SizedBox(width: 4.0),
-                        Text(
-                          "TODAY'S TASK",
-                          style: FlutterFlowTheme.of(context).bodySmall.override(
-                            fontFamily: 'Andika New Basic',
-                            color: FlutterFlowTheme.of(context).primary,
-                            fontSize: 10.0,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 0.5,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 4.0),
-                    Text(
-                      task.title,
-                      style: FlutterFlowTheme.of(context).bodyMedium.override(
-                        fontFamily: 'Andika New Basic',
-                        color: const Color(0xFF5D4E60),
-                        fontSize: 14.0,
-                        fontWeight: FontWeight.w500,
                       ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
-              ),
-              Icon(
-                Icons.arrow_forward_ios_rounded,
-                color: FlutterFlowTheme.of(context).primary.withOpacity(0.5),
-                size: 14.0,
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildActivePathsPreview(BuildContext context, List<LearningPathRecord> paths) {
-    return Column(
-      children: paths.take(2).map((path) => Padding(
-        padding: const EdgeInsets.only(bottom: 8.0),
-        child: Row(
-          children: [
-            Container(
-              width: 4.0,
-              height: 32.0,
-              decoration: BoxDecoration(
-                color: FlutterFlowTheme.of(context).primary,
-                borderRadius: BorderRadius.circular(2.0),
-              ),
-            ),
-            const SizedBox(width: 12.0),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                    ],
+                  );
+                },
+              )
+            else
+              Row(
                 children: [
-                  Text(
-                    path.title,
-                    style: FlutterFlowTheme.of(context).bodyMedium.override(
-                      fontFamily: 'Andika New Basic',
-                      color: const Color(0xFF5D4E60),
-                      fontSize: 14.0,
-                      fontWeight: FontWeight.w500,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                  Icon(
+                    Icons.add_circle_outline,
+                    color: const Color(0xFF9B8A9E),
+                    size: 18.0,
                   ),
+                  const SizedBox(width: 8.0),
                   Text(
-                    '${path.tasksCount ?? 0} tasks',
+                    'Add a child to track milestones',
                     style: FlutterFlowTheme.of(context).bodySmall.override(
                       fontFamily: 'Andika New Basic',
                       color: const Color(0xFF9B8A9E),
                       fontSize: 12.0,
+                      fontStyle: FontStyle.italic,
                     ),
                   ),
                 ],
               ),
-            ),
-            Icon(
-              Icons.arrow_forward_ios_rounded,
-              color: const Color(0xFFDADADA),
-              size: 14.0,
-            ),
           ],
-        ),
-      )).toList(),
-    );
-  }
-
-  Widget _buildEmptyLearningPathState(BuildContext context) {
-    return Row(
-      children: [
-        Icon(
-          Icons.add_circle_outline,
-          color: const Color(0xFF9B8A9E),
-          size: 20.0,
-        ),
-        const SizedBox(width: 8.0),
-        Text(
-          'Create a learning path',
-          style: FlutterFlowTheme.of(context).bodyMedium.override(
-            fontFamily: 'Andika New Basic',
-            color: const Color(0xFF9B8A9E),
-            fontSize: 14.0,
-            fontStyle: FontStyle.italic,
-          ),
-        ),
-        const Spacer(),
-        Icon(
-          Icons.arrow_forward_ios_rounded,
-          color: const Color(0xFFDADADA),
-          size: 14.0,
-        ),
-      ],
-    );
-  }
-
-  // Quick Access Pills - Pill/Chip style for secondary navigation
-  Widget _buildQuickAccessPills(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        _buildPillItem(context, 'Milestones', () => context.pushNamed(MilstonesWidget.routeName)),
-        const SizedBox(width: 8.0),
-        _buildPillItem(context, 'My Kids', () => context.pushNamed(ChildrenWidget.routeName)),
-        const SizedBox(width: 8.0),
-        _buildPillItem(context, 'Settings', () => context.pushNamed(ProfileWidget.routeName)),
-      ],
-    );
-  }
-
-  Widget _buildPillItem(BuildContext context, String label, VoidCallback onTap) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(20.0),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 8.0),
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.5),
-          borderRadius: BorderRadius.circular(20.0),
-        ),
-        child: Text(
-          label,
-          style: FlutterFlowTheme.of(context).bodySmall.override(
-            fontFamily: 'Andika New Basic',
-            color: const Color(0xFF5D4E60),
-            fontSize: 13.0,
-            fontWeight: FontWeight.w500,
-            letterSpacing: 0.0,
-          ),
         ),
       ),
     );

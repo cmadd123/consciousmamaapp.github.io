@@ -175,7 +175,7 @@ class _LearnPathSteponStep2WidgetState
                                     padding: EdgeInsetsDirectional.fromSTEB(
                                         15.0, 120.0, 0.0, 0.0),
                                     child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(8.0),
+                                      borderRadius: BorderRadius.circular(14.0),
                                       child: Image.asset(
                                         'assets/images/321.png',
                                         width: 79.0,
@@ -324,7 +324,7 @@ class _LearnPathSteponStep2WidgetState
                                                         child: Center(
                                                           child: Text(
                                                             wrapChildernRecord.name.isNotEmpty
-                                                                ? wrapChildernRecord.name[0].toUpperCase()
+                                                                ? wrapChildernRecord.name[0].toLowerCase()
                                                                 : 'C',
                                                             style: const TextStyle(
                                                               color: Colors.white,
@@ -395,7 +395,7 @@ class _LearnPathSteponStep2WidgetState
                                             ),
                                         elevation: 0.0,
                                         borderRadius:
-                                            BorderRadius.circular(8.0),
+                                            BorderRadius.circular(14.0),
                                       ),
                                     ),
                                   ),
@@ -462,7 +462,7 @@ class _LearnPathSteponStep2WidgetState
                                             ),
                                         elevation: 0.0,
                                         borderRadius:
-                                            BorderRadius.circular(8.0),
+                                            BorderRadius.circular(14.0),
                                       ),
                                     ),
                                   ),

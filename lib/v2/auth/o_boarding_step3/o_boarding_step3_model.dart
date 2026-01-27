@@ -14,7 +14,23 @@ import 'package:provider/provider.dart';
 class OBoardingStep3Model extends FlutterFlowModel<OBoardingStep3Widget> {
   ///  Local state fields for this page.
 
-  String? selectedPlanning = 'Thinking of activities that\nhelp them learn';
+  // Changed to List for multi-select support
+  List<String> selectedPlannings = [];
+
+  // Legacy field for compatibility
+  String? get selectedPlanning => selectedPlannings.isNotEmpty ? selectedPlannings.join(', ') : null;
+
+  void togglePlanning(String planning) {
+    if (selectedPlannings.contains(planning)) {
+      selectedPlannings.remove(planning);
+    } else {
+      selectedPlannings.add(planning);
+    }
+  }
+
+  bool isSelected(String planning) {
+    return selectedPlannings.contains(planning);
+  }
 
   @override
   void initState(BuildContext context) {}

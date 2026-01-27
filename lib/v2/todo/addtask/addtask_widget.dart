@@ -288,7 +288,7 @@ class _AddtaskWidgetState extends State<AddtaskWidget> {
                             height: 52.0,
                             decoration: BoxDecoration(
                               color: FlutterFlowTheme.of(context).prim30,
-                              borderRadius: BorderRadius.circular(29.0),
+                              borderRadius: BorderRadius.circular(14.0),
                               border: Border.all(
                                 color: Color(0xFFCBE3E0),
                                 width: 1.0,
@@ -327,28 +327,28 @@ class _AddtaskWidgetState extends State<AddtaskWidget> {
                                       color: Color(0x00000000),
                                       width: 1.0,
                                     ),
-                                    borderRadius: BorderRadius.circular(8.0),
+                                    borderRadius: BorderRadius.circular(14.0),
                                   ),
                                   focusedBorder: OutlineInputBorder(
                                     borderSide: BorderSide(
                                       color: Color(0x00000000),
                                       width: 1.0,
                                     ),
-                                    borderRadius: BorderRadius.circular(8.0),
+                                    borderRadius: BorderRadius.circular(14.0),
                                   ),
                                   errorBorder: OutlineInputBorder(
                                     borderSide: BorderSide(
                                       color: FlutterFlowTheme.of(context).error,
                                       width: 1.0,
                                     ),
-                                    borderRadius: BorderRadius.circular(8.0),
+                                    borderRadius: BorderRadius.circular(14.0),
                                   ),
                                   focusedErrorBorder: OutlineInputBorder(
                                     borderSide: BorderSide(
                                       color: FlutterFlowTheme.of(context).error,
                                       width: 1.0,
                                     ),
-                                    borderRadius: BorderRadius.circular(8.0),
+                                    borderRadius: BorderRadius.circular(14.0),
                                   ),
                                 ),
                                 style: FlutterFlowTheme.of(context)
@@ -373,7 +373,7 @@ class _AddtaskWidgetState extends State<AddtaskWidget> {
                           child: Container(
                             decoration: BoxDecoration(
                               color: FlutterFlowTheme.of(context).prim30,
-                              borderRadius: BorderRadius.circular(29.0),
+                              borderRadius: BorderRadius.circular(14.0),
                               border: Border.all(
                                 color: Color(0xFFCBE3E0),
                                 width: 1.0,
@@ -412,28 +412,28 @@ class _AddtaskWidgetState extends State<AddtaskWidget> {
                                       color: Color(0x00000000),
                                       width: 1.0,
                                     ),
-                                    borderRadius: BorderRadius.circular(8.0),
+                                    borderRadius: BorderRadius.circular(14.0),
                                   ),
                                   focusedBorder: OutlineInputBorder(
                                     borderSide: BorderSide(
                                       color: Color(0x00000000),
                                       width: 1.0,
                                     ),
-                                    borderRadius: BorderRadius.circular(8.0),
+                                    borderRadius: BorderRadius.circular(14.0),
                                   ),
                                   errorBorder: OutlineInputBorder(
                                     borderSide: BorderSide(
                                       color: FlutterFlowTheme.of(context).error,
                                       width: 1.0,
                                     ),
-                                    borderRadius: BorderRadius.circular(8.0),
+                                    borderRadius: BorderRadius.circular(14.0),
                                   ),
                                   focusedErrorBorder: OutlineInputBorder(
                                     borderSide: BorderSide(
                                       color: FlutterFlowTheme.of(context).error,
                                       width: 1.0,
                                     ),
-                                    borderRadius: BorderRadius.circular(8.0),
+                                    borderRadius: BorderRadius.circular(14.0),
                                   ),
                                 ),
                                 style: FlutterFlowTheme.of(context)
@@ -469,7 +469,7 @@ class _AddtaskWidgetState extends State<AddtaskWidget> {
                               height: 52.0,
                               decoration: BoxDecoration(
                                 color: FlutterFlowTheme.of(context).prim30,
-                                borderRadius: BorderRadius.circular(29.0),
+                                borderRadius: BorderRadius.circular(14.0),
                                 border: Border.all(
                                   color: Color(0xFFCBE3E0),
                                   width: 1.0,
@@ -575,7 +575,7 @@ class _AddtaskWidgetState extends State<AddtaskWidget> {
                               color: FlutterFlowTheme.of(context).primary,
                               width: 1.0,
                             ),
-                            borderRadius: BorderRadius.circular(8.0),
+                            borderRadius: BorderRadius.circular(14.0),
                           ),
                         ),
                       ),
@@ -637,7 +637,7 @@ class _AddtaskWidgetState extends State<AddtaskWidget> {
                                   letterSpacing: 0.0,
                                 ),
                             elevation: 0.0,
-                            borderRadius: BorderRadius.circular(8.0),
+                            borderRadius: BorderRadius.circular(14.0),
                           ),
                         ),
                       ),

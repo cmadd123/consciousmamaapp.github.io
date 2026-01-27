@@ -90,7 +90,7 @@ class _Loginv2WidgetState extends State<Loginv2Widget> {
                               child: Align(
                                 alignment: AlignmentDirectional(-1.0, 0.0),
                                 child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(8.0),
+                                  borderRadius: BorderRadius.circular(14.0),
                                   child: Image.asset(
                                     'assets/images/image_22.png',
                                     width: 200.0,
@@ -162,7 +162,7 @@ class _Loginv2WidgetState extends State<Loginv2Widget> {
                                           width: 1.0,
                                         ),
                                         borderRadius:
-                                            BorderRadius.circular(27.0),
+                                            BorderRadius.circular(14.0),
                                       ),
                                       focusedBorder: OutlineInputBorder(
                                         borderSide: BorderSide(
@@ -170,7 +170,7 @@ class _Loginv2WidgetState extends State<Loginv2Widget> {
                                           width: 1.0,
                                         ),
                                         borderRadius:
-                                            BorderRadius.circular(27.0),
+                                            BorderRadius.circular(14.0),
                                       ),
                                       errorBorder: OutlineInputBorder(
                                         borderSide: BorderSide(
@@ -179,7 +179,7 @@ class _Loginv2WidgetState extends State<Loginv2Widget> {
                                           width: 1.0,
                                         ),
                                         borderRadius:
-                                            BorderRadius.circular(27.0),
+                                            BorderRadius.circular(14.0),
                                       ),
                                       focusedErrorBorder: OutlineInputBorder(
                                         borderSide: BorderSide(
@@ -188,7 +188,7 @@ class _Loginv2WidgetState extends State<Loginv2Widget> {
                                           width: 1.0,
                                         ),
                                         borderRadius:
-                                            BorderRadius.circular(27.0),
+                                            BorderRadius.circular(14.0),
                                       ),
                                       filled: true,
                                       fillColor: FlutterFlowTheme.of(context)
@@ -244,7 +244,7 @@ class _Loginv2WidgetState extends State<Loginv2Widget> {
                                           width: 1.0,
                                         ),
                                         borderRadius:
-                                            BorderRadius.circular(27.0),
+                                            BorderRadius.circular(14.0),
                                       ),
                                       focusedBorder: OutlineInputBorder(
                                         borderSide: BorderSide(
@@ -252,7 +252,7 @@ class _Loginv2WidgetState extends State<Loginv2Widget> {
                                           width: 1.0,
                                         ),
                                         borderRadius:
-                                            BorderRadius.circular(27.0),
+                                            BorderRadius.circular(14.0),
                                       ),
                                       errorBorder: OutlineInputBorder(
                                         borderSide: BorderSide(
@@ -261,7 +261,7 @@ class _Loginv2WidgetState extends State<Loginv2Widget> {
                                           width: 1.0,
                                         ),
                                         borderRadius:
-                                            BorderRadius.circular(27.0),
+                                            BorderRadius.circular(14.0),
                                       ),
                                       focusedErrorBorder: OutlineInputBorder(
                                         borderSide: BorderSide(
@@ -270,7 +270,7 @@ class _Loginv2WidgetState extends State<Loginv2Widget> {
                                           width: 1.0,
                                         ),
                                         borderRadius:
-                                            BorderRadius.circular(27.0),
+                                            BorderRadius.circular(14.0),
                                       ),
                                       filled: true,
                                       fillColor: FlutterFlowTheme.of(context)
@@ -334,6 +334,38 @@ class _Loginv2WidgetState extends State<Loginv2Widget> {
                                 0.0, 0.0, 0.0, 16.0),
                             child: FFButtonWidget(
                               onPressed: () async {
+                                // Validate email and password are not empty
+                                if (_model.emailTextController.text.isEmpty) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        'Please enter your email address',
+                                        style: TextStyle(
+                                          color: FlutterFlowTheme.of(context).primaryText,
+                                        ),
+                                      ),
+                                      duration: Duration(milliseconds: 3000),
+                                      backgroundColor: FlutterFlowTheme.of(context).secondary,
+                                    ),
+                                  );
+                                  return;
+                                }
+                                if (_model.passwordTextController.text.isEmpty) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        'Please enter your password',
+                                        style: TextStyle(
+                                          color: FlutterFlowTheme.of(context).primaryText,
+                                        ),
+                                      ),
+                                      duration: Duration(milliseconds: 3000),
+                                      backgroundColor: FlutterFlowTheme.of(context).secondary,
+                                    ),
+                                  );
+                                  return;
+                                }
+
                                 GoRouter.of(context).prepareAuthEvent();
 
                                 final user = await authManager.signInWithEmail(
@@ -343,6 +375,24 @@ class _Loginv2WidgetState extends State<Loginv2Widget> {
                                 );
                                 if (user == null) {
                                   return;
+                                }
+
+                                // Migration: Mark existing users as having completed onboarding
+                                // if they have children (meaning they went through the old flow)
+                                if (currentUserReference != null) {
+                                  final userDoc = await UsersRecord.getDocumentOnce(currentUserReference!);
+                                  if (!userDoc.onboardingCompleted) {
+                                    // Check if user has children
+                                    final children = await queryChildernRecordOnce(
+                                      queryBuilder: (q) => q.where('userRef', isEqualTo: currentUserReference),
+                                    );
+                                    if (children.isNotEmpty) {
+                                      // User has children, mark onboarding as complete
+                                      await currentUserReference!.update(createUsersRecordData(
+                                        onboardingCompleted: true,
+                                      ));
+                                    }
+                                  }
                                 }
 
                                 context.pushNamedAuth(

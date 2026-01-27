@@ -116,7 +116,7 @@ class _WeekPlanWidgetState extends State<WeekPlanWidget> {
                                     height: 86.0,
                                     decoration: BoxDecoration(),
                                     child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(8.0),
+                                      borderRadius: BorderRadius.circular(14.0),
                                       child: Image.asset(
                                         'assets/images/Rectangle_367_(1).png',
                                         width: 200.0,
@@ -172,7 +172,7 @@ class _WeekPlanWidgetState extends State<WeekPlanWidget> {
                                     height: 86.0,
                                     decoration: BoxDecoration(),
                                     child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(8.0),
+                                      borderRadius: BorderRadius.circular(14.0),
                                       child: Image.asset(
                                         'assets/images/Rectangle_364.png',
                                         width: 200.0,

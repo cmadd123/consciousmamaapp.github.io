@@ -71,7 +71,7 @@ class _DeleteActivtyomponentWidgetState
                 spreadRadius: 0.0,
               )
             ],
-            borderRadius: BorderRadius.circular(16.0),
+            borderRadius: BorderRadius.circular(14.0),
           ),
           child: Padding(
             padding: EdgeInsetsDirectional.fromSTEB(24.0, 24.0, 24.0, 24.0),
@@ -141,7 +141,7 @@ class _DeleteActivtyomponentWidgetState
                           color: FlutterFlowTheme.of(context).alternate,
                           width: 1.0,
                         ),
-                        borderRadius: BorderRadius.circular(8.0),
+                        borderRadius: BorderRadius.circular(14.0),
                       ),
                     ),
                     FFButtonWidget(
@@ -168,7 +168,7 @@ class _DeleteActivtyomponentWidgetState
                           color: Colors.transparent,
                           width: 1.0,
                         ),
-                        borderRadius: BorderRadius.circular(8.0),
+                        borderRadius: BorderRadius.circular(14.0),
                       ),
                     ),
                   ].divide(SizedBox(width: 12.0)),

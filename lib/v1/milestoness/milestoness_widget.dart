@@ -6,6 +6,7 @@ import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/v1/empty_list_view_component/empty_list_view_component_widget.dart';
 import '/v1/nav_bar/nav_bar_widget.dart';
+import '/components/home_nav_bar_widget.dart';
 import 'dart:ui';
 import '/flutter_flow/custom_functions.dart' as functions;
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -2140,12 +2141,8 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                       minHeight: 50.0,
                     ),
                     decoration: BoxDecoration(),
-                    child: wrapWithModel(
-                      model: _model.navBarModel,
-                      updateCallback: () => safeSetState(() {}),
-                      child: NavBarWidget(
-                        currentPage: 'Milestones',
-                      ),
+                    child: const HomeNavBarWidget(
+                      currentPage: HomeNavPage.home,
                     ),
                   ),
                 ),

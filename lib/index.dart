@@ -13,6 +13,8 @@ export '/v1/tasks/calendar/calendar_widget.dart' show CalendarWidget;
 export '/v2/profile/profile_widget.dart' show ProfileWidget;
 export '/v2/profile/notification_settings/notification_settings_widget.dart'
     show NotificationSettingsWidget;
+export '/scripts/upload_activities_page.dart' show UploadActivitiesPage;
+export '/scripts/cleanup_duplicates_page.dart' show CleanupDuplicatesPage;
 export '/v1/pages/authentication/first_child/first_child_widget.dart'
     show FirstChildWidget;
 export '/v1/milestoness/milestoness_widget.dart' show MilestonessWidget;
@@ -57,6 +59,8 @@ export '/v2/auth/loginv2/loginv2_widget.dart' show Loginv2Widget;
 export '/v2/auth/sign_upv2/sign_upv2_widget.dart' show SignUpv2Widget;
 export '/v2/auth/welcome/welcome_widget.dart' show WelcomeWidget;
 export '/v2/auth/preparation/preparation_widget.dart' show PreparationWidget;
+export '/v2/auth/family_setup_intro/family_setup_intro_widget.dart'
+    show FamilySetupIntroWidget;
 export '/v2/auth/add_childx/add_childx_widget.dart' show AddChildxWidget;
 export '/v2/auth/o_boarding_step2/o_boarding_step2_widget.dart'
     show OBoardingStep2Widget;
@@ -153,3 +157,8 @@ export '/v2/meal_detail/meal_detail_widget.dart' show MealDetailWidget;
 export '/v2/child_summary/child_summary_widget.dart' show ChildSummaryWidget;
 export '/v2/resources/resources_page_widget.dart' show ResourcesPageWidget;
 export '/v2/resources/article_detail_widget.dart' show ArticleDetailWidget;
+export '/v2/shared/import_shared_content_widget.dart' show ImportSharedContentWidget;
+export '/v2/todos/todos_page_widget.dart' show TodosPageWidget;
+export '/v2/my_activities/my_activities_widget.dart' show MyActivitiesWidget;
+export '/v2/auth/parent_setup/parent_setup_widget.dart' show ParentSetupWidget;
+export '/v2/auth/family_preview/family_preview_widget.dart' show FamilyPreviewWidget;

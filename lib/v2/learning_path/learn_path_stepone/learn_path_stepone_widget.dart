@@ -189,7 +189,7 @@ class _LearnPathSteponeWidgetState extends State<LearnPathSteponeWidget> {
                                 padding: EdgeInsetsDirectional.fromSTEB(
                                     15.0, 20.0, 0.0, 0.0),
                                 child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(8.0),
+                                  borderRadius: BorderRadius.circular(14.0),
                                   child: Image.asset(
                                     'assets/images/321.png',
                                     width: 79.0,
@@ -259,7 +259,7 @@ class _LearnPathSteponeWidgetState extends State<LearnPathSteponeWidget> {
                                 child: Container(
                                   decoration: BoxDecoration(
                                     color: FlutterFlowTheme.of(context).prim30,
-                                    borderRadius: BorderRadius.circular(10.0),
+                                    borderRadius: BorderRadius.circular(14.0),
                                     border: Border.all(
                                       color: Color(0xFFCBE3E0),
                                       width: 1.0,
@@ -300,7 +300,7 @@ class _LearnPathSteponeWidgetState extends State<LearnPathSteponeWidget> {
                                             width: 1.0,
                                           ),
                                           borderRadius:
-                                              BorderRadius.circular(8.0),
+                                              BorderRadius.circular(14.0),
                                         ),
                                         focusedBorder: OutlineInputBorder(
                                           borderSide: BorderSide(
@@ -308,7 +308,7 @@ class _LearnPathSteponeWidgetState extends State<LearnPathSteponeWidget> {
                                             width: 1.0,
                                           ),
                                           borderRadius:
-                                              BorderRadius.circular(8.0),
+                                              BorderRadius.circular(14.0),
                                         ),
                                         errorBorder: OutlineInputBorder(
                                           borderSide: BorderSide(
@@ -317,7 +317,7 @@ class _LearnPathSteponeWidgetState extends State<LearnPathSteponeWidget> {
                                             width: 1.0,
                                           ),
                                           borderRadius:
-                                              BorderRadius.circular(8.0),
+                                              BorderRadius.circular(14.0),
                                         ),
                                         focusedErrorBorder: OutlineInputBorder(
                                           borderSide: BorderSide(
@@ -326,7 +326,7 @@ class _LearnPathSteponeWidgetState extends State<LearnPathSteponeWidget> {
                                             width: 1.0,
                                           ),
                                           borderRadius:
-                                              BorderRadius.circular(8.0),
+                                              BorderRadius.circular(14.0),
                                         ),
                                       ),
                                       style: FlutterFlowTheme.of(context)
@@ -384,7 +384,7 @@ class _LearnPathSteponeWidgetState extends State<LearnPathSteponeWidget> {
                                         letterSpacing: 0.0,
                                       ),
                                   elevation: 0.0,
-                                  borderRadius: BorderRadius.circular(8.0),
+                                  borderRadius: BorderRadius.circular(14.0),
                                 ),
                               ),
                             ),

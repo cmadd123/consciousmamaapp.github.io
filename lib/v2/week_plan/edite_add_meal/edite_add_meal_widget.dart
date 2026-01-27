@@ -71,7 +71,44 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
         _model.cookingInsturction = widget!.editCookingMeal!.cookingInstructions
             .toList()
             .cast<String>();
+
+        // Initialize selectedCategories from existing meal data
+        if (widget!.editCookingMeal!.mainOrSides == 'Side') {
+          _model.selectedCategories.add('Side');
+        }
+        // Parse mealTyp (comma-separated) into categories
+        if (widget!.editCookingMeal!.mealTyp.isNotEmpty) {
+          final mealTypes = widget!.editCookingMeal!.mealTyp.split(',');
+          for (final type in mealTypes) {
+            final trimmed = type.trim();
+            if (['Breakfast', 'Lunch', 'Dinner', 'Snacks'].contains(trimmed)) {
+              _model.selectedCategories.add(trimmed);
+            }
+          }
+        }
+
         safeSetState(() {});
+      } else {
+        // For new recipes, initialize with default category based on meal type context
+        if (widget!.dateTyyp != null) {
+          switch (widget!.dateTyyp) {
+            case MealTyp.Breakfast:
+              _model.selectedCategories.add('Breakfast');
+              break;
+            case MealTyp.Lunch:
+              _model.selectedCategories.add('Lunch');
+              break;
+            case MealTyp.Dinner:
+              _model.selectedCategories.add('Dinner');
+              break;
+            case MealTyp.Snacks:
+              _model.selectedCategories.add('Snacks');
+              break;
+            default:
+              break;
+          }
+          safeSetState(() {});
+        }
       }
     });
 
@@ -412,7 +449,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
       },
       child: Scaffold(
         key: scaffoldKey,
-        backgroundColor: const Color(0xFFFFF5F2), // Light pink to match app theme
+        backgroundColor: FlutterFlowTheme.of(context).secondaryBackground, // White background
         body: SafeArea(
           top: true,
           child: Form(
@@ -537,16 +574,16 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                         padding:
                             EdgeInsetsDirectional.fromSTEB(0.0, 20.0, 0.0, 0.0),
                         child: ClipRRect(
-                          borderRadius: BorderRadius.circular(10.0),
+                          borderRadius: BorderRadius.circular(14.0),
                           child: Container(
                             width: 266.84,
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10.0),
+                              borderRadius: BorderRadius.circular(14.0),
                             ),
                             child: Stack(
                               children: [
                                 ClipRRect(
-                                  borderRadius: BorderRadius.circular(8.0),
+                                  borderRadius: BorderRadius.circular(14.0),
                                   child: _isValidImageUrl(_model.mealImage)
                                       ? Image.network(
                                           _model.mealImage!,
@@ -670,7 +707,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                           width: MediaQuery.sizeOf(context).width * 0.66,
                           decoration: BoxDecoration(
                             color: Color(0x4D52A097),
-                            borderRadius: BorderRadius.circular(10.0),
+                            borderRadius: BorderRadius.circular(14.0),
                           ),
                           child: Padding(
                             padding: EdgeInsetsDirectional.fromSTEB(
@@ -720,7 +757,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                       height: 65.0,
                       decoration: BoxDecoration(
                         color: FlutterFlowTheme.of(context).prim30,
-                        borderRadius: BorderRadius.circular(10.0),
+                        borderRadius: BorderRadius.circular(14.0),
                         border: Border.all(
                           color: Color(0xFFCBE3E0),
                           width: 1.0,
@@ -758,28 +795,28 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                   color: Color(0x00000000),
                                   width: 1.0,
                                 ),
-                                borderRadius: BorderRadius.circular(8.0),
+                                borderRadius: BorderRadius.circular(14.0),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderSide: BorderSide(
                                   color: Color(0x00000000),
                                   width: 1.0,
                                 ),
-                                borderRadius: BorderRadius.circular(8.0),
+                                borderRadius: BorderRadius.circular(14.0),
                               ),
                               errorBorder: OutlineInputBorder(
                                 borderSide: BorderSide(
                                   color: FlutterFlowTheme.of(context).error,
                                   width: 1.0,
                                 ),
-                                borderRadius: BorderRadius.circular(8.0),
+                                borderRadius: BorderRadius.circular(14.0),
                               ),
                               focusedErrorBorder: OutlineInputBorder(
                                 borderSide: BorderSide(
                                   color: FlutterFlowTheme.of(context).error,
                                   width: 1.0,
                                 ),
-                                borderRadius: BorderRadius.circular(8.0),
+                                borderRadius: BorderRadius.circular(14.0),
                               ),
                             ),
                             style: FlutterFlowTheme.of(context)
@@ -829,24 +866,37 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                     }
                                   });
                                 },
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                                borderRadius: BorderRadius.circular(14.0),
+                                child: AnimatedContainer(
+                                  duration: const Duration(milliseconds: 200),
+                                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
                                   decoration: BoxDecoration(
                                     color: isSelected
                                         ? FlutterFlowTheme.of(context).primary
-                                        : Colors.transparent,
+                                        : FlutterFlowTheme.of(context).primary.withValues(alpha: 0.1),
                                     border: Border.all(
                                       color: isSelected
                                           ? FlutterFlowTheme.of(context).primary
-                                          : const Color(0xFFCCCCCC),
+                                          : FlutterFlowTheme.of(context).primary.withValues(alpha: 0.3),
+                                      width: isSelected ? 2.0 : 1.0,
                                     ),
-                                    borderRadius: BorderRadius.circular(20.0),
+                                    borderRadius: BorderRadius.circular(14.0),
+                                    boxShadow: isSelected
+                                        ? [
+                                            BoxShadow(
+                                              color: FlutterFlowTheme.of(context).primary.withValues(alpha: 0.3),
+                                              blurRadius: 8.0,
+                                              offset: const Offset(0, 2),
+                                            ),
+                                          ]
+                                        : null,
                                   ),
                                   child: Text(
                                     displayText,
                                     style: FlutterFlowTheme.of(context).bodySmall.override(
                                           fontFamily: 'Andika New Basic',
-                                          color: isSelected ? Colors.white : FlutterFlowTheme.of(context).primaryText,
+                                          color: isSelected ? Colors.white : FlutterFlowTheme.of(context).primary,
+                                          fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
                                           letterSpacing: 0.0,
                                         ),
                                   ),
@@ -869,7 +919,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                               height: 45.0,
                               decoration: BoxDecoration(
                                 color: FlutterFlowTheme.of(context).prim30,
-                                borderRadius: BorderRadius.circular(10.0),
+                                borderRadius: BorderRadius.circular(14.0),
                                 border: Border.all(
                                   color: Color(0xFFCBE3E0),
                                   width: 1.0,
@@ -905,14 +955,14 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                         color: Color(0x00000000),
                                         width: 1.0,
                                       ),
-                                      borderRadius: BorderRadius.circular(8.0),
+                                      borderRadius: BorderRadius.circular(14.0),
                                     ),
                                     focusedBorder: OutlineInputBorder(
                                       borderSide: BorderSide(
                                         color: Color(0x00000000),
                                         width: 1.0,
                                       ),
-                                      borderRadius: BorderRadius.circular(8.0),
+                                      borderRadius: BorderRadius.circular(14.0),
                                     ),
                                     errorBorder: OutlineInputBorder(
                                       borderSide: BorderSide(
@@ -920,7 +970,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                             FlutterFlowTheme.of(context).error,
                                         width: 1.0,
                                       ),
-                                      borderRadius: BorderRadius.circular(8.0),
+                                      borderRadius: BorderRadius.circular(14.0),
                                     ),
                                     focusedErrorBorder: OutlineInputBorder(
                                       borderSide: BorderSide(
@@ -928,7 +978,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                             FlutterFlowTheme.of(context).error,
                                         width: 1.0,
                                       ),
-                                      borderRadius: BorderRadius.circular(8.0),
+                                      borderRadius: BorderRadius.circular(14.0),
                                     ),
                                   ),
                                   style: FlutterFlowTheme.of(context)
@@ -953,7 +1003,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                               height: 45.0,
                               decoration: BoxDecoration(
                                 color: FlutterFlowTheme.of(context).prim30,
-                                borderRadius: BorderRadius.circular(10.0),
+                                borderRadius: BorderRadius.circular(14.0),
                                 border: Border.all(
                                   color: Color(0xFFCBE3E0),
                                   width: 1.0,
@@ -989,14 +1039,14 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                         color: Color(0x00000000),
                                         width: 1.0,
                                       ),
-                                      borderRadius: BorderRadius.circular(8.0),
+                                      borderRadius: BorderRadius.circular(14.0),
                                     ),
                                     focusedBorder: OutlineInputBorder(
                                       borderSide: BorderSide(
                                         color: Color(0x00000000),
                                         width: 1.0,
                                       ),
-                                      borderRadius: BorderRadius.circular(8.0),
+                                      borderRadius: BorderRadius.circular(14.0),
                                     ),
                                     errorBorder: OutlineInputBorder(
                                       borderSide: BorderSide(
@@ -1004,7 +1054,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                             FlutterFlowTheme.of(context).error,
                                         width: 1.0,
                                       ),
-                                      borderRadius: BorderRadius.circular(8.0),
+                                      borderRadius: BorderRadius.circular(14.0),
                                     ),
                                     focusedErrorBorder: OutlineInputBorder(
                                       borderSide: BorderSide(
@@ -1012,7 +1062,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                             FlutterFlowTheme.of(context).error,
                                         width: 1.0,
                                       ),
-                                      borderRadius: BorderRadius.circular(8.0),
+                                      borderRadius: BorderRadius.circular(14.0),
                                     ),
                                   ),
                                   style: FlutterFlowTheme.of(context)
@@ -1042,7 +1092,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                       child: Container(
                         decoration: BoxDecoration(
                           color: FlutterFlowTheme.of(context).prim30,
-                          borderRadius: BorderRadius.circular(10.0),
+                          borderRadius: BorderRadius.circular(14.0),
                           border: Border.all(
                             color: Color(0xFFCBE3E0),
                             width: 1.0,
@@ -1111,7 +1161,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                               width: 1.0,
                                             ),
                                             borderRadius:
-                                                BorderRadius.circular(8.0),
+                                                BorderRadius.circular(14.0),
                                           ),
                                           focusedBorder: OutlineInputBorder(
                                             borderSide: BorderSide(
@@ -1119,7 +1169,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                               width: 1.0,
                                             ),
                                             borderRadius:
-                                                BorderRadius.circular(8.0),
+                                                BorderRadius.circular(14.0),
                                           ),
                                           errorBorder: OutlineInputBorder(
                                             borderSide: BorderSide(
@@ -1129,7 +1179,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                               width: 1.0,
                                             ),
                                             borderRadius:
-                                                BorderRadius.circular(8.0),
+                                                BorderRadius.circular(14.0),
                                           ),
                                           focusedErrorBorder:
                                               OutlineInputBorder(
@@ -1140,7 +1190,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                               width: 1.0,
                                             ),
                                             borderRadius:
-                                                BorderRadius.circular(8.0),
+                                                BorderRadius.circular(14.0),
                                           ),
                                         ),
                                         style: FlutterFlowTheme.of(context)
@@ -1304,7 +1354,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                       child: Container(
                         decoration: BoxDecoration(
                           color: FlutterFlowTheme.of(context).prim30,
-                          borderRadius: BorderRadius.circular(10.0),
+                          borderRadius: BorderRadius.circular(14.0),
                           border: Border.all(
                             color: Color(0xFFCBE3E0),
                             width: 1.0,
@@ -1369,7 +1419,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                               width: 1.0,
                                             ),
                                             borderRadius:
-                                                BorderRadius.circular(8.0),
+                                                BorderRadius.circular(14.0),
                                           ),
                                           focusedBorder: OutlineInputBorder(
                                             borderSide: BorderSide(
@@ -1377,7 +1427,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                               width: 1.0,
                                             ),
                                             borderRadius:
-                                                BorderRadius.circular(8.0),
+                                                BorderRadius.circular(14.0),
                                           ),
                                           errorBorder: OutlineInputBorder(
                                             borderSide: BorderSide(
@@ -1387,7 +1437,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                               width: 1.0,
                                             ),
                                             borderRadius:
-                                                BorderRadius.circular(8.0),
+                                                BorderRadius.circular(14.0),
                                           ),
                                           focusedErrorBorder:
                                               OutlineInputBorder(
@@ -1398,7 +1448,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                               width: 1.0,
                                             ),
                                             borderRadius:
-                                                BorderRadius.circular(8.0),
+                                                BorderRadius.circular(14.0),
                                           ),
                                         ),
                                         style: FlutterFlowTheme.of(context)
@@ -1500,6 +1550,63 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                                 ),
                                               ),
                                             ),
+                                            // Edit icon
+                                            InkWell(
+                                              splashColor: Colors.transparent,
+                                              focusColor: Colors.transparent,
+                                              hoverColor: Colors.transparent,
+                                              highlightColor:
+                                                  Colors.transparent,
+                                              onTap: () async {
+                                                // Show dialog to edit instruction
+                                                final controller = TextEditingController(
+                                                  text: userCookingInstructionsItem,
+                                                );
+                                                final result = await showDialog<String>(
+                                                  context: context,
+                                                  builder: (dialogContext) => AlertDialog(
+                                                    title: Text('Edit Instruction'),
+                                                    content: TextField(
+                                                      controller: controller,
+                                                      maxLines: 3,
+                                                      decoration: InputDecoration(
+                                                        hintText: 'Enter instruction',
+                                                        border: OutlineInputBorder(),
+                                                      ),
+                                                    ),
+                                                    actions: [
+                                                      TextButton(
+                                                        onPressed: () => Navigator.pop(dialogContext),
+                                                        child: Text('Cancel'),
+                                                      ),
+                                                      TextButton(
+                                                        onPressed: () => Navigator.pop(dialogContext, controller.text),
+                                                        child: Text('Save'),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                );
+                                                if (result != null && result.isNotEmpty) {
+                                                  _model.updateCookingInsturctionAtIndex(
+                                                    userCookingInstructionsIndex,
+                                                    (_) => result,
+                                                  );
+                                                  safeSetState(() {});
+                                                }
+                                              },
+                                              child: Padding(
+                                                padding: EdgeInsetsDirectional.fromSTEB(
+                                                    0.0, 0.0, 8.0, 0.0),
+                                                child: Icon(
+                                                  Icons.edit_outlined,
+                                                  color:
+                                                      FlutterFlowTheme.of(context)
+                                                          .primary,
+                                                  size: 22.0,
+                                                ),
+                                              ),
+                                            ),
+                                            // Delete icon
                                             InkWell(
                                               splashColor: Colors.transparent,
                                               focusColor: Colors.transparent,
@@ -1583,7 +1690,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                   color: FlutterFlowTheme.of(context).primary,
                                   width: 1.0,
                                 ),
-                                borderRadius: BorderRadius.circular(8.0),
+                                borderRadius: BorderRadius.circular(14.0),
                               ),
                             ),
                           ),
@@ -1641,6 +1748,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                               mainOrSides: mainOrSidesValue,
                                               mealTyp: mealTypValue,
                                               userRef: currentUserReference,
+                                              isCurated: false,
                                               prepareTime: double.tryParse(
                                                   _model
                                                       .textController4.text),
@@ -1751,6 +1859,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                                   _model.textController2.text),
                                               mainOrSides: newMainOrSides,
                                               userRef: currentUserReference,
+                                              isCurated: false,
                                               prepareTime: double.tryParse(
                                                   _model.textController4.text),
                                               cookingTime: double.tryParse(
@@ -1776,6 +1885,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                                   _model.textController2.text),
                                               mainOrSides: newMainOrSides,
                                               userRef: currentUserReference,
+                                              isCurated: false,
                                               prepareTime: double.tryParse(
                                                   _model.textController4.text),
                                               cookingTime: double.tryParse(
@@ -1951,7 +2061,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                         letterSpacing: 0.0,
                                       ),
                                   elevation: 0.0,
-                                  borderRadius: BorderRadius.circular(8.0),
+                                  borderRadius: BorderRadius.circular(14.0),
                                 ),
                               ),
                             ),

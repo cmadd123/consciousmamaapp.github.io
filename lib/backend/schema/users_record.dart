@@ -87,6 +87,41 @@ class UsersRecord extends FirestoreRecord {
   bool get onboardingCompleted => _onboardingCompleted ?? false;
   bool hasOnboardingCompleted() => _onboardingCompleted != null;
 
+  // "my_name" field - what the user calls themselves (defaults to "Me")
+  String? _myName;
+  String get myName => _myName ?? 'Me';
+  bool hasMyName() => _myName != null;
+
+  // "my_color" field - user's chosen color (stored as int)
+  int? _myColor;
+  int? get myColor => _myColor;
+  bool hasMyColor() => _myColor != null;
+
+  // "partner_name" field - what user calls their partner
+  String? _partnerName;
+  String get partnerName => _partnerName ?? '';
+  bool hasPartnerName() => _partnerName != null;
+
+  // "partner_color" field - partner's chosen color (stored as int)
+  int? _partnerColor;
+  int? get partnerColor => _partnerColor;
+  bool hasPartnerColor() => _partnerColor != null;
+
+  // "meal_plan_reminders_enabled" field - weekly meal planning reminder toggle
+  bool? _mealPlanRemindersEnabled;
+  bool get mealPlanRemindersEnabled => _mealPlanRemindersEnabled ?? true; // Default ON
+  bool hasMealPlanRemindersEnabled() => _mealPlanRemindersEnabled != null;
+
+  // "meal_plan_reminder_day" field - which day of week to remind (0 = Sunday, 6 = Saturday)
+  int? _mealPlanReminderDay;
+  int get mealPlanReminderDay => _mealPlanReminderDay ?? 0; // Default Sunday
+  bool hasMealPlanReminderDay() => _mealPlanReminderDay != null;
+
+  // "meal_plan_reminder_hour" field - hour of day (0-23)
+  int? _mealPlanReminderHour;
+  int get mealPlanReminderHour => _mealPlanReminderHour ?? 18; // Default 6 PM
+  bool hasMealPlanReminderHour() => _mealPlanReminderHour != null;
+
   void _initializeFields() {
     _email = snapshotData['email'] as String?;
     _displayName = snapshotData['display_name'] as String?;
@@ -102,6 +137,13 @@ class UsersRecord extends FirestoreRecord {
     _preventingMealTimes = snapshotData['preventing_meal_times'] as String?;
     _fcmToken = snapshotData['fcmToken'] as String?;
     _onboardingCompleted = snapshotData['onboarding_completed'] as bool?;
+    _myName = snapshotData['my_name'] as String?;
+    _myColor = castToType<int>(snapshotData['my_color']);
+    _partnerName = snapshotData['partner_name'] as String?;
+    _partnerColor = castToType<int>(snapshotData['partner_color']);
+    _mealPlanRemindersEnabled = snapshotData['meal_plan_reminders_enabled'] as bool?;
+    _mealPlanReminderDay = castToType<int>(snapshotData['meal_plan_reminder_day']);
+    _mealPlanReminderHour = castToType<int>(snapshotData['meal_plan_reminder_hour']);
   }
 
   static CollectionReference get collection =>
@@ -152,6 +194,10 @@ Map<String, dynamic> createUsersRecordData({
   String? preventingMealTimes,
   String? fcmToken,
   bool? onboardingCompleted,
+  String? myName,
+  int? myColor,
+  String? partnerName,
+  int? partnerColor,
 }) {
   final firestoreData = mapToFirestore(
     <String, dynamic>{
@@ -169,6 +215,10 @@ Map<String, dynamic> createUsersRecordData({
       'preventing_meal_times': preventingMealTimes,
       'fcmToken': fcmToken,
       'onboarding_completed': onboardingCompleted,
+      'my_name': myName,
+      'my_color': myColor,
+      'partner_name': partnerName,
+      'partner_color': partnerColor,
     }.withoutNulls,
   );
 
@@ -193,7 +243,11 @@ class UsersRecordDocumentEquality implements Equality<UsersRecord> {
         e1?.firstChildCreated == e2?.firstChildCreated &&
         e1?.preventingMealTimes == e2?.preventingMealTimes &&
         e1?.fcmToken == e2?.fcmToken &&
-        e1?.onboardingCompleted == e2?.onboardingCompleted;
+        e1?.onboardingCompleted == e2?.onboardingCompleted &&
+        e1?.myName == e2?.myName &&
+        e1?.myColor == e2?.myColor &&
+        e1?.partnerName == e2?.partnerName &&
+        e1?.partnerColor == e2?.partnerColor;
   }
 
   @override
@@ -211,7 +265,11 @@ class UsersRecordDocumentEquality implements Equality<UsersRecord> {
         e?.firstChildCreated,
         e?.preventingMealTimes,
         e?.fcmToken,
-        e?.onboardingCompleted
+        e?.onboardingCompleted,
+        e?.myName,
+        e?.myColor,
+        e?.partnerName,
+        e?.partnerColor,
       ]);
 
   @override
