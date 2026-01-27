@@ -11,7 +11,7 @@ workflows:
       groups:
         - app_store_credentials  # Add your credentials in Codemagic UI
       vars:
-        BUNDLE_ID: "com.mycompany.momecoach"
+        BUNDLE_ID: "com.momrise.app"
         APP_STORE_CONNECT_ISSUER_ID: Encrypted(...) # Add in Codemagic UI
         APP_STORE_CONNECT_KEY_IDENTIFIER: Encrypted(...) # Add in Codemagic UI
         APP_STORE_CONNECT_PRIVATE_KEY: Encrypted(...) # Add in Codemagic UI
