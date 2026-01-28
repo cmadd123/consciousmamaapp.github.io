@@ -35,21 +35,41 @@ workflows:
         script: |
           cd ios && pod install
 
+      - name: Set up code signing
+        script: |
+          set -e
+          set -x
+
+          # Initialize keychain
+          keychain initialize
+
+          # Fetch signing files using App Store Connect API with Admin key
+          app-store-connect fetch-signing-files "$BUNDLE_ID" \
+            --issuer-id "$APP_STORE_CONNECT_ISSUER_ID" \
+            --key-id "$APP_STORE_CONNECT_KEY_IDENTIFIER" \
+            --private-key "$APP_STORE_CONNECT_PRIVATE_KEY" \
+            --type IOS_APP_STORE \
+            --create
+
+          # Add certificates to keychain
+          keychain add-certificates
+
+          # Set Xcode project to use fetched profiles
+          xcode-project use-profiles
+
       - name: Flutter analyze
         script: |
           flutter analyze --no-fatal-infos
         ignore_failure: true
 
-      - name: Build iOS (unsigned for local signing)
+      - name: Build iOS IPA
         script: |
-          # Build without code signing - you'll sign locally with Xcode
-          flutter build ios --release \
-            --no-codesign \
+          flutter build ipa --release \
             --build-name=1.1.128 \
             --build-number=1
 
     artifacts:
-      - build/ios/iphoneos/*.app
+      - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
       - flutter_drive.log
 
