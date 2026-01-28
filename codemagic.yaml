@@ -5,9 +5,6 @@ workflows:
     instance_type: mac_mini_m2
 
     environment:
-      ios_signing:
-        distribution_type: app_store
-        bundle_identifier: com.momrise.app
       flutter: stable
       xcode: latest
       cocoapods: default
@@ -17,6 +14,8 @@ workflows:
         # APP_STORE_CONNECT_ISSUER_ID (plain text, NOT secure)
         # APP_STORE_CONNECT_KEY_IDENTIFIER (can be secure)
         # APP_STORE_CONNECT_PRIVATE_KEY (MUST be secure)
+        XCODE_PROJECT: "Runner.xcodeproj"
+        XCODE_SCHEME: "Runner"
 
     triggering:
       events:
@@ -36,31 +35,20 @@ workflows:
         script: |
           cd ios && pod install
 
-      - name: Set up code signing
+      - name: Set up code signing (manual approach)
         script: |
           set -e
           set -x
 
-          # Register the app identifier if it doesn't exist
-          app-store-connect create-app-id \
-            --bundle-id "$BUNDLE_ID" \
-            --issuer-id "$APP_STORE_CONNECT_ISSUER_ID" \
-            --key-id "$APP_STORE_CONNECT_KEY_IDENTIFIER" \
-            --private-key "$APP_STORE_CONNECT_PRIVATE_KEY" || true
+          # Use automatic code signing in Xcode
+          # This will let Xcode manage signing instead of using provisioning profiles
+          cd ios
 
-          # Fetch existing signing files (profile was created manually)
-          # Note: --create flag removed because App Manager role can't create profiles
-          app-store-connect fetch-signing-files "$BUNDLE_ID" \
-            --type IOS_APP_STORE \
-            --issuer-id "$APP_STORE_CONNECT_ISSUER_ID" \
-            --key-id "$APP_STORE_CONNECT_KEY_IDENTIFIER" \
-            --private-key "$APP_STORE_CONNECT_PRIVATE_KEY"
+          # Enable automatic code signing
+          sed -i '' 's/CODE_SIGN_STYLE = Manual;/CODE_SIGN_STYLE = Automatic;/g' Runner.xcodeproj/project.pbxproj || true
+          sed -i '' 's/DEVELOPMENT_TEAM = "";/DEVELOPMENT_TEAM = QD9XFTWRQ9;/g' Runner.xcodeproj/project.pbxproj || true
 
-          # Add certificates to keychain
-          keychain add-certificates
-
-          # Set up code signing settings
-          xcode-project use-profiles
+          cd ..
 
       - name: Flutter analyze
         script: |
@@ -71,7 +59,8 @@ workflows:
         script: |
           flutter build ipa --release \
             --build-name=1.1.128 \
-            --build-number=1
+            --build-number=1 \
+            --export-options-plist=ios/ExportOptions.plist
 
     artifacts:
       - build/ios/ipa/*.ipa
