@@ -67,6 +67,13 @@ ios/Runner/GoogleService-Info.plist
 **/google-services.json
 **/GoogleService-Info.plist
 
+# Apple Developer Keys - SECURITY: Never commit
+*.p8
+*.pem
+*.mobileprovision
+*.cer
+*.certSigningRequest
+
 # Environment variables
 .env
 .env.*
