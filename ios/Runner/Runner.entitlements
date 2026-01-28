@@ -6,5 +6,10 @@
     <array>
       <string>Default</string>
     </array>
+    <key>com.apple.developer.associated-domains</key>
+    <array>
+      <string>applinks:momrise.app</string>
+      <string>applinks:cmadd123.github.io</string>
+    </array>
 </dict>
 </plist>
