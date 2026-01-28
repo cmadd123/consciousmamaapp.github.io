@@ -5,11 +5,18 @@ workflows:
     instance_type: mac_mini_m2
 
     environment:
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.momrise.app
       flutter: stable
       xcode: latest
       cocoapods: default
       vars:
         BUNDLE_ID: "com.momrise.app"
+        # These environment variables must be set in Codemagic UI:
+        # APP_STORE_CONNECT_ISSUER_ID (plain text, NOT secure)
+        # APP_STORE_CONNECT_KEY_IDENTIFIER (can be secure)
+        # APP_STORE_CONNECT_PRIVATE_KEY (MUST be secure)
 
     triggering:
       events:
@@ -34,9 +41,12 @@ workflows:
           set -e
           set -x
 
-          # Fetch signing files
+          # Fetch signing files with explicit credentials
           app-store-connect fetch-signing-files "$BUNDLE_ID" \
             --type IOS_APP_STORE \
+            --issuer-id "$APP_STORE_CONNECT_ISSUER_ID" \
+            --key-id "$APP_STORE_CONNECT_KEY_IDENTIFIER" \
+            --private-key "$APP_STORE_CONNECT_PRIVATE_KEY" \
             --create
 
           # Add certificates to keychain
