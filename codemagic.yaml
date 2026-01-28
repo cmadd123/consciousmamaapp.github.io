@@ -41,7 +41,14 @@ workflows:
           set -e
           set -x
 
-          # Fetch signing files with explicit credentials
+          # Register the app identifier if it doesn't exist
+          app-store-connect create-app-id \
+            --bundle-id "$BUNDLE_ID" \
+            --issuer-id "$APP_STORE_CONNECT_ISSUER_ID" \
+            --key-id "$APP_STORE_CONNECT_KEY_IDENTIFIER" \
+            --private-key "$APP_STORE_CONNECT_PRIVATE_KEY" || true
+
+          # Create and fetch signing files (certificates and profiles)
           app-store-connect fetch-signing-files "$BUNDLE_ID" \
             --type IOS_APP_STORE \
             --issuer-id "$APP_STORE_CONNECT_ISSUER_ID" \
