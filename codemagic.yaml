@@ -33,41 +33,45 @@ workflows:
         script: |
           cd ios && pod install
 
-      - name: Set up code signing
-        script: |
-          set -e
-          set -x
-
-          # Initialize keychain
-          keychain initialize
-
-          # Fetch signing files using App Store Connect API with Admin key
-          # Use existing certificates, don't try to create new ones
-          app-store-connect fetch-signing-files "$BUNDLE_ID" \
-            --issuer-id "$APP_STORE_CONNECT_ISSUER_ID" \
-            --key-id "$APP_STORE_CONNECT_KEY_IDENTIFIER" \
-            --private-key "$APP_STORE_CONNECT_PRIVATE_KEY" \
-            --type IOS_APP_STORE
-
-          # Add certificates to keychain
-          keychain add-certificates
-
-          # Set Xcode project to use fetched profiles
-          xcode-project use-profiles
+      # TEMPORARILY DISABLED: Code signing failing because certificate was created manually
+      # (not via API), so API can't access the private key.
+      # TODO: Either create certificate via API or manually upload to Codemagic
+      # - name: Set up code signing
+      #   script: |
+      #     set -e
+      #     set -x
+      #
+      #     # Initialize keychain
+      #     keychain initialize
+      #
+      #     # Fetch signing files using App Store Connect API with Admin key
+      #     # Use existing certificates, don't try to create new ones
+      #     app-store-connect fetch-signing-files "$BUNDLE_ID" \
+      #       --issuer-id "$APP_STORE_CONNECT_ISSUER_ID" \
+      #       --key-id "$APP_STORE_CONNECT_KEY_IDENTIFIER" \
+      #       --private-key "$APP_STORE_CONNECT_PRIVATE_KEY" \
+      #       --type IOS_APP_STORE
+      #
+      #     # Add certificates to keychain
+      #     keychain add-certificates
+      #
+      #     # Set Xcode project to use fetched profiles
+      #     xcode-project use-profiles
 
       - name: Flutter analyze
         script: |
           flutter analyze --no-fatal-infos
         ignore_failure: true
 
-      - name: Build iOS IPA
+      - name: Build iOS IPA (without signing)
         script: |
-          flutter build ipa --release \
+          flutter build ios --release --no-codesign \
             --build-name=1.1.128 \
             --build-number=1
 
     artifacts:
-      - build/ios/ipa/*.ipa
+      - build/ios/iphoneos/*.app  # .app file (unsigned build)
+      # - build/ios/ipa/*.ipa  # Only available with signed builds
       - /tmp/xcodebuild_logs/*.log
       - flutter_drive.log
 
@@ -79,14 +83,16 @@ workflows:
           success: true
           failure: true
 
-      app_store_connect:
-        api_key: $APP_STORE_CONNECT_PRIVATE_KEY
-        key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
-        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
-        submit_to_testflight: true
-        beta_groups:
-          - Internal Testers  # Create this group in App Store Connect
-        # submit_to_app_store: false  # Enable for production releases
+      # TEMPORARILY DISABLED: Can't upload unsigned builds to TestFlight
+      # Re-enable once code signing is working
+      # app_store_connect:
+      #   api_key: $APP_STORE_CONNECT_PRIVATE_KEY
+      #   key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
+      #   issuer_id: $APP_STORE_CONNECT_ISSUER_ID
+      #   submit_to_testflight: true
+      #   beta_groups:
+      #     - Internal Testers  # Create this group in App Store Connect
+      #   # submit_to_app_store: false  # Enable for production releases
 
   android-workflow:
     name: Android Production Build
