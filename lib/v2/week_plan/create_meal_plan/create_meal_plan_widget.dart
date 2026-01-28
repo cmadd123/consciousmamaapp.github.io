@@ -1747,6 +1747,97 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
     }
   }
 
+  /// Clear all meals for a specific day
+  Future<void> _clearAllMealsForDay(BuildContext context, DateTime day, List<MealPlanRecord> dayMealPlans) async {
+    if (dayMealPlans.isEmpty) return;
+
+    // Show confirmation dialog
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text('Clear All Meals?'),
+        content: Text('This will remove all ${dayMealPlans.length} meal(s) for ${dateTimeFormat('EEEE, MMMM d', day)}.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: Text('Clear All'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm != true) return;
+
+    // Show loading dialog
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      barrierColor: Colors.black54,
+      builder: (dialogContext) => Material(
+        color: Colors.transparent,
+        child: Center(
+          child: Container(
+            padding: EdgeInsets.all(24.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(14.0),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircularProgressIndicator(color: FlutterFlowTheme.of(dialogContext).primary),
+                SizedBox(height: 16.0),
+                Text(
+                  'Clearing meals...',
+                  style: FlutterFlowTheme.of(dialogContext).bodyMedium.override(
+                    fontFamily: 'Andika New Basic',
+                    letterSpacing: 0.0,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+
+    try {
+      // Delete all meals for this day
+      for (final plan in dayMealPlans) {
+        await plan.reference.delete();
+      }
+
+      Navigator.pop(context); // Close loading
+      FFAppState().MealCashtearm = true; // Trigger refresh
+      await _refreshMealPlans(); // Reload cached meal plans
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('${dayMealPlans.length} meal(s) cleared from ${dateTimeFormat('EEEE', day)}'),
+          backgroundColor: Colors.green,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        ),
+      );
+    } catch (e) {
+      Navigator.pop(context);
+      debugPrint('Error clearing meals for day: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error clearing meals'),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        ),
+      );
+    }
+  }
+
   // Build meal image widget with proper validation and caching
   Widget _buildMealImage(String? imageUrl, double iconSize, {String? mealName}) {
     if (_isValidImageUrl(imageUrl)) {
@@ -2329,44 +2420,88 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
       ),
       child: Column(
         children: [
-          // Share day button (only show if there are meals)
+          // Action buttons row (only show if there are meals)
           if (hasAnyMeals)
             Padding(
               padding: EdgeInsets.only(bottom: 8.0),
-              child: InkWell(
-                onTap: () => _shareSingleDay(context, day, dayMealPlans),
-                borderRadius: BorderRadius.circular(14.0),
-                child: Container(
-                  padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
-                  decoration: BoxDecoration(
-                    color: FlutterFlowTheme.of(context).secondary.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(14.0),
-                    border: Border.all(
-                      color: FlutterFlowTheme.of(context).secondary.withOpacity(0.3),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.share,
-                        size: 16.0,
-                        color: FlutterFlowTheme.of(context).secondary,
-                      ),
-                      SizedBox(width: 6.0),
-                      Text(
-                        'Share ${dateTimeFormat("EEEE", day, locale: 'en')}\'s Meals',
-                        style: FlutterFlowTheme.of(context).bodySmall.override(
-                          fontFamily: 'Andika New Basic',
-                          color: FlutterFlowTheme.of(context).secondary,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 0.0,
+              child: Row(
+                children: [
+                  // Share day button
+                  Expanded(
+                    child: InkWell(
+                      onTap: () => _shareSingleDay(context, day, dayMealPlans),
+                      borderRadius: BorderRadius.circular(14.0),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                        decoration: BoxDecoration(
+                          color: FlutterFlowTheme.of(context).secondary.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(14.0),
+                          border: Border.all(
+                            color: FlutterFlowTheme.of(context).secondary.withOpacity(0.3),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.share,
+                              size: 16.0,
+                              color: FlutterFlowTheme.of(context).secondary,
+                            ),
+                            SizedBox(width: 6.0),
+                            Text(
+                              'Share ${dateTimeFormat("EEEE", day, locale: 'en')}\'s Meals',
+                              style: FlutterFlowTheme.of(context).bodySmall.override(
+                                fontFamily: 'Andika New Basic',
+                                color: FlutterFlowTheme.of(context).secondary,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: 0.0,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
+                    ),
                   ),
-                ),
+                  SizedBox(width: 8.0),
+                  // Clear All button
+                  InkWell(
+                    onTap: () => _clearAllMealsForDay(context, day, dayMealPlans),
+                    borderRadius: BorderRadius.circular(14.0),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                      decoration: BoxDecoration(
+                        color: Colors.red.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(14.0),
+                        border: Border.all(
+                          color: Colors.red.withOpacity(0.3),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.clear_all,
+                            size: 16.0,
+                            color: Colors.red,
+                          ),
+                          SizedBox(width: 6.0),
+                          Text(
+                            'Clear All',
+                            style: FlutterFlowTheme.of(context).bodySmall.override(
+                              fontFamily: 'Andika New Basic',
+                              color: Colors.red,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 0.0,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           // Meal slots

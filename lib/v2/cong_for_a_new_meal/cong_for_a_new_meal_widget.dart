@@ -192,7 +192,7 @@ class _CongForANewMealWidgetState extends State<CongForANewMealWidget> {
                         if (Navigator.of(context).canPop()) {
                           context.pop();
                         }
-                        context.pushNamed(CreateBookCategoryWidget.routeName);
+                        context.pushNamed(FavMealPageWidget.routeName);
                       }
                     },
                     text: 'Continue',

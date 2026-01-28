@@ -205,30 +205,43 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
     final theme = FlutterFlowTheme.of(context);
     final isSnacks = widget.mealType == MealTyp.Snacks;
 
-    return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFFFAF8F5), Color(0xFFF5EDE6)],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+
+        // Auto-save changes before popping if there are any items
+        if (_hasAnyItems && !_isSaving) {
+          await _saveMealPlan();
+        } else {
+          Navigator.pop(context);
+        }
+      },
+      child: Scaffold(
+        body: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFFFAF8F5), Color(0xFFF5EDE6)],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
           ),
-        ),
-        child: SafeArea(
-          bottom: false,
-          child: Column(
-            children: [
-              _buildAppBar(context, theme),
-              Expanded(
-                child: _isLoading
-                    ? Center(child: CircularProgressIndicator(color: theme.primary))
-                    : SingleChildScrollView(
-                        padding: EdgeInsets.all(16.0),
-                        child: isSnacks ? _buildSnacksLayout(context) : _buildMealLayout(context),
-                      ),
-              ),
-              _buildBottomActions(context),
-            ],
+          child: SafeArea(
+            bottom: false,
+            child: Column(
+              children: [
+                _buildAppBar(context, theme),
+                Expanded(
+                  child: _isLoading
+                      ? Center(child: CircularProgressIndicator(color: theme.primary))
+                      : SingleChildScrollView(
+                          padding: EdgeInsets.all(16.0),
+                          child: isSnacks ? _buildSnacksLayout(context) : _buildMealLayout(context),
+                        ),
+                ),
+                _buildBottomActions(context),
+              ],
+            ),
           ),
         ),
       ),
@@ -246,7 +259,14 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
         children: [
           IconButton(
             icon: Icon(Icons.arrow_back, color: theme.primaryText),
-            onPressed: () => Navigator.pop(context),
+            onPressed: () async {
+              // Auto-save changes before going back if there are any items
+              if (_hasAnyItems && !_isSaving) {
+                await _saveMealPlan();
+              } else {
+                Navigator.pop(context);
+              }
+            },
           ),
           Expanded(
             child: Column(
