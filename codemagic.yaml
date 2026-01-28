@@ -42,12 +42,12 @@ workflows:
           keychain initialize
 
           # Fetch signing files using App Store Connect API with Admin key
+          # Use existing certificates, don't try to create new ones
           app-store-connect fetch-signing-files "$BUNDLE_ID" \
             --issuer-id "$APP_STORE_CONNECT_ISSUER_ID" \
             --key-id "$APP_STORE_CONNECT_KEY_IDENTIFIER" \
             --private-key "$APP_STORE_CONNECT_PRIVATE_KEY" \
-            --type IOS_APP_STORE \
-            --create
+            --type IOS_APP_STORE
 
           # Add certificates to keychain
           keychain add-certificates
