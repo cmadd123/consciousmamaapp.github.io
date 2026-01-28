@@ -21,10 +21,6 @@ workflows:
           source: true
 
     scripts:
-      - name: Set up code signing settings on Xcode project
-        script: |
-          xcode-project use-profiles
-
       - name: Get Flutter packages
         script: |
           flutter pub get
@@ -32,6 +28,22 @@ workflows:
       - name: Install CocoaPods dependencies
         script: |
           cd ios && pod install
+
+      - name: Set up code signing
+        script: |
+          set -e
+          set -x
+
+          # Fetch signing files
+          app-store-connect fetch-signing-files "$BUNDLE_ID" \
+            --type IOS_APP_STORE \
+            --create
+
+          # Add certificates to keychain
+          keychain add-certificates
+
+          # Set up code signing settings
+          xcode-project use-profiles
 
       - name: Flutter analyze
         script: |
@@ -42,8 +54,7 @@ workflows:
         script: |
           flutter build ipa --release \
             --build-name=1.1.128 \
-            --build-number=$(($(app-store-connect get-latest-testflight-build-number "$APP_STORE_CONNECT_ISSUER_ID" "$BUNDLE_ID") + 1)) \
-            --export-options-plist=/Users/builder/export_options.plist
+            --build-number=1
 
     artifacts:
       - build/ios/ipa/*.ipa
