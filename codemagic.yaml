@@ -35,35 +35,21 @@ workflows:
         script: |
           cd ios && pod install
 
-      - name: Set up code signing (manual approach)
-        script: |
-          set -e
-          set -x
-
-          # Use automatic code signing in Xcode
-          # This will let Xcode manage signing instead of using provisioning profiles
-          cd ios
-
-          # Enable automatic code signing
-          sed -i '' 's/CODE_SIGN_STYLE = Manual;/CODE_SIGN_STYLE = Automatic;/g' Runner.xcodeproj/project.pbxproj || true
-          sed -i '' 's/DEVELOPMENT_TEAM = "";/DEVELOPMENT_TEAM = QD9XFTWRQ9;/g' Runner.xcodeproj/project.pbxproj || true
-
-          cd ..
-
       - name: Flutter analyze
         script: |
           flutter analyze --no-fatal-infos
         ignore_failure: true
 
-      - name: Build iOS IPA
+      - name: Build iOS (unsigned for local signing)
         script: |
-          flutter build ipa --release \
+          # Build without code signing - you'll sign locally with Xcode
+          flutter build ios --release \
+            --no-codesign \
             --build-name=1.1.128 \
-            --build-number=1 \
-            --export-options-plist=ios/ExportOptions.plist
+            --build-number=1
 
     artifacts:
-      - build/ios/ipa/*.ipa
+      - build/ios/iphoneos/*.app
       - /tmp/xcodebuild_logs/*.log
       - flutter_drive.log
 
