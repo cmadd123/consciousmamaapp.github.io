@@ -48,13 +48,13 @@ workflows:
             --key-id "$APP_STORE_CONNECT_KEY_IDENTIFIER" \
             --private-key "$APP_STORE_CONNECT_PRIVATE_KEY" || true
 
-          # Create and fetch signing files (certificates and profiles)
+          # Fetch existing signing files (profile was created manually)
+          # Note: --create flag removed because App Manager role can't create profiles
           app-store-connect fetch-signing-files "$BUNDLE_ID" \
             --type IOS_APP_STORE \
             --issuer-id "$APP_STORE_CONNECT_ISSUER_ID" \
             --key-id "$APP_STORE_CONNECT_KEY_IDENTIFIER" \
-            --private-key "$APP_STORE_CONNECT_PRIVATE_KEY" \
-            --create
+            --private-key "$APP_STORE_CONNECT_PRIVATE_KEY"
 
           # Add certificates to keychain
           keychain add-certificates
