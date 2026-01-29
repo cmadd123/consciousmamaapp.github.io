@@ -25,6 +25,10 @@ workflows:
           source: true
 
     scripts:
+      - name: Create GoogleService-Info.plist from environment variable
+        script: |
+          echo "$GOOGLE_SERVICE_INFO_PLIST" > ios/Runner/GoogleService-Info.plist
+
       - name: Get Flutter packages
         script: |
           flutter pub get
