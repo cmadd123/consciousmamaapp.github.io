@@ -118,6 +118,10 @@ workflows:
           source: true
 
     scripts:
+      - name: Create google-services.json from environment variable
+        script: |
+          echo "$GOOGLE_SERVICES_JSON" > android/app/google-services.json
+
       - name: Get Flutter packages
         script: |
           flutter pub get
