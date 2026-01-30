@@ -43,13 +43,20 @@ workflows:
           flutter analyze --no-fatal-infos
         ignore_failure: true
 
-      - name: Build iOS archive without code signing
+      - name: Build iOS archive
         script: |
-          # Build archive without signing - Codemagic will handle signing during upload
-          flutter build ipa --release \
+          # Build xcarchive first
+          flutter build ios --release \
+            --no-codesign \
             --build-name=1.1.128 \
-            --build-number=1 \
-            --no-codesign
+            --build-number=1
+
+      - name: Package and sign IPA
+        script: |
+          # Use Codemagic's app-store-connect publish command to sign and create IPA
+          # This uses the App Store Connect integration for signing
+          app-store-connect publish \
+            --path build/ios/archive/Runner.xcarchive
 
     artifacts:
       - build/ios/ipa/*.ipa
