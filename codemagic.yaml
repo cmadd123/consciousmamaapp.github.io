@@ -4,12 +4,13 @@ workflows:
     max_build_duration: 60
     instance_type: mac_mini_m2
 
+    integrations:
+      app_store_connect: Codemagic CI/CD
+
     environment:
       flutter: stable
       xcode: latest
       cocoapods: default
-      groups:
-        - APP_STORE_KEYS  # Variable group containing issuer_id, key_id, private_key
       vars:
         BUNDLE_ID: "com.momrise.app"
         XCODE_PROJECT: "Runner.xcodeproj"
@@ -45,12 +46,9 @@ workflows:
           # Initialize keychain
           keychain initialize
 
-          # Create new Distribution certificate and provisioning profile via API
-          # User has 2 existing certs, can create 1 more (Apple allows 3 total)
+          # Fetch signing files using the App Store Connect integration
+          # This will automatically create certificates/profiles if needed
           app-store-connect fetch-signing-files "$BUNDLE_ID" \
-            --issuer-id "$APP_STORE_CONNECT_ISSUER_ID" \
-            --key-id "$APP_STORE_CONNECT_KEY_IDENTIFIER" \
-            --private-key "$APP_STORE_CONNECT_PRIVATE_KEY" \
             --type IOS_APP_STORE \
             --create
 
@@ -85,9 +83,7 @@ workflows:
           failure: true
 
       app_store_connect:
-        api_key: $APP_STORE_CONNECT_PRIVATE_KEY
-        key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
-        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
+        auth: integration
         submit_to_testflight: true
         # Note: You'll need to create "Internal Testers" group in App Store Connect first
         # Or comment out beta_groups to upload without auto-distributing
