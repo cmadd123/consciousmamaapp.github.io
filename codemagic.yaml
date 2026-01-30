@@ -46,11 +46,10 @@ workflows:
           # Initialize keychain
           keychain initialize
 
-          # Fetch signing files using the App Store Connect integration
-          # This will automatically create certificates/profiles if needed
+          # Fetch existing signing files from Apple Developer portal
+          # Remove --create flag to use existing certificates instead of creating new ones
           app-store-connect fetch-signing-files "$BUNDLE_ID" \
-            --type IOS_APP_STORE \
-            --create
+            --type IOS_APP_STORE
 
           # Add certificates to keychain
           keychain add-certificates
