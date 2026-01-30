@@ -38,35 +38,18 @@ workflows:
         script: |
           cd ios && pod install
 
-      - name: Set up code signing
-        script: |
-          set -e
-          set -x
-
-          # Initialize keychain
-          keychain initialize
-
-          # Fetch existing signing files from Apple Developer portal
-          # Remove --create flag to use existing certificates instead of creating new ones
-          app-store-connect fetch-signing-files "$BUNDLE_ID" \
-            --type IOS_APP_STORE
-
-          # Add certificates to keychain
-          keychain add-certificates
-
-          # Set Xcode project to use fetched profiles
-          xcode-project use-profiles
-
       - name: Flutter analyze
         script: |
           flutter analyze --no-fatal-infos
         ignore_failure: true
 
-      - name: Build iOS IPA
+      - name: Build iOS archive without code signing
         script: |
+          # Build archive without signing - Codemagic will handle signing during upload
           flutter build ipa --release \
             --build-name=1.1.128 \
-            --build-number=1
+            --build-number=1 \
+            --no-codesign
 
     artifacts:
       - build/ios/ipa/*.ipa
