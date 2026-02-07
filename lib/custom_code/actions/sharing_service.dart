@@ -72,10 +72,20 @@ class SharingService {
               }
             }
 
+            // Find the desserts
+            List<Map<String, dynamic>> dessertsData = [];
+            for (final dessertRef in combo.dessertRefs) {
+              final dessert = meals.firstWhereOrNull((m) => m.reference == dessertRef);
+              if (dessert != null) {
+                dessertsData.add(_serializeMeal(dessert));
+              }
+            }
+
             mealData['combo'] = {
               'name': combo.name,
               'entree': entree != null ? _serializeMeal(entree) : null,
               'sides': sidesData,
+              'desserts': dessertsData,
               'drink_type': combo.drinkType?.name,
               'drink_custom': combo.drinkCustom,
               'meal_typ': combo.mealTyp?.name,
@@ -192,10 +202,19 @@ class SharingService {
               }
             }
 
+            List<Map<String, dynamic>> dessertsData = [];
+            for (final dessertRef in combo.dessertRefs) {
+              final dessert = meals.firstWhereOrNull((m) => m.reference == dessertRef);
+              if (dessert != null) {
+                dessertsData.add(_serializeMeal(dessert));
+              }
+            }
+
             mealData['combo'] = {
               'name': combo.name,
               'entree': entree != null ? _serializeMeal(entree) : null,
               'sides': sidesData,
+              'desserts': dessertsData,
               'drink_type': combo.drinkType?.name,
               'drink_custom': combo.drinkCustom,
               'meal_typ': combo.mealTyp?.name,
@@ -299,10 +318,19 @@ class SharingService {
           }
         }
 
+        List<Map<String, dynamic>> dessertsData = [];
+        for (final dessertRef in combo.dessertRefs) {
+          final dessert = comboMeals.firstWhereOrNull((m) => m.reference == dessertRef);
+          if (dessert != null) {
+            dessertsData.add(_serializeMeal(dessert));
+          }
+        }
+
         mealData['combo'] = {
           'name': combo.name,
           'entree': entree != null ? _serializeMeal(entree) : null,
           'sides': sidesData,
+          'desserts': dessertsData,
           'drink_type': combo.drinkType?.name,
           'drink_custom': combo.drinkCustom,
           'meal_typ': combo.mealTyp?.name,
@@ -436,6 +464,14 @@ class SharingService {
         }
       }
 
+      List<Map<String, dynamic>> dessertsData = [];
+      for (final dessertRef in combo.dessertRefs) {
+        final dessert = comboMeals.firstWhereOrNull((m) => m.reference == dessertRef);
+        if (dessert != null) {
+          dessertsData.add(_serializeMeal(dessert));
+        }
+      }
+
       final mealData = {
         'date_offset': 0,
         'meal_type': combo.mealTyp?.name ?? 'Dinner',
@@ -443,6 +479,7 @@ class SharingService {
           'name': combo.name,
           'entree': entree != null ? _serializeMeal(entree) : null,
           'sides': sidesData,
+          'desserts': dessertsData,
           'drink_type': combo.drinkType?.name,
           'drink_custom': combo.drinkCustom,
           'meal_typ': combo.mealTyp?.name,
@@ -875,10 +912,11 @@ class SharingService {
         // Calculate the date for this meal
         final mealDate = targetWeekStart.add(Duration(days: dateOffset));
 
-        // Handle combo import (entree + sides + drink)
+        // Handle combo import (entree + sides + desserts + drink)
         if (combo != null) {
           DocumentReference? entreeRef;
           List<DocumentReference> sideRefs = [];
+          List<DocumentReference> dessertRefs = [];
 
           // Create entree
           final entreeData = combo['entree'] as Map<String, dynamic>?;
@@ -895,6 +933,15 @@ class SharingService {
             }
           }
 
+          // Create desserts
+          final dessertsData = combo['desserts'] as List<dynamic>? ?? [];
+          for (final dessertData in dessertsData) {
+            if (dessertData is Map<String, dynamic>) {
+              final dessertRef = await _createMealFromData(dessertData);
+              dessertRefs.add(dessertRef);
+            }
+          }
+
           // Create the combo
           final comboRef = await MealComboRecord.collection.add(createMealComboRecordData(
             name: combo['name'] as String?,
@@ -906,11 +953,16 @@ class SharingService {
             createdTime: DateTime.now(),
           ));
 
-          // Add side refs to the combo
+          // Add side refs and dessert refs to the combo
+          final updateData = <String, dynamic>{};
           if (sideRefs.isNotEmpty) {
-            await comboRef.update({
-              'side_refs': sideRefs,
-            });
+            updateData['side_refs'] = sideRefs;
+          }
+          if (dessertRefs.isNotEmpty) {
+            updateData['dessert_refs'] = dessertRefs;
+          }
+          if (updateData.isNotEmpty) {
+            await comboRef.update(updateData);
           }
 
           // Create the meal plan entry with combo reference

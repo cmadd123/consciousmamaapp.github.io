@@ -57,6 +57,11 @@ class MealPlanRecord extends FirestoreRecord {
   List<DocumentReference> get sideRefs => _sideRefs ?? const [];
   bool hasSideRefs() => _sideRefs != null && _sideRefs!.isNotEmpty;
 
+  // "dessert_refs" field - List of dessert recipe references (for ad-hoc meal compositions)
+  List<DocumentReference>? _dessertRefs;
+  List<DocumentReference> get dessertRefs => _dessertRefs ?? const [];
+  bool hasDessertRefs() => _dessertRefs != null && _dessertRefs!.isNotEmpty;
+
   // "drink_type" field - Drink selection (for ad-hoc meal compositions)
   DrinkType? _drinkType;
   DrinkType? get drinkType => _drinkType;
@@ -66,6 +71,31 @@ class MealPlanRecord extends FirestoreRecord {
   String? _drinkCustom;
   String get drinkCustom => _drinkCustom ?? '';
   bool hasDrinkCustom() => _drinkCustom != null;
+
+  // "is_leftover_entree" field - Mark entree as leftover (excludes from grocery list)
+  bool? _isLeftoverEntree;
+  bool get isLeftoverEntree => _isLeftoverEntree ?? false;
+  bool hasIsLeftoverEntree() => _isLeftoverEntree != null;
+
+  // "is_leftover_side" field - Mark side as leftover (excludes from grocery list)
+  bool? _isLeftoverSide;
+  bool get isLeftoverSide => _isLeftoverSide ?? false;
+  bool hasIsLeftoverSide() => _isLeftoverSide != null;
+
+  // "is_leftover_dessert" field - Mark dessert as leftover (excludes from grocery list)
+  bool? _isLeftoverDessert;
+  bool get isLeftoverDessert => _isLeftoverDessert ?? false;
+  bool hasIsLeftoverDessert() => _isLeftoverDessert != null;
+
+  // "is_leftover_snack" field - Mark snack as leftover (excludes from grocery list)
+  bool? _isLeftoverSnack;
+  bool get isLeftoverSnack => _isLeftoverSnack ?? false;
+  bool hasIsLeftoverSnack() => _isLeftoverSnack != null;
+
+  // "custom_meal" field - Custom meal text (e.g., "Eating Out", "Pizza Delivery")
+  String? _customMeal;
+  String get customMeal => _customMeal ?? '';
+  bool hasCustomMeal() => _customMeal != null && _customMeal!.isNotEmpty;
 
   // Helper to check if this is a meal combo vs single recipe
   bool get isMealCombo => _mealComboRef != null;
@@ -81,10 +111,16 @@ class MealPlanRecord extends FirestoreRecord {
     _mealComboRef = snapshotData['meal_combo_ref'] as DocumentReference?;
     _notes = snapshotData['notes'] as String?;
     _sideRefs = getDataList(snapshotData['side_refs']);
+    _dessertRefs = getDataList(snapshotData['dessert_refs']);
     _drinkType = snapshotData['drink_type'] is DrinkType
         ? snapshotData['drink_type']
         : deserializeEnum<DrinkType>(snapshotData['drink_type']);
     _drinkCustom = snapshotData['drink_custom'] as String?;
+    _isLeftoverEntree = snapshotData['is_leftover_entree'] as bool?;
+    _isLeftoverSide = snapshotData['is_leftover_side'] as bool?;
+    _isLeftoverDessert = snapshotData['is_leftover_dessert'] as bool?;
+    _isLeftoverSnack = snapshotData['is_leftover_snack'] as bool?;
+    _customMeal = snapshotData['custom_meal'] as String?;
   }
 
   static CollectionReference get collection =>
@@ -131,6 +167,11 @@ Map<String, dynamic> createMealPlanRecordData({
   String? notes,
   DrinkType? drinkType,
   String? drinkCustom,
+  bool? isLeftoverEntree,
+  bool? isLeftoverSide,
+  bool? isLeftoverDessert,
+  bool? isLeftoverSnack,
+  String? customMeal,
 }) {
   final firestoreData = mapToFirestore(
     <String, dynamic>{
@@ -143,6 +184,11 @@ Map<String, dynamic> createMealPlanRecordData({
       'notes': notes,
       'drink_type': drinkType,
       'drink_custom': drinkCustom,
+      'is_leftover_entree': isLeftoverEntree,
+      'is_leftover_side': isLeftoverSide,
+      'is_leftover_dessert': isLeftoverDessert,
+      'is_leftover_snack': isLeftoverSnack,
+      'custom_meal': customMeal,
     }.withoutNulls,
   );
 
@@ -163,13 +209,19 @@ class MealPlanRecordDocumentEquality implements Equality<MealPlanRecord> {
         e1?.mealComboRef == e2?.mealComboRef &&
         e1?.notes == e2?.notes &&
         listEquality.equals(e1?.sideRefs, e2?.sideRefs) &&
+        listEquality.equals(e1?.dessertRefs, e2?.dessertRefs) &&
         e1?.drinkType == e2?.drinkType &&
-        e1?.drinkCustom == e2?.drinkCustom;
+        e1?.drinkCustom == e2?.drinkCustom &&
+        e1?.isLeftoverEntree == e2?.isLeftoverEntree &&
+        e1?.isLeftoverSide == e2?.isLeftoverSide &&
+        e1?.isLeftoverDessert == e2?.isLeftoverDessert &&
+        e1?.isLeftoverSnack == e2?.isLeftoverSnack &&
+        e1?.customMeal == e2?.customMeal;
   }
 
   @override
   int hash(MealPlanRecord? e) => const ListEquality()
-      .hash([e?.date, e?.mealId, e?.typ, e?.userRef, e?.userFirebasemeal, e?.mealComboRef, e?.notes, e?.sideRefs, e?.drinkType, e?.drinkCustom]);
+      .hash([e?.date, e?.mealId, e?.typ, e?.userRef, e?.userFirebasemeal, e?.mealComboRef, e?.notes, e?.sideRefs, e?.dessertRefs, e?.drinkType, e?.drinkCustom, e?.isLeftoverEntree, e?.isLeftoverSide, e?.isLeftoverDessert, e?.isLeftoverSnack, e?.customMeal]);
 
   @override
   bool isValidKey(Object? o) => o is MealPlanRecord;

@@ -569,11 +569,15 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
       mealCount = 1;
     } else if (widget.contentType == 'single_combo') {
       mealCount = 1;
-      // Count sides in combo
+      // Count sides and desserts in combo
       if (widget.combo != null) {
         final sideCount = widget.combo!.sideRefs.length;
+        final dessertCount = widget.combo!.dessertRefs.length;
         if (sideCount > 0) {
           mealCount += sideCount;
+        }
+        if (dessertCount > 0) {
+          mealCount += dessertCount;
         }
       }
     } else if (widget.contentType == 'activity' && widget.activity != null) {

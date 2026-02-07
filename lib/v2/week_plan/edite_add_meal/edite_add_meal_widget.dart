@@ -73,15 +73,27 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
             .cast<String>();
 
         // Initialize selectedCategories from existing meal data
+        // Add recipe type (Entree/Side/Dessert)
         if (widget!.editCookingMeal!.mainOrSides == 'Side') {
           _model.selectedCategories.add('Side');
+        } else if (widget!.editCookingMeal!.mainOrSides == 'Dessert') {
+          _model.selectedCategories.add('Dessert');
+        } else {
+          // Main = Entree
+          _model.selectedCategories.add('Entree');
         }
-        // Parse mealTyp (comma-separated) into categories
+
+        // Parse mealTyp (comma-separated) into meal type and dietary categories
         if (widget!.editCookingMeal!.mealTyp.isNotEmpty) {
-          final mealTypes = widget!.editCookingMeal!.mealTyp.split(',');
-          for (final type in mealTypes) {
+          final allTypes = widget!.editCookingMeal!.mealTyp.split(',');
+          for (final type in allTypes) {
             final trimmed = type.trim();
+            // Add meal types
             if (['Breakfast', 'Lunch', 'Dinner', 'Snacks'].contains(trimmed)) {
+              _model.selectedCategories.add(trimmed);
+            }
+            // Add dietary tags
+            if (['Gluten-Free', 'Dairy-Free', 'Nut-Free', 'Vegetarian', 'Vegan'].contains(trimmed)) {
               _model.selectedCategories.add(trimmed);
             }
           }
@@ -508,6 +520,43 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                         ),
                               ),
                             ),
+                            // Pinterest import tip - only show when creating new recipe
+                            if (widget.editCookingMeal == null)
+                              Padding(
+                                padding: EdgeInsetsDirectional.fromSTEB(16.0, 16.0, 16.0, 0.0),
+                                child: Container(
+                                  padding: EdgeInsets.all(12.0),
+                                  decoration: BoxDecoration(
+                                    color: Color(0xFFFFF3E0), // Light orange background
+                                    borderRadius: BorderRadius.circular(12.0),
+                                    border: Border.all(
+                                      color: Color(0xFFFFB74D), // Orange border
+                                      width: 1.0,
+                                    ),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.lightbulb_outline,
+                                        color: Color(0xFFFF9800),
+                                        size: 20.0,
+                                      ),
+                                      SizedBox(width: 8.0),
+                                      Expanded(
+                                        child: Text(
+                                          'Tip: You can import recipes from Pinterest and other websites! Just copy the recipe URL and use "Import from Link" below.',
+                                          style: FlutterFlowTheme.of(context).bodySmall.override(
+                                                fontFamily: 'Andika New Basic',
+                                                color: Color(0xFF6D4C41),
+                                                fontSize: 13.0,
+                                                letterSpacing: 0.0,
+                                              ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
                             // Scan Cookbook button - only show when creating new recipe
                             if (widget.editCookingMeal == null)
                               Padding(
@@ -552,6 +601,62 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                         SizedBox(width: 8.0),
                                         Text(
                                           _isScanning ? 'Scanning...' : 'Scan Cookbook Page',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 14.0,
+                                            fontFamily: 'Andika New Basic',
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            // Import from Link button - only show when creating new recipe
+                            if (widget.editCookingMeal == null)
+                              Padding(
+                                padding: EdgeInsetsDirectional.fromSTEB(0.0, 12.0, 0.0, 0.0),
+                                child: AnimatedPress(
+                                  onTap: () {
+                                    context.pushNamed(
+                                      'RecipeFromLink',
+                                      extra: <String, dynamic>{
+                                        kTransitionInfoKey: const TransitionInfo(
+                                          hasTransition: true,
+                                          transitionType: PageTransitionType.bottomToTop,
+                                        ),
+                                      },
+                                    );
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        colors: [Color(0xFF9C6FB8), Color(0xFF7B4FA0)],
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
+                                      ),
+                                      borderRadius: BorderRadius.circular(25.0),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Color(0xFF9C6FB8).withOpacity(0.3),
+                                          blurRadius: 8,
+                                          offset: Offset(0, 4),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          Icons.link,
+                                          color: Colors.white,
+                                          size: 20.0,
+                                        ),
+                                        SizedBox(width: 8.0),
+                                        Text(
+                                          'Import from Link',
                                           style: TextStyle(
                                             color: Colors.white,
                                             fontWeight: FontWeight.w600,
@@ -833,36 +938,54 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                           ),
                         ),
                       ),
-                    // Category chips (multi-select)
+                    // Section 1: When do you eat this? (Meal Types)
                     Padding(
-                      padding:
-                          EdgeInsetsDirectional.fromSTEB(0.0, 12.0, 0.0, 0.0),
+                      padding: EdgeInsetsDirectional.fromSTEB(0.0, 12.0, 0.0, 0.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            'Category (select all that apply)',
-                            style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                  fontFamily: 'Andika New Basic',
-                                  fontSize: 13.0,
-                                  color: const Color(0xFF666666),
-                                  letterSpacing: 0.0,
+                          Row(
+                            children: [
+                              Text(
+                                'When do you eat this? (select all that apply) *',
+                                style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                      fontFamily: 'Andika New Basic',
+                                      fontSize: 13.0,
+                                      color: const Color(0xFF666666),
+                                      letterSpacing: 0.0,
+                                    ),
+                              ),
+                              SizedBox(width: 4.0),
+                              InkWell(
+                                onTap: () {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('🍳 Used to filter recipes by meal time when building meals'),
+                                      duration: Duration(seconds: 3),
+                                    ),
+                                  );
+                                },
+                                child: Icon(
+                                  Icons.help_outline,
+                                  size: 16.0,
+                                  color: Color(0xFF999999),
                                 ),
+                              ),
+                            ],
                           ),
                           const SizedBox(height: 8.0),
                           Wrap(
                             spacing: 8.0,
                             runSpacing: 8.0,
-                            children: ['Breakfast', 'Lunch', 'Dinner', 'Side', 'Snacks'].map((category) {
-                              final isSelected = _model.selectedCategories.contains(category);
-                              final displayText = category == 'Snacks' ? 'Snacks/Desserts' : category;
+                            children: ['Breakfast', 'Lunch', 'Dinner', 'Snacks'].map((mealType) {
+                              final isSelected = _model.selectedCategories.contains(mealType);
                               return InkWell(
                                 onTap: () {
                                   setState(() {
                                     if (isSelected) {
-                                      _model.selectedCategories.remove(category);
+                                      _model.selectedCategories.remove(mealType);
                                     } else {
-                                      _model.selectedCategories.add(category);
+                                      _model.selectedCategories.add(mealType);
                                     }
                                   });
                                 },
@@ -892,10 +1015,208 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                         : null,
                                   ),
                                   child: Text(
-                                    displayText,
+                                    mealType,
                                     style: FlutterFlowTheme.of(context).bodySmall.override(
                                           fontFamily: 'Andika New Basic',
                                           color: isSelected ? Colors.white : FlutterFlowTheme.of(context).primary,
+                                          fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                                          letterSpacing: 0.0,
+                                        ),
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // Section 2: What type of recipe? (Recipe Types) - Only show if Snacks not exclusively selected
+                    if (!(_model.selectedCategories.contains('Snacks') && _model.selectedCategories.length == 1))
+                      Padding(
+                        padding: EdgeInsetsDirectional.fromSTEB(0.0, 20.0, 0.0, 0.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Text(
+                                  'What type of recipe is this? (select one) ${_model.selectedCategories.contains('Snacks') ? '' : '*'}',
+                                  style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                        fontFamily: 'Andika New Basic',
+                                        fontSize: 13.0,
+                                        color: const Color(0xFF666666),
+                                        letterSpacing: 0.0,
+                                      ),
+                                ),
+                                SizedBox(width: 4.0),
+                                InkWell(
+                                  onTap: () {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text('🍽️ Defines the role this recipe plays in a meal'),
+                                        duration: Duration(seconds: 3),
+                                      ),
+                                    );
+                                  },
+                                  child: Icon(
+                                    Icons.help_outline,
+                                    size: 16.0,
+                                    color: Color(0xFF999999),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8.0),
+                            Wrap(
+                              spacing: 8.0,
+                              runSpacing: 8.0,
+                              children: [
+                                {'label': 'Entree', 'emoji': '🍖'},
+                                {'label': 'Side', 'emoji': '🥗'},
+                                {'label': 'Dessert', 'emoji': '🍰'},
+                              ].map((recipeType) {
+                                final label = recipeType['label']!;
+                                final emoji = recipeType['emoji']!;
+                                final isSelected = _model.selectedCategories.contains(label);
+                                return InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      // Remove all other recipe types first (single selection)
+                                      _model.selectedCategories.removeWhere((c) => ['Entree', 'Side', 'Dessert'].contains(c));
+                                      // Then add the selected one
+                                      _model.selectedCategories.add(label);
+                                    });
+                                  },
+                                  borderRadius: BorderRadius.circular(14.0),
+                                  child: AnimatedContainer(
+                                    duration: const Duration(milliseconds: 200),
+                                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+                                    decoration: BoxDecoration(
+                                      color: isSelected
+                                          ? FlutterFlowTheme.of(context).secondary
+                                          : FlutterFlowTheme.of(context).secondary.withValues(alpha: 0.1),
+                                      border: Border.all(
+                                        color: isSelected
+                                            ? FlutterFlowTheme.of(context).secondary
+                                            : FlutterFlowTheme.of(context).secondary.withValues(alpha: 0.3),
+                                        width: isSelected ? 2.0 : 1.0,
+                                      ),
+                                      borderRadius: BorderRadius.circular(14.0),
+                                      boxShadow: isSelected
+                                          ? [
+                                              BoxShadow(
+                                                color: FlutterFlowTheme.of(context).secondary.withValues(alpha: 0.3),
+                                                blurRadius: 8.0,
+                                                offset: const Offset(0, 2),
+                                              ),
+                                            ]
+                                          : null,
+                                    ),
+                                    child: Text(
+                                      '$emoji $label',
+                                      style: FlutterFlowTheme.of(context).bodySmall.override(
+                                            fontFamily: 'Andika New Basic',
+                                            color: isSelected ? Colors.white : FlutterFlowTheme.of(context).secondary,
+                                            fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                                            letterSpacing: 0.0,
+                                          ),
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                          ],
+                        ),
+                      ),
+                    // Section 3: Dietary & Allergen Info (Optional)
+                    Padding(
+                      padding: EdgeInsetsDirectional.fromSTEB(0.0, 20.0, 0.0, 0.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                'Dietary & Allergen Info (optional)',
+                                style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                      fontFamily: 'Andika New Basic',
+                                      fontSize: 13.0,
+                                      color: const Color(0xFF666666),
+                                      letterSpacing: 0.0,
+                                    ),
+                              ),
+                              SizedBox(width: 4.0),
+                              InkWell(
+                                onTap: () {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('🥗 Helps filter recipes by dietary restrictions and allergens'),
+                                      duration: Duration(seconds: 3),
+                                    ),
+                                  );
+                                },
+                                child: Icon(
+                                  Icons.help_outline,
+                                  size: 16.0,
+                                  color: Color(0xFF999999),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8.0),
+                          Wrap(
+                            spacing: 8.0,
+                            runSpacing: 8.0,
+                            children: [
+                              {'label': 'Gluten-Free', 'emoji': '🌾'},
+                              {'label': 'Dairy-Free', 'emoji': '🥛'},
+                              {'label': 'Nut-Free', 'emoji': '🥜'},
+                              {'label': 'Vegetarian', 'emoji': '🥕'},
+                              {'label': 'Vegan', 'emoji': '🌱'},
+                            ].map((dietary) {
+                              final label = dietary['label']!;
+                              final emoji = dietary['emoji']!;
+                              final isSelected = _model.selectedCategories.contains(label);
+                              return InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    if (isSelected) {
+                                      _model.selectedCategories.remove(label);
+                                    } else {
+                                      _model.selectedCategories.add(label);
+                                    }
+                                  });
+                                },
+                                borderRadius: BorderRadius.circular(14.0),
+                                child: AnimatedContainer(
+                                  duration: const Duration(milliseconds: 200),
+                                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+                                  decoration: BoxDecoration(
+                                    color: isSelected
+                                        ? Color(0xFF52A097)
+                                        : Color(0xFF52A097).withValues(alpha: 0.1),
+                                    border: Border.all(
+                                      color: isSelected
+                                          ? Color(0xFF52A097)
+                                          : Color(0xFF52A097).withValues(alpha: 0.3),
+                                      width: isSelected ? 2.0 : 1.0,
+                                    ),
+                                    borderRadius: BorderRadius.circular(14.0),
+                                    boxShadow: isSelected
+                                        ? [
+                                            BoxShadow(
+                                              color: Color(0xFF52A097).withValues(alpha: 0.3),
+                                              blurRadius: 8.0,
+                                              offset: const Offset(0, 2),
+                                            ),
+                                          ]
+                                        : null,
+                                  ),
+                                  child: Text(
+                                    '$emoji $label',
+                                    style: FlutterFlowTheme.of(context).bodySmall.override(
+                                          fontFamily: 'Andika New Basic',
+                                          color: isSelected ? Colors.white : Color(0xFF52A097),
                                           fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
                                           letterSpacing: 0.0,
                                         ),
@@ -1703,6 +2024,34 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                           .validate()) {
                                     return;
                                   }
+
+                                  // Validate categories
+                                  final mealTypes = _model.selectedCategories.where((c) => ['Breakfast', 'Lunch', 'Dinner', 'Snacks'].contains(c)).toList();
+                                  final recipeTypes = _model.selectedCategories.where((c) => ['Entree', 'Side', 'Dessert'].contains(c)).toList();
+
+                                  if (mealTypes.isEmpty) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text('Please select at least one meal type (Breakfast, Lunch, Dinner, or Snacks)'),
+                                        backgroundColor: Colors.red,
+                                      ),
+                                    );
+                                    return;
+                                  }
+
+                                  // If not exclusively Snacks, require a recipe type
+                                  if (!(mealTypes.contains('Snacks') && mealTypes.length == 1)) {
+                                    if (recipeTypes.isEmpty) {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                          content: Text('Please select a recipe type (Entree, Side, or Dessert)'),
+                                          backgroundColor: Colors.red,
+                                        ),
+                                      );
+                                      return;
+                                    }
+                                  }
+
                                   // Image is now optional
                                   if (_model.ingredientsList.isNotEmpty) {
                                     if (_model.cookingInsturction.isNotEmpty) {
@@ -1720,20 +2069,39 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                                   .editCookingMeal!.mainOrSides;
                                             });
                                           }
-                                          // Compute mainOrSides and mealTyp from selectedCategories
+                                          // Compute mainOrSides, recipeType, and mealTyp from selectedCategories
                                           String? mainOrSidesValue = _model.dropDownValue2;
                                           String? mealTypValue;
+                                          RecipeType? recipeTypeValue;
+
                                           if (_model.selectedCategories.isNotEmpty) {
-                                            if (_model.selectedCategories.contains('Side')) {
+                                            // Determine recipe type based on Section 2 selection
+                                            if (_model.selectedCategories.contains('Entree')) {
+                                              mainOrSidesValue = 'Main';
+                                              recipeTypeValue = RecipeType.Entree;
+                                            } else if (_model.selectedCategories.contains('Side')) {
                                               mainOrSidesValue = 'Side';
+                                              recipeTypeValue = RecipeType.Side;
+                                            } else if (_model.selectedCategories.contains('Dessert')) {
+                                              mainOrSidesValue = 'Dessert';
+                                              recipeTypeValue = RecipeType.Dessert;
+                                            } else {
+                                              // Default if only Snacks selected (no recipe type)
+                                              mainOrSidesValue = 'Main';
+                                              recipeTypeValue = RecipeType.Entree;
                                             }
-                                            final mealCategories = _model.selectedCategories.where((c) => c != 'Side').toList();
+
+                                            // Get meal types (Breakfast, Lunch, Dinner, Snacks)
+                                            final mealCategories = _model.selectedCategories
+                                                .where((c) => ['Breakfast', 'Lunch', 'Dinner', 'Snacks'].contains(c))
+                                                .toList();
                                             if (mealCategories.isNotEmpty) {
                                               mealTypValue = mealCategories.join(',');
                                             }
                                           } else {
                                             // Keep existing value if no categories selected
                                             mealTypValue = widget!.editCookingMeal?.mealTyp;
+                                            recipeTypeValue = widget!.editCookingMeal?.recipeType;
                                           }
 
                                           await widget!
@@ -1746,6 +2114,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                               cost: double.tryParse(_model
                                                   .textController2.text),
                                               mainOrSides: mainOrSidesValue,
+                                              recipeType: recipeTypeValue,
                                               mealTyp: mealTypValue,
                                               userRef: currentUserReference,
                                               isCurated: false,
@@ -1834,14 +2203,32 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                             );
                                           }
                                         } else {
-                                          // Compute mainOrSides and mealTyp from selectedCategories for new meal
+                                          // Compute mainOrSides, recipeType, and mealTyp from selectedCategories for new meal
                                           String? newMainOrSides;
                                           String? newMealTyp;
+                                          RecipeType? newRecipeType;
+
                                           if (_model.selectedCategories.isNotEmpty) {
-                                            if (_model.selectedCategories.contains('Side')) {
+                                            // Determine recipe type based on Section 2 selection
+                                            if (_model.selectedCategories.contains('Entree')) {
+                                              newMainOrSides = 'Main';
+                                              newRecipeType = RecipeType.Entree;
+                                            } else if (_model.selectedCategories.contains('Side')) {
                                               newMainOrSides = 'Side';
+                                              newRecipeType = RecipeType.Side;
+                                            } else if (_model.selectedCategories.contains('Dessert')) {
+                                              newMainOrSides = 'Dessert';
+                                              newRecipeType = RecipeType.Dessert;
+                                            } else {
+                                              // Default if only Snacks selected (no recipe type)
+                                              newMainOrSides = 'Main';
+                                              newRecipeType = RecipeType.Entree;
                                             }
-                                            final mealCategories = _model.selectedCategories.where((c) => c != 'Side').toList();
+
+                                            // Get meal types (Breakfast, Lunch, Dinner, Snacks)
+                                            final mealCategories = _model.selectedCategories
+                                                .where((c) => ['Breakfast', 'Lunch', 'Dinner', 'Snacks'].contains(c))
+                                                .toList();
                                             if (mealCategories.isNotEmpty) {
                                               newMealTyp = mealCategories.join(',');
                                             }
@@ -1858,6 +2245,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                               cost: double.tryParse(
                                                   _model.textController2.text),
                                               mainOrSides: newMainOrSides,
+                                              recipeType: newRecipeType,
                                               userRef: currentUserReference,
                                               isCurated: false,
                                               prepareTime: double.tryParse(
@@ -1884,6 +2272,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                               cost: double.tryParse(
                                                   _model.textController2.text),
                                               mainOrSides: newMainOrSides,
+                                              recipeType: newRecipeType,
                                               userRef: currentUserReference,
                                               isCurated: false,
                                               prepareTime: double.tryParse(

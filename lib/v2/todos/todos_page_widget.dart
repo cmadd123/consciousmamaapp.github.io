@@ -18,27 +18,20 @@ class TodosPageWidget extends StatefulWidget {
 
 class _TodosPageWidgetState extends State<TodosPageWidget> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
-  final TextEditingController _newTodoController = TextEditingController();
-  final FocusNode _newTodoFocusNode = FocusNode();
-  bool _isAddingTodo = false;
   bool _isSaving = false;
+  bool _isAdding = false;
+  final TextEditingController _textController = TextEditingController();
+  final FocusNode _textFocusNode = FocusNode();
 
-  // Person assignment for new todos
+  // Assignment state
   bool _assignToMom = false;
   bool _assignToDad = false;
   List<DocumentReference> _selectedChildren = [];
-
-  // User's children for selection
   List<ChildernRecord>? _userChildren;
 
   @override
   void initState() {
     super.initState();
-    // Listen to text changes to update button state
-    _newTodoController.addListener(() {
-      setState(() {});
-    });
-    // Load user's children
     _loadChildren();
   }
 
@@ -58,74 +51,9 @@ class _TodosPageWidgetState extends State<TodosPageWidget> {
 
   @override
   void dispose() {
-    _newTodoController.dispose();
-    _newTodoFocusNode.dispose();
+    _textController.dispose();
+    _textFocusNode.dispose();
     super.dispose();
-  }
-
-  Future<void> _addTodo() async {
-    final title = _newTodoController.text.trim();
-    debugPrint('_addTodo called with title: "$title"');
-    if (title.isEmpty) {
-      debugPrint('Title is empty, returning');
-      return;
-    }
-    if (_isSaving) {
-      debugPrint('Already saving, returning');
-      return;
-    }
-
-    setState(() {
-      _isSaving = true;
-    });
-
-    try {
-      debugPrint('Querying existing todos...');
-      // Get current max sort order - simple query, sort locally
-      final existingTodos = await queryTodoRecordOnce(
-        queryBuilder: (todoRecord) => todoRecord
-            .where('user_ref', isEqualTo: currentUserReference),
-      );
-      debugPrint('Found ${existingTodos.length} existing todos');
-      final sortOrders = existingTodos.map((t) => t.sortOrder).toList();
-      final maxSortOrder = sortOrders.isEmpty ? 0 : sortOrders.reduce((a, b) => a > b ? a : b);
-      debugPrint('Max sort order: $maxSortOrder');
-
-      // Create new todo with person and child assignment
-      debugPrint('Creating new todo...');
-      await TodoRecord.collection.add(createTodoRecordData(
-        title: title,
-        isCompleted: false,
-        userRef: currentUserReference,
-        createdTime: getCurrentTimestamp,
-        sortOrder: maxSortOrder + 1,
-        assignedToMom: _assignToMom,
-        assignedToDad: _assignToDad,
-        selectedChildren: _selectedChildren.isNotEmpty ? _selectedChildren : null,
-      ));
-      debugPrint('Todo created successfully!');
-
-      _newTodoController.clear();
-      _newTodoFocusNode.unfocus();
-      setState(() {
-        _isAddingTodo = false;
-        _isSaving = false;
-        // Reset for next todo - parents unselected by default
-        _assignToMom = false;
-        _assignToDad = false;
-        _selectedChildren = [];
-      });
-    } catch (e) {
-      debugPrint('Error adding todo: $e');
-      setState(() {
-        _isSaving = false;
-      });
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error adding todo: $e')),
-        );
-      }
-    }
   }
 
   Future<void> _toggleTodo(TodoRecord todo) async {
@@ -155,6 +83,24 @@ class _TodosPageWidgetState extends State<TodosPageWidget> {
         key: scaffoldKey,
         backgroundColor: const Color(0xFFFFF8F5),
         bottomNavigationBar: const HomeNavBarWidget(currentPage: HomeNavPage.homeSubpage),
+        floatingActionButton: !_isAdding ? FloatingActionButton(
+          onPressed: () {
+            setState(() {
+              _isAdding = true;
+            });
+            // Focus text field after setState completes
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              _textFocusNode.requestFocus();
+            });
+          },
+          backgroundColor: FlutterFlowTheme.of(context).primary,
+          elevation: 4.0,
+          child: const Icon(
+            Icons.add_rounded,
+            color: Colors.white,
+            size: 28.0,
+          ),
+        ) : null,
         body: Container(
           width: double.infinity,
           height: double.infinity,
@@ -307,6 +253,13 @@ class _TodosPageWidgetState extends State<TodosPageWidget> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Inline add field (when adding)
+                    if (_isAdding) ...[
+                      _buildInlineAddField(context),
+                      const SizedBox(height: 16.0),
+                      const Divider(height: 1, color: Color(0xFFEEEEEE)),
+                      const SizedBox(height: 16.0),
+                    ],
                     // Hint text at top
                     if (incompleteTodos.isNotEmpty || completedTodos.isNotEmpty) ...[
                       Center(
@@ -321,13 +274,6 @@ class _TodosPageWidgetState extends State<TodosPageWidget> {
                         ),
                       ),
                       const SizedBox(height: 12.0),
-                    ],
-                    // Add todo input
-                    _buildAddTodoInput(context),
-                    if (incompleteTodos.isNotEmpty || _isAddingTodo) ...[
-                      const SizedBox(height: 16.0),
-                      const Divider(height: 1, color: Color(0xFFEEEEEE)),
-                      const SizedBox(height: 16.0),
                     ],
                     // Incomplete todos
                     ...incompleteTodos.map((todo) => _buildTodoItem(context, todo)),
@@ -358,7 +304,7 @@ class _TodosPageWidgetState extends State<TodosPageWidget> {
                       ...completedTodos.map((todo) => _buildTodoItem(context, todo)),
                     ],
                     // Empty state
-                    if (incompleteTodos.isEmpty && completedTodos.isEmpty && !_isAddingTodo) ...[
+                    if (incompleteTodos.isEmpty && completedTodos.isEmpty) ...[
                       const SizedBox(height: 24.0),
                       Center(
                         child: Column(
@@ -401,13 +347,14 @@ class _TodosPageWidgetState extends State<TodosPageWidget> {
     );
   }
 
-  Widget _buildAddTodoInput(BuildContext context) {
+  Widget _buildInlineAddField(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // Text field with checkmark/x buttons
         Row(
           children: [
-            // Empty circle - checkbox placeholder
+            // Empty circle placeholder
             Container(
               width: 24.0,
               height: 24.0,
@@ -423,15 +370,11 @@ class _TodosPageWidgetState extends State<TodosPageWidget> {
             // Text field
             Expanded(
               child: TextField(
-                controller: _newTodoController,
-                focusNode: _newTodoFocusNode,
+                controller: _textController,
+                focusNode: _textFocusNode,
+                autofocus: true,
                 textInputAction: TextInputAction.done,
-                onTap: () {
-                  setState(() {
-                    _isAddingTodo = true;
-                  });
-                },
-                onSubmitted: (_) => _addTodo(),
+                onSubmitted: (_) => _submitTodo(),
                 style: FlutterFlowTheme.of(context).bodyMedium.override(
                   fontFamily: 'Andika New Basic',
                   color: const Color(0xFF5D4E60),
@@ -450,20 +393,30 @@ class _TodosPageWidgetState extends State<TodosPageWidget> {
               ),
             ),
             const SizedBox(width: 8.0),
-            // Add button - always visible, but styled differently when active
+            // Cancel button (X)
             GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: _isSaving ? null : () {
-                debugPrint('Add button tapped! Text: "${_newTodoController.text}"');
-                final text = _newTodoController.text.trim();
-                if (text.isNotEmpty) {
-                  _addTodo();
-                }
-              },
+              onTap: _cancelAdd,
               child: Container(
-                padding: const EdgeInsets.all(10.0),
+                padding: const EdgeInsets.all(8.0),
                 decoration: BoxDecoration(
-                  color: _newTodoController.text.trim().isNotEmpty && !_isSaving
+                  color: const Color(0xFFE0E0E0),
+                  borderRadius: BorderRadius.circular(14.0),
+                ),
+                child: const Icon(
+                  Icons.close_rounded,
+                  color: Color(0xFF5D4E60),
+                  size: 20.0,
+                ),
+              ),
+            ),
+            const SizedBox(width: 8.0),
+            // Submit button (checkmark)
+            GestureDetector(
+              onTap: _isSaving ? null : _submitTodo,
+              child: Container(
+                padding: const EdgeInsets.all(8.0),
+                decoration: BoxDecoration(
+                  color: _textController.text.trim().isNotEmpty && !_isSaving
                       ? const Color(0xFF7CB342)
                       : const Color(0xFF7CB342).withOpacity(0.3),
                   borderRadius: BorderRadius.circular(14.0),
@@ -478,7 +431,7 @@ class _TodosPageWidgetState extends State<TodosPageWidget> {
                         ),
                       )
                     : const Icon(
-                        Icons.add_rounded,
+                        Icons.check_rounded,
                         color: Colors.white,
                         size: 20.0,
                       ),
@@ -486,184 +439,229 @@ class _TodosPageWidgetState extends State<TodosPageWidget> {
             ),
           ],
         ),
-        // Person assignment chips - show when adding
-        if (_isAddingTodo)
-          Padding(
-            padding: const EdgeInsets.only(left: 36.0, top: 8.0),
-            child: Row(
-              children: [
-                // Mom chip
-                GestureDetector(
-                  onTap: () => setState(() => _assignToMom = !_assignToMom),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 150),
-                    padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
-                    decoration: BoxDecoration(
-                      color: _assignToMom
-                          ? const Color(0xFFEC407A).withOpacity(0.15)
-                          : Colors.transparent,
-                      borderRadius: BorderRadius.circular(14.0),
-                      border: Border.all(
-                        color: _assignToMom
-                            ? const Color(0xFFEC407A)
-                            : const Color(0xFFE0E0E0),
-                        width: _assignToMom ? 1.5 : 1.0,
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                          width: 18.0,
-                          height: 18.0,
-                          decoration: const BoxDecoration(
-                            color: Color(0xFFEC407A),
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Center(
-                            child: Text('M', style: TextStyle(color: Colors.white, fontSize: 10.0, fontWeight: FontWeight.bold)),
-                          ),
-                        ),
-                        const SizedBox(width: 6.0),
-                        Text(
-                          'Mom',
-                          style: FlutterFlowTheme.of(context).bodySmall.override(
-                            fontFamily: 'Andika New Basic',
-                            color: _assignToMom ? const Color(0xFFEC407A) : const Color(0xFF9B8A9E),
-                            fontSize: 12.0,
-                            fontWeight: _assignToMom ? FontWeight.w600 : FontWeight.w500,
-                          ),
-                        ),
-                      ],
+        // Assignment chips
+        Padding(
+          padding: const EdgeInsets.only(left: 36.0, top: 8.0),
+          child: Wrap(
+            spacing: 8.0,
+            runSpacing: 8.0,
+            children: [
+              // Mom chip
+              GestureDetector(
+                onTap: () => setState(() => _assignToMom = !_assignToMom),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+                  decoration: BoxDecoration(
+                    color: _assignToMom
+                        ? const Color(0xFFEC407A).withOpacity(0.15)
+                        : Colors.transparent,
+                    borderRadius: BorderRadius.circular(14.0),
+                    border: Border.all(
+                      color: _assignToMom ? const Color(0xFFEC407A) : const Color(0xFFE0E0E0),
+                      width: _assignToMom ? 1.5 : 1.0,
                     ),
                   ),
-                ),
-                const SizedBox(width: 8.0),
-                // Dad chip
-                GestureDetector(
-                  onTap: () => setState(() => _assignToDad = !_assignToDad),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 150),
-                    padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
-                    decoration: BoxDecoration(
-                      color: _assignToDad
-                          ? const Color(0xFF1976D2).withOpacity(0.15)
-                          : Colors.transparent,
-                      borderRadius: BorderRadius.circular(14.0),
-                      border: Border.all(
-                        color: _assignToDad
-                            ? const Color(0xFF1976D2)
-                            : const Color(0xFFE0E0E0),
-                        width: _assignToDad ? 1.5 : 1.0,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: 18.0,
+                        height: 18.0,
+                        decoration: const BoxDecoration(
+                          color: Color(0xFFEC407A),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Center(
+                          child: Text('M', style: TextStyle(color: Colors.white, fontSize: 10.0, fontWeight: FontWeight.bold)),
+                        ),
                       ),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                          width: 18.0,
-                          height: 18.0,
-                          decoration: const BoxDecoration(
-                            color: Color(0xFF1976D2),
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Center(
-                            child: Text('D', style: TextStyle(color: Colors.white, fontSize: 10.0, fontWeight: FontWeight.bold)),
-                          ),
+                      const SizedBox(width: 6.0),
+                      Text(
+                        'Mom',
+                        style: FlutterFlowTheme.of(context).bodySmall.override(
+                          fontFamily: 'Andika New Basic',
+                          color: _assignToMom ? const Color(0xFFEC407A) : const Color(0xFF9B8A9E),
+                          fontSize: 12.0,
+                          fontWeight: _assignToMom ? FontWeight.w600 : FontWeight.w500,
                         ),
-                        const SizedBox(width: 6.0),
-                        Text(
-                          'Dad',
-                          style: FlutterFlowTheme.of(context).bodySmall.override(
-                            fontFamily: 'Andika New Basic',
-                            color: _assignToDad ? const Color(0xFF1976D2) : const Color(0xFF9B8A9E),
-                            fontSize: 12.0,
-                            fontWeight: _assignToDad ? FontWeight.w600 : FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
-                // Kid chips
-                if (_userChildren != null && _userChildren!.isNotEmpty) ...[
-                  const SizedBox(width: 12.0),
-                  // Divider
-                  Container(width: 1, height: 20, color: const Color(0xFFE0E0E0)),
-                  const SizedBox(width: 12.0),
-                  ..._userChildren!.map((child) {
-                    final isSelected = _selectedChildren.contains(child.reference);
-                    final childColor = child.selectedColor ?? FlutterFlowTheme.of(context).primary;
-                    final initial = child.name.isNotEmpty ? child.name[0].toLowerCase() : '?';
+              ),
+              // Dad chip
+              GestureDetector(
+                onTap: () => setState(() => _assignToDad = !_assignToDad),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+                  decoration: BoxDecoration(
+                    color: _assignToDad
+                        ? const Color(0xFF1976D2).withOpacity(0.15)
+                        : Colors.transparent,
+                    borderRadius: BorderRadius.circular(14.0),
+                    border: Border.all(
+                      color: _assignToDad ? const Color(0xFF1976D2) : const Color(0xFFE0E0E0),
+                      width: _assignToDad ? 1.5 : 1.0,
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: 18.0,
+                        height: 18.0,
+                        decoration: const BoxDecoration(
+                          color: Color(0xFF1976D2),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Center(
+                          child: Text('D', style: TextStyle(color: Colors.white, fontSize: 10.0, fontWeight: FontWeight.bold)),
+                        ),
+                      ),
+                      const SizedBox(width: 6.0),
+                      Text(
+                        'Dad',
+                        style: FlutterFlowTheme.of(context).bodySmall.override(
+                          fontFamily: 'Andika New Basic',
+                          color: _assignToDad ? const Color(0xFF1976D2) : const Color(0xFF9B8A9E),
+                          fontSize: 12.0,
+                          fontWeight: _assignToDad ? FontWeight.w600 : FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              // Children chips
+              if (_userChildren != null && _userChildren!.isNotEmpty) ...[
+                ..._userChildren!.map((child) {
+                  final isSelected = _selectedChildren.contains(child.reference);
+                  final childColor = child.selectedColor ?? FlutterFlowTheme.of(context).primary;
+                  final initial = child.name.isNotEmpty ? child.name[0].toLowerCase() : '?';
 
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 6.0),
-                      child: GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            if (isSelected) {
-                              _selectedChildren.remove(child.reference);
-                            } else {
-                              _selectedChildren.add(child.reference);
-                            }
-                          });
-                        },
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 150),
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 6.0),
-                          decoration: BoxDecoration(
-                            color: isSelected
-                                ? childColor.withOpacity(0.15)
-                                : Colors.transparent,
-                            borderRadius: BorderRadius.circular(14.0),
-                            border: Border.all(
-                              color: isSelected ? childColor : const Color(0xFFE0E0E0),
-                              width: isSelected ? 1.5 : 1.0,
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        if (isSelected) {
+                          _selectedChildren.remove(child.reference);
+                        } else {
+                          _selectedChildren.add(child.reference);
+                        }
+                      });
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 6.0),
+                      decoration: BoxDecoration(
+                        color: isSelected ? childColor.withOpacity(0.15) : Colors.transparent,
+                        borderRadius: BorderRadius.circular(14.0),
+                        border: Border.all(
+                          color: isSelected ? childColor : const Color(0xFFE0E0E0),
+                          width: isSelected ? 1.5 : 1.0,
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            width: 18.0,
+                            height: 18.0,
+                            decoration: BoxDecoration(
+                              color: childColor,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Center(
+                              child: Text(
+                                initial,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
                           ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Container(
-                                width: 18.0,
-                                height: 18.0,
-                                decoration: BoxDecoration(
-                                  color: childColor,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    initial,
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 10.0,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 4.0),
-                              Text(
-                                child.name.length > 6 ? '${child.name.substring(0, 6)}...' : child.name,
-                                style: FlutterFlowTheme.of(context).bodySmall.override(
-                                  fontFamily: 'Andika New Basic',
-                                  color: isSelected ? childColor : const Color(0xFF9B8A9E),
-                                  fontSize: 11.0,
-                                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                                ),
-                              ),
-                            ],
+                          const SizedBox(width: 4.0),
+                          Text(
+                            child.name.length > 6 ? '${child.name.substring(0, 6)}...' : child.name,
+                            style: FlutterFlowTheme.of(context).bodySmall.override(
+                              fontFamily: 'Andika New Basic',
+                              color: isSelected ? childColor : const Color(0xFF9B8A9E),
+                              fontSize: 11.0,
+                              fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                            ),
                           ),
-                        ),
+                        ],
                       ),
-                    );
-                  }),
-                ],
+                    ),
+                  );
+                }),
               ],
-            ),
+            ],
           ),
+        ),
       ],
     );
+  }
+
+  void _cancelAdd() {
+    setState(() {
+      _isAdding = false;
+      _textController.clear();
+      _assignToMom = false;
+      _assignToDad = false;
+      _selectedChildren = [];
+    });
+  }
+
+  Future<void> _submitTodo() async {
+    final title = _textController.text.trim();
+    if (title.isEmpty || _isSaving) return;
+
+    setState(() {
+      _isSaving = true;
+    });
+
+    try {
+      final existingTodos = await queryTodoRecordOnce(
+        queryBuilder: (todoRecord) => todoRecord
+            .where('user_ref', isEqualTo: currentUserReference),
+      );
+      final sortOrders = existingTodos.map((t) => t.sortOrder).toList();
+      final maxSortOrder = sortOrders.isEmpty ? 0 : sortOrders.reduce((a, b) => a > b ? a : b);
+
+      await TodoRecord.collection.add(createTodoRecordData(
+        title: title,
+        isCompleted: false,
+        userRef: currentUserReference,
+        createdTime: getCurrentTimestamp,
+        sortOrder: maxSortOrder + 1,
+        assignedToMom: _assignToMom,
+        assignedToDad: _assignToDad,
+        selectedChildren: _selectedChildren.isNotEmpty ? _selectedChildren : null,
+      ));
+
+      // Reset for next todo
+      _textController.clear();
+      setState(() {
+        _isSaving = false;
+        _assignToMom = false;
+        _assignToDad = false;
+        _selectedChildren = [];
+      });
+
+      // Keep focus for rapid entry
+      _textFocusNode.requestFocus();
+    } catch (e) {
+      debugPrint('Error adding todo: $e');
+      setState(() {
+        _isSaving = false;
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error adding todo: $e')),
+        );
+      }
+    }
   }
 
   Widget _buildTodoItem(BuildContext context, TodoRecord todo) {

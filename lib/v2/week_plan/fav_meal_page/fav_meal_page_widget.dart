@@ -58,14 +58,14 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
     return url;
   }
 
-  // Palette colors for placeholder backgrounds
+  // Palette colors for placeholder backgrounds (avoiding primary teal to not match heart)
   static const List<Color> _placeholderColors = [
-    Color(0xFF52A097), // primary teal
-    Color(0xFF39D2C0), // secondary turquoise
     Color(0xFFEE8B60), // tertiary coral
-    Color(0xFF2A6F67), // dark teal
-    Color(0xFF7BC4BB), // light teal
     Color(0xFFE8A87C), // soft peach
+    Color(0xFF9B8AA0), // lavender purple
+    Color(0xFFFF9800), // orange
+    Color(0xFF2196F3), // blue
+    Color(0xFF4CAF50), // green
   ];
 
   // Get a consistent color based on meal name
@@ -111,116 +111,25 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
       _model.isSelectionMode = widget.date != null || widget.mealTyp != null;
       debugPrint('FavMealPage: isSelectionMode=${_model.isSelectionMode}');
 
-      if (_model.isSelectionMode) {
-        // Selection mode: load ALL user recipes + curated recipes
-        debugPrint('FavMealPage [Selection]: Starting query...');
-        final allUserRecipes = await queryMealRecordOnce(
-          queryBuilder: (mealRecord) => mealRecord.where(
-            'user_ref',
-            isEqualTo: currentUserReference,
-          ),
-        );
-        final curatedRecipes = await queryMealRecordOnce(
-          queryBuilder: (mealRecord) => mealRecord.where(
-            'is_curated',
-            isEqualTo: true,
-          ),
-        );
-        debugPrint('FavMealPage [Selection]: Loaded ${allUserRecipes.length} user recipes, ${curatedRecipes.length} curated recipes');
-        _model.userMeal = allUserRecipes;
-        _model.curatedMeal = curatedRecipes;
-        _model.loadedAllRecipes = true;
-        _model.loadedCuratedRecipes = true;
-        debugPrint('FavMealPage [Selection]: Model updated, calling safeSetState');
-      } else {
-        // Normal mode: load user recipes and curated recipes separately
-        final allUserRecipes = await queryMealRecordOnce(
-          queryBuilder: (mealRecord) => mealRecord.where(
-            'user_ref',
-            isEqualTo: currentUserReference,
-          ),
-        );
-        final curatedRecipes = await queryMealRecordOnce(
-          queryBuilder: (mealRecord) => mealRecord.where(
-            'is_curated',
-            isEqualTo: true,
-          ),
-        );
-        debugPrint('FavMealPage [Normal]: Loaded ${allUserRecipes.length} user recipes, ${curatedRecipes.length} curated recipes');
-        // Log image URL info for debugging
-        final withImages = curatedRecipes.where((e) => e.imageUrl.isNotEmpty && e.imageUrl.startsWith('http')).length;
-        debugPrint('FavMealPage: Curated with valid images: $withImages / ${curatedRecipes.length}');
-        // Log first 3 curated recipes for debugging
-        for (var i = 0; i < curatedRecipes.length && i < 3; i++) {
-          final r = curatedRecipes[i];
-          debugPrint('FavMealPage: Sample curated[$i]: name="${r.recipeName}", imageUrl="${r.imageUrl.length > 50 ? r.imageUrl.substring(0, 50) + '...' : r.imageUrl}"');
-        }
-        _model.userMeal = allUserRecipes;
-        _model.curatedMeal = curatedRecipes;
-        _model.loadedAllRecipes = true;
-        _model.loadedCuratedRecipes = true;
+      // Load user recipes only
+      debugPrint('FavMealPage: Starting query...');
+      final allUserRecipes = await queryMealRecordOnce(
+        queryBuilder: (mealRecord) => mealRecord.where(
+          'user_ref',
+          isEqualTo: currentUserReference,
+        ),
+      );
+      debugPrint('FavMealPage: Loaded ${allUserRecipes.length} user recipes');
+      _model.userMeal = allUserRecipes;
+      _model.loadedAllRecipes = true;
+      debugPrint('FavMealPage: Model updated, calling safeSetState');
 
-        // Auto-tag curated recipes silently in background
-        _autoTagCuratedRecipesSilent();
-      }
-      debugPrint('FavMealPage: Calling safeSetState - userMeal=${_model.userMeal.length}, curatedMeal=${_model.curatedMeal.length}');
+      debugPrint('FavMealPage: Calling safeSetState - userMeal=${_model.userMeal.length}');
       safeSetState(() {});
       debugPrint('FavMealPage: safeSetState completed');
     });
   }
 
-  /// Auto-tag curated recipes silently (no UI feedback, runs in background)
-  Future<void> _autoTagCuratedRecipesSilent() async {
-    try {
-      debugPrint('Auto-tagging: Starting with ${_model.curatedMeal.length} curated recipes');
-      int taggedCount = 0;
-
-      for (final recipe in _model.curatedMeal) {
-        // Check if missing any tags
-        final needsMealTyp = recipe.mealTyp.isEmpty;
-        final needsRecipeType = recipe.recipeType == null;
-        final needsMainOrSides = recipe.mainOrSides.isEmpty;
-
-        if (needsMealTyp || needsRecipeType || needsMainOrSides) {
-          final (guessedMealTyp, guessedRecipeType) = _guessTagsFromName(recipe.recipeName);
-
-          final updates = <String, dynamic>{};
-          if (needsMealTyp && guessedMealTyp != null) {
-            updates['meal_typ'] = guessedMealTyp;
-          }
-          if (needsRecipeType && guessedRecipeType != null) {
-            updates['recipe_type'] = guessedRecipeType.name;
-          }
-          // Also update main_or_sides for Side filter compatibility
-          if (needsMainOrSides && guessedRecipeType != null) {
-            updates['main_or_sides'] = guessedRecipeType == RecipeType.Side ? 'Side' : 'Main';
-          }
-
-          if (updates.isNotEmpty) {
-            await recipe.reference.update(updates);
-            taggedCount++;
-            debugPrint('Auto-tagged "${recipe.recipeName}" with: $updates');
-          }
-        }
-      }
-
-      debugPrint('Auto-tagging: Tagged $taggedCount recipes');
-
-      // Reload curated recipes to get updated tags
-      if (mounted && taggedCount > 0) {
-        final updatedCurated = await queryMealRecordOnce(
-          queryBuilder: (mealRecord) => mealRecord.where(
-            'is_curated',
-            isEqualTo: true,
-          ),
-        );
-        _model.curatedMeal = updatedCurated;
-        safeSetState(() {});
-      }
-    } catch (e) {
-      debugPrint('Error auto-tagging curated recipes: $e');
-    }
-  }
 
   /// Load meal templates (user-created combos)
   Future<void> _loadMealTemplates() async {
@@ -911,10 +820,11 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
         lower.contains('bread') || lower.contains('roll') ||
         lower.contains('mashed') || lower.contains('roasted')) {
       recipeType = RecipeType.Side;
-    } else if (lower.contains('drink') || lower.contains('smoothie') ||
-        lower.contains('juice') || lower.contains('lemonade') ||
-        lower.contains('tea') || lower.contains('milkshake')) {
-      recipeType = RecipeType.Drink;
+    } else if (lower.contains('dessert') || lower.contains('cake') ||
+        lower.contains('cookie') || lower.contains('pie') ||
+        lower.contains('brownie') || lower.contains('pudding') ||
+        lower.contains('ice cream') || lower.contains('fruit')) {
+      recipeType = RecipeType.Dessert;
     } else {
       // Default to Entree for main dishes
       recipeType = RecipeType.Entree;
@@ -922,6 +832,131 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
 
     return (mealTyp, recipeType);
   }
+
+  /// Show bulk delete dialog with options
+  void _showBulkDeleteDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Bulk Delete (Temporary)', style: TextStyle(color: Colors.red)),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text('Choose what to delete:', style: TextStyle(fontWeight: FontWeight.bold)),
+              SizedBox(height: 16),
+              ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.pop(context);
+                  _deleteAllMealTemplates();
+                },
+                icon: Icon(Icons.restaurant_menu),
+                label: Text('Delete ALL Meal Templates'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.orange,
+                  foregroundColor: Colors.white,
+                ),
+              ),
+              SizedBox(height: 8),
+              ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.pop(context);
+                  _deleteAllMyRecipes();
+                },
+                icon: Icon(Icons.book),
+                label: Text('Delete ALL My Recipes'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.white,
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('Cancel'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  /// Delete all meal templates
+  Future<void> _deleteAllMealTemplates() async {
+    try {
+      final templates = await queryMealComboRecordOnce(
+        queryBuilder: (q) => q.where('user_ref', isEqualTo: currentUserReference),
+      );
+
+      for (final template in templates) {
+        await template.reference.delete();
+      }
+
+      _model.mealTemplates = [];
+      _model.loadedMealTemplates = false;
+      safeSetState(() {});
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Deleted ${templates.length} meal templates'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      debugPrint('Error deleting templates: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  /// Delete all user recipes
+  Future<void> _deleteAllMyRecipes() async {
+    try {
+      final recipes = await queryMealRecordOnce(
+        queryBuilder: (q) => q
+            .where('user_ref', isEqualTo: currentUserReference),
+      );
+
+      for (final recipe in recipes) {
+        await recipe.reference.delete();
+      }
+
+      _model.userMeal = [];
+      _model.loadedAllRecipes = false;
+      safeSetState(() {});
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Deleted ${recipes.length} my recipes'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      debugPrint('Error deleting my recipes: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -1077,7 +1112,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                       ],
                                     ),
                                   ),
-                                // My Recipes / Discover / Templates tab toggle
+                                // My Recipes / Templates tab toggle
                                 Padding(
                                   padding: EdgeInsetsDirectional.fromSTEB(
                                       8.0, 12.0, 8.0, 12.0),
@@ -1109,37 +1144,6 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                   fontFamily: 'Andika New Basic',
                                                   color: _model.recipeSourceTab == 'my'
-                                                      ? Colors.white
-                                                      : Color(0xFF666666),
-                                                  fontSize: 13.0,
-                                                  fontWeight: FontWeight.w600,
-                                                  letterSpacing: 0.0,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        Expanded(
-                                          child: InkWell(
-                                            onTap: () {
-                                              _model.recipeSourceTab = 'discover';
-                                              _model.categoryFilter = 'All';
-                                              safeSetState(() {});
-                                            },
-                                            child: Container(
-                                              padding: EdgeInsets.symmetric(vertical: 10.0),
-                                              decoration: BoxDecoration(
-                                                color: _model.recipeSourceTab == 'discover'
-                                                    ? FlutterFlowTheme.of(context).primary
-                                                    : Colors.transparent,
-                                                borderRadius: BorderRadius.circular(8.0),
-                                              ),
-                                              child: Text(
-                                                'Discover',
-                                                textAlign: TextAlign.center,
-                                                style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                  fontFamily: 'Andika New Basic',
-                                                  color: _model.recipeSourceTab == 'discover'
                                                       ? Colors.white
                                                       : Color(0xFF666666),
                                                   fontSize: 13.0,
@@ -1241,58 +1245,258 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                     ),
                                   ),
                                 ),
-                                // Filter chips - horizontal scroll (show for both My Recipes and Discover)
+                                // Filter chips - grouped by category (show for both My Recipes and Templates)
                                 Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        8.0, 0.0, 8.0, 8.0),
-                                    child: SingleChildScrollView(
-                                      scrollDirection: Axis.horizontal,
-                                      child: Row(
-                                        children: ['All', 'Breakfast', 'Lunch', 'Dinner', 'Side', 'Snacks'].map((filter) {
-                                          final isSelected = _model.categoryFilter == filter;
-                                          // Display "Snacks/Desserts" to user but use "Snacks" internally
-                                          final displayText = filter == 'Snacks' ? 'Snacks/Desserts' : filter;
-                                          return Padding(
-                                            padding: EdgeInsets.only(right: 8.0),
-                                            child: InkWell(
-                                              splashColor: Colors.transparent,
-                                              focusColor: Colors.transparent,
-                                              hoverColor: Colors.transparent,
-                                              highlightColor: Colors.transparent,
+                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                      8.0, 0.0, 8.0, 8.0),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      // Section 1: Meal Types
+                                      Padding(
+                                        padding: EdgeInsetsDirectional.fromSTEB(0.0, 4.0, 0.0, 8.0),
+                                        child: Row(
+                                          children: [
+                                            Text(
+                                              'Meal Times',
+                                              style: FlutterFlowTheme.of(context).bodySmall.override(
+                                                fontFamily: 'Andika New Basic',
+                                                color: Color(0xFF666666),
+                                                fontSize: 11.0,
+                                                fontWeight: FontWeight.w600,
+                                                letterSpacing: 0.0,
+                                              ),
+                                            ),
+                                            SizedBox(width: 4.0),
+                                            InkWell(
                                               onTap: () {
-                                                _model.categoryFilter = filter;
-                                                safeSetState(() {});
-                                              },
-                                              child: Container(
-                                                padding: EdgeInsets.symmetric(horizontal: 14.0, vertical: 6.0),
-                                                decoration: BoxDecoration(
-                                                  color: isSelected
-                                                      ? FlutterFlowTheme.of(context).primary
-                                                      : Colors.transparent,
-                                                  borderRadius: BorderRadius.circular(16.0),
-                                                  border: Border.all(
-                                                    color: FlutterFlowTheme.of(context).primary,
+                                                ScaffoldMessenger.of(context).showSnackBar(
+                                                  SnackBar(
+                                                    content: Text('🍳 Filter recipes by when they are typically eaten'),
+                                                    duration: Duration(seconds: 3),
                                                   ),
-                                                ),
-                                                child: Text(
-                                                  displayText,
-                                                  style: FlutterFlowTheme.of(context).bodySmall.override(
-                                                    fontFamily: 'Andika New Basic',
+                                                );
+                                              },
+                                              child: Icon(Icons.help_outline, size: 14.0, color: Color(0xFF999999)),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      SingleChildScrollView(
+                                        scrollDirection: Axis.horizontal,
+                                        child: Row(
+                                          children: [
+                                            {'label': 'All', 'emoji': ''},
+                                            {'label': 'Breakfast', 'emoji': '🌅'},
+                                            {'label': 'Lunch', 'emoji': '🌞'},
+                                            {'label': 'Dinner', 'emoji': '🌙'},
+                                            {'label': 'Snacks', 'emoji': '🍪'},
+                                          ].map((mealType) {
+                                            final label = mealType['label']!;
+                                            final emoji = mealType['emoji']!;
+                                            final isSelected = _model.categoryFilter == label;
+                                            return Padding(
+                                              padding: EdgeInsets.only(right: 8.0),
+                                              child: InkWell(
+                                                splashColor: Colors.transparent,
+                                                focusColor: Colors.transparent,
+                                                hoverColor: Colors.transparent,
+                                                highlightColor: Colors.transparent,
+                                                onTap: () {
+                                                  _model.categoryFilter = label;
+                                                  safeSetState(() {});
+                                                },
+                                                child: Container(
+                                                  padding: EdgeInsets.symmetric(horizontal: 14.0, vertical: 6.0),
+                                                  decoration: BoxDecoration(
                                                     color: isSelected
-                                                        ? Colors.white
-                                                        : FlutterFlowTheme.of(context).primary,
-                                                    letterSpacing: 0.0,
+                                                        ? FlutterFlowTheme.of(context).primary
+                                                        : Colors.transparent,
+                                                    borderRadius: BorderRadius.circular(16.0),
+                                                    border: Border.all(
+                                                      color: FlutterFlowTheme.of(context).primary,
+                                                    ),
+                                                  ),
+                                                  child: Text(
+                                                    emoji.isNotEmpty ? '$emoji $label' : label,
+                                                    style: FlutterFlowTheme.of(context).bodySmall.override(
+                                                      fontFamily: 'Andika New Basic',
+                                                      color: isSelected
+                                                          ? Colors.white
+                                                          : FlutterFlowTheme.of(context).primary,
+                                                      letterSpacing: 0.0,
+                                                    ),
                                                   ),
                                                 ),
                                               ),
-                                            ),
-                                          );
-                                        }).toList(),
+                                            );
+                                          }).toList(),
+                                        ),
                                       ),
-                                    ),
+                                      // Section 2: Recipe Types
+                                      Padding(
+                                        padding: EdgeInsetsDirectional.fromSTEB(0.0, 12.0, 0.0, 8.0),
+                                        child: Row(
+                                          children: [
+                                            Text(
+                                              'Recipe Types',
+                                              style: FlutterFlowTheme.of(context).bodySmall.override(
+                                                fontFamily: 'Andika New Basic',
+                                                color: Color(0xFF666666),
+                                                fontSize: 11.0,
+                                                fontWeight: FontWeight.w600,
+                                                letterSpacing: 0.0,
+                                              ),
+                                            ),
+                                            SizedBox(width: 4.0),
+                                            InkWell(
+                                              onTap: () {
+                                                ScaffoldMessenger.of(context).showSnackBar(
+                                                  SnackBar(
+                                                    content: Text('🍽️ Filter by main dish, side dish, or dessert'),
+                                                    duration: Duration(seconds: 3),
+                                                  ),
+                                                );
+                                              },
+                                              child: Icon(Icons.help_outline, size: 14.0, color: Color(0xFF999999)),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      SingleChildScrollView(
+                                        scrollDirection: Axis.horizontal,
+                                        child: Row(
+                                          children: [
+                                            {'label': 'Side', 'emoji': '🥗'},
+                                            {'label': 'Desserts', 'emoji': '🍰'},
+                                          ].map((recipeType) {
+                                            final label = recipeType['label']!;
+                                            final emoji = recipeType['emoji']!;
+                                            final isSelected = _model.categoryFilter == label;
+                                            return Padding(
+                                              padding: EdgeInsets.only(right: 8.0),
+                                              child: InkWell(
+                                                splashColor: Colors.transparent,
+                                                focusColor: Colors.transparent,
+                                                hoverColor: Colors.transparent,
+                                                highlightColor: Colors.transparent,
+                                                onTap: () {
+                                                  _model.categoryFilter = label;
+                                                  safeSetState(() {});
+                                                },
+                                                child: Container(
+                                                  padding: EdgeInsets.symmetric(horizontal: 14.0, vertical: 6.0),
+                                                  decoration: BoxDecoration(
+                                                    color: isSelected
+                                                        ? Color(0xFF9B8AA0)
+                                                        : Colors.transparent,
+                                                    borderRadius: BorderRadius.circular(16.0),
+                                                    border: Border.all(
+                                                      color: Color(0xFF9B8AA0),
+                                                    ),
+                                                  ),
+                                                  child: Text(
+                                                    '$emoji $label',
+                                                    style: FlutterFlowTheme.of(context).bodySmall.override(
+                                                      fontFamily: 'Andika New Basic',
+                                                      color: isSelected
+                                                          ? Colors.white
+                                                          : Color(0xFF9B8AA0),
+                                                      letterSpacing: 0.0,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          }).toList(),
+                                        ),
+                                      ),
+                                      // Section 3: Dietary & Allergen Info
+                                      Padding(
+                                        padding: EdgeInsetsDirectional.fromSTEB(0.0, 12.0, 0.0, 8.0),
+                                        child: Row(
+                                          children: [
+                                            Text(
+                                              'Dietary & Allergen Info',
+                                              style: FlutterFlowTheme.of(context).bodySmall.override(
+                                                fontFamily: 'Andika New Basic',
+                                                color: Color(0xFF666666),
+                                                fontSize: 11.0,
+                                                fontWeight: FontWeight.w600,
+                                                letterSpacing: 0.0,
+                                              ),
+                                            ),
+                                            SizedBox(width: 4.0),
+                                            InkWell(
+                                              onTap: () {
+                                                ScaffoldMessenger.of(context).showSnackBar(
+                                                  SnackBar(
+                                                    content: Text('🌾 Filter recipes by dietary restrictions or allergen information'),
+                                                    duration: Duration(seconds: 3),
+                                                  ),
+                                                );
+                                              },
+                                              child: Icon(Icons.help_outline, size: 14.0, color: Color(0xFF999999)),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      SingleChildScrollView(
+                                        scrollDirection: Axis.horizontal,
+                                        child: Row(
+                                          children: [
+                                            {'label': 'Gluten-Free', 'emoji': '🌾'},
+                                            {'label': 'Dairy-Free', 'emoji': '🥛'},
+                                            {'label': 'Nut-Free', 'emoji': '🥜'},
+                                            {'label': 'Vegetarian', 'emoji': '🥕'},
+                                            {'label': 'Vegan', 'emoji': '🌱'},
+                                          ].map((dietary) {
+                                            final label = dietary['label']!;
+                                            final emoji = dietary['emoji']!;
+                                            final isSelected = _model.categoryFilter == label;
+                                            return Padding(
+                                              padding: EdgeInsets.only(right: 8.0),
+                                              child: InkWell(
+                                                splashColor: Colors.transparent,
+                                                focusColor: Colors.transparent,
+                                                hoverColor: Colors.transparent,
+                                                highlightColor: Colors.transparent,
+                                                onTap: () {
+                                                  _model.categoryFilter = label;
+                                                  safeSetState(() {});
+                                                },
+                                                child: Container(
+                                                  padding: EdgeInsets.symmetric(horizontal: 14.0, vertical: 6.0),
+                                                  decoration: BoxDecoration(
+                                                    color: isSelected
+                                                        ? Color(0xFF52A097)
+                                                        : Colors.transparent,
+                                                    borderRadius: BorderRadius.circular(16.0),
+                                                    border: Border.all(
+                                                      color: Color(0xFF52A097),
+                                                    ),
+                                                  ),
+                                                  child: Text(
+                                                    '$emoji $label',
+                                                    style: FlutterFlowTheme.of(context).bodySmall.override(
+                                                      fontFamily: 'Andika New Basic',
+                                                      color: isSelected
+                                                          ? Colors.white
+                                                          : Color(0xFF52A097),
+                                                      letterSpacing: 0.0,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          }).toList(),
+                                        ),
+                                      ),
+                                    ],
                                   ),
+                                ),
                                 Container(
-                                  key: ValueKey('recipe_container_${_model.userMeal.length}_${_model.curatedMeal.length}_${_model.recipeSourceTab}'),
+                                  key: ValueKey('recipe_container_${_model.userMeal.length}_${_model.recipeSourceTab}'),
                                   width: double.infinity,
                                   decoration: BoxDecoration(
                                     color: FlutterFlowTheme.of(context)
@@ -1307,17 +1511,13 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                     }
 
                                     // Get the active recipe list based on selected tab
-                                    // For Discover, filter out incomplete recipes (no image)
-                                    debugPrint('FavMealPage Builder: recipeSourceTab=${_model.recipeSourceTab}, userMeal=${_model.userMeal.length}, curatedMeal=${_model.curatedMeal.length}');
-                                    final activeRecipes = _model.recipeSourceTab == 'my'
-                                        ? _model.userMeal
-                                        : _model.curatedMeal.where((e) =>
-                                            e.imageUrl.isNotEmpty &&
-                                            e.imageUrl.startsWith('http')).toList();
+                                    // Get active recipes based on selected tab
+                                    debugPrint('FavMealPage Builder: recipeSourceTab=${_model.recipeSourceTab}, userMeal=${_model.userMeal.length}');
+                                    final activeRecipes = _model.userMeal;
                                     debugPrint('FavMealPage Builder: activeRecipes=${activeRecipes.length}');
 
                                     if (activeRecipes.isEmpty) {
-                                      // Empty state - different for My Recipes vs Discover
+                                      // Empty state for My Recipes
                                       if (_model.recipeSourceTab == 'my') {
                                         return Padding(
                                           padding: const EdgeInsetsDirectional.fromSTEB(16.0, 40.0, 16.0, 40.0),
@@ -1409,22 +1609,6 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                                   ),
                                                 ],
                                               ),
-                                              const SizedBox(height: 16.0),
-                                              InkWell(
-                                                onTap: () {
-                                                  _model.recipeSourceTab = 'discover';
-                                                  safeSetState(() {});
-                                                },
-                                                child: Text(
-                                                  'Browse Discover recipes →',
-                                                  style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                        fontFamily: 'Andika New Basic',
-                                                        color: FlutterFlowTheme.of(context).primary,
-                                                        fontWeight: FontWeight.w600,
-                                                        letterSpacing: 0.0,
-                                                      ),
-                                                ),
-                                              ),
                                             ],
                                           ),
                                         );
@@ -1468,20 +1652,36 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                             if (_model.categoryFilter == 'All') {
                                               filtered = activeRecipes;
                                             } else if (_model.categoryFilter == 'Side') {
-                                              // Check both mainOrSides field and recipeType enum
+                                              // Recipe Type: Side
                                               filtered = activeRecipes
                                                   .where((e) =>
                                                       e.mainOrSides == 'Side' ||
                                                       e.recipeType == RecipeType.Side)
                                                   .toList();
-                                            } else {
-                                              // Filter by meal type (Breakfast, Lunch, Dinner, Snacks)
-                                              // meal_typ may contain comma-separated categories (e.g., "Lunch,Dinner")
+                                            } else if (_model.categoryFilter == 'Desserts') {
+                                              // Recipe Type: Desserts
+                                              filtered = activeRecipes
+                                                  .where((e) =>
+                                                      e.mainOrSides == 'Dessert' ||
+                                                      e.recipeType == RecipeType.Dessert)
+                                                  .toList();
+                                            } else if (['Gluten-Free', 'Dairy-Free', 'Nut-Free', 'Vegetarian', 'Vegan'].contains(_model.categoryFilter)) {
+                                              // Dietary tags: Check if meal_typ contains this dietary tag
                                               final filterLower = _model.categoryFilter.toLowerCase();
                                               filtered = activeRecipes
                                                   .where((e) {
-                                                    final mealTypes = e.mealTyp.toLowerCase().split(',');
-                                                    return mealTypes.any((t) => t.trim() == filterLower);
+                                                    final tags = e.mealTyp.toLowerCase().split(',');
+                                                    return tags.any((t) => t.trim() == filterLower);
+                                                  })
+                                                  .toList();
+                                            } else {
+                                              // Meal types: Breakfast, Lunch, Dinner, Snacks
+                                              // meal_typ may contain comma-separated categories (e.g., "Lunch,Dinner,Gluten-Free")
+                                              final filterLower = _model.categoryFilter.toLowerCase();
+                                              filtered = activeRecipes
+                                                  .where((e) {
+                                                    final tags = e.mealTyp.toLowerCase().split(',');
+                                                    return tags.any((t) => t.trim() == filterLower);
                                                   })
                                                   .toList();
                                             }
@@ -1587,22 +1787,9 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                                       children: [
                                                         ClipRRect(
                                                           borderRadius:
-                                                              BorderRadius.only(
-                                                            bottomLeft:
-                                                                Radius.circular(
-                                                                    5.0),
-                                                            bottomRight:
-                                                                Radius.circular(
-                                                                    0.0),
-                                                            topLeft:
-                                                                Radius.circular(
-                                                                    5.0),
-                                                            topRight:
-                                                                Radius.circular(
-                                                                    0.0),
-                                                          ),
+                                                              BorderRadius.circular(5.0),
                                                           child: Container(
-                                                            width: 158.0,
+                                                            width: double.infinity,
                                                             height: 188.0,
                                                             decoration:
                                                                 BoxDecoration(
@@ -1610,21 +1797,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                                                       .of(context)
                                                                   .secondaryBackground,
                                                               borderRadius:
-                                                                  BorderRadius
-                                                                      .only(
-                                                                bottomLeft: Radius
-                                                                    .circular(
-                                                                        5.0),
-                                                                bottomRight: Radius
-                                                                    .circular(
-                                                                        0.0),
-                                                                topLeft: Radius
-                                                                    .circular(
-                                                                        5.0),
-                                                                topRight: Radius
-                                                                    .circular(
-                                                                        0.0),
-                                                              ),
+                                                                  BorderRadius.circular(5.0),
                                                             ),
                                                             child: ClipRRect(
                                                               borderRadius:
@@ -1872,37 +2045,56 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
             ),
           ),
         ),
-        floatingActionButton: _model.recipeSourceTab == 'templates'
-            ? FloatingActionButton.extended(
+        floatingActionButton: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Bulk delete button (temporary)
+            FloatingActionButton(
+              heroTag: 'bulk_delete',
+              onPressed: () => _showBulkDeleteDialog(),
+              backgroundColor: Colors.red,
+              child: Icon(Icons.delete_forever, color: Colors.white),
+              elevation: 4.0,
+            ),
+            SizedBox(height: 12),
+            // Original add button
+            if (_model.recipeSourceTab == 'my' || _model.recipeSourceTab == 'templates')
+              FloatingActionButton(
+                heroTag: 'add_recipe',
                 onPressed: () {
-                  // Navigate to meal composer in template creation mode
-                  context.pushNamed(
-                    'MealComposer',
-                    queryParameters: {
-                      'editTemplateId': 'new', // Special value to indicate creating new template
-                    },
-                    extra: <String, dynamic>{
-                      kTransitionInfoKey: TransitionInfo(
-                        hasTransition: true,
-                        transitionType: PageTransitionType.bottomToTop,
-                      ),
-                    },
-                  );
+                  if (_model.recipeSourceTab == 'templates') {
+                    // Navigate to meal composer in template creation mode
+                    context.pushNamed(
+                      'MealComposer',
+                      queryParameters: {
+                        'editTemplateId': 'new', // Special value to indicate creating new template
+                      },
+                      extra: <String, dynamic>{
+                        kTransitionInfoKey: TransitionInfo(
+                          hasTransition: true,
+                          transitionType: PageTransitionType.bottomToTop,
+                        ),
+                      },
+                    );
+                  } else {
+                    // Navigate to create recipe page for My Recipes
+                    context.pushNamed(
+                      'EditeAddMeal',
+                      extra: <String, dynamic>{
+                        kTransitionInfoKey: TransitionInfo(
+                          hasTransition: true,
+                          transitionType: PageTransitionType.bottomToTop,
+                        ),
+                      },
+                    );
+                  }
                 },
                 backgroundColor: FlutterFlowTheme.of(context).primary,
-                icon: Icon(Icons.add, color: Colors.white),
-                label: Text(
-                  'Create Template',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontFamily: 'Andika New Basic',
-                    fontSize: 14.0,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
+                child: Icon(Icons.add, color: Colors.white, size: 28.0),
                 elevation: 4.0,
-              )
-            : null,
+              ),
+          ],
+        ),
       ),
     );
   }

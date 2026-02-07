@@ -47,7 +47,7 @@ enum DrinkType {
 enum RecipeType {
   Entree,
   Side,
-  Drink,
+  Dessert,
 }
 
 /// Types of shareable content

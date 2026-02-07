@@ -127,6 +127,26 @@ class EventAndTaskRecord extends FirestoreRecord {
   String get safetyNote => _safetyNote ?? '';
   bool hasSafetyNote() => _safetyNote != null;
 
+  // "recurring_pattern" field - "None", "Daily", "Weekly", "Monthly"
+  String? _recurringPattern;
+  String get recurringPattern => _recurringPattern ?? 'None';
+  bool hasRecurringPattern() => _recurringPattern != null;
+
+  // "end_date" field - for multi-day events
+  DateTime? _endDate;
+  DateTime? get endDate => _endDate;
+  bool hasEndDate() => _endDate != null;
+
+  // "repeat_count" field - how many times to repeat (for recurring events)
+  int? _repeatCount;
+  int? get repeatCount => _repeatCount;
+  bool hasRepeatCount() => _repeatCount != null;
+
+  // "custom_weekly_days" field - list of days (1-7) for Custom Weekly pattern
+  List<int>? _customWeeklyDays;
+  List<int> get customWeeklyDays => _customWeeklyDays ?? [];
+  bool hasCustomWeeklyDays() => _customWeeklyDays != null && _customWeeklyDays!.isNotEmpty;
+
   void _initializeFields() {
     _name = snapshotData['name'] as String?;
     _description = snapshotData['description'] as String?;
@@ -150,6 +170,10 @@ class EventAndTaskRecord extends FirestoreRecord {
     _iconColor = castToType<int>(snapshotData['icon_color']);
     _iconEmoji = snapshotData['icon_emoji'] as String?;
     _safetyNote = snapshotData['safety_note'] as String?;
+    _recurringPattern = snapshotData['recurring_pattern'] as String?;
+    _endDate = snapshotData['end_date'] as DateTime?;
+    _repeatCount = castToType<int>(snapshotData['repeat_count']);
+    _customWeeklyDays = getDataList(snapshotData['custom_weekly_days']);
   }
 
   static CollectionReference get collection =>
@@ -209,6 +233,10 @@ Map<String, dynamic> createEventAndTaskRecordData({
   int? iconColor,
   String? iconEmoji,
   String? safetyNote,
+  String? recurringPattern,
+  DateTime? endDate,
+  int? repeatCount,
+  List<int>? customWeeklyDays,
 }) {
   final firestoreData = mapToFirestore(
     <String, dynamic>{
@@ -234,6 +262,10 @@ Map<String, dynamic> createEventAndTaskRecordData({
       'icon_color': iconColor,
       'icon_emoji': iconEmoji,
       'safety_note': safetyNote,
+      'recurring_pattern': recurringPattern,
+      'end_date': endDate,
+      'repeat_count': repeatCount,
+      'custom_weekly_days': customWeeklyDays,
     }.withoutNulls,
   );
 
@@ -258,7 +290,11 @@ class EventAndTaskRecordDocumentEquality
         e1?.isCompleted == e2?.isCompleted &&
         e1?.lastGenerated == e2?.lastGenerated &&
         e1?.assignedToMom == e2?.assignedToMom &&
-        e1?.assignedToDad == e2?.assignedToDad;
+        e1?.assignedToDad == e2?.assignedToDad &&
+        e1?.recurringPattern == e2?.recurringPattern &&
+        e1?.endDate == e2?.endDate &&
+        e1?.repeatCount == e2?.repeatCount &&
+        listEquality.equals(e1?.customWeeklyDays, e2?.customWeeklyDays);
   }
 
   @override
@@ -274,7 +310,11 @@ class EventAndTaskRecordDocumentEquality
         e?.isCompleted,
         e?.lastGenerated,
         e?.assignedToMom,
-        e?.assignedToDad
+        e?.assignedToDad,
+        e?.recurringPattern,
+        e?.endDate,
+        e?.repeatCount,
+        e?.customWeeklyDays
       ]);
 
   @override

@@ -37,6 +37,7 @@ class ChildrenWidget extends StatefulWidget {
 class _ChildrenWidgetState extends State<ChildrenWidget> {
   late ChildrenModel _model;
   int _selectedChildIndex = 0;
+  bool _hasInitializedChildRef = false; // Track if we've already set index from widget.childRef
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -123,13 +124,14 @@ class _ChildrenWidgetState extends State<ChildrenWidget> {
                     _selectedChildIndex = 0;
                   }
 
-                  // If a specific child was requested, find and select them
-                  if (widget.childRef != null && _selectedChildIndex == 0) {
+                  // If a specific child was requested, find and select them ONLY ONCE
+                  if (widget.childRef != null && !_hasInitializedChildRef) {
                     final requestedIndex = children.indexWhere(
                       (c) => c.reference.path == widget.childRef!.path,
                     );
                     if (requestedIndex >= 0) {
                       _selectedChildIndex = requestedIndex;
+                      _hasInitializedChildRef = true; // Mark as initialized so we don't reset on every rebuild
                     }
                   }
 

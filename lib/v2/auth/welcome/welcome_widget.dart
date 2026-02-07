@@ -100,12 +100,18 @@ class _WelcomeWidgetState extends State<WelcomeWidget>
             ),
           ),
           child: SafeArea(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 24.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return SingleChildScrollView(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: constraints.maxHeight,
+                    ),
+                    child: Padding(
+                      padding: EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 24.0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
                     // Back button
                     Align(
                       alignment: AlignmentDirectional(-1.0, 0.0),
@@ -290,9 +296,12 @@ class _WelcomeWidgetState extends State<WelcomeWidget>
                         ),
                       ),
                     ),
-                  ],
-                ),
-              ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
             ),
           ),
         ),

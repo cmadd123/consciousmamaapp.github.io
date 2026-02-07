@@ -2583,6 +2583,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
     final combo = recipe.comboData!;
     DocumentReference? entreeRef;
     List<DocumentReference> sideRefs = [];
+    List<DocumentReference> dessertRefs = [];
 
     // Create entree
     final entreeData = combo['entree'] as Map<String, dynamic>?;
@@ -2599,6 +2600,15 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
       }
     }
 
+    // Create desserts
+    final dessertsData = combo['desserts'] as List<dynamic>? ?? [];
+    for (final dessertData in dessertsData) {
+      if (dessertData is Map<String, dynamic>) {
+        final dessertRef = await _createMealInCookbook(dessertData);
+        dessertRefs.add(dessertRef);
+      }
+    }
+
     // Create the combo
     final comboRef = await MealComboRecord.collection.add(createMealComboRecordData(
       name: combo['name'] as String?,
@@ -2610,11 +2620,16 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
       createdTime: DateTime.now(),
     ));
 
-    // Add side refs to the combo
+    // Add side refs and dessert refs to the combo
+    final updateData = <String, dynamic>{};
     if (sideRefs.isNotEmpty) {
-      await comboRef.update({
-        'side_refs': sideRefs,
-      });
+      updateData['side_refs'] = sideRefs;
+    }
+    if (dessertRefs.isNotEmpty) {
+      updateData['dessert_refs'] = dessertRefs;
+    }
+    if (updateData.isNotEmpty) {
+      await comboRef.update(updateData);
     }
   }
 
@@ -2680,6 +2695,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
     final combo = recipe.comboData!;
     DocumentReference? entreeRef;
     List<DocumentReference> sideRefs = [];
+    List<DocumentReference> dessertRefs = [];
 
     // Create entree
     final entreeData = combo['entree'] as Map<String, dynamic>?;
@@ -2696,6 +2712,15 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
       }
     }
 
+    // Create desserts
+    final dessertsData = combo['desserts'] as List<dynamic>? ?? [];
+    for (final dessertData in dessertsData) {
+      if (dessertData is Map<String, dynamic>) {
+        final dessertRef = await _createMealInCookbook(dessertData);
+        dessertRefs.add(dessertRef);
+      }
+    }
+
     // Create the combo
     final comboRef = await MealComboRecord.collection.add(createMealComboRecordData(
       name: combo['name'] as String?,
@@ -2707,11 +2732,16 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
       createdTime: DateTime.now(),
     ));
 
-    // Add side refs to the combo
+    // Add side refs and dessert refs to the combo
+    final updateData = <String, dynamic>{};
     if (sideRefs.isNotEmpty) {
-      await comboRef.update({
-        'side_refs': sideRefs,
-      });
+      updateData['side_refs'] = sideRefs;
+    }
+    if (dessertRefs.isNotEmpty) {
+      updateData['dessert_refs'] = dessertRefs;
+    }
+    if (updateData.isNotEmpty) {
+      await comboRef.update(updateData);
     }
 
     // Create the meal plan entry with combo reference

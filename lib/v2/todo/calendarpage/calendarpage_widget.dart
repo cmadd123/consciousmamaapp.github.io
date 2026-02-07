@@ -9,6 +9,7 @@ import '/flutter_flow/flutter_flow_calendar.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
+import '/utils/holidays.dart';
 import 'dart:ui';
 import '/custom_code/actions/index.dart' as actions;
 import '/index.dart';
@@ -44,6 +45,9 @@ class CalendarItem {
   final List<String> childNames; // Multiple child names for display
   final List<Color> childColors; // Multiple child colors for display
   final bool isRecurring;
+  final String? recurringPattern; // "None", "Daily", "Weekly", "Monthly"
+  final DateTime? endDate; // End date for multi-day events
+  final int? repeatCount; // How many times this repeats (for recurring)
   final bool assignedToMom;
   final bool assignedToDad;
   final int? duration; // For learning tasks
@@ -63,6 +67,9 @@ class CalendarItem {
     this.childNames = const [],
     this.childColors = const [],
     this.isRecurring = false,
+    this.recurringPattern,
+    this.endDate,
+    this.repeatCount,
     this.assignedToMom = false,
     this.assignedToDad = false,
     this.duration,
@@ -92,6 +99,9 @@ class CalendarItem {
       childNames: childNames,
       childColors: childColors,
       isRecurring: record.isrecurring,
+      recurringPattern: record.hasRecurringPattern() ? record.recurringPattern : null,
+      endDate: record.hasEndDate() ? record.endDate : null,
+      repeatCount: record.hasRepeatCount() ? record.repeatCount : null,
       assignedToMom: record.assignedToMom,
       assignedToDad: record.assignedToDad,
     );
@@ -524,19 +534,47 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                               return uniqueMarkers.values.toList();
                             },
                             markerBuilder: (context, day, events) {
-                              if (events.isEmpty) return const SizedBox.shrink();
+                              // Check if this day is a holiday
+                              final holiday = Holidays.getHoliday(day);
 
-                              // Simple single dot - industry standard (like iOS/Google Calendar)
-                              return Positioned(
-                                bottom: 4,
-                                child: Container(
-                                  width: 6.0,
-                                  height: 6.0,
-                                  decoration: BoxDecoration(
-                                    color: FlutterFlowTheme.of(context).primary,
-                                    shape: BoxShape.circle,
+                              // Build markers stack
+                              final List<Widget> markers = [];
+
+                              // Add holiday emoji at top if exists
+                              if (holiday != null) {
+                                markers.add(
+                                  Positioned(
+                                    top: 2,
+                                    child: Text(
+                                      holiday.emoji,
+                                      style: const TextStyle(fontSize: 14),
+                                    ),
                                   ),
-                                ),
+                                );
+                              }
+
+                              // Add event dot at bottom if has events
+                              if (events.isNotEmpty) {
+                                markers.add(
+                                  Positioned(
+                                    bottom: 4,
+                                    child: Container(
+                                      width: 6.0,
+                                      height: 6.0,
+                                      decoration: BoxDecoration(
+                                        color: FlutterFlowTheme.of(context).primary,
+                                        shape: BoxShape.circle,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              }
+
+                              if (markers.isEmpty) return const SizedBox.shrink();
+
+                              return Stack(
+                                alignment: Alignment.center,
+                                children: markers,
                               );
                             },
                             onChange: (DateTimeRange? newSelectedDate) {
@@ -734,13 +772,51 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                               // Add events/tasks with child info
                               if (eventSnapshot.hasData) {
                                 debugPrint('=== Standard Mode Calendar Data ===');
+                                debugPrint('Selected Date: ${_model.selecteddate}');
                                 debugPrint('Total EventAndTask records: ${eventSnapshot.data!.length}');
+
+                                // Group by name to see recurring patterns
+                                Map<String, List<DateTime>> eventDates = {};
                                 for (final e in eventSnapshot.data!) {
-                                  debugPrint('Record: ${e.name}, typ: ${e.typ}, date: ${e.date}');
+                                  if (!eventDates.containsKey(e.name)) {
+                                    eventDates[e.name] = [];
+                                  }
+                                  if (e.date != null) {
+                                    eventDates[e.name]!.add(e.date!);
+                                  }
                                 }
+
+                                debugPrint('');
+                                debugPrint('Events grouped by name:');
+                                eventDates.forEach((name, dates) {
+                                  debugPrint('  "$name": ${dates.length} instance(s)');
+                                  for (final date in dates.take(5)) {
+                                    debugPrint('    - ${date.toString().split(' ')[0]}');
+                                  }
+                                  if (dates.length > 5) {
+                                    debugPrint('    ... and ${dates.length - 5} more');
+                                  }
+                                });
+                                debugPrint('');
+
+                                // Clear debug logs for this refresh
+                                _model.debugLogs.clear();
+
                                 allCalendarItems.addAll(
                                   eventSnapshot.data!.map((e) {
-                                    final childPath = e.selectedChild?.path;
+                                    // DEBUG: Log child selection data AND recurring info (both console and model)
+                                    final debugLines = [
+                                      '=== EVENT: ${e.name} ===',
+                                      'Date: ${e.date != null ? e.date.toString().split(' ')[0] : "NULL"}',
+                                      'isRecurring: ${e.isrecurring}',
+                                      'Pattern: ${e.hasRecurringPattern() ? e.recurringPattern : "NOT SET"}',
+                                      'End Date: ${e.hasEndDate() ? e.endDate.toString().split(' ')[0] : "NOT SET"}',
+                                      'Type: ${e.typ}',
+                                      'selectedChild: ${e.selectedChild?.path ?? "NULL"}',
+                                      'selectedChildren.length: ${e.selectedChildren.length}',
+                                      'Paths: ${e.selectedChildren.isEmpty ? "EMPTY" : e.selectedChildren.map((ref) => ref.path.split('/').last).join(", ")}',
+                                    ];
+
                                     // Build lists for multiple children
                                     final List<String> multiChildNames = [];
                                     final List<Color> multiChildColors = [];
@@ -751,12 +827,29 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                                         multiChildNames.add(childNameMap[path]!);
                                         multiChildColors.add(childColorMap[path] ?? FlutterFlowTheme.of(context).primary);
                                         multiChildRefs.add(childRef);
+                                        debugLines.add('  ✓ ${childNameMap[path]}');
+                                      } else {
+                                        debugLines.add('  ✗ Path not found: ${path.split('/').last}');
                                       }
                                     }
+
+                                    debugLines.add('Display: ${multiChildNames.isEmpty ? "NO CHILDREN" : multiChildNames.join(", ")}');
+                                    debugLines.add('');
+
+                                    // Add to model for UI display
+                                    _model.debugLogs.addAll(debugLines);
+
+                                    // Also print to console
+                                    for (final line in debugLines) {
+                                      debugPrint(line);
+                                    }
+
                                     return CalendarItem.fromEventAndTask(
                                       e,
-                                      childName: childPath != null ? childNameMap[childPath] : null,
-                                      childColor: childPath != null ? childColorMap[childPath] : null,
+                                      // Don't use old selectedChild field - always use selectedChildren array
+                                      // This prevents showing a child when all children have been deselected
+                                      childName: null,
+                                      childColor: null,
                                       childNames: multiChildNames,
                                       childColors: multiChildColors,
                                       childRefs: multiChildRefs,
@@ -1108,76 +1201,78 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                                                                       16.0,
                                                                       16.0,
                                                                       8.0),
-                                                          child: Row(
-                                                            mainAxisSize:
-                                                                MainAxisSize
-                                                                    .max,
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .spaceBetween,
+                                                          child: Column(
+                                                            crossAxisAlignment: CrossAxisAlignment.start,
                                                             children: [
-                                                              // Type badge
-                                                              Container(
-                                                                padding: EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
-                                                                decoration: BoxDecoration(
-                                                                  color: containerVarItem.type == 'Todo'
-                                                                      ? Color(0xFF1976D2) // Blue for todos
-                                                                      : containerVarItem.type == 'Learning'
-                                                                        ? Color(0xFF7C4DFF) // Purple for learning
-                                                                        : containerVarItem.type == 'Activity'
-                                                                          ? Color(0xFFFF9800) // Orange for activities
-                                                                          : Color(0xFF00897B), // Teal for events
-                                                                  borderRadius: BorderRadius.circular(14.0),
-                                                                ),
-                                                                child: Row(
-                                                                  mainAxisSize: MainAxisSize.min,
-                                                                  children: [
-                                                                    Icon(
-                                                                      containerVarItem.type == 'Todo'
-                                                                          ? Icons.check_box_outlined
+                                                              // Row 1: Type badge + Title
+                                                              Row(
+                                                                children: [
+                                                                  // Type badge
+                                                                  Container(
+                                                                    padding: EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
+                                                                    decoration: BoxDecoration(
+                                                                      color: containerVarItem.type == 'Todo'
+                                                                          ? Color(0xFF1976D2) // Blue for todos
                                                                           : containerVarItem.type == 'Learning'
-                                                                            ? Icons.school_outlined
+                                                                            ? Color(0xFF7C4DFF) // Purple for learning
                                                                             : containerVarItem.type == 'Activity'
-                                                                              ? Icons.play_circle_outline
-                                                                              : Icons.event_outlined,
-                                                                      size: 14.0,
-                                                                      color: Colors.white,
+                                                                              ? Color(0xFFFF9800) // Orange for activities
+                                                                              : Color(0xFF00897B), // Teal for events
+                                                                      borderRadius: BorderRadius.circular(14.0),
                                                                     ),
-                                                                    SizedBox(width: 4.0),
-                                                                    Text(
-                                                                      containerVarItem.type,
+                                                                    child: Row(
+                                                                      mainAxisSize: MainAxisSize.min,
+                                                                      children: [
+                                                                        Icon(
+                                                                          containerVarItem.type == 'Todo'
+                                                                              ? Icons.check_box_outlined
+                                                                              : containerVarItem.type == 'Learning'
+                                                                                ? Icons.school_outlined
+                                                                                : containerVarItem.type == 'Activity'
+                                                                                  ? Icons.play_circle_outline
+                                                                                  : Icons.event_outlined,
+                                                                          size: 14.0,
+                                                                          color: Colors.white,
+                                                                        ),
+                                                                        SizedBox(width: 4.0),
+                                                                        Text(
+                                                                          containerVarItem.type,
+                                                                          style: FlutterFlowTheme.of(context)
+                                                                              .bodyMedium
+                                                                              .override(
+                                                                                fontFamily: 'Andika New Basic',
+                                                                                fontSize: 11.0,
+                                                                                fontWeight: FontWeight.w600,
+                                                                                color: Colors.white,
+                                                                                letterSpacing: 0.0,
+                                                                              ),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                  SizedBox(width: 8.0),
+                                                                  Expanded(
+                                                                    child: Text(
+                                                                      valueOrDefault<String>(
+                                                                        containerVarItem.name,
+                                                                        'Title',
+                                                                      ),
                                                                       style: FlutterFlowTheme.of(context)
                                                                           .bodyMedium
                                                                           .override(
                                                                             fontFamily: 'Andika New Basic',
-                                                                            fontSize: 11.0,
-                                                                            fontWeight: FontWeight.w600,
-                                                                            color: Colors.white,
+                                                                            fontSize: 20.0,
                                                                             letterSpacing: 0.0,
+                                                                            decoration: containerVarItem.isCompleted
+                                                                              ? TextDecoration.lineThrough
+                                                                              : TextDecoration.none,
                                                                           ),
                                                                     ),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                              SizedBox(width: 8.0),
-                                                              Expanded(
-                                                                child: Text(
-                                                                  valueOrDefault<String>(
-                                                                    containerVarItem.name,
-                                                                    'Title',
                                                                   ),
-                                                                  style: FlutterFlowTheme.of(context)
-                                                                      .bodyMedium
-                                                                      .override(
-                                                                        fontFamily: 'Andika New Basic',
-                                                                        fontSize: 20.0,
-                                                                        letterSpacing: 0.0,
-                                                                        decoration: containerVarItem.isCompleted
-                                                                          ? TextDecoration.lineThrough
-                                                                          : TextDecoration.none,
-                                                                      ),
-                                                                ),
+                                                                ],
                                                               ),
+                                                              // Row 2: Time + Pattern/Date Range
+                                                              SizedBox(height: 6.0),
                                                               Row(
                                                                 mainAxisSize: MainAxisSize.min,
                                                                 children: [
@@ -1202,13 +1297,73 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                                                                           letterSpacing: 0.0,
                                                                         ),
                                                                   ),
-                                                                  if (containerVarItem.isRecurring)
+                                                                  // Show pattern or date range
+                                                                  if (containerVarItem.isRecurring && containerVarItem.recurringPattern != null && containerVarItem.recurringPattern != 'None')
                                                                     Padding(
                                                                       padding: EdgeInsetsDirectional.fromSTEB(6.0, 0, 0, 0),
-                                                                      child: Icon(
-                                                                        Icons.repeat,
-                                                                        size: 16.0,
-                                                                        color: FlutterFlowTheme.of(context).primary,
+                                                                      child: Row(
+                                                                        mainAxisSize: MainAxisSize.min,
+                                                                        children: [
+                                                                          Text(
+                                                                            '•',
+                                                                            style: TextStyle(
+                                                                              color: FlutterFlowTheme.of(context).secondaryText,
+                                                                              fontSize: 14.0,
+                                                                            ),
+                                                                          ),
+                                                                          SizedBox(width: 6.0),
+                                                                          Icon(
+                                                                            Icons.repeat,
+                                                                            size: 16.0,
+                                                                            color: FlutterFlowTheme.of(context).primary,
+                                                                          ),
+                                                                          SizedBox(width: 4.0),
+                                                                          Text(
+                                                                            containerVarItem.recurringPattern!,
+                                                                            style: FlutterFlowTheme.of(context)
+                                                                                .bodyMedium
+                                                                                .override(
+                                                                                  fontFamily: 'Andika New Basic',
+                                                                                  fontSize: 14.0,
+                                                                                  color: FlutterFlowTheme.of(context).primary,
+                                                                                  letterSpacing: 0.0,
+                                                                                ),
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    )
+                                                                  else if (!containerVarItem.isRecurring && containerVarItem.endDate != null)
+                                                                    Padding(
+                                                                      padding: EdgeInsetsDirectional.fromSTEB(6.0, 0, 0, 0),
+                                                                      child: Row(
+                                                                        mainAxisSize: MainAxisSize.min,
+                                                                        children: [
+                                                                          Text(
+                                                                            '•',
+                                                                            style: TextStyle(
+                                                                              color: FlutterFlowTheme.of(context).secondaryText,
+                                                                              fontSize: 14.0,
+                                                                            ),
+                                                                          ),
+                                                                          SizedBox(width: 6.0),
+                                                                          Icon(
+                                                                            Icons.event_note,
+                                                                            size: 16.0,
+                                                                            color: FlutterFlowTheme.of(context).primary,
+                                                                          ),
+                                                                          SizedBox(width: 4.0),
+                                                                          Text(
+                                                                            '${dateTimeFormat("MMMd", containerVarItem.date, locale: FFLocalizations.of(context).languageCode)}-${dateTimeFormat("MMMd", containerVarItem.endDate, locale: FFLocalizations.of(context).languageCode)}',
+                                                                            style: FlutterFlowTheme.of(context)
+                                                                                .bodyMedium
+                                                                                .override(
+                                                                                  fontFamily: 'Andika New Basic',
+                                                                                  fontSize: 14.0,
+                                                                                  color: FlutterFlowTheme.of(context).primary,
+                                                                                  letterSpacing: 0.0,
+                                                                                ),
+                                                                          ),
+                                                                        ],
                                                                       ),
                                                                     ),
                                                                 ],
@@ -1482,72 +1637,78 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                                                                   children: [
                                                                     Padding(
                                                                       padding: EdgeInsetsDirectional.fromSTEB(16.0, 16.0, 16.0, 8.0),
-                                                                      child: Row(
-                                                                        mainAxisSize: MainAxisSize.max,
-                                                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                      child: Column(
+                                                                        crossAxisAlignment: CrossAxisAlignment.start,
                                                                         children: [
-                                                                          // Type badge
-                                                                          Container(
-                                                                            padding: EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
-                                                                            decoration: BoxDecoration(
-                                                                              color: containerVarItem.type == 'Todo'
-                                                                                  ? Color(0xFF1976D2) // Blue for todos
-                                                                                  : containerVarItem.type == 'Learning'
-                                                                                    ? Color(0xFF7C4DFF) // Purple for learning
-                                                                                    : containerVarItem.type == 'Activity'
-                                                                                      ? Color(0xFFFF9800) // Orange for activities
-                                                                                      : Color(0xFF00897B), // Teal for events
-                                                                              borderRadius: BorderRadius.circular(14.0),
-                                                                            ),
-                                                                            child: Row(
-                                                                              mainAxisSize: MainAxisSize.min,
-                                                                              children: [
-                                                                                Icon(
-                                                                                  containerVarItem.type == 'Todo'
-                                                                                      ? Icons.check_box_outlined
+                                                                          // Row 1: Type badge + Title
+                                                                          Row(
+                                                                            children: [
+                                                                              // Type badge
+                                                                              Container(
+                                                                                padding: EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
+                                                                                decoration: BoxDecoration(
+                                                                                  color: containerVarItem.type == 'Todo'
+                                                                                      ? Color(0xFF1976D2) // Blue for todos
                                                                                       : containerVarItem.type == 'Learning'
-                                                                                        ? Icons.school_outlined
+                                                                                        ? Color(0xFF7C4DFF) // Purple for learning
                                                                                         : containerVarItem.type == 'Activity'
-                                                                                          ? Icons.play_circle_outline
-                                                                                          : Icons.event_outlined,
-                                                                                  size: 14.0,
-                                                                                  color: Colors.white,
+                                                                                          ? Color(0xFFFF9800) // Orange for activities
+                                                                                          : Color(0xFF00897B), // Teal for events
+                                                                                  borderRadius: BorderRadius.circular(14.0),
                                                                                 ),
-                                                                                SizedBox(width: 4.0),
-                                                                                Text(
-                                                                                  containerVarItem.type,
+                                                                                child: Row(
+                                                                                  mainAxisSize: MainAxisSize.min,
+                                                                                  children: [
+                                                                                    Icon(
+                                                                                      containerVarItem.type == 'Todo'
+                                                                                          ? Icons.check_box_outlined
+                                                                                          : containerVarItem.type == 'Learning'
+                                                                                            ? Icons.school_outlined
+                                                                                            : containerVarItem.type == 'Activity'
+                                                                                              ? Icons.play_circle_outline
+                                                                                              : Icons.event_outlined,
+                                                                                      size: 14.0,
+                                                                                      color: Colors.white,
+                                                                                    ),
+                                                                                    SizedBox(width: 4.0),
+                                                                                    Text(
+                                                                                      containerVarItem.type,
+                                                                                      style: FlutterFlowTheme.of(context)
+                                                                                          .bodyMedium
+                                                                                          .override(
+                                                                                            fontFamily: 'Andika New Basic',
+                                                                                            fontSize: 11.0,
+                                                                                            fontWeight: FontWeight.w600,
+                                                                                            color: Colors.white,
+                                                                                            letterSpacing: 0.0,
+                                                                                          ),
+                                                                                    ),
+                                                                                  ],
+                                                                                ),
+                                                                              ),
+                                                                              SizedBox(width: 8.0),
+                                                                              Expanded(
+                                                                                child: Text(
+                                                                                  valueOrDefault<String>(
+                                                                                    containerVarItem.name,
+                                                                                    'Title',
+                                                                                  ),
                                                                                   style: FlutterFlowTheme.of(context)
                                                                                       .bodyMedium
                                                                                       .override(
                                                                                         fontFamily: 'Andika New Basic',
-                                                                                        fontSize: 11.0,
-                                                                                        fontWeight: FontWeight.w600,
-                                                                                        color: Colors.white,
+                                                                                        fontSize: 20.0,
                                                                                         letterSpacing: 0.0,
+                                                                                        decoration: containerVarItem.isCompleted
+                                                                                          ? TextDecoration.lineThrough
+                                                                                          : TextDecoration.none,
                                                                                       ),
                                                                                 ),
-                                                                              ],
-                                                                            ),
-                                                                          ),
-                                                                          SizedBox(width: 8.0),
-                                                                          Expanded(
-                                                                            child: Text(
-                                                                              valueOrDefault<String>(
-                                                                                containerVarItem.name,
-                                                                                'Title',
                                                                               ),
-                                                                              style: FlutterFlowTheme.of(context)
-                                                                                  .bodyMedium
-                                                                                  .override(
-                                                                                    fontFamily: 'Andika New Basic',
-                                                                                    fontSize: 20.0,
-                                                                                    letterSpacing: 0.0,
-                                                                                    decoration: containerVarItem.isCompleted
-                                                                                      ? TextDecoration.lineThrough
-                                                                                      : TextDecoration.none,
-                                                                                  ),
-                                                                            ),
+                                                                            ],
                                                                           ),
+                                                                          // Row 2: Time + Pattern/Date Range
+                                                                          SizedBox(height: 6.0),
                                                                           Row(
                                                                             mainAxisSize: MainAxisSize.min,
                                                                             children: [
@@ -1572,13 +1733,73 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                                                                                       letterSpacing: 0.0,
                                                                                     ),
                                                                               ),
-                                                                              if (containerVarItem.isRecurring)
+                                                                              // Show pattern or date range
+                                                                              if (containerVarItem.isRecurring && containerVarItem.recurringPattern != null && containerVarItem.recurringPattern != 'None')
                                                                                 Padding(
                                                                                   padding: EdgeInsetsDirectional.fromSTEB(6.0, 0, 0, 0),
-                                                                                  child: Icon(
-                                                                                    Icons.repeat,
-                                                                                    size: 16.0,
-                                                                                    color: FlutterFlowTheme.of(context).primary,
+                                                                                  child: Row(
+                                                                                    mainAxisSize: MainAxisSize.min,
+                                                                                    children: [
+                                                                                      Text(
+                                                                                        '•',
+                                                                                        style: TextStyle(
+                                                                                          color: FlutterFlowTheme.of(context).secondaryText,
+                                                                                          fontSize: 14.0,
+                                                                                        ),
+                                                                                      ),
+                                                                                      SizedBox(width: 6.0),
+                                                                                      Icon(
+                                                                                        Icons.repeat,
+                                                                                        size: 16.0,
+                                                                                        color: FlutterFlowTheme.of(context).primary,
+                                                                                      ),
+                                                                                      SizedBox(width: 4.0),
+                                                                                      Text(
+                                                                                        containerVarItem.recurringPattern!,
+                                                                                        style: FlutterFlowTheme.of(context)
+                                                                                            .bodyMedium
+                                                                                            .override(
+                                                                                              fontFamily: 'Andika New Basic',
+                                                                                              fontSize: 14.0,
+                                                                                              color: FlutterFlowTheme.of(context).primary,
+                                                                                              letterSpacing: 0.0,
+                                                                                            ),
+                                                                                      ),
+                                                                                    ],
+                                                                                  ),
+                                                                                )
+                                                                              else if (!containerVarItem.isRecurring && containerVarItem.endDate != null)
+                                                                                Padding(
+                                                                                  padding: EdgeInsetsDirectional.fromSTEB(6.0, 0, 0, 0),
+                                                                                  child: Row(
+                                                                                    mainAxisSize: MainAxisSize.min,
+                                                                                    children: [
+                                                                                      Text(
+                                                                                        '•',
+                                                                                        style: TextStyle(
+                                                                                          color: FlutterFlowTheme.of(context).secondaryText,
+                                                                                          fontSize: 14.0,
+                                                                                        ),
+                                                                                      ),
+                                                                                      SizedBox(width: 6.0),
+                                                                                      Icon(
+                                                                                        Icons.event_note,
+                                                                                        size: 16.0,
+                                                                                        color: FlutterFlowTheme.of(context).primary,
+                                                                                      ),
+                                                                                      SizedBox(width: 4.0),
+                                                                                      Text(
+                                                                                        '${dateTimeFormat("MMMd", containerVarItem.date, locale: FFLocalizations.of(context).languageCode)}-${dateTimeFormat("MMMd", containerVarItem.endDate, locale: FFLocalizations.of(context).languageCode)}',
+                                                                                        style: FlutterFlowTheme.of(context)
+                                                                                            .bodyMedium
+                                                                                            .override(
+                                                                                              fontFamily: 'Andika New Basic',
+                                                                                              fontSize: 14.0,
+                                                                                              color: FlutterFlowTheme.of(context).primary,
+                                                                                              letterSpacing: 0.0,
+                                                                                            ),
+                                                                                      ),
+                                                                                    ],
                                                                                   ),
                                                                                 ),
                                                                             ],
@@ -1965,6 +2186,81 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                   currentPage: HomeNavPage.calendar,
                 ),
               ),
+
+              // Debug Panel
+              if (_model.showDebugPanel)
+                Positioned(
+                  top: 100,
+                  right: 8,
+                  bottom: 100,
+                  width: MediaQuery.of(context).size.width * 0.85,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.9),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.orange, width: 2),
+                    ),
+                    child: Column(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: const BoxDecoration(
+                            color: Colors.orange,
+                            borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
+                          ),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.bug_report, color: Colors.black, size: 20),
+                              const SizedBox(width: 8),
+                              const Expanded(
+                                child: Text(
+                                  'Child Selection Debug',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.close, color: Colors.black, size: 20),
+                                onPressed: () => setState(() => _model.showDebugPanel = false),
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          child: ListView.builder(
+                            padding: const EdgeInsets.all(8),
+                            itemCount: _model.debugLogs.length,
+                            itemBuilder: (context, index) {
+                              final log = _model.debugLogs[index];
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 2),
+                                child: Text(
+                                  log,
+                                  style: TextStyle(
+                                    color: log.contains('===') ? Colors.orange :
+                                           log.contains('✓') ? Colors.green :
+                                           log.contains('✗') ? Colors.red :
+                                           log.contains('NULL') || log.contains('EMPTY') || log.contains('NO CHILDREN') ? Colors.red :
+                                           Colors.white,
+                                    fontSize: 11,
+                                    fontFamily: 'monospace',
+                                    fontWeight: log.contains('===') ? FontWeight.bold : FontWeight.normal,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
             ],
           ),
         ),

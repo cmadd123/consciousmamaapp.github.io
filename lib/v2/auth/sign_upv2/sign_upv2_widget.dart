@@ -503,27 +503,48 @@ class _SignUpv2WidgetState extends State<SignUpv2Widget> {
                                     hoverColor: Colors.transparent,
                                     highlightColor: Colors.transparent,
                                     onTap: () async {
-                                      GoRouter.of(context).prepareAuthEvent();
-                                      final user = await authManager
-                                          .signInWithGoogle(context);
-                                      if (user == null) {
-                                        return;
-                                      }
+                                      try {
+                                        print('Google Sign-In (Signup): Starting...');
+                                        GoRouter.of(context).prepareAuthEvent();
+                                        final user = await authManager
+                                            .signInWithGoogle(context);
+                                        print('Google Sign-In (Signup): User = ${user?.uid ?? "null"}');
+                                        if (user == null) {
+                                          print('Google Sign-In (Signup): Cancelled or failed');
+                                          if (!context.mounted) return;
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            const SnackBar(
+                                              content: Text('Google Sign-In cancelled. Please try again.'),
+                                            ),
+                                          );
+                                          return;
+                                        }
 
-                                      // Check if user has completed onboarding
-                                      final userDoc = await UsersRecord.getDocumentOnce(
-                                        UsersRecord.collection.doc(user.uid),
-                                      );
+                                        // Check if user has completed onboarding
+                                        final userDoc = await UsersRecord.getDocumentOnce(
+                                          UsersRecord.collection.doc(user.uid),
+                                        );
 
-                                      if (userDoc.onboardingCompleted) {
-                                        context.goNamedAuth(
-                                            HomeHybridWidget.routeName,
-                                            context.mounted);
-                                      } else {
-                                        // New user or incomplete onboarding
-                                        context.goNamedAuth(
-                                            PreparationWidget.routeName,
-                                            context.mounted);
+                                        if (!context.mounted) return;
+
+                                        if (userDoc.onboardingCompleted) {
+                                          context.goNamedAuth(
+                                              HomeHybridWidget.routeName,
+                                              context.mounted);
+                                        } else {
+                                          // New user or incomplete onboarding
+                                          context.goNamedAuth(
+                                              PreparationWidget.routeName,
+                                              context.mounted);
+                                        }
+                                      } catch (e) {
+                                        print('Google Sign-In (Signup) Error: $e');
+                                        if (!context.mounted) return;
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(
+                                            content: Text('Sign-in error: ${e.toString()}'),
+                                          ),
+                                        );
                                       }
                                     },
                                     child: Container(

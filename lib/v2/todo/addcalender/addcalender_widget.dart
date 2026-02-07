@@ -1,5 +1,6 @@
 import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
+import '/components/animated_press_widget.dart';
 import '/components/custom_date_time_picker.dart';
 import '/components/parent_circle_widget.dart';
 import '/flutter_flow/flutter_flow_drop_down.dart';
@@ -87,12 +88,26 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
             _model.selectedChildren = {taskEvent.selectedChild!};
           }
           _model.selectedChild = taskEvent.selectedChild;
-          _model.recurringPattern = taskEvent.isrecurring ? 'Daily' : 'None'; // Default to Daily if recurring
+          // Load the actual recurring pattern from Firestore (not hardcoded!)
+          _model.recurringPattern = taskEvent.hasRecurringPattern() ? taskEvent.recurringPattern : 'None';
+          _model.endDate = taskEvent.endDate; // Load end date
+          _model.repeatCount = taskEvent.repeatCount; // Load repeat count
+          _model.customWeeklyDays = taskEvent.customWeeklyDays.toSet(); // Load custom weekly days
           _model.assignToMom = taskEvent.assignedToMom;
           _model.assignToDad = taskEvent.assignedToDad;
+
+          // DEBUG: Log what was loaded from Firestore
+          debugPrint('=== LOADING EVENT FOR EDIT ===');
+          debugPrint('Event name: ${taskEvent.name}');
+          debugPrint('isRecurring: ${taskEvent.isrecurring}');
+          debugPrint('Recurring pattern from Firestore: ${taskEvent.hasRecurringPattern() ? taskEvent.recurringPattern : "NOT SET"}');
+          debugPrint('End date from Firestore: ${taskEvent.hasEndDate() ? taskEvent.endDate : "NOT SET"}');
+          debugPrint('Loaded into model: pattern=${_model.recurringPattern}, endDate=${_model.endDate}');
+          debugPrint('==============================');
         }
       } else {
-        _model.selectedChild = _model.userChildren?.firstOrNull?.reference;
+        // Don't auto-select first child - let user choose (per user request)
+        // _model.selectedChild = _model.userChildren?.firstOrNull?.reference;
         // Pre-fill from activity if provided
         if (widget.prefillName != null && widget.prefillName!.isNotEmpty) {
           _model.nameController.text = widget.prefillName!;
@@ -128,8 +143,26 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
   bool get _isEditingActivity =>
       widget.editTaskEvent != null && _model.selectedType == 'Activity';
 
+  // Helper to get day name for debug output
+  String _getDayName(int weekday) {
+    switch (weekday) {
+      case DateTime.monday: return 'Monday';
+      case DateTime.tuesday: return 'Tuesday';
+      case DateTime.wednesday: return 'Wednesday';
+      case DateTime.thursday: return 'Thursday';
+      case DateTime.friday: return 'Friday';
+      case DateTime.saturday: return 'Saturday';
+      case DateTime.sunday: return 'Sunday';
+      default: return 'Unknown';
+    }
+  }
+
   // End date/time picker - Custom wheel picker
   Future<void> _showEndDateTimePicker() async {
+    // Dismiss keyboard before showing picker
+    FocusScope.of(context).unfocus();
+    FocusManager.instance.primaryFocus?.unfocus();
+
     final initialDate = _model.endDate ?? _model.selectedDate ?? DateTime.now();
 
     final selectedDate = await showCustomDateTimePicker(
@@ -151,6 +184,10 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
 
   // Date/time picker - Custom wheel picker
   Future<void> _showDateTimePicker() async {
+    // Dismiss keyboard before showing picker
+    FocusScope.of(context).unfocus();
+    FocusManager.instance.primaryFocus?.unfocus();
+
     final initialDate = _model.selectedDate ?? DateTime.now();
 
     final selectedDate = await showCustomDateTimePicker(
@@ -180,6 +217,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
         FocusScope.of(context).unfocus();
         FocusManager.instance.primaryFocus?.unfocus();
       },
+      behavior: HitTestBehavior.opaque,
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: isComfort
@@ -558,29 +596,34 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                             ),
                           ),
                         // End Date/Time Picker (for Events - multi-day support)
+                        // Disabled when recurring pattern is selected
                         if (_model.selectedType == 'Event')
                           Padding(
                             padding: EdgeInsetsDirectional.fromSTEB(
                                 0.0, 20.0, 0.0, 0.0),
                             child: InkWell(
-                              onTap: () async {
-                                await _showEndDateTimePicker();
-                              },
-                              child: Container(
-                                width: double.infinity,
-                                height: 52.0,
-                                decoration: BoxDecoration(
-                                  color: FFAppState().isComfortMode
-                                      ? const Color(0xFF34495E)
-                                      : FlutterFlowTheme.of(context).prim30,
-                                  borderRadius: BorderRadius.circular(14.0),
-                                  border: Border.all(
+                              onTap: (_model.recurringPattern != null && _model.recurringPattern != 'None')
+                                ? null // Disable when recurring
+                                : () async {
+                                  await _showEndDateTimePicker();
+                                },
+                              child: Opacity(
+                                opacity: (_model.recurringPattern != null && _model.recurringPattern != 'None') ? 0.4 : 1.0,
+                                child: Container(
+                                  width: double.infinity,
+                                  height: 52.0,
+                                  decoration: BoxDecoration(
                                     color: FFAppState().isComfortMode
-                                        ? const Color(0xFF7F8C8D)
-                                        : const Color(0xFFCBE3E0),
-                                    width: 1.0,
+                                        ? const Color(0xFF34495E)
+                                        : FlutterFlowTheme.of(context).prim30,
+                                    borderRadius: BorderRadius.circular(14.0),
+                                    border: Border.all(
+                                      color: FFAppState().isComfortMode
+                                          ? const Color(0xFF7F8C8D)
+                                          : const Color(0xFFCBE3E0),
+                                      width: 1.0,
+                                    ),
                                   ),
-                                ),
                                 child: Padding(
                                   padding: EdgeInsetsDirectional.fromSTEB(
                                       20.0, 0.0, 20.0, 0.0),
@@ -647,6 +690,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                 ),
                               ),
                             ),
+                          ),
                           ),
                         // Parent Assignment - Mom/Dad chips (styled like child chips)
                         Padding(
@@ -879,13 +923,17 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                           setState(() {
                                             if (isSelected) {
                                               _model.selectedChildren.remove(child.reference);
+                                              // Don't auto-select another child when removing one
+                                              if (_model.selectedChild == child.reference) {
+                                                _model.selectedChild = null;
+                                              }
                                             } else {
                                               _model.selectedChildren.add(child.reference);
+                                              // Only set selectedChild if it's currently null
+                                              if (_model.selectedChild == null) {
+                                                _model.selectedChild = child.reference;
+                                              }
                                             }
-                                            // Keep selectedChild for backwards compatibility
-                                            _model.selectedChild = _model.selectedChildren.isNotEmpty
-                                                ? _model.selectedChildren.first
-                                                : null;
                                           });
                                         },
                                         child: Container(
@@ -1000,12 +1048,29 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                 child: Wrap(
                                   spacing: 8.0,
                                   runSpacing: 8.0,
-                                  children: ['None', 'Daily', 'Weekly', 'Monthly'].map((option) {
+                                  children: ['None', 'Daily', 'Weekly', 'Custom Weekly', 'Monthly'].map((option) {
                                     final isSelected = _model.recurringPattern == option;
                                     return GestureDetector(
                                       onTap: () {
                                         setState(() {
                                           _model.recurringPattern = option;
+                                          // Clear end date when recurring is selected
+                                          if (option != 'None') {
+                                            _model.endDate = null;
+                                            _model.isEndDateSelected = false;
+                                            // Set default repeat count based on pattern
+                                            if (_model.repeatCount == null) {
+                                              _model.repeatCount = option == 'Daily' ? 30 : option == 'Custom Weekly' ? 12 : option == 'Weekly' ? 12 : 12;
+                                            }
+                                            // Clear custom weekly days when switching away from Custom Weekly
+                                            if (option != 'Custom Weekly') {
+                                              _model.customWeeklyDays.clear();
+                                            }
+                                          } else {
+                                            // Clear repeat count and custom days when None is selected
+                                            _model.repeatCount = null;
+                                            _model.customWeeklyDays.clear();
+                                          }
                                         });
                                       },
                                       child: Container(
@@ -1083,6 +1148,292 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                             ],
                           ),
                         ),
+                        // Repeat Count Field (only shown when recurring pattern is NOT 'None')
+                        if (_model.recurringPattern != null && _model.recurringPattern != 'None')
+                          Padding(
+                            padding: EdgeInsetsDirectional.fromSTEB(0.0, 16.0, 0.0, 0.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 8.0),
+                                  child: Text(
+                                    'Repeat ${_model.recurringPattern == 'Daily' ? 'for how many days?' : _model.recurringPattern == 'Weekly' ? 'for how many weeks?' : _model.recurringPattern == 'Custom Weekly' ? 'for how many weeks?' : 'for how many months?'}',
+                                    style: theme.bodyMedium.override(
+                                      fontFamily: 'Andika New Basic',
+                                      fontSize: 14.0,
+                                      fontWeight: FontWeight.w600,
+                                      color: isComfort ? const Color(0xFFECF0F1) : const Color(0xFF5D4E60),
+                                      letterSpacing: 0.0,
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  width: double.infinity,
+                                  padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                                  decoration: BoxDecoration(
+                                    color: FFAppState().isComfortMode ? const Color(0xFF34495E) : FlutterFlowTheme.of(context).prim30,
+                                    borderRadius: BorderRadius.circular(14.0),
+                                    border: Border.all(
+                                      color: FFAppState().isComfortMode ? const Color(0xFF7F8C8D) : const Color(0xFFCBE3E0),
+                                      width: 1.0,
+                                    ),
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        '${_model.repeatCount ?? (_model.recurringPattern == 'Daily' ? 30 : _model.recurringPattern == 'Weekly' ? 12 : 12)}',
+                                        style: theme.bodyMedium.override(
+                                          fontFamily: 'Andika New Basic',
+                                          fontSize: 16.0,
+                                          color: isComfort ? const Color(0xFFECF0F1) : FlutterFlowTheme.of(context).primaryText,
+                                          letterSpacing: 0.0,
+                                        ),
+                                      ),
+                                      Row(
+                                        children: [
+                                          IconButton(
+                                            icon: Icon(Icons.remove_circle_outline, color: isComfort ? const Color(0xFF95A5A6) : FlutterFlowTheme.of(context).secondaryText),
+                                            onPressed: () {
+                                              setState(() {
+                                                final currentCount = _model.repeatCount ?? (_model.recurringPattern == 'Daily' ? 30 : 12);
+                                                if (currentCount > 1) {
+                                                  _model.repeatCount = currentCount - 1;
+                                                }
+                                              });
+                                            },
+                                          ),
+                                          IconButton(
+                                            icon: Icon(Icons.add_circle_outline, color: isComfort ? const Color(0xFF95A5A6) : FlutterFlowTheme.of(context).primary),
+                                            onPressed: () {
+                                              setState(() {
+                                                final currentCount = _model.repeatCount ?? (_model.recurringPattern == 'Daily' ? 30 : 12);
+                                                final max = _model.recurringPattern == 'Daily' ? 90 : _model.recurringPattern == 'Weekly' ? 52 : 24;
+                                                if (currentCount < max) {
+                                                  _model.repeatCount = currentCount + 1;
+                                                }
+                                              });
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        // Day Selector (only shown for Custom Weekly)
+                        if (_model.recurringPattern == 'Custom Weekly')
+                          Padding(
+                            padding: EdgeInsetsDirectional.fromSTEB(0.0, 16.0, 0.0, 0.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 8.0),
+                                  child: Text(
+                                    'Which days of the week?',
+                                    style: theme.bodyMedium.override(
+                                      fontFamily: 'Andika New Basic',
+                                      fontSize: 14.0,
+                                      fontWeight: FontWeight.w600,
+                                      color: isComfort ? const Color(0xFFECF0F1) : const Color(0xFF5D4E60),
+                                      letterSpacing: 0.0,
+                                    ),
+                                  ),
+                                ),
+                                // Tip explaining custom weekly
+                                Padding(
+                                  padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 12.0),
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.info_outline,
+                                        size: 16.0,
+                                        color: isComfort ? const Color(0xFF95A5A6) : FlutterFlowTheme.of(context).secondaryText,
+                                      ),
+                                      SizedBox(width: 6.0),
+                                      Expanded(
+                                        child: Text(
+                                          'Example: Select Tuesday and Thursday for activities that repeat twice a week',
+                                          style: theme.bodySmall.override(
+                                            fontFamily: 'Andika New Basic',
+                                            fontSize: 12.0,
+                                            color: isComfort ? const Color(0xFF95A5A6) : FlutterFlowTheme.of(context).secondaryText,
+                                            letterSpacing: 0.0,
+                                            fontStyle: FontStyle.italic,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                // Day selector chips (2 rows) - matching "How often?" style
+                                Column(
+                                  children: [
+                                    // First row: Mon-Thu
+                                    Wrap(
+                                      spacing: 8.0,
+                                      runSpacing: 8.0,
+                                      children: [
+                                        {'label': 'Mon', 'value': 1},
+                                        {'label': 'Tue', 'value': 2},
+                                        {'label': 'Wed', 'value': 3},
+                                        {'label': 'Thu', 'value': 4},
+                                      ].map((day) {
+                                        final isSelected = _model.customWeeklyDays.contains(day['value'] as int);
+                                        return GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              if (isSelected) {
+                                                _model.customWeeklyDays.remove(day['value'] as int);
+                                              } else {
+                                                _model.customWeeklyDays.add(day['value'] as int);
+                                              }
+                                            });
+                                          },
+                                          child: Container(
+                                            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+                                            decoration: BoxDecoration(
+                                              color: isSelected
+                                                  ? (isComfort
+                                                      ? const Color(0xFF7F8C8D)
+                                                      : FlutterFlowTheme.of(context).primary.withOpacity(0.15))
+                                                  : (isComfort
+                                                      ? const Color(0xFF34495E)
+                                                      : const Color(0xFFF5F5F5)),
+                                              borderRadius: BorderRadius.circular(20.0),
+                                              border: Border.all(
+                                                color: isSelected
+                                                    ? (isComfort
+                                                        ? const Color(0xFF95A5A6)
+                                                        : FlutterFlowTheme.of(context).primary)
+                                                    : (isComfort
+                                                        ? const Color(0xFF7F8C8D)
+                                                        : Colors.transparent),
+                                                width: isSelected ? 2.0 : 1.0,
+                                              ),
+                                            ),
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Text(
+                                                  day['label'] as String,
+                                                  style: theme.bodyMedium.override(
+                                                    fontFamily: 'Andika New Basic',
+                                                    fontSize: 14.0,
+                                                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                                                    color: isSelected
+                                                        ? (isComfort
+                                                            ? const Color(0xFFECF0F1)
+                                                            : FlutterFlowTheme.of(context).primary)
+                                                        : (isComfort
+                                                            ? const Color(0xFFECF0F1)
+                                                            : const Color(0xFF5D4E60)),
+                                                    letterSpacing: 0.0,
+                                                  ),
+                                                ),
+                                                if (isSelected) ...[
+                                                  const SizedBox(width: 4.0),
+                                                  Icon(
+                                                    Icons.check_circle,
+                                                    size: 16.0,
+                                                    color: isComfort
+                                                        ? const Color(0xFFECF0F1)
+                                                        : FlutterFlowTheme.of(context).primary,
+                                                  ),
+                                                ],
+                                              ],
+                                            ),
+                                          ),
+                                        );
+                                      }).toList(),
+                                    ),
+                                    SizedBox(height: 8.0),
+                                    // Second row: Fri-Sun
+                                    Wrap(
+                                      spacing: 8.0,
+                                      runSpacing: 8.0,
+                                      children: [
+                                        {'label': 'Fri', 'value': 5},
+                                        {'label': 'Sat', 'value': 6},
+                                        {'label': 'Sun', 'value': 7},
+                                      ].map((day) {
+                                        final isSelected = _model.customWeeklyDays.contains(day['value'] as int);
+                                        return GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              if (isSelected) {
+                                                _model.customWeeklyDays.remove(day['value'] as int);
+                                              } else {
+                                                _model.customWeeklyDays.add(day['value'] as int);
+                                              }
+                                            });
+                                          },
+                                          child: Container(
+                                            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+                                            decoration: BoxDecoration(
+                                              color: isSelected
+                                                  ? (isComfort
+                                                      ? const Color(0xFF7F8C8D)
+                                                      : FlutterFlowTheme.of(context).primary.withOpacity(0.15))
+                                                  : (isComfort
+                                                      ? const Color(0xFF34495E)
+                                                      : const Color(0xFFF5F5F5)),
+                                              borderRadius: BorderRadius.circular(20.0),
+                                              border: Border.all(
+                                                color: isSelected
+                                                    ? (isComfort
+                                                        ? const Color(0xFF95A5A6)
+                                                        : FlutterFlowTheme.of(context).primary)
+                                                    : (isComfort
+                                                        ? const Color(0xFF7F8C8D)
+                                                        : Colors.transparent),
+                                                width: isSelected ? 2.0 : 1.0,
+                                              ),
+                                            ),
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Text(
+                                                  day['label'] as String,
+                                                  style: theme.bodyMedium.override(
+                                                    fontFamily: 'Andika New Basic',
+                                                    fontSize: 14.0,
+                                                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                                                    color: isSelected
+                                                        ? (isComfort
+                                                            ? const Color(0xFFECF0F1)
+                                                            : FlutterFlowTheme.of(context).primary)
+                                                        : (isComfort
+                                                            ? const Color(0xFFECF0F1)
+                                                            : const Color(0xFF5D4E60)),
+                                                    letterSpacing: 0.0,
+                                                  ),
+                                                ),
+                                                if (isSelected) ...[
+                                                  const SizedBox(width: 4.0),
+                                                  Icon(
+                                                    Icons.check_circle,
+                                                    size: 16.0,
+                                                    color: isComfort
+                                                        ? const Color(0xFFECF0F1)
+                                                        : FlutterFlowTheme.of(context).primary,
+                                                  ),
+                                                ],
+                                              ],
+                                            ),
+                                          ),
+                                        );
+                                      }).toList(),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
                         // Delete Recurring Events Button (only when editing a recurring event)
                         if (widget.editTaskEvent != null)
                           FutureBuilder<DocumentSnapshot>(
@@ -1117,7 +1468,12 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                       ),
                                     ),
                                     Center(
-                                      child: InkWell(
+                                      child: _model.isDeleting
+                                        ? BouncingDots(
+                                            color: FlutterFlowTheme.of(context).primary,
+                                            size: 12.0,
+                                          )
+                                        : InkWell(
                                         onTap: () async {
                                           // Show confirmation dialog
                                           final confirmed = await showDialog<bool>(
@@ -1160,24 +1516,50 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                           );
 
                                           if (confirmed == true) {
-                                            // Find all recurring events with the same name and user
-                                            final allRecurring = await queryEventAndTaskRecordOnce(
-                                              queryBuilder: (q) => q
-                                                  .where('user_ref', isEqualTo: currentUserReference)
-                                                  .where('name', isEqualTo: taskEvent.name)
-                                                  .where('isrecurring', isEqualTo: true),
-                                            );
+                                            try {
+                                              // Start deleting (no progress tracking - just show loading)
+                                              if (mounted) {
+                                                setState(() {
+                                                  _model.isDeleting = true;
+                                                });
+                                              }
 
-                                            // Delete all of them
-                                            for (final event in allRecurring) {
-                                              await event.reference.delete();
-                                            }
+                                              // Find all recurring events with the same name and user
+                                              final allRecurring = await queryEventAndTaskRecordOnce(
+                                                queryBuilder: (q) => q
+                                                    .where('user_ref', isEqualTo: currentUserReference)
+                                                    .where('name', isEqualTo: taskEvent.name)
+                                                    .where('isrecurring', isEqualTo: true),
+                                              );
 
-                                            FFAppState().todocash = true;
+                                              // Delete all of them (no progress updates to avoid errors)
+                                              for (final event in allRecurring) {
+                                                try {
+                                                  await event.reference.delete();
+                                                } catch (deleteError) {
+                                                  debugPrint('Error deleting single event: $deleteError');
+                                                  // Continue with next event even if one fails
+                                                }
+                                              }
 
-                                            // Navigate back to calendar
-                                            if (context.mounted) {
-                                              context.pushNamed(CalendarpageWidget.routeName);
+                                              FFAppState().todocash = true;
+
+                                              // Fast navigation - no transition delay
+                                              if (mounted && context.mounted) {
+                                                Navigator.of(context).pushReplacement(
+                                                  MaterialPageRoute(
+                                                    builder: (context) => const CalendarpageWidget(),
+                                                  ),
+                                                );
+                                              }
+                                            } catch (e) {
+                                              debugPrint('Error deleting recurring events: $e');
+                                            } finally {
+                                              if (mounted) {
+                                                setState(() {
+                                                  _model.isDeleting = false;
+                                                });
+                                              }
                                             }
                                           }
                                         },
@@ -1272,8 +1654,22 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                         ),
                       ),
                       Expanded(
-                        child: FFButtonWidget(
-                          onPressed: _model.isSubmitting ? null : () async {
+                        child: Container(
+                          height: 40,
+                          decoration: BoxDecoration(
+                            gradient: FFAppState().isComfortMode
+                              ? const LinearGradient(
+                                  colors: [Color(0xFF7F8C8D), Color(0xFF7F8C8D)],
+                                )
+                              : LinearGradient(
+                                  colors: [FlutterFlowTheme.of(context).primary, FlutterFlowTheme.of(context).primary],
+                                ),
+                            borderRadius: BorderRadius.circular(14.0),
+                          ),
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              onTap: _model.isSubmitting ? () {} : () async {
                             // LAYER 1: Debouncing - prevent double-tap
                             if (_model.isSubmitting) return;
                             setState(() => _model.isSubmitting = true);
@@ -1281,20 +1677,30 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                             try {
                               // Validate name
                               if (_model.nameController.text.trim().isEmpty) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('Please enter a ${_model.selectedType.toLowerCase()} name'),
-                                    duration: Duration(seconds: 2),
-                                  ),
-                                );
+                                if (mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('Please enter a ${_model.selectedType.toLowerCase()} name'),
+                                      duration: Duration(seconds: 2),
+                                    ),
+                                  );
+                                  setState(() {
+                                    _model.isSubmitting = false;
+                                    _model.creationStartTime = null;
+                                  });
+                                }
                                 return;
                               }
 
                               // Validate date
                               if (_model.selectedDate == null) {
-                                setState(() {
-                                  _model.showDateError = true;
-                                });
+                                if (mounted) {
+                                  setState(() {
+                                    _model.showDateError = true;
+                                    _model.isSubmitting = false;
+                                    _model.creationStartTime = null;
+                                  });
+                                }
                                 return;
                               }
 
@@ -1315,11 +1721,15 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                         duration: Duration(seconds: 2),
                                       ),
                                     );
+                                    setState(() {
+                                      _model.isSubmitting = false;
+                                      _model.creationStartTime = null;
+                                    });
                                   }
                                   return;
                                 }
 
-                                // LAYER 3: Rate limiting - check daily limit (15 per day max)
+                                // LAYER 3: Rate limiting - check daily limit (30 per day max)
                                 final startOfDay = DateTime(_model.selectedDate!.year, _model.selectedDate!.month, _model.selectedDate!.day);
                                 final endOfDay = startOfDay.add(Duration(days: 1));
 
@@ -1329,14 +1739,18 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                   .where('date', isLessThan: endOfDay)
                                   .get();
 
-                                if (todayEvents.docs.length >= 15) {
+                                if (todayEvents.docs.length >= 30) {
                                   if (mounted) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
-                                        content: Text('Maximum 15 entries per day reached. Please choose a different date or clean up duplicates in Settings.'),
+                                        content: Text('Maximum 30 entries per day reached. Please choose a different date or clean up duplicates in Settings.'),
                                         duration: Duration(seconds: 3),
                                       ),
                                     );
+                                    setState(() {
+                                      _model.isSubmitting = false;
+                                      _model.creationStartTime = null;
+                                    });
                                   }
                                   return;
                                 }
@@ -1344,86 +1758,475 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
 
                             // Check if we're editing or creating
                             if (widget.editTaskEvent != null) {
-                              // Update existing task/event
+                              // Get the current event to check if it was recurring
+                              final eventDoc = await widget.editTaskEvent!.get();
+                              final currentEvent = EventAndTaskRecord.fromSnapshot(eventDoc);
+                              final wasRecurring = currentEvent.isrecurring;
+                              final isNowRecurring = _model.recurringPattern != null && _model.recurringPattern != 'None';
+
+                              // DEBUG: Log what's being saved
+                              debugPrint('=== SAVING EVENT ===');
+                              debugPrint('Event name: ${_model.nameController.text}');
+                              debugPrint('Event date: ${_model.selectedDate}');
+                              debugPrint('Event type: ${_model.selectedType}');
+                              debugPrint('selectedChild: ${_model.selectedChild?.path ?? "null"}');
+                              debugPrint('selectedChildren count: ${_model.selectedChildren.length}');
+                              debugPrint('selectedChildren: ${_model.selectedChildren.map((ref) => ref.path).join(", ")}');
+                              debugPrint('');
+                              debugPrint('RECURRING INFO:');
+                              debugPrint('  Was recurring: $wasRecurring');
+                              debugPrint('  Is now recurring: $isNowRecurring');
+                              debugPrint('  Recurring pattern: ${_model.recurringPattern ?? "None"}');
+                              debugPrint('===================');
+
+                              // Update the current instance
                               await widget.editTaskEvent!.update(createEventAndTaskRecordData(
                                 description: _model.descriptionController.text,
                                 name: _model.nameController.text,
-                                isrecurring: _model.recurringPattern != null && _model.recurringPattern != 'None',
-                                selectedChild: _model.selectedChild ?? FFAppState().selectedChildForMilestone,
-                                selectedChildren: _model.selectedChildren.toList(),
+                                isrecurring: isNowRecurring,
+                                recurringPattern: _model.recurringPattern, // Save the pattern!
+                                endDate: _model.endDate, // Save the end date!
+                                repeatCount: _model.repeatCount, // Save repeat count!
+                                customWeeklyDays: _model.customWeeklyDays.toList(), // Save custom weekly days!
+                                selectedChild: _model.selectedChild, // Allow null (no child assigned)
+                                selectedChildren: _model.selectedChildren.toList(), // Allow empty list
                                 userRef: currentUserReference,
                                 date: _model.selectedDate,
                                 typ: _model.selectedType,
                                 assignedToMom: _model.assignToMom,
                                 assignedToDad: _model.assignToDad,
                               ));
-                            } else {
-                              // Create the initial task/event
-                              await EventAndTaskRecord.collection
-                                  .doc()
-                                  .set(createEventAndTaskRecordData(
-                                    description: _model.descriptionController.text,
-                                    name: _model.nameController.text,
-                                    isrecurring: _model.recurringPattern != null && _model.recurringPattern != 'None',
-                                    selectedChild: _model.selectedChild ?? FFAppState().selectedChildForMilestone,
-                                    selectedChildren: _model.selectedChildren.toList(),
-                                    userRef: currentUserReference,
-                                    date: _model.selectedDate,
-                                    typ: _model.selectedType,
-                                    isCompleted: false,
-                                    lastGenerated: getCurrentTimestamp,
-                                    assignedToMom: _model.assignToMom,
-                                    assignedToDad: _model.assignToDad,
-                                  ));
-                            }
 
-                            // Generate recurring instances if needed (only for new tasks)
-                            if (widget.editTaskEvent == null && _model.recurringPattern != null && _model.recurringPattern != 'None') {
-                              DateTime nextDate = _model.selectedDate!;
+                              // Handle recurring event changes
+                              // Use simpler query to avoid Firestore index requirement
+                              if (wasRecurring || isNowRecurring) {
+                                // Get all recurring events with same name and user (simpler query)
+                                final allRecurring = await queryEventAndTaskRecordOnce(
+                                  queryBuilder: (q) => q
+                                      .where('user_ref', isEqualTo: currentUserReference)
+                                      .where('name', isEqualTo: currentEvent.name)
+                                      .where('isrecurring', isEqualTo: true),
+                                );
 
-                              // Generate next 12 instances
-                              for (int i = 0; i < 12; i++) {
-                                // Calculate next date based on pattern
-                                if (_model.recurringPattern == 'Daily') {
-                                  nextDate = nextDate.add(Duration(days: 1));
-                                } else if (_model.recurringPattern == 'Weekly') {
-                                  nextDate = nextDate.add(Duration(days: 7));
-                                } else if (_model.recurringPattern == 'Monthly') {
-                                  nextDate = DateTime(
-                                    nextDate.year,
-                                    nextDate.month + 1,
-                                    nextDate.day,
-                                    nextDate.hour,
-                                    nextDate.minute,
-                                  );
+                                // Filter in memory for future dates (avoid complex Firestore query)
+                                final futureEvents = allRecurring.where((event) {
+                                  return event.date != null && event.date!.isAfter(_model.selectedDate!);
+                                }).toList();
+
+                                debugPrint('');
+                                debugPrint('RECURRING EVENT QUERY RESULTS:');
+                                debugPrint('  Total recurring events found: ${allRecurring.length}');
+                                debugPrint('  Future events (after ${_model.selectedDate}): ${futureEvents.length}');
+                                if (futureEvents.isNotEmpty) {
+                                  debugPrint('  Future event dates:');
+                                  for (final event in futureEvents.take(5)) {
+                                    debugPrint('    - ${event.date?.toString().split(' ')[0]} (isRecurring: ${event.isrecurring})');
+                                  }
+                                  if (futureEvents.length > 5) {
+                                    debugPrint('    ... and ${futureEvents.length - 5} more');
+                                  }
                                 }
 
-                                // Create the recurring instance
+                                if (wasRecurring && !isNowRecurring) {
+                                  // Changed from recurring to non-recurring: Delete all future instances
+                                  debugPrint('Converting recurring to non-recurring: deleting future instances');
+                                  for (final event in futureEvents) {
+                                    await event.reference.delete();
+                                  }
+                                  debugPrint('Deleted ${futureEvents.length} future recurring instances');
+                                } else if (isNowRecurring && wasRecurring && currentEvent.recurringPattern != _model.recurringPattern) {
+                                  // Pattern changed (Daily -> Weekly, etc.): Delete old instances and regenerate
+                                  debugPrint('Pattern changed from ${currentEvent.recurringPattern} to ${_model.recurringPattern}');
+                                  debugPrint('Deleting ${futureEvents.length} old instances and regenerating with new pattern');
+
+                                  for (final event in futureEvents) {
+                                    await event.reference.delete();
+                                  }
+
+                                  // Regenerate instances with new pattern (using repeat count)
+                                  final count = _model.repeatCount ?? (_model.recurringPattern == 'Daily' ? 30 : 12);
+
+                                  if (_model.recurringPattern == 'Custom Weekly') {
+                                    // Custom Weekly: Generate instances for selected days only
+                                    if (_model.customWeeklyDays.isEmpty) {
+                                      debugPrint('ERROR: Custom Weekly selected but no days chosen');
+                                    } else {
+                                      debugPrint('Generating Custom Weekly: ${_model.customWeeklyDays.length} days per week for $count weeks');
+
+                                      // Start from the Monday of the week containing the selected date
+                                      final startDate = _model.selectedDate!;
+                                      final daysUntilMonday = (startDate.weekday - DateTime.monday + 7) % 7;
+                                      DateTime currentWeekStart = startDate.subtract(Duration(days: daysUntilMonday));
+
+                                      debugPrint('Selected date: ${startDate.toString().split(' ')[0]} (${_getDayName(startDate.weekday)})');
+                                      debugPrint('Starting from Monday: ${currentWeekStart.toString().split(' ')[0]}');
+
+                                      for (int week = 0; week < count; week++) {
+                                        for (int dayOfWeek in _model.customWeeklyDays.toList()..sort()) {
+                                          // Calculate the date for this day of the week (1=Mon, 7=Sun)
+                                          final daysToAdd = dayOfWeek - DateTime.monday;
+                                          final instanceDate = currentWeekStart.add(Duration(days: daysToAdd));
+
+                                          // Only create instances that are today or in the future
+                                          if (instanceDate.isAfter(startDate.subtract(Duration(days: 1)))) {
+                                            debugPrint('  Creating instance: ${instanceDate.toString().split(' ')[0]} (${_getDayName(dayOfWeek)})');
+
+                                            await EventAndTaskRecord.collection.doc().set(createEventAndTaskRecordData(
+                                              description: _model.descriptionController.text,
+                                              name: _model.nameController.text,
+                                              isrecurring: true,
+                                              recurringPattern: _model.recurringPattern,
+                                              endDate: _model.endDate,
+                                              repeatCount: _model.repeatCount,
+                                              customWeeklyDays: _model.customWeeklyDays.toList(),
+                                              selectedChild: _model.selectedChild,
+                                              selectedChildren: _model.selectedChildren.toList(),
+                                              userRef: currentUserReference,
+                                              date: instanceDate,
+                                              typ: _model.selectedType,
+                                              isCompleted: false,
+                                              lastGenerated: getCurrentTimestamp,
+                                              assignedToMom: _model.assignToMom,
+                                              assignedToDad: _model.assignToDad,
+                                            ));
+                                          } else {
+                                            debugPrint('  Skipping past date: ${instanceDate.toString().split(' ')[0]} (${_getDayName(dayOfWeek)})');
+                                          }
+                                        }
+                                        // Move to next week
+                                        currentWeekStart = currentWeekStart.add(Duration(days: 7));
+                                      }
+                                    }
+                                  } else {
+                                    // Standard patterns: Daily, Weekly, Monthly
+                                    DateTime nextDate = _model.selectedDate!;
+                                    for (int i = 0; i < count; i++) {
+                                      // Calculate next date based on NEW pattern
+                                      if (_model.recurringPattern == 'Daily') {
+                                        nextDate = nextDate.add(Duration(days: 1));
+                                      } else if (_model.recurringPattern == 'Weekly') {
+                                        nextDate = nextDate.add(Duration(days: 7));
+                                      } else if (_model.recurringPattern == 'Monthly') {
+                                        nextDate = DateTime(
+                                          nextDate.year,
+                                          nextDate.month + 1,
+                                          nextDate.day,
+                                          nextDate.hour,
+                                          nextDate.minute,
+                                        );
+                                      }
+
+                                      await EventAndTaskRecord.collection.doc().set(createEventAndTaskRecordData(
+                                        description: _model.descriptionController.text,
+                                        name: _model.nameController.text,
+                                        isrecurring: true,
+                                        recurringPattern: _model.recurringPattern,
+                                        endDate: _model.endDate,
+                                        repeatCount: _model.repeatCount,
+                                        customWeeklyDays: _model.customWeeklyDays.toList(),
+                                        selectedChild: _model.selectedChild,
+                                        selectedChildren: _model.selectedChildren.toList(),
+                                        userRef: currentUserReference,
+                                        date: nextDate,
+                                        typ: _model.selectedType,
+                                        isCompleted: false,
+                                        lastGenerated: getCurrentTimestamp,
+                                        assignedToMom: _model.assignToMom,
+                                        assignedToDad: _model.assignToDad,
+                                      ));
+                                    }
+                                  }
+                                  debugPrint('Regenerated $count instances with new ${_model.recurringPattern} pattern');
+                                } else if (!wasRecurring && isNowRecurring) {
+                                  // Changed from non-recurring to recurring: Generate new instances
+                                  debugPrint('Converting non-recurring to recurring: generating future instances');
+                                  final count = _model.repeatCount ?? (_model.recurringPattern == 'Daily' ? 30 : 12);
+
+                                  if (_model.recurringPattern == 'Custom Weekly') {
+                                    // Custom Weekly generation (same as pattern change logic)
+                                    if (_model.customWeeklyDays.isEmpty) {
+                                      debugPrint('ERROR: Custom Weekly selected but no days chosen');
+                                    } else {
+                                      debugPrint('Generating Custom Weekly: ${_model.customWeeklyDays.length} days per week for $count weeks');
+                                      final startDate = _model.selectedDate!;
+                                      final daysUntilMonday = (startDate.weekday - DateTime.monday + 7) % 7;
+                                      DateTime currentWeekStart = startDate.subtract(Duration(days: daysUntilMonday));
+
+                                      for (int week = 0; week < count; week++) {
+                                        for (int dayOfWeek in _model.customWeeklyDays.toList()..sort()) {
+                                          final daysToAdd = dayOfWeek - DateTime.monday;
+                                          final instanceDate = currentWeekStart.add(Duration(days: daysToAdd));
+
+                                          if (instanceDate.isAfter(startDate.subtract(Duration(days: 1)))) {
+                                            await EventAndTaskRecord.collection.doc().set(createEventAndTaskRecordData(
+                                              description: _model.descriptionController.text,
+                                              name: _model.nameController.text,
+                                              isrecurring: true,
+                                              recurringPattern: _model.recurringPattern,
+                                              endDate: _model.endDate,
+                                              repeatCount: _model.repeatCount,
+                                              customWeeklyDays: _model.customWeeklyDays.toList(),
+                                              selectedChild: _model.selectedChild,
+                                              selectedChildren: _model.selectedChildren.toList(),
+                                              userRef: currentUserReference,
+                                              date: instanceDate,
+                                              typ: _model.selectedType,
+                                              isCompleted: false,
+                                              lastGenerated: getCurrentTimestamp,
+                                              assignedToMom: _model.assignToMom,
+                                              assignedToDad: _model.assignToDad,
+                                            ));
+                                          }
+                                        }
+                                        currentWeekStart = currentWeekStart.add(Duration(days: 7));
+                                      }
+                                    }
+                                  } else {
+                                    // Standard patterns: Daily, Weekly, Monthly
+                                    DateTime nextDate = _model.selectedDate!;
+                                    for (int i = 0; i < count; i++) {
+                                      if (_model.recurringPattern == 'Daily') {
+                                        nextDate = nextDate.add(Duration(days: 1));
+                                      } else if (_model.recurringPattern == 'Weekly') {
+                                        nextDate = nextDate.add(Duration(days: 7));
+                                      } else if (_model.recurringPattern == 'Monthly') {
+                                        nextDate = DateTime(
+                                          nextDate.year,
+                                          nextDate.month + 1,
+                                          nextDate.day,
+                                          nextDate.hour,
+                                          nextDate.minute,
+                                        );
+                                      }
+
+                                      await EventAndTaskRecord.collection.doc().set(createEventAndTaskRecordData(
+                                        description: _model.descriptionController.text,
+                                        name: _model.nameController.text,
+                                        isrecurring: true,
+                                        recurringPattern: _model.recurringPattern,
+                                        endDate: _model.endDate,
+                                        repeatCount: _model.repeatCount,
+                                        customWeeklyDays: _model.customWeeklyDays.toList(),
+                                        selectedChild: _model.selectedChild,
+                                        selectedChildren: _model.selectedChildren.toList(),
+                                        userRef: currentUserReference,
+                                        date: nextDate,
+                                        typ: _model.selectedType,
+                                        isCompleted: false,
+                                        lastGenerated: getCurrentTimestamp,
+                                        assignedToMom: _model.assignToMom,
+                                        assignedToDad: _model.assignToDad,
+                                      ));
+                                    }
+                                  }
+                                  debugPrint('Generated $count new recurring instances');
+                                } else if (isNowRecurring) {
+                                  // Pattern unchanged: just update the details
+                                  debugPrint('Pattern unchanged: updating ${futureEvents.length} instances');
+                                  for (final event in futureEvents) {
+                                    await event.reference.update(createEventAndTaskRecordData(
+                                      description: _model.descriptionController.text,
+                                      recurringPattern: _model.recurringPattern,
+                                      endDate: _model.endDate,
+                                      repeatCount: _model.repeatCount,
+                                      customWeeklyDays: _model.customWeeklyDays.toList(),
+                                      selectedChild: _model.selectedChild,
+                                      selectedChildren: _model.selectedChildren.toList(),
+                                      assignedToMom: _model.assignToMom,
+                                      assignedToDad: _model.assignToDad,
+                                    ));
+                                  }
+                                  debugPrint('Updated ${futureEvents.length} future recurring instances');
+                                }
+                              }
+                            } else {
+                              // Create the initial task/event
+                              // For Custom Weekly, skip initial creation - the recurring generation handles all instances
+                              if (_model.recurringPattern != 'Custom Weekly') {
                                 await EventAndTaskRecord.collection
                                     .doc()
                                     .set(createEventAndTaskRecordData(
                                       description: _model.descriptionController.text,
                                       name: _model.nameController.text,
-                                      isrecurring: true,
-                                      selectedChild: _model.selectedChild ?? FFAppState().selectedChildForMilestone,
+                                      isrecurring: _model.recurringPattern != null && _model.recurringPattern != 'None',
+                                      recurringPattern: _model.recurringPattern, // Save pattern
+                                      endDate: _model.endDate, // Save end date
+                                      repeatCount: _model.repeatCount, // Save repeat count
+                                      customWeeklyDays: _model.customWeeklyDays.toList(), // Save custom weekly days
+                                      selectedChild: _model.selectedChild, // Don't force a child assignment
                                       selectedChildren: _model.selectedChildren.toList(),
                                       userRef: currentUserReference,
-                                      date: nextDate,
+                                      date: _model.selectedDate,
                                       typ: _model.selectedType,
                                       isCompleted: false,
                                       lastGenerated: getCurrentTimestamp,
                                       assignedToMom: _model.assignToMom,
                                       assignedToDad: _model.assignToDad,
                                     ));
+                              } else {
+                                debugPrint('Skipping initial event creation for Custom Weekly (all instances handled by recurring generation)');
                               }
                             }
 
-                              FFAppState().todocash = true;
-                              setState(() {});
+                            // Generate recurring instances if needed (only for new tasks)
+                            if (widget.editTaskEvent == null && _model.recurringPattern != null && _model.recurringPattern != 'None') {
+                              final count = _model.repeatCount ?? (_model.recurringPattern == 'Daily' ? 30 : 12);
 
-                              // Navigate back to calendar
+                              // Set progress state for button indicator
+                              setState(() {
+                                _model.creatingProgress = 0;
+                                _model.creatingTotal = count;
+                                _model.creationStartTime = DateTime.now();
+                              });
+
+                              // Small delay to let the UI update
+                              await Future.delayed(const Duration(milliseconds: 50));
+
+                              debugPrint('');
+                              debugPrint('=== GENERATING RECURRING INSTANCES ===');
+                              debugPrint('Pattern: ${_model.recurringPattern}');
+                              debugPrint('Starting date: ${_model.selectedDate}');
+                              debugPrint('Repeat count: $count');
+
+                              int successCount = 0;
+
+                              if (_model.recurringPattern == 'Custom Weekly') {
+                                // Custom Weekly: Generate instances for selected days only
+                                if (_model.customWeeklyDays.isEmpty) {
+                                  debugPrint('ERROR: Custom Weekly selected but no days chosen');
+                                } else {
+                                  debugPrint('Custom Weekly: ${_model.customWeeklyDays.length} days per week for $count weeks');
+
+                                  // Start from the Monday of the week containing the selected date
+                                  final startDate = _model.selectedDate!;
+                                  final daysUntilMonday = (startDate.weekday - DateTime.monday + 7) % 7;
+                                  DateTime currentWeekStart = startDate.subtract(Duration(days: daysUntilMonday));
+
+                                  debugPrint('Selected date: ${startDate.toString().split(' ')[0]} (${_getDayName(startDate.weekday)})');
+                                  debugPrint('Starting from Monday: ${currentWeekStart.toString().split(' ')[0]}');
+
+                                  for (int week = 0; week < count; week++) {
+                                    for (int dayOfWeek in _model.customWeeklyDays.toList()..sort()) {
+                                      // Calculate the date for this day of the week (1=Mon, 7=Sun)
+                                      final daysToAdd = dayOfWeek - DateTime.monday;
+                                      final instanceDate = currentWeekStart.add(Duration(days: daysToAdd));
+
+                                      // Only create instances that are today or in the future
+                                      if (instanceDate.isAfter(startDate.subtract(Duration(days: 1)))) {
+                                        debugPrint('  Creating instance: ${instanceDate.toString().split(' ')[0]} (${_getDayName(dayOfWeek)})');
+
+                                        await EventAndTaskRecord.collection.doc().set(createEventAndTaskRecordData(
+                                          description: _model.descriptionController.text,
+                                          name: _model.nameController.text,
+                                          isrecurring: true,
+                                          recurringPattern: _model.recurringPattern,
+                                          endDate: _model.endDate,
+                                          repeatCount: _model.repeatCount,
+                                          customWeeklyDays: _model.customWeeklyDays.toList(),
+                                          selectedChild: _model.selectedChild,
+                                          selectedChildren: _model.selectedChildren.toList(),
+                                          userRef: currentUserReference,
+                                          date: instanceDate,
+                                          typ: _model.selectedType,
+                                          isCompleted: false,
+                                          lastGenerated: getCurrentTimestamp,
+                                          assignedToMom: _model.assignToMom,
+                                          assignedToDad: _model.assignToDad,
+                                        ));
+
+                                        successCount++;
+
+                                        // Update progress with smooth delay
+                                        setState(() {
+                                          _model.creatingProgress = successCount;
+                                        });
+                                        await Future.delayed(const Duration(milliseconds: 300));
+                                      } else {
+                                        debugPrint('  Skipping past date: ${instanceDate.toString().split(' ')[0]} (${_getDayName(dayOfWeek)})');
+                                      }
+                                    }
+                                    // Move to next week
+                                    currentWeekStart = currentWeekStart.add(Duration(days: 7));
+                                  }
+                                }
+                              } else {
+                                // Standard patterns: Daily, Weekly, Monthly
+                                debugPrint('Will create $count future instances...');
+                                DateTime nextDate = _model.selectedDate!;
+
+                                for (int i = 0; i < count; i++) {
+                                  // Calculate next date based on pattern
+                                  if (_model.recurringPattern == 'Daily') {
+                                    nextDate = nextDate.add(Duration(days: 1));
+                                  } else if (_model.recurringPattern == 'Weekly') {
+                                    nextDate = nextDate.add(Duration(days: 7));
+                                  } else if (_model.recurringPattern == 'Monthly') {
+                                    nextDate = DateTime(
+                                      nextDate.year,
+                                      nextDate.month + 1,
+                                      nextDate.day,
+                                      nextDate.hour,
+                                      nextDate.minute,
+                                    );
+                                  }
+
+                                  debugPrint('  Creating instance ${i + 1}/$count: ${nextDate.toString().split(' ')[0]}');
+
+                                  await EventAndTaskRecord.collection.doc().set(createEventAndTaskRecordData(
+                                    description: _model.descriptionController.text,
+                                    name: _model.nameController.text,
+                                    isrecurring: true,
+                                    recurringPattern: _model.recurringPattern,
+                                    endDate: _model.endDate,
+                                    repeatCount: _model.repeatCount,
+                                    customWeeklyDays: _model.customWeeklyDays.toList(),
+                                    selectedChild: _model.selectedChild,
+                                    selectedChildren: _model.selectedChildren.toList(),
+                                    userRef: currentUserReference,
+                                    date: nextDate,
+                                    typ: _model.selectedType,
+                                    isCompleted: false,
+                                    lastGenerated: getCurrentTimestamp,
+                                    assignedToMom: _model.assignToMom,
+                                    assignedToDad: _model.assignToDad,
+                                  ));
+
+                                  successCount++;
+
+                                  // Update progress with smooth delay
+                                  setState(() {
+                                    _model.creatingProgress = successCount;
+                                  });
+                                  await Future.delayed(const Duration(milliseconds: 150));
+                                }
+                              }
+
+                              debugPrint('Successfully created $successCount recurring instances');
+                              debugPrint('======================================');
+                            }
+
+                              FFAppState().todocash = true;
                               if (mounted) {
-                                context.pushNamed(CalendarpageWidget.routeName);
+                                setState(() {});
+                              }
+
+                              // Navigate to calendar - simple navigation, no transitions
+                              if (mounted && context.mounted) {
+                                try {
+                                  await context.pushNamed('calendarpage');
+                                } catch (navError) {
+                                  debugPrint('Navigation error: $navError');
+                                }
+
+                                // Reset state after navigation
+                                if (mounted) {
+                                  setState(() {
+                                    _model.isSubmitting = false;
+                                    _model.creatingProgress = 0;
+                                    _model.creatingTotal = 0;
+                                    _model.creationStartTime = null;
+                                  });
+                                }
                               }
                             } catch (e) {
                               // Handle any errors during submission
@@ -1434,42 +2237,51 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                     duration: const Duration(seconds: 3),
                                   ),
                                 );
-                              }
-                            } finally {
-                              // LAYER 1: Reset processing flag to allow future submissions
-                              if (mounted) {
-                                setState(() => _model.isSubmitting = false);
+                                // Reset on error
+                                setState(() {
+                                  _model.isSubmitting = false;
+                                  _model.creationStartTime = null;
+                                });
                               }
                             }
-                          },
-                          text: widget.editTaskEvent != null ? 'Update' : 'Create',
-                          options: FFButtonOptions(
-                            height: 40.0,
-                            padding: EdgeInsetsDirectional.fromSTEB(
-                                16.0, 0.0, 16.0, 0.0),
-                            iconPadding: EdgeInsetsDirectional.fromSTEB(
-                                0.0, 0.0, 0.0, 0.0),
-                            color: FFAppState().isComfortMode
-                                ? const Color(0xFF7F8C8D)
-                                : FlutterFlowTheme.of(context).primary,
-                            textStyle: FlutterFlowTheme.of(context)
-                                .titleSmall
-                                .override(
-                                  fontFamily: 'Andika New Basic',
-                                  color: FFAppState().isComfortMode
-                                      ? const Color(0xFFECF0F1)
-                                      : Colors.white,
-                                  letterSpacing: 0.0,
+                                },
+                                borderRadius: BorderRadius.circular(14.0),
+                                child: Center(
+                                  child: _model.isSubmitting
+                                    ? (_model.creatingTotal > 0 &&
+                                       _model.creationStartTime != null &&
+                                       DateTime.now().difference(_model.creationStartTime!).inSeconds >= 2)
+                                      ? Text(
+                                          'Creating ${_model.creatingProgress} of ${_model.creatingTotal}...',
+                                          style: FlutterFlowTheme.of(context).titleSmall.override(
+                                            fontFamily: 'Andika New Basic',
+                                            color: FFAppState().isComfortMode ? const Color(0xFFECF0F1) : Colors.white,
+                                            letterSpacing: 0.0,
+                                            fontSize: 14.0,
+                                          ),
+                                        )
+                                      : BouncingDots(
+                                          color: FFAppState().isComfortMode ? const Color(0xFFECF0F1) : Colors.white,
+                                          size: 8.0,
+                                        )
+                                    : Text(
+                                        widget.editTaskEvent != null ? 'Update' : 'Create',
+                                        style: FlutterFlowTheme.of(context).titleSmall.override(
+                                          fontFamily: 'Andika New Basic',
+                                          color: FFAppState().isComfortMode ? const Color(0xFFECF0F1) : Colors.white,
+                                          letterSpacing: 0.0,
+                                        ),
+                                      ),
                                 ),
-                            elevation: 0.0,
-                            borderRadius: BorderRadius.circular(14.0),
-                          ),
-                        ),
-                      ),
+                          ), // Close InkWell
+                        ), // Close Material
+                ), // Close Container
+              ),  // Close Expanded
                     ].divide(SizedBox(width: 16.0)),
                   ),
                 ),
               ),
+
             ],
           ),
         ),

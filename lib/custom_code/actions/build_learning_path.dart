@@ -131,30 +131,15 @@ Example format:
 
   // 🧠 Step 2 — Safety Controls & OpenAI API Call
 
-  // SAFETY 1: Daily Limit Check (max 7 learning paths per day)
-  // Get all learning paths for this user and filter in memory to avoid composite index
-  final todayStart = DateTime(now.year, now.month, now.day);
+  // SAFETY 1: Duplicate Detection (Daily limit removed per user request)
+  // Check if identical learning path exists (same challenge + child within last 7 days)
+  // Filter in memory to avoid composite index
+  final sevenDaysAgo = now.subtract(const Duration(days: 7));
 
   final userPathsQuery = await db
       .collection("learning_path")
       .where("user_ref", isEqualTo: userRef)
       .get();
-
-  // Filter today's paths in memory
-  final todayPaths = userPathsQuery.docs.where((doc) {
-    final createdAt = (doc.data()['created_at'] as Timestamp?)?.toDate();
-    if (createdAt == null) return false;
-    return createdAt.isAfter(todayStart) && createdAt.isBefore(todayStart.add(const Duration(days: 1)));
-  }).toList();
-
-  if (todayPaths.length >= 7) {
-    throw Exception("Daily limit reached. You can create up to 7 learning paths per day. Please try again tomorrow.");
-  }
-
-  // SAFETY 2: Duplicate Detection
-  // Check if identical learning path exists (same challenge + child within last 7 days)
-  // Filter in memory to avoid composite index
-  final sevenDaysAgo = now.subtract(const Duration(days: 7));
 
   final recentDuplicates = userPathsQuery.docs.where((doc) {
     final data = doc.data();

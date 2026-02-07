@@ -23,6 +23,9 @@ class CreateMealPlanModel extends FlutterFlowModel<CreateMealPlanWidget> {
   // Cache for meal records to avoid repeated lookups
   Map<String, MealRecord?> mealCache = {};
 
+  // Cache for meal combo records to avoid repeated lookups
+  Map<String, MealComboRecord?> comboCache = {};
+
   // NEW: Real-time stream for meal plans (replaces cached approach)
   Stream<List<MealPlanRecord>>? mealPlanStream;
   StreamSubscription<List<MealPlanRecord>>? _mealPlanSubscription;
@@ -130,6 +133,7 @@ class CreateMealPlanModel extends FlutterFlowModel<CreateMealPlanWidget> {
     cachedMealPlans = null;
     _loadingFuture = null;
     mealCache.clear();
+    comboCache.clear();
     return loadMealPlansOnce();
   }
 
@@ -143,6 +147,7 @@ class CreateMealPlanModel extends FlutterFlowModel<CreateMealPlanWidget> {
     cachedMealPlans = null;
     _loadingFuture = null;
     mealCache.clear();
+    comboCache.clear();
   }
 
   @override

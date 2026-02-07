@@ -7,6 +7,7 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/custom_functions.dart' as functions;
 import '/index.dart';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
@@ -42,9 +43,6 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
   // Track todos being completed for fade animation
   final Set<String> _completingTodos = {};
 
-  // Data from Firebase
-  List<ChildernRecord>? _userChildren;
-
   // Parent display info
   ParentDisplayInfo _parentInfo = ParentDisplayInfo.defaults();
 
@@ -55,22 +53,25 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
 
     // Setup staggered animation
     _animationController = AnimationController(
-      duration: const Duration(milliseconds: 800),
+      duration: const Duration(milliseconds: 1200),
       vsync: this,
     );
 
-    // Create staggered animations for each card (6 cards + pills)
-    _cardAnimations = List.generate(7, (index) {
-      final start = index * 0.1;
-      final end = start + 0.4;
+    // Create staggered animations for each element (header/greeting + 6 cards, children not animated)
+    _cardAnimations = List.generate(8, (index) {
+      final start = index * 0.07;
+      final end = start + 0.45;
       return CurvedAnimation(
         parent: _animationController,
-        curve: Interval(start.clamp(0.0, 1.0), end.clamp(0.0, 1.0), curve: Curves.easeOut),
+        curve: Interval(start.clamp(0.0, 1.0), end.clamp(0.0, 1.0), curve: Curves.easeOutCubic),
       );
     });
 
     // Start animation after frame is built
     SchedulerBinding.instance.addPostFrameCallback((_) async {
+      // Start the entrance animation immediately for smooth transition from splash
+      _animationController.forward();
+
       // Check if quote was dismissed today
       await _checkQuoteDismissed();
 
@@ -89,40 +90,6 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
           return;
         }
       }
-
-      // Fetch user children
-      _userChildren = await queryChildernRecordOnce(
-        queryBuilder: (childernRecord) => childernRecord.where(
-          'userRef',
-          isEqualTo: currentUserReference,
-        ),
-      );
-
-      // Sort children by birthdate (oldest to youngest)
-      if (_userChildren != null && _userChildren!.isNotEmpty) {
-        _userChildren!.sort((a, b) {
-          if (a.birthDay == null && b.birthDay == null) return 0;
-          if (a.birthDay == null) return 1;
-          if (b.birthDay == null) return -1;
-          return a.birthDay!.compareTo(b.birthDay!);
-        });
-      }
-
-      // If no children, redirect to add child
-      if (_userChildren == null || _userChildren!.isEmpty) {
-        context.pushNamed(
-          AddChildxWidget.routeName,
-          queryParameters: {
-            'isFirst': serializeParam(true, ParamType.bool),
-          }.withoutNulls,
-        );
-      } else {
-        FFAppState().selectedChildForMilestone = _userChildren?.firstOrNull?.reference;
-        safeSetState(() {});
-      }
-
-      // Start the entrance animation
-      _animationController.forward();
     });
   }
 
@@ -141,7 +108,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
         return Opacity(
           opacity: animation.value,
           child: Transform.translate(
-            offset: Offset(0, 20 * (1 - animation.value)),
+            offset: Offset(0, 30 * (1 - animation.value)),
             child: child,
           ),
         );
@@ -175,51 +142,94 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
             ),
           ),
           child: SafeArea(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(20.0, 16.0, 20.0, 24.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Header with logo and version
-                    _buildHeader(context),
-                    const SizedBox(height: 24.0),
-
-                    // Greeting
-                    _buildGreeting(context),
-                    const SizedBox(height: 20.0),
-
-                    // Children quick access
-                    if (_userChildren != null && _userChildren!.isNotEmpty)
-                      _buildChildrenRow(context),
-                    const SizedBox(height: 24.0),
-
-                    // Today's Meals Card (animated)
-                    _animatedCard(0, _buildMealsCard(context)),
-                    const SizedBox(height: 16.0),
-
-                    // Today's Events Card (animated)
-                    _animatedCard(1, _buildScheduleCard(context)),
-                    const SizedBox(height: 16.0),
-
-                    // Todos Card (animated)
-                    _animatedCard(2, _buildTodosCard(context)),
-                    const SizedBox(height: 16.0),
-
-                    // Learning Path Card (animated)
-                    _animatedCard(3, _buildLearningPathCard(context)),
-                    const SizedBox(height: 16.0),
-
-                    // Activities Card (animated)
-                    _animatedCard(4, _buildActivitiesCard(context)),
-                    const SizedBox(height: 16.0),
-
-                    // Milestones Card (animated)
-                    _animatedCard(5, _buildMilestonesCard(context)),
-                    const SizedBox(height: 24.0),
-                  ],
+            child: StreamBuilder<List<ChildernRecord>>(
+              stream: queryChildernRecord(
+                queryBuilder: (childernRecord) => childernRecord.where(
+                  'userRef',
+                  isEqualTo: currentUserReference,
                 ),
               ),
+              builder: (context, childrenSnapshot) {
+                final userChildren = childrenSnapshot.data;
+
+                // Sort children by birthdate (oldest to youngest)
+                final sortedChildren = userChildren != null && userChildren.isNotEmpty
+                    ? (userChildren.toList()
+                      ..sort((a, b) {
+                        if (a.birthDay == null && b.birthDay == null) return 0;
+                        if (a.birthDay == null) return 1;
+                        if (b.birthDay == null) return -1;
+                        return a.birthDay!.compareTo(b.birthDay!);
+                      }))
+                    : null;
+
+                // If no children after loading, redirect to add child
+                if (childrenSnapshot.hasData && (sortedChildren == null || sortedChildren.isEmpty)) {
+                  SchedulerBinding.instance.addPostFrameCallback((_) {
+                    if (mounted) {
+                      context.pushNamed(
+                        AddChildxWidget.routeName,
+                        queryParameters: {
+                          'isFirst': serializeParam(true, ParamType.bool),
+                        }.withoutNulls,
+                      );
+                    }
+                  });
+                } else if (sortedChildren != null && sortedChildren.isNotEmpty) {
+                  // Update app state with first child
+                  if (FFAppState().selectedChildForMilestone == null) {
+                    FFAppState().selectedChildForMilestone = sortedChildren.first.reference;
+                  }
+                }
+
+                return SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(20.0, 16.0, 20.0, 24.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Header with logo and version (animated)
+                        _animatedCard(0, _buildHeader(context)),
+                        const SizedBox(height: 24.0),
+
+                        // Greeting (animated)
+                        _animatedCard(1, _buildGreeting(context)),
+                        const SizedBox(height: 20.0),
+
+                        // Children quick access (NOT animated - appears immediately like header)
+                        if (sortedChildren != null && sortedChildren.isNotEmpty)
+                          _buildChildrenRow(context, sortedChildren),
+                        if (sortedChildren != null && sortedChildren.isNotEmpty)
+                          const SizedBox(height: 24.0),
+
+                        // Today's Meals Card (animated)
+                        _animatedCard(2, _buildMealsCard(context)),
+                        const SizedBox(height: 16.0),
+
+                        // Today's Events Card (animated)
+                        _animatedCard(3, _buildScheduleCard(context)),
+                        const SizedBox(height: 16.0),
+
+                        // Todos Card (animated)
+                        _animatedCard(4, _buildTodosCard(context)),
+                        const SizedBox(height: 16.0),
+
+                        // Learning Path Card (animated)
+                        _animatedCard(5, _buildLearningPathCard(context)),
+                        const SizedBox(height: 16.0),
+
+                        // Activities Card (animated)
+                        _animatedCard(6, _buildActivitiesCard(context)),
+                        const SizedBox(height: 16.0),
+
+                        // Milestones Card (animated)
+                        _animatedCard(7, _buildMilestonesCard(context, sortedChildren)),
+                        const SizedBox(height: 24.0),
+                      ],
+                    ),
+                  ),
+                );
+              },
             ),
           ),
         ),
@@ -407,7 +417,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
     );
   }
 
-  Widget _buildChildrenRow(BuildContext context) {
+  Widget _buildChildrenRow(BuildContext context, List<ChildernRecord> userChildren) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -426,7 +436,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
-            children: _userChildren!.map((child) {
+            children: userChildren.map((child) {
               return Padding(
                 padding: const EdgeInsets.only(right: 16.0),
                 child: InkWell(
@@ -842,7 +852,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                           ),
                         ],
                         const Spacer(),
-                        // Add Event button
+                        // Add Event button - just plus icon
                         InkWell(
                           onTap: () => context.pushNamed(
                             AddcalenderWidget.routeName,
@@ -850,35 +860,15 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                           ),
                           borderRadius: BorderRadius.circular(14.0),
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
+                            padding: const EdgeInsets.all(6.0),
                             decoration: BoxDecoration(
                               color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(14.0),
-                              border: Border.all(
-                                color: FlutterFlowTheme.of(context).primary.withOpacity(0.3),
-                                width: 1.0,
-                              ),
                             ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  Icons.add,
-                                  color: FlutterFlowTheme.of(context).primary,
-                                  size: 16.0,
-                                ),
-                                const SizedBox(width: 4.0),
-                                Text(
-                                  'Add',
-                                  style: FlutterFlowTheme.of(context).bodySmall.override(
-                                    fontFamily: 'Andika New Basic',
-                                    color: FlutterFlowTheme.of(context).primary,
-                                    fontSize: 13.0,
-                                    fontWeight: FontWeight.w600,
-                                    letterSpacing: 0.0,
-                                  ),
-                                ),
-                              ],
+                            child: Icon(
+                              Icons.add_rounded,
+                              color: FlutterFlowTheme.of(context).primary,
+                              size: 18.0,
                             ),
                           ),
                         ),
@@ -1265,7 +1255,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                     Icon(
                       Icons.check_circle_outline_rounded,
                       color: FlutterFlowTheme.of(context).primary,
-                      size: 22.0,
+                      size: 26.0,
                     ),
                     const SizedBox(width: 8.0),
                     Text(
@@ -1527,7 +1517,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                     Icon(
                       Icons.play_circle_outline_rounded,
                       color: FlutterFlowTheme.of(context).primary,
-                      size: 22.0,
+                      size: 26.0,
                     ),
                     const SizedBox(width: 8.0),
                     Text(
@@ -1681,11 +1671,11 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                     Icon(
                       Icons.school_outlined,
                       color: FlutterFlowTheme.of(context).primary,
-                      size: 22.0,
+                      size: 26.0,
                     ),
                     const SizedBox(width: 8.0),
                     Text(
-                      "Today's Learning",
+                      todaysTasks.isEmpty ? "Create a Learning Path" : "Today's Learning",
                       style: FlutterFlowTheme.of(context).bodyLarge.override(
                         fontFamily: 'Andika New Basic',
                         color: const Color(0xFF5D4E60),
@@ -1749,27 +1739,6 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                         ),
                       ),
                     ),
-                ] else ...[
-                  const SizedBox(height: 12.0),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.check_circle_outline,
-                        color: const Color(0xFF4CAF50),
-                        size: 20.0,
-                      ),
-                      const SizedBox(width: 8.0),
-                      Text(
-                        'No lessons scheduled for today',
-                        style: FlutterFlowTheme.of(context).bodyMedium.override(
-                          fontFamily: 'Andika New Basic',
-                          color: const Color(0xFF9B8A9E),
-                          fontSize: 14.0,
-                          fontStyle: FontStyle.italic,
-                        ),
-                      ),
-                    ],
-                  ),
                 ],
               ],
             ),
@@ -1845,8 +1814,103 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
     );
   }
 
+  // Helper method to build child milestone progress with 5-part ring
+  Widget _buildChildMilestoneProgress(BuildContext context, ChildernRecord child) {
+    return StreamBuilder<List<ChildrenAccomlishedMilestonesRecord>>(
+      stream: queryChildrenAccomlishedMilestonesRecord(
+        queryBuilder: (q) => q.where('child', isEqualTo: child.reference),
+      ),
+      builder: (context, snapshot) {
+        final accomplishedMilestones = snapshot.data ?? [];
+
+        // Category names (matching the string values in Firestore)
+        const categoryNames = [
+          'Physical',
+          'Cognitive',
+          'Selfcare',
+          'Communication',
+          'SocialEmotional',
+        ];
+
+        // Colors for each category segment (matching milestone page colors)
+        const categoryColors = [
+          Color(0xFF4CAF50), // Green - Physical
+          Color(0xFF64B5F6), // Light Blue - Cognitive
+          Color(0xFFEE8B60), // Coral/Peach - Selfcare
+          Color(0xFF52A097), // Teal - Communication
+          Color(0xFFE57373), // Light Red - SocialEmotional
+        ];
+
+        // Calculate progress for each category
+        final List<double> categoryProgress = [];
+        for (int i = 0; i < categoryNames.length; i++) {
+          final categoryMilestones = accomplishedMilestones.where((m) =>
+            m.category.toLowerCase() == categoryNames[i].toLowerCase()
+          ).length;
+
+          // Get total milestones for this category
+          // For now, assume 10 milestones per category per age bracket
+          // This should ideally query Static_Milestones collection based on child's age
+          const totalForCategory = 10.0;
+          final progress = (categoryMilestones / totalForCategory).clamp(0.0, 1.0);
+          categoryProgress.add(progress);
+        }
+
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Circle with segmented progress ring
+            SizedBox(
+              width: 72.0,  // Larger to accommodate ring
+              height: 72.0,
+              child: CustomPaint(
+                painter: _MilestoneProgressPainter(
+                  categoryProgress: categoryProgress,
+                  categoryColors: categoryColors,
+                ),
+                child: Center(
+                  child: Container(
+                    width: 56.0,  // Inner circle smaller to show ring around it
+                    height: 56.0,
+                    decoration: BoxDecoration(
+                      color: child.selectedColor ?? FlutterFlowTheme.of(context).primary,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Center(
+                      child: Text(
+                        child.name.isNotEmpty ? child.name[0].toUpperCase() : 'C',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 22.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 6.0),
+            // Child name below circle
+            Text(
+              child.name,
+              style: FlutterFlowTheme.of(context).bodySmall.override(
+                fontFamily: 'Andika New Basic',
+                color: const Color(0xFF5D4E60),
+                fontSize: 12.0,
+                fontWeight: FontWeight.w500,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   // Milestones Card
-  Widget _buildMilestonesCard(BuildContext context) {
+  Widget _buildMilestonesCard(BuildContext context, List<ChildernRecord>? userChildren) {
     return InkWell(
       onTap: () => context.pushNamed(MilstonesWidget.routeName),
       borderRadius: BorderRadius.circular(20.0),
@@ -1873,7 +1937,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                 Icon(
                   Icons.emoji_events_outlined,
                   color: const Color(0xFFFF9800),
-                  size: 22.0,
+                  size: 26.0,
                 ),
                 const SizedBox(width: 8.0),
                 Text(
@@ -1894,81 +1958,15 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                 ),
               ],
             ),
-            const SizedBox(height: 12.0),
-            // Description text
-            Text(
-              'Track your child\'s developmental milestones',
-              style: FlutterFlowTheme.of(context).bodyMedium.override(
-                fontFamily: 'Andika New Basic',
-                color: const Color(0xFF9B8A9E),
-                fontSize: 14.0,
-              ),
-            ),
-            const SizedBox(height: 12.0),
-            // Milestone categories preview
-            if (_userChildren != null && _userChildren!.isNotEmpty)
-              StreamBuilder<List<ChildrenAccomlishedMilestonesRecord>>(
-                stream: queryChildrenAccomlishedMilestonesRecord(
-                  queryBuilder: (q) => q
-                      .where('child', isEqualTo: _userChildren!.first.reference)
-                      .limit(10),
-                ),
-                builder: (context, snapshot) {
-                  final accomplishedCount = snapshot.data?.length ?? 0;
-                  return Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFFF9800).withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(14.0),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.check_circle,
-                              color: const Color(0xFFFF9800),
-                              size: 16.0,
-                            ),
-                            const SizedBox(width: 6.0),
-                            Text(
-                              '$accomplishedCount achieved',
-                              style: FlutterFlowTheme.of(context).bodySmall.override(
-                                fontFamily: 'Andika New Basic',
-                                color: const Color(0xFFFF9800),
-                                fontSize: 12.0,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 8.0),
-                      // Child avatar
-                      Container(
-                        width: 24.0,
-                        height: 24.0,
-                        decoration: BoxDecoration(
-                          color: _userChildren!.first.selectedColor ?? FlutterFlowTheme.of(context).primary,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Center(
-                          child: Text(
-                            _userChildren!.first.name.isNotEmpty
-                                ? _userChildren!.first.name[0].toLowerCase()
-                                : 'c',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 11.0,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  );
-                },
+            const SizedBox(height: 16.0),
+            // All children with progress rings
+            if (userChildren != null && userChildren.isNotEmpty)
+              Wrap(
+                spacing: 16.0,
+                runSpacing: 16.0,
+                children: userChildren.map((child) {
+                  return _buildChildMilestoneProgress(context, child);
+                }).toList(),
               )
             else
               Row(
@@ -1995,4 +1993,64 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
       ),
     );
   }
+}
+
+// Custom painter for milestone progress ring (must be outside State class)
+class _MilestoneProgressPainter extends CustomPainter {
+  final List<double> categoryProgress;
+  final List<Color> categoryColors;
+
+  _MilestoneProgressPainter({
+    required this.categoryProgress,
+    required this.categoryColors,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    const strokeWidth = 6.0;
+    // Ring drawn at outer edge with some padding
+    final radius = (size.width / 2) - (strokeWidth / 2) - 2.0;
+
+    // Draw background circle (light gray) - optional, can remove if you want transparent gaps
+    // final bgPaint = Paint()
+    //   ..color = Colors.grey.shade200
+    //   ..style = PaintingStyle.stroke
+    //   ..strokeWidth = strokeWidth;
+    // canvas.drawCircle(center, radius, bgPaint);
+
+    // Draw 5 segments (each 72 degrees = 360/5)
+    const segmentAngle = 2 * pi / 5; // 72 degrees in radians
+    const startAngle = -pi / 2; // Start at top (12 o'clock)
+    const minSliverAngle = 0.08; // Minimum sliver to show (about 5 degrees)
+
+    for (int i = 0; i < 5; i++) {
+      final progress = categoryProgress[i];
+
+      final paint = Paint()
+        ..color = categoryColors[i]
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = strokeWidth
+        ..strokeCap = StrokeCap.round;
+
+      // Calculate arc for this segment
+      // Always show at least a sliver, max is full segment
+      final sweepAngle = progress > 0
+          ? (segmentAngle * progress)  // Fill based on progress
+          : minSliverAngle;             // Show sliver if no progress
+
+      final currentStartAngle = startAngle + (i * segmentAngle);
+
+      canvas.drawArc(
+        Rect.fromCircle(center: center, radius: radius),
+        currentStartAngle,
+        sweepAngle,
+        false,
+        paint,
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }

@@ -25,6 +25,7 @@ class _NotificationSettingsWidgetState
   bool _calendarReminders = true;
   bool _encouragement = true;
   TimeOfDay _mealReminderTime = const TimeOfDay(hour: 7, minute: 0);
+  int _mealReminderDay = 0; // 0 = Sunday, 1 = Monday, etc. (0 = daily for now)
   TimeOfDay _quietStart = const TimeOfDay(hour: 22, minute: 0);
   TimeOfDay _quietEnd = const TimeOfDay(hour: 7, minute: 0);
   bool _isLoading = true;
@@ -50,7 +51,9 @@ class _NotificationSettingsWidgetState
       _encouragement = prefs.getBool(actions.NotificationService.keyEncouragementEnabled) ?? true;
 
       final mealHour = prefs.getInt(actions.NotificationService.keyMealReminderTime) ?? 7;
-      _mealReminderTime = TimeOfDay(hour: mealHour, minute: 0);
+      final mealMinute = prefs.getInt('${actions.NotificationService.keyMealReminderTime}_minute') ?? 0;
+      _mealReminderTime = TimeOfDay(hour: mealHour, minute: mealMinute);
+      _mealReminderDay = prefs.getInt('${actions.NotificationService.keyMealReminderTime}_day') ?? 0;
 
       final quietStartHour = prefs.getInt(actions.NotificationService.keyQuietHoursStart) ?? 22;
       final quietEndHour = prefs.getInt(actions.NotificationService.keyQuietHoursEnd) ?? 7;
@@ -69,6 +72,8 @@ class _NotificationSettingsWidgetState
     await prefs.setBool(actions.NotificationService.keyCalendarRemindersEnabled, _calendarReminders);
     await prefs.setBool(actions.NotificationService.keyEncouragementEnabled, _encouragement);
     await prefs.setInt(actions.NotificationService.keyMealReminderTime, _mealReminderTime.hour);
+    await prefs.setInt('${actions.NotificationService.keyMealReminderTime}_minute', _mealReminderTime.minute);
+    await prefs.setInt('${actions.NotificationService.keyMealReminderTime}_day', _mealReminderDay);
     await prefs.setInt(actions.NotificationService.keyQuietHoursStart, _quietStart.hour);
     await prefs.setInt(actions.NotificationService.keyQuietHoursEnd, _quietEnd.hour);
 
@@ -295,12 +300,14 @@ class _NotificationSettingsWidgetState
                             ),
 
                             // Meal reminder time
-                            if (_mealReminders)
+                            if (_mealReminders) ...[
                               _buildTimeTile(
                                 title: 'Reminder Time',
                                 time: _mealReminderTime,
                                 onTap: () => _selectTime('meal'),
                               ),
+                              _buildDayOfWeekTile(),
+                            ],
 
                             // Learning Reminders
                             _buildSettingTile(
@@ -527,6 +534,74 @@ class _NotificationSettingsWidgetState
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDayOfWeekTile() {
+    final days = ['Daily', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+      child: Container(
+        padding: const EdgeInsets.all(16.0),
+        decoration: BoxDecoration(
+          color: FlutterFlowTheme.of(context).secondaryBackground,
+          borderRadius: BorderRadius.circular(14.0),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Reminder Day',
+              style: FlutterFlowTheme.of(context).bodyMedium.override(
+                    fontFamily: 'Andika New Basic',
+                    letterSpacing: 0.0,
+                  ),
+            ),
+            const SizedBox(height: 12.0),
+            Wrap(
+              spacing: 8.0,
+              runSpacing: 8.0,
+              children: List.generate(days.length, (index) {
+                final isSelected = _mealReminderDay == index;
+                return InkWell(
+                  onTap: () async {
+                    setState(() => _mealReminderDay = index);
+                    await _saveSettings();
+                  },
+                  borderRadius: BorderRadius.circular(8.0),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? FlutterFlowTheme.of(context).primary
+                          : FlutterFlowTheme.of(context).secondaryBackground,
+                      borderRadius: BorderRadius.circular(8.0),
+                      border: Border.all(
+                        color: isSelected
+                            ? FlutterFlowTheme.of(context).primary
+                            : FlutterFlowTheme.of(context).alternate,
+                        width: 1.5,
+                      ),
+                    ),
+                    child: Text(
+                      days[index],
+                      style: FlutterFlowTheme.of(context).bodySmall.override(
+                            fontFamily: 'Andika New Basic',
+                            color: isSelected
+                                ? Colors.white
+                                : FlutterFlowTheme.of(context).primaryText,
+                            letterSpacing: 0.0,
+                            fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                          ),
+                    ),
+                  ),
+                );
+              }),
+            ),
+          ],
         ),
       ),
     );

@@ -384,6 +384,155 @@ parenting,conscious,mindful,baby,toddler,milestones,development,activities,mama,
 
 ---
 
+### **ONBOARDING STRATEGY** 🎉
+
+#### Premium Onboarding Design (2026-02-05)
+
+**Context**: App has paywall with 7-day free trial at END of onboarding. Must deliver massive value BEFORE asking for payment.
+
+**Current Model**: Freemium + Free Trial Hybrid
+- 7-day free trial to premium features
+- Paywall appears after onboarding (add child → trial starts)
+- Goal: Show value so compelling they can't imagine NOT subscribing
+
+**Competitor Research Insights**:
+- Headspace: Meditation intro before signup
+- Calm: Interactive breathing exercise first
+- Duolingo: Immediate language lesson before account
+- Principle: **Let them experience magic BEFORE friction**
+
+#### Voice & Tone Upgrades (APPROVED)
+
+Replace functional copy with emotional, specific copy:
+
+**Before → After Examples**:
+- "Track milestones and activities" → "Remember every first - from their first word to their first bike ride"
+- "Easy weekly meal plans for your family" → "Stop staring at the fridge at 5pm wondering what's for dinner"
+- "Stay organized with events and tasks" → "Finally, a calendar that works for your whole crew"
+
+**Tone Guidelines**:
+- Empathetic: "We get it, 5pm is rough"
+- Conversational: "Let's fix that" not "Configure settings"
+- Encouraging: "You're doing great!" at milestones
+- No jargon: "Add your first kiddo" not "Create child profile"
+
+#### Celebration Moments (APPROVED)
+
+**When to celebrate**:
+1. First child added → Full-screen confetti animation + "Welcome to MomRise, [Name]! 👋"
+2. First meal planned → "Your first dinner is planned! That was easy, right?"
+3. First learning path created → "🎉 [Name]'s first learning adventure begins!"
+4. First calendar event → "You're getting organized! 📅"
+
+**Implementation**:
+- Use confetti package for full-screen animations
+- Haptic feedback on celebration moments
+- Brief (1-2 seconds), not intrusive
+- Shows age-appropriate tip after celebration
+
+#### Lottie Animations (APPROVED)
+
+**Where to use**:
+1. Welcome page feature highlights:
+   - Meal planning: Fork and plate animating together
+   - Child development: Baby crawling animation
+   - Calendar: Pages flipping
+2. Loading states: Custom illustrations instead of spinners
+3. Tutorial overlays: Floating bubbles with bounce
+4. Progress indicators: Animated circles that fill
+
+**Resources**:
+- LottieFiles.com for free animations
+- Keep file sizes under 100KB each
+- Subtle loops, not distracting
+
+#### Recommended Onboarding Flow (Pre-Paywall Value Build)
+
+**Goal**: User completes 1-2 "quick wins" BEFORE seeing paywall
+
+**Flow**:
+1. **Splash Screen** → (Current - looks good)
+
+2. **Welcome Screen** → Updated copy
+   - Hero: "Let's be honest - mom life is beautiful chaos."
+   - Sub: "We're here to help with the chaos part, so you can enjoy the beautiful."
+   - Emotional feature highlights (with Lottie animations):
+     - 🍽️ "Stop staring at the fridge at 5pm wondering what's for dinner"
+     - 👶 "Remember every first - from their first word to their first bike ride"
+     - 📅 "Finally, a calendar that works for your whole crew"
+   - Button: "Let's get started"
+
+3. **Sign Up** → Quick and clear
+   - "Create your account - we'll personalize everything for you"
+   - Email/password or Google Sign-In
+   - Progress indicator: "Step 1 of 3"
+
+4. **Add First Child** → With celebration
+   - "Who are we helping you with?"
+   - After submit → **Confetti animation**
+   - "Welcome to MomRise, [Name]! 👋"
+   - Age-appropriate tip: "At 2 years old, they're learning so fast! We'll suggest activities perfect for them."
+
+5. **First Quick Win** → Critical!
+   - Don't dump them on empty home page
+   - Guided action: "Let's add your first dinner plan together"
+   - Tutorial overlay walks through meal composer
+   - They pick a recipe → "That looks delicious! 🎉 Your Tuesday dinner is planned."
+
+6. **Paywall (7-Day Free Trial)**
+   - **Timing**: After first meal is planned (they've experienced value)
+   - Copy: "You just planned dinner in 30 seconds. Imagine doing that for the whole week."
+   - **Free trial**: "Try all features free for 7 days"
+   - **Benefits list**:
+     - ✓ Unlimited meal plans
+     - ✓ AI learning paths for [Child's Name]
+     - ✓ Full calendar & activity tracker
+     - ✓ Milestone tracking & reminders
+   - **Pricing**: "$4.99/month after trial - cancel anytime"
+   - **CTA**: "Start My Free Trial"
+   - **Skip option**: "Maybe later" (goes to home page, can upgrade from settings)
+
+7. **Home Page** → Now with 1 meal already planned
+   - Not empty - shows their first action
+   - Gentle prompts for next actions
+
+#### Animation & Polish Details
+
+**Page Transitions**:
+- Smooth horizontal slides (300ms)
+- Fade + slide combo for depth
+
+**Micro-Interactions**:
+- Buttons scale slightly when pressed (0.95x)
+- Haptic feedback on important actions
+- Loading states with custom illustrations
+
+**Gradient Flow**:
+- Welcome: Teal → Pink (current brand)
+- Add child: Pink → Lavender
+- Guided action: Lavender → Mint
+- Creates visual journey
+
+#### Key Metrics to Track
+
+**Onboarding Funnel**:
+1. Welcome screen views
+2. Sign-up starts
+3. Sign-up completions
+4. First child added
+5. First "quick win" completed
+6. Paywall views
+7. Trial starts
+8. Trial → Paid conversions
+
+**Success Targets**:
+- 80%+ complete first child
+- 70%+ complete first meal plan
+- 50%+ start free trial
+- 30%+ convert trial to paid
+
+---
+
 ### **LOW PRIORITY (Post-Launch)**
 
 #### 11. **Learning Path Enhancements**
@@ -444,6 +593,19 @@ flutter build ipa --release
 **Current keystore**: `android/upload-keystore.jks`
 - Alias: upload
 - Password: consciousmama2026 (⚠️ CHANGE BEFORE PUBLIC LAUNCH)
+
+---
+
+## 📝 Notes for Future Work
+
+### Page Transitions & Animations (2026-02-04)
+**Status**: Needs revisiting - timing and implementation require more refinement
+**Context**: Attempted to implement warm page transitions for recurring event creation with white fade pattern. Issue: difficult to get smooth transitions without overlap/timing issues with Flutter's PageRouteBuilder.
+**TODO for later**:
+- Revisit warm page transitions for heavy operations (AI calls, bulk operations)
+- Consider simpler approach or different animation framework
+- May need to use Hero animations or custom animation controllers
+- Test different timing approaches for white fade pattern
 
 ---
 

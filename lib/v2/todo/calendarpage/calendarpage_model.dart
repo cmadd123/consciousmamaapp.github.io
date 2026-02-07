@@ -35,6 +35,10 @@ class CalendarpageModel extends FlutterFlowModel<CalendarpageWidget> {
   // Parent display info (loaded from current user)
   ParentDisplayInfo parentInfo = ParentDisplayInfo.defaults();
 
+  // Debug state
+  bool showDebugPanel = false;
+  List<String> debugLogs = [];
+
   ///  State fields for stateful widgets in this page.
 
   // State field(s) for Calendar widget.

@@ -18,6 +18,7 @@ import 'flutter_flow/nav/nav.dart';
 import 'flutter_flow/share_intent_handler.dart';
 import 'flutter_flow/deep_link_handler.dart';
 import 'custom_code/actions/notification_service.dart';
+import 'v2/auth/demo_data_notifier.dart';
 import 'index.dart';
 
 void main() async {
@@ -52,8 +53,11 @@ void main() async {
   // Initialize notification service
   await notificationService.initialize();
 
-  runApp(ChangeNotifierProvider(
-    create: (context) => appState,
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider(create: (context) => appState),
+      ChangeNotifierProvider(create: (context) => DemoDataNotifier()),
+    ],
     child: MyApp(),
   ));
 }

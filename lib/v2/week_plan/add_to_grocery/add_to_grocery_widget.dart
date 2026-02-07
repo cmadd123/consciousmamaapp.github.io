@@ -1,5 +1,6 @@
 import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
+import '/backend/schema/enums/enums.dart';
 import '/components/home_nav_bar_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -40,29 +41,80 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
 
   /// Helper method to get all ingredients from a meal plan entry
   /// Handles both single recipes (userFirebasemeal) and meal combos (mealComboRef)
+  /// Excludes ingredients from recipes marked as leftovers
   Future<List<String>> _getIngredientsFromMealPlan(MealPlanRecord mealPlan) async {
     List<String> allIngredients = [];
 
-    if (mealPlan.userFirebasemeal != null) {
-      // Single recipe
-      final meal = await MealRecord.getDocumentOnce(mealPlan.userFirebasemeal!);
-      allIngredients.addAll(meal.ingredients);
-    } else if (mealPlan.mealComboRef != null) {
-      // Meal combo - fetch entree and all sides
-      final combo = await MealComboRecord.getDocumentOnce(mealPlan.mealComboRef!);
+    // Skip all ingredients if custom meal is set (e.g., "Eating Out")
+    if (mealPlan.hasCustomMeal()) {
+      debugPrint('Skipping ingredients for custom meal: ${mealPlan.customMeal}');
+      return allIngredients;
+    }
 
-      // Get entree ingredients
-      if (combo.entreeRef != null) {
+    if (mealPlan.userFirebasemeal != null) {
+      // Single recipe - check leftover flags based on meal type
+      final meal = await MealRecord.getDocumentOnce(mealPlan.userFirebasemeal!);
+
+      // Determine recipe type and check corresponding leftover flag
+      bool isLeftover = false;
+      if (mealPlan.typ == MealTyp.Snacks) {
+        isLeftover = mealPlan.isLeftoverSnack;
+      } else if (meal.recipeType == RecipeType.Side) {
+        isLeftover = mealPlan.isLeftoverSide;
+      } else if (meal.recipeType == RecipeType.Dessert) {
+        isLeftover = mealPlan.isLeftoverDessert;
+      } else {
+        // Entree/Main
+        isLeftover = mealPlan.isLeftoverEntree;
+      }
+
+      debugPrint('Grocery: ${meal.recipeName} - Type: ${meal.recipeType?.name ?? "unknown"}, Leftover: $isLeftover, Ingredients: ${meal.ingredients.length}');
+
+      if (!isLeftover) {
+        allIngredients.addAll(meal.ingredients);
+        debugPrint('  -> Added ${meal.ingredients.length} ingredients');
+      } else {
+        debugPrint('  -> Skipping leftover ingredients');
+      }
+    } else if (mealPlan.mealComboRef != null) {
+      // Meal combo - fetch entree and all sides, respecting leftover flags
+      final combo = await MealComboRecord.getDocumentOnce(mealPlan.mealComboRef!);
+      debugPrint('Grocery: Meal combo - Entree leftover: ${mealPlan.isLeftoverEntree}, Side leftover: ${mealPlan.isLeftoverSide}, Dessert leftover: ${mealPlan.isLeftoverDessert}');
+
+      // Get entree ingredients (unless marked as leftover)
+      if (combo.entreeRef != null && !mealPlan.isLeftoverEntree) {
         final entree = await MealRecord.getDocumentOnce(combo.entreeRef!);
         allIngredients.addAll(entree.ingredients);
+        debugPrint('  -> Added ${entree.ingredients.length} entree ingredients (${entree.recipeName})');
+      } else if (combo.entreeRef != null && mealPlan.isLeftoverEntree) {
+        final entree = await MealRecord.getDocumentOnce(combo.entreeRef!);
+        debugPrint('  -> Skipping leftover entree: ${entree.recipeName}');
       }
 
-      // Get side ingredients
-      for (final sideRef in combo.sideRefs) {
-        final side = await MealRecord.getDocumentOnce(sideRef);
-        allIngredients.addAll(side.ingredients);
+      // Get side ingredients (unless marked as leftover)
+      if (!mealPlan.isLeftoverSide) {
+        for (final sideRef in combo.sideRefs) {
+          final side = await MealRecord.getDocumentOnce(sideRef);
+          allIngredients.addAll(side.ingredients);
+          debugPrint('  -> Added ${side.ingredients.length} side ingredients (${side.recipeName})');
+        }
+      } else if (combo.sideRefs.isNotEmpty) {
+        debugPrint('  -> Skipping leftover sides (${combo.sideRefs.length} sides)');
+      }
+
+      // Get dessert ingredients (unless marked as leftover)
+      if (!mealPlan.isLeftoverDessert) {
+        for (final dessertRef in combo.dessertRefs) {
+          final dessert = await MealRecord.getDocumentOnce(dessertRef);
+          allIngredients.addAll(dessert.ingredients);
+          debugPrint('  -> Added ${dessert.ingredients.length} dessert ingredients (${dessert.recipeName})');
+        }
+      } else if (combo.dessertRefs.isNotEmpty) {
+        debugPrint('  -> Skipping leftover desserts (${combo.dessertRefs.length} desserts)');
       }
     }
+
+    debugPrint('Grocery: Total ingredients returned: ${allIngredients.length}');
 
     return allIngredients;
   }
@@ -1197,6 +1249,22 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
       final mealDate = DateTime(meal.date!.year, meal.date!.month, meal.date!.day);
       final dateKey = dateTimeFormat('yyyy-MM-dd', mealDate, locale: 'en');
       groupedMeals.putIfAbsent(dateKey, () => []).add(meal);
+    }
+
+    // Sort meals within each day by meal type (Breakfast, Lunch, Dinner, Snacks)
+    final mealTypeOrder = {
+      MealTyp.Breakfast: 0,
+      MealTyp.Lunch: 1,
+      MealTyp.Dinner: 2,
+      MealTyp.Snacks: 3,
+    };
+
+    for (final dayMeals in groupedMeals.values) {
+      dayMeals.sort((a, b) {
+        final orderA = mealTypeOrder[a.typ] ?? 999;
+        final orderB = mealTypeOrder[b.typ] ?? 999;
+        return orderA.compareTo(orderB);
+      });
     }
 
     // Sort keys by date

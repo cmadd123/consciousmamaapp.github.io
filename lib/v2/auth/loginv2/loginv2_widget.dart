@@ -379,6 +379,7 @@ class _Loginv2WidgetState extends State<Loginv2Widget> {
 
                                 // Migration: Mark existing users as having completed onboarding
                                 // if they have children (meaning they went through the old flow)
+                                bool shouldGoToOnboarding = false;
                                 if (currentUserReference != null) {
                                   final userDoc = await UsersRecord.getDocumentOnce(currentUserReference!);
                                   if (!userDoc.onboardingCompleted) {
@@ -391,13 +392,24 @@ class _Loginv2WidgetState extends State<Loginv2Widget> {
                                       await currentUserReference!.update(createUsersRecordData(
                                         onboardingCompleted: true,
                                       ));
+                                    } else {
+                                      // User has no children and hasn't completed onboarding
+                                      shouldGoToOnboarding = true;
                                     }
                                   }
                                 }
 
-                                context.pushNamedAuth(
-                                    HomeHybridWidget.routeName,
-                                    context.mounted);
+                                // Navigate to onboarding or home based on completion status
+                                if (!context.mounted) return;
+                                if (shouldGoToOnboarding) {
+                                  context.pushNamedAuth(
+                                      PreparationWidget.routeName,
+                                      context.mounted);
+                                } else {
+                                  context.pushNamedAuth(
+                                      HomeHybridWidget.routeName,
+                                      context.mounted);
+                                }
                               },
                               text: 'Login',
                               options: FFButtonOptions(
@@ -457,27 +469,64 @@ class _Loginv2WidgetState extends State<Loginv2Widget> {
                                       hoverColor: Colors.transparent,
                                       highlightColor: Colors.transparent,
                                       onTap: () async {
-                                        GoRouter.of(context).prepareAuthEvent();
-                                        final user = await authManager
-                                            .signInWithGoogle(context);
-                                        if (user == null) {
+                                        try {
+                                          print('Google Sign-In: Starting sign-in process...');
+                                          GoRouter.of(context).prepareAuthEvent();
+                                          final user = await authManager
+                                              .signInWithGoogle(context);
+                                          print('Google Sign-In: User result = ${user?.uid ?? "null"}');
+                                          if (user == null) {
+                                            print('Google Sign-In: User is null, sign-in cancelled or failed');
+                                            if (!context.mounted) return;
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              const SnackBar(
+                                                content: Text('Google Sign-In cancelled or failed. Please try again.'),
+                                              ),
+                                            );
+                                            return;
+                                          }
+
+                                          // Check if user has completed onboarding
+                                          final userDoc = await UsersRecord.getDocumentOnce(
+                                            UsersRecord.collection.doc(user.uid),
+                                          );
+
+                                          bool shouldGoHome = userDoc.onboardingCompleted;
+
+                                          // Migration: Mark existing users as having completed onboarding
+                                          if (!userDoc.onboardingCompleted) {
+                                            final children = await queryChildernRecordOnce(
+                                              queryBuilder: (q) => q.where('userRef', isEqualTo: UsersRecord.collection.doc(user.uid)),
+                                            );
+                                            if (children.isNotEmpty) {
+                                              await UsersRecord.collection.doc(user.uid).update(createUsersRecordData(
+                                                onboardingCompleted: true,
+                                              ));
+                                              shouldGoHome = true;
+                                            }
+                                          }
+
+                                          if (!context.mounted) return;
+
+                                          if (shouldGoHome) {
+                                            context.goNamedAuth(
+                                                HomeHybridWidget.routeName,
+                                                context.mounted);
+                                          } else {
+                                            // New user or incomplete onboarding
+                                            context.goNamedAuth(
+                                                PreparationWidget.routeName,
+                                                context.mounted);
+                                          }
+                                        } catch (e) {
+                                          print('Google Sign-In Error: $e');
+                                          if (!context.mounted) return;
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(
+                                              content: Text('Google Sign-In error: ${e.toString()}'),
+                                            ),
+                                          );
                                           return;
-                                        }
-
-                                        // Check if user has completed onboarding
-                                        final userDoc = await UsersRecord.getDocumentOnce(
-                                          UsersRecord.collection.doc(user.uid),
-                                        );
-
-                                        if (userDoc.onboardingCompleted) {
-                                          context.goNamedAuth(
-                                              HomeHybridWidget.routeName,
-                                              context.mounted);
-                                        } else {
-                                          // New user or incomplete onboarding
-                                          context.goNamedAuth(
-                                              PreparationWidget.routeName,
-                                              context.mounted);
                                         }
                                       },
                                       child: Container(
@@ -545,27 +594,64 @@ class _Loginv2WidgetState extends State<Loginv2Widget> {
                                       hoverColor: Colors.transparent,
                                       highlightColor: Colors.transparent,
                                       onTap: () async {
-                                        GoRouter.of(context).prepareAuthEvent();
-                                        final user = await authManager
-                                            .signInWithApple(context);
-                                        if (user == null) {
+                                        try {
+                                          print('Apple Sign-In: Starting sign-in process...');
+                                          GoRouter.of(context).prepareAuthEvent();
+                                          final user = await authManager
+                                              .signInWithApple(context);
+                                          print('Apple Sign-In: User result = ${user?.uid ?? "null"}');
+                                          if (user == null) {
+                                            print('Apple Sign-In: User is null, sign-in cancelled or failed');
+                                            if (!context.mounted) return;
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              const SnackBar(
+                                                content: Text('Apple Sign-In cancelled or failed. Please try again.'),
+                                              ),
+                                            );
+                                            return;
+                                          }
+
+                                          // Check if user has completed onboarding
+                                          final userDoc = await UsersRecord.getDocumentOnce(
+                                            UsersRecord.collection.doc(user.uid),
+                                          );
+
+                                          bool shouldGoHome = userDoc.onboardingCompleted;
+
+                                          // Migration: Mark existing users as having completed onboarding
+                                          if (!userDoc.onboardingCompleted) {
+                                            final children = await queryChildernRecordOnce(
+                                              queryBuilder: (q) => q.where('userRef', isEqualTo: UsersRecord.collection.doc(user.uid)),
+                                            );
+                                            if (children.isNotEmpty) {
+                                              await UsersRecord.collection.doc(user.uid).update(createUsersRecordData(
+                                                onboardingCompleted: true,
+                                              ));
+                                              shouldGoHome = true;
+                                            }
+                                          }
+
+                                          if (!context.mounted) return;
+
+                                          if (shouldGoHome) {
+                                            context.goNamedAuth(
+                                                HomeHybridWidget.routeName,
+                                                context.mounted);
+                                          } else {
+                                            // New user or incomplete onboarding
+                                            context.goNamedAuth(
+                                                PreparationWidget.routeName,
+                                                context.mounted);
+                                          }
+                                        } catch (e) {
+                                          print('Apple Sign-In Error: $e');
+                                          if (!context.mounted) return;
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(
+                                              content: Text('Apple Sign-In error: ${e.toString()}'),
+                                            ),
+                                          );
                                           return;
-                                        }
-
-                                        // Check if user has completed onboarding
-                                        final userDoc = await UsersRecord.getDocumentOnce(
-                                          UsersRecord.collection.doc(user.uid),
-                                        );
-
-                                        if (userDoc.onboardingCompleted) {
-                                          context.goNamedAuth(
-                                              HomeHybridWidget.routeName,
-                                              context.mounted);
-                                        } else {
-                                          // New user or incomplete onboarding
-                                          context.goNamedAuth(
-                                              PreparationWidget.routeName,
-                                              context.mounted);
                                         }
                                       },
                                       child: Container(

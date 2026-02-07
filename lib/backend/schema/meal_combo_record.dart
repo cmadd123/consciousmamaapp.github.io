@@ -34,6 +34,11 @@ class MealComboRecord extends FirestoreRecord {
   List<DocumentReference> get sideRefs => _sideRefs ?? const [];
   bool hasSideRefs() => _sideRefs != null;
 
+  // "dessert_refs" field - List of references to dessert recipes (0-2)
+  List<DocumentReference>? _dessertRefs;
+  List<DocumentReference> get dessertRefs => _dessertRefs ?? const [];
+  bool hasDessertRefs() => _dessertRefs != null && _dessertRefs!.isNotEmpty;
+
   // "drink_type" field - Simple drink selection from enum
   DrinkType? _drinkType;
   DrinkType? get drinkType => _drinkType;
@@ -83,6 +88,7 @@ class MealComboRecord extends FirestoreRecord {
     _name = snapshotData['name'] as String?;
     _entreeRef = snapshotData['entree_ref'] as DocumentReference?;
     _sideRefs = getDataList(snapshotData['side_refs']);
+    _dessertRefs = getDataList(snapshotData['dessert_refs']);
     _drinkType = snapshotData['drink_type'] is DrinkType
         ? snapshotData['drink_type']
         : deserializeEnum<DrinkType>(snapshotData['drink_type']);
@@ -173,6 +179,7 @@ class MealComboRecordDocumentEquality implements Equality<MealComboRecord> {
     return e1?.name == e2?.name &&
         e1?.entreeRef == e2?.entreeRef &&
         listEquality.equals(e1?.sideRefs, e2?.sideRefs) &&
+        listEquality.equals(e1?.dessertRefs, e2?.dessertRefs) &&
         e1?.drinkType == e2?.drinkType &&
         e1?.drinkCustom == e2?.drinkCustom &&
         e1?.rating == e2?.rating &&
@@ -189,6 +196,7 @@ class MealComboRecordDocumentEquality implements Equality<MealComboRecord> {
         e?.name,
         e?.entreeRef,
         e?.sideRefs,
+        e?.dessertRefs,
         e?.drinkType,
         e?.drinkCustom,
         e?.rating,

@@ -94,13 +94,13 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
       refreshListenable: appStateNotifier,
       navigatorKey: appNavigatorKey,
       errorBuilder: (context, state) =>
-          appStateNotifier.loggedIn ? HomeHybridWidget() : WelcomeWidget(),
+          OnboardingSelectorWidget(),
       routes: [
         FFRoute(
           name: '_initialize',
           path: '/',
           builder: (context, _) =>
-              appStateNotifier.loggedIn ? HomeHybridWidget() : WelcomeWidget(),
+              OnboardingSelectorWidget(),
         ),
         FFRoute(
           name: HomePageWidget.routeName,
@@ -126,6 +126,60 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           name: SignUpWidget.routeName,
           path: SignUpWidget.routePath,
           builder: (context, params) => SignUpWidget(),
+        ),
+        FFRoute(
+          name: OnboardingSelectorWidget.routeName,
+          path: OnboardingSelectorWidget.routePath,
+          builder: (context, params) => OnboardingSelectorWidget(),
+        ),
+        FFRoute(
+          name: WelcomeEnhancedWidget.routeName,
+          path: WelcomeEnhancedWidget.routePath,
+          builder: (context, params) => WelcomeEnhancedWidget(),
+        ),
+        FFRoute(
+          name: AddChildEnhancedWidget.routeName,
+          path: AddChildEnhancedWidget.routePath,
+          builder: (context, params) => AddChildEnhancedWidget(),
+        ),
+        FFRoute(
+          name: ParentSetupEnhancedWidget.routeName,
+          path: ParentSetupEnhancedWidget.routePath,
+          builder: (context, params) => ParentSetupEnhancedWidget(),
+        ),
+        FFRoute(
+          name: FeaturesEnhancedWidget.routeName,
+          path: FeaturesEnhancedWidget.routePath,
+          builder: (context, params) => FeaturesEnhancedWidget(),
+        ),
+        FFRoute(
+          name: MealIntroTransitionWidget.routeName,
+          path: MealIntroTransitionWidget.routePath,
+          builder: (context, params) => MealIntroTransitionWidget(),
+        ),
+        FFRoute(
+          name: DaySelectorDemoWidget.routeName,
+          path: DaySelectorDemoWidget.routePath,
+          builder: (context, params) => DaySelectorDemoWidget(),
+        ),
+        FFRoute(
+          name: MealPlanDemoWidget.routeName,
+          path: MealPlanDemoWidget.routePath,
+          builder: (context, params) => MealPlanDemoWidget(
+            selectedDays: params.getParam(
+              'selectedDays',
+              ParamType.int,
+              isList: true,
+            ) as List<int>?,
+          ),
+        ),
+        FFRoute(
+          name: MealComposerDemoWidget.routeName,
+          path: MealComposerDemoWidget.routePath,
+          builder: (context, params) => MealComposerDemoWidget(
+            mealName: params.getParam('mealName', ParamType.String)!,
+            dayIndex: params.getParam('dayIndex', ParamType.int)!,
+          ),
         ),
         FFRoute(
           // Meals route now points to v2 CreateMealPlan (weekly meal planning)

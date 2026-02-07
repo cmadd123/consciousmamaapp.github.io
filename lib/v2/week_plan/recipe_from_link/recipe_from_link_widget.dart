@@ -1004,10 +1004,9 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                             Wrap(
                               spacing: 8.0,
                               runSpacing: 8.0,
-                              children: ['Breakfast', 'Lunch', 'Dinner', 'Side', 'Snacks'].map((category) {
+                              children: ['Breakfast', 'Lunch', 'Dinner', 'Side', 'Snacks', 'Desserts'].map((category) {
                                 final isSelected = _model.selectedCategories.contains(category);
-                                // Display "Snacks/Desserts" for "Snacks" category
-                                final displayText = category == 'Snacks' ? 'Snacks/Desserts' : category;
+                                final displayText = category;
                                 return InkWell(
                                   onTap: () {
                                     setState(() {

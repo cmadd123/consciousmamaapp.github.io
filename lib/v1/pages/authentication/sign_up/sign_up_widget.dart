@@ -2,6 +2,7 @@ import '/auth/firebase_auth/auth_util.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
+import '/v2/auth/demo_data_notifier.dart';
 import 'dart:ui';
 import '/index.dart';
 import 'package:flutter/gestures.dart';
@@ -410,7 +411,43 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                               0.0, 0.0, 0.0, 16.0),
                           child: FFButtonWidget(
                             onPressed: () async {
-                              context.pushNamed(FirstChildWidget.routeName);
+                              // Validate inputs
+                              if (_model.textController2?.text.isEmpty ?? true) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text('Please enter your email')),
+                                );
+                                return;
+                              }
+                              if (_model.textController3?.text.isEmpty ?? true) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text('Please enter your password')),
+                                );
+                                return;
+                              }
+
+                              // Create account with email/password
+                              GoRouter.of(context).prepareAuthEvent();
+
+                              final user = await authManager.createAccountWithEmail(
+                                context,
+                                _model.textController2!.text,  // email
+                                _model.textController3!.text,  // password
+                              );
+
+                              if (user == null) {
+                                return;
+                              }
+
+                              if (!mounted) return;
+
+                              // Save demo data to Firestore
+                              final demoData = Provider.of<DemoDataNotifier>(context, listen: false);
+                              await demoData.saveToFirestore();
+
+                              // Navigate to paywall
+                              if (mounted) {
+                                context.goNamedAuth('paimentCopy', mounted);
+                              }
                             },
                             text: 'Create account',
                             options: FFButtonOptions(
@@ -476,9 +513,14 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                                         return;
                                       }
 
-                                      context.goNamedAuth(
-                                          HomeHybridWidget.routeName,
-                                          context.mounted);
+                                      // Save demo data to Firestore
+                                      final demoData = Provider.of<DemoDataNotifier>(context, listen: false);
+                                      await demoData.saveToFirestore();
+
+                                      // Navigate to paywall
+                                      if (context.mounted) {
+                                        context.goNamedAuth('paimentCopy', context.mounted);
+                                      }
                                     },
                                     child: Container(
                                       height: 48.0,
@@ -551,9 +593,14 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                                         return;
                                       }
 
-                                      context.goNamedAuth(
-                                          HomeHybridWidget.routeName,
-                                          context.mounted);
+                                      // Save demo data to Firestore
+                                      final demoData = Provider.of<DemoDataNotifier>(context, listen: false);
+                                      await demoData.saveToFirestore();
+
+                                      // Navigate to paywall
+                                      if (context.mounted) {
+                                        context.goNamedAuth('paimentCopy', context.mounted);
+                                      }
                                     },
                                     child: Container(
                                       height: 48.0,

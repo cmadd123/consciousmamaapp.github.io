@@ -440,7 +440,7 @@ class _MyActivitiesWidgetState extends State<MyActivitiesWidget> {
                     _buildColoredTag(
                       text: activity.cleanupDifficulty,
                       chipColor: activity.cleanupDifficulty == 'easy'
-                          ? const Color(0xFF4CAF50) // Green
+                          ? const Color(0xFF52A097) // Teal (matches app primary)
                           : activity.cleanupDifficulty == 'medium'
                               ? const Color(0xFFFF9800) // Orange
                               : const Color(0xFFF44336), // Red
@@ -1135,9 +1135,9 @@ class _CreateActivityBottomSheetState extends State<CreateActivityBottomSheet> {
                       runSpacing: 8.0,
                       children: _cleanupOptions.map((cleanup) {
                         final isSelected = _selectedCleanupDifficulty == cleanup;
-                        // Traffic light colors: green=easy, orange=medium, red=hard
+                        // Color scheme: teal=easy, orange=medium, red=hard
                         final chipColor = cleanup == 'easy'
-                            ? const Color(0xFF4CAF50) // Green
+                            ? const Color(0xFF52A097) // Teal (matches app primary)
                             : cleanup == 'medium'
                                 ? const Color(0xFFFF9800) // Orange
                                 : const Color(0xFFF44336); // Red

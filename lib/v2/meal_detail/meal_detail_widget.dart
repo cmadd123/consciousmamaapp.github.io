@@ -28,6 +28,7 @@ class MealDetailWidget extends StatefulWidget {
 class _MealDetailWidgetState extends State<MealDetailWidget> {
   MealRecord? _entree;
   List<MealRecord> _sides = [];
+  List<MealRecord> _desserts = [];
   MealComboRecord? _mealCombo;
   bool _isLoading = true;
 
@@ -59,6 +60,14 @@ class _MealDetailWidgetState extends State<MealDetailWidget> {
             final sideDoc = await sideRef.get();
             if (sideDoc.exists) {
               _sides.add(MealRecord.fromSnapshot(sideDoc));
+            }
+          }
+
+          // Load desserts
+          for (final dessertRef in _mealCombo!.dessertRefs) {
+            final dessertDoc = await dessertRef.get();
+            if (dessertDoc.exists) {
+              _desserts.add(MealRecord.fromSnapshot(dessertDoc));
             }
           }
         }

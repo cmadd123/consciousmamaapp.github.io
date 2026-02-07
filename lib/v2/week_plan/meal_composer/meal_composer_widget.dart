@@ -5,6 +5,7 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/index.dart';
 import '/components/share_content_bottom_sheet.dart';
+import '/components/animated_press_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
@@ -38,11 +39,21 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
   // Current meal composition state
   MealRecord? _selectedEntree;
   List<MealRecord> _selectedSides = [];
+  List<MealRecord> _selectedDesserts = [];
   DrinkType? _selectedDrinkType;
   String? _customDrinkName;
 
   // For snacks mode - just a list of items
   List<MealRecord> _selectedSnackItems = [];
+
+  // Leftover toggles for each recipe type
+  bool _isLeftoverEntree = false;
+  bool _isLeftoverSide = false;
+  bool _isLeftoverDessert = false;
+  bool _isLeftoverSnack = false;
+
+  // Custom meal field (e.g., "Eating Out", "Pizza Delivery")
+  final TextEditingController _customMealController = TextEditingController();
 
   // Notes for this meal plan
   final TextEditingController _notesController = TextEditingController();
@@ -53,7 +64,6 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
 
   // Available recipes (loaded once)
   List<MealRecord> _userRecipes = [];
-  List<MealRecord> _curatedRecipes = [];
 
   // For template creation - allow selecting meal type
   MealTyp? _selectedMealType;
@@ -63,13 +73,19 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
     super.initState();
     // Initialize selected meal type (for template creation, start with widget.mealType)
     _selectedMealType = widget.mealType;
-    _loadExistingMeal();
-    _loadRecipes();
+    // Load data sequentially to avoid multiple rapid setState calls
+    _loadDataSequentially();
+  }
+
+  Future<void> _loadDataSequentially() async {
+    await _loadExistingMeal();
+    await _loadRecipes();
   }
 
   @override
   void dispose() {
     _notesController.dispose();
+    _customMealController.dispose();
     super.dispose();
   }
 
@@ -95,8 +111,17 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
             }
           }
 
+          for (final dessertRef in combo.dessertRefs) {
+            final dessertDoc = await dessertRef.get();
+            if (dessertDoc.exists) {
+              _selectedDesserts.add(MealRecord.fromSnapshot(dessertDoc));
+            }
+          }
+
           _selectedDrinkType = combo.drinkType;
           _customDrinkName = combo.drinkCustom;
+
+          debugPrint('MealComposer: Loaded ${_selectedSides.length} sides, ${_selectedDesserts.length} desserts, entree: ${_selectedEntree?.recipeName}');
         }
       } catch (e) {
         debugPrint('Error loading template for editing: $e');
@@ -110,6 +135,17 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
     // Load existing notes
     if (widget.existingMealPlan!.hasNotes()) {
       _notesController.text = widget.existingMealPlan!.notes;
+    }
+
+    // Load leftover flags
+    _isLeftoverEntree = widget.existingMealPlan!.isLeftoverEntree;
+    _isLeftoverSide = widget.existingMealPlan!.isLeftoverSide;
+    _isLeftoverDessert = widget.existingMealPlan!.isLeftoverDessert;
+    _isLeftoverSnack = widget.existingMealPlan!.isLeftoverSnack;
+
+    // Load custom meal text
+    if (widget.existingMealPlan!.hasCustomMeal()) {
+      _customMealController.text = widget.existingMealPlan!.customMeal;
     }
 
     try {
@@ -133,8 +169,17 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
             }
           }
 
+          for (final dessertRef in combo.dessertRefs) {
+            final dessertDoc = await dessertRef.get();
+            if (dessertDoc.exists) {
+              _selectedDesserts.add(MealRecord.fromSnapshot(dessertDoc));
+            }
+          }
+
           _selectedDrinkType = combo.drinkType;
           _customDrinkName = combo.drinkCustom;
+
+          debugPrint('MealComposer: Loaded ${_selectedSides.length} sides, ${_selectedDesserts.length} desserts, entree: ${_selectedEntree?.recipeName}');
         }
       } else if (widget.existingMealPlan!.userFirebasemeal != null) {
         final mealDoc = await widget.existingMealPlan!.userFirebasemeal!.get();
@@ -152,16 +197,14 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
     } catch (e) {
       debugPrint('Error loading existing meal: $e');
     }
+    // Single setState at the end of loading existing meal
+    if (mounted) setState(() {});
   }
 
   Future<void> _loadRecipes() async {
     try {
       _userRecipes = await queryMealRecordOnce(
         queryBuilder: (q) => q.where('user_ref', isEqualTo: currentUserReference),
-      );
-
-      _curatedRecipes = await queryMealRecordOnce(
-        queryBuilder: (q) => q.where('is_curated', isEqualTo: true),
       );
 
       if (mounted) {
@@ -178,9 +221,26 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
   List<MealRecord> _getFilteredRecipes(RecipeType? type, {bool userOnly = false, bool curatedOnly = false}) {
     List<MealRecord> recipes = [];
     if (!curatedOnly) recipes.addAll(_userRecipes);
-    if (!userOnly) recipes.addAll(_curatedRecipes);
     if (type == null) return recipes;
-    return recipes.where((r) => r.recipeType == type).toList();
+
+    // Filter by BOTH recipe type (Entree/Side/Dessert) AND meal type (Breakfast/Lunch/Dinner)
+    return recipes.where((r) {
+      // Must match the recipe type (Entree, Side, Dessert)
+      if (r.recipeType != type) return false;
+
+      // If recipe has a meal type specified, it must match the current meal being composed
+      // (e.g., don't show breakfast entrees when composing dinner)
+      if (r.hasMealTyp() && r.mealTyp.isNotEmpty) {
+        final recipeMealType = r.mealTyp.toLowerCase();
+        final currentMealType = widget.mealType.name.toLowerCase();
+
+        // Only show recipes that match the current meal type
+        return recipeMealType == currentMealType;
+      }
+
+      // If recipe has no meal type specified, show it for all meals (universal recipe)
+      return true;
+    }).toList();
   }
 
   bool get _canSaveAsMeal {
@@ -192,6 +252,11 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
   }
 
   bool get _hasAnyItems {
+    // Check if custom meal text is entered
+    if (_customMealController.text.trim().isNotEmpty) {
+      return true;
+    }
+
     if (widget.mealType == MealTyp.Snacks) {
       return _selectedSnackItems.isNotEmpty;
     }
@@ -233,7 +298,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
                 _buildAppBar(context, theme),
                 Expanded(
                   child: _isLoading
-                      ? Center(child: CircularProgressIndicator(color: theme.primary))
+                      ? Center(child: BouncingDots(color: theme.primary, size: 12.0))
                       : SingleChildScrollView(
                           padding: EdgeInsets.all(16.0),
                           child: isSnacks ? _buildSnacksLayout(context) : _buildMealLayout(context),
@@ -486,6 +551,8 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
           context,
           title: 'ENTREE',
           icon: Icons.restaurant,
+          isLeftover: _isLeftoverEntree,
+          onLeftoverChanged: (value) => setState(() => _isLeftoverEntree = value),
           child: _buildSlot(
             context,
             item: _selectedEntree,
@@ -500,6 +567,8 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
           context,
           title: 'SIDES',
           icon: Icons.grain,
+          isLeftover: _isLeftoverSide,
+          onLeftoverChanged: (value) => setState(() => _isLeftoverSide = value),
           child: Wrap(
             spacing: 12.0,
             runSpacing: 12.0,
@@ -520,6 +589,30 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
 
         _buildSection(
           context,
+          title: 'DESSERTS',
+          icon: Icons.cake,
+          isLeftover: _isLeftoverDessert,
+          onLeftoverChanged: (value) => setState(() => _isLeftoverDessert = value),
+          child: Wrap(
+            spacing: 12.0,
+            runSpacing: 12.0,
+            children: [
+              ..._selectedDesserts.asMap().entries.map((entry) => _buildCompactSlot(
+                context,
+                item: entry.value,
+                slotType: _SlotType.dessert,
+                index: entry.key,
+                onRemove: () => setState(() => _selectedDesserts.removeAt(entry.key)),
+              )),
+              if (_selectedDesserts.length < 2)
+                _buildAddButton(context, _SlotType.dessert, 'Add dessert'),
+            ],
+          ),
+        ),
+        SizedBox(height: 20.0),
+
+        _buildSection(
+          context,
           title: 'DRINKS',
           icon: Icons.local_drink,
           child: _buildDrinkSlot(context),
@@ -527,6 +620,10 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
         SizedBox(height: 20.0),
 
         _buildNotesSection(context),
+        SizedBox(height: 20.0),
+
+        // Custom meal field
+        _buildCustomMealField(context),
         SizedBox(height: 100.0),
       ],
     );
@@ -540,6 +637,8 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
           context,
           title: 'SNACKS',
           icon: Icons.cookie,
+          isLeftover: _isLeftoverSnack,
+          onLeftoverChanged: (value) => setState(() => _isLeftoverSnack = value),
           child: Wrap(
             spacing: 12.0,
             runSpacing: 12.0,
@@ -573,6 +672,78 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
   }
 
   /// Build the notes section for meal planning
+  Widget _buildCustomMealField(BuildContext context) {
+    final theme = FlutterFlowTheme.of(context);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Container(
+              padding: EdgeInsets.all(8.0),
+              decoration: BoxDecoration(
+                color: Color(0xFFFF9800).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              child: Icon(Icons.edit_note, size: 18.0, color: Color(0xFFFF9800)),
+            ),
+            SizedBox(width: 12.0),
+            Text(
+              'Or, add custom meal',
+              style: theme.bodyLarge.override(
+                fontFamily: 'Andika New Basic',
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF5D4E60),
+                letterSpacing: 0.0,
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 14.0),
+        TextField(
+          controller: _customMealController,
+          decoration: InputDecoration(
+            hintText: 'E.g., "Eating Out", "Pizza Delivery", "Takeout"',
+            hintStyle: TextStyle(
+              fontSize: 14.0,
+              color: Color(0xFF999999),
+              fontFamily: 'Andika New Basic',
+            ),
+            filled: true,
+            fillColor: Color(0xFFF9F9F9),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12.0),
+              borderSide: BorderSide(color: Color(0xFFE0E0E0)),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12.0),
+              borderSide: BorderSide(color: Color(0xFFE0E0E0)),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12.0),
+              borderSide: BorderSide(color: theme.primary, width: 2.0),
+            ),
+            contentPadding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
+          ),
+          style: TextStyle(
+            fontSize: 14.0,
+            fontFamily: 'Andika New Basic',
+          ),
+        ),
+        SizedBox(height: 8.0),
+        Text(
+          'Leave blank if using recipes above',
+          style: TextStyle(
+            fontSize: 12.0,
+            color: Color(0xFF999999),
+            fontFamily: 'Andika New Basic',
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildNotesSection(BuildContext context) {
     final theme = FlutterFlowTheme.of(context);
     return Column(
@@ -642,6 +813,8 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
     required String title,
     required IconData icon,
     required Widget child,
+    bool? isLeftover,
+    ValueChanged<bool>? onLeftoverChanged,
   }) {
     final theme = FlutterFlowTheme.of(context);
     // Convert ALL CAPS to Title Case for warmth
@@ -663,15 +836,54 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
               child: Icon(icon, size: 18.0, color: theme.primary),
             ),
             SizedBox(width: 12.0),
-            Text(
-              friendlyTitle,
-              style: theme.bodyLarge.override(
-                fontFamily: 'Andika New Basic',
-                fontWeight: FontWeight.w600,
-                color: Color(0xFF5D4E60), // Warm purple-grey
-                letterSpacing: 0.0,
+            Expanded(
+              child: Text(
+                friendlyTitle,
+                style: theme.bodyLarge.override(
+                  fontFamily: 'Andika New Basic',
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF5D4E60), // Warm purple-grey
+                  letterSpacing: 0.0,
+                ),
               ),
             ),
+            // Leftover toggle (if enabled)
+            if (isLeftover != null && onLeftoverChanged != null)
+              InkWell(
+                onTap: () => onLeftoverChanged(!isLeftover),
+                borderRadius: BorderRadius.circular(8.0),
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+                  decoration: BoxDecoration(
+                    color: isLeftover ? Color(0xFFFF9800).withOpacity(0.1) : Colors.transparent,
+                    borderRadius: BorderRadius.circular(8.0),
+                    border: Border.all(
+                      color: isLeftover ? Color(0xFFFF9800) : Color(0xFFE0E0E0),
+                      width: 1.5,
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        isLeftover ? Icons.check_box : Icons.check_box_outline_blank,
+                        size: 18.0,
+                        color: isLeftover ? Color(0xFFFF9800) : Color(0xFF999999),
+                      ),
+                      SizedBox(width: 6.0),
+                      Text(
+                        'Leftover',
+                        style: TextStyle(
+                          fontSize: 13.0,
+                          fontFamily: 'Andika New Basic',
+                          fontWeight: FontWeight.w600,
+                          color: isLeftover ? Color(0xFFFF9800) : Color(0xFF666666),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
           ],
         ),
         SizedBox(height: 14.0),
@@ -1000,6 +1212,9 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
             fit: BoxFit.cover,
             placeholder: (_, __) => _buildPlaceholder(recipe, size),
             errorWidget: (_, __, ___) => _buildPlaceholder(recipe, size),
+            // Reduce fade duration to minimize stutter
+            fadeInDuration: Duration(milliseconds: 50),
+            fadeOutDuration: Duration(milliseconds: 50),
           )
         : _buildPlaceholder(recipe, size);
 
@@ -1067,7 +1282,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
   }
 
   /// Show recipe picker with My Recipes / Discover tabs
-  /// Filters by recipe type for entrees and sides, shows all for snacks
+  /// Filters by recipe type for entrees, sides, and desserts, shows all for snacks
   void _showRecipePicker(_SlotType slotType) {
     RecipeType? filterType;
     String title;
@@ -1079,6 +1294,10 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
       case _SlotType.side:
         filterType = RecipeType.Side;
         title = 'Add Side';
+        break;
+      case _SlotType.dessert:
+        filterType = RecipeType.Dessert;
+        title = 'Add Dessert';
         break;
       case _SlotType.snackItem:
         filterType = null; // Show all recipes for snacks
@@ -1094,7 +1313,6 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
         title: title,
         filterType: filterType,
         userRecipes: _userRecipes,
-        curatedRecipes: _curatedRecipes,
         onSelect: (recipe) {
           Navigator.pop(sheetContext);
           _addRecipeToSlot(recipe, slotType);
@@ -1116,6 +1334,9 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
         case _SlotType.side:
           if (_selectedSides.length < 3) _selectedSides.add(recipe);
           break;
+        case _SlotType.dessert:
+          if (_selectedDesserts.length < 2) _selectedDesserts.add(recipe);
+          break;
         case _SlotType.snackItem:
           if (_selectedSnackItems.length < 6) _selectedSnackItems.add(recipe);
           break;
@@ -1136,6 +1357,10 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
         filterType = RecipeType.Side;
         title = 'Change Side';
         break;
+      case _SlotType.dessert:
+        filterType = RecipeType.Dessert;
+        title = 'Change Dessert';
+        break;
       case _SlotType.snackItem:
         filterType = null; // Show all recipes for snacks
         title = 'Change Snack';
@@ -1150,7 +1375,6 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
         title: title,
         filterType: filterType,
         userRecipes: _userRecipes,
-        curatedRecipes: _curatedRecipes,
         onSelect: (recipe) {
           Navigator.pop(sheetContext);
           _replaceRecipeAtIndex(recipe, slotType, index);
@@ -1173,6 +1397,11 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
         case _SlotType.side:
           if (index < _selectedSides.length) {
             _selectedSides[index] = recipe;
+          }
+          break;
+        case _SlotType.dessert:
+          if (index < _selectedDesserts.length) {
+            _selectedDesserts[index] = recipe;
           }
           break;
         case _SlotType.snackItem:
@@ -1714,6 +1943,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
         createdTime: DateTime.now(),
       );
       comboData['side_refs'] = _selectedSides.map((s) => s.reference).toList();
+      comboData['dessert_refs'] = _selectedDesserts.map((d) => d.reference).toList();
 
       // If editing an existing template, update it
       if (widget.editTemplateId != null && widget.editTemplateId != 'new') {
@@ -1753,13 +1983,59 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
     setState(() => _isSaving = true);
 
     final notes = _notesController.text.trim();
+    final customMeal = _customMealController.text.trim();
 
     try {
-      // If updating an existing meal plan, just update the notes
+      // If custom meal is provided, save it directly (no recipes needed)
+      if (customMeal.isNotEmpty) {
+        await MealPlanRecord.collection.doc().set(
+          createMealPlanRecordData(
+            date: widget.date,
+            typ: widget.mealType,
+            userRef: currentUserReference,
+            customMeal: customMeal,
+            notes: notes.isNotEmpty ? notes : null,
+          ),
+        );
+
+        FFAppState().MealCashtearm = true;
+        if (mounted) Navigator.pop(context);
+        return;
+      }
+
+      // If updating an existing meal plan, update both the meal plan notes AND the combo if it exists
       if (widget.existingMealPlan != null) {
+        // Update notes and leftover flags on the meal plan
         await widget.existingMealPlan!.reference.update({
           'notes': notes.isNotEmpty ? notes : null,
+          'is_leftover_entree': _isLeftoverEntree,
+          'is_leftover_side': _isLeftoverSide,
+          'is_leftover_dessert': _isLeftoverDessert,
+          'is_leftover_snack': _isLeftoverSnack,
         });
+
+        // If this meal plan has a combo, update the combo's sides/desserts/drinks
+        if (widget.existingMealPlan!.mealComboRef != null) {
+          final comboRef = widget.existingMealPlan!.mealComboRef!;
+
+          // Build updated combo data
+          final comboData = createMealComboRecordData(
+            entreeRef: _selectedEntree?.reference,
+            drinkType: _selectedDrinkType,
+            drinkCustom: _customDrinkName,
+            mealTyp: widget.mealType,
+          );
+
+          // Add lists separately (can't use createMealComboRecordData for lists)
+          final Map<String, dynamic> fullData = Map<String, dynamic>.from(comboData);
+          fullData['side_refs'] = _selectedSides.map((s) => s.reference).toList();
+          fullData['dessert_refs'] = _selectedDesserts.map((d) => d.reference).toList();
+
+          debugPrint('Updating meal combo with ${_selectedSides.length} sides, ${_selectedDesserts.length} desserts');
+
+          await comboRef.update(fullData);
+        }
+
         FFAppState().MealCashtearm = true;
         if (mounted) Navigator.pop(context);
         return;
@@ -1767,7 +2043,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
 
       // Creating a new meal plan
       if (_selectedEntree != null) {
-        if (_selectedSides.isNotEmpty || _selectedDrinkType != null) {
+        if (_selectedSides.isNotEmpty || _selectedDesserts.isNotEmpty || _selectedDrinkType != null) {
           final comboData = createMealComboRecordData(
             name: '',
             entreeRef: _selectedEntree!.reference,
@@ -1778,6 +2054,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
             createdTime: DateTime.now(),
           );
           comboData['side_refs'] = _selectedSides.map((s) => s.reference).toList();
+          comboData['dessert_refs'] = _selectedDesserts.map((d) => d.reference).toList();
 
           final comboRef = await MealComboRecord.collection.add(comboData);
 
@@ -1788,6 +2065,10 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
               userRef: currentUserReference,
               mealComboRef: comboRef,
               notes: notes.isNotEmpty ? notes : null,
+              isLeftoverEntree: _isLeftoverEntree,
+              isLeftoverSide: _isLeftoverSide,
+              isLeftoverDessert: _isLeftoverDessert,
+              isLeftoverSnack: _isLeftoverSnack,
             ),
           );
         } else {
@@ -1798,6 +2079,10 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
               userRef: currentUserReference,
               userFirebasemeal: _selectedEntree!.reference,
               notes: notes.isNotEmpty ? notes : null,
+              isLeftoverEntree: _isLeftoverEntree,
+              isLeftoverSide: _isLeftoverSide,
+              isLeftoverDessert: _isLeftoverDessert,
+              isLeftoverSnack: _isLeftoverSnack,
             ),
           );
         }
@@ -1826,7 +2111,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
           ),
         );
       } else if (_selectedSnackItems.isNotEmpty) {
-        // For snacks, only the first one gets the notes
+        // For snacks, only the first one gets the notes and leftover flag
         for (int i = 0; i < _selectedSnackItems.length; i++) {
           await MealPlanRecord.collection.doc().set(
             createMealPlanRecordData(
@@ -1835,6 +2120,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
               userRef: currentUserReference,
               userFirebasemeal: _selectedSnackItems[i].reference,
               notes: i == 0 && notes.isNotEmpty ? notes : null,
+              isLeftoverSnack: i == 0 ? _isLeftoverSnack : false,  // Only first snack item gets the leftover flag
             ),
           );
         }
@@ -1870,7 +2156,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
   }
 }
 
-enum _SlotType { entree, side, snackItem }
+enum _SlotType { entree, side, dessert, snackItem }
 
 /// Drink Picker Bottom Sheet
 class _DrinkPickerSheet extends StatelessWidget {
@@ -1981,7 +2267,6 @@ class _RecipePickerSheet extends StatefulWidget {
     required this.title,
     required this.filterType,
     required this.userRecipes,
-    required this.curatedRecipes,
     required this.onSelect,
     required this.onCreateNew,
   });
@@ -1989,7 +2274,6 @@ class _RecipePickerSheet extends StatefulWidget {
   final String title;
   final RecipeType? filterType;
   final List<MealRecord> userRecipes;
-  final List<MealRecord> curatedRecipes;
   final Function(MealRecord) onSelect;
   final VoidCallback onCreateNew;
 
@@ -1998,16 +2282,9 @@ class _RecipePickerSheet extends StatefulWidget {
 }
 
 class _RecipePickerSheetState extends State<_RecipePickerSheet> {
-  int _selectedTab = 0; // 0 = My Recipes, 1 = Discover
-
   List<MealRecord> get _filteredUserRecipes {
     if (widget.filterType == null) return widget.userRecipes;
     return widget.userRecipes.where((r) => r.recipeType == widget.filterType).toList();
-  }
-
-  List<MealRecord> get _filteredCuratedRecipes {
-    if (widget.filterType == null) return widget.curatedRecipes;
-    return widget.curatedRecipes.where((r) => r.recipeType == widget.filterType).toList();
   }
 
   @override
@@ -2040,26 +2317,10 @@ class _RecipePickerSheetState extends State<_RecipePickerSheet> {
                 style: theme.titleMedium.override(fontFamily: 'Andika New Basic', fontWeight: FontWeight.w600),
               ),
             ),
-            // Tab bar
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: 16.0),
-              decoration: BoxDecoration(
-                color: Color(0xFFF5F5F5),
-                borderRadius: BorderRadius.circular(14.0),
-              ),
-              child: Row(
-                children: [
-                  Expanded(child: _buildTab(0, 'My Recipes', _filteredUserRecipes.length)),
-                  Expanded(child: _buildTab(1, 'Discover', _filteredCuratedRecipes.length)),
-                ],
-              ),
-            ),
             SizedBox(height: 16.0),
-            // Content
+            // Content - My Recipes only
             Expanded(
-              child: _selectedTab == 0
-                  ? _buildRecipeList(_filteredUserRecipes, scrollController, showCreateButton: true)
-                  : _buildRecipeList(_filteredCuratedRecipes, scrollController, showCreateButton: false),
+              child: _buildRecipeList(_filteredUserRecipes, scrollController, showCreateButton: true),
             ),
           ],
         ),
@@ -2067,53 +2328,6 @@ class _RecipePickerSheetState extends State<_RecipePickerSheet> {
     );
   }
 
-  Widget _buildTab(int index, String label, int count) {
-    final isSelected = _selectedTab == index;
-    final theme = FlutterFlowTheme.of(context);
-
-    return InkWell(
-      onTap: () => setState(() => _selectedTab = index),
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: 10.0),
-        decoration: BoxDecoration(
-          color: isSelected ? Colors.white : Colors.transparent,
-          borderRadius: BorderRadius.circular(14.0),
-          boxShadow: isSelected
-              ? [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 4)]
-              : null,
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              label,
-              style: TextStyle(
-                fontFamily: 'Andika New Basic',
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                color: isSelected ? theme.primary : Color(0xFF666666),
-              ),
-            ),
-            SizedBox(width: 4.0),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
-              decoration: BoxDecoration(
-                color: isSelected ? theme.primary.withValues(alpha: 0.1) : Color(0xFFE0E0E0),
-                borderRadius: BorderRadius.circular(14.0),
-              ),
-              child: Text(
-                '$count',
-                style: TextStyle(
-                  fontSize: 11.0,
-                  fontWeight: FontWeight.w600,
-                  color: isSelected ? theme.primary : Color(0xFF999999),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
   Widget _buildRecipeList(List<MealRecord> recipes, ScrollController controller, {required bool showCreateButton}) {
     final theme = FlutterFlowTheme.of(context);
@@ -2183,6 +2397,9 @@ class _RecipePickerSheetState extends State<_RecipePickerSheet> {
                             height: double.infinity,
                             placeholder: (_, __) => _buildPlaceholder(recipe),
                             errorWidget: (_, __, ___) => _buildPlaceholder(recipe),
+                            // Reduce fade duration to minimize stutter
+                            fadeInDuration: const Duration(milliseconds: 50),
+                            fadeOutDuration: const Duration(milliseconds: 50),
                           )
                         : _buildPlaceholder(recipe),
                   ),

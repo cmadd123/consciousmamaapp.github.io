@@ -21,6 +21,8 @@ class AddcalenderModel extends FlutterFlowModel<AddcalenderWidget> {
   bool isEndDateSelected = false;
   bool showDateError = false;
   String? recurringPattern = 'None';
+  int? repeatCount; // How many times to repeat (for recurring events)
+  Set<int> customWeeklyDays = {}; // Days of week (1=Mon, 2=Tue, ..., 7=Sun) for Custom Weekly
   List<ChildernRecord>? userChildren;
   DocumentReference? selectedChild;
   // Support for multiple children selection
@@ -36,6 +38,19 @@ class AddcalenderModel extends FlutterFlowModel<AddcalenderWidget> {
 
   // Duplicate prevention: processing flag to prevent double-tap submissions
   bool isSubmitting = false;
+
+  // Loading animation state
+  bool isCreating = false;
+  int creatingProgress = 0;
+  int creatingTotal = 0;
+  bool showLoadingCard = false;
+  bool cardExpanded = false;
+  DateTime? creationStartTime; // Track when creation started
+
+  // Delete animation state
+  bool isDeleting = false;
+  int deletingProgress = 0;
+  int deletingTotal = 0;
 
   ///  State fields for stateful widgets in this page.
 
