@@ -11,10 +11,11 @@ workflows:
       flutter: stable
       xcode: latest
       cocoapods: default
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.momrise.app
       vars:
         BUNDLE_ID: "com.momrise.app"
-        XCODE_PROJECT: "Runner.xcodeproj"
-        XCODE_SCHEME: "Runner"
 
     triggering:
       events:
@@ -29,22 +30,6 @@ workflows:
       - name: Create GoogleService-Info.plist from environment variable
         script: |
           echo "$GOOGLE_SERVICE_INFO_PLIST" > ios/Runner/GoogleService-Info.plist
-
-      - name: Set up code signing
-        script: |
-          # Initialize the macOS keychain for code signing
-          keychain initialize
-
-          # Fetch signing files (certificate + provisioning profile) from App Store Connect
-          app-store-connect fetch-signing-files "$BUNDLE_ID" \
-            --type IOS_APP_STORE \
-            --create
-
-          # Add the fetched certificates to the keychain
-          keychain add-certificates
-
-          # Apply the provisioning profiles to the Xcode project
-          xcode-project use-profiles
 
       - name: Get Flutter packages
         script: |
@@ -82,11 +67,6 @@ workflows:
       app_store_connect:
         auth: integration
         submit_to_testflight: true
-        # Note: You'll need to create "Internal Testers" group in App Store Connect first
-        # Or comment out beta_groups to upload without auto-distributing
-        # beta_groups:
-        #   - Internal Testers
-        # submit_to_app_store: false  # Enable for production releases
 
   android-workflow:
     name: Android Production Build
@@ -97,7 +77,7 @@ workflows:
       flutter: stable
       java: 17
       groups:
-        - android_signing  # Add your keystore in Codemagic UI
+        - android_signing
 
     triggering:
       events:
@@ -136,30 +116,3 @@ workflows:
         notify:
           success: true
           failure: true
-
-  # Quick build for testing (no signing)
-  ios-test-build:
-    name: iOS Test Build (Unsigned)
-    max_build_duration: 30
-    instance_type: mac_mini_m2
-
-    environment:
-      flutter: stable
-      xcode: latest
-      cocoapods: default
-
-    scripts:
-      - name: Get Flutter packages
-        script: |
-          flutter pub get
-
-      - name: Install CocoaPods dependencies
-        script: |
-          cd ios && pod install
-
-      - name: Build iOS (Debug)
-        script: |
-          flutter build ios --debug --no-codesign
-
-    artifacts:
-      - build/ios/iphoneos/*.app
