@@ -36,10 +36,10 @@ workflows:
           keychain initialize
 
           # Fetch signing files (certificate + provisioning profile) from App Store Connect
-          # --create will auto-create a profile if one doesn't exist
+          # Profile must be created manually in Apple Developer Portal with
+          # Associated Domains + Sign In with Apple capabilities
           app-store-connect fetch-signing-files "$BUNDLE_ID" \
-            --type IOS_APP_STORE \
-            --create
+            --type IOS_APP_STORE
 
           # Add the fetched certificates to the keychain
           keychain add-certificates
