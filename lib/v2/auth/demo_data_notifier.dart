@@ -2,13 +2,31 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '/auth/firebase_auth/auth_util.dart';
 
-/// Holds demo data (child + parents) entered before account creation
+/// Data class for a single child
+class ChildData {
+  final String name;
+  final DateTime birthdate;
+  final String? gender;
+  final Color? color;
+
+  ChildData({
+    required this.name,
+    required this.birthdate,
+    this.gender,
+    this.color,
+  });
+}
+
+/// Holds demo data (children + parents) entered before account creation
 /// This data is saved to Firestore after signup succeeds
 class DemoDataNotifier extends ChangeNotifier {
-  // Child data
-  String? childName;
-  DateTime? childBirthdate;
-  String? childGender;
+  // Multiple children support
+  List<ChildData> children = [];
+
+  // Legacy single-child accessors for backward compatibility
+  String? get childName => children.isNotEmpty ? children.first.name : null;
+  DateTime? get childBirthdate => children.isNotEmpty ? children.first.birthdate : null;
+  String? get childGender => children.isNotEmpty ? children.first.gender : null;
 
   // Parent data
   String? myName;
@@ -16,15 +34,33 @@ class DemoDataNotifier extends ChangeNotifier {
   String? partnerName;
   Color? partnerColor;
 
-  /// Save child info
+  /// Add a child to the list
+  void addChild({
+    required String name,
+    required DateTime birthdate,
+    String? gender,
+    Color? color,
+  }) {
+    children.add(ChildData(
+      name: name,
+      birthdate: birthdate,
+      gender: gender,
+      color: color,
+    ));
+    notifyListeners();
+  }
+
+  /// Save child info (legacy - replaces first child or adds if empty)
   void setChildInfo({
     required String name,
     required DateTime birthdate,
     String? gender,
   }) {
-    childName = name;
-    childBirthdate = birthdate;
-    childGender = gender;
+    if (children.isEmpty) {
+      children.add(ChildData(name: name, birthdate: birthdate, gender: gender));
+    } else {
+      children[0] = ChildData(name: name, birthdate: birthdate, gender: gender);
+    }
     notifyListeners();
   }
 
@@ -44,7 +80,7 @@ class DemoDataNotifier extends ChangeNotifier {
 
   /// Check if child data exists
   bool hasChildData() {
-    return childName != null && childBirthdate != null;
+    return children.isNotEmpty;
   }
 
   /// Save demo data to Firestore (called after successful signup)
@@ -55,15 +91,17 @@ class DemoDataNotifier extends ChangeNotifier {
     }
 
     try {
-      // Save child data
-      await FirebaseFirestore.instance.collection('childern').add({
-        'name': childName,
-        'birthday': childBirthdate,
-        'gender': childGender,
-        'color': myColor != null ? '#${myColor!.value.toRadixString(16).substring(2)}' : null,
-        'user_ref': FirebaseFirestore.instance.doc('users/$userId'),
-        'created_time': FieldValue.serverTimestamp(),
-      });
+      // Save all children
+      for (final child in children) {
+        await FirebaseFirestore.instance.collection('childern').add({
+          'name': child.name,
+          'birthday': child.birthdate,
+          'gender': child.gender,
+          'color': child.color != null ? '#${child.color!.value.toRadixString(16).substring(2)}' : null,
+          'user_ref': FirebaseFirestore.instance.doc('users/$userId'),
+          'created_time': FieldValue.serverTimestamp(),
+        });
+      }
 
       // Save user profile data (parent names/colors) - update user document
       if (myName != null || partnerName != null) {
@@ -83,9 +121,7 @@ class DemoDataNotifier extends ChangeNotifier {
 
   /// Clear all data (after successful save to Firestore)
   void clear() {
-    childName = null;
-    childBirthdate = null;
-    childGender = null;
+    children.clear();
     myName = null;
     myColor = null;
     partnerName = null;

@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 
@@ -404,18 +405,22 @@ Future<DateTime?> showCustomDateTimePicker({
   final result = await showModalBottomSheet<bool>(
     context: context,
     backgroundColor: Colors.transparent,
+    barrierColor: Colors.black.withOpacity(0.5),
     isScrollControlled: true,
     builder: (context) {
-      return CustomDateTimePicker(
-        initialDateTime: initialDateTime,
-        minimumDate: minimumDate,
-        maximumDate: maximumDate,
-        showTime: showTime,
-        title: title,
-        minuteInterval: minuteInterval,
-        onDateTimeChanged: (dateTime) {
-          selectedDateTime = dateTime;
-        },
+      return BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 8.0, sigmaY: 8.0),
+        child: CustomDateTimePicker(
+          initialDateTime: initialDateTime,
+          minimumDate: minimumDate,
+          maximumDate: maximumDate,
+          showTime: showTime,
+          title: title,
+          minuteInterval: minuteInterval,
+          onDateTimeChanged: (dateTime) {
+            selectedDateTime = dateTime;
+          },
+        ),
       );
     },
   );

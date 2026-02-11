@@ -3,6 +3,7 @@ import '/backend/backend.dart';
 import '/backend/schema/enums/enums.dart';
 import '/components/home_nav_bar_widget.dart';
 import '/components/animated_press_widget.dart';
+import '/components/custom_date_time_picker.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
@@ -441,6 +442,243 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
     }
     final index = mealName.hashCode.abs() % _placeholderColors.length;
     return _placeholderColors[index];
+  }
+
+  /// Show calendar picker dialog with grid view
+  Future<void> _showCalendarPicker(BuildContext context) async {
+    final startDate = DateTime.now();
+    final selectedDaysSet = <int>{}; // Track selected day indices
+
+    await showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return Dialog(
+              backgroundColor: Colors.transparent,
+              child: Container(
+                constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.8),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.15),
+                      blurRadius: 20.0,
+                      offset: const Offset(0, 10),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Header
+                    Container(
+                      padding: const EdgeInsets.all(20.0),
+                      decoration: BoxDecoration(
+                        color: FlutterFlowTheme.of(context).primary.withOpacity(0.05),
+                        borderRadius: const BorderRadius.vertical(top: Radius.circular(20.0)),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Select Dates',
+                            style: FlutterFlowTheme.of(context).titleLarge.override(
+                              fontFamily: 'Andika New Basic',
+                              fontSize: 22.0,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 0.0,
+                            ),
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.close),
+                            onPressed: () => Navigator.pop(dialogContext),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // Day headers (S M T W T F S)
+                    Container(
+                      padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: ['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day) {
+                          return Expanded(
+                            child: Text(
+                              day,
+                              textAlign: TextAlign.center,
+                              style: FlutterFlowTheme.of(context).bodySmall.override(
+                                fontFamily: 'Andika New Basic',
+                                fontSize: 14.0,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: 0.0,
+                                color: FlutterFlowTheme.of(context).secondaryText,
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                    // Calendar grid
+                    Flexible(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: _buildCalendarGrid(startDate, selectedDaysSet, setDialogState),
+                      ),
+                    ),
+                    // Footer with selection count and buttons
+                    Container(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            '${selectedDaysSet.length} ${selectedDaysSet.length == 1 ? 'date' : 'dates'} selected',
+                            style: FlutterFlowTheme.of(context).bodyLarge.override(
+                              fontFamily: 'Andika New Basic',
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.w500,
+                              letterSpacing: 0.0,
+                            ),
+                          ),
+                          FFButtonWidget(
+                            onPressed: selectedDaysSet.isEmpty
+                                ? null
+                                : () {
+                                    // Convert selected indices to dates
+                                    final selectedDates = selectedDaysSet
+                                        .map((i) => startDate.add(Duration(days: i)))
+                                        .toList()
+                                      ..sort();
+
+                                    Navigator.pop(dialogContext);
+
+                                    // Show success message with selected dates
+                                    final datesList = selectedDates
+                                        .map((d) => dateTimeFormat("MMM d", d, locale: 'en'))
+                                        .join(', ');
+
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text('Selected: $datesList'),
+                                        backgroundColor: FlutterFlowTheme.of(context).primary,
+                                        behavior: SnackBarBehavior.floating,
+                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                        margin: const EdgeInsets.only(bottom: 20, left: 16, right: 16),
+                                        duration: const Duration(seconds: 3),
+                                      ),
+                                    );
+                                  },
+                            text: 'Done',
+                            options: FFButtonOptions(
+                              height: 48.0,
+                              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                              iconPadding: const EdgeInsets.all(0.0),
+                              color: selectedDaysSet.isEmpty
+                                  ? FlutterFlowTheme.of(context).secondaryText
+                                  : FlutterFlowTheme.of(context).primary,
+                              textStyle: FlutterFlowTheme.of(context).titleMedium.override(
+                                fontFamily: 'Andika New Basic',
+                                color: Colors.white,
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: 0.0,
+                              ),
+                              elevation: 2.0,
+                              borderRadius: BorderRadius.circular(24.0),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  /// Build the calendar grid with selectable dates
+  Widget _buildCalendarGrid(DateTime startDate, Set<int> selectedDays, StateSetter setDialogState) {
+    // Get the weekday of the start date (0 = Sunday, 6 = Saturday)
+    final todayWeekday = startDate.weekday % 7;
+
+    // Generate 30 days starting from today
+    final days = List.generate(30, (index) => startDate.add(Duration(days: index)));
+
+    // Build calendar cells
+    List<Widget> calendarCells = [];
+
+    // Add empty cells for days before the first day
+    for (int i = 0; i < todayWeekday; i++) {
+      calendarCells.add(const SizedBox());
+    }
+
+    // Add day cells (up to 30 days)
+    for (int i = 0; i < days.length; i++) {
+      final day = days[i];
+      final isSelected = selectedDays.contains(i);
+      final isToday = i == 0;
+
+      calendarCells.add(
+        InkWell(
+          onTap: () {
+            setDialogState(() {
+              if (isSelected) {
+                selectedDays.remove(i);
+              } else {
+                selectedDays.add(i);
+              }
+            });
+          },
+          borderRadius: BorderRadius.circular(12.0),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            decoration: BoxDecoration(
+              color: isSelected
+                  ? FlutterFlowTheme.of(context).primary
+                  : isToday
+                      ? FlutterFlowTheme.of(context).primary.withOpacity(0.1)
+                      : Colors.transparent,
+              borderRadius: BorderRadius.circular(12.0),
+              border: isToday && !isSelected
+                  ? Border.all(
+                      color: FlutterFlowTheme.of(context).primary.withOpacity(0.3),
+                      width: 2.0,
+                    )
+                  : null,
+            ),
+            child: Center(
+              child: Text(
+                '${day.day}',
+                style: FlutterFlowTheme.of(context).bodyLarge.override(
+                  fontFamily: 'Andika New Basic',
+                  fontSize: 16.0,
+                  fontWeight: isSelected || isToday ? FontWeight.w600 : FontWeight.normal,
+                  letterSpacing: 0.0,
+                  color: isSelected
+                      ? Colors.white
+                      : FlutterFlowTheme.of(context).primaryText,
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return GridView.count(
+      crossAxisCount: 7,
+      mainAxisSpacing: 8.0,
+      crossAxisSpacing: 8.0,
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      children: calendarCells,
+    );
   }
 
   /// Show native share sheet with meal plan link
@@ -2431,6 +2669,29 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                                 child: Icon(
                                                   Icons.shopping_cart,
                                                   color: Color(0xFF9B8AA0),
+                                                  size: 20.0,
+                                                ),
+                                              ),
+                                            ),
+                                            // Date picker button (icon only) - Calendar grid view
+                                            InkWell(
+                                              splashColor: Colors.transparent,
+                                              focusColor: Colors.transparent,
+                                              hoverColor: Colors.transparent,
+                                              highlightColor: Colors.transparent,
+                                              onTap: () async {
+                                                await _showCalendarPicker(context);
+                                              },
+                                              borderRadius: BorderRadius.circular(14.0),
+                                              child: Container(
+                                                padding: EdgeInsets.all(8.0),
+                                                decoration: BoxDecoration(
+                                                  color: Color(0xFF4CAF50).withOpacity(0.15),
+                                                  borderRadius: BorderRadius.circular(14.0),
+                                                ),
+                                                child: Icon(
+                                                  Icons.calendar_month,
+                                                  color: Color(0xFF4CAF50),
                                                   size: 20.0,
                                                 ),
                                               ),

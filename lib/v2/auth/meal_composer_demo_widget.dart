@@ -1,3 +1,4 @@
+import 'dart:ui';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
@@ -850,7 +851,7 @@ class _MealComposerDemoWidgetState extends State<MealComposerDemoWidget> {
                                 ),
                                 const SizedBox(height: 12.0),
                                 Text(
-                                  'Your week is planned. No more "what\'s for dinner?" stress.',
+                                  'Your meals are planned. No more "what\'s for dinner?" stress.',
                                   textAlign: TextAlign.center,
                                   style: FlutterFlowTheme.of(context).bodyLarge.override(
                                     fontFamily: 'Andika New Basic',
@@ -941,12 +942,19 @@ class _MealComposerDemoWidgetState extends State<MealComposerDemoWidget> {
 
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.transparent,
+      barrierColor: Colors.black.withOpacity(0.5),
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
       ),
       builder: (context) {
-        return Container(
+        return BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 8.0, sigmaY: 8.0),
+          child: Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
+          ),
           padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -983,6 +991,7 @@ class _MealComposerDemoWidgetState extends State<MealComposerDemoWidget> {
                 ),
               ),
             ],
+          ),
           ),
         );
       },

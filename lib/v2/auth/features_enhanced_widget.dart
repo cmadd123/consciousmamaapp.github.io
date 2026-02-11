@@ -1,9 +1,12 @@
+import 'dart:ui';
+
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/v2/auth/onboarding_progress_tracker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 import 'features_enhanced_model.dart';
 export 'features_enhanced_model.dart';
 
@@ -28,6 +31,16 @@ class _FeaturesEnhancedWidgetState extends State<FeaturesEnhancedWidget>
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
 
+  // Breathing animation for first card icon
+  late AnimationController _breathController;
+  late Animation<double> _breathAnimation;
+
+  // Shimmer animation for heading
+  late AnimationController _shimmerController;
+
+  // Card tap feedback scales
+  Map<int, double> _tapScales = {};
+
   // Animation controllers for each feature card
   late List<AnimationController> _cardControllers;
   late List<Animation<Offset>> _cardSlideAnimations;
@@ -45,6 +58,21 @@ class _FeaturesEnhancedWidgetState extends State<FeaturesEnhancedWidget>
     _fadeAnimation = CurvedAnimation(
       parent: _fadeController,
       curve: Curves.easeIn,
+    );
+
+    // Initialize breathing animation for first card icon
+    _breathController = AnimationController(
+      duration: const Duration(milliseconds: 2500),
+      vsync: this,
+    )..repeat(reverse: true);
+    _breathAnimation = Tween<double>(begin: 1.0, end: 1.08).animate(
+      CurvedAnimation(parent: _breathController, curve: Curves.easeInOut),
+    );
+
+    // Initialize shimmer animation for heading (runs once after delay)
+    _shimmerController = AnimationController(
+      duration: const Duration(milliseconds: 1500),
+      vsync: this,
     );
 
     // Initialize animation controllers for 5 feature cards
@@ -77,11 +105,18 @@ class _FeaturesEnhancedWidgetState extends State<FeaturesEnhancedWidget>
           }
         });
       }
+
+      // Start shimmer after initial fade completes
+      Future.delayed(const Duration(milliseconds: 1200), () {
+        if (mounted) _shimmerController.forward();
+      });
     });
   }
 
   @override
   void dispose() {
+    _breathController.dispose();
+    _shimmerController.dispose();
     _fadeController.dispose();
     _scrollController.dispose();
     for (var controller in _cardControllers) {
@@ -98,81 +133,101 @@ class _FeaturesEnhancedWidgetState extends State<FeaturesEnhancedWidget>
     required String subtitle,
     required Color iconColor,
   }) {
+    // Build the icon container
+    Widget iconWidget = Container(
+      width: 56.0,
+      height: 56.0,
+      decoration: BoxDecoration(
+        color: iconColor.withOpacity(0.15),
+        borderRadius: BorderRadius.circular(16.0),
+      ),
+      child: Center(
+        child: Text(
+          icon,
+          style: const TextStyle(fontSize: 28),
+        ),
+      ),
+    );
+
+    // Wrap first card's icon with breathing scale animation
+    if (index == 0) {
+      iconWidget = ScaleTransition(
+        scale: _breathAnimation,
+        child: iconWidget,
+      );
+    }
+
     return SlideTransition(
       position: _cardSlideAnimations[index],
       child: FadeTransition(
         opacity: _cardControllers[index],
-        child: Padding(
-          padding: const EdgeInsets.only(bottom: 20.0),
-          child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(24.0),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.85),
-              borderRadius: BorderRadius.circular(20.0),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.08),
-                  blurRadius: 16.0,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Icon
-                Container(
-                  width: 56.0,
-                  height: 56.0,
-                  decoration: BoxDecoration(
-                    color: iconColor.withOpacity(0.15),
-                    borderRadius: BorderRadius.circular(16.0),
-                  ),
-                  child: Center(
-                    child: Text(
-                      icon,
-                      style: const TextStyle(fontSize: 28),
+        child: GestureDetector(
+          onTapDown: (_) => setState(() => _tapScales[index] = 0.97),
+          onTapUp: (_) => setState(() => _tapScales.remove(index)),
+          onTapCancel: () => setState(() => _tapScales.remove(index)),
+          child: AnimatedScale(
+            scale: _tapScales[index] ?? 1.0,
+            duration: const Duration(milliseconds: 100),
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 20.0),
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(24.0),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.85),
+                  borderRadius: BorderRadius.circular(20.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.08),
+                      blurRadius: 16.0,
+                      offset: const Offset(0, 4),
                     ),
-                  ),
+                  ],
                 ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Icon (with breathing animation for index 0)
+                    iconWidget,
 
-                const SizedBox(width: 16.0),
+                    const SizedBox(width: 16.0),
 
-                // Text content
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        title,
-                        style: FlutterFlowTheme.of(context)
-                            .headlineSmall
-                            .override(
-                              fontFamily: 'Andika New Basic',
-                              fontSize: 20.0,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 0.0,
-                            ).copyWith(height: 1.3),
+                    // Text content
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            title,
+                            style: FlutterFlowTheme.of(context)
+                                .headlineSmall
+                                .override(
+                                  fontFamily: 'Andika New Basic',
+                                  fontSize: 20.0,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 0.0,
+                                ).copyWith(height: 1.3),
+                          ),
+                          const SizedBox(height: 8.0),
+                          Text(
+                            subtitle,
+                            style: FlutterFlowTheme.of(context)
+                                .bodyMedium
+                                .override(
+                                  fontFamily: 'Andika New Basic',
+                                  fontSize: 15.0,
+                                  fontWeight: FontWeight.normal,
+                                  letterSpacing: 0.0,
+                                  color: FlutterFlowTheme.of(context)
+                                      .secondaryText,
+                                ).copyWith(height: 1.4),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 8.0),
-                      Text(
-                        subtitle,
-                        style: FlutterFlowTheme.of(context)
-                            .bodyMedium
-                            .override(
-                              fontFamily: 'Andika New Basic',
-                              fontSize: 15.0,
-                              fontWeight: FontWeight.normal,
-                              letterSpacing: 0.0,
-                              color: FlutterFlowTheme.of(context)
-                                  .secondaryText,
-                            ).copyWith(height: 1.4),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         ),
@@ -215,31 +270,74 @@ class _FeaturesEnhancedWidgetState extends State<FeaturesEnhancedWidget>
                         ),
                         const SizedBox(height: 32),
 
-                        Text(
-                          'Here\'s what else\nyou can do',
-                          textAlign: TextAlign.center,
-                          style: FlutterFlowTheme.of(context)
-                              .headlineLarge
-                              .override(
-                                fontFamily: 'Andika New Basic',
-                                fontSize: 32.0,
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: 0.0,
-                              ).copyWith(height: 1.3),
+                        AnimatedBuilder(
+                          animation: _shimmerController,
+                          builder: (context, child) {
+                            final shimmerPosition =
+                                _shimmerController.value * 3.0 - 1.0;
+                            return ShaderMask(
+                              shaderCallback: (bounds) {
+                                return LinearGradient(
+                                  begin: Alignment(
+                                      shimmerPosition - 0.3, 0),
+                                  end: Alignment(
+                                      shimmerPosition + 0.3, 0),
+                                  colors: [
+                                    FlutterFlowTheme.of(context)
+                                        .primaryText,
+                                    FlutterFlowTheme.of(context)
+                                        .primary
+                                        .withOpacity(0.8),
+                                    Colors.white,
+                                    FlutterFlowTheme.of(context)
+                                        .primary
+                                        .withOpacity(0.8),
+                                    FlutterFlowTheme.of(context)
+                                        .primaryText,
+                                  ],
+                                  stops: const [
+                                    0.0,
+                                    0.35,
+                                    0.5,
+                                    0.65,
+                                    1.0
+                                  ],
+                                ).createShader(bounds);
+                              },
+                              blendMode: BlendMode.srcIn,
+                              child: child!,
+                            );
+                          },
+                          child: Text(
+                            'You\'re all set!',
+                            textAlign: TextAlign.center,
+                            style: FlutterFlowTheme.of(context)
+                                .headlineLarge
+                                .override(
+                                  fontFamily: 'Andika New Basic',
+                                  fontSize: 32.0,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 0.0,
+                                ).copyWith(height: 1.3),
+                          ),
                         ),
                         const SizedBox(height: 12),
-                        Text(
-                          'Everything in one place',
-                          style: FlutterFlowTheme.of(context)
-                              .bodyLarge
-                              .override(
-                                fontFamily: 'Andika New Basic',
-                                fontSize: 18.0,
-                                fontWeight: FontWeight.w500,
-                                letterSpacing: 0.0,
-                                color: FlutterFlowTheme.of(context)
-                                    .secondaryText,
-                              ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Text(
+                            'Here\'s what\'s waiting for you',
+                            textAlign: TextAlign.center,
+                            style: FlutterFlowTheme.of(context)
+                                .bodyLarge
+                                .override(
+                                  fontFamily: 'Andika New Basic',
+                                  fontSize: 18.0,
+                                  fontWeight: FontWeight.w500,
+                                  letterSpacing: 0.0,
+                                  color: FlutterFlowTheme.of(context)
+                                      .secondaryText,
+                                ),
+                          ),
                         ),
                       ],
                     ),
@@ -257,7 +355,7 @@ class _FeaturesEnhancedWidgetState extends State<FeaturesEnhancedWidget>
                           index: 0,
                           icon: '🍽️',
                           title: 'Stop asking "what\'s for dinner?" every single night',
-                          subtitle: 'Plan your week in 5 minutes. Generate grocery lists instantly.',
+                          subtitle: 'Plan your meals in 5 minutes. Generate grocery lists instantly.',
                           iconColor: const Color(0xFFFF6B6B),
                         ),
 
@@ -293,7 +391,7 @@ class _FeaturesEnhancedWidgetState extends State<FeaturesEnhancedWidget>
                           index: 4,
                           icon: '🎨',
                           title: 'Never scramble for "what to do today" again',
-                          subtitle: 'Thousands of activities matched to your child\'s mood and your energy',
+                          subtitle: 'Hundreds of activities matched to your child\'s mood and your energy',
                           iconColor: const Color(0xFFFF8C00),
                         ),
 
@@ -308,12 +406,22 @@ class _FeaturesEnhancedWidgetState extends State<FeaturesEnhancedWidget>
                   padding: const EdgeInsets.all(24.0),
                   child: FFButtonWidget(
                     onPressed: () async {
+                      HapticFeedback.mediumImpact();
                       FocusScope.of(context).unfocus();
                       if (mounted) {
-                        context.pushNamed('MealIntroTransition');
+                        context.pushNamed(
+                          'MealPlannerSpotlight',
+                          extra: <String, dynamic>{
+                            kTransitionInfoKey: const TransitionInfo(
+                              hasTransition: true,
+                              transitionType: PageTransitionType.fade,
+                              duration: Duration(milliseconds: 400),
+                            ),
+                          },
+                        );
                       }
                     },
-                    text: 'Continue',
+                    text: 'Let\'s start with meal planning',
                     options: FFButtonOptions(
                       width: double.infinity,
                       height: 56.0,

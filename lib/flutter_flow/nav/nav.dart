@@ -158,9 +158,19 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           builder: (context, params) => MealIntroTransitionWidget(),
         ),
         FFRoute(
+          name: MealPlannerSpotlightWidget.routeName,
+          path: MealPlannerSpotlightWidget.routePath,
+          builder: (context, params) => MealPlannerSpotlightWidget(),
+        ),
+        FFRoute(
           name: DaySelectorDemoWidget.routeName,
           path: DaySelectorDemoWidget.routePath,
           builder: (context, params) => DaySelectorDemoWidget(),
+        ),
+        FFRoute(
+          name: WelcomeCelebrationWidget.routeName,
+          path: WelcomeCelebrationWidget.routePath,
+          builder: (context, params) => WelcomeCelebrationWidget(),
         ),
         FFRoute(
           name: MealPlanDemoWidget.routeName,
