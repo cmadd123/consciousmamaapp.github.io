@@ -4,17 +4,17 @@ import '/flutter_flow/flutter_flow_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class SetupTransitionWidget extends StatefulWidget {
-  const SetupTransitionWidget({super.key});
+class FeatureIntroWidget extends StatefulWidget {
+  const FeatureIntroWidget({super.key});
 
-  static String routeName = 'SetupTransition';
-  static String routePath = '/setup-transition';
+  static String routeName = 'FeatureIntro';
+  static String routePath = '/feature-intro';
 
   @override
-  State<SetupTransitionWidget> createState() => _SetupTransitionWidgetState();
+  State<FeatureIntroWidget> createState() => _FeatureIntroWidgetState();
 }
 
-class _SetupTransitionWidgetState extends State<SetupTransitionWidget>
+class _FeatureIntroWidgetState extends State<FeatureIntroWidget>
     with TickerProviderStateMixin {
   // Breathing animation for icon
   late AnimationController _breathController;
@@ -154,7 +154,7 @@ class _SetupTransitionWidgetState extends State<SetupTransitionWidget>
                           shape: BoxShape.circle,
                         ),
                         child: const Icon(
-                          Icons.family_restroom,
+                          Icons.auto_awesome,
                           size: 48,
                           color: Color(0xFF38B2AC),
                         ),
@@ -171,7 +171,7 @@ class _SetupTransitionWidgetState extends State<SetupTransitionWidget>
                   child: SlideTransition(
                     position: _headingSlide,
                     child: Text(
-                      'Let\'s make it happen',
+                      'Made for days like yours',
                       textAlign: TextAlign.center,
                       style:
                           FlutterFlowTheme.of(context).headlineLarge.override(
@@ -192,7 +192,7 @@ class _SetupTransitionWidgetState extends State<SetupTransitionWidget>
                   child: SlideTransition(
                     position: _subtextSlide,
                     child: Text(
-                      "Set up your family and\nyou're good to go.",
+                      'Take a peek at how MomRise\nfits into your day.',
                       textAlign: TextAlign.center,
                       style: FlutterFlowTheme.of(context).bodyLarge.override(
                             fontFamily: 'Andika New Basic',
@@ -219,7 +219,7 @@ class _SetupTransitionWidgetState extends State<SetupTransitionWidget>
                           HapticFeedback.mediumImpact();
                           if (mounted) {
                             context.pushNamed(
-                              'AddChildEnhanced',
+                              'FeatureWalkthrough',
                               extra: <String, dynamic>{
                                 kTransitionInfoKey: const TransitionInfo(
                                   hasTransition: true,
@@ -230,7 +230,7 @@ class _SetupTransitionWidgetState extends State<SetupTransitionWidget>
                             );
                           }
                         },
-                        text: 'Continue',
+                        text: 'Show Me',
                         options: FFButtonOptions(
                           width: double.infinity,
                           height: 56.0,

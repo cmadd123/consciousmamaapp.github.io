@@ -183,6 +183,11 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           builder: (context, params) => const SetupTransitionWidget(),
         ),
         FFRoute(
+          name: FeatureIntroWidget.routeName,
+          path: FeatureIntroWidget.routePath,
+          builder: (context, params) => const FeatureIntroWidget(),
+        ),
+        FFRoute(
           name: MealPlanDemoWidget.routeName,
           path: MealPlanDemoWidget.routePath,
           builder: (context, params) => MealPlanDemoWidget(

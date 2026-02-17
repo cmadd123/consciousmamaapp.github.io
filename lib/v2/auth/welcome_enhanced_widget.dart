@@ -151,10 +151,10 @@ class _WelcomeEnhancedWidgetState extends State<WelcomeEnhancedWidget>
                         padding: const EdgeInsets.symmetric(horizontal: 24.0),
                         child: FFButtonWidget(
                           onPressed: () async {
-                            // Navigate to feature walkthrough
+                            // Navigate to feature intro
                             if (mounted) {
                               context.pushNamed(
-                                'FeatureWalkthrough',
+                                'FeatureIntro',
                                 extra: <String, dynamic>{
                                   kTransitionInfoKey: const TransitionInfo(
                                     hasTransition: true,
