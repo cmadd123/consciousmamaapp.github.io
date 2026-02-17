@@ -5,7 +5,7 @@ workflows:
     instance_type: mac_mini_m2
 
     integrations:
-      app_store_connect: Codemagic CI/CD
+      app_store_connect: CodeMagic Key
 
     environment:
       flutter: stable
