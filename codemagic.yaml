@@ -11,6 +11,8 @@ workflows:
       flutter: stable
       xcode: latest
       cocoapods: default
+      groups:
+        - APP_STORE_KEYS
       vars:
         BUNDLE_ID: "com.momrise.app"
 
