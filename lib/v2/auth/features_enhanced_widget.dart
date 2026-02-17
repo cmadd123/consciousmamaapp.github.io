@@ -410,7 +410,7 @@ class _FeaturesEnhancedWidgetState extends State<FeaturesEnhancedWidget>
                       FocusScope.of(context).unfocus();
                       if (mounted) {
                         context.pushNamed(
-                          'MealPlannerSpotlight',
+                          'FeatureWalkthrough',
                           extra: <String, dynamic>{
                             kTransitionInfoKey: const TransitionInfo(
                               hasTransition: true,
@@ -421,7 +421,7 @@ class _FeaturesEnhancedWidgetState extends State<FeaturesEnhancedWidget>
                         );
                       }
                     },
-                    text: 'Let\'s start with meal planning',
+                    text: 'Take a quick tour',
                     options: FFButtonOptions(
                       width: double.infinity,
                       height: 56.0,

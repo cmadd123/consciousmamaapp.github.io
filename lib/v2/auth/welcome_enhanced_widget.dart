@@ -151,9 +151,18 @@ class _WelcomeEnhancedWidgetState extends State<WelcomeEnhancedWidget>
                         padding: const EdgeInsets.symmetric(horizontal: 24.0),
                         child: FFButtonWidget(
                           onPressed: () async {
-                            // Navigate to enhanced add child page
+                            // Navigate to feature walkthrough
                             if (mounted) {
-                              context.pushNamed('AddChildEnhanced');
+                              context.pushNamed(
+                                'FeatureWalkthrough',
+                                extra: <String, dynamic>{
+                                  kTransitionInfoKey: const TransitionInfo(
+                                    hasTransition: true,
+                                    transitionType: PageTransitionType.fade,
+                                    duration: Duration(milliseconds: 400),
+                                  ),
+                                },
+                              );
                             }
                           },
                           text: 'Let\'s Get Started',

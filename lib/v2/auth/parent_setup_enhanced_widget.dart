@@ -374,10 +374,10 @@ class _ParentSetupEnhancedWidgetState extends State<ParentSetupEnhancedWidget>
                                       partnerColorValue: _model.partnerColor,
                                     );
 
-                                    // Navigate to features overview
+                                    // Navigate to sign up
                                     if (context.mounted) {
                                       context.pushNamed(
-                                        'FeaturesEnhanced',
+                                        'signUpv2',
                                         extra: <String, dynamic>{
                                           kTransitionInfoKey: const TransitionInfo(
                                             hasTransition: true,
@@ -433,14 +433,14 @@ class _ParentSetupEnhancedWidgetState extends State<ParentSetupEnhancedWidget>
   }) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(20.0),
+      padding: const EdgeInsets.all(24.0),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20.0),
+        borderRadius: BorderRadius.circular(24.0),
         boxShadow: [
           BoxShadow(
-            blurRadius: 8.0,
-            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 20.0,
+            color: Colors.black.withOpacity(0.08),
             offset: const Offset(0, 2),
           ),
         ],
@@ -519,46 +519,26 @@ class _ParentSetupEnhancedWidgetState extends State<ParentSetupEnhancedWidget>
             },
             autofocus: false,
             decoration: InputDecoration(
-              isDense: true,
               hintText: nameHint,
-              hintStyle: FlutterFlowTheme.of(context).labelMedium.override(
+              hintStyle: FlutterFlowTheme.of(context).bodyMedium.override(
                 fontFamily: 'Andika New Basic',
+                color: FlutterFlowTheme.of(context).secondaryText,
                 letterSpacing: 0.0,
               ),
-              enabledBorder: OutlineInputBorder(
-                borderSide: const BorderSide(
-                  color: Color(0xFFCBE3E0),
-                  width: 1.0,
-                ),
-                borderRadius: BorderRadius.circular(14.0),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: FlutterFlowTheme.of(context).primary,
-                  width: 1.5,
-                ),
-                borderRadius: BorderRadius.circular(14.0),
-              ),
-              errorBorder: OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: FlutterFlowTheme.of(context).error,
-                  width: 1.0,
-                ),
-                borderRadius: BorderRadius.circular(14.0),
-              ),
-              focusedErrorBorder: OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: FlutterFlowTheme.of(context).error,
-                  width: 1.0,
-                ),
-                borderRadius: BorderRadius.circular(14.0),
-              ),
               filled: true,
-              fillColor: FlutterFlowTheme.of(context).prim30,
-              contentPadding: const EdgeInsetsDirectional.fromSTEB(16.0, 16.0, 16.0, 16.0),
+              fillColor: const Color(0xFFF5F5F5),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.0),
+                borderSide: BorderSide.none,
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 16.0,
+              ),
             ),
-            style: FlutterFlowTheme.of(context).bodyMedium.override(
+            style: FlutterFlowTheme.of(context).bodyLarge.override(
               fontFamily: 'Andika New Basic',
+              fontSize: 16.0,
               letterSpacing: 0.0,
             ),
             validator: (val) => nameValidator(context, val),

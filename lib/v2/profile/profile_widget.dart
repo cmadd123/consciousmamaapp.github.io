@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import '/components/page_animations.dart';
 import 'profile_model.dart';
 export 'profile_model.dart';
 
@@ -28,7 +29,7 @@ class ProfileWidget extends StatefulWidget {
   State<ProfileWidget> createState() => _ProfileWidgetState();
 }
 
-class _ProfileWidgetState extends State<ProfileWidget> {
+class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateMixin, PageAnimationMixin {
   late ProfileModel _model;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
@@ -37,10 +38,12 @@ class _ProfileWidgetState extends State<ProfileWidget> {
   void initState() {
     super.initState();
     _model = createModel(context, () => ProfileModel());
+    initPageAnimations(itemCount: 4);
   }
 
   @override
   void dispose() {
+    disposePageAnimations();
     _model.dispose();
 
     super.dispose();
@@ -80,7 +83,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                   child: Column(
                     mainAxisSize: MainAxisSize.max,
                     children: [
-                    Padding(
+                    animateItem(0, Padding(
                       padding:
                           EdgeInsetsDirectional.fromSTEB(20.0, 20.0, 20.0, 0.0),
                     child: Row(
@@ -130,8 +133,8 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                         ),
                       ],
                     ),
-                  ),
-                  Padding(
+                  )),
+                  animateItem(1, Padding(
                     padding:
                         EdgeInsetsDirectional.fromSTEB(24.0, 24.0, 24.0, 0.0),
                     child: Container(
@@ -147,7 +150,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                           Padding(
                             padding: EdgeInsetsDirectional.fromSTEB(
                                 10.0, 0.0, 0.0, 0.0),
-                            child: ClipOval(
+                            child: breathingWidget(ClipOval(
                               child: Container(
                                 width: 62.0,
                                 height: 62.0,
@@ -185,7 +188,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                                   },
                                 ),
                               ),
-                            ),
+                            )),
                           ),
                           Expanded(
                             child: Padding(
@@ -274,7 +277,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                         ],
                       ),
                     ),
-                  ),
+                  )),
                   if (false)
                     Padding(
                       padding:
@@ -367,7 +370,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                         ),
                       ),
                     ),
-                  Padding(
+                  CascadeItem(index: 0, baseDelayMs: 400, staggerMs: 80, child: Padding(
                     padding:
                         EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),
                     child: Container(
@@ -428,7 +431,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                         ),
                       ),
                     ),
-                  ),
+                  )),
                   // Comfort Mode Toggle - Hidden from UI but code preserved
                   // To re-enable comfort mode, uncomment the Padding widget below
                   // Padding(
@@ -488,7 +491,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                   //     ),
                   //   ),
                   // ),
-                  Padding(
+                  CascadeItem(index: 1, baseDelayMs: 400, staggerMs: 80, child: Padding(
                     padding:
                         EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),
                     child: Container(
@@ -557,9 +560,9 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                         ),
                       ),
                     ),
-                  ),
+                  )),
                   // Notifications
-                  Padding(
+                  CascadeItem(index: 2, baseDelayMs: 400, staggerMs: 80, child: Padding(
                     padding:
                         EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),
                     child: Container(
@@ -620,9 +623,9 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                         ),
                       ),
                     ),
-                  ),
+                  )),
                   // Subscription
-                  Padding(
+                  CascadeItem(index: 3, baseDelayMs: 400, staggerMs: 80, child: Padding(
                     padding:
                         EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),
                     child: Container(
@@ -683,8 +686,8 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                         ),
                       ),
                     ),
-                  ),
-                  Padding(
+                  )),
+                  CascadeItem(index: 4, baseDelayMs: 400, staggerMs: 80, child: Padding(
                     padding:
                         EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),
                     child: InkWell(
@@ -753,8 +756,8 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                         ),
                       ),
                     ),
-                  ),
-                  Builder(
+                  )),
+                  CascadeItem(index: 5, baseDelayMs: 400, staggerMs: 80, child: Builder(
                     builder: (context) => Padding(
                       padding:
                           EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),
@@ -838,7 +841,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                         ),
                       ),
                     ),
-                  ),
+                  )),
                   // Add bottom padding to account for navigation bar
                   const SizedBox(height: 120.0),
                   ],

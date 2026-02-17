@@ -94,13 +94,13 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
       refreshListenable: appStateNotifier,
       navigatorKey: appNavigatorKey,
       errorBuilder: (context, state) =>
-          OnboardingSelectorWidget(),
+          WelcomeEnhancedWidget(),
       routes: [
         FFRoute(
           name: '_initialize',
           path: '/',
           builder: (context, _) =>
-              OnboardingSelectorWidget(),
+              WelcomeEnhancedWidget(),
         ),
         FFRoute(
           name: HomePageWidget.routeName,
@@ -158,6 +158,11 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           builder: (context, params) => MealIntroTransitionWidget(),
         ),
         FFRoute(
+          name: FeatureWalkthroughWidget.routeName,
+          path: FeatureWalkthroughWidget.routePath,
+          builder: (context, params) => const FeatureWalkthroughWidget(),
+        ),
+        FFRoute(
           name: MealPlannerSpotlightWidget.routeName,
           path: MealPlannerSpotlightWidget.routePath,
           builder: (context, params) => MealPlannerSpotlightWidget(),
@@ -171,6 +176,11 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           name: WelcomeCelebrationWidget.routeName,
           path: WelcomeCelebrationWidget.routePath,
           builder: (context, params) => WelcomeCelebrationWidget(),
+        ),
+        FFRoute(
+          name: SetupTransitionWidget.routeName,
+          path: SetupTransitionWidget.routePath,
+          builder: (context, params) => const SetupTransitionWidget(),
         ),
         FFRoute(
           name: MealPlanDemoWidget.routeName,
@@ -1471,7 +1481,7 @@ class TransitionInfo {
   static TransitionInfo appDefault() => TransitionInfo(
     hasTransition: true,
     transitionType: PageTransitionType.fade,
-    duration: const Duration(milliseconds: 200),
+    duration: const Duration(milliseconds: 150),
   );
 }
 

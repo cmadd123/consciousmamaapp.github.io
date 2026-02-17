@@ -266,9 +266,9 @@ class _CelebrationWidgetState extends State<CelebrationWidget>
                                   // Fade out animation
                                   await _fadeController.reverse();
 
-                                  // Navigate to features page
+                                  // Navigate to feature walkthrough
                                   if (mounted) {
-                                    context.pushNamed('FeaturesEnhanced');
+                                    context.pushNamed('FeatureWalkthrough');
                                   }
                                 },
                                 text: 'See What Else You Can Do',

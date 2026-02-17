@@ -21,6 +21,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
+import '/components/page_animations.dart';
 import 'create_meal_plan_model.dart';
 export 'create_meal_plan_model.dart';
 
@@ -44,6 +45,9 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
+  // Custom dates selected via calendar picker (null = default 7-day view)
+  List<DateTime>? _customSelectedDates;
+
   @override
   void initState() {
     super.initState();
@@ -51,17 +55,12 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
 
     // Check if we need to refresh (flag set when adding meals from other pages)
     if (FFAppState().MealCashtearm) {
-      debugPrint('CreateMealPlan: MealCashtearm flag is true - will refresh');
       FFAppState().MealCashtearm = false; // Clear the flag
-      // Cache will be null, so FutureBuilder will fetch fresh data
     }
-
-    debugPrint('CreateMealPlan: initState - using FutureBuilder approach');
   }
 
   // Refresh method - clears cache and forces reload
   Future<void> _refreshMealPlans() async {
-    debugPrint('CreateMealPlan: Refreshing meal plans...');
     _model.invalidateCache();
     // Pre-fetch to ensure data is ready, then rebuild ONCE
     await _model.refreshMealPlans();
@@ -114,15 +113,6 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
     final match = mealPlans.firstWhereOrNull((e) =>
         e.typ == mealType &&
         dateTimeFormat("d/M/y", e.date, locale: 'en') == dayStr);
-
-    // Debug: Log matching attempt for today
-    if (day.day == DateTime.now().day && day.month == DateTime.now().month) {
-      debugPrint('_getMealPlan: Looking for $mealType on $dayStr');
-      debugPrint('  Found match: ${match != null}');
-      if (match != null) {
-        debugPrint('  Match details: mealRef=${match.userFirebasemeal?.id}');
-      }
-    }
 
     return match;
   }
@@ -548,27 +538,20 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                 : () {
                                     // Convert selected indices to dates
                                     final selectedDates = selectedDaysSet
-                                        .map((i) => startDate.add(Duration(days: i)))
+                                        .map((i) {
+                                          final d = startDate.add(Duration(days: i));
+                                          // Normalize to midnight for date comparison
+                                          return DateTime(d.year, d.month, d.day);
+                                        })
                                         .toList()
                                       ..sort();
 
                                     Navigator.pop(dialogContext);
 
-                                    // Show success message with selected dates
-                                    final datesList = selectedDates
-                                        .map((d) => dateTimeFormat("MMM d", d, locale: 'en'))
-                                        .join(', ');
-
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text('Selected: $datesList'),
-                                        backgroundColor: FlutterFlowTheme.of(context).primary,
-                                        behavior: SnackBarBehavior.floating,
-                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                                        margin: const EdgeInsets.only(bottom: 20, left: 16, right: 16),
-                                        duration: const Duration(seconds: 3),
-                                      ),
-                                    );
+                                    // Update the meal planner to show selected dates
+                                    setState(() {
+                                      _customSelectedDates = selectedDates;
+                                    });
                                   },
                             text: 'Done',
                             options: FFButtonOptions(
@@ -2467,7 +2450,9 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                   child: Column(
                     mainAxisSize: MainAxisSize.max,
                     children: [
-                      Padding(
+                      CascadeItem(
+                        index: 0,
+                        child: Padding(
                         padding: EdgeInsetsDirectional.fromSTEB(0.0, 16.0, 0.0, 0.0),
                         child: Material(
                           color: Colors.transparent,
@@ -2533,12 +2518,12 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                           ],
                                         ),
                                         SizedBox(height: 12.0),
-                                        // Second row: All 5 action buttons
+                                        // Second row: All 6 action buttons with bounce cascade
                                         Row(
                                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                           children: [
                                             // Reminder bell button - now navigates to notifications
-                                            StreamBuilder<UsersRecord>(
+                                            CascadeItem(index: 0, baseDelayMs: 350, staggerMs: 70, bounce: true, child: StreamBuilder<UsersRecord>(
                                               stream: UsersRecord.getDocument(currentUserReference!),
                                               builder: (context, snapshot) {
                                                 final user = snapshot.data;
@@ -2574,9 +2559,9 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                                   ),
                                                 );
                                               },
-                                            ),
+                                            )),
                                             // Share button (icon only - teal to match palette)
-                                            InkWell(
+                                            CascadeItem(index: 1, baseDelayMs: 350, staggerMs: 70, bounce: true, child: InkWell(
                                               splashColor: Colors.transparent,
                                               focusColor: Colors.transparent,
                                               hoverColor: Colors.transparent,
@@ -2597,9 +2582,9 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                                   size: 20.0,
                                                 ),
                                               ),
-                                            ),
+                                            )),
                                             // Generate/Auto-fill button (icon only)
-                                            InkWell(
+                                            CascadeItem(index: 2, baseDelayMs: 350, staggerMs: 70, bounce: true, child: InkWell(
                                               splashColor: Colors.transparent,
                                               focusColor: Colors.transparent,
                                               hoverColor: Colors.transparent,
@@ -2620,9 +2605,9 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                                   size: 20.0,
                                                 ),
                                               ),
-                                            ),
+                                            )),
                                             // Cookbook button (icon only)
-                                            InkWell(
+                                            CascadeItem(index: 3, baseDelayMs: 350, staggerMs: 70, bounce: true, child: InkWell(
                                               splashColor: Colors.transparent,
                                               focusColor: Colors.transparent,
                                               hoverColor: Colors.transparent,
@@ -2643,9 +2628,9 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                                   size: 20.0,
                                                 ),
                                               ),
-                                            ),
+                                            )),
                                             // Grocery list button (icon only)
-                                            InkWell(
+                                            CascadeItem(index: 4, baseDelayMs: 350, staggerMs: 70, bounce: true, child: InkWell(
                                               splashColor: Colors.transparent,
                                               focusColor: Colors.transparent,
                                               hoverColor: Colors.transparent,
@@ -2672,9 +2657,9 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                                   size: 20.0,
                                                 ),
                                               ),
-                                            ),
+                                            )),
                                             // Date picker button (icon only) - Calendar grid view
-                                            InkWell(
+                                            CascadeItem(index: 5, baseDelayMs: 350, staggerMs: 70, bounce: true, child: InkWell(
                                               splashColor: Colors.transparent,
                                               focusColor: Colors.transparent,
                                               hoverColor: Colors.transparent,
@@ -2695,7 +2680,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                                   size: 20.0,
                                                 ),
                                               ),
-                                            ),
+                                            )),
                                           ],
                                         ),
                                       ],
@@ -2765,8 +2750,6 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                   FutureBuilder<List<MealPlanRecord>>(
                                     future: _model.loadMealPlansOnce(),
                                     builder: (context, snapshot) {
-                                      debugPrint('MealPlan FutureBuilder: connectionState=${snapshot.connectionState}, hasData=${snapshot.hasData}, dataLength=${snapshot.data?.length ?? 0}');
-
                                       if (snapshot.connectionState == ConnectionState.waiting && !snapshot.hasData && _model.cachedMealPlans == null) {
                                         return Padding(
                                           padding: EdgeInsets.all(40.0),
@@ -2793,7 +2776,6 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                       }
 
                                       if (snapshot.hasError && _model.cachedMealPlans == null) {
-                                        debugPrint('MealPlan FutureBuilder ERROR: ${snapshot.error}');
                                         return Padding(
                                           padding: EdgeInsets.all(40.0),
                                           child: Center(
@@ -2819,19 +2801,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
 
                                       // Use cached data if available, otherwise use snapshot data
                                       final mealPlanRecords = _model.cachedMealPlans ?? snapshot.data ?? [];
-                                      final days = functions.getSevenDays()?.toList() ?? [];
-
-                                      debugPrint('MealPlan FutureBuilder: Rendering ${mealPlanRecords.length} meal plans for ${days.length} days');
-
-                                      // Debug: Print what days we're checking
-                                      if (days.isNotEmpty) {
-                                        debugPrint('  Days: ${days.map((d) => dateTimeFormat("d/M/y", d, locale: "en")).join(", ")}');
-                                      }
-
-                                      // Debug: Print meal plan dates
-                                      for (final plan in mealPlanRecords.take(5)) {
-                                        debugPrint('  Plan: date=${plan.date} formatted=${dateTimeFormat("d/M/y", plan.date, locale: "en")} typ=${plan.typ}');
-                                      }
+                                      final days = _customSelectedDates ?? functions.getSevenDays()?.toList() ?? [];
 
                                       return Padding(
                                         padding: EdgeInsetsDirectional.fromSTEB(0.0, 16.0, 0.0, 100.0),
@@ -2846,7 +2816,10 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                             final isExpanded = _model.isDayExpanded(dayIndex);
                                             final plannedCount = _countPlannedMeals(mealPlanRecords, day);
 
-                                            return Column(
+                                            return CascadeItem(
+                                              index: dayIndex + 1,
+                                              staggerMs: 100,
+                                              child: Column(
                                               children: [
                                                 // Day header (always visible)
                                                 InkWell(
@@ -2953,6 +2926,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                                 if (isExpanded)
                                                   _buildExpandedDayContent(context, day, mealPlanRecords),
                                               ],
+                                            ),
                                             );
                                           },
                                         ),
@@ -2964,6 +2938,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                             ),
                           ),
                         ),
+                      ),
                       ),
                     ],
                   ),
@@ -3084,9 +3059,15 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                 ],
               ),
             ),
-          // Meal slots
-          ...MealTyp.values.map((mealType) {
-            return _buildMealSlot(context, day, mealType, mealPlanRecords);
+          // Meal slots - cascade in separately
+          ...MealTyp.values.asMap().entries.map((entry) {
+            return CascadeItem(
+              index: entry.key,
+              baseDelayMs: 150,
+              staggerMs: 120,
+              slideFromRight: true,
+              child: _buildMealSlot(context, day, entry.value, mealPlanRecords),
+            );
           }),
         ],
       ),

@@ -31,6 +31,10 @@ class FlutterFlowCalendar extends StatefulWidget {
     this.locale,
     this.eventLoader,
     this.markerBuilder,
+    this.animateDays = false,
+    this.headerWrapper,
+    this.animationBaseDelayMs = 100,
+    this.rowStaggerMs = 120,
   });
 
   final bool weekFormat;
@@ -49,6 +53,10 @@ class FlutterFlowCalendar extends StatefulWidget {
   final String? locale;
   final List<dynamic> Function(DateTime)? eventLoader;
   final Widget Function(BuildContext, DateTime, List<dynamic>)? markerBuilder;
+  final bool animateDays;
+  final Widget Function(Widget header)? headerWrapper;
+  final int animationBaseDelayMs;
+  final int rowStaggerMs;
 
   @override
   State<StatefulWidget> createState() => _FlutterFlowCalendarState();
@@ -105,29 +113,32 @@ class _FlutterFlowCalendarState extends State<FlutterFlowCalendar> {
   }
 
   @override
-  Widget build(BuildContext context) => Column(
+  Widget build(BuildContext context) {
+    final header = CalendarHeader(
+      focusedDay: focusedDay,
+      onLeftChevronTap: () => setState(
+        () => focusedDay = widget.weekFormat
+            ? _previousWeek(focusedDay)
+            : _previousMonth(focusedDay),
+      ),
+      onRightChevronTap: () => setState(
+        () => focusedDay = widget.weekFormat
+            ? _nextWeek(focusedDay)
+            : _nextMonth(focusedDay),
+      ),
+      onTodayButtonTap: () => setState(() => focusedDay = DateTime.now()),
+      titleStyle: widget.titleStyle,
+      iconColor: widget.iconColor,
+      locale: widget.locale,
+      twoRowHeader: widget.twoRowHeader,
+    );
+
+    return Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          CalendarHeader(
-            focusedDay: focusedDay,
-            onLeftChevronTap: () => setState(
-              () => focusedDay = widget.weekFormat
-                  ? _previousWeek(focusedDay)
-                  : _previousMonth(focusedDay),
-            ),
-            onRightChevronTap: () => setState(
-              () => focusedDay = widget.weekFormat
-                  ? _nextWeek(focusedDay)
-                  : _nextMonth(focusedDay),
-            ),
-            onTodayButtonTap: () => setState(() => focusedDay = DateTime.now()),
-            titleStyle: widget.titleStyle,
-            iconColor: widget.iconColor,
-            locale: widget.locale,
-            twoRowHeader: widget.twoRowHeader,
-          ),
+          widget.headerWrapper != null ? widget.headerWrapper!(header) : header,
           TableCalendar(
             focusedDay: focusedDay,
             selectedDayPredicate: (date) => isSameDay(selectedDay, date),
@@ -138,11 +149,87 @@ class _FlutterFlowCalendarState extends State<FlutterFlowCalendar> {
             locale: widget.locale,
             eventLoader: widget.eventLoader,
             rowHeight: widget.rowHeight ?? MediaQuery.sizeOf(context).width / 7,
-            calendarBuilders: widget.markerBuilder != null
-                ? CalendarBuilders(
-                    markerBuilder: widget.markerBuilder,
-                  )
-                : const CalendarBuilders(),
+            calendarBuilders: CalendarBuilders(
+                    markerBuilder: widget.animateDays && widget.markerBuilder != null
+                        ? (context, day, events) => _AnimatedMarker(
+                              key: ValueKey('m_${focusedDay.month}_${day.day}'),
+                              day: day,
+                              focusedDay: focusedDay,
+                              baseDelayMs: widget.animationBaseDelayMs,
+                              rowStaggerMs: widget.rowStaggerMs,
+                              child: widget.markerBuilder!(context, day, events),
+                            )
+                        : widget.markerBuilder,
+                    dowBuilder: widget.animateDays
+                        ? (context, day) => _AnimatedDowCell(
+                              key: ValueKey('dow_${day.weekday}'),
+                              day: day,
+                              baseDelayMs: (widget.animationBaseDelayMs - widget.rowStaggerMs).clamp(0, 9999),
+                              style: const TextStyle(color: Color(0xFF616161))
+                                  .merge(widget.dayOfWeekStyle),
+                            )
+                        : null,
+                    defaultBuilder: widget.animateDays
+                        ? (context, day, focused) => _AnimatedDayCell(
+                              key: ValueKey('d_${focused.month}_${day.day}'),
+                              day: day,
+                              focusedDay: focused,
+                              isSelected: false,
+                              isToday: false,
+                              isOutside: false,
+                              style: widget.dateStyle,
+                              color: color,
+                              lighterColor: lighterColor,
+                              baseDelayMs: widget.animationBaseDelayMs,
+                              rowStaggerMs: widget.rowStaggerMs,
+                            )
+                        : null,
+                    todayBuilder: widget.animateDays
+                        ? (context, day, focused) => _AnimatedDayCell(
+                              key: ValueKey('t_${focused.month}_${day.day}'),
+                              day: day,
+                              focusedDay: focused,
+                              isSelected: false,
+                              isToday: true,
+                              isOutside: false,
+                              style: widget.selectedDateStyle,
+                              color: color,
+                              lighterColor: lighterColor,
+                              baseDelayMs: widget.animationBaseDelayMs,
+                              rowStaggerMs: widget.rowStaggerMs,
+                            )
+                        : null,
+                    selectedBuilder: widget.animateDays
+                        ? (context, day, focused) => _AnimatedDayCell(
+                              key: ValueKey('s_${focused.month}_${day.day}'),
+                              day: day,
+                              focusedDay: focused,
+                              isSelected: true,
+                              isToday: false,
+                              isOutside: false,
+                              style: widget.selectedDateStyle,
+                              color: color,
+                              lighterColor: lighterColor,
+                              baseDelayMs: widget.animationBaseDelayMs,
+                              rowStaggerMs: widget.rowStaggerMs,
+                            )
+                        : null,
+                    outsideBuilder: widget.animateDays
+                        ? (context, day, focused) => _AnimatedDayCell(
+                              key: ValueKey('o_${focused.month}_${day.day}'),
+                              day: day,
+                              focusedDay: focused,
+                              isSelected: false,
+                              isToday: false,
+                              isOutside: true,
+                              style: widget.inactiveDateStyle,
+                              color: color,
+                              lighterColor: lighterColor,
+                              baseDelayMs: widget.animationBaseDelayMs,
+                              rowStaggerMs: widget.rowStaggerMs,
+                            )
+                        : null,
+                  ),
             calendarStyle: CalendarStyle(
               defaultTextStyle:
                   widget.dateStyle ?? const TextStyle(color: Color(0xFF5A5A5A)),
@@ -198,6 +285,7 @@ class _FlutterFlowCalendarState extends State<FlutterFlowCalendar> {
           ),
         ],
       );
+  }
 }
 
 class CalendarHeader extends StatelessWidget {
@@ -311,8 +399,257 @@ class CustomIconButton extends StatelessWidget {
       );
 }
 
+/// Animated day-of-week label that fades in as a row.
+class _AnimatedDowCell extends StatefulWidget {
+  final DateTime day;
+  final int baseDelayMs;
+  final TextStyle? style;
+
+  const _AnimatedDowCell({
+    super.key,
+    required this.day,
+    this.baseDelayMs = 300,
+    this.style,
+  });
+
+  @override
+  State<_AnimatedDowCell> createState() => _AnimatedDowCellState();
+}
+
+class _AnimatedDowCellState extends State<_AnimatedDowCell>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _fadeAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
+    _fadeAnimation = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeOut,
+    );
+    // Subtle left-to-right stagger within the dow row
+    final col = (widget.day.weekday % 7); // Sunday=0
+    final delay = widget.baseDelayMs + (col * 10);
+    Future.delayed(Duration(milliseconds: delay), () {
+      if (mounted) _controller.forward();
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final text = DateFormat.E().format(widget.day).substring(0, 2);
+    return FadeTransition(
+      opacity: _fadeAnimation,
+      child: Center(
+        child: Text(
+          text,
+          style: widget.style ?? const TextStyle(color: Color(0xFF616161)),
+        ),
+      ),
+    );
+  }
+}
+
+/// Animated day cell that fades+scales in with a stagger based on grid position.
+class _AnimatedDayCell extends StatefulWidget {
+  final DateTime day;
+  final DateTime focusedDay;
+  final bool isSelected;
+  final bool isToday;
+  final bool isOutside;
+  final TextStyle? style;
+  final Color color;
+  final Color lighterColor;
+  final int baseDelayMs;
+  final int rowStaggerMs;
+
+  const _AnimatedDayCell({
+    super.key,
+    required this.day,
+    required this.focusedDay,
+    required this.isSelected,
+    required this.isToday,
+    required this.isOutside,
+    this.style,
+    required this.color,
+    required this.lighterColor,
+    this.baseDelayMs = 100,
+    this.rowStaggerMs = 120,
+  });
+
+  @override
+  State<_AnimatedDayCell> createState() => _AnimatedDayCellState();
+}
+
+class _AnimatedDayCellState extends State<_AnimatedDayCell>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _fadeAnimation;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 350),
+    );
+    _fadeAnimation = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeOut,
+    );
+    _scaleAnimation = Tween<double>(begin: 0.5, end: 1.0).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
+    );
+
+    // Stagger by ROW so each row of 7 days appears together, rippling top to bottom.
+    final firstOfMonth = DateTime(widget.focusedDay.year, widget.focusedDay.month, 1);
+    final firstVisibleDay = firstOfMonth.subtract(Duration(days: firstOfMonth.weekday % 7));
+    final gridPosition = widget.day.difference(firstVisibleDay).inDays.clamp(0, 41);
+    final row = gridPosition ~/ 7;
+    final col = gridPosition % 7;
+    // Row-based stagger + subtle left-to-right within each row
+    final delay = widget.baseDelayMs + (row * widget.rowStaggerMs) + (col * 8);
+    Future.delayed(Duration(milliseconds: delay), () {
+      if (mounted) _controller.forward();
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Text color and style
+    final TextStyle textStyle;
+    if (widget.isOutside) {
+      textStyle = const TextStyle(color: Color(0xFF9E9E9E), fontSize: 14.0)
+          .merge(widget.style);
+    } else if (widget.isSelected || widget.isToday) {
+      textStyle = const TextStyle(color: Color(0xFFFAFAFA), fontSize: 16.0)
+          .merge(widget.style);
+    } else {
+      textStyle = const TextStyle(color: Color(0xFF5A5A5A), fontSize: 14.0)
+          .merge(widget.style);
+    }
+
+    // Decoration
+    BoxDecoration? decoration;
+    if (widget.isSelected) {
+      decoration = BoxDecoration(
+        color: Colors.transparent,
+        shape: BoxShape.circle,
+        border: Border.all(color: widget.color, width: 2.0),
+      );
+    } else if (widget.isToday) {
+      decoration = BoxDecoration(
+        color: widget.lighterColor,
+        shape: BoxShape.circle,
+      );
+    }
+
+    return FadeTransition(
+      opacity: _fadeAnimation,
+      child: ScaleTransition(
+        scale: _scaleAnimation,
+        child: Center(
+          child: Container(
+            width: 40,
+            height: 40,
+            decoration: decoration,
+            alignment: Alignment.center,
+            child: Text(
+              '${widget.day.day}',
+              style: textStyle,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 DateTime _previousWeek(DateTime week) {
   return week.subtract(const Duration(days: 7));
+}
+
+/// Animated marker wrapper — fades in with the same timing as the day cell.
+class _AnimatedMarker extends StatefulWidget {
+  final DateTime day;
+  final DateTime focusedDay;
+  final int baseDelayMs;
+  final int rowStaggerMs;
+  final Widget child;
+
+  const _AnimatedMarker({
+    super.key,
+    required this.day,
+    required this.focusedDay,
+    required this.baseDelayMs,
+    required this.rowStaggerMs,
+    required this.child,
+  });
+
+  @override
+  State<_AnimatedMarker> createState() => _AnimatedMarkerState();
+}
+
+class _AnimatedMarkerState extends State<_AnimatedMarker>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _fadeAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 350),
+    );
+    _fadeAnimation = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeOut,
+    );
+
+    // Same row-based delay calculation as _AnimatedDayCell
+    final firstOfMonth = DateTime(widget.focusedDay.year, widget.focusedDay.month, 1);
+    final firstVisibleDay = firstOfMonth.subtract(Duration(days: firstOfMonth.weekday % 7));
+    final gridPosition = widget.day.difference(firstVisibleDay).inDays.clamp(0, 41);
+    final row = gridPosition ~/ 7;
+    final col = gridPosition % 7;
+    final delay = widget.baseDelayMs + (row * widget.rowStaggerMs) + (col * 8);
+    Future.delayed(Duration(milliseconds: delay), () {
+      if (mounted) _controller.forward();
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FadeTransition(
+      opacity: _fadeAnimation,
+      child: widget.child,
+    );
+  }
 }
 
 DateTime _nextWeek(DateTime week) {

@@ -11,6 +11,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:provider/provider.dart';
+import '/components/page_animations.dart';
+import '/components/animated_press_widget.dart';
 import 'milstones_model.dart';
 export 'milstones_model.dart';
 
@@ -220,7 +222,10 @@ class _MilstonesWidgetState extends State<MilstonesWidget> {
           child: Stack(
             children: [
               if (_isLoading)
-                const Center(child: CircularProgressIndicator())
+                Center(child: Padding(
+                  padding: const EdgeInsets.only(top: 120.0),
+                  child: BouncingDots(color: FlutterFlowTheme.of(context).primary, size: 10.0),
+                ))
               else if (_error != null)
                 _buildErrorState()
               else
@@ -265,24 +270,39 @@ class _MilstonesWidgetState extends State<MilstonesWidget> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Title
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: Text(
-                'Milestones',
-                style: FlutterFlowTheme.of(context).headlineMedium.override(
-                  fontFamily: 'Andika New Basic',
-                  fontSize: 24,
+            CascadeItem(
+              index: 0,
+              baseDelayMs: 200,
+              staggerMs: 150,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: Text(
+                  'Milestones',
+                  style: FlutterFlowTheme.of(context).headlineMedium.override(
+                    fontFamily: 'Andika New Basic',
+                    fontSize: 24,
+                  ),
                 ),
               ),
             ),
             const SizedBox(height: 24),
 
             // Child selector
-            _buildChildSelector(),
+            CascadeItem(
+              index: 1,
+              baseDelayMs: 200,
+              staggerMs: 150,
+              child: _buildChildSelector(),
+            ),
             const SizedBox(height: 24),
 
             // Progress summary
-            _buildProgressSummary(),
+            CascadeItem(
+              index: 2,
+              baseDelayMs: 200,
+              staggerMs: 150,
+              child: _buildProgressSummary(),
+            ),
             const SizedBox(height: 32),
 
             // Category sections
@@ -291,6 +311,7 @@ class _MilstonesWidgetState extends State<MilstonesWidget> {
               icon: Icons.directions_run,
               color: const Color(0xFF4CAF50),
               category: ActGoalMilestones.Physical,
+              cascadeBaseDelay: 650,
             ),
             const SizedBox(height: 20),
             _buildCategorySection(
@@ -425,11 +446,18 @@ class _MilstonesWidgetState extends State<MilstonesWidget> {
     required IconData icon,
     required Color color,
     required ActGoalMilestones category,
+    int? cascadeBaseDelay,
   }) {
     final categoryMilestones = _getMilestonesForCategory(category);
     final accomplishedCount = _getAccomplishedCountForCategory(category);
     final total = categoryMilestones.length;
     final progress = total > 0 ? accomplishedCount / total : 0.0;
+    final animate = cascadeBaseDelay != null;
+
+    Widget maybeAnimate(int index, Widget child) {
+      if (!animate) return child;
+      return CascadeItem(index: index, baseDelayMs: cascadeBaseDelay!, staggerMs: 100, child: child);
+    }
 
     return Container(
       decoration: BoxDecoration(
@@ -439,7 +467,7 @@ class _MilstonesWidgetState extends State<MilstonesWidget> {
       child: Column(
         children: [
           // Header
-          Padding(
+          maybeAnimate(0, Padding(
             padding: const EdgeInsets.all(16),
             child: Row(
               children: [
@@ -476,10 +504,10 @@ class _MilstonesWidgetState extends State<MilstonesWidget> {
                 ),
               ],
             ),
-          ),
+          )),
 
           // Progress bar
-          Padding(
+          maybeAnimate(1, Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: LinearPercentIndicator(
               percent: progress.clamp(0.0, 1.0),
@@ -490,7 +518,7 @@ class _MilstonesWidgetState extends State<MilstonesWidget> {
               barRadius: const Radius.circular(4),
               padding: EdgeInsets.zero,
             ),
-          ),
+          )),
           const SizedBox(height: 12),
 
           // Milestones list
@@ -515,7 +543,7 @@ class _MilstonesWidgetState extends State<MilstonesWidget> {
                 final milestone = categoryMilestones[index];
                 final isCompleted = _isMilestoneCompleted(milestone.reference);
 
-                return Padding(
+                return maybeAnimate(2 + index, Padding(
                   padding: const EdgeInsets.only(bottom: 8),
                   child: GestureDetector(
                     onTap: () => _openLearningPathCreation(milestone.title),
@@ -561,7 +589,7 @@ class _MilstonesWidgetState extends State<MilstonesWidget> {
                       ),
                     ),
                   ),
-                );
+                ));
               },
             ),
         ],

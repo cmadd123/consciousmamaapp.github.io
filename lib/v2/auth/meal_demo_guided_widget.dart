@@ -252,7 +252,7 @@ class _MealDemoGuidedWidgetState extends State<MealDemoGuidedWidget>
                         onPressed: () async {
                           await _fadeController.reverse();
                           if (mounted) {
-                            context.pushNamed('FeaturesEnhanced');
+                            context.pushNamed('FeatureWalkthrough');
                           }
                         },
                         child: Text(

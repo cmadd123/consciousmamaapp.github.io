@@ -8,7 +8,7 @@ workflows:
       app_store_connect: CodeMagic Key
 
     environment:
-      flutter: stable
+      flutter: 3.41.1
       xcode: latest
       cocoapods: default
       groups:
@@ -83,7 +83,7 @@ workflows:
     instance_type: linux_x2
 
     environment:
-      flutter: stable
+      flutter: 3.41.1
       java: 17
       groups:
         - android_signing

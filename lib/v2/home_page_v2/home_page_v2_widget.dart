@@ -15,6 +15,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:provider/provider.dart';
+import '/components/page_animations.dart';
 import 'home_page_v2_model.dart';
 export 'home_page_v2_model.dart';
 
@@ -31,7 +32,7 @@ class HomePageV2Widget extends StatefulWidget {
   State<HomePageV2Widget> createState() => _HomePageV2WidgetState();
 }
 
-class _HomePageV2WidgetState extends State<HomePageV2Widget> {
+class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProviderStateMixin, PageAnimationMixin {
   late HomePageV2Model _model;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
@@ -40,6 +41,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> {
   void initState() {
     super.initState();
     _model = createModel(context, () => HomePageV2Model());
+    initPageAnimations(itemCount: 5);
 
     // On page load action.
     SchedulerBinding.instance.addPostFrameCallback((_) async {
@@ -69,6 +71,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> {
 
   @override
   void dispose() {
+    disposePageAnimations();
     _model.dispose();
 
     super.dispose();
@@ -485,7 +488,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> {
           mainAxisSize: MainAxisSize.max,
           children: [
                       // Version number - top right (temporary for dev)
-                      Align(
+                      animateItem(0, Align(
                         alignment: Alignment.topRight,
                         child: Padding(
                           padding: EdgeInsetsDirectional.fromSTEB(0.0, 8.0, 0.0, 0.0),
@@ -498,8 +501,8 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> {
                             ),
                           ),
                         ),
-                      ),
-                      Padding(
+                      )),
+                      animateItem(1, Padding(
                         padding:
                             EdgeInsetsDirectional.fromSTEB(0.0, 12.0, 0.0, 0.0),
                         child: Row(
@@ -593,7 +596,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> {
                               children: [
                                 _buildModeToggle(),
                                 SizedBox(height: 8.0),
-                                Container(
+                                breathingWidget(Container(
                                   width: 140.0,
                                   height: 132.0,
                                   decoration: BoxDecoration(),
@@ -606,12 +609,12 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> {
                                       fit: BoxFit.cover,
                                     ),
                                   ),
-                                ),
+                                )),
                               ],
                             ),
                           ],
                         ),
-                      ),
+                      )),
                       Padding(
                         padding:
                             EdgeInsetsDirectional.fromSTEB(0.0, 30.0, 0.0, 0.0),

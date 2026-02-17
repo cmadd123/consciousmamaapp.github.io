@@ -3,6 +3,7 @@ import '/backend/backend.dart';
 import '/components/home_nav_bar_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
+import '/components/page_animations.dart';
 import 'package:flutter/material.dart';
 
 /// Todos Page - Grocery-list style todo management
@@ -16,7 +17,7 @@ class TodosPageWidget extends StatefulWidget {
   State<TodosPageWidget> createState() => _TodosPageWidgetState();
 }
 
-class _TodosPageWidgetState extends State<TodosPageWidget> {
+class _TodosPageWidgetState extends State<TodosPageWidget> with TickerProviderStateMixin, PageAnimationMixin {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   bool _isSaving = false;
   bool _isAdding = false;
@@ -33,6 +34,7 @@ class _TodosPageWidgetState extends State<TodosPageWidget> {
   void initState() {
     super.initState();
     _loadChildren();
+    initPageAnimations(itemCount: 1);
   }
 
   Future<void> _loadChildren() async {
@@ -51,6 +53,7 @@ class _TodosPageWidgetState extends State<TodosPageWidget> {
 
   @override
   void dispose() {
+    disposePageAnimations();
     _textController.dispose();
     _textFocusNode.dispose();
     super.dispose();
@@ -116,7 +119,7 @@ class _TodosPageWidgetState extends State<TodosPageWidget> {
             child: Column(
               children: [
                 // Header
-                _buildHeader(context),
+                animateItem(0, _buildHeader(context)),
                 // Todo List
                 Expanded(
                   child: _buildTodoList(context),
@@ -219,6 +222,41 @@ class _TodosPageWidgetState extends State<TodosPageWidget> {
             .where('user_ref', isEqualTo: currentUserReference),
       ),
       builder: (context, snapshot) {
+        // Show skeleton while initial data loads
+        if (!snapshot.hasData) {
+          return SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(20.0, 8.0, 20.0, 24.0),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16.0),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20.0),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Column(
+                children: List.generate(4, (i) => Padding(
+                  padding: const EdgeInsets.only(bottom: 12.0),
+                  child: Row(
+                    children: [
+                      PulsingPlaceholder(width: 24.0, height: 24.0, borderRadius: 12.0, durationMs: 1200 + (i * 200)),
+                      const SizedBox(width: 12.0),
+                      Expanded(
+                        child: PulsingPlaceholder(height: 16.0, borderRadius: 8.0, durationMs: 1300 + (i * 200)),
+                      ),
+                    ],
+                  ),
+                )),
+              ),
+            ),
+          );
+        }
         final allTodos = snapshot.data ?? [];
         // Filter and sort locally to avoid needing composite Firestore index
         final incompleteTodos = allTodos
@@ -275,8 +313,14 @@ class _TodosPageWidgetState extends State<TodosPageWidget> {
                       ),
                       const SizedBox(height: 12.0),
                     ],
-                    // Incomplete todos
-                    ...incompleteTodos.map((todo) => _buildTodoItem(context, todo)),
+                    // Incomplete todos — staggered entrance
+                    ...incompleteTodos.asMap().entries.map((entry) => CascadeItem(
+                      key: ValueKey('todo_${entry.value.reference.id}'),
+                      index: entry.key,
+                      baseDelayMs: 350,
+                      staggerMs: 100,
+                      child: _buildTodoItem(context, entry.value),
+                    )),
                     // Completed section
                     if (completedTodos.isNotEmpty) ...[
                       const SizedBox(height: 16.0),

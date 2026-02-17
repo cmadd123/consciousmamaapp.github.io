@@ -6,6 +6,7 @@ import '/flutter_flow/flutter_flow_util.dart';
 import '/index.dart';
 import '/components/share_content_bottom_sheet.dart';
 import '/components/animated_press_widget.dart';
+import '/components/page_animations.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
@@ -1238,7 +1239,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
 
   /// Show drink picker bottom sheet (DrinkType enum)
   void _showDrinkPicker() async {
-    final result = await showModalBottomSheet<DrinkType>(
+    final result = await showBlurredBottomSheet<DrinkType>(
       context: context,
       backgroundColor: Colors.transparent,
       builder: (context) => _DrinkPickerSheet(currentSelection: _selectedDrinkType),
@@ -1305,7 +1306,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
         break;
     }
 
-    showModalBottomSheet(
+    showBlurredBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
@@ -1367,7 +1368,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
         break;
     }
 
-    showModalBottomSheet(
+    showBlurredBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
@@ -1659,7 +1660,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
 
     if (!mounted) return;
 
-    showModalBottomSheet(
+    showBlurredBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,

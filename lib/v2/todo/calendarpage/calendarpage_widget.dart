@@ -19,6 +19,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import '/components/page_animations.dart';
 import 'calendarpage_model.dart';
 export 'calendarpage_model.dart';
 
@@ -135,36 +136,77 @@ class CalendarpageWidget extends StatefulWidget {
   State<CalendarpageWidget> createState() => _CalendarpageWidgetState();
 }
 
-class _CalendarpageWidgetState extends State<CalendarpageWidget> {
+class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTickerProviderStateMixin {
   late CalendarpageModel _model;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
+
+  // Breathing FAB
+  late AnimationController _breathingController;
+  late Animation<double> _breathingAnimation;
+
+  // Eagerly loaded data — everything loads before content appears
+  List<ChildernRecord>? _cachedChildren;
+  List<EventAndTaskRecord>? _cachedEvents;
+  List<LearningPathTasksRecord>? _cachedLearningTasks;
+  bool _dataReady = false;
+  bool _showTop = false;
+  bool _showBottom = false;
 
   @override
   void initState() {
     super.initState();
     _model = createModel(context, () => CalendarpageModel());
-    _loadParentInfo();
+    _model.selecteddate = getCurrentTimestamp;
+    _loadAllData();
 
-    // On page load action.
-    SchedulerBinding.instance.addPostFrameCallback((_) async {
-      _model.selecteddate = getCurrentTimestamp;
-      safeSetState(() {});
-    });
+    _breathingController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 2500),
+    );
+    _breathingAnimation = Tween<double>(begin: 0.95, end: 1.05).animate(
+      CurvedAnimation(parent: _breathingController, curve: Curves.easeInOut),
+    );
+    _breathingController.repeat(reverse: true);
   }
 
-  Future<void> _loadParentInfo() async {
+  Future<void> _loadAllData() async {
     if (currentUserReference == null) return;
-    final user = await UsersRecord.getDocumentOnce(currentUserReference!);
+    final results = await Future.wait([
+      UsersRecord.getDocumentOnce(currentUserReference!),
+      queryChildernRecordOnce(
+        queryBuilder: (childernRecord) => childernRecord
+            .where('userRef', isEqualTo: currentUserReference),
+      ),
+      queryEventAndTaskRecordOnce(
+        queryBuilder: (eventAndTaskRecord) => eventAndTaskRecord
+            .where('user_ref', isEqualTo: currentUserReference)
+            .orderBy('date'),
+      ),
+      queryLearningPathTasksRecordOnce(
+        queryBuilder: (learningPathTasksRecord) => learningPathTasksRecord
+            .where('user_ref', isEqualTo: currentUserReference),
+      ),
+    ]);
     if (mounted) {
       setState(() {
-        _model.parentInfo = ParentDisplayInfo.fromUser(user);
+        _model.parentInfo = ParentDisplayInfo.fromUser(results[0] as UsersRecord);
+        _cachedChildren = results[1] as List<ChildernRecord>;
+        _cachedEvents = results[2] as List<EventAndTaskRecord>;
+        _cachedLearningTasks = results[3] as List<LearningPathTasksRecord>;
+        _dataReady = true;
+        _showTop = true;
+      });
+      // Bottom half follows 150ms later
+      Future.delayed(const Duration(milliseconds: 150), () {
+        if (mounted) setState(() => _showBottom = true);
       });
     }
   }
 
   @override
   void dispose() {
+    _breathingController.dispose();
     _model.dispose();
 
     super.dispose();
@@ -196,14 +238,28 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
                   children: [
-                    // Person filter circles (colored circles with letters)
+                    // ===== TOP HALF: Filter circles + Calendar + Date + Chips =====
+                    if (!_dataReady && !FFAppState().isComfortMode)
+                      CalendarPageSkeleton(isComfortMode: FFAppState().isComfortMode),
+                    if (_dataReady)
+                    // Entrance animation for top half
+                    AnimatedSlide(
+                      duration: const Duration(milliseconds: 400),
+                      offset: _showTop ? Offset.zero : const Offset(-0.05, 0),
+                      curve: Curves.easeOutCubic,
+                      child: AnimatedOpacity(
+                        duration: const Duration(milliseconds: 300),
+                        opacity: _showTop ? 1.0 : 0.0,
+                        child: Column(
+                          children: [
+                    // Person filter circles
                     StreamBuilder<List<ChildernRecord>>(
                       stream: queryChildernRecord(
                         queryBuilder: (childernRecord) => childernRecord
                             .where('userRef', isEqualTo: currentUserReference),
                       ),
                       builder: (context, snapshot) {
-                        final children = snapshot.data ?? [];
+                        final children = snapshot.data ?? _cachedChildren ?? [];
 
                         return Container(
                           width: double.infinity,
@@ -330,7 +386,9 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                                   ),
                                 ),
                                 // Child circles
-                                ...children.map((child) {
+                                ...children.asMap().entries.map((entry) {
+                                  final childIndex = entry.key;
+                                  final child = entry.value;
                                   final isSelected = _model.selectedChildFilters.contains(child.reference);
                                   final childColor = child.selectedColor ?? FlutterFlowTheme.of(context).primary;
                                   final initial = child.name.isNotEmpty ? child.name[0].toLowerCase() : '?';
@@ -380,7 +438,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                         );
                       },
                     ),
-                    // Show calendar only in standard mode
+                    // Calendar
                     if (!FFAppState().isComfortMode)
                       Container(
                         decoration: BoxDecoration(
@@ -401,10 +459,9 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                         builder: (context, childrenSnapshot) {
                           // Create a map of childRef to color
                           final childColorMap = <String, Color>{};
-                          if (childrenSnapshot.hasData) {
-                            for (var child in childrenSnapshot.data!) {
-                              childColorMap[child.reference.path] = child.selectedColor ?? FlutterFlowTheme.of(context).primary;
-                            }
+                          final childrenData = childrenSnapshot.data ?? _cachedChildren ?? [];
+                          for (var child in childrenData) {
+                            childColorMap[child.reference.path] = child.selectedColor ?? FlutterFlowTheme.of(context).primary;
                           }
 
                           return StreamBuilder<List<EventAndTaskRecord>>(
@@ -418,8 +475,8 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                                   .orderBy('date'),
                         ),
                         builder: (context, eventSnapshot) {
-                          // Show calendar without markers while loading
-                          final events = eventSnapshot.data ?? [];
+                          // Use cached data as fallback for instant markers
+                          final events = eventSnapshot.data ?? _cachedEvents ?? [];
 
                           return StreamBuilder<List<LearningPathTasksRecord>>(
                             stream: queryLearningPathTasksRecord(
@@ -428,7 +485,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                                       .where('user_ref', isEqualTo: currentUserReference),
                             ),
                             builder: (context, learningSnapshot) {
-                              final learningTasks = learningSnapshot.data ?? [];
+                              final learningTasks = learningSnapshot.data ?? _cachedLearningTasks ?? [];
 
                           return FlutterFlowCalendar(
                             color: FlutterFlowTheme.of(context).primary,
@@ -436,6 +493,9 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                             weekFormat: false,
                             weekStartsMonday: false,
                             rowHeight: 56.0,
+                            animateDays: true,
+                            animationBaseDelayMs: 150,
+                            rowStaggerMs: 80,
                             eventLoader: (day) {
                               var dayEvents = events
                                   .where((event) =>
@@ -621,54 +681,70 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                         },
                       ),
                     ),
-                    // Standard mode: Show selected day's tasks
-                    if (!FFAppState().isComfortMode)
-                      Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(
-                            0.0, 4.0, 0.0, 30.0),
+                          ], // end top half Column children
+                        ), // end top half Column
+                      ), // end AnimatedOpacity
+                    ), // end AnimatedSlide (top half)
+                    // ===== BOTTOM HALF: Date text + Filter chips + Schedule items =====
+                    if (!_dataReady && !FFAppState().isComfortMode)
+                      CalendarScheduleSkeleton(isComfortMode: FFAppState().isComfortMode),
+                    if (_dataReady && !FFAppState().isComfortMode)
+                    AnimatedSlide(
+                      duration: const Duration(milliseconds: 400),
+                      offset: _showBottom ? Offset.zero : const Offset(0.05, 0),
+                      curve: Curves.easeOutCubic,
+                      child: AnimatedOpacity(
+                        duration: const Duration(milliseconds: 300),
+                        opacity: _showBottom ? 1.0 : 0.0,
                         child: Column(
                           children: [
-                            Container(
-                              width: double.infinity,
-                              padding: EdgeInsetsDirectional.fromSTEB(16.0, 12.0, 16.0, 12.0),
-                              decoration: BoxDecoration(
-                                color: Colors.transparent,
-                              ),
-                              child: Text(
-                                dateTimeFormat(
-                                  "MMMMEEEEd",
-                                  _model.selecteddate ?? getCurrentTimestamp,
-                                  locale: FFLocalizations.of(context).languageCode,
-                                ),
-                                style: FlutterFlowTheme.of(context).bodyLarge.override(
-                                  fontFamily: 'Andika New Basic',
-                                  color: FlutterFlowTheme.of(context).primaryText,
-                                  fontSize: 16.0,
-                                  fontWeight: FontWeight.w600,
-                                  letterSpacing: 0.0,
-                                ),
-                              ),
+                    // Selected date text
+                    Padding(
+                      padding: EdgeInsetsDirectional.fromSTEB(0.0, 4.0, 0.0, 0.0),
+                      child: Container(
+                        width: double.infinity,
+                        padding: EdgeInsetsDirectional.fromSTEB(16.0, 12.0, 16.0, 12.0),
+                        child: Text(
+                          dateTimeFormat(
+                            "MMMMEEEEd",
+                            _model.selecteddate ?? getCurrentTimestamp,
+                            locale: FFLocalizations.of(context).languageCode,
                           ),
-                          SizedBox(height: 12.0),
-                          // Filter tabs
-                          Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(16.0, 0, 16.0, 8.0),
-                            child: SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  _buildFilterChip('All'),
-                                  SizedBox(width: 8.0),
-                                  _buildFilterChip('Event'),
-                                  SizedBox(width: 8.0),
-                                  _buildFilterChip('Learning'),
-                                  SizedBox(width: 8.0),
-                                  _buildFilterChip('Activity'),
-                                ],
-                              ),
-                            ),
+                          style: FlutterFlowTheme.of(context).bodyLarge.override(
+                            fontFamily: 'Andika New Basic',
+                            color: FlutterFlowTheme.of(context).primaryText,
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 0.0,
                           ),
+                        ),
+                      ),
+                    ),
+                    // Filter chips
+                    Padding(
+                      padding: EdgeInsetsDirectional.fromSTEB(16.0, 0, 16.0, 8.0),
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            _buildFilterChip('All'),
+                            SizedBox(width: 8.0),
+                            _buildFilterChip('Event'),
+                            SizedBox(width: 8.0),
+                            _buildFilterChip('Learning'),
+                            SizedBox(width: 8.0),
+                            _buildFilterChip('Activity'),
+                          ],
+                        ),
+                      ),
+                    ),
+                    // Schedule items
+                    Padding(
+                        padding: EdgeInsetsDirectional.fromSTEB(
+                            0.0, 0.0, 0.0, 30.0),
+                        child: Column(
+                          children: [
                           // Combined StreamBuilder for events/tasks and learning path tasks
                           StreamBuilder<List<ChildernRecord>>(
                             stream: queryChildernRecord(
@@ -679,11 +755,10 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                               // Create maps for child info lookup
                               final childNameMap = <String, String>{};
                               final childColorMap = <String, Color>{};
-                              if (childrenSnapshot.hasData) {
-                                for (var child in childrenSnapshot.data!) {
-                                  childNameMap[child.reference.path] = child.name;
-                                  childColorMap[child.reference.path] = child.selectedColor ?? FlutterFlowTheme.of(context).primary;
-                                }
+                              final scheduleChildren = childrenSnapshot.data ?? _cachedChildren ?? [];
+                              for (var child in scheduleChildren) {
+                                childNameMap[child.reference.path] = child.name;
+                                childColorMap[child.reference.path] = child.selectedColor ?? FlutterFlowTheme.of(context).primary;
                               }
 
                               return StreamBuilder<List<EventAndTaskRecord>>(
@@ -704,11 +779,13 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                                           .where('user_ref', isEqualTo: currentUserReference),
                                 ),
                                 builder: (context, learningSnapshot) {
-                              // Handle errors (including missing index errors)
+                              // Determine the schedule content (skeleton, empty, or real data)
+                              Widget scheduleContent;
+
                               if (eventSnapshot.hasError && learningSnapshot.hasError) {
                                 debugPrint('Error querying ${eventSnapshot.error}');
-                                // Show empty state on error
-                                return Center(
+                                scheduleContent = Center(
+                                  key: const ValueKey('schedule_error'),
                                   child: Padding(
                                     padding: EdgeInsetsDirectional.fromSTEB(12.0, 12.0, 12.0, 12.0),
                                     child: EmptyWidgetComponentWidget(
@@ -724,60 +801,50 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                                     ),
                                   ),
                                 );
-                              }
-                              // Show loading only briefly, then show empty state
-                              if (!eventSnapshot.hasData && !learningSnapshot.hasData) {
-                                // Use connectionState to avoid infinite loading
+                              } else if (!eventSnapshot.hasData && !learningSnapshot.hasData) {
                                 if (eventSnapshot.connectionState == ConnectionState.waiting ||
                                     learningSnapshot.connectionState == ConnectionState.waiting) {
-                                  return Center(
+                                  scheduleContent = CalendarScheduleSkeleton(
+                                    key: const ValueKey('schedule_skeleton'),
+                                    isComfortMode: FFAppState().isComfortMode,
+                                  );
+                                } else {
+                                  scheduleContent = Center(
+                                    key: const ValueKey('schedule_empty'),
                                     child: Padding(
-                                      padding: EdgeInsets.symmetric(vertical: 40.0),
-                                      child: SizedBox(
-                                        width: 50.0,
-                                        height: 50.0,
-                                        child: CircularProgressIndicator(
-                                          valueColor:
-                                              AlwaysStoppedAnimation<Color>(
-                                            FlutterFlowTheme.of(context)
-                                                .primary,
-                                          ),
-                                        ),
+                                      padding: EdgeInsetsDirectional.fromSTEB(12.0, 12.0, 12.0, 12.0),
+                                      child: EmptyWidgetComponentWidget(
+                                        titleParams: 'Nothing planned for this day\nTap + to add something',
+                                        actionParam: () async {
+                                          context.pushNamed(
+                                            AddcalenderWidget.routeName,
+                                            queryParameters: {
+                                              'fromPage': serializeParam('Calender', ParamType.String),
+                                            }.withoutNulls,
+                                          );
+                                        },
                                       ),
                                     ),
                                   );
                                 }
-                                // If not waiting and no data, treat as empty
-                                return Center(
-                                  child: Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(12.0, 12.0, 12.0, 12.0),
-                                    child: EmptyWidgetComponentWidget(
-                                      titleParams: 'Nothing planned for this day\nTap + to add something',
-                                      actionParam: () async {
-                                        context.pushNamed(
-                                          AddcalenderWidget.routeName,
-                                          queryParameters: {
-                                            'fromPage': serializeParam('Calender', ParamType.String),
-                                          }.withoutNulls,
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                );
-                              }
+                              } else {
 
                               // Combine both lists into CalendarItems
                               List<CalendarItem> allCalendarItems = [];
 
+                              // Use stream data if available, fallback to cached data
+                              final eventData = eventSnapshot.data ?? _cachedEvents ?? [];
+                              final learningData = learningSnapshot.data ?? _cachedLearningTasks ?? [];
+
                               // Add events/tasks with child info
-                              if (eventSnapshot.hasData) {
+                              if (eventData.isNotEmpty) {
                                 debugPrint('=== Standard Mode Calendar Data ===');
                                 debugPrint('Selected Date: ${_model.selecteddate}');
-                                debugPrint('Total EventAndTask records: ${eventSnapshot.data!.length}');
+                                debugPrint('Total EventAndTask records: ${eventData.length}');
 
                                 // Group by name to see recurring patterns
                                 Map<String, List<DateTime>> eventDates = {};
-                                for (final e in eventSnapshot.data!) {
+                                for (final e in eventData) {
                                   if (!eventDates.containsKey(e.name)) {
                                     eventDates[e.name] = [];
                                   }
@@ -803,7 +870,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                                 _model.debugLogs.clear();
 
                                 allCalendarItems.addAll(
-                                  eventSnapshot.data!.map((e) {
+                                  eventData.map((e) {
                                     // DEBUG: Log child selection data AND recurring info (both console and model)
                                     final debugLines = [
                                       '=== EVENT: ${e.name} ===',
@@ -860,9 +927,9 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                               }
 
                               // Add learning path tasks with child info
-                              if (learningSnapshot.hasData) {
+                              if (learningData.isNotEmpty) {
                                 allCalendarItems.addAll(
-                                  learningSnapshot.data!.map((e) {
+                                  learningData.map((e) {
                                     final childPath = e.childRef?.path;
                                     return CalendarItem.fromLearningTask(
                                       e,
@@ -888,7 +955,8 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                                   )
                               ).toList();
 
-                              return Container(
+                              scheduleContent = Container(
+                                key: ValueKey('schedule_content_${_model.selecteddate}'),
                                 decoration: BoxDecoration(),
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
@@ -1013,7 +1081,6 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                                                 ),
                                               );
                                             }
-                                            // Activity filter - link to activities page
                                             if (_model.selectedFilter == 'Activity') {
                                               return Center(
                                                 child: Padding(
@@ -1028,7 +1095,6 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                                                 ),
                                               );
                                             }
-                                            // All filter or other filters - link to add calendar
                                             return Center(
                                               child: Padding(
                                                 padding: EdgeInsets.symmetric(vertical: 12.0),
@@ -1037,11 +1103,9 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                                                       'Nothing planned for this day\nTap + to add something',
                                                   actionParam: () async {
                                                     context.pushNamed(
-                                                      AddcalenderWidget
-                                                          .routeName,
+                                                      AddcalenderWidget.routeName,
                                                       queryParameters: {
-                                                        'fromPage':
-                                                            serializeParam(
+                                                        'fromPage': serializeParam(
                                                           'Calender',
                                                           ParamType.String,
                                                         ),
@@ -1933,6 +1997,11 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                                   ],
                                 ),
                               );
+                              }
+                              return AnimatedSwitcher(
+                                duration: const Duration(milliseconds: 200),
+                                child: scheduleContent,
+                              );
                                 },
                               );
                             },
@@ -1942,9 +2011,22 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                         ],
                       ),
                     ),
+                          ], // end bottom half Column children
+                        ), // end bottom half Column
+                      ), // end AnimatedOpacity (bottom half)
+                    ), // end AnimatedSlide (bottom half)
                     // Comfort mode: Show agenda list grouped by date
-                    if (FFAppState().isComfortMode)
-                      Padding(
+                    if (FFAppState().isComfortMode && !_dataReady)
+                      CalendarScheduleSkeleton(isComfortMode: true),
+                    if (FFAppState().isComfortMode && _dataReady)
+                      AnimatedSlide(
+                        duration: const Duration(milliseconds: 400),
+                        offset: _showBottom ? Offset.zero : const Offset(0.05, 0),
+                        curve: Curves.easeOutCubic,
+                        child: AnimatedOpacity(
+                          duration: const Duration(milliseconds: 300),
+                          opacity: _showBottom ? 1.0 : 0.0,
+                          child: Padding(
                         padding: EdgeInsetsDirectional.fromSTEB(0.0, 16.0, 0.0, 30.0),
                         child: StreamBuilder<List<EventAndTaskRecord>>(
                           stream: queryEventAndTaskRecord(
@@ -1954,48 +2036,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                                     .orderBy('date'),
                           ),
                           builder: (context, snapshot) {
-                            // Handle errors gracefully
-                            if (snapshot.hasError) {
-                              debugPrint('Comfort mode query error: ${snapshot.error}');
-                              return Center(
-                                child: Padding(
-                                  padding: EdgeInsets.all(20.0),
-                                  child: Text(
-                                    'No events to show',
-                                    style: TextStyle(color: Color(0xFF999999)),
-                                  ),
-                                ),
-                              );
-                            }
-
-                            if (!snapshot.hasData) {
-                              // Only show spinner if still waiting
-                              if (snapshot.connectionState == ConnectionState.waiting) {
-                                return Center(
-                                  child: SizedBox(
-                                    width: 50.0,
-                                    height: 50.0,
-                                    child: CircularProgressIndicator(
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                        FlutterFlowTheme.of(context).primary,
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              }
-                              // Not waiting and no data = empty
-                              return Center(
-                                child: Padding(
-                                  padding: EdgeInsets.all(20.0),
-                                  child: Text(
-                                    'No events to show',
-                                    style: TextStyle(color: Color(0xFF999999)),
-                                  ),
-                                ),
-                              );
-                            }
-
-                            var allEvents = snapshot.data!;
+                            var allEvents = snapshot.data ?? _cachedEvents ?? [];
 
                             // Debug: Print all event types
                             debugPrint('=== Comfort Mode Calendar Data ===');
@@ -2112,7 +2153,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                                         ),
                                       ),
                                       // Active tasks
-                                      ...activeEvents.map((event) => _buildComfortModeTaskCard(context, event)).toList(),
+                                      ...activeEvents.map((item) => _buildComfortModeTaskCard(context, item)).toList(),
                                       // Completed tasks
                                       if (completedEvents.isNotEmpty)
                                         Padding(
@@ -2147,6 +2188,8 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                           },
                         ),
                       ),
+                        ), // end AnimatedOpacity (comfort bottom)
+                      ), // end AnimatedSlide (comfort bottom)
                   ].addToEnd(SizedBox(height: 90.0)),
                 ),
               ),
@@ -2154,7 +2197,9 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                 alignment: AlignmentDirectional(1.0, 1.0),
                 child: Padding(
                   padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 16.0, 100.0),
-                  child: FloatingActionButton(
+                  child: ScaleTransition(
+                    scale: _breathingAnimation,
+                    child: FloatingActionButton(
                     onPressed: () async {
                       context.pushNamed(
                         AddcalenderWidget.routeName,
@@ -2178,6 +2223,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> {
                       size: 28.0,
                     ),
                   ),
+                  ), // end ScaleTransition
                 ),
               ),
               const Align(

@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:provider/provider.dart';
+import '/components/page_animations.dart';
 import 'learn_path_model.dart';
 export 'learn_path_model.dart';
 
@@ -819,7 +820,7 @@ class _LearnPathWidgetState extends State<LearnPathWidget>
                           child: Column(
                             mainAxisSize: MainAxisSize.max,
                             children: [
-                              Padding(
+                              CascadeItem(index: 0, baseDelayMs: 150, staggerMs: 150, child: Padding(
                                 padding: EdgeInsetsDirectional.fromSTEB(
                                     24.0, 16.0, 24.0, 0.0),
                                 child: Text(
@@ -833,10 +834,10 @@ class _LearnPathWidgetState extends State<LearnPathWidget>
                                         letterSpacing: 0.0,
                                       ),
                                 ),
-                              ),
+                              )),
                               // Today's Task Widget
-                              _buildTodaysTaskWidget(context),
-                              Container(
+                              CascadeItem(index: 1, baseDelayMs: 300, staggerMs: 150, child: _buildTodaysTaskWidget(context)),
+                              CascadeItem(index: 2, baseDelayMs: 450, staggerMs: 150, child: Container(
                                 width: double.infinity,
                                 height:
                                     MediaQuery.sizeOf(context).height * 0.67,
@@ -936,7 +937,12 @@ class _LearnPathWidgetState extends State<LearnPathWidget>
                                                 ),
                                               ),
                                             ),
-                                            ...activePaths.map((pathItem) => _buildPathCard(context, pathItem, false)),
+                                            ...activePaths.asMap().entries.map((entry) => CascadeItem(
+                                              index: entry.key,
+                                              baseDelayMs: 400,
+                                              staggerMs: 120,
+                                              child: _buildPathCard(context, entry.value, false),
+                                            )),
                                           ],
                                           // Completed Learning Paths (Collapsible)
                                           if (completedPaths.isNotEmpty) ...[
@@ -1000,7 +1006,7 @@ class _LearnPathWidgetState extends State<LearnPathWidget>
                                     );
                                   },
                                 ),
-                              ),
+                              )),
                             ],
                           ),
                         ),

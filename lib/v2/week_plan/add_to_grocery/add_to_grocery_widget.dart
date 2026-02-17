@@ -6,6 +6,7 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/v2/week_plan/create_grocery_list/grocery_list_bottom_sheet.dart';
 import '/custom_code/actions/instacart_affiliate_service.dart';
+import '/custom_code/actions/grocery_aisle_categorizer.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -659,49 +660,107 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
   }
 
   Widget _buildGroceryList(BuildContext context, List<GroceryItemStruct> items) {
-    return ListView.builder(
-      padding: const EdgeInsets.fromLTRB(20.0, 16.0, 20.0, 100.0),
-      itemCount: items.length + 1, // +1 for the info banner
-      itemBuilder: (context, index) {
-        // First item is the info banner
-        if (index == 0) {
-          return Container(
-            margin: const EdgeInsets.only(bottom: 16.0),
-            padding: const EdgeInsets.all(12.0),
-            decoration: BoxDecoration(
-              color: const Color(0xFFF0F7FF),
-              borderRadius: BorderRadius.circular(14.0),
-              border: Border.all(
-                color: const Color(0xFFBBDEFB),
-                width: 1.0,
+    // Group items by aisle category, preserving original indices for state operations
+    final Map<String, List<(int, GroceryItemStruct)>> grouped = {};
+    for (int i = 0; i < items.length; i++) {
+      final item = items[i];
+      final ingredientName = item.name.isNotEmpty ? item.name : item.displayText;
+      final aisle = GroceryAisleCategorizer.categorize(ingredientName);
+      grouped.putIfAbsent(aisle, () => []).add((i, item));
+    }
+
+    // Sort aisles by store layout order
+    final sortedAisles = grouped.keys.toList()
+      ..sort((a, b) => GroceryAisleCategorizer.sortOrder(a)
+          .compareTo(GroceryAisleCategorizer.sortOrder(b)));
+
+    // Build flat widget list: info banner + (header + items) per aisle
+    final List<Widget> children = [];
+
+    // Info banner
+    children.add(
+      Container(
+        margin: const EdgeInsets.only(bottom: 16.0),
+        padding: const EdgeInsets.all(12.0),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF0F7FF),
+          borderRadius: BorderRadius.circular(14.0),
+          border: Border.all(
+            color: const Color(0xFFBBDEFB),
+            width: 1.0,
+          ),
+        ),
+        child: Row(
+          children: [
+            const Icon(
+              Icons.info_outline_rounded,
+              color: Color(0xFF5C9CE5),
+              size: 20.0,
+            ),
+            const SizedBox(width: 10.0),
+            Expanded(
+              child: Text(
+                'Sorted by aisle to make shopping faster. Swipe left to remove.',
+                style: FlutterFlowTheme.of(context).bodySmall.override(
+                      fontFamily: 'Andika New Basic',
+                      color: const Color(0xFF5C9CE5),
+                      fontSize: 13.0,
+                      letterSpacing: 0.0,
+                    ),
               ),
             ),
-            child: Row(
-              children: [
-                const Icon(
-                  Icons.info_outline_rounded,
-                  color: Color(0xFF5C9CE5),
-                  size: 20.0,
-                ),
-                const SizedBox(width: 10.0),
-                Expanded(
-                  child: Text(
-                    'These are ingredients for your planned meals. Remove items you already have.',
-                    style: FlutterFlowTheme.of(context).bodySmall.override(
-                          fontFamily: 'Andika New Basic',
-                          color: const Color(0xFF5C9CE5),
-                          fontSize: 13.0,
-                          letterSpacing: 0.0,
-                        ),
-                  ),
-                ),
-              ],
-            ),
-          );
-        }
-        final item = items[index - 1]; // Adjust index for actual items
-        return _buildGroceryItem(context, item, index - 1);
-      },
+          ],
+        ),
+      ),
+    );
+
+    for (final aisle in sortedAisles) {
+      final aisleItems = grouped[aisle]!;
+      final uncheckedCount = aisleItems.where((e) => !e.$2.isChecked).length;
+      final emoji = GroceryAisleCategorizer.emojiFor(aisle);
+
+      // Aisle section header
+      children.add(
+        Padding(
+          padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+          child: Row(
+            children: [
+              Text(emoji, style: const TextStyle(fontSize: 16)),
+              const SizedBox(width: 8.0),
+              Text(
+                aisle,
+                style: FlutterFlowTheme.of(context).bodyMedium.override(
+                      fontFamily: 'Andika New Basic',
+                      color: const Color(0xFF5D4E60),
+                      fontSize: 15.0,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.0,
+                    ),
+              ),
+              const SizedBox(width: 8.0),
+              Text(
+                '$uncheckedCount item${uncheckedCount == 1 ? '' : 's'}',
+                style: FlutterFlowTheme.of(context).bodySmall.override(
+                      fontFamily: 'Andika New Basic',
+                      color: const Color(0xFF9B8A9E),
+                      fontSize: 12.0,
+                      letterSpacing: 0.0,
+                    ),
+              ),
+            ],
+          ),
+        ),
+      );
+
+      // Items in this aisle
+      for (final (originalIndex, item) in aisleItems) {
+        children.add(_buildGroceryItem(context, item, originalIndex));
+      }
+    }
+
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(20.0, 16.0, 20.0, 100.0),
+      children: children,
     );
   }
 

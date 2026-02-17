@@ -95,11 +95,11 @@ service cloud.firestore {
       allow create: if isAuthenticated();
     }
 
-    // Activities - read for all authenticated, write allowed for cleanup
+    // Activities - read-only for authenticated users
     match /activity/{activityId} {
       allow read: if isAuthenticated();
-      allow write: if isAuthenticated(); // Temporarily allow for cleanup, change back to false after upload
-      allow delete: if isAuthenticated(); // Allow deletion for cleanup
+      allow write: if false;
+      allow delete: if false;
     }
 
     // User Activities - users can only access their own custom activities

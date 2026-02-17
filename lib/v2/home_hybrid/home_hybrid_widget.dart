@@ -53,24 +53,26 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
 
     // Setup staggered animation
     _animationController = AnimationController(
-      duration: const Duration(milliseconds: 1200),
+      duration: const Duration(milliseconds: 1800),
       vsync: this,
     );
 
-    // Create staggered animations for each element (header/greeting + 6 cards, children not animated)
-    _cardAnimations = List.generate(8, (index) {
+    // Create staggered animations for each element (header, greeting, children + 6 cards)
+    // Each item starts ~130ms after the previous (0.07 * 1800ms)
+    _cardAnimations = List.generate(9, (index) {
       final start = index * 0.07;
-      final end = start + 0.45;
+      final end = start + 0.25;
       return CurvedAnimation(
         parent: _animationController,
         curve: Interval(start.clamp(0.0, 1.0), end.clamp(0.0, 1.0), curve: Curves.easeOutCubic),
       );
     });
 
-    // Start animation after frame is built
+    // Start animation after frame is built + route transition completes
     SchedulerBinding.instance.addPostFrameCallback((_) async {
-      // Start the entrance animation immediately for smooth transition from splash
-      _animationController.forward();
+      // Delay entrance animation to avoid overlapping with route fade (150ms)
+      await Future.delayed(const Duration(milliseconds: 200));
+      if (mounted) _animationController.forward();
 
       // Check if quote was dismissed today
       await _checkQuoteDismissed();
@@ -196,34 +198,34 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                         _animatedCard(1, _buildGreeting(context)),
                         const SizedBox(height: 20.0),
 
-                        // Children quick access (NOT animated - appears immediately like header)
+                        // Children quick access (animated with the cards)
                         if (sortedChildren != null && sortedChildren.isNotEmpty)
-                          _buildChildrenRow(context, sortedChildren),
+                          _animatedCard(2, _buildChildrenRow(context, sortedChildren)),
                         if (sortedChildren != null && sortedChildren.isNotEmpty)
                           const SizedBox(height: 24.0),
 
                         // Today's Meals Card (animated)
-                        _animatedCard(2, _buildMealsCard(context)),
+                        _animatedCard(3, _buildMealsCard(context)),
                         const SizedBox(height: 16.0),
 
                         // Today's Events Card (animated)
-                        _animatedCard(3, _buildScheduleCard(context)),
+                        _animatedCard(4, _buildScheduleCard(context)),
                         const SizedBox(height: 16.0),
 
                         // Todos Card (animated)
-                        _animatedCard(4, _buildTodosCard(context)),
+                        _animatedCard(5, _buildTodosCard(context)),
                         const SizedBox(height: 16.0),
 
                         // Learning Path Card (animated)
-                        _animatedCard(5, _buildLearningPathCard(context)),
+                        _animatedCard(6, _buildLearningPathCard(context)),
                         const SizedBox(height: 16.0),
 
                         // Activities Card (animated)
-                        _animatedCard(6, _buildActivitiesCard(context)),
+                        _animatedCard(7, _buildActivitiesCard(context)),
                         const SizedBox(height: 16.0),
 
                         // Milestones Card (animated)
-                        _animatedCard(7, _buildMilestonesCard(context, sortedChildren)),
+                        _animatedCard(8, _buildMilestonesCard(context, sortedChildren)),
                         const SizedBox(height: 24.0),
                       ],
                     ),
@@ -793,7 +795,25 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
             final hasItems = totalItems > 0;
 
             return InkWell(
-              onTap: () => context.pushNamed(CalendarpageWidget.routeName),
+              onTap: () => Navigator.of(context).push(
+                PageRouteBuilder(
+                  pageBuilder: (context, animation, secondaryAnimation) =>
+                      CalendarpageWidget(),
+                  transitionDuration: const Duration(milliseconds: 500),
+                  reverseTransitionDuration: const Duration(milliseconds: 300),
+                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                    return FadeTransition(
+                      opacity: CurvedAnimation(parent: animation, curve: Curves.easeOut),
+                      child: ScaleTransition(
+                        scale: Tween<double>(begin: 0.75, end: 1.0).animate(
+                          CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
+                        ),
+                        child: child,
+                      ),
+                    );
+                  },
+                ),
+              ),
               borderRadius: BorderRadius.circular(20.0),
               child: Container(
                 width: double.infinity,

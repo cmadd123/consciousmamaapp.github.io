@@ -164,8 +164,6 @@ Example format:
     throw Exception("OpenAI API key not configured. Please add 'openai_api_key' to Firebase Remote Config.");
   }
 
-  print('DEBUG: OpenAI key length: ${openAiKey.length}, starts with: ${openAiKey.substring(0, openAiKey.length > 10 ? 10 : openAiKey.length)}...');
-
   // SAFETY 3: Request Timeout (30 seconds)
   final response = await http.post(
     Uri.parse('https://api.openai.com/v1/chat/completions'),

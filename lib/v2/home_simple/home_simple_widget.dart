@@ -7,6 +7,7 @@ import '/flutter_flow/flutter_flow_widgets.dart';
 import '/index.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '/components/page_animations.dart';
 import 'home_simple_model.dart';
 export 'home_simple_model.dart';
 
@@ -26,7 +27,7 @@ class HomeSimpleWidget extends StatefulWidget {
   State<HomeSimpleWidget> createState() => _HomeSimpleWidgetState();
 }
 
-class _HomeSimpleWidgetState extends State<HomeSimpleWidget> {
+class _HomeSimpleWidgetState extends State<HomeSimpleWidget> with TickerProviderStateMixin, PageAnimationMixin {
   late HomeSimpleModel _model;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
@@ -35,10 +36,12 @@ class _HomeSimpleWidgetState extends State<HomeSimpleWidget> {
   void initState() {
     super.initState();
     _model = createModel(context, () => HomeSimpleModel());
+    initPageAnimations(itemCount: 4);
   }
 
   @override
   void dispose() {
+    disposePageAnimations();
     _model.dispose();
     super.dispose();
   }
@@ -131,7 +134,7 @@ class _HomeSimpleWidgetState extends State<HomeSimpleWidget> {
                             ),
                             const SizedBox(height: 8.0),
                             // Logo - centered at top (house with leaves, white for comfort mode)
-                            Center(
+                            breathingWidget(Center(
                               child: ColorFiltered(
                                 colorFilter: const ColorFilter.mode(
                                   Color(0xFFECF0F1), // Light gray-white
@@ -144,10 +147,10 @@ class _HomeSimpleWidgetState extends State<HomeSimpleWidget> {
                                   fit: BoxFit.contain,
                                 ),
                               ),
-                            ),
+                            )),
                             const SizedBox(height: 12.0),
                             // Greeting with user's first name
-                            Center(
+                            animateItem(0, Center(
                               child: Text(
                                 _getGreeting(),
                                 style: FlutterFlowTheme.of(context)
@@ -158,10 +161,10 @@ class _HomeSimpleWidgetState extends State<HomeSimpleWidget> {
                                       fontSize: 18.0,
                                     ),
                               ),
-                            ),
+                            )),
                             const SizedBox(height: 6.0),
                             // Date - small, centered
-                            Center(
+                            animateItem(1, Center(
                               child: Text(
                                 dateTimeFormat('EEEE, MMMM d', getCurrentTimestamp),
                                 style: FlutterFlowTheme.of(context)
@@ -173,7 +176,7 @@ class _HomeSimpleWidgetState extends State<HomeSimpleWidget> {
                                       letterSpacing: 1.0,
                                     ),
                               ),
-                            ),
+                            )),
 
                             const SizedBox(height: 36.0),
 
@@ -244,7 +247,7 @@ class _HomeSimpleWidgetState extends State<HomeSimpleWidget> {
                                       calendarText = '$taskCount things today';
                                     }
 
-                                    return Column(
+                                    return animateItem(2, Column(
                                       children: [
                                         // Calendar/Tasks button with dots inside
                                         _buildInfoButtonWithDotsStyled(
@@ -318,7 +321,7 @@ class _HomeSimpleWidgetState extends State<HomeSimpleWidget> {
                                           hasData: false, // Always show as action item
                                         ),
                                       ],
-                                    );
+                                    ));
                                   },
                                 );
                               },
@@ -327,7 +330,7 @@ class _HomeSimpleWidgetState extends State<HomeSimpleWidget> {
                       const SizedBox(height: 60.0),
 
                       // Subtle "More" link at bottom
-                      Center(
+                      animateItem(3, Center(
                         child: InkWell(
                           onTap: () => _showMoreSheet(context),
                           borderRadius: BorderRadius.circular(14.0),
@@ -344,7 +347,7 @@ class _HomeSimpleWidgetState extends State<HomeSimpleWidget> {
                             ),
                           ),
                         ),
-                      ),
+                      )),
                       const SizedBox(height: 40.0),
                     ],
                   ),

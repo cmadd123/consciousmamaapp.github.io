@@ -2210,10 +2210,10 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                 setState(() {});
                               }
 
-                              // Navigate to calendar - simple navigation, no transitions
+                              // Go back to previous page (calendar or home)
                               if (mounted && context.mounted) {
                                 try {
-                                  await context.pushNamed('calendarpage');
+                                  Navigator.of(context).pop();
                                 } catch (navError) {
                                   debugPrint('Navigation error: $navError');
                                 }

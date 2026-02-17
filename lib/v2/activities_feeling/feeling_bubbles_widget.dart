@@ -1,6 +1,7 @@
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/components/home_nav_bar_widget.dart';
+import '/components/page_animations.dart';
 import '/components/share_content_bottom_sheet.dart';
 import '/components/parent_circle_widget.dart';
 import '/index.dart';
@@ -100,7 +101,7 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
                 child: Column(
                   children: [
                     // Page title
-                    Padding(
+                    CascadeItem(index: 0, staggerMs: 150, child: Padding(
                       padding: EdgeInsetsDirectional.fromSTEB(24.0, 24.0, 24.0, 0.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -163,11 +164,11 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
                           ),
                         ],
                       ),
-                    ),
+                    )),
                     SizedBox(height: 16.0),
                     // Tab content
                     Expanded(
-                      child: TabBarView(
+                      child: CascadeItem(index: 1, staggerMs: 150, child: TabBarView(
                         controller: _tabController,
                         children: [
                           // Feelings tab (formerly Find Activity)
@@ -177,7 +178,7 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
                           // My Week tab
                           _buildMyWeekTab(context, isComfortMode),
                         ],
-                      ),
+                      )),
                     ),
                   ],
                 ),
