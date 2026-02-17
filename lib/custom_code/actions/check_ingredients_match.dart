@@ -70,7 +70,7 @@ Future<bool> checkIngredientsMatch(
 
       return answer.contains('yes');
     } else {
-      print('❌ OpenAI API error: ${response.statusCode} - ${response.body}');
+      debugPrint('OpenAI API error: ${response.statusCode}');
       return false;
     }
   } catch (e) {

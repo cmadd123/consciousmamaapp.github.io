@@ -265,16 +265,9 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           path: NotificationSettingsWidget.routePath,
           builder: (context, params) => NotificationSettingsWidget(),
         ),
-        FFRoute(
-          name: 'UploadActivities',
-          path: '/upload-activities',
-          builder: (context, params) => UploadActivitiesPage(),
-        ),
-        FFRoute(
-          name: CleanupDuplicatesPage.routeName,
-          path: CleanupDuplicatesPage.routePath,
-          builder: (context, params) => CleanupDuplicatesPage(),
-        ),
+        // REMOVED: Debug/script pages - not for production
+        // FFRoute(name: 'UploadActivities', path: '/upload-activities', builder: (context, params) => UploadActivitiesPage()),
+        // FFRoute(name: CleanupDuplicatesPage.routeName, path: CleanupDuplicatesPage.routePath, builder: (context, params) => CleanupDuplicatesPage()),
         FFRoute(
           name: FirstChildWidget.routeName,
           path: FirstChildWidget.routePath,
@@ -377,11 +370,8 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           path: ProgramesWidget.routePath,
           builder: (context, params) => ProgramesWidget(),
         ),
-        FFRoute(
-          name: AiChattestAssitantWidget.routeName,
-          path: AiChattestAssitantWidget.routePath,
-          builder: (context, params) => AiChattestAssitantWidget(),
-        ),
+        // REMOVED: Debug AI chat test page
+        // FFRoute(name: AiChattestAssitantWidget.routeName, path: AiChattestAssitantWidget.routePath, builder: (context, params) => AiChattestAssitantWidget()),
         FFRoute(
           name: ProgramDetailsWidget.routeName,
           path: ProgramDetailsWidget.routePath,
@@ -1013,11 +1003,8 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
             ),
           ),
         ),
-        FFRoute(
-          name: TestcloudWidget.routeName,
-          path: TestcloudWidget.routePath,
-          builder: (context, params) => TestcloudWidget(),
-        ),
+        // REMOVED: Test cloud debug page
+        // FFRoute(name: TestcloudWidget.routeName, path: TestcloudWidget.routePath, builder: (context, params) => TestcloudWidget()),
         FFRoute(
           name: CategoryDetailsCopy2Widget.routeName,
           path: CategoryDetailsCopy2Widget.routePath,

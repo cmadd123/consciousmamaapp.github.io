@@ -395,7 +395,7 @@ class _HomeSimpleWidgetState extends State<HomeSimpleWidget> with TickerProvider
                     'Milestones',
                     () {
                       Navigator.pop(context);
-                      context.pushNamed('Milestones');
+                      context.pushNamed(MilstonesWidget.routeName);
                     },
                   ),
                   _buildMoreOption(
@@ -404,7 +404,7 @@ class _HomeSimpleWidgetState extends State<HomeSimpleWidget> with TickerProvider
                     'Tasks',
                     () {
                       Navigator.pop(context);
-                      context.pushNamed('Tasks');
+                      context.pushNamed(TasksWidget.routeName);
                     },
                   ),
                   _buildMoreOption(
@@ -413,7 +413,7 @@ class _HomeSimpleWidgetState extends State<HomeSimpleWidget> with TickerProvider
                     'Profile',
                     () {
                       Navigator.pop(context);
-                      context.pushNamed('Profile');
+                      context.pushNamed(ProfileWidget.routeName);
                     },
                   ),
                   const Divider(color: Color(0xFF7F8C8D), height: 32.0),

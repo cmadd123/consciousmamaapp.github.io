@@ -564,15 +564,9 @@ class FFAppState extends ChangeNotifier {
         minimumFetchInterval: Duration.zero, // Always fetch fresh for development
       ));
       final activated = await remoteConfig.fetchAndActivate();
-      print('Remote Config fetch activated: $activated');
       _openAiKey = remoteConfig.getString('openai_api_key');
-      if (_openAiKey.isEmpty) {
-        print('WARNING: OpenAI API key not configured in Remote Config');
-      } else {
-        print('OpenAI key loaded successfully, length: ${_openAiKey.length}');
-      }
     } catch (e) {
-      print('Error fetching OpenAI key from Remote Config: $e');
+      debugPrint('Error fetching Remote Config: $e');
     }
   }
 

@@ -35,7 +35,7 @@ Future parseAndSaveProgram(
     FirebaseFirestore firestore = FirebaseFirestore.instance;
 
     // Step 4: Store Program in 'Programs' collection
-    DocumentReference programRef = await firestore.collection('Programs').add({
+    DocumentReference programRef = await firestore.collection('programs').add({
       'title': programTitle,
       'tasks': [], // Tasks will be added later
       'created_at': FieldValue.serverTimestamp(),
