@@ -110,7 +110,7 @@ class _FeatureWalkthroughWidgetState extends State<FeatureWalkthroughWidget>
       ),
       // 7. Activities - value, lighter tone
       _PageData(
-        title: 'Hundreds of ideas for every kind of day',
+        title: 'Plenty of ideas for every kind of day',
         subtitle: 'Browse activities by age, setting, and how much time you have',
         preview: const ActivitiesPreview(),
         accentColor: const Color(0xFFFF8C00),
