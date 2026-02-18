@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Conscious Mama - Find Peace Through Planning</title>
-    <meta name="description" content="A mobile app for busy moms to find calm in the chaos. Plan meals, organize your family calendar, and finally feel in control of your week.">
+    <title>MomRise - Rise Above the Chaos</title>
+    <meta name="description" content="MomRise helps moms track milestones, create AI-powered learning paths, plan meals, and manage family life. Rise above the chaos.">
 
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="assets/images/image_22_original.png">
@@ -194,16 +194,25 @@
         .phone-mockup {
             width: 300px;
             height: 600px;
-            background: linear-gradient(180deg, var(--primary) 0%, var(--primary-dark) 100%);
+            background: linear-gradient(180deg, var(--gradient-top) 0%, var(--gradient-bottom) 100%);
             border-radius: 40px;
+            border: 3px solid var(--primary);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
+            color: var(--primary);
             font-size: 16px;
             text-align: center;
             padding: 40px;
             box-shadow: 0 40px 80px rgba(82, 160, 151, 0.3);
+            overflow: hidden;
+        }
+
+        .phone-mockup img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 37px;
         }
 
         /* Tagline */
@@ -223,6 +232,10 @@
         .product-showcase {
             padding: 100px 0;
             background: rgba(255, 255, 255, 0.7);
+        }
+
+        .product-showcase:nth-child(even) {
+            background: transparent;
         }
 
         .showcase-grid {
@@ -259,6 +272,14 @@
             text-align: center;
             padding: 30px;
             box-shadow: 0 30px 60px rgba(82, 160, 151, 0.2);
+            overflow: hidden;
+        }
+
+        .showcase-phone img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 33px;
         }
 
         .showcase-content h2 {
@@ -290,7 +311,7 @@
         }
 
         .showcase-features li::before {
-            content: "✓";
+            content: "\2713";
             color: var(--primary);
             font-weight: bold;
             font-size: 18px;
@@ -408,59 +429,43 @@
             font-size: 15px;
         }
 
-        /* Testimonials */
-        .testimonials {
+        /* Use Cases */
+        .use-cases {
             padding: 100px 0;
             background: transparent;
         }
 
-        .testimonials-grid {
+        .use-cases-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 40px;
         }
 
-        .testimonial-card {
+        .use-case-card {
             background: var(--white);
             padding: 40px;
             border-radius: 24px;
             border-left: 4px solid var(--primary);
         }
 
-        .testimonial-text {
-            font-size: 18px;
-            font-style: italic;
-            margin-bottom: 24px;
-            line-height: 1.8;
-        }
-
-        .testimonial-author {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .author-avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: var(--primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--white);
+        .use-case-card .scenario {
+            font-size: 15px;
+            color: var(--primary);
             font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
         }
 
-        .author-info h4 {
-            font-family: 'Inter', sans-serif;
-            font-weight: 600;
-            font-size: 16px;
+        .use-case-card h3 {
+            font-size: 20px;
+            margin-bottom: 12px;
         }
 
-        .author-info p {
+        .use-case-card p {
             color: var(--text-secondary);
-            font-size: 14px;
+            font-size: 16px;
+            line-height: 1.7;
         }
 
         /* CTA Section */
@@ -589,7 +594,7 @@
 
         .footer-content {
             display: grid;
-            grid-template-columns: 2fr 1fr 1fr 1fr;
+            grid-template-columns: 2fr 1fr 1fr;
             gap: 60px;
             margin-bottom: 40px;
         }
@@ -632,28 +637,6 @@
             color: var(--primary-light);
         }
 
-        .social-links {
-            display: flex;
-            gap: 16px;
-            margin-top: 20px;
-        }
-
-        .social-links a {
-            width: 40px;
-            height: 40px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--white);
-            transition: background 0.3s;
-        }
-
-        .social-links a:hover {
-            background: var(--primary);
-        }
-
         .footer-bottom {
             border-top: 1px solid rgba(255,255,255,0.1);
             padding-top: 30px;
@@ -692,7 +675,7 @@
                 flex-direction: column;
             }
 
-            .testimonials-grid {
+            .use-cases-grid {
                 grid-template-columns: 1fr;
             }
 
@@ -748,13 +731,13 @@
     <nav>
         <div class="container nav-content">
             <a href="#" class="logo">
-                <img src="assets/images/image_22_original.png" alt="Conscious Mama Logo" class="logo-img">
-                Conscious Mama
+                <img src="assets/images/image_22_original.png" alt="MomRise Logo" class="logo-img">
+                MomRise
             </a>
             <ul class="nav-links">
                 <li><a href="#features">Features</a></li>
                 <li><a href="#how-it-works">How It Works</a></li>
-                <li><a href="#testimonials">Stories</a></li>
+                <li><a href="#stories">Stories</a></li>
                 <li><a href="#faq">FAQ</a></li>
                 <li><a href="#download" class="nav-cta">Download</a></li>
             </ul>
@@ -765,20 +748,20 @@
     <section class="hero">
         <div class="container hero-content">
             <div class="hero-text">
-                <h1>Find <span>peace</span> through planning</h1>
-                <p>Finally feel in control of your week. Plan meals, organize schedules, and manage your busy family life without the overwhelm.</p>
+                <h1>Rise above the <span>chaos</span></h1>
+                <p>Track your child's milestones, get AI-powered learning paths, plan meals, and manage your family calendar. One app built for the way you actually parent.</p>
                 <div class="hero-buttons">
                     <a href="#download" class="btn btn-primary">
                         Download Free
                     </a>
                     <a href="#features" class="btn btn-secondary">
-                        Learn More
+                        See Features
                     </a>
                 </div>
             </div>
             <div class="hero-image">
                 <div class="phone-mockup">
-                    App Screenshot<br>Goes Here
+                    App Screenshot<br>Coming Soon
                 </div>
             </div>
         </div>
@@ -787,17 +770,40 @@
     <!-- Tagline -->
     <section class="tagline">
         <div class="container">
-            <h2>Take the mental load off, mama.</h2>
+            <h2>Motherhood is beautiful chaos. We handle the chaos part.</h2>
+        </div>
+    </section>
+
+    <!-- Product Showcase: AI Learning Paths -->
+    <section class="product-showcase">
+        <div class="container">
+            <div class="showcase-grid">
+                <div class="showcase-image">
+                    <div class="showcase-phone">
+                        Learning Paths<br>Screenshot<br>Coming Soon
+                    </div>
+                </div>
+                <div class="showcase-content">
+                    <h2>AI-powered <span>learning paths</span></h2>
+                    <p>Potty training? Sleep struggles? Picky eating? Describe your challenge and MomRise creates a personalized day-by-day plan with tips, activities, and guidance for every step.</p>
+                    <ul class="showcase-features">
+                        <li>Tailored to your child's age and stage</li>
+                        <li>Step-by-step daily activities and parent tips</li>
+                        <li>Suggestions for when your child resists</li>
+                        <li>Track progress as you go</li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </section>
 
     <!-- Product Showcase: Meal Planning -->
     <section class="product-showcase">
         <div class="container">
-            <div class="showcase-grid">
+            <div class="showcase-grid reverse">
                 <div class="showcase-image">
                     <div class="showcase-phone">
-                        Meal Planner<br>Screenshot<br>Goes Here
+                        Meal Planner<br>Screenshot<br>Coming Soon
                     </div>
                 </div>
                 <div class="showcase-content">
@@ -807,7 +813,30 @@
                         <li>Weekly meal planning at a glance</li>
                         <li>Save your family's favorite recipes</li>
                         <li>Quick-add meals from your recipe library</li>
-                        <li>Never forget an ingredient again</li>
+                        <li>Grocery list builds itself from your plan</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Product Showcase: Activities -->
+    <section class="product-showcase">
+        <div class="container">
+            <div class="showcase-grid">
+                <div class="showcase-image">
+                    <div class="showcase-phone">
+                        Activities<br>Screenshot<br>Coming Soon
+                    </div>
+                </div>
+                <div class="showcase-content">
+                    <h2>Hundreds of <span>activity ideas</span></h2>
+                    <p>Not sure what to do with your little one? Tell MomRise how you're feeling and get age-appropriate activity suggestions that actually match your day.</p>
+                    <ul class="showcase-features">
+                        <li>Browse by mood, energy level, and setting</li>
+                        <li>Filter by setup time and mess level</li>
+                        <li>Detailed instructions and materials needed</li>
+                        <li>Save favorites for easy access</li>
                     </ul>
                 </div>
             </div>
@@ -820,14 +849,14 @@
             <div class="showcase-grid reverse">
                 <div class="showcase-image">
                     <div class="showcase-phone">
-                        Family Calendar<br>Screenshot<br>Goes Here
+                        Family Calendar<br>Screenshot<br>Coming Soon
                     </div>
                 </div>
                 <div class="showcase-content">
                     <h2>Your family's <span>command center</span></h2>
-                    <p>Soccer practice, doctor appointments, school events. Keep everyone's schedule in one place and know exactly what's coming up.</p>
+                    <p>Meals, activities, appointments, and learning tasks all in one calendar. See your whole family's week at a glance and finally stop juggling it all in your head.</p>
                     <ul class="showcase-features">
-                        <li>See your whole week at a glance</li>
+                        <li>Everything in one view</li>
                         <li>Assign events to family members</li>
                         <li>Color-coded for each child</li>
                         <li>Never double-book again</li>
@@ -841,39 +870,39 @@
     <section class="features" id="features">
         <div class="container">
             <div class="section-header">
-                <h2>Everything in one place</h2>
-                <p>Simple tools that actually make your life easier, not more complicated.</p>
+                <h2>Everything you need, nothing you don't</h2>
+                <p>Real tools that fit the way you actually parent.</p>
             </div>
             <div class="features-grid">
                 <div class="feature-card">
-                    <div class="feature-icon">🍽️</div>
-                    <h3>Meal Planning</h3>
-                    <p>Plan breakfast, lunch, and dinner for the whole week. Save time, reduce stress, and eat better as a family.</p>
+                    <div class="feature-icon">&#x1F9E0;</div>
+                    <h3>AI Learning Paths</h3>
+                    <p>Describe a parenting challenge and get a personalized step-by-step plan generated for your child's age.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">📅</div>
+                    <div class="feature-icon">&#x1F4C8;</div>
+                    <h3>Milestone Tracking</h3>
+                    <p>Track your child's physical, cognitive, social, and emotional milestones. See how far they've come.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#x1F37D;&#xFE0F;</div>
+                    <h3>Meal Planning</h3>
+                    <p>Plan breakfast, lunch, and dinner for the whole week. Your grocery list writes itself.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#x1F4C5;</div>
                     <h3>Family Calendar</h3>
                     <p>Keep track of appointments, activities, and events. See who needs to be where and when.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">👨‍👩‍👧‍👦</div>
-                    <h3>Family Profiles</h3>
-                    <p>Add profiles for each child and family member. Color-coded and easy to identify at a glance.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🎨</div>
+                    <div class="feature-icon">&#x1F3A8;</div>
                     <h3>Activity Ideas</h3>
-                    <p>Stuck on what to do? Get fun activity suggestions based on your mood and available time.</p>
+                    <p>Stuck on what to do? Get fun activity suggestions matched to your mood and how much time you have.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">📋</div>
-                    <h3>Task Assignment</h3>
-                    <p>Assign tasks to Mom, Dad, or any family member. Everyone knows their responsibilities.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🧘</div>
-                    <h3>Mental Load Relief</h3>
-                    <p>Get everything out of your head and into the app. Finally have the mental space to just be present.</p>
+                    <div class="feature-icon">&#x1F91D;</div>
+                    <h3>Content Sharing</h3>
+                    <p>Found a great activity or meal plan? Share it with other moms. Import what friends share with you.</p>
                 </div>
             </div>
         </div>
@@ -884,75 +913,55 @@
         <div class="container">
             <div class="section-header">
                 <h2>Getting started is easy</h2>
-                <p>You're three steps away from a calmer, more organized week.</p>
+                <p>You're three steps away from a calmer week.</p>
             </div>
             <div class="steps">
                 <div class="step">
                     <div class="step-number">1</div>
-                    <h3>Add Your Family</h3>
-                    <p>Create profiles for each family member. The app keeps everything organized by person.</p>
+                    <h3>Add Your Child</h3>
+                    <p>Enter their name and birthday. MomRise personalizes activities, milestones, and learning paths to their age.</p>
                 </div>
                 <div class="step">
                     <div class="step-number">2</div>
-                    <h3>Plan Your Week</h3>
-                    <p>Add meals, events, and appointments. See your entire week at a glance and feel prepared.</p>
+                    <h3>Explore Your Tools</h3>
+                    <p>Meal planner, milestone tracker, activity finder, and family calendar are all ready to go from day one.</p>
                 </div>
                 <div class="step">
                     <div class="step-number">3</div>
-                    <h3>Breathe Easy</h3>
-                    <p>With everything planned, you can finally relax knowing nothing will slip through the cracks.</p>
+                    <h3>Create a Learning Path</h3>
+                    <p>Facing a challenge? Tell MomRise about it and our AI creates a day-by-day guide just for you.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Testimonials -->
-    <section class="testimonials" id="testimonials">
+    <!-- How Moms Use MomRise -->
+    <section class="use-cases" id="stories">
         <div class="container">
             <div class="section-header">
-                <h2>Moms like you love it</h2>
-                <p>Join thousands of moms who finally feel in control of their week.</p>
+                <h2>How moms use MomRise</h2>
+                <p>Real scenarios, real relief.</p>
             </div>
-            <div class="testimonials-grid">
-                <div class="testimonial-card">
-                    <p class="testimonial-text">"Sunday meal planning used to stress me out. Now I open the app, plan the whole week in 10 minutes, and actually enjoy grocery shopping."</p>
-                    <div class="testimonial-author">
-                        <div class="author-avatar">S</div>
-                        <div class="author-info">
-                            <h4>Sarah M.</h4>
-                            <p>Mom of 2</p>
-                        </div>
-                    </div>
+            <div class="use-cases-grid">
+                <div class="use-case-card">
+                    <div class="scenario">Sunday Evening</div>
+                    <h3>The week is planned in 10 minutes</h3>
+                    <p>Open the meal planner, fill in the week, and your grocery list is ready before bed. No more scrambling at dinnertime wondering what to make.</p>
                 </div>
-                <div class="testimonial-card">
-                    <p class="testimonial-text">"I finally stopped forgetting appointments. The family calendar saved me from showing up to soccer practice on the wrong day!"</p>
-                    <div class="testimonial-author">
-                        <div class="author-avatar">J</div>
-                        <div class="author-info">
-                            <h4>Jessica L.</h4>
-                            <p>Mom of 3</p>
-                        </div>
-                    </div>
+                <div class="use-case-card">
+                    <div class="scenario">Potty Training Week</div>
+                    <h3>A step-by-step plan that actually works</h3>
+                    <p>Create a learning path for potty training and get daily activities, parent tips, and what to do when your toddler says "no." Day by day, it gets easier.</p>
                 </div>
-                <div class="testimonial-card">
-                    <p class="testimonial-text">"My husband and I can both see what's happening when. No more 'I thought YOU were picking them up' moments."</p>
-                    <div class="testimonial-author">
-                        <div class="author-avatar">A</div>
-                        <div class="author-info">
-                            <h4>Amanda K.</h4>
-                            <p>Mom of 2</p>
-                        </div>
-                    </div>
+                <div class="use-case-card">
+                    <div class="scenario">Rainy Tuesday</div>
+                    <h3>Instant activity ideas for any mood</h3>
+                    <p>Tap how you're feeling, and MomRise suggests activities that match your energy, your time, and your child's age. No Pinterest rabbit holes required.</p>
                 </div>
-                <div class="testimonial-card">
-                    <p class="testimonial-text">"The mental load is real. This app is like having a second brain that remembers everything so I don't have to."</p>
-                    <div class="testimonial-author">
-                        <div class="author-avatar">M</div>
-                        <div class="author-info">
-                            <h4>Michelle T.</h4>
-                            <p>Mom of 2</p>
-                        </div>
-                    </div>
+                <div class="use-case-card">
+                    <div class="scenario">Pediatrician Visit</div>
+                    <h3>Every milestone tracked and ready</h3>
+                    <p>When the doctor asks "is she rolling over yet?" you'll have every milestone checked off with dates. No more guessing or forgetting.</p>
                 </div>
             </div>
         </div>
@@ -961,8 +970,8 @@
     <!-- CTA Section -->
     <section class="cta" id="download">
         <div class="container">
-            <h2>Ready to feel more in control?</h2>
-            <p>Download Conscious Mama for free and start planning your way to a calmer week.</p>
+            <h2>Ready to rise above it?</h2>
+            <p>Download MomRise for free and start turning the chaos into something manageable.</p>
             <div class="store-buttons">
                 <a href="#" class="store-btn">
                     <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
@@ -991,16 +1000,16 @@
             <div class="faq-list">
                 <div class="faq-item">
                     <div class="faq-question">
-                        Is Conscious Mama free?
+                        Is MomRise free?
                         <span>+</span>
                     </div>
                     <div class="faq-answer">
-                        Yes! Conscious Mama is free to download and use. We believe every busy parent deserves access to helpful tools without financial barriers.
+                        Yes! MomRise is free to download and use. All core features are included at no cost.
                     </div>
                 </div>
                 <div class="faq-item">
                     <div class="faq-question">
-                        Can my partner use it too?
+                        Can my husband use it too?
                         <span>+</span>
                     </div>
                     <div class="faq-answer">
@@ -1009,20 +1018,29 @@
                 </div>
                 <div class="faq-item">
                     <div class="faq-question">
-                        How is this different from a regular calendar app?
+                        How do the AI learning paths work?
                         <span>+</span>
                     </div>
                     <div class="faq-answer">
-                        Regular calendars show events, but Conscious Mama is designed specifically for family life. Meal planning, child profiles with color coding, task assignment to family members - it's built for how families actually work.
+                        Tell MomRise about a parenting challenge you're facing, like potty training or sleep struggles. Our AI creates a personalized day-by-day plan with activities, tips, and guidance tailored to your child's age. Each learning path includes suggestions for when things don't go as planned.
                     </div>
                 </div>
                 <div class="faq-item">
                     <div class="faq-question">
-                        Is my data private and secure?
+                        How is this different from a regular calendar app?
                         <span>+</span>
                     </div>
                     <div class="faq-answer">
-                        Your privacy is our priority. We never sell your personal information. All data is stored securely, and you can delete your account and all associated data at any time.
+                        Regular calendars show events. MomRise is built specifically for family life: meal planning, child milestone tracking, age-appropriate activities, AI learning paths, and task assignment to family members. It's built for how families actually work.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        Is my family's data private?
+                        <span>+</span>
+                    </div>
+                    <div class="faq-answer">
+                        Your privacy is our priority. We never sell your personal information or your children's data. All data is stored securely, and you can delete your account and all associated data at any time. Read our full <a href="/privacy" style="color: var(--primary);">privacy policy</a> for details.
                     </div>
                 </div>
                 <div class="faq-item">
@@ -1031,7 +1049,7 @@
                         <span>+</span>
                     </div>
                     <div class="faq-answer">
-                        Absolutely! Add as many children as you have. Each child gets their own color-coded profile so you can see at a glance who has what going on.
+                        Add as many children as you have. Each child gets their own profile with milestones and activities personalized to their age.
                     </div>
                 </div>
             </div>
@@ -1044,21 +1062,10 @@
             <div class="footer-content">
                 <div class="footer-brand">
                     <a href="#" class="logo">
-                        <img src="assets/images/image_22_original.png" alt="Conscious Mama Logo" class="logo-img">
-                        Conscious Mama
+                        <img src="assets/images/image_22_original.png" alt="MomRise Logo" class="logo-img">
+                        MomRise
                     </a>
-                    <p>Helping busy families find peace through planning and organization.</p>
-                    <div class="social-links">
-                        <a href="#" aria-label="Instagram">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-                        </a>
-                        <a href="#" aria-label="Facebook">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-                        </a>
-                        <a href="#" aria-label="Twitter">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                        </a>
-                    </div>
+                    <p>Helping busy moms rise above the chaos with tools that actually make daily life easier.</p>
                 </div>
                 <div class="footer-links">
                     <h4>Product</h4>
@@ -1069,23 +1076,16 @@
                     </ul>
                 </div>
                 <div class="footer-links">
-                    <h4>Company</h4>
-                    <ul>
-                        <li><a href="#">About Us</a></li>
-                        <li><a href="#">Contact</a></li>
-                        <li><a href="#">Careers</a></li>
-                    </ul>
-                </div>
-                <div class="footer-links">
                     <h4>Legal</h4>
                     <ul>
                         <li><a href="/privacy">Privacy Policy</a></li>
                         <li><a href="/terms">Terms of Service</a></li>
+                        <li><a href="mailto:support@momrise.app">Contact</a></li>
                     </ul>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2026 Conscious Mama. All rights reserved.</p>
+                <p>&copy; 2026 MomRise. All rights reserved.</p>
             </div>
         </div>
     </footer>

@@ -69,7 +69,7 @@ Download MomRise today and discover tools that help you parent with presence, pu
 
 ## Keywords (100 chars max)
 
-parenting,baby,toddler,milestones,development,activities,intentional,mom,kids,family,learning
+parenting,baby,toddler,milestones,development,activities,intentional,mom,kids,family,learning,meal
 
 ---
 
@@ -92,10 +92,10 @@ Track milestones, create personalized learning paths, and find age-appropriate a
 ## App Review Information
 
 **Contact Information:**
-- First Name: [YOUR FIRST NAME]
-- Last Name: [YOUR LAST NAME]
-- Phone Number: [YOUR PHONE]
-- Email: [YOUR EMAIL]
+- First Name: Collin
+- Last Name: Maddox
+- Phone Number: 3343436923
+- Email: collinjmaddox@gmail.com
 
 **Demo Account (if required):**
 - Username: [Create a test account email]
@@ -116,7 +116,7 @@ To test learning path creation: Add a child profile → Go to Learning Paths →
 
 ## What's New (for updates)
 
-**Version 1.0.0**
+**Version 2.1.0**
 - Launch version with core features
 - AI-powered learning path creation
 - Milestone tracking
