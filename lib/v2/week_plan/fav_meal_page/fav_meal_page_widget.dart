@@ -2048,16 +2048,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
         floatingActionButton: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Bulk delete button (temporary)
-            FloatingActionButton(
-              heroTag: 'bulk_delete',
-              onPressed: () => _showBulkDeleteDialog(),
-              backgroundColor: Colors.red,
-              child: Icon(Icons.delete_forever, color: Colors.white),
-              elevation: 4.0,
-            ),
-            SizedBox(height: 12),
-            // Original add button
+            // Add button
             if (_model.recipeSourceTab == 'my' || _model.recipeSourceTab == 'templates')
               FloatingActionButton(
                 heroTag: 'add_recipe',

@@ -133,11 +133,19 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
     _model.textFieldFocusNode2 ??= FocusNode();
 
     _model.textController3 ??= TextEditingController(
-        text: widget!.editCookingMeal?.cookingTime?.toString());
+        text: widget!.editCookingMeal?.cookingTime != null
+            ? (widget!.editCookingMeal!.cookingTime! % 1 == 0
+                ? widget!.editCookingMeal!.cookingTime!.toInt().toString()
+                : widget!.editCookingMeal!.cookingTime!.toString())
+            : null);
     _model.textFieldFocusNode3 ??= FocusNode();
 
     _model.textController4 ??= TextEditingController(
-        text: widget!.editCookingMeal?.prepareTime?.toString());
+        text: widget!.editCookingMeal?.prepareTime != null
+            ? (widget!.editCookingMeal!.prepareTime! % 1 == 0
+                ? widget!.editCookingMeal!.prepareTime!.toInt().toString()
+                : widget!.editCookingMeal!.prepareTime!.toString())
+            : null);
     _model.textFieldFocusNode4 ??= FocusNode();
 
     _model.ingredientsTextFieldTextController ??= TextEditingController();
@@ -317,8 +325,9 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
 
     // Pick image based on selection
     final selectedMedia = await selectMedia(
-      maxWidth: 2000.00,
-      maxHeight: 2000.00,
+      maxWidth: 1200.00,
+      maxHeight: 1200.00,
+      imageQuality: 85,
       mediaSource: mediaSource == 'camera' ? MediaSource.camera : MediaSource.photoGallery,
     );
 
@@ -544,7 +553,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                       SizedBox(width: 8.0),
                                       Expanded(
                                         child: Text(
-                                          'Tip: You can import recipes from Pinterest and other websites! Just copy the recipe URL and use "Import from Link" below.',
+                                          'Tip: You can import recipes from Pinterest and other websites! Just share the recipe or URL with MomRise, or use "Import from Link" below.',
                                           style: FlutterFlowTheme.of(context).bodySmall.override(
                                                 fontFamily: 'Andika New Basic',
                                                 color: Color(0xFF6D4C41),
@@ -620,7 +629,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                 child: AnimatedPress(
                                   onTap: () {
                                     context.pushNamed(
-                                      'RecipeFromLink',
+                                      RecipeFromLinkWidget.routeName,
                                       extra: <String, dynamic>{
                                         kTransitionInfoKey: const TransitionInfo(
                                           hasTransition: true,
@@ -752,8 +761,9 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                           final selectedMedia =
                               await selectMediaWithSourceBottomSheet(
                             context: context,
-                            maxWidth: 100000.00,
-                            maxHeight: 10000.00,
+                            maxWidth: 1200.00,
+                            maxHeight: 1200.00,
+                            imageQuality: 85,
                             allowPhoto: true,
                           );
                           if (selectedMedia != null &&
@@ -1235,7 +1245,23 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                         mainAxisSize: MainAxisSize.max,
                         children: [
                           Expanded(
-                            child: Container(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.only(left: 4.0, bottom: 6.0),
+                                  child: Text(
+                                    'Cook Time',
+                                    style: FlutterFlowTheme.of(context).bodySmall.override(
+                                      fontFamily: 'Andika New Basic',
+                                      fontSize: 12.0,
+                                      fontWeight: FontWeight.w600,
+                                      letterSpacing: 0.0,
+                                      color: FlutterFlowTheme.of(context).secondaryText,
+                                    ),
+                                  ),
+                                ),
+                                Container(
                               width: 200.0,
                               height: 45.0,
                               decoration: BoxDecoration(
@@ -1261,7 +1287,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                           fontFamily: 'Andika New Basic',
                                           letterSpacing: 0.0,
                                         ),
-                                    hintText: 'Cook time (optional)',
+                                    hintText: 'Cook time (min)',
                                     hintStyle: FlutterFlowTheme.of(context)
                                         .labelMedium
                                         .override(
@@ -1269,6 +1295,14 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                           color: FlutterFlowTheme.of(context)
                                               .primaryText,
                                           fontSize: 12.0,
+                                          letterSpacing: 0.0,
+                                        ),
+                                    suffixText: 'min',
+                                    suffixStyle: FlutterFlowTheme.of(context)
+                                        .bodySmall
+                                        .override(
+                                          fontFamily: 'Andika New Basic',
+                                          color: FlutterFlowTheme.of(context).secondaryText,
                                           letterSpacing: 0.0,
                                         ),
                                     enabledBorder: OutlineInputBorder(
@@ -1317,9 +1351,27 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                 ),
                               ),
                             ),
+                              ],
+                            ),
                           ),
                           Expanded(
-                            child: Container(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.only(left: 4.0, bottom: 6.0),
+                                  child: Text(
+                                    'Prep Time',
+                                    style: FlutterFlowTheme.of(context).bodySmall.override(
+                                      fontFamily: 'Andika New Basic',
+                                      fontSize: 12.0,
+                                      fontWeight: FontWeight.w600,
+                                      letterSpacing: 0.0,
+                                      color: FlutterFlowTheme.of(context).secondaryText,
+                                    ),
+                                  ),
+                                ),
+                                Container(
                               width: 200.0,
                               height: 45.0,
                               decoration: BoxDecoration(
@@ -1345,7 +1397,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                           fontFamily: 'Andika New Basic',
                                           letterSpacing: 0.0,
                                         ),
-                                    hintText: 'Prep time (optional)',
+                                    hintText: 'Prep time (min)',
                                     hintStyle: FlutterFlowTheme.of(context)
                                         .labelMedium
                                         .override(
@@ -1353,6 +1405,14 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                           color: FlutterFlowTheme.of(context)
                                               .primaryText,
                                           fontSize: 12.0,
+                                          letterSpacing: 0.0,
+                                        ),
+                                    suffixText: 'min',
+                                    suffixStyle: FlutterFlowTheme.of(context)
+                                        .bodySmall
+                                        .override(
+                                          fontFamily: 'Andika New Basic',
+                                          color: FlutterFlowTheme.of(context).secondaryText,
                                           letterSpacing: 0.0,
                                         ),
                                     enabledBorder: OutlineInputBorder(
@@ -1400,6 +1460,8 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                       .asValidator(context),
                                 ),
                               ),
+                            ),
+                              ],
                             ),
                           ),
                         ].divide(SizedBox(width: 8.0)),
@@ -2091,12 +2153,12 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                               recipeTypeValue = RecipeType.Entree;
                                             }
 
-                                            // Get meal types (Breakfast, Lunch, Dinner, Snacks)
-                                            final mealCategories = _model.selectedCategories
-                                                .where((c) => ['Breakfast', 'Lunch', 'Dinner', 'Snacks'].contains(c))
+                                            // Get meal types (Breakfast, Lunch, Dinner, Snacks) and dietary tags
+                                            final mealAndDietaryCategories = _model.selectedCategories
+                                                .where((c) => ['Breakfast', 'Lunch', 'Dinner', 'Snacks', 'Gluten-Free', 'Dairy-Free', 'Nut-Free', 'Vegetarian', 'Vegan'].contains(c))
                                                 .toList();
-                                            if (mealCategories.isNotEmpty) {
-                                              mealTypValue = mealCategories.join(',');
+                                            if (mealAndDietaryCategories.isNotEmpty) {
+                                              mealTypValue = mealAndDietaryCategories.join(',');
                                             }
                                           } else {
                                             // Keep existing value if no categories selected
@@ -2225,12 +2287,12 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                               newRecipeType = RecipeType.Entree;
                                             }
 
-                                            // Get meal types (Breakfast, Lunch, Dinner, Snacks)
-                                            final mealCategories = _model.selectedCategories
-                                                .where((c) => ['Breakfast', 'Lunch', 'Dinner', 'Snacks'].contains(c))
+                                            // Get meal types (Breakfast, Lunch, Dinner, Snacks) and dietary tags
+                                            final mealAndDietaryCategories = _model.selectedCategories
+                                                .where((c) => ['Breakfast', 'Lunch', 'Dinner', 'Snacks', 'Gluten-Free', 'Dairy-Free', 'Nut-Free', 'Vegetarian', 'Vegan'].contains(c))
                                                 .toList();
-                                            if (mealCategories.isNotEmpty) {
-                                              newMealTyp = mealCategories.join(',');
+                                            if (mealAndDietaryCategories.isNotEmpty) {
+                                              newMealTyp = mealAndDietaryCategories.join(',');
                                             }
                                           }
 

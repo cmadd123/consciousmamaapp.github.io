@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:app_links/app_links.dart';
 import 'package:flutter/foundation.dart';
 import '/index.dart';
+import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/nav/nav.dart';
 
 /// Handles deep links for the app (e.g., https://consciousmama.app/shared/ABC123)
@@ -119,6 +120,17 @@ class DeepLinkHandler {
     else if (path.startsWith('/s/')) {
       shareCode = path.substring('/s/'.length);
       debugPrint('DeepLinkHandler: Matched legacy /s/ pattern');
+    }
+    // Handle Share Extension: momecoach://share?url=RECIPE_URL
+    else if (uri.scheme == 'momecoach' && uri.host == 'share') {
+      final sharedUrl = uri.queryParameters['url'];
+      if (sharedUrl != null && sharedUrl.isNotEmpty) {
+        debugPrint('DeepLinkHandler: Share Extension URL received: $sharedUrl');
+        // Store in app state and navigate to recipe import
+        FFAppState().sharedRecipeUrl = sharedUrl;
+        _router?.go('/recipeFromLink');
+        return;
+      }
     }
     // Handle custom scheme: consciousmama://shared/CODE
     else if (uri.scheme == 'consciousmama') {

@@ -77,20 +77,10 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
       // Check if quote was dismissed today
       await _checkQuoteDismissed();
 
-      // Check if user has completed onboarding
+      // Load parent info from user doc
       if (currentUserReference != null) {
         final userDoc = await UsersRecord.getDocumentOnce(currentUserReference!);
-
-        // Load parent info from user doc
         _parentInfo = ParentDisplayInfo.fromUser(userDoc);
-
-        if (!userDoc.onboardingCompleted) {
-          // User hasn't completed onboarding, redirect to preparation
-          if (mounted) {
-            context.goNamed(PreparationWidget.routeName);
-          }
-          return;
-        }
       }
     });
   }
@@ -165,19 +155,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                       }))
                     : null;
 
-                // If no children after loading, redirect to add child
-                if (childrenSnapshot.hasData && (sortedChildren == null || sortedChildren.isEmpty)) {
-                  SchedulerBinding.instance.addPostFrameCallback((_) {
-                    if (mounted) {
-                      context.pushNamed(
-                        AddChildxWidget.routeName,
-                        queryParameters: {
-                          'isFirst': serializeParam(true, ParamType.bool),
-                        }.withoutNulls,
-                      );
-                    }
-                  });
-                } else if (sortedChildren != null && sortedChildren.isNotEmpty) {
+                if (sortedChildren != null && sortedChildren.isNotEmpty) {
                   // Update app state with first child
                   if (FFAppState().selectedChildForMilestone == null) {
                     FFAppState().selectedChildForMilestone = sortedChildren.first.reference;

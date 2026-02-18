@@ -1,6 +1,9 @@
+import '/auth/firebase_auth/auth_util.dart';
+import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
+import '/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
@@ -120,20 +123,32 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
     );
   }
 
+  Future<void> _completeOnboardingAndGoHome() async {
+    // Mark onboarding as completed in Firestore
+    if (currentUserReference != null) {
+      await currentUserReference!.update(createUsersRecordData(
+        onboardingCompleted: true,
+      ));
+    }
+    // Update local state so the GoRouter redirect knows
+    final appState = Provider.of<AppStateNotifier>(context, listen: false);
+    appState.onboardingCompleted = true;
+
+    if (mounted) {
+      context.goNamed(HomeHybridWidget.routeName);
+    }
+  }
+
   void _handleSubscribe() {
     HapticFeedback.mediumImpact();
     // TODO: Wire up RevenueCat purchase flow here
-    // For now, navigate to home
-    if (mounted) {
-      context.goNamedAuth('HomePage', mounted);
-    }
+    // For now, mark onboarding complete and go home
+    _completeOnboardingAndGoHome();
   }
 
   void _handleSkip() {
     HapticFeedback.lightImpact();
-    if (mounted) {
-      context.goNamedAuth('HomePage', mounted);
-    }
+    _completeOnboardingAndGoHome();
   }
 
   @override

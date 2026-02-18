@@ -2363,8 +2363,41 @@ class _RecipePickerSheetState extends State<_RecipePickerSheet> {
         mainAxisSpacing: 12.0,
         childAspectRatio: 0.75,
       ),
-      itemCount: recipes.length,
-      itemBuilder: (context, index) => _buildRecipeItem(recipes[index]),
+      itemCount: showCreateButton ? recipes.length + 1 : recipes.length,
+      itemBuilder: (context, index) {
+        if (showCreateButton && index == 0) {
+          return InkWell(
+            onTap: widget.onCreateNew,
+            borderRadius: BorderRadius.circular(14.0),
+            child: Container(
+              decoration: BoxDecoration(
+                color: theme.primary.withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(14.0),
+                border: Border.all(color: theme.primary.withValues(alpha: 0.3), width: 1.5),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.add_circle_outline, size: 36.0, color: theme.primary),
+                  SizedBox(height: 8.0),
+                  Text(
+                    'Create\nNew',
+                    textAlign: TextAlign.center,
+                    style: theme.bodySmall.override(
+                      fontFamily: 'Andika New Basic',
+                      color: theme.primary,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.0,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+        final recipeIndex = showCreateButton ? index - 1 : index;
+        return _buildRecipeItem(recipes[recipeIndex]);
+      },
     );
   }
 

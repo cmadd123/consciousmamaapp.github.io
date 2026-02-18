@@ -175,4 +175,5 @@ export '/v2/auth/meal_planner_spotlight_widget.dart' show MealPlannerSpotlightWi
 export '/v2/auth/welcome_celebration_widget.dart' show WelcomeCelebrationWidget;
 export '/v2/auth/feature_walkthrough_widget.dart' show FeatureWalkthroughWidget;
 export '/v2/auth/setup_transition_widget.dart' show SetupTransitionWidget;
+export '/v2/auth/account_transition_widget.dart' show AccountTransitionWidget;
 export '/v2/auth/feature_intro_widget.dart' show FeatureIntroWidget;

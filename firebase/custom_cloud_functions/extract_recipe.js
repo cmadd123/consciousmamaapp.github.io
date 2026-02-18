@@ -345,10 +345,42 @@ function normalizeRecipe(recipe, sourceUrl) {
         }
       });
     } else if (typeof recipe.recipeInstructions === "string") {
-      // Single string with newlines
-      instructions = recipe.recipeInstructions.split(/\n+/).filter(s => s.trim());
+      // Single string - may contain HTML list items or newlines
+      let raw = recipe.recipeInstructions;
+
+      // Split on HTML list/paragraph boundaries BEFORE stripping tags
+      if (/<li[\s>]/i.test(raw) || /<\/p>/i.test(raw) || /<br\s*\/?>/i.test(raw)) {
+        // Replace closing tags with a delimiter, then strip remaining HTML
+        raw = raw
+          .replace(/<\/li>/gi, "|||SPLIT|||")
+          .replace(/<\/p>/gi, "|||SPLIT|||")
+          .replace(/<br\s*\/?>/gi, "|||SPLIT|||");
+        // Strip remaining HTML tags
+        raw = raw.replace(/<[^>]*>/g, "");
+        instructions = raw
+          .split("|||SPLIT|||")
+          .map(s => s.trim())
+          .filter(s => s.length > 0);
+      } else {
+        // No HTML - split on newlines or numbered patterns (1. 2. etc.)
+        instructions = raw
+          .split(/\n+/)
+          .map(s => s.trim())
+          .filter(s => s.length > 0);
+
+        // If still just one big block, try splitting on numbered patterns
+        if (instructions.length === 1 && instructions[0].length > 200) {
+          const numbered = instructions[0].split(/(?=\d+\.\s)/).map(s => s.trim()).filter(s => s.length > 0);
+          if (numbered.length > 1) {
+            instructions = numbered;
+          }
+        }
+      }
     }
   }
+
+  // Clean HTML from all instructions
+  instructions = instructions.map(s => cleanHtmlText(s)).filter(s => s && s.trim().length > 0);
 
   // Parse image
   let imageUrl = "";

@@ -596,6 +596,13 @@ class FFAppState extends ChangeNotifier {
     _favMealCash = value;
   }
 
+  // Persists selected meal plan dates across navigation
+  List<DateTime>? _mealPlanSelectedDates;
+  List<DateTime>? get mealPlanSelectedDates => _mealPlanSelectedDates;
+  set mealPlanSelectedDates(List<DateTime>? value) {
+    _mealPlanSelectedDates = value;
+  }
+
   bool _leariningpathchashBool = false;
   bool get leariningpathchashBool => _leariningpathchashBool;
   set leariningpathchashBool(bool value) {

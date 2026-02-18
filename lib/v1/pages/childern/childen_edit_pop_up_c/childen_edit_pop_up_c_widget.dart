@@ -392,7 +392,12 @@ class _ChildenEditPopUpCWidgetState extends State<ChildenEditPopUpCWidget> {
                                             .languageCode,
                                       );
                                     } else if (_model.datepickerValue != null) {
-                                      return _model.datePicked?.toString();
+                                      return dateTimeFormat(
+                                        "yMMMd",
+                                        _model.datePicked,
+                                        locale: FFLocalizations.of(context)
+                                            .languageCode,
+                                      );
                                     } else {
                                       return 'Birth Day';
                                     }

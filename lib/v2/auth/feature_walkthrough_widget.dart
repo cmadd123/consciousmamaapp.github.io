@@ -58,7 +58,7 @@ class _FeatureWalkthroughWidgetState extends State<FeatureWalkthroughWidget>
       curve: Curves.easeOut,
     );
 
-    // 6 pages, momentum-optimized order, honest copy
+    // 8 pages, momentum-optimized order, honest copy
     _pages = [
       // 1. Meal Planning - the core hook, biggest daily pain point
       _PageData(
@@ -76,7 +76,15 @@ class _FeatureWalkthroughWidgetState extends State<FeatureWalkthroughWidget>
         accentColor: const Color(0xFF9B8AA0),
         icon: Icons.shopping_cart,
       ),
-      // 3. Learning Paths - the differentiator, emotional hook
+      // 3. Cookbook - complete the meal ecosystem
+      _PageData(
+        title: 'All your recipes in one place',
+        subtitle: 'Save favorites, import from any website, or create your own — ready when you need them',
+        preview: const CookbookPreview(),
+        accentColor: const Color(0xFFE67E22),
+        icon: Icons.menu_book,
+      ),
+      // 4. Learning Paths - the differentiator, emotional hook
       _PageData(
         title: 'Potty training? Sleep struggles? We\'ll walk you through it',
         subtitle: 'Tell us the challenge and we create a day-by-day plan with tips for every step',
@@ -84,7 +92,7 @@ class _FeatureWalkthroughWidgetState extends State<FeatureWalkthroughWidget>
         accentColor: const Color(0xFFEC407A),
         icon: Icons.route,
       ),
-      // 4. Calendar - ties it all together
+      // 5. Calendar - ties it all together
       _PageData(
         title: 'Your whole family in one calendar',
         subtitle: 'Meals, activities, appointments, and learning tasks — all at a glance',
@@ -92,7 +100,15 @@ class _FeatureWalkthroughWidgetState extends State<FeatureWalkthroughWidget>
         accentColor: const Color(0xFF52A097),
         icon: Icons.calendar_month,
       ),
-      // 5. Activities - value, lighter tone
+      // 6. Todo List - planning companion
+      _PageData(
+        title: 'Never forget the little things',
+        subtitle: 'Keep track of everything on your plate — from appointments to party planning',
+        preview: const TodoListPreview(),
+        accentColor: const Color(0xFF5C6BC0),
+        icon: Icons.checklist_rounded,
+      ),
+      // 7. Activities - value, lighter tone
       _PageData(
         title: 'Hundreds of ideas for every kind of day',
         subtitle: 'Browse activities by age, setting, and how much time you have',
@@ -356,9 +372,7 @@ class _FeatureWalkthroughWidgetState extends State<FeatureWalkthroughWidget>
                       padding: const EdgeInsets.symmetric(
                           horizontal: 24.0),
                       iconPadding: const EdgeInsets.all(0.0),
-                      color: isLastPage
-                          ? FlutterFlowTheme.of(context).primary
-                          : page.accentColor,
+                      color: page.accentColor,
                       textStyle: FlutterFlowTheme.of(context)
                           .titleMedium
                           .override(

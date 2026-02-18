@@ -140,6 +140,16 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                 List<ChildernRecord> rowChildernRecordList =
                                     snapshot.data!;
 
+                                // Auto-select first child if none selected
+                                if (FFAppState().selectedChildForMilestone == null &&
+                                    rowChildernRecordList.isNotEmpty) {
+                                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                                    FFAppState().selectedChildForMilestone =
+                                        rowChildernRecordList.first.reference;
+                                    safeSetState(() {});
+                                  });
+                                }
+
                                 return SingleChildScrollView(
                                   scrollDirection: Axis.horizontal,
                                   child: Row(
@@ -247,7 +257,15 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                           ),
                         ),
                         Flexible(
-                          child: StreamBuilder<ChildernRecord>(
+                          child: FFAppState().selectedChildForMilestone == null
+                            ? Center(
+                                child: CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    FlutterFlowTheme.of(context).primary,
+                                  ),
+                                ),
+                              )
+                            : StreamBuilder<ChildernRecord>(
                             stream: ChildernRecord.getDocument(
                                 FFAppState().selectedChildForMilestone!),
                             builder: (context, snapshot) {

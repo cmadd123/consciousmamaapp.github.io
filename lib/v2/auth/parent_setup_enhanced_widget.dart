@@ -1,5 +1,6 @@
 import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
+import '/v2/auth/account_transition_widget.dart';
 import '/v2/auth/onboarding_progress_tracker.dart';
 import '/v2/auth/demo_data_notifier.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
@@ -238,7 +239,7 @@ class _ParentSetupEnhancedWidgetState extends State<ParentSetupEnhancedWidget>
                               ),
                               const SizedBox(height: 12.0),
                               OnboardingProgressTracker(
-                                currentStep: 2,
+                                currentStep: 3,
                                 fadeAnimation: CurvedAnimation(
                                   parent: _headerController,
                                   curve: Curves.easeOut,
@@ -374,10 +375,10 @@ class _ParentSetupEnhancedWidgetState extends State<ParentSetupEnhancedWidget>
                                       partnerColorValue: _model.partnerColor,
                                     );
 
-                                    // Navigate to sign up
+                                    // Navigate to account transition page
                                     if (context.mounted) {
                                       context.pushNamed(
-                                        'signUpv2',
+                                        AccountTransitionWidget.routeName,
                                         extra: <String, dynamic>{
                                           kTransitionInfoKey: const TransitionInfo(
                                             hasTransition: true,

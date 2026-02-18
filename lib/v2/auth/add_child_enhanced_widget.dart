@@ -333,7 +333,7 @@ class _AddChildEnhancedWidgetState extends State<AddChildEnhancedWidget>
                   _staggeredEntry(
                     controller: _headingController,
                     child: OnboardingProgressTracker(
-                      currentStep: 1,
+                      currentStep: 2,
                       fadeAnimation: CurvedAnimation(
                         parent: _headingController,
                         curve: Curves.easeOut,

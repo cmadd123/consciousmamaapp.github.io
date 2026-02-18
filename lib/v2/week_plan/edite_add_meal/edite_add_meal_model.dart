@@ -90,11 +90,10 @@ class EditeAddMealModel extends FlutterFlowModel<EditeAddMealWidget> {
   FocusNode? textFieldFocusNode3;
   TextEditingController? textController3;
   String? Function(BuildContext, String?)? textController3Validator;
-  // Cook time is optional - no validation required
+  // Cook time is optional - accepts integers or decimals
   String? _textController3Validator(BuildContext context, String? val) {
-    // Optional field - if provided, validate it's a number
     if (val != null && val.isNotEmpty) {
-      if (int.tryParse(val) == null) {
+      if (double.tryParse(val) == null) {
         return 'Please enter a valid number';
       }
     }
@@ -105,11 +104,10 @@ class EditeAddMealModel extends FlutterFlowModel<EditeAddMealWidget> {
   FocusNode? textFieldFocusNode4;
   TextEditingController? textController4;
   String? Function(BuildContext, String?)? textController4Validator;
-  // Prep time is optional - no validation required
+  // Prep time is optional - accepts integers or decimals
   String? _textController4Validator(BuildContext context, String? val) {
-    // Optional field - if provided, validate it's a number
     if (val != null && val.isNotEmpty) {
-      if (int.tryParse(val) == null) {
+      if (double.tryParse(val) == null) {
         return 'Please enter a valid number';
       }
     }

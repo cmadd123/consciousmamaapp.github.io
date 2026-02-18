@@ -45,8 +45,11 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
-  // Custom dates selected via calendar picker (null = default 7-day view)
-  List<DateTime>? _customSelectedDates;
+  // Custom dates selected via calendar picker - stored in FFAppState for persistence
+  List<DateTime>? get _customSelectedDates => FFAppState().mealPlanSelectedDates;
+  set _customSelectedDates(List<DateTime>? value) {
+    FFAppState().mealPlanSelectedDates = value;
+  }
 
   @override
   void initState() {
@@ -472,13 +475,15 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            'Select Dates',
-                            style: FlutterFlowTheme.of(context).titleLarge.override(
-                              fontFamily: 'Andika New Basic',
-                              fontSize: 22.0,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 0.0,
+                          Flexible(
+                            child: Text(
+                              'Choose days to meal plan for',
+                              style: FlutterFlowTheme.of(context).titleLarge.override(
+                                fontFamily: 'Andika New Basic',
+                                fontSize: 20.0,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 0.0,
+                              ),
                             ),
                           ),
                           IconButton(
@@ -552,6 +557,23 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                     setState(() {
                                       _customSelectedDates = selectedDates;
                                     });
+
+                                    // Show confirmation
+                                    if (mounted) {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                            'Meal plan updated to ${selectedDates.length} ${selectedDates.length == 1 ? 'day' : 'days'}',
+                                            style: const TextStyle(fontFamily: 'Andika New Basic'),
+                                          ),
+                                          backgroundColor: FlutterFlowTheme.of(context).primary,
+                                          behavior: SnackBarBehavior.floating,
+                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                          margin: const EdgeInsets.all(16),
+                                          duration: const Duration(seconds: 2),
+                                        ),
+                                      );
+                                    }
                                   },
                             text: 'Done',
                             options: FFButtonOptions(
@@ -2805,7 +2827,69 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
 
                                       return Padding(
                                         padding: EdgeInsetsDirectional.fromSTEB(0.0, 16.0, 0.0, 100.0),
-                                        child: ListView.builder(
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            // First-time directions when no meals are planned
+                                            if (mealPlanRecords.isEmpty)
+                                              Container(
+                                                margin: EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 16.0),
+                                                padding: EdgeInsets.all(16.0),
+                                                decoration: BoxDecoration(
+                                                  color: FlutterFlowTheme.of(context).primary.withOpacity(0.06),
+                                                  borderRadius: BorderRadius.circular(16.0),
+                                                  border: Border.all(
+                                                    color: FlutterFlowTheme.of(context).primary.withOpacity(0.2),
+                                                    width: 1.0,
+                                                  ),
+                                                ),
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    Row(
+                                                      children: [
+                                                        Icon(
+                                                          Icons.waving_hand,
+                                                          color: FlutterFlowTheme.of(context).primary,
+                                                          size: 22.0,
+                                                        ),
+                                                        SizedBox(width: 8.0),
+                                                        Text(
+                                                          'Welcome to your Meal Planner!',
+                                                          style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                            fontFamily: 'Andika New Basic',
+                                                            fontSize: 16.0,
+                                                            fontWeight: FontWeight.w600,
+                                                            letterSpacing: 0.0,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    SizedBox(height: 12.0),
+                                                    _buildDirectionRow(
+                                                      context,
+                                                      Icons.calendar_month,
+                                                      Color(0xFF4CAF50),
+                                                      'Tap the calendar icon above to choose which days to plan for.',
+                                                    ),
+                                                    SizedBox(height: 8.0),
+                                                    _buildDirectionRow(
+                                                      context,
+                                                      Icons.touch_app,
+                                                      FlutterFlowTheme.of(context).primary,
+                                                      'Tap any day to expand it, then tap a meal slot to add a recipe.',
+                                                    ),
+                                                    SizedBox(height: 8.0),
+                                                    _buildDirectionRow(
+                                                      context,
+                                                      Icons.auto_awesome,
+                                                      Color(0xFFFF9800),
+                                                      'Or use the Fill button to auto-fill your week from your cookbook.',
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ListView.builder(
                                           padding: EdgeInsets.zero,
                                           primary: false,
                                           shrinkWrap: true,
@@ -2930,6 +3014,8 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                             );
                                           },
                                         ),
+                                          ],
+                                        ),
                                       );
                                     },
                                   ),
@@ -2956,6 +3042,34 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildDirectionRow(BuildContext context, IconData icon, Color color, String text) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: EdgeInsets.all(6.0),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+          child: Icon(icon, size: 16.0, color: color),
+        ),
+        SizedBox(width: 10.0),
+        Expanded(
+          child: Text(
+            text,
+            style: FlutterFlowTheme.of(context).bodySmall.override(
+              fontFamily: 'Andika New Basic',
+              fontSize: 13.0,
+              letterSpacing: 0.0,
+              color: FlutterFlowTheme.of(context).secondaryText,
+            ),
+          ),
+        ),
+      ],
     );
   }
 

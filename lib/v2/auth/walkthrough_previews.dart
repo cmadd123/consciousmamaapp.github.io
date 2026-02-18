@@ -248,7 +248,162 @@ class GroceryListPreview extends StatelessWidget {
   }
 }
 
-// ─── 3. Learning Path Preview ───────────────────────────────────────────────
+// ─── 3. Cookbook Preview ────────────────────────────────────────────────────
+// Shows saved recipes with image, time, and dietary tags
+
+class CookbookPreview extends StatelessWidget {
+  const CookbookPreview({super.key});
+
+  static const _accent = Color(0xFFE67E22);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Header
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          decoration: BoxDecoration(
+            color: _accent.withValues(alpha: 0.08),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.menu_book, size: 14, color: _accent),
+              const SizedBox(width: 6),
+              Text(
+                'Your saved recipes',
+                style: TextStyle(
+                  fontFamily: 'Andika New Basic',
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: _accent,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 12),
+        _recipeCard(
+          'Honey Garlic Chicken',
+          '35 min',
+          _kFoodImages[0],
+          ['🌾 Gluten-Free'],
+        ),
+        const SizedBox(height: 8),
+        _recipeCard(
+          'One-Pot Pasta Primavera',
+          '25 min',
+          _kFoodImages[2],
+          ['🥕 Vegetarian'],
+        ),
+        const SizedBox(height: 8),
+        _recipeCard(
+          'Banana Oat Pancakes',
+          '15 min',
+          _kFoodImages[1],
+          ['🥛 Dairy-Free', '🌾 Gluten-Free'],
+        ),
+        const SizedBox(height: 10),
+        // Import hint
+        Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: _accent.withValues(alpha: 0.05),
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: _accent.withValues(alpha: 0.15)),
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.link, size: 14, color: _accent),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  'Import recipes from any website or create your own',
+                  style: TextStyle(
+                    fontFamily: 'Andika New Basic',
+                    fontSize: 11,
+                    color: Colors.grey.shade600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _recipeCard(String title, String time, String imageUrl, List<String> tags) {
+    return Container(
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade50,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      child: Row(
+        children: [
+          _foodThumbnail(imageUrl, size: 48.0, radius: 10.0),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontFamily: 'Andika New Basic',
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey.shade800,
+                  ),
+                ),
+                const SizedBox(height: 3),
+                Row(
+                  children: [
+                    Icon(Icons.timer_outlined, size: 12, color: Colors.grey.shade500),
+                    const SizedBox(width: 4),
+                    Text(
+                      time,
+                      style: TextStyle(
+                        fontFamily: 'Andika New Basic',
+                        fontSize: 11,
+                        color: Colors.grey.shade500,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Flexible(
+                      child: Row(
+                        children: tags.map((tag) => Padding(
+                          padding: const EdgeInsets.only(right: 6),
+                          child: Text(
+                            tag,
+                            style: TextStyle(
+                              fontFamily: 'Andika New Basic',
+                              fontSize: 10,
+                              color: Colors.grey.shade600,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        )).toList(),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          Icon(Icons.favorite, size: 18, color: Colors.red.shade300),
+        ],
+      ),
+    );
+  }
+}
+
+// ─── Learning Path Preview ───────────────────────────────────────────────
 // Enhanced to show AI-generated details (parent tip, success signs, if resistant)
 
 class LearningPathPreview extends StatelessWidget {
@@ -623,7 +778,144 @@ class CalendarPreview extends StatelessWidget {
   }
 }
 
-// ─── 5. Activities Preview ──────────────────────────────────────────────────
+// ─── Todo List Preview ─────────────────────────────────────────────────────
+// Shows family task list with categories and checkboxes
+
+class TodoListPreview extends StatelessWidget {
+  const TodoListPreview({super.key});
+
+  static const _accent = Color(0xFF5C6BC0);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Category header
+        Row(
+          children: [
+            Icon(Icons.checklist_rounded, size: 16, color: _accent),
+            const SizedBox(width: 6),
+            const Text(
+              'Family Tasks',
+              style: TextStyle(
+                fontFamily: 'Andika New Basic',
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const Spacer(),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+              decoration: BoxDecoration(
+                color: _accent.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                '3 of 6 done',
+                style: TextStyle(
+                  fontFamily: 'Andika New Basic',
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: _accent,
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(4),
+          child: LinearProgressIndicator(
+            value: 3 / 6,
+            backgroundColor: const Color(0xFFE0E0E0),
+            valueColor: AlwaysStoppedAnimation(_accent),
+            minHeight: 5,
+          ),
+        ),
+        const SizedBox(height: 12),
+        _todoItem(true, 'Schedule dentist appointment', 'Mom'),
+        _todoItem(true, 'Buy birthday party supplies', 'Mom'),
+        _todoItem(true, 'Pack school lunches', 'Mom'),
+        _todoItem(false, 'Sign up for swim lessons', 'Mom'),
+        _todoItem(false, 'Organize playroom toys', null),
+        _todoItem(false, 'Plan weekend family outing', null),
+        const SizedBox(height: 10),
+        // Add task hint
+        Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: _accent.withValues(alpha: 0.05),
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: _accent.withValues(alpha: 0.15)),
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.add_circle_outline, size: 14, color: _accent),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  'Add tasks and check them off as you go',
+                  style: TextStyle(
+                    fontFamily: 'Andika New Basic',
+                    fontSize: 11,
+                    color: Colors.grey.shade600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _todoItem(bool done, String title, String? assignee) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 3),
+      child: Row(
+        children: [
+          Icon(
+            done ? Icons.check_circle_rounded : Icons.circle_outlined,
+            size: 18,
+            color: done ? _accent : Colors.grey.shade400,
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              title,
+              style: TextStyle(
+                fontFamily: 'Andika New Basic',
+                fontSize: 13,
+                color: done ? Colors.grey.shade400 : Colors.grey.shade800,
+                decoration: done ? TextDecoration.lineThrough : null,
+              ),
+            ),
+          ),
+          if (assignee != null)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              decoration: BoxDecoration(
+                color: _accent.withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                assignee,
+                style: TextStyle(
+                  fontFamily: 'Andika New Basic',
+                  fontSize: 10,
+                  color: _accent,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+// ─── Activities Preview ──────────────────────────────────────────────────
 
 class ActivitiesPreview extends StatelessWidget {
   const ActivitiesPreview({super.key});

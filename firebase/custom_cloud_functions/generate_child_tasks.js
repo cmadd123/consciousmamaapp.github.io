@@ -3,9 +3,15 @@ const admin = require("firebase-admin");
 const OpenAI = require("openai");
 const moment = require("moment-timezone");
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY || functions.config().openai?.key,
-});
+let _openai;
+function getOpenAI() {
+  if (!_openai) {
+    _openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY || functions.config().openai?.key,
+    });
+  }
+  return _openai;
+}
 const ASSISTANT_ID = "asst_Zrdo4Vh9j6BeaRALEXyqPZMZ";
 
 const db = admin.firestore();
@@ -43,11 +49,11 @@ exports.generateChildTasks = functions.https.onCall(async (data, context) => {
     }
 
     console.log("Creating a thread with OpenAI Assistant");
-    const thread = await openai.beta.threads.create();
+    const thread = await getOpenAI().beta.threads.create();
     console.log("Thread created:", thread.id);
 
     // Force assistant to reply ONLY with JSON schema we want
-    await openai.beta.threads.messages.create(thread.id, {
+    await getOpenAI().beta.threads.messages.create(thread.id, {
       role: "user",
       content: `Reply ONLY with valid JSON. 
 Do not include explanations, markdown, or extra fields.
@@ -67,20 +73,20 @@ Current Date: ${currentDate}`,
     });
     console.log("Message sent to assistant");
 
-    const run = await openai.beta.threads.runs.create(thread.id, {
+    const run = await getOpenAI().beta.threads.runs.create(thread.id, {
       assistant_id: ASSISTANT_ID,
     });
     console.log("Assistant run started:", run.id);
 
     let runStatus;
     do {
-      runStatus = await openai.beta.threads.runs.retrieve(thread.id, run.id);
+      runStatus = await getOpenAI().beta.threads.runs.retrieve(thread.id, run.id);
       console.log("Run status:", runStatus.status);
       await new Promise((resolve) => setTimeout(resolve, 2000));
     } while (runStatus.status !== "completed");
 
     console.log("Run completed. Fetching response messages.");
-    const messages = await openai.beta.threads.messages.list(thread.id);
+    const messages = await getOpenAI().beta.threads.messages.list(thread.id);
     const responseMessage = messages.data.find(
       (msg) => msg.role === "assistant",
     );

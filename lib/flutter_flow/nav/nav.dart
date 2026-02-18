@@ -93,6 +93,20 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
       debugLogDiagnostics: true,
       refreshListenable: appStateNotifier,
       navigatorKey: appNavigatorKey,
+      redirect: (context, state) {
+        // Don't redirect while still loading (splash screen)
+        if (appStateNotifier.loading) return null;
+
+        final loggedIn = appStateNotifier.loggedIn;
+        final currentPath = state.uri.path;
+
+        // If user is logged in and on the welcome/init page, send to home
+        if (loggedIn && (currentPath == '/' || currentPath == '/welcome-enhanced')) {
+          return '/home-hybrid';
+        }
+
+        return null;
+      },
       errorBuilder: (context, state) =>
           WelcomeEnhancedWidget(),
       routes: [
@@ -181,6 +195,11 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           name: SetupTransitionWidget.routeName,
           path: SetupTransitionWidget.routePath,
           builder: (context, params) => const SetupTransitionWidget(),
+        ),
+        FFRoute(
+          name: AccountTransitionWidget.routeName,
+          path: AccountTransitionWidget.routePath,
+          builder: (context, params) => const AccountTransitionWidget(),
         ),
         FFRoute(
           name: FeatureIntroWidget.routeName,

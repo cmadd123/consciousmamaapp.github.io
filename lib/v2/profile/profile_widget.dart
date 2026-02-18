@@ -11,7 +11,9 @@ import '/v1/profile/profile_edit_pop_up/profile_edit_pop_up_widget.dart';
 import '/v1/profile/profile_edite_email_pop_up/profile_edite_email_pop_up_widget.dart';
 import 'dart:ui';
 import '/index.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -38,7 +40,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
   void initState() {
     super.initState();
     _model = createModel(context, () => ProfileModel());
-    initPageAnimations(itemCount: 4);
+    initPageAnimations(itemCount: 5);
   }
 
   @override
@@ -624,7 +626,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                       ),
                     ),
                   )),
-                  // Subscription
+                  // Clear Calendar
                   CascadeItem(index: 3, baseDelayMs: 400, staggerMs: 80, child: Padding(
                     padding:
                         EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),
@@ -641,7 +643,199 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                         hoverColor: Colors.transparent,
                         highlightColor: Colors.transparent,
                         onTap: () async {
-                          context.pushNamed(PaimentWidget.routeName);
+                          final confirm = await showDialog<bool>(
+                            context: context,
+                            builder: (dialogContext) => AlertDialog(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              title: Text(
+                                'Clear Calendar',
+                                style: FlutterFlowTheme.of(context)
+                                    .bodyMedium
+                                    .override(
+                                      fontFamily: 'Andika New Basic',
+                                      fontSize: 20.0,
+                                      letterSpacing: 0.0,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                              ),
+                              content: Text(
+                                'This will permanently delete ALL events, tasks, and activities from your calendar. This cannot be undone.',
+                                style: FlutterFlowTheme.of(context)
+                                    .bodyMedium
+                                    .override(
+                                      fontFamily: 'Andika New Basic',
+                                      fontSize: 14.0,
+                                      letterSpacing: 0.0,
+                                    ),
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.of(dialogContext).pop(false),
+                                  child: Text(
+                                    'Cancel',
+                                    style: TextStyle(
+                                      fontFamily: 'Andika New Basic',
+                                      color: FlutterFlowTheme.of(context).secondaryText,
+                                    ),
+                                  ),
+                                ),
+                                TextButton(
+                                  onPressed: () => Navigator.of(dialogContext).pop(true),
+                                  child: Text(
+                                    'Delete All',
+                                    style: TextStyle(
+                                      fontFamily: 'Andika New Basic',
+                                      color: FlutterFlowTheme.of(context).error,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                          if (confirm != true) return;
+
+                          // Show loading indicator
+                          showDialog(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (_) => const Center(child: CircularProgressIndicator()),
+                          );
+
+                          try {
+                            final userRef = currentUserReference;
+                            if (userRef == null) {
+                              Navigator.of(context).pop();
+                              return;
+                            }
+
+                            final query = FirebaseFirestore.instance
+                                .collection('event_and_task')
+                                .where('user_ref', isEqualTo: userRef);
+
+                            final snapshot = await query.get();
+                            final total = snapshot.docs.length;
+
+                            // Batch delete (500 per batch is Firestore limit)
+                            final batches = <WriteBatch>[];
+                            var currentBatch = FirebaseFirestore.instance.batch();
+                            var count = 0;
+
+                            for (final doc in snapshot.docs) {
+                              currentBatch.delete(doc.reference);
+                              count++;
+                              if (count % 500 == 0) {
+                                batches.add(currentBatch);
+                                currentBatch = FirebaseFirestore.instance.batch();
+                              }
+                            }
+                            if (count % 500 != 0) {
+                              batches.add(currentBatch);
+                            }
+
+                            for (final batch in batches) {
+                              await batch.commit();
+                            }
+
+                            // Dismiss loading
+                            Navigator.of(context).pop();
+
+                            HapticFeedback.mediumImpact();
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  'Cleared $total items from your calendar.',
+                                  style: const TextStyle(fontFamily: 'Andika New Basic'),
+                                ),
+                                backgroundColor: FlutterFlowTheme.of(context).primary,
+                                behavior: SnackBarBehavior.floating,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                            );
+                          } catch (e) {
+                            Navigator.of(context).pop();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  'Failed to clear calendar. Please try again.',
+                                  style: const TextStyle(fontFamily: 'Andika New Basic'),
+                                ),
+                                backgroundColor: FlutterFlowTheme.of(context).error,
+                                behavior: SnackBarBehavior.floating,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                            );
+                          }
+                        },
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                      16.0, 0.0, 16.0, 0.0),
+                                  child: Icon(
+                                    Icons.calendar_month_outlined,
+                                    color: FlutterFlowTheme.of(context).primary,
+                                    size: 24.0,
+                                  ),
+                                ),
+                                Text(
+                                  'Clear Calendar',
+                                  style: FlutterFlowTheme.of(context)
+                                      .bodyMedium
+                                      .override(
+                                        fontFamily: 'Andika New Basic',
+                                        fontSize: 16.0,
+                                        letterSpacing: 0.0,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                ),
+                              ],
+                            ),
+                            Padding(
+                              padding: EdgeInsetsDirectional.fromSTEB(
+                                  16.0, 0.0, 16.0, 0.0),
+                              child: Icon(
+                                Icons.arrow_forward_ios,
+                                color: FlutterFlowTheme.of(context).primaryText,
+                                size: 18.0,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  )),
+                  // Subscription
+                  CascadeItem(index: 5, baseDelayMs: 400, staggerMs: 80, child: Padding(
+                    padding:
+                        EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),
+                    child: Container(
+                      width: double.infinity,
+                      height: 60.0,
+                      decoration: BoxDecoration(
+                        color: FlutterFlowTheme.of(context).secondaryBackground,
+                        borderRadius: BorderRadius.circular(14.0),
+                      ),
+                      child: InkWell(
+                        splashColor: Colors.transparent,
+                        focusColor: Colors.transparent,
+                        hoverColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                        onTap: () async {
+                          context.pushNamed(PaimentCopyWidget.routeName);
                         },
                         child: Row(
                           mainAxisSize: MainAxisSize.max,
@@ -687,7 +881,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                       ),
                     ),
                   )),
-                  CascadeItem(index: 4, baseDelayMs: 400, staggerMs: 80, child: Padding(
+                  CascadeItem(index: 6, baseDelayMs: 400, staggerMs: 80, child: Padding(
                     padding:
                         EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),
                     child: InkWell(
@@ -696,6 +890,60 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                       hoverColor: Colors.transparent,
                       highlightColor: Colors.transparent,
                       onTap: () async {
+                        final confirm = await showDialog<bool>(
+                          context: context,
+                          builder: (dialogContext) => AlertDialog(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            title: Text(
+                              'Logout',
+                              style: FlutterFlowTheme.of(context)
+                                  .bodyMedium
+                                  .override(
+                                    fontFamily: 'Andika New Basic',
+                                    fontSize: 20.0,
+                                    letterSpacing: 0.0,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                            ),
+                            content: Text(
+                              'Are you sure you want to logout?',
+                              style: FlutterFlowTheme.of(context)
+                                  .bodyMedium
+                                  .override(
+                                    fontFamily: 'Andika New Basic',
+                                    fontSize: 14.0,
+                                    letterSpacing: 0.0,
+                                  ),
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.of(dialogContext).pop(false),
+                                child: Text(
+                                  'Cancel',
+                                  style: TextStyle(
+                                    fontFamily: 'Andika New Basic',
+                                    color: FlutterFlowTheme.of(context).secondaryText,
+                                  ),
+                                ),
+                              ),
+                              TextButton(
+                                onPressed: () => Navigator.of(dialogContext).pop(true),
+                                child: Text(
+                                  'Logout',
+                                  style: TextStyle(
+                                    fontFamily: 'Andika New Basic',
+                                    color: FlutterFlowTheme.of(context).error,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                        if (confirm != true) return;
+
                         FFAppState().activityFinalModel = [];
                         safeSetState(() {});
                         GoRouter.of(context).prepareAuthEvent();
@@ -757,7 +1005,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                       ),
                     ),
                   )),
-                  CascadeItem(index: 5, baseDelayMs: 400, staggerMs: 80, child: Builder(
+                  CascadeItem(index: 7, baseDelayMs: 400, staggerMs: 80, child: Builder(
                     builder: (context) => Padding(
                       padding:
                           EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),

@@ -10,6 +10,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'auth/firebase_auth/firebase_user_provider.dart';
 import 'auth/firebase_auth/auth_util.dart';
 
+import 'backend/backend.dart';
 import 'backend/firebase/firebase_config.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import 'flutter_flow/flutter_flow_util.dart';
@@ -107,8 +108,19 @@ class _MyAppState extends State<MyApp> {
     deepLinkHandler.initialize(_router);
 
     userStream = momeCoachFirebaseUserStream()
-      ..listen((user) {
+      ..listen((user) async {
         _appStateNotifier.update(user);
+
+        // Load onboarding status from Firestore when user is logged in
+        if (user.loggedIn && currentUserReference != null) {
+          try {
+            final userDoc = await UsersRecord.getDocumentOnce(currentUserReference!);
+            _appStateNotifier.onboardingCompleted = userDoc.onboardingCompleted;
+          } catch (_) {
+            _appStateNotifier.onboardingCompleted = false;
+          }
+        }
+
         // Handle pending deep links after user is logged in
         if (user.loggedIn && deepLinkHandler.hasPendingUri) {
           // Small delay to ensure navigation is ready

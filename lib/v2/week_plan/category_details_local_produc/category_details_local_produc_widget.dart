@@ -628,6 +628,78 @@ class _CategoryDetailsLocalProducWidgetState
                           ],
                         ),
 
+                        // Meal type, recipe type, and dietary tags
+                        if (widget.itemDetails != null) ...[
+                          () {
+                            final tags = <String>[];
+                            // Recipe type (Entree, Side, Dessert)
+                            if (widget.itemDetails!.recipeType != null) {
+                              tags.add(widget.itemDetails!.recipeType!.name);
+                            }
+                            // Meal types and dietary from mealTyp (comma-separated)
+                            if (widget.itemDetails!.mealTyp.isNotEmpty) {
+                              tags.addAll(widget.itemDetails!.mealTyp.split(',').map((s) => s.trim()).where((s) => s.isNotEmpty));
+                            }
+                            if (tags.isEmpty) return const SizedBox.shrink();
+
+                            // Emoji map matching edit recipe page
+                            const dietaryEmojis = {
+                              'Gluten-Free': '\u{1F33E}',
+                              'Dairy-Free': '\u{1F95B}',
+                              'Nut-Free': '\u{1F95C}',
+                              'Vegetarian': '\u{1F955}',
+                              'Vegan': '\u{1F331}',
+                            };
+                            const mealEmojis = {
+                              'Breakfast': '\u{2615}',
+                              'Lunch': '\u{1F96A}',
+                              'Dinner': '\u{1F37D}\u{FE0F}',
+                              'Snacks': '\u{1F36A}',
+                            };
+                            const typeEmojis = {
+                              'Entree': '\u{1F372}',
+                              'Side': '\u{1F957}',
+                              'Dessert': '\u{1F370}',
+                            };
+
+                            return Padding(
+                              padding: const EdgeInsets.only(top: 10.0),
+                              child: Wrap(
+                                spacing: 8.0,
+                                runSpacing: 8.0,
+                                children: tags.map((tag) {
+                                  final isDietary = dietaryEmojis.containsKey(tag);
+                                  final emoji = dietaryEmojis[tag] ?? mealEmojis[tag] ?? typeEmojis[tag] ?? '';
+                                  final chipColor = isDietary
+                                      ? const Color(0xFF52A097)
+                                      : FlutterFlowTheme.of(context).primary;
+                                  return Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
+                                    decoration: BoxDecoration(
+                                      color: chipColor.withOpacity(0.1),
+                                      borderRadius: BorderRadius.circular(14.0),
+                                      border: Border.all(
+                                        color: chipColor.withOpacity(0.3),
+                                        width: 1.0,
+                                      ),
+                                    ),
+                                    child: Text(
+                                      emoji.isNotEmpty ? '$emoji $tag' : tag,
+                                      style: FlutterFlowTheme.of(context).bodySmall.override(
+                                            fontFamily: 'Andika New Basic',
+                                            color: chipColor,
+                                            fontSize: 12.0,
+                                            fontWeight: FontWeight.w500,
+                                            letterSpacing: 0.0,
+                                          ),
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
+                            );
+                          }(),
+                        ],
+
                         // Source URL (clickable)
                         if (widget.itemDetails?.sourceUrl != null &&
                             widget.itemDetails!.sourceUrl.isNotEmpty) ...[

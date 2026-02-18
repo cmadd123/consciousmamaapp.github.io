@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 
 /// Progress tracker for enhanced onboarding flow
-/// Shows: ✓ Child → ● Parents → ○ Features
+/// Shows: Features → Children → You
 /// The current step circle pulses gently to draw attention.
 class OnboardingProgressTracker extends StatefulWidget {
-  final int currentStep; // 1 = Child, 2 = Parents, 3 = Features
+  final int currentStep; // 1 = Features, 2 = Children, 3 = You
   final Animation<double>? fadeAnimation;
 
   const OnboardingProgressTracker({
@@ -45,9 +45,9 @@ class _OnboardingProgressTrackerState extends State<OnboardingProgressTracker>
   @override
   Widget build(BuildContext context) {
     final steps = [
-      {'label': 'Child', 'step': 1},
-      {'label': 'Parents', 'step': 2},
-      {'label': 'Features', 'step': 3},
+      {'label': 'Features', 'step': 1},
+      {'label': 'Children', 'step': 2},
+      {'label': 'You', 'step': 3},
     ];
 
     Widget content = Row(
