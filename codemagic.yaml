@@ -59,7 +59,8 @@ workflows:
 
       - name: Build iOS IPA
         script: |
-          LATEST_BUILD=$(app-store-connect get-latest-testflight-build-number "$BUNDLE_ID" || echo 0)
+          LATEST_BUILD=$(app-store-connect get-latest-build-number "$BUNDLE_ID" || echo 0)
+          echo "Latest build number: $LATEST_BUILD"
           flutter build ipa --release \
             --build-number=$((LATEST_BUILD + 1)) \
             --export-options-plist=/Users/builder/export_options.plist
