@@ -1,4 +1,4 @@
-# Deploy only website files to GitHub Pages (not the full Flutter repo)
+# Deploy static website to GitHub Pages
 name: Deploy website to Pages
 
 on:
@@ -24,15 +24,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          sparse-checkout: |
-            index.html
-            privacy.html
-            terms.html
-            favicon.png
-            CNAME
-            .nojekyll
-          sparse-checkout-cone-mode: false
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
