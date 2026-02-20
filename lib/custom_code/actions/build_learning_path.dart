@@ -282,13 +282,13 @@ Example format:
 
   final programRef = await db.collection("learning_path").add({
     "title": pathTitle,
-    "description": "A ${tasks.length}-day program to help your $ageString with ${pathTitle.toLowerCase()}. Practice $frequency at $preferredTime.",
+    "description": "A ${tasks.length}-day program to help your $ageString with ${pathTitle.toLowerCase()}. Practice ${frequency.toLowerCase()} at ${preferredTime.replaceFirst(RegExp(r'^0'), '')}.",
     "challenge": challengeDescription,
     "child_age": ageStringDisplay,
     "created_at": Timestamp.now(),
     "user_ref": userRef,
     "child_ref": childId,
-    "lessons_count": tasks.length,
+    "tasks_count": tasks.length,
     "start_date": Timestamp.fromDate(firstTaskDate),
     "end_date": Timestamp.fromDate(
       firstTaskDate.add(Duration(days: daysStep * (tasks.length - 1))),

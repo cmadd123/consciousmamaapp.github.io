@@ -1,9 +1,11 @@
 import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
 import '/components/custom_date_time_picker.dart';
+import '/components/parent_circle_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
+import '/components/momrise_confirmation.dart';
 import 'dart:ui';
 import '/index.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -30,6 +32,7 @@ class AddEventWidget extends StatefulWidget {
 
 class _AddEventWidgetState extends State<AddEventWidget> {
   late AddEventModel _model;
+  late ParentDisplayInfo _parentInfo;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -37,6 +40,7 @@ class _AddEventWidgetState extends State<AddEventWidget> {
   void initState() {
     super.initState();
     _model = createModel(context, () => AddEventModel());
+    _parentInfo = ParentDisplayInfo.fromUser(currentUserDocument);
 
     _model.textController1 ??= TextEditingController();
     _model.textFieldFocusNode1 ??= FocusNode();
@@ -300,12 +304,12 @@ class _AddEventWidgetState extends State<AddEventWidget> {
                                             height: 134.0,
                                             decoration: BoxDecoration(
                                               color: _model.assignedToMom
-                                                  ? const Color(0xFFE91E63).withOpacity(0.15)
+                                                  ? _parentInfo.myColor.withOpacity(0.15)
                                                   : Colors.transparent,
                                               borderRadius: BorderRadius.circular(14.0),
                                               border: Border.all(
                                                 color: _model.assignedToMom
-                                                    ? const Color(0xFFE91E63)
+                                                    ? _parentInfo.myColor
                                                     : FlutterFlowTheme.of(context).alternate,
                                                 width: _model.assignedToMom ? 2.0 : 1.0,
                                               ),
@@ -319,14 +323,14 @@ class _AddEventWidgetState extends State<AddEventWidget> {
                                                     Container(
                                                       width: 66.0,
                                                       height: 66.0,
-                                                      decoration: const BoxDecoration(
-                                                        color: Color(0xFFE91E63),
+                                                      decoration: BoxDecoration(
+                                                        color: _parentInfo.myColor,
                                                         shape: BoxShape.circle,
                                                       ),
-                                                      child: const Center(
+                                                      child: Center(
                                                         child: Text(
-                                                          'M',
-                                                          style: TextStyle(
+                                                          _parentInfo.myInitial,
+                                                          style: const TextStyle(
                                                             color: Colors.white,
                                                             fontSize: 28.0,
                                                             fontWeight: FontWeight.bold,
@@ -335,7 +339,7 @@ class _AddEventWidgetState extends State<AddEventWidget> {
                                                       ),
                                                     ),
                                                     Text(
-                                                      'Mom',
+                                                      _parentInfo.myName,
                                                       style: FlutterFlowTheme.of(context)
                                                           .bodyMedium
                                                           .override(
@@ -352,8 +356,8 @@ class _AddEventWidgetState extends State<AddEventWidget> {
                                                     child: Container(
                                                       width: 20,
                                                       height: 20,
-                                                      decoration: const BoxDecoration(
-                                                        color: Color(0xFFE91E63),
+                                                      decoration: BoxDecoration(
+                                                        color: _parentInfo.myColor,
                                                         shape: BoxShape.circle,
                                                       ),
                                                       child: const Icon(
@@ -386,12 +390,12 @@ class _AddEventWidgetState extends State<AddEventWidget> {
                                             height: 134.0,
                                             decoration: BoxDecoration(
                                               color: _model.assignedToDad
-                                                  ? const Color(0xFF2196F3).withOpacity(0.15)
+                                                  ? _parentInfo.partnerColor.withOpacity(0.15)
                                                   : Colors.transparent,
                                               borderRadius: BorderRadius.circular(14.0),
                                               border: Border.all(
                                                 color: _model.assignedToDad
-                                                    ? const Color(0xFF2196F3)
+                                                    ? _parentInfo.partnerColor
                                                     : FlutterFlowTheme.of(context).alternate,
                                                 width: _model.assignedToDad ? 2.0 : 1.0,
                                               ),
@@ -405,14 +409,14 @@ class _AddEventWidgetState extends State<AddEventWidget> {
                                                     Container(
                                                       width: 66.0,
                                                       height: 66.0,
-                                                      decoration: const BoxDecoration(
-                                                        color: Color(0xFF2196F3),
+                                                      decoration: BoxDecoration(
+                                                        color: _parentInfo.partnerColor,
                                                         shape: BoxShape.circle,
                                                       ),
-                                                      child: const Center(
+                                                      child: Center(
                                                         child: Text(
-                                                          'D',
-                                                          style: TextStyle(
+                                                          _parentInfo.partnerInitial,
+                                                          style: const TextStyle(
                                                             color: Colors.white,
                                                             fontSize: 28.0,
                                                             fontWeight: FontWeight.bold,
@@ -421,7 +425,7 @@ class _AddEventWidgetState extends State<AddEventWidget> {
                                                       ),
                                                     ),
                                                     Text(
-                                                      'Dad',
+                                                      _parentInfo.partnerName,
                                                       style: FlutterFlowTheme.of(context)
                                                           .bodyMedium
                                                           .override(
@@ -438,8 +442,8 @@ class _AddEventWidgetState extends State<AddEventWidget> {
                                                     child: Container(
                                                       width: 20,
                                                       height: 20,
-                                                      decoration: const BoxDecoration(
-                                                        color: Color(0xFF2196F3),
+                                                      decoration: BoxDecoration(
+                                                        color: _parentInfo.partnerColor,
                                                         shape: BoxShape.circle,
                                                       ),
                                                       child: const Icon(
@@ -801,6 +805,10 @@ class _AddEventWidgetState extends State<AddEventWidget> {
                                   ));
                               FFAppState().todocash = true;
                               safeSetState(() {});
+
+                              if (mounted) {
+                                await MomRiseConfirmation.show(context, message: 'Event Created');
+                              }
 
                               context.pushNamed(CalendarpageWidget.routeName);
                             } else {

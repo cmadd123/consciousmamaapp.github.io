@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -258,6 +259,7 @@ class _ChildSummaryWidgetState extends State<ChildSummaryWidget> {
       child: StreamBuilder<List<LearningPathTasksRecord>>(
         stream: queryLearningPathTasksRecord(
           queryBuilder: (q) => q
+              .where('user_ref', isEqualTo: currentUserReference)
               .where('child_ref', isEqualTo: widget.childRef)
               .where('is_completed', isEqualTo: false)
               .orderBy('task_time')
@@ -414,6 +416,7 @@ class _ChildSummaryWidgetState extends State<ChildSummaryWidget> {
           StreamBuilder<List<LearningPathRecord>>(
             stream: queryLearningPathRecord(
               queryBuilder: (q) => q
+                  .where('user_ref', isEqualTo: currentUserReference)
                   .where('child_ref', isEqualTo: widget.childRef)
                   .where('is_completed', isEqualTo: false)
                   .limit(3),

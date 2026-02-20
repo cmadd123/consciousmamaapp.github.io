@@ -5,6 +5,7 @@ import '/components/onboarding_progress_indicator_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
+import '/components/momrise_confirmation.dart';
 import 'dart:ui';
 import '/index.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -884,25 +885,15 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
                                   _model.childedDoc?.reference;
                               safeSetState(() {});
 
-                              // Show success message
-                              if (mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('${_model.textController.text} has been added!'),
-                                    backgroundColor: FlutterFlowTheme.of(context).primary,
-                                    behavior: SnackBarBehavior.floating,
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                                    duration: const Duration(seconds: 2),
-                                  ),
-                                );
-                              }
-
                               // Navigate based on whether this is first-time onboarding or adding another child
                               if (widget.isFirst) {
                                 // First child - continue to parent setup
                                 context.pushNamed(ParentSetupWidget.routeName);
                               } else {
-                                // Adding another child - go back to My Kids page
+                                // Adding another child - show confirmation and go back
+                                if (mounted) {
+                                  await MomRiseConfirmation.show(context, message: 'Child Added');
+                                }
                                 context.safePop();
                               }
                             } else {
@@ -974,17 +965,8 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
                                   firstChildCreated: true,
                                 ));
 
-                                // Show success message
                                 if (mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text('${_model.textController.text} has been added!'),
-                                      backgroundColor: FlutterFlowTheme.of(context).primary,
-                                      behavior: SnackBarBehavior.floating,
-                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                                      duration: const Duration(seconds: 2),
-                                    ),
-                                  );
+                                  await MomRiseConfirmation.show(context, message: 'Child Added');
                                 }
 
                                 context.pushNamed(

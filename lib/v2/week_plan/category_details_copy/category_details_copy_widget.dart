@@ -244,12 +244,12 @@ class _CategoryDetailsCopyWidgetState extends State<CategoryDetailsCopyWidget> {
                                               onTap: () async {
                                                 final navigator = Navigator.of(context);
 
-                                                for (int loop1Index = 0;
-                                                    loop1Index <
-                                                        widget!
+                                                final ingredientCount = widget!
                                                             .itemDetails!
                                                             .extendedIngredients
                                                             .length;
+                                                for (int loop1Index = 0;
+                                                    loop1Index < ingredientCount;
                                                     loop1Index++) {
                                                   final currentLoop1Item = widget!
                                                           .itemDetails!
@@ -260,6 +260,18 @@ class _CategoryDetailsCopyWidgetState extends State<CategoryDetailsCopyWidget> {
                                                           currentLoop1Item
                                                               .toString());
                                                   safeSetState(() {});
+                                                }
+
+                                                if (ingredientCount > 0) {
+                                                  ScaffoldMessenger.of(context).showSnackBar(
+                                                    SnackBar(
+                                                      content: Text('Added $ingredientCount ingredients to your grocery list'),
+                                                      backgroundColor: const Color(0xFF9B8AA0),
+                                                      behavior: SnackBarBehavior.floating,
+                                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                                      duration: const Duration(seconds: 2),
+                                                    ),
+                                                  );
                                                 }
 
                                                 navigator.pushNamed(

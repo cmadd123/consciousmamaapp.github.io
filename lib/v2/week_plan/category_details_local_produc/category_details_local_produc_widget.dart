@@ -357,7 +357,11 @@ class _CategoryDetailsLocalProducWidgetState
             'editCookingMeal': serializeParam(newRecipe, ParamType.Document),
           }.withoutNulls,
           extra: <String, dynamic>{'editCookingMeal': newRecipe},
-        );
+        ).then((result) {
+          if (result == 'saved' && mounted) {
+            Navigator.of(context).pop();
+          }
+        });
       }
     } catch (e) {
       Navigator.pop(context); // Close loading if open
@@ -662,17 +666,40 @@ class _CategoryDetailsLocalProducWidgetState
                               'Dessert': '\u{1F370}',
                             };
 
+                            // Reorder: meal types (canonical order) first, then recipe types, then dietary
+                            final mealTypes = ['Breakfast', 'Lunch', 'Dinner', 'Snacks'];
+                            final recipeTypes = ['Entree', 'Side', 'Dessert'];
+                            final sortedMealTypes = tags.where((t) => mealTypes.contains(t)).toList()
+                              ..sort((a, b) => mealTypes.indexOf(a).compareTo(mealTypes.indexOf(b)));
+                            final orderedTags = <String>[
+                              ...sortedMealTypes,
+                              ...tags.where((t) => recipeTypes.contains(t)),
+                              ...tags.where((t) => dietaryEmojis.containsKey(t)),
+                            ];
+
                             return Padding(
                               padding: const EdgeInsets.only(top: 10.0),
                               child: Wrap(
                                 spacing: 8.0,
                                 runSpacing: 8.0,
-                                children: tags.map((tag) {
+                                children: orderedTags.map((tag) {
                                   final isDietary = dietaryEmojis.containsKey(tag);
+                                  final isMealType = mealEmojis.containsKey(tag);
+                                  final isRecipeType = typeEmojis.containsKey(tag);
                                   final emoji = dietaryEmojis[tag] ?? mealEmojis[tag] ?? typeEmojis[tag] ?? '';
-                                  final chipColor = isDietary
-                                      ? const Color(0xFF52A097)
-                                      : FlutterFlowTheme.of(context).primary;
+                                  // Consistent colors: meal type=teal, Side=blue, Dessert=pink, dietary=coral
+                                  final Color chipColor;
+                                  if (isDietary) {
+                                    chipColor = const Color(0xFFEE8B60); // coral
+                                  } else if (tag == 'Side') {
+                                    chipColor = const Color(0xFF4A90D9); // blue
+                                  } else if (tag == 'Dessert') {
+                                    chipColor = const Color(0xFFE91E63); // pink
+                                  } else if (isMealType) {
+                                    chipColor = const Color(0xFF52A097); // teal
+                                  } else {
+                                    chipColor = FlutterFlowTheme.of(context).primary;
+                                  }
                                   return Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
                                     decoration: BoxDecoration(
@@ -967,7 +994,15 @@ class _CategoryDetailsLocalProducWidgetState
                     'editCookingMeal': serializeParam(widget.itemDetails, ParamType.Document),
                   }.withoutNulls,
                   extra: <String, dynamic>{'editCookingMeal': widget.itemDetails},
-                );
+                ).then((result) {
+                  // When the edit page saves, it pops with 'saved'.
+                  // Also pop this detail page so the user lands back
+                  // on the meal composer (or wherever they came from)
+                  // with freshly loaded data.
+                  if (result == 'saved' && mounted) {
+                    Navigator.of(context).pop();
+                  }
+                });
               },
             ),
 

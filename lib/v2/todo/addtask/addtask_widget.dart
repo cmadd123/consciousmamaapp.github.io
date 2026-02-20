@@ -1,5 +1,6 @@
 import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
+import '/components/momrise_confirmation.dart';
 import '/flutter_flow/flutter_flow_drop_down.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -609,6 +610,7 @@ class _AddtaskWidgetState extends State<AddtaskWidget> {
                                   ));
                               FFAppState().todocash = true;
                               safeSetState(() {});
+                              if (mounted) await MomRiseConfirmation.show(context, message: 'Task Created');
                               if (widget!.fromPage == 'Tasks') {
                                 context.pushNamed(TasksWidget.routeName);
                               } else if (widget!.fromPage == 'Home') {

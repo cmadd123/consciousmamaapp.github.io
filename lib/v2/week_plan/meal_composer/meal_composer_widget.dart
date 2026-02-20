@@ -6,6 +6,7 @@ import '/flutter_flow/flutter_flow_util.dart';
 import '/index.dart';
 import '/components/share_content_bottom_sheet.dart';
 import '/components/animated_press_widget.dart';
+import '/components/momrise_confirmation.dart';
 import '/components/page_animations.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -122,6 +123,15 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
           _selectedDrinkType = combo.drinkType;
           _customDrinkName = combo.drinkCustom;
 
+          // Load leftover flags from raw Firestore data
+          final rawData = comboDoc.data() as Map<String, dynamic>?;
+          if (rawData != null) {
+            _isLeftoverEntree = rawData['is_leftover_entree'] == true;
+            _isLeftoverSide = rawData['is_leftover_side'] == true;
+            _isLeftoverDessert = rawData['is_leftover_dessert'] == true;
+            _isLeftoverSnack = rawData['is_leftover_snack'] == true;
+          }
+
           debugPrint('MealComposer: Loaded ${_selectedSides.length} sides, ${_selectedDesserts.length} desserts, entree: ${_selectedEntree?.recipeName}');
         }
       } catch (e) {
@@ -194,6 +204,24 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
             _selectedEntree = meal;
           }
         }
+
+        // Load sides stored directly on the meal plan (ad-hoc compositions)
+        for (final sideRef in widget.existingMealPlan!.sideRefs) {
+          final sideDoc = await sideRef.get();
+          if (sideDoc.exists) {
+            _selectedSides.add(MealRecord.fromSnapshot(sideDoc));
+          }
+        }
+
+        // Load desserts stored directly on the meal plan
+        for (final dessertRef in widget.existingMealPlan!.dessertRefs) {
+          final dessertDoc = await dessertRef.get();
+          if (dessertDoc.exists) {
+            _selectedDesserts.add(MealRecord.fromSnapshot(dessertDoc));
+          }
+        }
+
+        _selectedDrinkType = widget.existingMealPlan!.drinkType;
       }
     } catch (e) {
       debugPrint('Error loading existing meal: $e');
@@ -208,6 +236,10 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
         queryBuilder: (q) => q.where('user_ref', isEqualTo: currentUserReference),
       );
 
+      // Refresh selected items with fresh Firestore data so the
+      // displayed names/images/times reflect any edits the user made.
+      _refreshSelectedFromLoaded();
+
       if (mounted) {
         setState(() => _isLoading = false);
       }
@@ -217,6 +249,25 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
         setState(() => _isLoading = false);
       }
     }
+  }
+
+  /// Replace in-memory selected recipe objects with their freshly loaded
+  /// counterparts so the UI shows up-to-date data after edits.
+  void _refreshSelectedFromLoaded() {
+    MealRecord? _findFresh(MealRecord old) {
+      for (final r in _userRecipes) {
+        if (r.reference.path == old.reference.path) return r;
+      }
+      return null;
+    }
+
+    if (_selectedEntree != null) {
+      _selectedEntree = _findFresh(_selectedEntree!) ?? _selectedEntree;
+    }
+
+    _selectedSides = _selectedSides.map((s) => _findFresh(s) ?? s).toList();
+    _selectedDesserts = _selectedDesserts.map((d) => _findFresh(d) ?? d).toList();
+    _selectedSnackItems = _selectedSnackItems.map((s) => _findFresh(s) ?? s).toList();
   }
 
   List<MealRecord> _getFilteredRecipes(RecipeType? type, {bool userOnly = false, bool curatedOnly = false}) {
@@ -231,12 +282,10 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
 
       // If recipe has a meal type specified, it must match the current meal being composed
       // (e.g., don't show breakfast entrees when composing dinner)
+      // mealTyp can be comma-separated like "Lunch,Dinner"
       if (r.hasMealTyp() && r.mealTyp.isNotEmpty) {
-        final recipeMealType = r.mealTyp.toLowerCase();
         final currentMealType = widget.mealType.name.toLowerCase();
-
-        // Only show recipes that match the current meal type
-        return recipeMealType == currentMealType;
+        return r.mealTyp.toLowerCase().contains(currentMealType);
       }
 
       // If recipe has no meal type specified, show it for all meals (universal recipe)
@@ -249,7 +298,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
       return _selectedSnackItems.length >= 2;
     }
     return _selectedEntree != null &&
-           (_selectedSides.isNotEmpty || _selectedDrinkType != null);
+           (_selectedSides.isNotEmpty || _selectedDesserts.isNotEmpty || _selectedDrinkType != null);
   }
 
   bool get _hasAnyItems {
@@ -263,6 +312,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
     }
     return _selectedEntree != null ||
            _selectedSides.isNotEmpty ||
+           _selectedDesserts.isNotEmpty ||
            _selectedDrinkType != null;
   }
 
@@ -1034,7 +1084,9 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
       extra: <String, dynamic>{
         'itemDetails': recipe,
       },
-    );
+    ).then((_) {
+      if (mounted) _loadRecipes();
+    });
   }
 
   Widget _buildCompactSlot(BuildContext context, {
@@ -1313,6 +1365,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
       builder: (sheetContext) => _RecipePickerSheet(
         title: title,
         filterType: filterType,
+        mealType: widget.mealType,
         userRecipes: _userRecipes,
         onSelect: (recipe) {
           Navigator.pop(sheetContext);
@@ -1375,6 +1428,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
       builder: (sheetContext) => _RecipePickerSheet(
         title: title,
         filterType: filterType,
+        mealType: widget.mealType,
         userRecipes: _userRecipes,
         onSelect: (recipe) {
           Navigator.pop(sheetContext);
@@ -1477,8 +1531,39 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
             SizedBox(height: 12.0),
             Row(
               children: [
-                // When creating/editing template, show only Save Template button
-                if (widget.editTemplateId != null) ...[
+                // When editing an existing template, show Update + Save as New inline
+                if (widget.editTemplateId != null && widget.editTemplateId != 'new') ...[
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: _isSaving ? null : () => _updateExistingCombo(''),
+                      icon: Icon(Icons.save, size: 18.0),
+                      label: _isSaving
+                          ? SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                          : Text('Update', style: TextStyle(fontSize: 13.0)),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: theme.primary,
+                        foregroundColor: Colors.white,
+                        padding: EdgeInsets.symmetric(vertical: 12.0),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.0)),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 8.0),
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: _isSaving ? null : () => _promptSaveAsNew(),
+                      icon: Icon(Icons.add_circle_outline, size: 18.0),
+                      label: Text('Save as New', style: TextStyle(fontSize: 13.0)),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: theme.primary,
+                        side: BorderSide(color: theme.primary),
+                        padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 6.0),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.0)),
+                      ),
+                    ),
+                  ),
+                ] else if (widget.editTemplateId == 'new') ...[
+                  // Creating a new template
                   Expanded(
                     child: ElevatedButton.icon(
                       onPressed: _isSaving ? null : _showSaveAsMealDialog,
@@ -1849,7 +1934,9 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
         'date': serializeParam(widget.date, ParamType.DateTime),
         'mealTyp': serializeParam(widget.mealType, ParamType.Enum),
       },
-    );
+    ).then((_) {
+      if (mounted) _loadRecipes();
+    });
   }
 
   void _navigateToCreateRecipe() {
@@ -1858,7 +1945,9 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
       queryParameters: {
         'dateTyyp': serializeParam(widget.mealType, ParamType.Enum),
       },
-    );
+    ).then((_) {
+      if (mounted) _loadRecipes();
+    });
   }
 
   void _navigateToGroceryList() {
@@ -1866,7 +1955,8 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
     context.pushNamed(AddToGroceryWidget.routeName);
   }
 
-  void _showSaveAsMealDialog() {
+  /// Prompt for a name, then save as a new template
+  void _promptSaveAsNew() {
     final theme = FlutterFlowTheme.of(context);
     final nameController = TextEditingController();
 
@@ -1874,105 +1964,170 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
       context: context,
       builder: (dialogContext) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.0)),
-        title: Text('Save as Meal Template'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Give this meal template a name:', style: theme.bodyMedium),
-            SizedBox(height: 8.0),
-            TextField(
-              controller: nameController,
-              decoration: InputDecoration(
-                hintText: 'e.g., Taco Tuesday',
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(14.0)),
-              ),
-              autofocus: true,
-            ),
-            SizedBox(height: 16.0),
-            Text('This template includes:', style: theme.bodySmall.override(fontFamily: 'Andika New Basic', color: theme.secondaryText)),
-            SizedBox(height: 4.0),
-            if (_selectedEntree != null) Text('  ${_selectedEntree!.recipeName} (entrée)'),
-            ..._selectedSides.map((s) => Text('  ${s.recipeName} (side)')),
-            if (_selectedDrinkType != null) Text('  ${_selectedDrinkType == DrinkType.Other ? _customDrinkName : _selectedDrinkType!.name} (drink)'),
-            SizedBox(height: 12.0),
-            Container(
-              padding: EdgeInsets.all(8.0),
-              decoration: BoxDecoration(
-                color: theme.primary.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-              child: Row(
-                children: [
-                  Icon(Icons.info_outline, size: 16.0, color: theme.primary),
-                  SizedBox(width: 8.0),
-                  Expanded(
-                    child: Text(
-                      'You can reuse this template from the Meal Templates tab in your cookbook!',
-                      style: theme.bodySmall.override(fontFamily: 'Andika New Basic', color: theme.primary, fontSize: 11.0),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+        title: Text('Save as New Template'),
+        content: TextField(
+          controller: nameController,
+          decoration: InputDecoration(
+            hintText: 'e.g., Taco Tuesday',
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(14.0)),
+          ),
+          autofocus: true,
         ),
         actions: [
           TextButton(onPressed: () => Navigator.pop(dialogContext), child: Text('Cancel')),
           ElevatedButton(
             onPressed: () async {
               Navigator.pop(dialogContext);
-              await _saveAsMealCombo(nameController.text);
+              await _saveAsNewCombo(nameController.text);
             },
             style: ElevatedButton.styleFrom(backgroundColor: theme.primary),
-            child: Text('Save Template'),
+            child: Text('Save'),
           ),
         ],
       ),
     );
   }
 
-  Future<void> _saveAsMealCombo(String name) async {
+  void _showSaveAsMealDialog() {
+    final theme = FlutterFlowTheme.of(context);
+    final nameController = TextEditingController();
+    final isEditing = widget.editTemplateId != null && widget.editTemplateId != 'new';
+
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.0)),
+        title: Text(isEditing ? 'Save Template' : 'Save as Meal Template'),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(isEditing ? 'Update this template or save as a new one:' : 'Give this meal template a name:', style: theme.bodyMedium),
+              SizedBox(height: 8.0),
+              TextField(
+                controller: nameController,
+                decoration: InputDecoration(
+                  hintText: 'e.g., Taco Tuesday',
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(14.0)),
+                ),
+                autofocus: true,
+              ),
+              SizedBox(height: 16.0),
+              Text('This template includes:', style: theme.bodySmall.override(fontFamily: 'Andika New Basic', color: theme.secondaryText)),
+              SizedBox(height: 4.0),
+              if (_selectedEntree != null) Text('  ${_selectedEntree!.recipeName} (entrée)'),
+              ..._selectedSides.map((s) => Text('  ${s.recipeName} (side)')),
+              ..._selectedDesserts.map((d) => Text('  ${d.recipeName} (dessert)')),
+              if (!isEditing) ...[
+                SizedBox(height: 12.0),
+                Container(
+                  padding: EdgeInsets.all(8.0),
+                  decoration: BoxDecoration(
+                    color: theme.primary.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.info_outline, size: 16.0, color: theme.primary),
+                      SizedBox(width: 8.0),
+                      Expanded(
+                        child: Text(
+                          'You can reuse this template from the Meal Templates tab in your cookbook!',
+                          style: theme.bodySmall.override(fontFamily: 'Andika New Basic', color: theme.primary, fontSize: 11.0),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(dialogContext), child: Text('Cancel')),
+          if (isEditing) ...[
+            OutlinedButton(
+              onPressed: () async {
+                Navigator.pop(dialogContext);
+                await _saveAsNewCombo(nameController.text);
+              },
+              style: OutlinedButton.styleFrom(
+                foregroundColor: theme.primary,
+                side: BorderSide(color: theme.primary),
+              ),
+              child: Text('Save as New'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                Navigator.pop(dialogContext);
+                await _updateExistingCombo(nameController.text);
+              },
+              style: ElevatedButton.styleFrom(backgroundColor: theme.primary),
+              child: Text('Update Template'),
+            ),
+          ] else
+            ElevatedButton(
+              onPressed: () async {
+                Navigator.pop(dialogContext);
+                await _saveAsNewCombo(nameController.text);
+              },
+              style: ElevatedButton.styleFrom(backgroundColor: theme.primary),
+              child: Text('Save Template'),
+            ),
+        ],
+      ),
+    );
+  }
+
+  /// Build combo data map for saving
+  Map<String, dynamic> _buildComboData(String name) {
+    final comboData = createMealComboRecordData(
+      name: name.isNotEmpty ? name : 'My Meal',
+      entreeRef: _selectedEntree?.reference,
+      drinkType: _selectedDrinkType,
+      drinkCustom: _customDrinkName,
+      mealTyp: _selectedMealType ?? widget.mealType,
+      userRef: currentUserReference,
+      createdTime: DateTime.now(),
+    );
+    comboData['side_refs'] = _selectedSides.map((s) => s.reference).toList();
+    comboData['dessert_refs'] = _selectedDesserts.map((d) => d.reference).toList();
+    // Persist leftover flags in templates
+    comboData['is_leftover_entree'] = _isLeftoverEntree;
+    comboData['is_leftover_side'] = _isLeftoverSide;
+    comboData['is_leftover_dessert'] = _isLeftoverDessert;
+    comboData['is_leftover_snack'] = _isLeftoverSnack;
+    return comboData;
+  }
+
+  /// Update the existing template in-place
+  Future<void> _updateExistingCombo(String name) async {
     try {
-      final comboData = createMealComboRecordData(
-        name: name.isNotEmpty ? name : 'My Meal',
-        entreeRef: _selectedEntree?.reference,
-        drinkType: _selectedDrinkType,
-        drinkCustom: _customDrinkName,
-        mealTyp: _selectedMealType ?? widget.mealType,
-        userRef: currentUserReference,
-        createdTime: DateTime.now(),
-      );
-      comboData['side_refs'] = _selectedSides.map((s) => s.reference).toList();
-      comboData['dessert_refs'] = _selectedDesserts.map((d) => d.reference).toList();
+      final comboData = _buildComboData(name);
+      await MealComboRecord.collection.doc(widget.editTemplateId).update(comboData);
 
-      // If editing an existing template, update it
-      if (widget.editTemplateId != null && widget.editTemplateId != 'new') {
-        await MealComboRecord.collection.doc(widget.editTemplateId).update(comboData);
+      FFAppState().MealCashtearm = true;
+      if (mounted) {
+        await MomRiseConfirmation.show(context, message: 'Template Updated');
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      debugPrint('Error updating meal combo: $e');
+    }
+  }
 
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Template updated!'),
-              backgroundColor: Colors.green,
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
-          Navigator.pop(context);
-        }
-      } else {
-        // Creating a new template
-        await MealComboRecord.collection.doc().set(comboData);
+  /// Save as a brand new template
+  Future<void> _saveAsNewCombo(String name) async {
+    try {
+      final comboData = _buildComboData(name);
+      await MealComboRecord.collection.add(comboData);
 
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Meal template saved! Find it in the Meal Templates tab.'),
-              backgroundColor: Colors.green,
-              behavior: SnackBarBehavior.floating,
-              duration: Duration(seconds: 4),
-            ),
-          );
+      FFAppState().MealCashtearm = true;
+      if (mounted) {
+        await MomRiseConfirmation.show(context, message: 'Template Saved');
+        if (widget.editTemplateId != null) {
+          Navigator.pop(context); // Go back if we were in edit mode
         }
       }
     } catch (e) {
@@ -2000,20 +2155,37 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
         );
 
         FFAppState().MealCashtearm = true;
-        if (mounted) Navigator.pop(context);
+        if (mounted) {
+          await MomRiseConfirmation.show(context, message: 'Meal Planned');
+          Navigator.pop(context);
+        }
         return;
       }
 
       // If updating an existing meal plan, update both the meal plan notes AND the combo if it exists
       if (widget.existingMealPlan != null) {
-        // Update notes and leftover flags on the meal plan
-        await widget.existingMealPlan!.reference.update({
+        // Update notes, leftover flags, and ad-hoc side/dessert refs on the meal plan
+        final updateData = <String, dynamic>{
           'notes': notes.isNotEmpty ? notes : null,
           'is_leftover_entree': _isLeftoverEntree,
           'is_leftover_side': _isLeftoverSide,
           'is_leftover_dessert': _isLeftoverDessert,
           'is_leftover_snack': _isLeftoverSnack,
-        });
+        };
+
+        // For ad-hoc compositions (no combo ref), save entree/sides/desserts directly on the meal plan
+        if (widget.existingMealPlan!.mealComboRef == null) {
+          if (_selectedEntree != null) {
+            updateData['user_firebasemeal'] = _selectedEntree!.reference;
+          }
+          updateData['side_refs'] = _selectedSides.map((s) => s.reference).toList();
+          updateData['dessert_refs'] = _selectedDesserts.map((d) => d.reference).toList();
+          if (_selectedDrinkType != null) {
+            updateData['drink_type'] = _selectedDrinkType!.name;
+          }
+        }
+
+        await widget.existingMealPlan!.reference.update(updateData);
 
         // If this meal plan has a combo, update the combo's sides/desserts/drinks
         if (widget.existingMealPlan!.mealComboRef != null) {
@@ -2032,13 +2204,21 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
           fullData['side_refs'] = _selectedSides.map((s) => s.reference).toList();
           fullData['dessert_refs'] = _selectedDesserts.map((d) => d.reference).toList();
 
+          // Explicitly clear entree_ref if entree was removed (withoutNulls strips null values)
+          if (_selectedEntree == null) {
+            fullData['entree_ref'] = FieldValue.delete();
+          }
+
           debugPrint('Updating meal combo with ${_selectedSides.length} sides, ${_selectedDesserts.length} desserts');
 
           await comboRef.update(fullData);
         }
 
         FFAppState().MealCashtearm = true;
-        if (mounted) Navigator.pop(context);
+        if (mounted) {
+          await MomRiseConfirmation.show(context, message: 'Meal Updated');
+          Navigator.pop(context);
+        }
         return;
       }
 
@@ -2129,7 +2309,10 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
 
       FFAppState().MealCashtearm = true;
 
-      if (mounted) Navigator.pop(context);
+      if (mounted) {
+        await MomRiseConfirmation.show(context, message: 'Meal Planned');
+        Navigator.pop(context);
+      }
     } catch (e) {
       debugPrint('Error saving meal plan: $e');
       if (mounted) {
@@ -2267,6 +2450,7 @@ class _RecipePickerSheet extends StatefulWidget {
   const _RecipePickerSheet({
     required this.title,
     required this.filterType,
+    required this.mealType,
     required this.userRecipes,
     required this.onSelect,
     required this.onCreateNew,
@@ -2274,6 +2458,7 @@ class _RecipePickerSheet extends StatefulWidget {
 
   final String title;
   final RecipeType? filterType;
+  final MealTyp mealType;
   final List<MealRecord> userRecipes;
   final Function(MealRecord) onSelect;
   final VoidCallback onCreateNew;
@@ -2285,7 +2470,13 @@ class _RecipePickerSheet extends StatefulWidget {
 class _RecipePickerSheetState extends State<_RecipePickerSheet> {
   List<MealRecord> get _filteredUserRecipes {
     if (widget.filterType == null) return widget.userRecipes;
-    return widget.userRecipes.where((r) => r.recipeType == widget.filterType).toList();
+    var filtered = widget.userRecipes.where((r) => r.recipeType == widget.filterType).toList();
+    // Filter ALL recipe types by meal type (Breakfast, Lunch, Dinner, Snacks)
+    final mealTypeName = widget.mealType.name.toLowerCase();
+    filtered = filtered.where((r) =>
+      r.mealTyp.isEmpty || r.mealTyp.toLowerCase().contains(mealTypeName)
+    ).toList();
+    return filtered;
   }
 
   @override

@@ -18,6 +18,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '/components/page_animations.dart';
+import '/v2/profile/edit_parent_info_sheet.dart' show EditParentInfoPage;
 import 'profile_model.dart';
 export 'profile_model.dart';
 
@@ -199,7 +200,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                               child: Column(
                                 mainAxisSize: MainAxisSize.max,
                                 mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Padding(
                                     padding: EdgeInsetsDirectional.fromSTEB(
@@ -207,6 +208,8 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                                     child: AuthUserStreamWidget(
                                       builder: (context) => Text(
                                         currentUserDisplayName,
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
                                         style: FlutterFlowTheme.of(context)
                                             .bodyMedium
                                             .override(
@@ -409,6 +412,73 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                                 ),
                                 Text(
                                   'My Kids',
+                                  style: FlutterFlowTheme.of(context)
+                                      .bodyMedium
+                                      .override(
+                                        fontFamily: 'Andika New Basic',
+                                        fontSize: 16.0,
+                                        letterSpacing: 0.0,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                ),
+                              ],
+                            ),
+                            Padding(
+                              padding: EdgeInsetsDirectional.fromSTEB(
+                                  16.0, 0.0, 16.0, 0.0),
+                              child: Icon(
+                                Icons.arrow_forward_ios,
+                                color: FlutterFlowTheme.of(context).primaryText,
+                                size: 18.0,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  )),
+                  // Parent Info (names & colors)
+                  CascadeItem(index: 0, baseDelayMs: 400, staggerMs: 80, child: Padding(
+                    padding:
+                        EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),
+                    child: Container(
+                      width: double.infinity,
+                      height: 60.0,
+                      decoration: BoxDecoration(
+                        color: FlutterFlowTheme.of(context).secondaryBackground,
+                        borderRadius: BorderRadius.circular(14.0),
+                      ),
+                      child: InkWell(
+                        splashColor: Colors.transparent,
+                        focusColor: Colors.transparent,
+                        hoverColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                        onTap: () async {
+                          await Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => const EditParentInfoPage(),
+                            ),
+                          );
+                        },
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                      16.0, 0.0, 16.0, 0.0),
+                                  child: Icon(
+                                    Icons.family_restroom,
+                                    color: FlutterFlowTheme.of(context).primary,
+                                    size: 24.0,
+                                  ),
+                                ),
+                                Text(
+                                  'Parent Info',
                                   style: FlutterFlowTheme.of(context)
                                       .bodyMedium
                                       .override(

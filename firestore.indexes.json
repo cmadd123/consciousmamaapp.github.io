@@ -1,4 +1,15 @@
 {
-  "indexes": [],
+  "indexes": [
+    {
+      "collectionGroup": "learning_path_tasks",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "user_ref", "order": "ASCENDING" },
+        { "fieldPath": "child_ref", "order": "ASCENDING" },
+        { "fieldPath": "is_completed", "order": "ASCENDING" },
+        { "fieldPath": "task_time", "order": "ASCENDING" }
+      ]
+    }
+  ],
   "fieldOverrides": []
 }

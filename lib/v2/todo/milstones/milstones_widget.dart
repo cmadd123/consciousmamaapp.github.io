@@ -59,14 +59,24 @@ class _MilstonesWidgetState extends State<MilstonesWidget> {
     });
 
     try {
-      final selectedChildRef = FFAppState().selectedChildForMilestone;
+      var selectedChildRef = FFAppState().selectedChildForMilestone;
 
+      // Auto-select first child if none selected
       if (selectedChildRef == null) {
-        setState(() {
-          _isLoading = false;
-          _error = 'No child selected';
-        });
-        return;
+        final childrenQuery = await FirebaseFirestore.instance
+            .collection('childern')
+            .where('userRef', isEqualTo: currentUserReference)
+            .limit(1)
+            .get();
+        if (childrenQuery.docs.isEmpty) {
+          setState(() {
+            _isLoading = false;
+            _error = 'No children added yet';
+          });
+          return;
+        }
+        selectedChildRef = childrenQuery.docs.first.reference;
+        FFAppState().selectedChildForMilestone = selectedChildRef;
       }
 
       // Load the selected child

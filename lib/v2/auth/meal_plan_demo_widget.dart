@@ -1312,7 +1312,7 @@ class _MealPlanDemoWidgetState extends State<MealPlanDemoWidget> with TickerProv
     // Fix type casting - convert List<dynamic> to List<String>
     final sidesRaw = mealData['sides'];
     final sides = sidesRaw != null ? List<String>.from(sidesRaw as List) : null;
-    final drink = mealData['drink'] as String?;
+    final dessert = mealData['dessert'] as String?;
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1385,12 +1385,17 @@ class _MealPlanDemoWidgetState extends State<MealPlanDemoWidget> with TickerProv
                       style: const TextStyle(color: Color(0xFF666666), fontSize: 11.0),
                     ),
                   ],
-                  // Drink icon
-                  if (drink != null) ...[
+                  // Dessert icon
+                  if (dessert != null) ...[
                     const SizedBox(width: 8.0),
                     const Icon(Icons.add, size: 10.0, color: Color(0xFFAAAAAA)),
                     const SizedBox(width: 4.0),
-                    const Icon(Icons.local_cafe, size: 12.0, color: Color(0xFF2196F3)),
+                    const Icon(Icons.cake, size: 12.0, color: Color(0xFFE91E63)),
+                    const SizedBox(width: 2.0),
+                    const Text(
+                      '1',
+                      style: TextStyle(color: Color(0xFF666666), fontSize: 11.0),
+                    ),
                   ],
                 ],
               ),

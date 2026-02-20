@@ -55,6 +55,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
   late EditeAddMealModel _model;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
+  bool _isPopping = false; // Guard against double-pop from PopScope
 
   @override
   void initState() {
@@ -73,10 +74,10 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
             .cast<String>();
 
         // Initialize selectedCategories from existing meal data
-        // Add recipe type (Entree/Side/Dessert)
-        if (widget!.editCookingMeal!.mainOrSides == 'Side') {
+        // Add recipe type (Entree/Side/Dessert) — check both recipeType and mainOrSides
+        if (widget!.editCookingMeal!.recipeType == RecipeType.Side || widget!.editCookingMeal!.mainOrSides == 'Side') {
           _model.selectedCategories.add('Side');
-        } else if (widget!.editCookingMeal!.mainOrSides == 'Dessert') {
+        } else if (widget!.editCookingMeal!.recipeType == RecipeType.Dessert || widget!.editCookingMeal!.mainOrSides == 'Dessert') {
           _model.selectedCategories.add('Dessert');
         } else {
           // Main = Entree
@@ -247,6 +248,87 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
       return 'Add to Meal Plan';
     }
     return 'Save Recipe';
+  }
+
+  /// Save and go back — unified handler for back arrow, cancel button, and system back
+  Future<void> _saveAndPop() async {
+    if (_isPopping) return; // Already in progress
+    _isPopping = true;
+    if (widget.editCookingMeal != null) {
+      await _saveEditedRecipe();
+    }
+    if (mounted) Navigator.of(context).pop();
+  }
+
+  /// Silently save edits to an existing recipe (called on back/cancel in edit mode)
+  Future<void> _saveEditedRecipe() async {
+    if (widget.editCookingMeal?.reference == null) return;
+
+    // Only save if the recipe name is non-empty (minimum data needed)
+    if (_model.textController1.text.trim().isEmpty) return;
+
+    // Compute mainOrSides, recipeType, and mealTyp from selectedCategories
+    String? mainOrSidesValue;
+    String? mealTypValue;
+    RecipeType? recipeTypeValue;
+
+    if (_model.selectedCategories.isNotEmpty) {
+      if (_model.selectedCategories.contains('Entree')) {
+        mainOrSidesValue = 'Main';
+        recipeTypeValue = RecipeType.Entree;
+      } else if (_model.selectedCategories.contains('Side')) {
+        mainOrSidesValue = 'Side';
+        recipeTypeValue = RecipeType.Side;
+      } else if (_model.selectedCategories.contains('Dessert')) {
+        mainOrSidesValue = 'Dessert';
+        recipeTypeValue = RecipeType.Dessert;
+      } else {
+        mainOrSidesValue = 'Main';
+        recipeTypeValue = RecipeType.Entree;
+      }
+
+      // Build mealTyp in canonical order: Breakfast, Lunch, Dinner, Snacks, then dietary
+      final canonicalOrder = ['Breakfast', 'Lunch', 'Dinner', 'Snacks', 'Gluten-Free', 'Dairy-Free', 'Nut-Free', 'Vegetarian', 'Vegan'];
+      final mealAndDietaryCategories = canonicalOrder
+          .where((c) => _model.selectedCategories.contains(c))
+          .toList();
+      if (mealAndDietaryCategories.isNotEmpty) {
+        mealTypValue = mealAndDietaryCategories.join(',');
+      }
+    } else {
+      mealTypValue = widget.editCookingMeal?.mealTyp;
+      recipeTypeValue = widget.editCookingMeal?.recipeType;
+      mainOrSidesValue = widget.editCookingMeal?.mainOrSides;
+    }
+
+    try {
+      final updateData = {
+        ...createMealRecordData(
+          imageUrl: _model.mealImage,
+          recipeName: _model.textController1.text,
+          cost: double.tryParse(_model.textController2.text),
+          mainOrSides: mainOrSidesValue,
+          recipeType: recipeTypeValue,
+          mealTyp: mealTypValue,
+          userRef: currentUserReference,
+          isCurated: false,
+          prepareTime: double.tryParse(_model.textController4.text),
+          cookingTime: double.tryParse(_model.textController3.text),
+        ),
+        ...mapToFirestore(
+          {
+            'ingredients': _model.ingredientsList,
+            'CookingInstructions': _model.cookingInsturction,
+          },
+        ),
+      };
+      debugPrint('Back-to-save: updating ${widget.editCookingMeal!.reference.path} with ${updateData.keys.toList()}');
+      debugPrint('  recipeType=$recipeTypeValue, mainOrSides=$mainOrSidesValue, mealTyp=$mealTypValue');
+      await widget.editCookingMeal!.reference.update(updateData);
+      debugPrint('Back-to-save: success');
+    } catch (e) {
+      debugPrint('Back-to-save error: $e');
+    }
   }
 
   /// State for cookbook scanning
@@ -473,32 +555,23 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
         backgroundColor: FlutterFlowTheme.of(context).secondaryBackground, // White background
         body: SafeArea(
           top: true,
-          child: Form(
+          child: Stack(
+            children: [
+              // Scrollable form content with fixed save button at bottom
+              Form(
             key: _model.formKey,
             autovalidateMode: AutovalidateMode.disabled,
-            child: Padding(
+            child: Column(
+              children: [
+                Expanded(
+                  child: Padding(
               padding: EdgeInsetsDirectional.fromSTEB(12.0, 20.0, 12.0, 0.0),
               child: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
                   children: [
-                    Align(
-                      alignment: AlignmentDirectional(-1.0, 0.0),
-                      child: InkWell(
-                        splashColor: Colors.transparent,
-                        focusColor: Colors.transparent,
-                        hoverColor: Colors.transparent,
-                        highlightColor: Colors.transparent,
-                        onTap: () async {
-                          context.safePop();
-                        },
-                        child: Icon(
-                          Icons.arrow_back,
-                          color: FlutterFlowTheme.of(context).primaryText,
-                          size: 24.0,
-                        ),
-                      ),
-                    ),
+                    // Spacer for floating back arrow
+                    SizedBox(height: 32.0),
                     Align(
                       alignment: AlignmentDirectional(0.0, -1.0),
                       child: Padding(
@@ -2039,47 +2112,25 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                   ),
                         ),
                       ),
-                    Padding(
-                      padding:
-                          EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            child: FFButtonWidget(
-                              onPressed: () async {
-                                context.safePop();
-                              },
-                              text: 'Cancel',
-                              options: FFButtonOptions(
-                                height: 40.0,
-                                padding: EdgeInsetsDirectional.fromSTEB(
-                                    16.0, 0.0, 16.0, 0.0),
-                                iconPadding: EdgeInsetsDirectional.fromSTEB(
-                                    0.0, 0.0, 0.0, 0.0),
-                                color: FlutterFlowTheme.of(context)
-                                    .secondaryBackground,
-                                textStyle: FlutterFlowTheme.of(context)
-                                    .titleSmall
-                                    .override(
-                                      fontFamily: 'Andika New Basic',
-                                      color:
-                                          FlutterFlowTheme.of(context).primary,
-                                      letterSpacing: 0.0,
-                                    ),
-                                elevation: 0.0,
-                                borderSide: BorderSide(
-                                  color: FlutterFlowTheme.of(context).primary,
-                                  width: 1.0,
-                                ),
-                                borderRadius: BorderRadius.circular(14.0),
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: Builder(
-                              builder: (context) => FFButtonWidget(
+                    SizedBox(height: 20.0),
+                  ],
+                ),
+              ),
+            ),
+                ),
+                // Fixed save button at bottom — always visible
+                Container(
+                  padding: EdgeInsets.fromLTRB(24.0, 12.0, 24.0, 12.0),
+                  decoration: BoxDecoration(
+                    color: FlutterFlowTheme.of(context).secondaryBackground,
+                    boxShadow: [
+                      BoxShadow(color: Colors.black.withValues(alpha: 0.08), blurRadius: 8, offset: Offset(0, -2)),
+                    ],
+                  ),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: Builder(
+                          builder: (context) => FFButtonWidget(
                                 onPressed: () async {
                                   if (_model.formKey.currentState == null ||
                                       !_model.formKey.currentState!
@@ -2153,9 +2204,10 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                               recipeTypeValue = RecipeType.Entree;
                                             }
 
-                                            // Get meal types (Breakfast, Lunch, Dinner, Snacks) and dietary tags
-                                            final mealAndDietaryCategories = _model.selectedCategories
-                                                .where((c) => ['Breakfast', 'Lunch', 'Dinner', 'Snacks', 'Gluten-Free', 'Dairy-Free', 'Nut-Free', 'Vegetarian', 'Vegan'].contains(c))
+                                            // Get meal types and dietary tags in canonical order
+                                            final canonicalOrder = ['Breakfast', 'Lunch', 'Dinner', 'Snacks', 'Gluten-Free', 'Dairy-Free', 'Nut-Free', 'Vegetarian', 'Vegan'];
+                                            final mealAndDietaryCategories = canonicalOrder
+                                                .where((c) => _model.selectedCategories.contains(c))
                                                 .toList();
                                             if (mealAndDietaryCategories.isNotEmpty) {
                                               mealTypValue = mealAndDietaryCategories.join(',');
@@ -2229,40 +2281,14 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                                         ?.reference,
                                                   ));
                                             }
-                                          } else {
-                                            await showDialog(
-                                              context: context,
-                                              builder: (dialogContext) {
-                                                return Dialog(
-                                                  elevation: 0,
-                                                  insetPadding: EdgeInsets.zero,
-                                                  backgroundColor:
-                                                      Colors.transparent,
-                                                  alignment:
-                                                      AlignmentDirectional(
-                                                              0.0, 0.0)
-                                                          .resolve(
-                                                              Directionality.of(
-                                                                  context)),
-                                                  child: GestureDetector(
-                                                    onTap: () {
-                                                      FocusScope.of(
-                                                              dialogContext)
-                                                          .unfocus();
-                                                      FocusManager
-                                                          .instance.primaryFocus
-                                                          ?.unfocus();
-                                                    },
-                                                    child:
-                                                        CongForANewMealWidget(
-                                                      isMealPlan: false,
-                                                      isGenrateForm:
-                                                          widget!.isGenrateForm,
-                                                    ),
-                                                  ),
-                                                );
-                                              },
-                                            );
+                                          }
+                                          // Editing done — pop with 'saved'
+                                          // result so intermediate pages
+                                          // (detail page) can also pop,
+                                          // landing the user back on the
+                                          // meal composer.
+                                          if (mounted) {
+                                            Navigator.of(context).pop('saved');
                                           }
                                         } else {
                                           // Compute mainOrSides, recipeType, and mealTyp from selectedCategories for new meal
@@ -2287,9 +2313,10 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                               newRecipeType = RecipeType.Entree;
                                             }
 
-                                            // Get meal types (Breakfast, Lunch, Dinner, Snacks) and dietary tags
-                                            final mealAndDietaryCategories = _model.selectedCategories
-                                                .where((c) => ['Breakfast', 'Lunch', 'Dinner', 'Snacks', 'Gluten-Free', 'Dairy-Free', 'Nut-Free', 'Vegetarian', 'Vegan'].contains(c))
+                                            // Get meal types and dietary tags in canonical order
+                                            final canonicalOrder2 = ['Breakfast', 'Lunch', 'Dinner', 'Snacks', 'Gluten-Free', 'Dairy-Free', 'Nut-Free', 'Vegetarian', 'Vegan'];
+                                            final mealAndDietaryCategories = canonicalOrder2
+                                                .where((c) => _model.selectedCategories.contains(c))
                                                 .toList();
                                             if (mealAndDietaryCategories.isNotEmpty) {
                                               newMealTyp = mealAndDietaryCategories.join(',');
@@ -2517,26 +2544,44 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                               ),
                             ),
                           ),
-                        ].divide(SizedBox(width: 16.0)),
+                        ),
+              ],
+            ),
+          ),
+              // Floating back arrow — large tap target for reliability
+              Positioned(
+                top: 12.0,
+                left: 4.0,
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(24.0),
+                    onTap: () => Navigator.of(context).pop(),
+                    child: Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Container(
+                        width: 36.0,
+                        height: 36.0,
+                        decoration: BoxDecoration(
+                          color: FlutterFlowTheme.of(context).secondaryBackground,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(color: Colors.black.withValues(alpha: 0.12), blurRadius: 6, offset: Offset(0, 2)),
+                          ],
+                        ),
+                        child: Center(
+                          child: Icon(
+                            Icons.arrow_back,
+                            color: FlutterFlowTheme.of(context).primaryText,
+                            size: 20.0,
+                          ),
+                        ),
                       ),
                     ),
-                    Padding(
-                      padding:
-                          EdgeInsetsDirectional.fromSTEB(0.0, 20.0, 0.0, 20.0),
-                      child: Text(
-                        'This recipe will automatically be saved to your cookbook',
-                        textAlign: TextAlign.center,
-                        style: FlutterFlowTheme.of(context).bodyMedium.override(
-                              fontFamily: 'Andika New Basic',
-                              fontSize: 12.0,
-                              letterSpacing: 0.0,
-                            ),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
-            ),
+            ],
           ),
         ),
       ),

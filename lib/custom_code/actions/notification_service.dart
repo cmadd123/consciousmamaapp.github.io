@@ -181,11 +181,15 @@ class NotificationService {
     String? customMessage,
   }) async {
     if (!await _isSettingEnabled(keyMealRemindersEnabled)) return;
+    if (await _isTimeInQuietHours(hour, minute)) {
+      await cancelMealReminders();
+      return;
+    }
 
     await _notifications.zonedSchedule(
       mealNotificationId,
-      '🍽️ Today\'s Meal Plan',
-      customMessage ?? 'Check out what\'s cooking today!',
+      '🍽️ MomRise',
+      customMessage ?? 'Here\'s your reminder to meal plan for next week!',
       _nextInstanceOfTime(hour, minute),
       NotificationDetails(
         android: AndroidNotificationDetails(
@@ -324,13 +328,42 @@ class NotificationService {
     required int minute,
   }) async {
     if (!await _isSettingEnabled(keyEncouragementEnabled)) return;
+    if (await _isTimeInQuietHours(hour, minute)) {
+      await cancelEncouragementNotifications();
+      return;
+    }
 
     final messages = [
-      'You\'re doing an amazing job, mama! 💪',
-      'Every small step counts. Keep going! ✨',
-      'Your love shapes their world. 💕',
-      'Take a moment to breathe. You\'ve got this! 🌸',
-      'Progress, not perfection. You\'re enough! 🌟',
+      'She is clothed with strength and dignity, and she laughs without fear of the future. — Proverbs 31:25',
+      'Her children rise up and call her blessed; her husband also, and he praises her. — Proverbs 31:28',
+      'Train up a child in the way he should go, and when he is old he will not depart from it. — Proverbs 22:6',
+      'The wise woman builds her house, but the foolish pulls it down with her hands. — Proverbs 14:1',
+      'Be strong and courageous. Do not be afraid, for the Lord your God is with you wherever you go. — Joshua 1:9',
+      'I can do all things through Christ who strengthens me. — Philippians 4:13',
+      'Cast all your anxiety on Him, because He cares for you. — 1 Peter 5:7',
+      'The Lord is my strength and my shield; my heart trusts in Him, and He helps me. — Psalm 28:7',
+      'For I know the plans I have for you, declares the Lord, plans to prosper you and not to harm you. — Jeremiah 29:11',
+      'Be still, and know that I am God. — Psalm 46:10',
+      'Let us not grow weary in doing good, for in due season we will reap if we do not give up. — Galatians 6:9',
+      'Trust in the Lord with all your heart, and lean not on your own understanding. — Proverbs 3:5',
+      'The Lord will fight for you; you need only to be still. — Exodus 14:14',
+      'Come to me, all you who are weary and burdened, and I will give you rest. — Matthew 11:28',
+      'She opens her mouth with wisdom, and the teaching of kindness is on her tongue. — Proverbs 31:26',
+      'Do not be anxious about anything, but in everything by prayer, present your requests to God. — Philippians 4:6',
+      'He gives strength to the weary and increases the power of the weak. — Isaiah 40:29',
+      'The joy of the Lord is your strength. — Nehemiah 8:10',
+      'A mother\'s heart is a child\'s classroom. — Henry Ward Beecher',
+      'God could not be everywhere, and therefore He made mothers. — Rudyard Kipling',
+      'The influence of a mother upon the lives of her children cannot be measured. — Billy Graham',
+      'A good mother is worth a hundred teachers. — George Herbert',
+      'Motherhood is a great honor and privilege. — Elisabeth Elliot',
+      'The hand that rocks the cradle rules the world. — William Ross Wallace',
+      'There is no way to be a perfect mother, but a million ways to be a good one. — Jill Churchill',
+      'When you feel like giving up, remember who is watching. Your children learn strength from you.',
+      'Your home is your ministry. The small, faithful work you do each day matters to God.',
+      'Rest when you need to, mama. Even God rested on the seventh day.',
+      'You were chosen for these children. God knew exactly what He was doing.',
+      'A gentle answer turns away wrath. Let grace lead your home today. — Proverbs 15:1',
     ];
 
     final randomMessage = messages[DateTime.now().day % messages.length];
@@ -395,20 +428,43 @@ class NotificationService {
     await prefs.setInt(keyQuietHoursEnd, endHour);
   }
 
-  /// Check if a time is in quiet hours
+  /// Check if a given hour:minute falls within quiet hours
+  Future<bool> _isTimeInQuietHours(int hour, int minute) async {
+    final prefs = await SharedPreferences.getInstance();
+    final startHour = prefs.getInt(keyQuietHoursStart) ?? 22;
+    final startMinute = prefs.getInt('${keyQuietHoursStart}_minute') ?? 0;
+    final endHour = prefs.getInt(keyQuietHoursEnd) ?? 7;
+    final endMinute = prefs.getInt('${keyQuietHoursEnd}_minute') ?? 0;
+
+    final timeMinutes = hour * 60 + minute;
+    final startMinutes = startHour * 60 + startMinute;
+    final endMinutes = endHour * 60 + endMinute;
+
+    if (startMinutes > endMinutes) {
+      return timeMinutes >= startMinutes || timeMinutes < endMinutes;
+    } else {
+      return timeMinutes >= startMinutes && timeMinutes < endMinutes;
+    }
+  }
+
+  /// Check if a DateTime is in quiet hours
   Future<bool> _isInQuietHours(DateTime time) async {
     final prefs = await SharedPreferences.getInstance();
-    final startHour = prefs.getInt(keyQuietHoursStart) ?? 22; // Default 10 PM
-    final endHour = prefs.getInt(keyQuietHoursEnd) ?? 7; // Default 7 AM
+    final startHour = prefs.getInt(keyQuietHoursStart) ?? 22;
+    final startMinute = prefs.getInt('${keyQuietHoursStart}_minute') ?? 0;
+    final endHour = prefs.getInt(keyQuietHoursEnd) ?? 7;
+    final endMinute = prefs.getInt('${keyQuietHoursEnd}_minute') ?? 0;
 
-    final hour = time.hour;
+    final timeMinutes = time.hour * 60 + time.minute;
+    final startMinutes = startHour * 60 + startMinute;
+    final endMinutes = endHour * 60 + endMinute;
 
-    if (startHour > endHour) {
-      // Quiet hours span midnight (e.g., 22:00 - 07:00)
-      return hour >= startHour || hour < endHour;
+    if (startMinutes > endMinutes) {
+      // Quiet hours span midnight (e.g., 22:30 - 07:00)
+      return timeMinutes >= startMinutes || timeMinutes < endMinutes;
     } else {
       // Quiet hours within same day (e.g., 01:00 - 06:00)
-      return hour >= startHour && hour < endHour;
+      return timeMinutes >= startMinutes && timeMinutes < endMinutes;
     }
   }
 

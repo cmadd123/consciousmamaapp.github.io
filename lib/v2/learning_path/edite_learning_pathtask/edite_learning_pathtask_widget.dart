@@ -4,6 +4,7 @@ import '/components/custom_date_time_picker.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
+import '/components/momrise_confirmation.dart';
 import 'dart:ui';
 import '/index.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -129,7 +130,19 @@ class _EditeLearningPathtaskWidgetState
                     Padding(
                       padding:
                           EdgeInsetsDirectional.fromSTEB(0.0, 30.0, 0.0, 0.0),
-                      child: Container(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Title',
+                            style: FlutterFlowTheme.of(context).bodyMedium.override(
+                              fontFamily: 'Andika New Basic',
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 0.0,
+                            ),
+                          ),
+                          const SizedBox(height: 8.0),
+                          Container(
                         height: 52.0,
                         decoration: BoxDecoration(
                           color: FlutterFlowTheme.of(context).prim30,
@@ -211,11 +224,25 @@ class _EditeLearningPathtaskWidgetState
                           ),
                         ),
                       ),
+                        ],
+                      ),
                     ),
                     Padding(
                       padding:
                           EdgeInsetsDirectional.fromSTEB(0.0, 30.0, 0.0, 0.0),
-                      child: Row(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Date & Time',
+                            style: FlutterFlowTheme.of(context).bodyMedium.override(
+                              fontFamily: 'Andika New Basic',
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 0.0,
+                            ),
+                          ),
+                          const SizedBox(height: 8.0),
+                          Row(
                         mainAxisSize: MainAxisSize.max,
                         children: [
                           Expanded(
@@ -303,11 +330,25 @@ class _EditeLearningPathtaskWidgetState
                           ),
                         ].divide(SizedBox(width: 11.0)),
                       ),
+                        ],
+                      ),
                     ),
                     Padding(
                       padding:
                           EdgeInsetsDirectional.fromSTEB(0.0, 30.0, 0.0, 0.0),
-                      child: Container(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Description',
+                            style: FlutterFlowTheme.of(context).bodyMedium.override(
+                              fontFamily: 'Andika New Basic',
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 0.0,
+                            ),
+                          ),
+                          const SizedBox(height: 8.0),
+                          Container(
                         decoration: BoxDecoration(
                           color: FlutterFlowTheme.of(context).prim30,
                           borderRadius: BorderRadius.circular(14.0),
@@ -390,11 +431,25 @@ class _EditeLearningPathtaskWidgetState
                           ),
                         ),
                       ),
+                        ],
+                      ),
                     ),
                     Padding(
                       padding:
                           EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
-                      child: Container(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Duration (minutes)',
+                            style: FlutterFlowTheme.of(context).bodyMedium.override(
+                              fontFamily: 'Andika New Basic',
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 0.0,
+                            ),
+                          ),
+                          const SizedBox(height: 8.0),
+                          Container(
                         height: 52.0,
                         decoration: BoxDecoration(
                           color: FlutterFlowTheme.of(context).prim30,
@@ -422,13 +477,13 @@ class _EditeLearningPathtaskWidgetState
                                     fontSize: 16.0,
                                     letterSpacing: 0.0,
                                   ),
-                              hintText: 'Crafting a Potty Hat ',
+                              hintText: 'e.g. 15',
                               hintStyle: FlutterFlowTheme.of(context)
                                   .labelMedium
                                   .override(
                                     fontFamily: 'Andika New Basic',
                                     color: FlutterFlowTheme.of(context)
-                                        .primaryText,
+                                        .secondaryText,
                                     fontSize: 16.0,
                                     letterSpacing: 0.0,
                                   ),
@@ -476,6 +531,8 @@ class _EditeLearningPathtaskWidgetState
                                 .asValidator(context),
                           ),
                         ),
+                      ),
+                        ],
                       ),
                     ),
                     Padding(
@@ -764,6 +821,10 @@ class _EditeLearningPathtaskWidgetState
                                       int.tryParse(_model.textController3.text),
                                   programRef: widget!.learingTask?.programRef,
                                 ));
+
+                                if (mounted) {
+                                  await MomRiseConfirmation.show(context, message: 'Lesson Updated');
+                                }
 
                                 context.pushNamed(
                                   LearnPathDetialsWidget.routeName,

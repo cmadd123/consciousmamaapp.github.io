@@ -1788,7 +1788,9 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                 endDate: _model.endDate, // Save the end date!
                                 repeatCount: _model.repeatCount, // Save repeat count!
                                 customWeeklyDays: _model.customWeeklyDays.toList(), // Save custom weekly days!
-                                selectedChild: _model.selectedChild, // Allow null (no child assigned)
+                                selectedChild: _model.selectedChildren.isNotEmpty
+                                    ? _model.selectedChildren.first
+                                    : null, // synced with selectedChildren
                                 selectedChildren: _model.selectedChildren.toList(), // Allow empty list
                                 userRef: currentUserReference,
                                 date: _model.selectedDate,
@@ -1796,6 +1798,14 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                 assignedToMom: _model.assignToMom,
                                 assignedToDad: _model.assignToDad,
                               ));
+
+                              // Explicitly clear selected_child if no children assigned
+                              // (.withoutNulls strips null values, so we must delete manually)
+                              if (_model.selectedChildren.isEmpty) {
+                                await widget.editTaskEvent!.update({
+                                  'selected_child': FieldValue.delete(),
+                                });
+                              }
 
                               // Handle recurring event changes
                               // Use simpler query to avoid Firestore index requirement
@@ -1879,7 +1889,9 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                               endDate: _model.endDate,
                                               repeatCount: _model.repeatCount,
                                               customWeeklyDays: _model.customWeeklyDays.toList(),
-                                              selectedChild: _model.selectedChild,
+                                              selectedChild: _model.selectedChildren.isNotEmpty
+                                                  ? _model.selectedChildren.first
+                                                  : null,
                                               selectedChildren: _model.selectedChildren.toList(),
                                               userRef: currentUserReference,
                                               date: instanceDate,
@@ -1924,7 +1936,9 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                         endDate: _model.endDate,
                                         repeatCount: _model.repeatCount,
                                         customWeeklyDays: _model.customWeeklyDays.toList(),
-                                        selectedChild: _model.selectedChild,
+                                        selectedChild: _model.selectedChildren.isNotEmpty
+                                            ? _model.selectedChildren.first
+                                            : null,
                                         selectedChildren: _model.selectedChildren.toList(),
                                         userRef: currentUserReference,
                                         date: nextDate,
@@ -1966,7 +1980,9 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                               endDate: _model.endDate,
                                               repeatCount: _model.repeatCount,
                                               customWeeklyDays: _model.customWeeklyDays.toList(),
-                                              selectedChild: _model.selectedChild,
+                                              selectedChild: _model.selectedChildren.isNotEmpty
+                                                  ? _model.selectedChildren.first
+                                                  : null,
                                               selectedChildren: _model.selectedChildren.toList(),
                                               userRef: currentUserReference,
                                               date: instanceDate,
@@ -2007,7 +2023,9 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                         endDate: _model.endDate,
                                         repeatCount: _model.repeatCount,
                                         customWeeklyDays: _model.customWeeklyDays.toList(),
-                                        selectedChild: _model.selectedChild,
+                                        selectedChild: _model.selectedChildren.isNotEmpty
+                                            ? _model.selectedChildren.first
+                                            : null,
                                         selectedChildren: _model.selectedChildren.toList(),
                                         userRef: currentUserReference,
                                         date: nextDate,
@@ -2030,7 +2048,9 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                       endDate: _model.endDate,
                                       repeatCount: _model.repeatCount,
                                       customWeeklyDays: _model.customWeeklyDays.toList(),
-                                      selectedChild: _model.selectedChild,
+                                      selectedChild: _model.selectedChildren.isNotEmpty
+                                          ? _model.selectedChildren.first
+                                          : null,
                                       selectedChildren: _model.selectedChildren.toList(),
                                       assignedToMom: _model.assignToMom,
                                       assignedToDad: _model.assignToDad,
@@ -2053,7 +2073,9 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                       endDate: _model.endDate, // Save end date
                                       repeatCount: _model.repeatCount, // Save repeat count
                                       customWeeklyDays: _model.customWeeklyDays.toList(), // Save custom weekly days
-                                      selectedChild: _model.selectedChild, // Don't force a child assignment
+                                      selectedChild: _model.selectedChildren.isNotEmpty
+                                          ? _model.selectedChildren.first
+                                          : null,
                                       selectedChildren: _model.selectedChildren.toList(),
                                       userRef: currentUserReference,
                                       date: _model.selectedDate,
@@ -2123,7 +2145,9 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                           endDate: _model.endDate,
                                           repeatCount: _model.repeatCount,
                                           customWeeklyDays: _model.customWeeklyDays.toList(),
-                                          selectedChild: _model.selectedChild,
+                                          selectedChild: _model.selectedChildren.isNotEmpty
+                                              ? _model.selectedChildren.first
+                                              : null,
                                           selectedChildren: _model.selectedChildren.toList(),
                                           userRef: currentUserReference,
                                           date: instanceDate,
@@ -2180,7 +2204,9 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                     endDate: _model.endDate,
                                     repeatCount: _model.repeatCount,
                                     customWeeklyDays: _model.customWeeklyDays.toList(),
-                                    selectedChild: _model.selectedChild,
+                                    selectedChild: _model.selectedChildren.isNotEmpty
+                                        ? _model.selectedChildren.first
+                                        : null,
                                     selectedChildren: _model.selectedChildren.toList(),
                                     userRef: currentUserReference,
                                     date: nextDate,

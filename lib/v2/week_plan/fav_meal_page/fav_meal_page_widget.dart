@@ -86,6 +86,27 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
   }
 
   // Build colored placeholder with icon
+  Widget _buildRecipeChip(String label, Color color) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 1.0),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.15),
+        borderRadius: BorderRadius.circular(4.0),
+        border: Border.all(color: color.withOpacity(0.4), width: 0.5),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontFamily: 'Andika New Basic',
+          fontSize: 8.0,
+          fontWeight: FontWeight.w600,
+          color: color,
+          letterSpacing: 0.0,
+        ),
+      ),
+    );
+  }
+
   Widget _buildColoredPlaceholder(String? mealName) {
     return Container(
       color: _getPlaceholderColor(mealName),
@@ -130,6 +151,19 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
     });
   }
 
+
+  /// Re-fetch user recipes from Firestore so the cookbook reflects any edits.
+  Future<void> _reloadUserRecipes() async {
+    try {
+      final freshRecipes = await queryMealRecordOnce(
+        queryBuilder: (q) => q.where('user_ref', isEqualTo: currentUserReference),
+      );
+      _model.userMeal = freshRecipes;
+      if (mounted) safeSetState(() {});
+    } catch (e) {
+      debugPrint('Error reloading recipes: $e');
+    }
+  }
 
   /// Load meal templates (user-created combos)
   Future<void> _loadMealTemplates() async {
@@ -193,7 +227,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
     }
   }
 
-  /// Show template details with "Add to Meal Plan" option
+  /// Show template details with "Add to Meal Plan" and edit options
   void _showTemplateDetails(MealComboRecord template) {
     showModalBottomSheet(
       context: context,
@@ -205,14 +239,38 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
           Navigator.pop(context);
           _showAddTemplateToMealPlanSheet(template);
         },
+        onEdit: () {
+          Navigator.pop(context);
+          _editTemplateFullly(template);
+        },
+        onRename: () {
+          Navigator.pop(context);
+          _renameTemplate(template);
+        },
+        onShare: () {
+          Navigator.pop(context);
+          _shareTemplate(template);
+        },
+        onDelete: () {
+          Navigator.pop(context);
+          _deleteTemplate(template);
+        },
       ),
     );
   }
 
   /// Show sheet to select date and meal type for adding template
   void _showAddTemplateToMealPlanSheet(MealComboRecord template) {
-    DateTime selectedDate = DateTime.now();
+    final now = DateTime.now();
+    final todayNormalized = DateTime(now.year, now.month, now.day);
+    DateTime selectedDate = todayNormalized;
     MealTyp selectedMealType = template.mealTyp ?? MealTyp.Dinner;
+
+    // Use custom selected dates if user has picked them, otherwise default 7 days
+    final customDates = FFAppState().mealPlanSelectedDates;
+    final days = (customDates != null && customDates.isNotEmpty)
+        ? customDates
+        : List.generate(7, (i) => now.add(Duration(days: i)));
 
     showModalBottomSheet(
       context: context,
@@ -231,43 +289,42 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Header
-                  Text(
-                    'Add to Meal Plan',
-                    style: FlutterFlowTheme.of(context).headlineSmall.override(
-                          fontFamily: 'Andika New Basic',
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 0.0,
+                  // Header row with title and template name
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          'Add to Meal Plan',
+                          style: FlutterFlowTheme.of(context).headlineSmall.override(
+                                fontFamily: 'Andika New Basic',
+                                fontSize: 18.0,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: 0.0,
+                              ),
                         ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 16.0),
-                  // Template name
-                  Container(
-                    padding: const EdgeInsets.all(12.0),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFFF9800).withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12.0),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(Icons.restaurant_menu, color: const Color(0xFFFF9800), size: 20.0),
-                        const SizedBox(width: 12.0),
-                        Expanded(
-                          child: Text(
-                            template.name,
-                            style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                  fontFamily: 'Andika New Basic',
-                                  fontWeight: FontWeight.w600,
-                                  letterSpacing: 0.0,
-                                ),
-                          ),
+                  const SizedBox(height: 4.0),
+                  // Template name as subtitle
+                  Row(
+                    children: [
+                      Icon(Icons.restaurant_menu, color: FlutterFlowTheme.of(context).primary, size: 16.0),
+                      const SizedBox(width: 6.0),
+                      Expanded(
+                        child: Text(
+                          template.name,
+                          style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                fontFamily: 'Andika New Basic',
+                                color: FlutterFlowTheme.of(context).secondaryText,
+                                letterSpacing: 0.0,
+                              ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 20.0),
-                  // Date picker - Next 7 days as chips
+                  // Date picker
                   Text(
                     'Select Day',
                     style: FlutterFlowTheme.of(context).bodyMedium.override(
@@ -277,51 +334,79 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                         ),
                   ),
                   const SizedBox(height: 8.0),
+                  // Mini calendar matching the fill meal plan style — wraps when >7 days
                   Wrap(
-                    spacing: 8.0,
-                    runSpacing: 8.0,
-                    children: List.generate(7, (index) {
-                      final date = DateTime.now().add(Duration(days: index));
+                    spacing: 6.0,
+                    runSpacing: 6.0,
+                    children: List.generate(days.length, (i) {
+                      final date = days[i];
                       final normalizedDate = DateTime(date.year, date.month, date.day);
-                      final normalizedSelected = DateTime(selectedDate.year, selectedDate.month, selectedDate.day);
-                      final isSelected = normalizedDate.isAtSameMomentAs(normalizedSelected);
-                      final dayLabel = index == 0 ? 'Today' : dateTimeFormat('EEE', date, locale: 'en');
-                      final dateLabel = dateTimeFormat('MMM d', date, locale: 'en');
-
-                      return ChoiceChip(
-                        label: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              dayLabel,
-                              style: TextStyle(
-                                fontSize: 12.0,
-                                fontWeight: FontWeight.w600,
-                                fontFamily: 'Andika New Basic',
-                              ),
-                            ),
-                            Text(
-                              dateLabel,
-                              style: TextStyle(
-                                fontSize: 10.0,
-                                fontFamily: 'Andika New Basic',
-                              ),
-                            ),
-                          ],
-                        ),
-                        selected: isSelected,
-                        onSelected: (selected) {
-                          if (selected) setState(() => selectedDate = normalizedDate);
+                      final dayName = dateTimeFormat('E', date, locale: 'en').substring(0, 3);
+                      final dayNum = date.day.toString();
+                      final isToday = normalizedDate.isAtSameMomentAs(todayNormalized);
+                      final isSelected = normalizedDate.isAtSameMomentAs(selectedDate);
+                      final itemWidth = (MediaQuery.of(context).size.width - 40.0 - 36.0) / 7;
+                      return GestureDetector(
+                        onTap: () {
+                          setState(() => selectedDate = normalizedDate);
                         },
-                        selectedColor: FlutterFlowTheme.of(context).primary,
-                        backgroundColor: Colors.white,
-                        labelStyle: TextStyle(
-                          color: isSelected ? Colors.white : Colors.black87,
-                          fontFamily: 'Andika New Basic',
-                        ),
-                        side: BorderSide(
-                          color: isSelected ? FlutterFlowTheme.of(context).primary : Color(0xFFE0E0E0),
-                          width: 1.0,
+                        child: Container(
+                          width: itemWidth,
+                          padding: const EdgeInsets.symmetric(vertical: 6.0),
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? FlutterFlowTheme.of(context).primary.withValues(alpha: 0.15)
+                                : const Color(0xFFF5F5F5),
+                            borderRadius: BorderRadius.circular(8.0),
+                            border: Border.all(
+                              color: isSelected
+                                  ? FlutterFlowTheme.of(context).primary
+                                  : const Color(0xFFE0E0E0),
+                              width: isSelected ? 2.0 : 1.0,
+                            ),
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                dayName,
+                                style: TextStyle(
+                                  fontFamily: 'Andika New Basic',
+                                  fontSize: 10.0,
+                                  color: isSelected
+                                      ? FlutterFlowTheme.of(context).primary
+                                      : const Color(0xFF999999),
+                                ),
+                              ),
+                              const SizedBox(height: 2.0),
+                              Container(
+                                width: 24.0,
+                                height: 24.0,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: isToday && isSelected
+                                      ? FlutterFlowTheme.of(context).primary
+                                      : isToday
+                                          ? const Color(0xFFE0E0E0)
+                                          : Colors.transparent,
+                                ),
+                                alignment: Alignment.center,
+                                child: Text(
+                                  dayNum,
+                                  style: TextStyle(
+                                    fontFamily: 'Andika New Basic',
+                                    fontSize: 13.0,
+                                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                                    color: isToday && isSelected
+                                        ? Colors.white
+                                        : isSelected
+                                            ? FlutterFlowTheme.of(context).primary
+                                            : const Color(0xFF666666),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       );
                     }),
@@ -423,6 +508,9 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
         'meal_combo_ref': template.reference,
       });
 
+      // Signal meal planner to refresh
+      FFAppState().MealCashtearm = true;
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -470,39 +558,44 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                   borderRadius: BorderRadius.circular(2.0),
                 ),
               ),
-              // Header
+              // Header — clean style matching "Add to Meal Plan"
               Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Row(
+                padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 4.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      padding: const EdgeInsets.all(8.0),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFFF9800).withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      child: const Icon(
-                        Icons.restaurant_menu,
-                        color: Color(0xFFFF9800),
-                        size: 20.0,
-                      ),
+                    Text(
+                      'Edit Template',
+                      style: FlutterFlowTheme.of(context).headlineSmall.override(
+                            fontFamily: 'Andika New Basic',
+                            fontSize: 18.0,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 0.0,
+                          ),
                     ),
-                    const SizedBox(width: 12.0),
-                    Expanded(
-                      child: Text(
-                        template.name,
-                        style: FlutterFlowTheme.of(context).titleMedium.override(
-                              fontFamily: 'Andika New Basic',
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: 0.0,
-                            ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
+                    const SizedBox(height: 4.0),
+                    Row(
+                      children: [
+                        Icon(Icons.restaurant_menu, color: FlutterFlowTheme.of(context).primary, size: 16.0),
+                        const SizedBox(width: 6.0),
+                        Expanded(
+                          child: Text(
+                            template.name,
+                            style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                  fontFamily: 'Andika New Basic',
+                                  color: FlutterFlowTheme.of(context).secondaryText,
+                                  letterSpacing: 0.0,
+                                ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
               ),
+              const SizedBox(height: 8.0),
               // Action buttons
               ListTile(
                 leading: Icon(Icons.edit, color: FlutterFlowTheme.of(context).primary),
@@ -1159,10 +1252,9 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                             onTap: () {
                                               _model.recipeSourceTab = 'templates';
                                               _model.categoryFilter = 'All';
-                                              // Load meal templates if not already loaded
-                                              if (!_model.loadedMealTemplates) {
-                                                _loadMealTemplates();
-                                              }
+                                              // Always reload templates to pick up newly saved ones
+                                              _model.loadedMealTemplates = false;
+                                              _loadMealTemplates();
                                               safeSetState(() {});
                                             },
                                             child: Container(
@@ -1333,40 +1425,26 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                           }).toList(),
                                         ),
                                       ),
-                                      // Section 2: Recipe Types
+                                      // Recipe Types (only for My Recipes tab)
+                                      if (_model.recipeSourceTab != 'templates') ...[
                                       Padding(
                                         padding: EdgeInsetsDirectional.fromSTEB(0.0, 12.0, 0.0, 8.0),
-                                        child: Row(
-                                          children: [
-                                            Text(
-                                              'Recipe Types',
-                                              style: FlutterFlowTheme.of(context).bodySmall.override(
-                                                fontFamily: 'Andika New Basic',
-                                                color: Color(0xFF666666),
-                                                fontSize: 11.0,
-                                                fontWeight: FontWeight.w600,
-                                                letterSpacing: 0.0,
-                                              ),
-                                            ),
-                                            SizedBox(width: 4.0),
-                                            InkWell(
-                                              onTap: () {
-                                                ScaffoldMessenger.of(context).showSnackBar(
-                                                  SnackBar(
-                                                    content: Text('🍽️ Filter by main dish, side dish, or dessert'),
-                                                    duration: Duration(seconds: 3),
-                                                  ),
-                                                );
-                                              },
-                                              child: Icon(Icons.help_outline, size: 14.0, color: Color(0xFF999999)),
-                                            ),
-                                          ],
+                                        child: Text(
+                                          'Recipe Types',
+                                          style: FlutterFlowTheme.of(context).bodySmall.override(
+                                            fontFamily: 'Andika New Basic',
+                                            color: Color(0xFF666666),
+                                            fontSize: 11.0,
+                                            fontWeight: FontWeight.w600,
+                                            letterSpacing: 0.0,
+                                          ),
                                         ),
                                       ),
                                       SingleChildScrollView(
                                         scrollDirection: Axis.horizontal,
                                         child: Row(
                                           children: [
+                                            {'label': 'Entree', 'emoji': '🍽️'},
                                             {'label': 'Side', 'emoji': '🥗'},
                                             {'label': 'Desserts', 'emoji': '🍰'},
                                           ].map((recipeType) {
@@ -1411,7 +1489,8 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                           }).toList(),
                                         ),
                                       ),
-                                      // Section 3: Dietary & Allergen Info
+                                      ],
+                                      // Dietary & Allergen Info
                                       Padding(
                                         padding: EdgeInsetsDirectional.fromSTEB(0.0, 12.0, 0.0, 8.0),
                                         child: Row(
@@ -1651,6 +1730,14 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                             List<MealRecord> filtered;
                                             if (_model.categoryFilter == 'All') {
                                               filtered = activeRecipes;
+                                            } else if (_model.categoryFilter == 'Entree') {
+                                              // Recipe Type: Entree
+                                              filtered = activeRecipes
+                                                  .where((e) =>
+                                                      e.mainOrSides == 'Main' ||
+                                                      e.recipeType == RecipeType.Entree ||
+                                                      (e.mainOrSides.isEmpty && e.recipeType != RecipeType.Side && e.recipeType != RecipeType.Dessert))
+                                                  .toList();
                                             } else if (_model.categoryFilter == 'Side') {
                                               // Recipe Type: Side
                                               filtered = activeRecipes
@@ -1771,13 +1858,15 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                                       'itemDetails':
                                                           containerVarItem,
                                                     },
-                                                  );
+                                                  ).then((_) {
+                                                    if (mounted) _reloadUserRecipes();
+                                                  });
                                                 },
                                                 child: Container(
                                                   width: _model.recipeSourceTab == 'my'
                                                       ? (MediaQuery.of(context).size.width - 40) / 2 - 5
                                                       : 160.0,
-                                                  height: 190.0,
+                                                  height: 210.0,
                                                   decoration: BoxDecoration(),
                                                   child: Align(
                                                     alignment:
@@ -1790,7 +1879,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                                               BorderRadius.circular(5.0),
                                                           child: Container(
                                                             width: double.infinity,
-                                                            height: 188.0,
+                                                            height: 208.0,
                                                             decoration:
                                                                 BoxDecoration(
                                                               color: FlutterFlowTheme
@@ -1823,45 +1912,96 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                                           alignment:
                                                               AlignmentDirectional(
                                                                   0.0, 1.0),
-                                                          child: Padding(
-                                                            padding:
-                                                                EdgeInsetsDirectional
-                                                                    .fromSTEB(
-                                                                        0.0,
-                                                                        0.0,
-                                                                        0.0,
-                                                                        5.0),
-                                                            child: ClipRRect(
-                                                              child: Container(
-                                                                width: double
-                                                                    .infinity,
-                                                                decoration:
-                                                                    BoxDecoration(
-                                                                  color: Color(
-                                                                      0x80D9D9D9),
-                                                                ),
-                                                                child: Text(
-                                                                  valueOrDefault<
-                                                                      String>(
-                                                                    containerVarItem
-                                                                        .recipeName,
-                                                                    'Meal Name',
+                                                          child: ClipRRect(
+                                                            borderRadius: BorderRadius.only(
+                                                              bottomLeft: Radius.circular(5.0),
+                                                              bottomRight: Radius.circular(5.0),
+                                                            ),
+                                                            child: Container(
+                                                              width: double
+                                                                  .infinity,
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                color: Color(
+                                                                    0xCCFFFFFF),
+                                                              ),
+                                                              padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 4.0),
+                                                              child: Column(
+                                                                mainAxisSize: MainAxisSize.min,
+                                                                children: [
+                                                                  Text(
+                                                                    valueOrDefault<
+                                                                        String>(
+                                                                      containerVarItem
+                                                                          .recipeName,
+                                                                      'Meal Name',
+                                                                    ),
+                                                                    textAlign:
+                                                                        TextAlign
+                                                                            .center,
+                                                                    maxLines: 1,
+                                                                    overflow: TextOverflow.ellipsis,
+                                                                    style: FlutterFlowTheme.of(
+                                                                            context)
+                                                                        .bodyMedium
+                                                                        .override(
+                                                                          fontFamily:
+                                                                              'Andika New Basic',
+                                                                          fontSize:
+                                                                              11.0,
+                                                                          fontWeight: FontWeight.w600,
+                                                                          letterSpacing:
+                                                                              0.0,
+                                                                        ),
                                                                   ),
-                                                                  textAlign:
-                                                                      TextAlign
-                                                                          .center,
-                                                                  style: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .bodyMedium
-                                                                      .override(
-                                                                        fontFamily:
-                                                                            'Andika New Basic',
-                                                                        fontSize:
-                                                                            12.0,
-                                                                        letterSpacing:
-                                                                            0.0,
-                                                                      ),
-                                                                ),
+                                                                  SizedBox(height: 3.0),
+                                                                  Builder(
+                                                                    builder: (context) {
+                                                                      final mealTypeChips = <Widget>[];
+                                                                      final recipeTypeChips = <Widget>[];
+                                                                      final dietaryChips = <Widget>[];
+
+                                                                      // Parse mealTyp for meal types and dietary tags
+                                                                      if (containerVarItem.mealTyp.isNotEmpty) {
+                                                                        final tags = containerVarItem.mealTyp.split(',');
+                                                                        final mealTypeOrder = ['Breakfast', 'Lunch', 'Dinner', 'Snacks'];
+                                                                        final foundMealTypes = <String>[];
+                                                                        for (final tag in tags) {
+                                                                          final t = tag.trim();
+                                                                          if (t.isEmpty) continue;
+                                                                          if (mealTypeOrder.contains(t)) {
+                                                                            foundMealTypes.add(t);
+                                                                          } else {
+                                                                            final abbr = t.replaceAll('-Free', '-F');
+                                                                            dietaryChips.add(_buildRecipeChip(abbr, Color(0xFFEE8B60)));
+                                                                          }
+                                                                        }
+                                                                        // Sort meal types in canonical order
+                                                                        foundMealTypes.sort((a, b) => mealTypeOrder.indexOf(a).compareTo(mealTypeOrder.indexOf(b)));
+                                                                        for (final mt in foundMealTypes) {
+                                                                          mealTypeChips.add(_buildRecipeChip(mt, Color(0xFF52A097)));
+                                                                        }
+                                                                      }
+
+                                                                      // Recipe type chip
+                                                                      if (containerVarItem.recipeType == RecipeType.Side || containerVarItem.mainOrSides == 'Side') {
+                                                                        recipeTypeChips.add(_buildRecipeChip('Side', Color(0xFF4A90D9)));
+                                                                      } else if (containerVarItem.recipeType == RecipeType.Dessert || containerVarItem.mainOrSides == 'Dessert') {
+                                                                        recipeTypeChips.add(_buildRecipeChip('Dessert', Color(0xFFE91E63)));
+                                                                      }
+
+                                                                      // Order: meal type → recipe type → dietary
+                                                                      final chips = [...mealTypeChips, ...recipeTypeChips, ...dietaryChips];
+                                                                      if (chips.isEmpty) return SizedBox.shrink();
+                                                                      return Wrap(
+                                                                        spacing: 3.0,
+                                                                        runSpacing: 2.0,
+                                                                        alignment: WrapAlignment.center,
+                                                                        children: chips,
+                                                                      );
+                                                                    },
+                                                                  ),
+                                                                ],
                                                               ),
                                                             ),
                                                           ),
@@ -2093,13 +2233,34 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
   /// Build the Meal Templates view
   Widget _buildTemplatesView(BuildContext context) {
     // Apply category filter
+    final dietaryFilters = ['Gluten-Free', 'Dairy-Free', 'Nut-Free', 'Vegetarian', 'Vegan'];
     final filteredTemplates = _model.categoryFilter == 'All'
         ? _model.mealTemplates
-        : _model.mealTemplates.where((template) {
-            if (template.mealTyp == null) return false;
-            final mealTypName = template.mealTyp!.name;
-            return mealTypName == _model.categoryFilter;
-          }).toList();
+        : dietaryFilters.contains(_model.categoryFilter)
+            ? _model.mealTemplates.where((template) {
+                // For dietary filters, require ALL recipes in the template to match
+                final filterLower = _model.categoryFilter.toLowerCase();
+                final allRefs = <DocumentReference>[
+                  if (template.entreeRef != null) template.entreeRef!,
+                  ...template.sideRefs,
+                  ...template.dessertRefs,
+                ];
+                if (allRefs.isEmpty) return false;
+                // Check that every recipe has the matching dietary tag
+                for (final ref in allRefs) {
+                  final matchingRecipe = _model.userMeal.where((r) => r.reference.path == ref.path).firstOrNull;
+                  if (matchingRecipe == null) return false;
+                  final tags = matchingRecipe.mealTyp.toLowerCase().split(',');
+                  if (!tags.any((t) => t.trim() == filterLower)) return false;
+                }
+                return true;
+              }).toList()
+            : _model.mealTemplates.where((template) {
+                // Meal type filter (Breakfast, Lunch, Dinner, Snacks)
+                if (template.mealTyp == null) return false;
+                final mealTypName = template.mealTyp!.name;
+                return mealTypName == _model.categoryFilter;
+              }).toList();
 
     // Apply search filter
     final searchFiltered = _model.searchQuery.isEmpty
@@ -2202,39 +2363,6 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
       padding: const EdgeInsetsDirectional.fromSTEB(0.0, 8.0, 0.0, 0.0),
       child: Column(
         children: [
-          // Help text at top
-          Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(16.0, 8.0, 16.0, 16.0),
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(12.0),
-              decoration: BoxDecoration(
-                color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12.0),
-              ),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.info_outline,
-                    size: 20.0,
-                    color: FlutterFlowTheme.of(context).primary,
-                  ),
-                  const SizedBox(width: 12.0),
-                  Expanded(
-                    child: Text(
-                      'Tap a template to add it to your meal plan. Long press to edit or delete.',
-                      style: FlutterFlowTheme.of(context).bodySmall.override(
-                            fontFamily: 'Andika New Basic',
-                            color: FlutterFlowTheme.of(context).primary,
-                            fontSize: 12.0,
-                            letterSpacing: 0.0,
-                          ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
           // Templates list
           ListView.builder(
             shrinkWrap: true,
@@ -2271,10 +2399,6 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                 // Show template details or navigate to meal composer with template
                 _showTemplateDetails(template);
               }
-            },
-            onLongPress: () {
-              // Show edit/delete options
-              _showTemplateActions(template);
             },
             child: Container(
               width: double.infinity,
@@ -2325,6 +2449,29 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                       children: [
                         Row(
                           children: [
+                            // Leftover badge (reads from raw Firestore data)
+                            if (template.snapshotData['is_leftover_entree'] == true ||
+                                template.snapshotData['is_leftover_side'] == true ||
+                                template.snapshotData['is_leftover_dessert'] == true ||
+                                template.snapshotData['is_leftover_snack'] == true)
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
+                                margin: const EdgeInsets.only(right: 6.0),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFFF9800).withOpacity(0.15),
+                                  borderRadius: BorderRadius.circular(4.0),
+                                  border: Border.all(color: const Color(0xFFFF9800), width: 1.0),
+                                ),
+                                child: const Text(
+                                  'Leftover',
+                                  style: TextStyle(
+                                    fontSize: 10.0,
+                                    fontWeight: FontWeight.w600,
+                                    color: Color(0xFFFF9800),
+                                    fontFamily: 'Andika New Basic',
+                                  ),
+                                ),
+                              ),
                             Expanded(
                               child: Text(
                                 template.name.isNotEmpty ? template.name : (entree?.recipeName ?? 'Meal Template'),
@@ -2391,12 +2538,17 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                 style: const TextStyle(color: Color(0xFF666666), fontSize: 11.0),
                               ),
                             ],
-                            // Drink icon
-                            if (template.drinkType != null) ...[
+                            // Dessert count
+                            if (template.dessertRefs.isNotEmpty) ...[
                               const SizedBox(width: 8.0),
                               const Icon(Icons.add, size: 10.0, color: Color(0xFFAAAAAA)),
                               const SizedBox(width: 4.0),
-                              const Icon(Icons.local_cafe, size: 12.0, color: Color(0xFF2196F3)),
+                              const Icon(Icons.cake, size: 12.0, color: Color(0xFFE91E63)),
+                              const SizedBox(width: 2.0),
+                              Text(
+                                '${template.dessertRefs.length}',
+                                style: const TextStyle(color: Color(0xFF666666), fontSize: 11.0),
+                              ),
                             ],
                           ],
                         ),
@@ -2423,10 +2575,18 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
 class _TemplateDetailsSheet extends StatelessWidget {
   final MealComboRecord template;
   final VoidCallback onAddToMealPlan;
+  final VoidCallback? onEdit;
+  final VoidCallback? onRename;
+  final VoidCallback? onShare;
+  final VoidCallback? onDelete;
 
   const _TemplateDetailsSheet({
     required this.template,
     required this.onAddToMealPlan,
+    this.onEdit,
+    this.onRename,
+    this.onShare,
+    this.onDelete,
   });
 
   @override
@@ -2450,9 +2610,22 @@ class _TemplateDetailsSheet extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Header
+                  // Drag handle
+                  Center(
+                    child: Container(
+                      margin: EdgeInsets.only(bottom: 12.0),
+                      width: 40.0,
+                      height: 4.0,
+                      decoration: BoxDecoration(color: Color(0xFFE0E0E0), borderRadius: BorderRadius.circular(2.0)),
+                    ),
+                  ),
+                  // Header — show template name or fallback
                   Text(
-                    template.name,
+                    template.name.isNotEmpty
+                        ? template.name
+                        : (snapshot.connectionState == ConnectionState.done && entree != null
+                            ? entree.recipeName ?? 'Meal Template'
+                            : 'Meal Template'),
                     style: FlutterFlowTheme.of(context).headlineSmall.override(
                           fontFamily: 'Andika New Basic',
                           fontSize: 18.0,
@@ -2540,6 +2713,40 @@ class _TemplateDetailsSheet extends StatelessWidget {
                       ),
                     ),
                   ),
+                  // Edit actions
+                  if (onEdit != null || onRename != null || onShare != null || onDelete != null) ...[
+                    const SizedBox(height: 12.0),
+                    Divider(height: 1),
+                    const SizedBox(height: 4.0),
+                    if (onEdit != null)
+                      ListTile(
+                        dense: true,
+                        leading: Icon(Icons.edit, color: FlutterFlowTheme.of(context).primary, size: 20.0),
+                        title: Text('Edit Template', style: TextStyle(fontSize: 14.0)),
+                        onTap: onEdit,
+                      ),
+                    if (onRename != null)
+                      ListTile(
+                        dense: true,
+                        leading: Icon(Icons.edit_note, color: FlutterFlowTheme.of(context).primary, size: 20.0),
+                        title: Text('Rename', style: TextStyle(fontSize: 14.0)),
+                        onTap: onRename,
+                      ),
+                    if (onShare != null)
+                      ListTile(
+                        dense: true,
+                        leading: Icon(Icons.ios_share, color: FlutterFlowTheme.of(context).primary, size: 20.0),
+                        title: Text('Share', style: TextStyle(fontSize: 14.0)),
+                        onTap: onShare,
+                      ),
+                    if (onDelete != null)
+                      ListTile(
+                        dense: true,
+                        leading: Icon(Icons.delete, color: Colors.red, size: 20.0),
+                        title: Text('Delete', style: TextStyle(color: Colors.red, fontSize: 14.0)),
+                        onTap: onDelete,
+                      ),
+                  ],
                   const SizedBox(height: 8.0),
                   // Close button
                   TextButton(

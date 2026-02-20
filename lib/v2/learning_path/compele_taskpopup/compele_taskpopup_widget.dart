@@ -128,7 +128,7 @@ class _CompeleTaskpopupWidgetState extends State<CompeleTaskpopupWidget> {
           ],
           borderRadius: BorderRadius.circular(14.0),
         ),
-        child: Padding(
+        child: SingleChildScrollView(
           padding: EdgeInsets.all(24.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,

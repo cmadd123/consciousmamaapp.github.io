@@ -6,6 +6,7 @@ import '/components/parent_circle_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
+import '/components/momrise_confirmation.dart';
 import '/v2/todo/addcalender/addcalender_widget.dart';
 import 'package:flutter/material.dart';
 import 'my_activities_model.dart';
@@ -735,26 +736,7 @@ class _MyActivitiesWidgetState extends State<MyActivitiesWidget> {
             });
 
             if (mounted) {
-              // Format a nice message based on the date
-              final now = DateTime.now();
-              final today = DateTime(now.year, now.month, now.day);
-              final tomorrow = today.add(const Duration(days: 1));
-              String dateLabel;
-              if (targetDate == today) {
-                dateLabel = 'today';
-              } else if (targetDate == tomorrow) {
-                dateLabel = 'tomorrow';
-              } else {
-                dateLabel = DateFormat('EEEE').format(targetDate);
-              }
-
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('${activity.title} added to $dateLabel!'),
-                  backgroundColor: const Color(0xFF4CAF50),
-                  duration: const Duration(seconds: 2),
-                ),
-              );
+              await MomRiseConfirmation.show(context, message: 'Added to Calendar');
             }
           } catch (e) {
             if (mounted) {
@@ -1605,12 +1587,7 @@ class _CreateActivityBottomSheetState extends State<CreateActivityBottomSheet> {
       if (mounted) {
         Navigator.pop(context);
         widget.onSave?.call();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(_isEditing ? 'Activity updated!' : 'Activity saved!'),
-            backgroundColor: Colors.green,
-          ),
-        );
+        await MomRiseConfirmation.show(context, message: _isEditing ? 'Activity Updated' : 'Activity Saved');
       }
     } catch (e) {
       if (mounted) {

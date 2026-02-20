@@ -1480,11 +1480,11 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                                                   Container(
                                                                     padding: EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
                                                                     decoration: BoxDecoration(
-                                                                      color: Color(0xFFE57373),
+                                                                      color: _model.parentInfo.myColor.withOpacity(0.85),
                                                                       borderRadius: BorderRadius.circular(14.0),
                                                                     ),
                                                                     child: Text(
-                                                                      'Mom',
+                                                                      _model.parentInfo.myName,
                                                                       style: FlutterFlowTheme.of(context).bodySmall.override(
                                                                         fontFamily: 'Andika New Basic',
                                                                         fontSize: 11.0,
@@ -1498,11 +1498,11 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                                                   Container(
                                                                     padding: EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
                                                                     decoration: BoxDecoration(
-                                                                      color: Color(0xFF64B5F6),
+                                                                      color: _model.parentInfo.partnerColor.withOpacity(0.85),
                                                                       borderRadius: BorderRadius.circular(14.0),
                                                                     ),
                                                                     child: Text(
-                                                                      'Dad',
+                                                                      _model.parentInfo.partnerName,
                                                                       style: FlutterFlowTheme.of(context).bodySmall.override(
                                                                         fontFamily: 'Andika New Basic',
                                                                         fontSize: 11.0,
@@ -1902,11 +1902,11 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                                                               Container(
                                                                                 padding: EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
                                                                                 decoration: BoxDecoration(
-                                                                                  color: Color(0xFFE57373),
+                                                                                  color: _model.parentInfo.myColor.withOpacity(0.85),
                                                                                   borderRadius: BorderRadius.circular(14.0),
                                                                                 ),
                                                                                 child: Text(
-                                                                                  'Mom',
+                                                                                  _model.parentInfo.myName,
                                                                                   style: FlutterFlowTheme.of(context).bodySmall.override(
                                                                                     fontFamily: 'Andika New Basic',
                                                                                     fontSize: 11.0,
@@ -1920,11 +1920,11 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                                                               Container(
                                                                                 padding: EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
                                                                                 decoration: BoxDecoration(
-                                                                                  color: Color(0xFF64B5F6),
+                                                                                  color: _model.parentInfo.partnerColor.withOpacity(0.85),
                                                                                   borderRadius: BorderRadius.circular(14.0),
                                                                                 ),
                                                                                 child: Text(
-                                                                                  'Dad',
+                                                                                  _model.parentInfo.partnerName,
                                                                                   style: FlutterFlowTheme.of(context).bodySmall.override(
                                                                                     fontFamily: 'Andika New Basic',
                                                                                     fontSize: 11.0,

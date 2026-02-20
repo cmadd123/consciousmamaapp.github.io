@@ -917,17 +917,47 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
     );
   }
 
+  /// Convert a decimal to a fraction string if possible
+  static String _quantityToString(double qty) {
+    if (qty == qty.truncateToDouble()) {
+      return qty.toInt().toString();
+    }
+    final whole = qty.truncate();
+    final decimal = qty - whole;
+
+    final fractions = {
+      0.125: '1/8',
+      0.1667: '1/6',
+      0.200: '1/5',
+      0.250: '1/4',
+      0.3333: '1/3',
+      0.375: '3/8',
+      0.400: '2/5',
+      0.500: '1/2',
+      0.600: '3/5',
+      0.625: '5/8',
+      0.6667: '2/3',
+      0.750: '3/4',
+      0.800: '4/5',
+      0.8333: '5/6',
+      0.875: '7/8',
+    };
+
+    for (final entry in fractions.entries) {
+      if ((decimal - entry.key).abs() < 0.02) {
+        return whole == 0 ? entry.value : '$whole ${entry.value}';
+      }
+    }
+
+    // Fallback to decimal
+    return qty.toStringAsFixed(2).replaceAll(RegExp(r'\.?0+$'), '');
+  }
+
   String _formatQuantityUnit(GroceryItemStruct item) {
     if (item.quantity > 0 && item.hasUnit()) {
-      String qtyStr = item.quantity == item.quantity.truncateToDouble()
-          ? item.quantity.toInt().toString()
-          : item.quantity.toStringAsFixed(2).replaceAll(RegExp(r'\.?0+$'), '');
-      return '$qtyStr ${item.unit}';
+      return '${_quantityToString(item.quantity)} ${item.unit}';
     } else if (item.quantity > 0) {
-      String qtyStr = item.quantity == item.quantity.truncateToDouble()
-          ? item.quantity.toInt().toString()
-          : item.quantity.toStringAsFixed(2).replaceAll(RegExp(r'\.?0+$'), '');
-      return qtyStr;
+      return _quantityToString(item.quantity);
     }
     return '';
   }

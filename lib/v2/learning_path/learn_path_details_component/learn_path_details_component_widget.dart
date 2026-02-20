@@ -304,7 +304,10 @@ class _LearnPathDetailsComponentWidgetState
                                             ),
                                       ),
                                       Text(
-                                        feedback,
+                                        feedback == 'great' ? 'Great!' :
+                                        feedback == 'okay' ? 'Okay' :
+                                        feedback == 'struggled' ? 'Struggled' :
+                                        feedback[0].toUpperCase() + feedback.substring(1),
                                         style: FlutterFlowTheme.of(context).bodyMedium.override(
                                               fontFamily: 'Andika New Basic',
                                               fontSize: 14.0,
@@ -404,10 +407,7 @@ class _LearnPathDetailsComponentWidgetState
                             padding: EdgeInsetsDirectional.fromSTEB(
                                 0.0, 5.0, 0.0, 0.0),
                             child: Text(
-                              valueOrDefault<String>(
-                                widget!.learningTask?.duration?.toString(),
-                                '1',
-                              ),
+                              '${widget!.learningTask?.duration ?? 1} min',
                               style: FlutterFlowTheme.of(context)
                                   .bodyMedium
                                   .override(
@@ -603,12 +603,10 @@ class _LearnPathDetailsComponentWidgetState
                                 },
                               );
                               if (confirm == true) {
-                                // Mark as completed but could add a 'skipped' field in the future
+                                // Mark as skipped (NOT completed - user can still complete later)
                                 await widget!.learningTask!.reference.update({
-                                  'is_completed': true,
                                   'was_skipped': true,
                                 });
-                                _model.iscompleted = true;
                                 safeSetState(() {});
                                 Navigator.pop(context);
                               }

@@ -75,6 +75,15 @@ class FFAppState extends ChangeNotifier {
     _safeInit(() {
       _loadGroceryItems();
     });
+    _safeInit(() {
+      final dateStrings = prefs.getStringList('ff_mealPlanSelectedDates');
+      if (dateStrings != null && dateStrings.isNotEmpty) {
+        _mealPlanSelectedDates = dateStrings
+            .map((s) => DateTime.tryParse(s))
+            .whereType<DateTime>()
+            .toList();
+      }
+    });
   }
 
   void update(VoidCallback callback) {
@@ -417,14 +426,25 @@ class FFAppState extends ChangeNotifier {
       bool aiMatch = false;
       int aiMatchIndex = -1;
 
+      // Helper: extract significant words (3+ chars, skip common words)
+      Set<String> _significantWords(String name) {
+        const skip = {'the', 'and', 'for', 'with', 'fresh', 'dried', 'chopped', 'sliced', 'diced', 'minced', 'large', 'small', 'medium', 'whole', 'half', 'cup', 'cups', 'tbsp', 'tsp', 'oz', 'lb'};
+        return name.toLowerCase().split(RegExp(r'[\s,]+'))
+            .where((w) => w.length >= 3 && !skip.contains(w))
+            .toSet();
+      }
+      final newWords = _significantWords(newItem.name);
+
       for (int i = 0; i < _groceryItems.length; i++) {
         final existing = _groceryItems[i];
-        // Check if units are compatible (same or convertible)
         if (existing.canAggregateWith(newItem)) {
-          // Skip - already caught by tier 1
           continue;
         }
-        // Try AI matching (for ingredient name variations)
+        // Pre-filter: only call AI if names share at least one significant word
+        final existingWords = _significantWords(existing.name);
+        if (newWords.intersection(existingWords).isEmpty) {
+          continue; // Clearly different ingredients, skip AI call
+        }
         print('   - Checking AI: "${existing.name}" vs "${newItem.name}"');
         final matched = await checkIngredientsMatch(
           existing.name,
@@ -463,9 +483,9 @@ class FFAppState extends ChangeNotifier {
   }
 
   /// Add multiple ingredients from a recipe with aggregation
-  void addIngredientsFromRecipe(List<String> ingredients) {
+  Future<void> addIngredientsFromRecipe(List<String> ingredients) async {
     for (final ingredient in ingredients) {
-      addToUserGroceryList(ingredient);
+      await addToUserGroceryList(ingredient);
     }
   }
 
@@ -596,11 +616,17 @@ class FFAppState extends ChangeNotifier {
     _favMealCash = value;
   }
 
-  // Persists selected meal plan dates across navigation
+  // Persists selected meal plan dates across navigation and sessions
   List<DateTime>? _mealPlanSelectedDates;
   List<DateTime>? get mealPlanSelectedDates => _mealPlanSelectedDates;
   set mealPlanSelectedDates(List<DateTime>? value) {
     _mealPlanSelectedDates = value;
+    if (value != null && value.isNotEmpty) {
+      prefs.setStringList('ff_mealPlanSelectedDates',
+          value.map((d) => d.toIso8601String()).toList());
+    } else {
+      prefs.remove('ff_mealPlanSelectedDates');
+    }
   }
 
   bool _leariningpathchashBool = false;

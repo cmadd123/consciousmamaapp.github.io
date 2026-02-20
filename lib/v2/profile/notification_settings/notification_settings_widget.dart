@@ -56,9 +56,11 @@ class _NotificationSettingsWidgetState
       _mealReminderDay = prefs.getInt('${actions.NotificationService.keyMealReminderTime}_day') ?? 0;
 
       final quietStartHour = prefs.getInt(actions.NotificationService.keyQuietHoursStart) ?? 22;
+      final quietStartMinute = prefs.getInt('${actions.NotificationService.keyQuietHoursStart}_minute') ?? 0;
       final quietEndHour = prefs.getInt(actions.NotificationService.keyQuietHoursEnd) ?? 7;
-      _quietStart = TimeOfDay(hour: quietStartHour, minute: 0);
-      _quietEnd = TimeOfDay(hour: quietEndHour, minute: 0);
+      final quietEndMinute = prefs.getInt('${actions.NotificationService.keyQuietHoursEnd}_minute') ?? 0;
+      _quietStart = TimeOfDay(hour: quietStartHour, minute: quietStartMinute);
+      _quietEnd = TimeOfDay(hour: quietEndHour, minute: quietEndMinute);
 
       _isLoading = false;
     });
@@ -75,7 +77,9 @@ class _NotificationSettingsWidgetState
     await prefs.setInt('${actions.NotificationService.keyMealReminderTime}_minute', _mealReminderTime.minute);
     await prefs.setInt('${actions.NotificationService.keyMealReminderTime}_day', _mealReminderDay);
     await prefs.setInt(actions.NotificationService.keyQuietHoursStart, _quietStart.hour);
+    await prefs.setInt('${actions.NotificationService.keyQuietHoursStart}_minute', _quietStart.minute);
     await prefs.setInt(actions.NotificationService.keyQuietHoursEnd, _quietEnd.hour);
+    await prefs.setInt('${actions.NotificationService.keyQuietHoursEnd}_minute', _quietEnd.minute);
 
     // Update scheduled notifications
     if (_mealReminders) {
@@ -290,8 +294,7 @@ class _NotificationSettingsWidgetState
                             // Meal Reminders
                             _buildSettingTile(
                               icon: Icons.restaurant_menu,
-                              title: 'Meal Reminders',
-                              subtitle: 'Daily reminder about today\'s meals',
+                              title: 'Remind me to plan meals:',
                               value: _mealReminders,
                               onChanged: (value) async {
                                 setState(() => _mealReminders = value);
@@ -436,7 +439,7 @@ class _NotificationSettingsWidgetState
   Widget _buildSettingTile({
     required IconData icon,
     required String title,
-    required String subtitle,
+    String? subtitle,
     required bool value,
     required Function(bool) onChanged,
   }) {
@@ -469,14 +472,16 @@ class _NotificationSettingsWidgetState
                   fontWeight: FontWeight.w500,
                 ),
           ),
-          subtitle: Text(
-            subtitle,
-            style: FlutterFlowTheme.of(context).bodySmall.override(
-                  fontFamily: 'Andika New Basic',
-                  color: FlutterFlowTheme.of(context).secondaryText,
-                  letterSpacing: 0.0,
-                ),
-          ),
+          subtitle: subtitle != null
+              ? Text(
+                  subtitle,
+                  style: FlutterFlowTheme.of(context).bodySmall.override(
+                        fontFamily: 'Andika New Basic',
+                        color: FlutterFlowTheme.of(context).secondaryText,
+                        letterSpacing: 0.0,
+                      ),
+                )
+              : null,
           trailing: Switch(
             value: value,
             onChanged: _notificationsPermissionGranted ? onChanged : null,

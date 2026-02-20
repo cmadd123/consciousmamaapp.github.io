@@ -839,8 +839,6 @@ class _LearnPathWidgetState extends State<LearnPathWidget>
                               CascadeItem(index: 1, baseDelayMs: 300, staggerMs: 150, child: _buildTodaysTaskWidget(context)),
                               CascadeItem(index: 2, baseDelayMs: 450, staggerMs: 150, child: Container(
                                 width: double.infinity,
-                                height:
-                                    MediaQuery.sizeOf(context).height * 0.67,
                                 decoration: BoxDecoration(
                                   color: FlutterFlowTheme.of(context)
                                       .secondaryBackground,
@@ -908,16 +906,15 @@ class _LearnPathWidgetState extends State<LearnPathWidget>
                                     }
 
                                     // Separate active and completed paths
+                                    // Only mark as completed when ALL lessons are done (isCompleted set by task completion logic)
                                     final activePaths = allPaths.where((p) =>
-                                        p.isCompleted != true &&
-                                        functions.compareTime(getCurrentTimestamp, p.endDate) == true
+                                        p.isCompleted != true
                                     ).toList();
                                     final completedPaths = allPaths.where((p) =>
-                                        p.isCompleted == true ||
-                                        functions.compareTime(getCurrentTimestamp, p.endDate) != true
+                                        p.isCompleted == true
                                     ).toList();
 
-                                    return SingleChildScrollView(
+                                    return Padding(
                                       padding: EdgeInsets.only(top: 16.0),
                                       child: Column(
                                         mainAxisSize: MainAxisSize.max,

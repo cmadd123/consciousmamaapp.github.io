@@ -1910,7 +1910,12 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
   // Milestones Card
   Widget _buildMilestonesCard(BuildContext context, List<ChildernRecord>? userChildren) {
     return InkWell(
-      onTap: () => context.pushNamed(MilstonesWidget.routeName),
+      onTap: () {
+        if (userChildren != null && userChildren.isNotEmpty) {
+          FFAppState().selectedChildForMilestone = userChildren.first.reference;
+        }
+        context.pushNamed(MilstonesWidget.routeName);
+      },
       borderRadius: BorderRadius.circular(20.0),
       child: Container(
         width: double.infinity,

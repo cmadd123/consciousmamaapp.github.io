@@ -62,6 +62,21 @@ class LearningPathTasksRecord extends FirestoreRecord {
   int get duration => _duration ?? 0;
   bool hasDuration() => _duration != null;
 
+  // "was_skipped" field.
+  bool? _wasSkipped;
+  bool get wasSkipped => _wasSkipped ?? false;
+  bool hasWasSkipped() => _wasSkipped != null;
+
+  // "completion_feedback" field.
+  String? _completionFeedback;
+  String get completionFeedback => _completionFeedback ?? '';
+  bool hasCompletionFeedback() => _completionFeedback != null;
+
+  // "completion_note" field.
+  String? _completionNote;
+  String get completionNote => _completionNote ?? '';
+  bool hasCompletionNote() => _completionNote != null;
+
   void _initializeFields() {
     _createdAt = snapshotData['created_at'] as DateTime?;
     _description = snapshotData['description'] as String?;
@@ -72,6 +87,9 @@ class LearningPathTasksRecord extends FirestoreRecord {
     _userRef = snapshotData['user_ref'] as DocumentReference?;
     _isCompleted = snapshotData['is_completed'] as bool?;
     _duration = castToType<int>(snapshotData['duration']);
+    _wasSkipped = snapshotData['was_skipped'] as bool?;
+    _completionFeedback = snapshotData['completion_feedback'] as String?;
+    _completionNote = snapshotData['completion_note'] as String?;
   }
 
   static CollectionReference get collection =>

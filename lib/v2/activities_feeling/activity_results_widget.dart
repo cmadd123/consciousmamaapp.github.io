@@ -1,5 +1,6 @@
 import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
+import '/components/parent_circle_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
@@ -1964,10 +1965,12 @@ class _ActivityQuickAddSheetState extends State<_ActivityQuickAddSheet> {
   bool _assignToDad = false;
   bool _isLoading = false;
   DateTime? _selectedDate; // null means Today
+  late ParentDisplayInfo _parentInfo;
 
   @override
   void initState() {
     super.initState();
+    _parentInfo = ParentDisplayInfo.fromUser(currentUserDocument);
     _loadUserChildren();
   }
 
@@ -2107,11 +2110,11 @@ class _ActivityQuickAddSheetState extends State<_ActivityQuickAddSheet> {
                       padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 10.0),
                       decoration: BoxDecoration(
                         color: _assignToMom
-                            ? const Color(0xFFEC407A).withOpacity(0.15)
+                            ? _parentInfo.myColor.withOpacity(0.15)
                             : (isComfortMode ? const Color(0xFF2C3E50) : const Color(0xFFF5F5F5)),
                         borderRadius: BorderRadius.circular(20.0),
                         border: Border.all(
-                          color: _assignToMom ? const Color(0xFFEC407A) : Colors.transparent,
+                          color: _assignToMom ? _parentInfo.myColor : Colors.transparent,
                           width: 2.0,
                         ),
                       ),
@@ -2121,17 +2124,17 @@ class _ActivityQuickAddSheetState extends State<_ActivityQuickAddSheet> {
                           Container(
                             width: 28.0,
                             height: 28.0,
-                            decoration: const BoxDecoration(
-                              color: Color(0xFFEC407A),
+                            decoration: BoxDecoration(
+                              color: _parentInfo.myColor,
                               shape: BoxShape.circle,
                             ),
-                            child: const Center(
-                              child: Text('M', style: TextStyle(color: Colors.white, fontSize: 14.0, fontWeight: FontWeight.bold)),
+                            child: Center(
+                              child: Text(_parentInfo.myInitial, style: const TextStyle(color: Colors.white, fontSize: 14.0, fontWeight: FontWeight.bold)),
                             ),
                           ),
                           const SizedBox(width: 8.0),
                           Text(
-                            'Mom',
+                            _parentInfo.myName,
                             style: TextStyle(
                               fontFamily: 'Andika New Basic',
                               color: isComfortMode ? const Color(0xFFECF0F1) : const Color(0xFF5D4E60),
@@ -2141,7 +2144,7 @@ class _ActivityQuickAddSheetState extends State<_ActivityQuickAddSheet> {
                           ),
                           if (_assignToMom) ...[
                             const SizedBox(width: 6.0),
-                            const Icon(Icons.check_circle, size: 18.0, color: Color(0xFFEC407A)),
+                            Icon(Icons.check_circle, size: 18.0, color: _parentInfo.myColor),
                           ],
                         ],
                       ),
@@ -2154,11 +2157,11 @@ class _ActivityQuickAddSheetState extends State<_ActivityQuickAddSheet> {
                       padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 10.0),
                       decoration: BoxDecoration(
                         color: _assignToDad
-                            ? const Color(0xFF1976D2).withOpacity(0.15)
+                            ? _parentInfo.partnerColor.withOpacity(0.15)
                             : (isComfortMode ? const Color(0xFF2C3E50) : const Color(0xFFF5F5F5)),
                         borderRadius: BorderRadius.circular(20.0),
                         border: Border.all(
-                          color: _assignToDad ? const Color(0xFF1976D2) : Colors.transparent,
+                          color: _assignToDad ? _parentInfo.partnerColor : Colors.transparent,
                           width: 2.0,
                         ),
                       ),
@@ -2168,17 +2171,17 @@ class _ActivityQuickAddSheetState extends State<_ActivityQuickAddSheet> {
                           Container(
                             width: 28.0,
                             height: 28.0,
-                            decoration: const BoxDecoration(
-                              color: Color(0xFF1976D2),
+                            decoration: BoxDecoration(
+                              color: _parentInfo.partnerColor,
                               shape: BoxShape.circle,
                             ),
-                            child: const Center(
-                              child: Text('D', style: TextStyle(color: Colors.white, fontSize: 14.0, fontWeight: FontWeight.bold)),
+                            child: Center(
+                              child: Text(_parentInfo.partnerInitial, style: const TextStyle(color: Colors.white, fontSize: 14.0, fontWeight: FontWeight.bold)),
                             ),
                           ),
                           const SizedBox(width: 8.0),
                           Text(
-                            'Dad',
+                            _parentInfo.partnerName,
                             style: TextStyle(
                               fontFamily: 'Andika New Basic',
                               color: isComfortMode ? const Color(0xFFECF0F1) : const Color(0xFF5D4E60),
@@ -2188,7 +2191,7 @@ class _ActivityQuickAddSheetState extends State<_ActivityQuickAddSheet> {
                           ),
                           if (_assignToDad) ...[
                             const SizedBox(width: 6.0),
-                            const Icon(Icons.check_circle, size: 18.0, color: Color(0xFF1976D2)),
+                            Icon(Icons.check_circle, size: 18.0, color: _parentInfo.partnerColor),
                           ],
                         ],
                       ),

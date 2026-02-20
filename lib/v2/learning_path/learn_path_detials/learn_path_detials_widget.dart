@@ -423,33 +423,6 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget>
                   return Column(
                     mainAxisSize: MainAxisSize.max,
                     children: [
-                      // Back button
-                      Padding(
-                        padding: const EdgeInsetsDirectional.fromSTEB(12.0, 8.0, 12.0, 0.0),
-                        child: Row(
-                          children: [
-                            InkWell(
-                              splashColor: Colors.transparent,
-                              focusColor: Colors.transparent,
-                              hoverColor: Colors.transparent,
-                              highlightColor: Colors.transparent,
-                              onTap: () => context.safePop(),
-                              child: Container(
-                                padding: const EdgeInsets.all(8.0),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withValues(alpha: 0.8),
-                                  borderRadius: BorderRadius.circular(12.0),
-                                ),
-                                child: Icon(
-                                  Icons.arrow_back,
-                                  color: FlutterFlowTheme.of(context).primaryText,
-                                  size: 24.0,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
                       // Header card with puzzle
                       Padding(
                         padding: EdgeInsetsDirectional.fromSTEB(12.0, 12.0, 12.0, 0.0),
@@ -684,19 +657,19 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget>
                                 ),
                               ),
                               child: ListView.builder(
-                                key: ValueKey('tasks_${tasksList.map((t) => '${t.reference.id}_${t.isCompleted}').join('_')}'),
+                                key: ValueKey('tasks_${tasksList.map((t) => '${t.reference.id}_${t.isCompleted}_${t.wasSkipped}').join('_')}'),
                                 padding: EdgeInsets.symmetric(vertical: 12.0),
                                 itemCount: tasksList.length,
                                 itemBuilder: (context, index) {
                                   final task = tasksList[index];
                                   return Padding(
-                                    key: ValueKey('task_${task.reference.id}_${task.isCompleted}'),
+                                    key: ValueKey('task_${task.reference.id}_${task.isCompleted}_${task.wasSkipped}'),
                                     padding: EdgeInsetsDirectional.fromSTEB(24.0, 8.0, 20.0, 8.0),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.max,
                                       children: [
-                                        Padding(
-                                          padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 7.0, 0.0),
+                                        SizedBox(
+                                          width: 80.0,
                                           child: Column(
                                             mainAxisSize: MainAxisSize.max,
                                             crossAxisAlignment: CrossAxisAlignment.end,
@@ -707,10 +680,11 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget>
                                                   task.taskTime!,
                                                   locale: FFLocalizations.of(context).languageCode,
                                                 ),
-                                                style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                style: FlutterFlowTheme.of(context).bodySmall.override(
                                                       fontFamily: 'Andika New Basic',
                                                       letterSpacing: 0.0,
                                                     ),
+                                                textAlign: TextAlign.end,
                                               ),
                                               Text(
                                                 dateTimeFormat(
@@ -718,14 +692,16 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget>
                                                   task.taskTime!,
                                                   locale: FFLocalizations.of(context).languageCode,
                                                 ),
-                                                style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                style: FlutterFlowTheme.of(context).bodySmall.override(
                                                       fontFamily: 'Andika New Basic',
                                                       letterSpacing: 0.0,
                                                     ),
+                                                textAlign: TextAlign.end,
                                               ),
                                             ],
                                           ),
                                         ),
+                                        SizedBox(width: 7.0),
                                         Padding(
                                           padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 8.0, 0.0),
                                           child: Container(
@@ -766,17 +742,23 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget>
                                                     );
                                                   },
                                                 );
+                                                // Force rebuild to pick up any skip/complete changes
+                                                if (mounted) safeSetState(() {});
                                               },
                                               child: Container(
                                                 decoration: BoxDecoration(
                                                   color: task.isCompleted
                                                       ? Color(0xFF4CAF50).withOpacity(0.1)
-                                                      : Color(0x5AFFD8E4),
+                                                      : task.wasSkipped
+                                                          ? Color(0xFFFF9800).withOpacity(0.1)
+                                                          : Color(0x5AFFD8E4),
                                                   borderRadius: BorderRadius.circular(14.0),
                                                   border: Border.all(
                                                     color: task.isCompleted
                                                         ? Color(0xFF4CAF50)
-                                                        : FlutterFlowTheme.of(context).primary,
+                                                        : task.wasSkipped
+                                                            ? Color(0xFFFF9800)
+                                                            : FlutterFlowTheme.of(context).primary,
                                                     width: 1.0,
                                                   ),
                                                 ),
@@ -807,7 +789,9 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget>
                                                                     fontFamily: 'Andika New Basic',
                                                                     color: task.isCompleted
                                                                         ? Color(0xFF4CAF50)
-                                                                        : Colors.black,
+                                                                        : task.wasSkipped
+                                                                            ? Color(0xFFFF9800)
+                                                                            : Colors.black,
                                                                     letterSpacing: 0.0,
                                                                     decoration: TextDecoration.underline,
                                                                   ),
@@ -816,13 +800,19 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget>
                                                         ),
                                                       ),
                                                     ),
-                                                    // Checkbox / Completed icon
+                                                    // Checkbox / Completed / Skipped icon
                                                     Padding(
                                                       padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 9.0, 0.0),
                                                       child: task.isCompleted
                                                           ? Icon(
                                                               FFIcons.kcheckicon,
                                                               color: Color(0xFF32DD8D),
+                                                              size: 24.0,
+                                                            )
+                                                          : task.wasSkipped
+                                                          ? Icon(
+                                                              Icons.skip_next,
+                                                              color: Color(0xFFFF9800),
                                                               size: 24.0,
                                                             )
                                                           : Builder(
