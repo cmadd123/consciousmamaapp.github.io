@@ -1,12 +1,11 @@
-[
-  {
-    "relation": ["delegate_permission/common.handle_all_urls"],
-    "target": {
-      "namespace": "android_app",
-      "package_name": "com.mycompany.momecoach",
-      "sha256_cert_fingerprints": [
-        "01:94:0A:98:19:BC:94:69:23:F3:2F:44:EF:E0:ED:D7:41:D4:61:A2:F8:DF:79:2A:C5:B6:EF:D5:72:D4:8B:E6"
-      ]
-    }
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.momrise.app",
+    "sha256_cert_fingerprints": [
+      "D2:0E:D8:CB:79:08:77:57:7F:79:C4:1D:7B:1C:1C:54:E2:EE:E5:02:C5:8B:EE:71:08:5F:E3:57:5F:5D:55:F4",
+      "21:F1:ED:CB:C8:A6:43:95:D8:B1:F2:62:29:B1:C7:87:33:1A:A4:0A:B1:B3:D5:B1:45:59:6E:7D:ED:E2:15:F5"
+    ]
   }
-]
+}]
