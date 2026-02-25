@@ -57,9 +57,17 @@ workflows:
           flutter analyze --no-fatal-infos
         ignore_failure: true
 
+      - name: Get latest build number from App Store Connect
+        script: |
+          LATEST_BUILD=$(app-store-connect get-latest-testflight-build-number "$BUNDLE_ID" || echo "0")
+          NEW_BUILD=$((LATEST_BUILD + 1))
+          echo "Latest build: $LATEST_BUILD, new build: $NEW_BUILD"
+          echo "BUILD_NUMBER=$NEW_BUILD" >> $CM_ENV
+
       - name: Build iOS IPA
         script: |
           flutter build ipa --release \
+            --build-number=$BUILD_NUMBER \
             --export-options-plist=/Users/builder/export_options.plist
 
     artifacts:
