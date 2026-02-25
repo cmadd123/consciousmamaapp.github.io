@@ -5,7 +5,7 @@ import '/index.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/nav/nav.dart';
 
-/// Handles deep links for the app (e.g., https://consciousmama.app/shared/ABC123)
+/// Handles deep links for the app (e.g., momrise://shared/CODE, https://momrise.app/s/CODE)
 ///
 /// When users click a share link, this handler navigates them to the import screen.
 class DeepLinkHandler {
@@ -132,30 +132,30 @@ class DeepLinkHandler {
         return;
       }
     }
-    // Handle custom scheme: consciousmama://shared/CODE
-    else if (uri.scheme == 'consciousmama') {
-      debugPrint('DeepLinkHandler: Custom scheme detected');
-      // Format 1: consciousmama://shared/CODE -> host='shared', pathSegments=['CODE']
+    // Handle custom scheme: momrise://shared/CODE or consciousmama://shared/CODE
+    else if (uri.scheme == 'momrise' || uri.scheme == 'consciousmama') {
+      debugPrint('DeepLinkHandler: Custom scheme detected: ${uri.scheme}');
+      // Format 1: scheme://shared/CODE -> host='shared', pathSegments=['CODE']
       if (uri.host == 'shared' && uri.pathSegments.isNotEmpty) {
         shareCode = uri.pathSegments.last;
         debugPrint('DeepLinkHandler: Format 1 - host=shared, code from pathSegments');
       }
-      // Format 2: consciousmama://shared/CODE -> host='shared', path='/CODE'
+      // Format 2: scheme://shared/CODE -> host='shared', path='/CODE'
       else if (uri.host == 'shared' && uri.path.isNotEmpty && uri.path != '/') {
         shareCode = uri.path.replaceFirst('/', '');
         debugPrint('DeepLinkHandler: Format 2 - host=shared, code from path');
       }
-      // Format 3: consciousmama:///shared/CODE -> host='', pathSegments=['shared', 'CODE']
+      // Format 3: scheme:///shared/CODE -> host='', pathSegments=['shared', 'CODE']
       else if (uri.pathSegments.length >= 2 && uri.pathSegments[0] == 'shared') {
         shareCode = uri.pathSegments[1];
         debugPrint('DeepLinkHandler: Format 3 - code from pathSegments[1]');
       }
-      // Format 4: consciousmama://shared?code=CODE -> query parameter
+      // Format 4: scheme://shared?code=CODE -> query parameter
       else if (uri.queryParameters.containsKey('code')) {
         shareCode = uri.queryParameters['code'];
         debugPrint('DeepLinkHandler: Format 4 - code from query parameter');
       }
-      // Format 5: consciousmama://CODE (direct code as host, from some Android intent transforms)
+      // Format 5: scheme://CODE (direct code as host, from some Android intent transforms)
       else if (uri.host.isNotEmpty && uri.host.length == 8 && RegExp(r'^[a-z0-9]+$').hasMatch(uri.host)) {
         shareCode = uri.host;
         debugPrint('DeepLinkHandler: Format 5 - code is the host itself');
