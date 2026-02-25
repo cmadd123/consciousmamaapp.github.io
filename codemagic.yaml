@@ -59,13 +59,27 @@ workflows:
 
       - name: Get latest build number from App Store Connect
         script: |
-          LATEST_BUILD=$(app-store-connect get-latest-testflight-build-number "$BUNDLE_ID" || echo "0")
-          NEW_BUILD=$((LATEST_BUILD + 1))
-          echo "Latest build: $LATEST_BUILD, new build: $NEW_BUILD"
+          # Get latest build from TestFlight
+          TF_BUILD=$(app-store-connect get-latest-testflight-build-number "$BUNDLE_ID" || echo "0")
+          echo "TestFlight latest: $TF_BUILD"
+
+          # Also read build number from pubspec.yaml as a floor
+          PUBSPEC_BUILD=$(grep -oP '(?<=\+)\d+' pubspec.yaml || echo "0")
+          echo "Pubspec build number: $PUBSPEC_BUILD"
+
+          # Take the maximum of both sources, then add 1
+          if [ "$TF_BUILD" -gt "$PUBSPEC_BUILD" ]; then
+            BASE_BUILD=$TF_BUILD
+          else
+            BASE_BUILD=$PUBSPEC_BUILD
+          fi
+          NEW_BUILD=$((BASE_BUILD + 1))
+          echo "Base: $BASE_BUILD, new build number: $NEW_BUILD"
           echo "BUILD_NUMBER=$NEW_BUILD" >> $CM_ENV
 
       - name: Build iOS IPA
         script: |
+          echo "Building with build number: $BUILD_NUMBER"
           flutter build ipa --release \
             --build-number=$BUILD_NUMBER \
             --export-options-plist=/Users/builder/export_options.plist
