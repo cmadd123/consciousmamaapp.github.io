@@ -734,6 +734,221 @@ class SharingService {
     }
   }
 
+  /// Share a day template (group of meal combos that form a saved day)
+  static Future<String?> shareDayTemplate({
+    required String dayTemplateName,
+    required List<MealComboRecord> templates,
+    required List<MealRecord> allMeals, // All recipes referenced by the templates
+    String? personalNote,
+  }) async {
+    try {
+      String shareCode;
+      bool codeExists = true;
+
+      do {
+        shareCode = _generateShareCode();
+        final existing = await SharedContentRecord.getByShareCode(shareCode);
+        codeExists = existing != null;
+      } while (codeExists);
+
+      // Serialize each template in the day
+      final List<Map<String, dynamic>> templatesData = [];
+      String? previewImage;
+
+      for (final template in templates) {
+        final Map<String, dynamic> templateData = {
+          'meal_type': template.mealTyp?.name ?? 'Dinner',
+          'name': template.name,
+          'drink_type': template.drinkType?.name,
+          'drink_custom': template.drinkCustom,
+        };
+
+        // Serialize entree
+        if (template.entreeRef != null) {
+          final entree = allMeals.firstWhereOrNull(
+            (m) => m.reference == template.entreeRef,
+          );
+          if (entree != null) {
+            templateData['entree'] = _serializeMeal(entree);
+            previewImage ??= entree.imageUrl;
+          }
+        }
+
+        // Serialize sides
+        final List<Map<String, dynamic>> sidesData = [];
+        for (final sideRef in template.sideRefs) {
+          final side = allMeals.firstWhereOrNull((m) => m.reference == sideRef);
+          if (side != null) {
+            sidesData.add(_serializeMeal(side));
+          }
+        }
+        if (sidesData.isNotEmpty) templateData['sides'] = sidesData;
+
+        // Serialize desserts
+        final List<Map<String, dynamic>> dessertsData = [];
+        for (final dessertRef in template.dessertRefs) {
+          final dessert = allMeals.firstWhereOrNull((m) => m.reference == dessertRef);
+          if (dessert != null) {
+            dessertsData.add(_serializeMeal(dessert));
+          }
+        }
+        if (dessertsData.isNotEmpty) templateData['desserts'] = dessertsData;
+
+        // Serialize snack refs from raw data
+        final rawSnackRefs = template.snapshotData['snack_refs'] as List<dynamic>?;
+        if (rawSnackRefs != null && rawSnackRefs.isNotEmpty) {
+          final List<Map<String, dynamic>> snacksData = [];
+          for (final ref in rawSnackRefs) {
+            if (ref is DocumentReference) {
+              final snack = allMeals.firstWhereOrNull((m) => m.reference == ref);
+              if (snack != null) {
+                snacksData.add(_serializeMeal(snack));
+                previewImage ??= snack.imageUrl;
+              }
+            }
+          }
+          if (snacksData.isNotEmpty) templateData['snacks'] = snacksData;
+        }
+
+        // Serialize leftover flags
+        final rawData = template.snapshotData;
+        if (rawData['is_leftover_entree'] == true) templateData['is_leftover_entree'] = true;
+        if (rawData['is_leftover_sides'] == true) templateData['is_leftover_sides'] = true;
+        if (rawData['is_leftover_dessert'] == true) templateData['is_leftover_dessert'] = true;
+
+        templatesData.add(templateData);
+      }
+
+      final contentData = {
+        'day_template_name': dayTemplateName,
+        'templates': templatesData,
+        'template_count': templates.length,
+        if (personalNote != null && personalNote.isNotEmpty) 'personal_note': personalNote,
+      };
+
+      final userName = currentUserDisplayName.isNotEmpty
+          ? currentUserDisplayName
+          : 'A MomRise User';
+
+      await SharedContentRecord.collection.add(createSharedContentRecordData(
+        shareCode: shareCode,
+        contentType: SharedContentType.dayTemplate,
+        sharedByUser: currentUserReference,
+        sharedByName: userName,
+        title: dayTemplateName,
+        description: '${templates.length} meal${templates.length == 1 ? '' : 's'} in this day template',
+        previewImage: previewImage,
+        contentData: contentData,
+        createdAt: DateTime.now(),
+        viewCount: 0,
+        importCount: 0,
+        isActive: true,
+      ));
+
+      debugPrint('Day template share created with code: $shareCode');
+      return shareCode;
+    } catch (e, stackTrace) {
+      debugPrint('Error sharing day template: $e');
+      debugPrint('Stack trace: $stackTrace');
+      return null;
+    }
+  }
+
+  /// Import a shared day template to the current user's cookbook
+  static Future<int> importDayTemplate({
+    required SharedContentRecord sharedContent,
+  }) async {
+    try {
+      if (sharedContent.contentType != SharedContentType.dayTemplate) {
+        return 0;
+      }
+
+      final contentData = sharedContent.contentData;
+      final dayTemplateName = contentData['day_template_name'] as String? ?? 'Imported Day';
+      final templates = contentData['templates'] as List<dynamic>? ?? [];
+
+      int importedCount = 0;
+
+      for (final templateData in templates) {
+        DocumentReference? entreeRef;
+        List<DocumentReference> sideRefs = [];
+        List<DocumentReference> dessertRefs = [];
+        List<DocumentReference> snackRefs = [];
+
+        // Create entree
+        final entreeData = templateData['entree'] as Map<String, dynamic>?;
+        if (entreeData != null) {
+          entreeRef = await _createMealFromData(entreeData);
+        }
+
+        // Create sides
+        final sidesData = templateData['sides'] as List<dynamic>? ?? [];
+        for (final sideData in sidesData) {
+          if (sideData is Map<String, dynamic>) {
+            sideRefs.add(await _createMealFromData(sideData));
+          }
+        }
+
+        // Create desserts
+        final dessertsData = templateData['desserts'] as List<dynamic>? ?? [];
+        for (final dessertData in dessertsData) {
+          if (dessertData is Map<String, dynamic>) {
+            dessertRefs.add(await _createMealFromData(dessertData));
+          }
+        }
+
+        // Create snacks
+        final snacksData = templateData['snacks'] as List<dynamic>? ?? [];
+        for (final snackData in snacksData) {
+          if (snackData is Map<String, dynamic>) {
+            snackRefs.add(await _createMealFromData(snackData));
+          }
+        }
+
+        // Create the meal combo record
+        final comboRef = await MealComboRecord.collection.add(createMealComboRecordData(
+          name: templateData['name'] as String?,
+          entreeRef: entreeRef,
+          drinkType: _parseDrinkType(templateData['drink_type'] as String?),
+          drinkCustom: templateData['drink_custom'] as String?,
+          mealTyp: _parseMealType(templateData['meal_type'] as String?),
+          userRef: currentUserReference,
+          createdTime: DateTime.now(),
+        ));
+
+        // Update array fields and day template metadata
+        final updateData = <String, dynamic>{
+          'day_template_group': dayTemplateName,
+          'day_template_name': dayTemplateName,
+        };
+        if (sideRefs.isNotEmpty) updateData['side_refs'] = sideRefs;
+        if (dessertRefs.isNotEmpty) updateData['dessert_refs'] = dessertRefs;
+        if (snackRefs.isNotEmpty) updateData['snack_refs'] = snackRefs;
+
+        // Leftover flags
+        if (templateData['is_leftover_entree'] == true) updateData['is_leftover_entree'] = true;
+        if (templateData['is_leftover_sides'] == true) updateData['is_leftover_sides'] = true;
+        if (templateData['is_leftover_dessert'] == true) updateData['is_leftover_dessert'] = true;
+
+        await comboRef.update(updateData);
+
+        importedCount++;
+      }
+
+      // Increment import count
+      await sharedContent.reference.update({
+        'import_count': FieldValue.increment(1),
+      });
+
+      debugPrint('Imported $importedCount templates from day template "$dayTemplateName"');
+      return importedCount;
+    } catch (e, stackTrace) {
+      debugPrint('Error importing day template: $e');
+      debugPrint('Stack trace: $stackTrace');
+      return 0;
+    }
+  }
+
   /// Get the full shareable URL from a share code
   static String getShareUrl(String shareCode) {
     return '$_baseUrl/$shareCode';

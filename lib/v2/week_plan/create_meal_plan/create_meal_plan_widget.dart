@@ -61,10 +61,43 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
     _model = createModel(context, () => CreateMealPlanModel());
     _loadWelcomeDismissed();
 
+    // Set default expanded day to today or next planned day
+    _setDefaultExpandedDay();
+
     // Check if we need to refresh (flag set when adding meals from other pages)
     if (FFAppState().MealCashtearm) {
       FFAppState().MealCashtearm = false; // Clear the flag
     }
+  }
+
+  /// Find today's index in the days list (or next future day) and expand it
+  void _setDefaultExpandedDay() {
+    final days = _customSelectedDates ?? functions.getSevenDays()?.toList() ?? [];
+    if (days.isEmpty) return;
+
+    final now = DateTime.now();
+    final todayKey = DateTime(now.year, now.month, now.day);
+
+    // Try to find today
+    for (int i = 0; i < days.length; i++) {
+      final dayKey = DateTime(days[i].year, days[i].month, days[i].day);
+      if (dayKey == todayKey) {
+        _model.expandedDayIndex = i;
+        return;
+      }
+    }
+
+    // Today not in list — find the next future day
+    for (int i = 0; i < days.length; i++) {
+      final dayKey = DateTime(days[i].year, days[i].month, days[i].day);
+      if (dayKey.isAfter(todayKey)) {
+        _model.expandedDayIndex = i;
+        return;
+      }
+    }
+
+    // All days in the past — expand the last one
+    _model.expandedDayIndex = days.length - 1;
   }
 
   Future<void> _loadWelcomeDismissed() async {
@@ -906,6 +939,52 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
   }
   */ // END ARCHIVED SHARING CODE
 
+  /// Share all meals for a single day
+  void _shareSingleDay(BuildContext context, DateTime day, List<MealPlanRecord> dayMealPlans) async {
+    if (dayMealPlans.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('No meals planned for this day'), backgroundColor: Colors.orange),
+      );
+      return;
+    }
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Row(children: [
+        SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)),
+        SizedBox(width: 12), Text('Loading day meals...'),
+      ]), duration: Duration(seconds: 5)),
+    );
+    try {
+      final Set<DocumentReference> mealRefsToFetch = {};
+      final Set<DocumentReference> comboRefsToFetch = {};
+      for (final plan in dayMealPlans) {
+        if (plan.userFirebasemeal != null) mealRefsToFetch.add(plan.userFirebasemeal!);
+        if (plan.mealComboRef != null) comboRefsToFetch.add(plan.mealComboRef!);
+      }
+      final List<MealComboRecord> combos = [];
+      for (final ref in comboRefsToFetch) {
+        try {
+          final combo = await MealComboRecord.getDocumentOnce(ref);
+          combos.add(combo);
+          if (combo.entreeRef != null) mealRefsToFetch.add(combo.entreeRef!);
+          for (final sideRef in combo.sideRefs) mealRefsToFetch.add(sideRef);
+        } catch (_) {}
+      }
+      final List<MealRecord> meals = [];
+      for (final ref in mealRefsToFetch) {
+        try { meals.add(await MealRecord.getDocumentOnce(ref)); } catch (_) {}
+      }
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      showShareDayBottomSheet(context: context, date: day, mealPlans: dayMealPlans, meals: meals, combos: combos);
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error loading day meals'), backgroundColor: Colors.red),
+      );
+    }
+  }
+
   /// Share a single meal (restored from archive)
   void _shareSingleMeal(BuildContext context, MealPlanRecord mealPlan) async {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -936,6 +1015,184 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error loading meal data'), backgroundColor: Colors.red),
+      );
+    }
+  }
+
+  /// Save all meals for a day as individual meal combo templates
+  void _saveDayAsTemplates(BuildContext context, DateTime day, List<MealPlanRecord> dayMealPlans) async {
+    if (dayMealPlans.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('No meals planned for this day'), backgroundColor: Colors.orange),
+      );
+      return;
+    }
+
+    // Ask user for a template group name
+    final dayName = dateTimeFormat('EEEE', day); // e.g., "Monday"
+    final nameController = TextEditingController(text: dayName);
+    // Capture primary color before async gap to avoid InheritedWidget issues
+    final primaryColor = FlutterFlowTheme.of(context).primary;
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        final dialogTheme = FlutterFlowTheme.of(dialogContext);
+        return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
+          title: Text(
+            'Save Day as Templates',
+            style: dialogTheme.titleMedium.override(
+              fontFamily: 'Andika New Basic',
+              letterSpacing: 0.0,
+            ),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'This will save each meal as a reusable template. Give them a name prefix:',
+                style: dialogTheme.bodySmall.override(
+                  fontFamily: 'Andika New Basic',
+                  letterSpacing: 0.0,
+                  color: dialogTheme.secondaryText,
+                ),
+              ),
+              SizedBox(height: 12.0),
+              TextField(
+                controller: nameController,
+                decoration: InputDecoration(
+                  hintText: 'e.g., Monday, Taco Night',
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.0)),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
+                ),
+                style: dialogTheme.bodyMedium.override(
+                  fontFamily: 'Andika New Basic',
+                  letterSpacing: 0.0,
+                ),
+              ),
+              SizedBox(height: 8.0),
+              Text(
+                '${dayMealPlans.length} meal${dayMealPlans.length > 1 ? 's' : ''} will be saved',
+                style: dialogTheme.bodySmall.override(
+                  fontFamily: 'Andika New Basic',
+                  letterSpacing: 0.0,
+                  color: dialogTheme.primary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext, false),
+              child: Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.pop(dialogContext, true),
+              style: ElevatedButton.styleFrom(backgroundColor: dialogTheme.primary),
+              child: Text('Save Templates'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmed != true || !mounted) return;
+
+    final prefix = nameController.text.trim();
+
+    // Show loading
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Row(children: [
+        SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)),
+        SizedBox(width: 12), Text('Saving templates...'),
+      ]), duration: Duration(seconds: 10)),
+    );
+
+    try {
+      int savedCount = 0;
+      // Generate a shared group ID so these templates can be grouped as a "saved day"
+      final groupId = '${day.millisecondsSinceEpoch}_${DateTime.now().millisecondsSinceEpoch}';
+
+      for (final plan in dayMealPlans) {
+        // Skip custom meals — no recipe to template
+        if (plan.hasCustomMeal()) continue;
+
+        final mealTypeName = plan.typ?.name ?? 'Meal';
+        final templateName = prefix.isNotEmpty ? '$prefix $mealTypeName' : mealTypeName;
+
+        if (plan.isMealCombo && plan.mealComboRef != null) {
+          // This meal already references a combo — copy its data into a new template
+          try {
+            final combo = await MealComboRecord.getDocumentOnce(plan.mealComboRef!);
+            final comboData = createMealComboRecordData(
+              name: templateName,
+              entreeRef: combo.entreeRef,
+              drinkType: combo.drinkType,
+              drinkCustom: combo.drinkCustom.isNotEmpty ? combo.drinkCustom : null,
+              mealTyp: plan.typ,
+              userRef: currentUserReference,
+              createdTime: DateTime.now(),
+            );
+            comboData['side_refs'] = combo.sideRefs.toList();
+            comboData['dessert_refs'] = combo.dessertRefs.toList();
+            comboData['day_template_group'] = groupId;
+            comboData['day_template_name'] = prefix.isNotEmpty ? prefix : dayName;
+            await MealComboRecord.collection.add(comboData);
+            savedCount++;
+          } catch (e) {
+            debugPrint('Error copying combo template: $e');
+          }
+        } else if (plan.userFirebasemeal != null) {
+          // Ad-hoc meal — build a new combo from individual fields
+          final comboData = createMealComboRecordData(
+            name: templateName,
+            entreeRef: plan.userFirebasemeal,
+            drinkType: plan.drinkType,
+            drinkCustom: plan.drinkCustom.isNotEmpty ? plan.drinkCustom : null,
+            mealTyp: plan.typ,
+            userRef: currentUserReference,
+            createdTime: DateTime.now(),
+          );
+          comboData['side_refs'] = plan.sideRefs.toList();
+          comboData['dessert_refs'] = plan.dessertRefs.toList();
+          comboData['is_leftover_entree'] = plan.isLeftoverEntree;
+          comboData['is_leftover_side'] = plan.isLeftoverSide;
+          comboData['is_leftover_dessert'] = plan.isLeftoverDessert;
+          comboData['is_leftover_snack'] = plan.isLeftoverSnack;
+          comboData['day_template_group'] = groupId;
+          comboData['day_template_name'] = prefix.isNotEmpty ? prefix : dayName;
+          await MealComboRecord.collection.add(comboData);
+          savedCount++;
+        }
+      }
+
+      // Invalidate template cache so new templates show up
+      FFAppState().MealCashtearm = true;
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+
+      if (savedCount > 0) {
+        HapticFeedback.mediumImpact();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('$savedCount template${savedCount > 1 ? 's' : ''} saved!'),
+            backgroundColor: primaryColor,
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('No meals to save as templates'), backgroundColor: Colors.orange),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error saving templates'), backgroundColor: Colors.red),
       );
     }
   }
@@ -1279,7 +1536,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                         onPressed: selectedDays.isEmpty || selectedMealTypes.isEmpty ? null : () {
                           Navigator.pop(context);
                           _generateMealPlanFromCookbook(
-                            selectedDays: selectedDays.toList(),
+                            selectedDates: selectedDays.map((i) => days[i]).toList(),
                             mealTypes: selectedMealTypes.toList(),
                             source: selectedSource,
                           );
@@ -1485,10 +1742,11 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
 
   /// Generate meal plan from user's cookbook
   Future<void> _generateMealPlanFromCookbook({
-    bool todayOnly = false, // DEPRECATED: Use selectedDays instead
-    List<int>? selectedDays, // NEW: List of day indices (0=Monday, 6=Sunday)
+    bool todayOnly = false, // DEPRECATED: Use selectedDays/selectedDates instead
+    List<int>? selectedDays, // List of day indices into the displayed week
+    List<DateTime>? selectedDates, // Actual dates to fill (preferred over selectedDays)
     List<MealTyp>? mealTypes,
-    String source = 'all', // NEW: 'my_recipes', 'templates', 'discover', 'all'
+    String source = 'all', // 'my_recipes', 'templates', 'discover', 'all'
   }) async {
     // Show loading indicator
     showDialog(
@@ -1598,14 +1856,17 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
           .toList();
 
       int mealsAdded = 0;
-      // NEW: Use selectedDays parameter or fall back to legacy todayOnly logic
-      List<int> daysToProcess;
-      if (selectedDays != null && selectedDays.isNotEmpty) {
-        daysToProcess = selectedDays;
+
+      // Build list of actual dates to process
+      List<DateTime> datesToProcess;
+      if (selectedDates != null && selectedDates.isNotEmpty) {
+        datesToProcess = selectedDates;
+      } else if (selectedDays != null && selectedDays.isNotEmpty) {
+        datesToProcess = selectedDays.map((i) => startOfWeek.add(Duration(days: i))).toList();
       } else if (todayOnly) {
-        daysToProcess = [now.weekday - 1]; // Convert to 0-based (0=Monday)
+        datesToProcess = [DateTime(now.year, now.month, now.day)];
       } else {
-        daysToProcess = [0, 1, 2, 3, 4, 5, 6]; // All days
+        datesToProcess = List.generate(7, (i) => startOfWeek.add(Duration(days: i)));
       }
 
       // Use provided meal types or default to all (including Snacks)
@@ -1625,9 +1886,8 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
         }
       }
 
-      // For each selected day and meal type, check if empty and fill
-      for (int dayIndex in daysToProcess) {
-        final day = startOfWeek.add(Duration(days: dayIndex));
+      // For each selected date and meal type, check if empty and fill
+      for (final day in datesToProcess) {
         final dayStr = dateTimeFormat("d/M/y", day, locale: 'en');
 
         for (final mealType in typesToFill) {
@@ -1815,7 +2075,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
   }
 
   /// Generate meal plan from Discover (curated) recipes
-  Future<void> _generateMealPlanFromDiscover({bool todayOnly = false, List<MealTyp>? mealTypes}) async {
+  Future<void> _generateMealPlanFromDiscover({bool todayOnly = false, List<MealTyp>? mealTypes, List<DateTime>? selectedDates}) async {
     // Show loading indicator
     showDialog(
       context: context,
@@ -1871,25 +2131,28 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
         return;
       }
 
-      // Fetch existing meal plans for this week
+      // Determine which dates to fill
       final now = DateTime.now();
-      final startOfWeek = DateTime(now.year, now.month, now.day);
-      final endOfWeek = startOfWeek.add(Duration(days: 7));
+      final List<DateTime> datesToProcess;
+      if (selectedDates != null && selectedDates.isNotEmpty) {
+        datesToProcess = selectedDates;
+      } else if (todayOnly) {
+        datesToProcess = [DateTime(now.year, now.month, now.day)];
+      } else {
+        final days = _customSelectedDates ?? functions.getSevenDays()?.toList() ?? [];
+        datesToProcess = days;
+      }
 
+      // Fetch existing meal plans
       final allPlansSnapshot = await MealPlanRecord.collection
           .where('user_ref', isEqualTo: currentUserReference)
           .get();
       final existingPlans = allPlansSnapshot.docs
           .map((doc) => MealPlanRecord.fromSnapshot(doc))
-          .where((plan) {
-            if (plan.date == null) return false;
-            return plan.date!.isAfter(startOfWeek.subtract(Duration(days: 1))) &&
-                   plan.date!.isBefore(endOfWeek);
-          })
+          .where((plan) => plan.date != null)
           .toList();
 
       int mealsAdded = 0;
-      final daysToFill = todayOnly ? 1 : 7;
       final typesToFill = mealTypes ?? [MealTyp.Breakfast, MealTyp.Lunch, MealTyp.Dinner, MealTyp.Snacks];
 
       // Track used recipes this week to avoid repetition
@@ -1902,9 +2165,8 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
         }
       }
 
-      // For each day and meal type, check if empty and fill
-      for (int dayIndex = 0; dayIndex < daysToFill; dayIndex++) {
-        final day = startOfWeek.add(Duration(days: dayIndex));
+      // For each selected date and meal type, check if empty and fill
+      for (final day in datesToProcess) {
         final dayStr = dateTimeFormat("d/M/y", day, locale: 'en');
 
         for (final mealType in typesToFill) {
@@ -2048,13 +2310,13 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
     }
   }
 
-  /// Show confirmation dialog for clearing the week
+  /// Show confirmation dialog for clearing all meals
   void _showClearWeekConfirmation() {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Clear Meal Plan?'),
-        content: Text('This will remove all planned meals for this week. This cannot be undone.'),
+        title: Text('Clear Entire Meal Plan?'),
+        content: Text('This will remove ALL planned meals. Your meal planner will be completely blank. This cannot be undone.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -2063,18 +2325,18 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
-              _clearWeekMealPlan();
+              _clearAllMealPlans();
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: Text('Clear', style: TextStyle(color: Colors.white)),
+            child: Text('Clear All', style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
     );
   }
 
-  /// Clear all meal plans for this week
-  Future<void> _clearWeekMealPlan() async {
+  /// Clear ALL meal plans for the user (entire planner becomes blank)
+  Future<void> _clearAllMealPlans() async {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -2094,7 +2356,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                 CircularProgressIndicator(color: FlutterFlowTheme.of(dialogContext).primary),
                 SizedBox(height: 16.0),
                 Text(
-                  'Clearing meal plan...',
+                  'Clearing all meals...',
                   style: FlutterFlowTheme.of(dialogContext).bodyMedium.override(
                     fontFamily: 'Andika New Basic',
                     letterSpacing: 0.0,
@@ -2108,36 +2370,25 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
     );
 
     try {
-      final now = DateTime.now();
-      final startOfWeek = DateTime(now.year, now.month, now.day);
-      final endOfWeek = startOfWeek.add(Duration(days: 7));
-
-      // Query by user only to avoid needing a composite index, then filter in code
+      // Delete ALL meal plans for this user
       final allPlansSnapshot = await MealPlanRecord.collection
           .where('user_ref', isEqualTo: currentUserReference)
           .get();
-      final plansToDelete = allPlansSnapshot.docs
-          .map((doc) => MealPlanRecord.fromSnapshot(doc))
-          .where((plan) {
-            if (plan.date == null) return false;
-            return plan.date!.isAfter(startOfWeek.subtract(Duration(days: 1))) &&
-                   plan.date!.isBefore(endOfWeek);
-          })
-          .toList();
 
       int deletedCount = 0;
-      for (final plan in plansToDelete) {
-        await plan.reference.delete();
+      for (final doc in allPlansSnapshot.docs) {
+        await doc.reference.delete();
         deletedCount++;
       }
 
       Navigator.pop(context); // Close loading
+      _model.mealCache.clear();
       FFAppState().MealCashtearm = true; // Trigger refresh
       await _refreshMealPlans(); // Reload cached meal plans
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('$deletedCount meals cleared from plan'),
+          content: Text('$deletedCount meals cleared'),
           backgroundColor: Colors.orange,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -2393,8 +2644,31 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                         Row(
                                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                           children: [
+                                            // Clear all button (leftmost position)
+                                            CascadeItem(index: 0, baseDelayMs: 350, staggerMs: 70, bounce: true, child: InkWell(
+                                              splashColor: Colors.transparent,
+                                              focusColor: Colors.transparent,
+                                              hoverColor: Colors.transparent,
+                                              highlightColor: Colors.transparent,
+                                              onTap: () {
+                                                _showClearWeekConfirmation();
+                                              },
+                                              borderRadius: BorderRadius.circular(14.0),
+                                              child: Container(
+                                                padding: EdgeInsets.all(8.0),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.red.withOpacity(0.1),
+                                                  borderRadius: BorderRadius.circular(14.0),
+                                                ),
+                                                child: Icon(
+                                                  Icons.clear_all,
+                                                  color: Colors.red.shade400,
+                                                  size: 20.0,
+                                                ),
+                                              ),
+                                            )),
                                             // Reminder bell button - now navigates to notifications
-                                            CascadeItem(index: 0, baseDelayMs: 350, staggerMs: 70, bounce: true, child: StreamBuilder<UsersRecord>(
+                                            CascadeItem(index: 1, baseDelayMs: 350, staggerMs: 70, bounce: true, child: StreamBuilder<UsersRecord>(
                                               stream: UsersRecord.getDocument(currentUserReference!),
                                               builder: (context, snapshot) {
                                                 final user = snapshot.data;
@@ -2431,8 +2705,6 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                                 );
                                               },
                                             )),
-                                            // ARCHIVED: Week share button — see sharing archive block above
-                                            // CascadeItem(index: 1, ... _showShareBottomSheet(context) ...)
                                             // Generate/Auto-fill button (icon only)
                                             CascadeItem(index: 2, baseDelayMs: 350, staggerMs: 70, bounce: true, child: InkWell(
                                               splashColor: Colors.transparent,
@@ -2457,7 +2729,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                               ),
                                             )),
                                             // Cookbook button (icon only)
-                                            CascadeItem(index: 3, baseDelayMs: 350, staggerMs: 70, bounce: true, child: InkWell(
+                                            CascadeItem(index: 4, baseDelayMs: 350, staggerMs: 70, bounce: true, child: InkWell(
                                               splashColor: Colors.transparent,
                                               focusColor: Colors.transparent,
                                               hoverColor: Colors.transparent,
@@ -2741,6 +3013,8 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                             final day = days[dayIndex];
                                             final isExpanded = _model.isDayExpanded(dayIndex);
                                             final plannedCount = _countPlannedMeals(mealPlanRecords, day);
+                                            final _now = DateTime.now();
+                                            final _isToday = day.year == _now.year && day.month == _now.month && day.day == _now.day;
 
                                             return CascadeItem(
                                               index: dayIndex + 1,
@@ -2758,7 +3032,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                                     width: double.infinity,
                                                     padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
                                                     decoration: BoxDecoration(
-                                                      color: dayIndex == 0
+                                                      color: _isToday
                                                           ? FlutterFlowTheme.of(context).primary.withOpacity(0.1)
                                                           : Colors.transparent,
                                                       border: Border(
@@ -2785,8 +3059,8 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                                             _formatDayHeader(day, dayIndex),
                                                             style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                   fontFamily: 'Andika New Basic',
-                                                                  fontSize: dayIndex == 0 ? 15.0 : 14.0,
-                                                                  fontWeight: dayIndex == 0 ? FontWeight.w600 : FontWeight.normal,
+                                                                  fontSize: _isToday ? 15.0 : 14.0,
+                                                                  fontWeight: _isToday ? FontWeight.w600 : FontWeight.normal,
                                                                   letterSpacing: 0.0,
                                                                 ),
                                                           ),
@@ -2887,6 +3161,527 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
     );
   }
 
+  Widget _buildDayActionChip(BuildContext context, {required IconData icon, required String label, required Color color, required VoidCallback onTap}) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(14.0),
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 10.0),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(14.0),
+          border: Border.all(color: color.withOpacity(0.3)),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 14.0, color: color),
+            SizedBox(width: 4.0),
+            Text(
+              label,
+              style: FlutterFlowTheme.of(context).bodySmall.override(
+                fontFamily: 'Andika New Basic',
+                color: color,
+                fontSize: 11.0,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 0.0,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Show picker of saved day templates to apply to a specific day
+  Future<void> _applyTemplateToDay(BuildContext context, DateTime day) async {
+    // Load all saved day templates
+    final allTemplates = await queryMealComboRecordOnce(
+      queryBuilder: (q) => q.where('user_ref', isEqualTo: currentUserReference),
+    );
+
+    // Group by day_template_group
+    final dayTemplates = allTemplates.where((t) => t.dayTemplateGroup.isNotEmpty).toList();
+    final Map<String, List<MealComboRecord>> grouped = {};
+    for (final t in dayTemplates) {
+      grouped.putIfAbsent(t.dayTemplateGroup, () => []).add(t);
+    }
+
+    if (grouped.isEmpty) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('No saved day templates yet. Use "Save" to create one first.')),
+        );
+      }
+      return;
+    }
+
+    if (!mounted) return;
+
+    // Show picker bottom sheet
+    final selectedGroupId = await showModalBottomSheet<String>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (ctx) => Container(
+        constraints: BoxConstraints(maxHeight: MediaQuery.of(ctx).size.height * 0.5),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20.0),
+            topRight: Radius.circular(20.0),
+          ),
+        ),
+        padding: EdgeInsets.fromLTRB(20.0, 16.0, 20.0, MediaQuery.of(ctx).padding.bottom + 20.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 40.0, height: 4.0,
+                decoration: BoxDecoration(color: Color(0xFFDDDDDD), borderRadius: BorderRadius.circular(2.0)),
+              ),
+            ),
+            SizedBox(height: 16.0),
+            Text(
+              'Apply Template to ${dateTimeFormat('E, MMM d', day)}',
+              style: FlutterFlowTheme.of(context).titleSmall.override(
+                fontFamily: 'Andika New Basic',
+                fontSize: 16.0,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 0.0,
+              ),
+            ),
+            SizedBox(height: 12.0),
+            Flexible(
+              child: ListView(
+                shrinkWrap: true,
+                children: grouped.entries.map((entry) {
+                  final templates = entry.value;
+                  final groupName = templates.first.dayTemplateName.isNotEmpty
+                      ? templates.first.dayTemplateName
+                      : 'Saved Day';
+                  return Padding(
+                    padding: EdgeInsets.only(bottom: 8.0),
+                    child: InkWell(
+                      onTap: () => Navigator.pop(ctx, entry.key),
+                      borderRadius: BorderRadius.circular(10.0),
+                      child: Container(
+                        padding: EdgeInsets.all(12.0),
+                        decoration: BoxDecoration(
+                          color: Color(0xFFF5F5F5),
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.calendar_today, size: 20.0, color: Color(0xFFFF9800)),
+                            SizedBox(width: 10.0),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    groupName,
+                                    style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                      fontFamily: 'Andika New Basic',
+                                      fontSize: 13.0,
+                                      fontWeight: FontWeight.w600,
+                                      letterSpacing: 0.0,
+                                    ),
+                                  ),
+                                  Text(
+                                    '${templates.length} meal${templates.length == 1 ? '' : 's'}',
+                                    style: FlutterFlowTheme.of(context).bodySmall.override(
+                                      fontFamily: 'Andika New Basic',
+                                      fontSize: 10.0,
+                                      color: Color(0xFF999999),
+                                      letterSpacing: 0.0,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            InkWell(
+                              onTap: () => _showTemplatePreview(ctx, groupName, templates),
+                              borderRadius: BorderRadius.circular(16.0),
+                              child: Padding(
+                                padding: EdgeInsets.all(6.0),
+                                child: Icon(Icons.visibility_outlined, size: 20.0, color: Color(0xFF999999)),
+                              ),
+                            ),
+                            SizedBox(width: 4.0),
+                            Icon(Icons.chevron_right, size: 20.0, color: Color(0xFFCCCCCC)),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    if (selectedGroupId == null || !mounted) return;
+
+    // Apply the selected template to the day
+    final selectedTemplates = grouped[selectedGroupId]!;
+    for (final template in selectedTemplates) {
+      if (template.mealTyp == null) continue;
+      final mealPlanData = createMealPlanRecordData(
+        date: day,
+        typ: template.mealTyp,
+        userRef: currentUserReference,
+      );
+      // Create combo from template data
+      final comboData = createMealComboRecordData(
+        name: template.name,
+        entreeRef: template.entreeRef,
+        drinkType: template.drinkType,
+        drinkCustom: template.drinkCustom.isNotEmpty ? template.drinkCustom : null,
+        mealTyp: template.mealTyp,
+        userRef: currentUserReference,
+        createdTime: DateTime.now(),
+      );
+      comboData['side_refs'] = template.sideRefs.toList();
+      comboData['dessert_refs'] = template.dessertRefs.toList();
+
+      final comboRef = await MealComboRecord.collection.add(comboData);
+      mealPlanData['meal_combo_ref'] = comboRef;
+      await MealPlanRecord.collection.doc().set(mealPlanData);
+    }
+
+    FFAppState().MealCashtearm = true;
+    _model.invalidateCache();
+    await _model.refreshMealPlans();
+    if (mounted) setState(() {});
+  }
+
+  /// Show a preview of meals in a saved day template
+  void _showTemplatePreview(BuildContext context, String templateName, List<MealComboRecord> meals) {
+    // Sort meals by type order: Breakfast, Lunch, Dinner, Snacks
+    final sortOrder = {MealTyp.Breakfast: 0, MealTyp.Lunch: 1, MealTyp.Dinner: 2, MealTyp.Snacks: 3};
+    final sorted = List<MealComboRecord>.from(meals)
+      ..sort((a, b) => (sortOrder[a.mealTyp] ?? 4).compareTo(sortOrder[b.mealTyp] ?? 4));
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (ctx) => Container(
+        constraints: BoxConstraints(maxHeight: MediaQuery.of(ctx).size.height * 0.6),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20.0),
+            topRight: Radius.circular(20.0),
+          ),
+        ),
+        padding: EdgeInsets.fromLTRB(20.0, 16.0, 20.0, MediaQuery.of(ctx).padding.bottom + 20.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 40.0, height: 4.0,
+                decoration: BoxDecoration(color: Color(0xFFDDDDDD), borderRadius: BorderRadius.circular(2.0)),
+              ),
+            ),
+            SizedBox(height: 16.0),
+            Text(
+              templateName,
+              style: FlutterFlowTheme.of(context).titleSmall.override(
+                fontFamily: 'Andika New Basic',
+                fontSize: 16.0,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 0.0,
+              ),
+            ),
+            SizedBox(height: 12.0),
+            Flexible(
+              child: ListView(
+                shrinkWrap: true,
+                children: sorted.map((meal) => _buildTemplatePreviewMealRow(context, meal)).toList(),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Build a single meal row for the template preview with thumbnails
+  Widget _buildTemplatePreviewMealRow(BuildContext context, MealComboRecord meal) {
+    final mealTypeLabel = meal.mealTyp?.name ?? 'Meal';
+    final mealName = meal.name.isNotEmpty ? meal.name : 'Unnamed meal';
+    final hasSides = meal.sideRefs.isNotEmpty;
+    final hasDesserts = meal.hasDessertRefs();
+    final hasDrink = meal.hasDrinkType();
+    final drinkLabel = meal.drinkCustom.isNotEmpty ? meal.drinkCustom : (meal.drinkType?.name ?? 'Drink');
+
+    // Read leftover flags from raw snapshot data
+    final isLeftoverEntree = meal.snapshotData['is_leftover_entree'] == true;
+    final isLeftoverSide = meal.snapshotData['is_leftover_side'] == true;
+    final isLeftoverDessert = meal.snapshotData['is_leftover_dessert'] == true;
+
+    return Padding(
+      padding: EdgeInsets.only(bottom: 10.0),
+      child: Container(
+        padding: EdgeInsets.all(12.0),
+        decoration: BoxDecoration(
+          color: Color(0xFFF5F5F5),
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Meal type badge + name
+            Row(
+              children: [
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                  decoration: BoxDecoration(
+                    color: Color(0xFFFF9800).withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(6.0),
+                  ),
+                  child: Text(
+                    mealTypeLabel,
+                    style: FlutterFlowTheme.of(context).bodySmall.override(
+                      fontFamily: 'Andika New Basic',
+                      fontSize: 10.0,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFFFF9800),
+                      letterSpacing: 0.0,
+                    ),
+                  ),
+                ),
+                SizedBox(width: 10.0),
+                Expanded(
+                  child: Text(
+                    mealName,
+                    style: FlutterFlowTheme.of(context).bodyMedium.override(
+                      fontFamily: 'Andika New Basic',
+                      fontSize: 13.0,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.0,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 8.0),
+            // Recipe thumbnails divided by type, drink on the right
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Entree
+                if (meal.entreeRef != null)
+                  _buildRecipeTypeGroup(context, 'Entree', [meal.entreeRef!], isLeftover: isLeftoverEntree),
+                // Sides
+                if (hasSides) ...[
+                  SizedBox(width: 12.0),
+                  _buildRecipeTypeGroup(context, meal.sideRefs.length == 1 ? 'Side' : 'Sides', meal.sideRefs, isLeftover: isLeftoverSide),
+                ],
+                // Desserts
+                if (hasDesserts) ...[
+                  SizedBox(width: 12.0),
+                  _buildRecipeTypeGroup(context, meal.dessertRefs.length == 1 ? 'Dessert' : 'Desserts', meal.dessertRefs, isLeftover: isLeftoverDessert),
+                ],
+                // Drink - next to the last recipe group on the right
+                if (hasDrink) ...[
+                  SizedBox(width: 12.0),
+                  Column(
+                    children: [
+                      Text('Drink', style: FlutterFlowTheme.of(context).bodySmall.override(fontFamily: 'Andika New Basic', fontSize: 9.0, color: _getPreviewDrinkColor(meal.drinkType!), fontWeight: FontWeight.w600, letterSpacing: 0.0)),
+                      SizedBox(height: 4.0),
+                      Container(
+                        width: 48.0, height: 48.0,
+                        decoration: BoxDecoration(
+                          color: _getPreviewDrinkColor(meal.drinkType!).withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(_getPreviewDrinkIcon(meal.drinkType!), size: 20.0, color: _getPreviewDrinkColor(meal.drinkType!)),
+                            SizedBox(height: 2.0),
+                            Text(drinkLabel, style: TextStyle(fontFamily: 'Andika New Basic', fontSize: 7.0, color: _getPreviewDrinkColor(meal.drinkType!), fontWeight: FontWeight.w600), overflow: TextOverflow.ellipsis),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Drink icon matching the meal composer's mapping
+  IconData _getPreviewDrinkIcon(DrinkType drink) {
+    switch (drink) {
+      case DrinkType.Water: return Icons.water_drop;
+      case DrinkType.Milk: return Icons.local_drink;
+      case DrinkType.Juice: return Icons.local_bar;
+      case DrinkType.Lemonade: return Icons.local_cafe;
+      case DrinkType.Smoothie: return Icons.blender;
+      case DrinkType.Tea: return Icons.emoji_food_beverage;
+      case DrinkType.Coffee: return Icons.coffee;
+      case DrinkType.Soda: return Icons.local_drink;
+      case DrinkType.Other: return Icons.edit;
+    }
+  }
+
+  /// Drink color matching the meal composer's mapping
+  Color _getPreviewDrinkColor(DrinkType drink) {
+    switch (drink) {
+      case DrinkType.Water: return Color(0xFF42A5F5);
+      case DrinkType.Milk: return Color(0xFF8D6E63);
+      case DrinkType.Juice: return Color(0xFFFF9800);
+      case DrinkType.Lemonade: return Color(0xFFFBC02D);
+      case DrinkType.Smoothie: return Color(0xFFE91E63);
+      case DrinkType.Tea: return Color(0xFF66BB6A);
+      case DrinkType.Coffee: return Color(0xFF5D4037);
+      case DrinkType.Soda: return Color(0xFF7E57C2);
+      case DrinkType.Other: return Color(0xFF78909C);
+    }
+  }
+
+  /// Build a labeled group of recipe thumbnails (e.g., "Entree", "Sides", "Desserts")
+  Widget _buildRecipeTypeGroup(BuildContext context, String label, List<DocumentReference> refs, {bool isLeftover = false}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              label,
+              style: FlutterFlowTheme.of(context).bodySmall.override(
+                fontFamily: 'Andika New Basic',
+                fontSize: 9.0,
+                color: isLeftover ? Color(0xFFFF9800) : Color(0xFF999999),
+                fontWeight: FontWeight.w600,
+                letterSpacing: 0.0,
+              ),
+            ),
+            if (isLeftover) ...[
+              SizedBox(width: 3.0),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 3.0, vertical: 0.5),
+                decoration: BoxDecoration(
+                  color: Color(0xFFFF9800).withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(3.0),
+                ),
+                child: Text(
+                  'L',
+                  style: TextStyle(
+                    fontFamily: 'Andika New Basic',
+                    fontSize: 8.0,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFFFF9800),
+                  ),
+                ),
+              ),
+            ],
+          ],
+        ),
+        SizedBox(height: 4.0),
+        Row(
+          children: refs.map((ref) => _buildRecipeThumbnail(ref, isLeftover: isLeftover)).toList(),
+        ),
+      ],
+    );
+  }
+
+  /// Build a small thumbnail for a recipe reference
+  Widget _buildRecipeThumbnail(DocumentReference recipeRef, {bool isLeftover = false}) {
+    return Padding(
+      padding: EdgeInsets.only(right: 6.0),
+      child: FutureBuilder<DocumentSnapshot>(
+        future: recipeRef.get(),
+        builder: (context, snapshot) {
+          String? imageUrl;
+          String? recipeName;
+          if (snapshot.hasData && snapshot.data!.exists) {
+            final data = snapshot.data!.data() as Map<String, dynamic>?;
+            imageUrl = data?['image_url'] as String?;
+            recipeName = data?['recipe_name'] as String?;
+          }
+
+          Widget thumbnail;
+          if (_isValidImageUrl(imageUrl)) {
+            thumbnail = ClipRRect(
+              borderRadius: BorderRadius.circular(8.0),
+              child: CachedNetworkImage(
+                imageUrl: imageUrl!,
+                width: 48.0,
+                height: 48.0,
+                fit: BoxFit.cover,
+                placeholder: (context, url) => _buildThumbnailPlaceholder(recipeName),
+                errorWidget: (context, url, error) => _buildThumbnailPlaceholder(recipeName),
+                fadeInDuration: Duration(milliseconds: 50),
+                fadeOutDuration: Duration(milliseconds: 50),
+              ),
+            );
+          } else {
+            thumbnail = _buildThumbnailPlaceholder(recipeName);
+          }
+
+          if (isLeftover) {
+            return Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Opacity(opacity: 0.7, child: thumbnail),
+                Positioned(
+                  top: -2, right: -2,
+                  child: Container(
+                    padding: EdgeInsets.all(2.0),
+                    decoration: BoxDecoration(
+                      color: Color(0xFFFF9800),
+                      borderRadius: BorderRadius.circular(6.0),
+                    ),
+                    child: Text('L', style: TextStyle(fontSize: 8.0, fontWeight: FontWeight.bold, color: Colors.white)),
+                  ),
+                ),
+              ],
+            );
+          }
+          return thumbnail;
+        },
+      ),
+    );
+  }
+
+  Widget _buildThumbnailPlaceholder(String? name) {
+    final initial = (name != null && name.isNotEmpty) ? name[0].toUpperCase() : '?';
+    return Container(
+      width: 48.0,
+      height: 48.0,
+      decoration: BoxDecoration(
+        color: Color(0xFFE0E0E0),
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      alignment: Alignment.center,
+      child: Text(
+        initial,
+        style: TextStyle(
+          fontFamily: 'Andika New Basic',
+          fontSize: 16.0,
+          fontWeight: FontWeight.w600,
+          color: Color(0xFF999999),
+        ),
+      ),
+    );
+  }
+
   Widget _buildDirectionRow(BuildContext context, IconData icon, Color color, String text) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -2935,46 +3730,47 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
           if (hasAnyMeals)
             Padding(
               padding: EdgeInsets.only(bottom: 8.0),
-              child: Row(
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
                 children: [
-                  // ARCHIVED: Share day button — see sharing archive block above
-                  // Clear All button
-                  InkWell(
+                  // Share button
+                  _buildDayActionChip(
+                    context,
+                    icon: Icons.share,
+                    label: 'Share',
+                    color: FlutterFlowTheme.of(context).secondary,
+                    onTap: () => _shareSingleDay(context, day, dayMealPlans),
+                  ),
+                  SizedBox(width: 6.0),
+                  // Save button
+                  _buildDayActionChip(
+                    context,
+                    icon: Icons.bookmark_add_outlined,
+                    label: 'Save',
+                    color: FlutterFlowTheme.of(context).primary,
+                    onTap: () => _saveDayAsTemplates(context, day, dayMealPlans),
+                  ),
+                  SizedBox(width: 6.0),
+                  // Template button - apply a saved day template to this day
+                  _buildDayActionChip(
+                    context,
+                    icon: Icons.calendar_today,
+                    label: 'Template',
+                    color: Color(0xFFFF9800),
+                    onTap: () => _applyTemplateToDay(context, day),
+                  ),
+                  SizedBox(width: 6.0),
+                  // Clear button
+                  _buildDayActionChip(
+                    context,
+                    icon: Icons.clear_all,
+                    label: 'Clear',
+                    color: Colors.red,
                     onTap: () => _clearAllMealsForDay(context, day, dayMealPlans),
-                    borderRadius: BorderRadius.circular(14.0),
-                    child: Container(
-                      padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
-                      decoration: BoxDecoration(
-                        color: Colors.red.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(14.0),
-                        border: Border.all(
-                          color: Colors.red.withOpacity(0.3),
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.clear_all,
-                            size: 16.0,
-                            color: Colors.red,
-                          ),
-                          SizedBox(width: 6.0),
-                          Text(
-                            'Clear All',
-                            style: FlutterFlowTheme.of(context).bodySmall.override(
-                              fontFamily: 'Andika New Basic',
-                              color: Colors.red,
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: 0.0,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
                   ),
                 ],
+              ),
               ),
             ),
           // Meal slots - cascade in separately
@@ -3815,7 +4611,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                           onTap: () {
                             Navigator.pop(context);
                             _generateMealPlanFromCookbook(
-                              todayOnly: true,
+                              selectedDates: [day],
                               mealTypes: [mealType],
                             );
                           },

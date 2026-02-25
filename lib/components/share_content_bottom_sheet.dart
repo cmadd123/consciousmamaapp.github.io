@@ -8,7 +8,7 @@ import '/backend/backend.dart';
 
 /// Bottom sheet for sharing content with other moms
 class ShareContentBottomSheet extends StatefulWidget {
-  final String contentType; // 'meal_plan', 'single_day', 'single_meal', 'single_recipe', 'single_combo', 'learning_path', 'activity'
+  final String contentType; // 'meal_plan', 'single_day', 'single_meal', 'single_recipe', 'single_combo', 'learning_path', 'activity', 'day_template'
   final String title;
   final String? description;
 
@@ -40,6 +40,11 @@ class ShareContentBottomSheet extends StatefulWidget {
   // For activity plan sharing (weekly activities)
   final List<EventAndTaskRecord>? weekActivities;
 
+  // For day template sharing
+  final String? dayTemplateName;
+  final List<MealComboRecord>? dayTemplates;
+  final List<MealRecord>? dayTemplateMeals;
+
   const ShareContentBottomSheet({
     super.key,
     required this.contentType,
@@ -59,6 +64,9 @@ class ShareContentBottomSheet extends StatefulWidget {
     this.tasks,
     this.activity,
     this.weekActivities,
+    this.dayTemplateName,
+    this.dayTemplates,
+    this.dayTemplateMeals,
   });
 
   @override
@@ -103,6 +111,8 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
         return 'Activity';
       case 'activity_plan':
         return 'Activity Plan';
+      case 'day_template':
+        return 'Day Template';
       default:
         return 'Content';
     }
@@ -125,6 +135,8 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
         return 'Your friend will be able to save this activity to their collection and add it to their calendar.';
       case 'activity_plan':
         return 'Your friend will be able to import these activities to their calendar for the next 7 days.';
+      case 'day_template':
+        return 'Your friend will be able to save this day template to their cookbook and use it for meal planning.';
       default:
         return 'Your friend will be able to import this content.';
     }
@@ -494,6 +506,17 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
           );
         }
         break;
+
+      case 'day_template':
+        if (widget.dayTemplateName != null && widget.dayTemplates != null && widget.dayTemplateMeals != null) {
+          code = await SharingService.shareDayTemplate(
+            dayTemplateName: widget.dayTemplateName!,
+            templates: widget.dayTemplates!,
+            allMeals: widget.dayTemplateMeals!,
+            personalNote: personalNote.isNotEmpty ? personalNote : null,
+          );
+        }
+        break;
     }
 
     if (code != null) {
@@ -663,22 +686,117 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
           ],
         ),
       );
+    } else if (widget.contentType == 'day_template' && widget.dayTemplates != null) {
+      // Day template preview
+      final templateCount = widget.dayTemplates!.length;
+      final mealTypes = widget.dayTemplates!
+          .map((t) => t.mealTyp?.name ?? 'Meal')
+          .toSet();
+
+      return Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.grey[200]!),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'What you\'re sharing:',
+              style: FlutterFlowTheme.of(context).bodyMedium.override(
+                fontFamily: 'Andika New Basic',
+                fontWeight: FontWeight.w600,
+                letterSpacing: 0.0,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Center(
+                    child: Icon(
+                      Icons.calendar_view_day,
+                      color: FlutterFlowTheme.of(context).primary,
+                      size: 24,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.dayTemplateName ?? 'Day Template',
+                        style: FlutterFlowTheme.of(context).bodyMedium.override(
+                          fontFamily: 'Andika New Basic',
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 0.0,
+                        ),
+                      ),
+                      Text(
+                        '$templateCount meal${templateCount == 1 ? '' : 's'}',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey[600],
+                          fontFamily: 'Andika New Basic',
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            if (mealTypes.isNotEmpty) ...[
+              const SizedBox(height: 12),
+              Wrap(
+                spacing: 6,
+                runSpacing: 6,
+                children: mealTypes.map((type) => Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    type,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: FlutterFlowTheme.of(context).primary,
+                      fontFamily: 'Andika New Basic',
+                    ),
+                  ),
+                )).toList(),
+              ),
+            ],
+          ],
+        ),
+      );
     } else if (widget.contentType == 'activity_plan' && widget.weekActivities != null) {
       // Activity plan preview - show week overview
       final activityCount = widget.weekActivities!.length;
 
-      // Use today as the reference point (day_offset 0 = today, 1 = tomorrow, etc.)
-      final today = DateTime.now();
-      final normalizedStart = DateTime(today.year, today.month, today.day);
+      // Use weekStart as the reference point, falling back to today
+      final refDate = widget.weekStart ?? DateTime.now();
+      final normalizedStart = DateTime(refDate.year, refDate.month, refDate.day);
 
-      // Generate day labels starting from today (e.g., "Today", "Wed", "Thu", etc.)
+      // Generate day labels starting from reference date
+      final nowNorm = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
       final dayLabels = List.generate(7, (index) {
-        if (index == 0) return 'Today';
         final date = normalizedStart.add(Duration(days: index));
+        if (date == nowNorm) return 'Today';
         return DateFormat('E').format(date); // Short day name like "Wed"
       });
 
-      // Group activities by day offset from today
+      // Group activities by day offset from reference start
       final activitiesByDay = <int, int>{};
       for (final activity in widget.weekActivities!) {
         if (activity.date != null) {
@@ -1059,6 +1177,27 @@ void showShareActivityPlanBottomSheet({
       title: planTitle ?? 'Activity Plan',
       weekStart: weekStart,
       weekActivities: activities,
+    ),
+  );
+}
+
+/// Helper function to share a day template
+void showShareDayTemplateBottomSheet({
+  required BuildContext context,
+  required String dayTemplateName,
+  required List<MealComboRecord> templates,
+  required List<MealRecord> allMeals,
+}) {
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    builder: (context) => ShareContentBottomSheet(
+      contentType: 'day_template',
+      title: dayTemplateName,
+      dayTemplateName: dayTemplateName,
+      dayTemplates: templates,
+      dayTemplateMeals: allMeals,
     ),
   );
 }

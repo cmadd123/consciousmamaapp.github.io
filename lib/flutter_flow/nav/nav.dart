@@ -707,6 +707,8 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
             mealType: params.getParam<MealTyp>('mealType', ParamType.Enum) ?? MealTyp.Dinner,
             existingMealPlan: params.getParam('existingMealPlan', ParamType.Document),
             editTemplateId: params.getParam('editTemplateId', ParamType.String),
+            dayTemplateGroup: params.getParam('dayTemplateGroup', ParamType.String),
+            dayTemplateName: params.getParam('dayTemplateName', ParamType.String),
           ),
         ),
         FFRoute(
@@ -982,6 +984,10 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
             fromPage: params.getParam(
               'fromPage',
               ParamType.String,
+            ),
+            initialDate: params.getParam(
+              'initialDate',
+              ParamType.DateTime,
             ),
           ),
         ),

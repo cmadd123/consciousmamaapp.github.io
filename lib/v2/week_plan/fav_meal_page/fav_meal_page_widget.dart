@@ -1,6 +1,7 @@
 import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
 import '/backend/schema/enums/enums.dart';
+import '/components/home_nav_bar_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
@@ -11,9 +12,11 @@ import '/index.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'fav_meal_page_model.dart';
 export 'fav_meal_page_model.dart';
 
@@ -50,10 +53,11 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
   /// Sizes: 236x (thumbnail), 474x (medium), 564x (large), originals (full)
   String _upgradePinterestImageUrl(String url) {
     if (url.contains('i.pinimg.com')) {
-      // Upgrade to 564x (large) which balances quality and load time
+      // Upgrade to originals (full resolution) for best image quality
       return url
-          .replaceFirst('/236x/', '/564x/')
-          .replaceFirst('/474x/', '/564x/');
+          .replaceFirst('/236x/', '/originals/')
+          .replaceFirst('/474x/', '/originals/')
+          .replaceFirst('/564x/', '/originals/');
     }
     return url;
   }
@@ -1063,6 +1067,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: Color(0xFFE8F5F3), // Light teal to match Cookbook button
+        bottomNavigationBar: const HomeNavBarWidget(currentPage: HomeNavPage.meals),
         body: SafeArea(
           top: true,
           child: Padding(
@@ -1205,7 +1210,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                       ],
                                     ),
                                   ),
-                                // My Recipes / Templates tab toggle
+                                // My Recipes / Templates / Saved Days tab toggle
                                 Padding(
                                   padding: EdgeInsetsDirectional.fromSTEB(
                                       8.0, 12.0, 8.0, 12.0),
@@ -1232,7 +1237,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                                 borderRadius: BorderRadius.circular(8.0),
                                               ),
                                               child: Text(
-                                                'My Recipes',
+                                                'Recipes',
                                                 textAlign: TextAlign.center,
                                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                   fontFamily: 'Andika New Basic',
@@ -1266,11 +1271,44 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                                 borderRadius: BorderRadius.circular(8.0),
                                               ),
                                               child: Text(
-                                                'Meal Templates',
+                                                'Templates',
                                                 textAlign: TextAlign.center,
                                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                   fontFamily: 'Andika New Basic',
                                                   color: _model.recipeSourceTab == 'templates'
+                                                      ? Colors.white
+                                                      : Color(0xFF666666),
+                                                  fontSize: 13.0,
+                                                  fontWeight: FontWeight.w600,
+                                                  letterSpacing: 0.0,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: InkWell(
+                                            onTap: () {
+                                              _model.recipeSourceTab = 'savedDays';
+                                              _model.categoryFilter = 'All';
+                                              _model.loadedMealTemplates = false;
+                                              _loadMealTemplates();
+                                              safeSetState(() {});
+                                            },
+                                            child: Container(
+                                              padding: EdgeInsets.symmetric(vertical: 10.0),
+                                              decoration: BoxDecoration(
+                                                color: _model.recipeSourceTab == 'savedDays'
+                                                    ? FlutterFlowTheme.of(context).primary
+                                                    : Colors.transparent,
+                                                borderRadius: BorderRadius.circular(8.0),
+                                              ),
+                                              child: Text(
+                                                'Saved Days',
+                                                textAlign: TextAlign.center,
+                                                style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                  fontFamily: 'Andika New Basic',
+                                                  color: _model.recipeSourceTab == 'savedDays'
                                                       ? Colors.white
                                                       : Color(0xFF666666),
                                                   fontSize: 13.0,
@@ -1337,7 +1375,8 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                     ),
                                   ),
                                 ),
-                                // Filter chips - grouped by category (show for both My Recipes and Templates)
+                                // Filter chips - grouped by category (show for My Recipes and Templates, not Saved Days)
+                                if (_model.recipeSourceTab != 'savedDays')
                                 Padding(
                                   padding: EdgeInsetsDirectional.fromSTEB(
                                       8.0, 0.0, 8.0, 8.0),
@@ -1426,7 +1465,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                         ),
                                       ),
                                       // Recipe Types (only for My Recipes tab)
-                                      if (_model.recipeSourceTab != 'templates') ...[
+                                      if (_model.recipeSourceTab == 'my') ...[
                                       Padding(
                                         padding: EdgeInsetsDirectional.fromSTEB(0.0, 12.0, 0.0, 8.0),
                                         child: Text(
@@ -1587,6 +1626,11 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                     // Handle templates tab separately
                                     if (_model.recipeSourceTab == 'templates') {
                                       return _buildTemplatesView(context);
+                                    }
+
+                                    // Handle saved days tab
+                                    if (_model.recipeSourceTab == 'savedDays') {
+                                      return _buildSavedDaysView(context);
                                     }
 
                                     // Get the active recipe list based on selected tab
@@ -2189,11 +2233,14 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
           mainAxisSize: MainAxisSize.min,
           children: [
             // Add button
-            if (_model.recipeSourceTab == 'my' || _model.recipeSourceTab == 'templates')
+            if (_model.recipeSourceTab == 'my' || _model.recipeSourceTab == 'templates' || _model.recipeSourceTab == 'savedDays')
               FloatingActionButton(
                 heroTag: 'add_recipe',
                 onPressed: () {
-                  if (_model.recipeSourceTab == 'templates') {
+                  if (_model.recipeSourceTab == 'savedDays') {
+                    // Open create day template flow
+                    _showCreateDayTemplateSheet(context);
+                  } else if (_model.recipeSourceTab == 'templates') {
                     // Navigate to meal composer in template creation mode
                     context.pushNamed(
                       'MealComposer',
@@ -2230,14 +2277,918 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
     );
   }
 
+  /// Show dialog to name a day template, then let user build each meal via MealComposer
+  void _showCreateDayTemplateSheet(BuildContext context) async {
+    final nameController = TextEditingController();
+    final theme = FlutterFlowTheme.of(context);
+
+    // Step 1: Ask for day name
+    final dayName = await showDialog<String>(
+      context: context,
+      builder: (ctx) {
+        final dialogTheme = FlutterFlowTheme.of(ctx);
+        return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
+          title: Text(
+            'Create Day Template',
+            style: dialogTheme.titleMedium.override(
+              fontFamily: 'Andika New Basic',
+              letterSpacing: 0.0,
+            ),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Give your day a name, then build each meal:',
+                style: dialogTheme.bodySmall.override(
+                  fontFamily: 'Andika New Basic',
+                  color: dialogTheme.secondaryText,
+                  letterSpacing: 0.0,
+                ),
+              ),
+              SizedBox(height: 12.0),
+              TextField(
+                controller: nameController,
+                autofocus: true,
+                decoration: InputDecoration(
+                  hintText: 'e.g., Taco Tuesday, Lazy Sunday',
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.0)),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
+                ),
+                style: dialogTheme.bodyMedium.override(
+                  fontFamily: 'Andika New Basic',
+                  letterSpacing: 0.0,
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, null),
+              child: Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                final name = nameController.text.trim();
+                if (name.isEmpty) return;
+                Navigator.pop(ctx, name);
+              },
+              style: ElevatedButton.styleFrom(backgroundColor: dialogTheme.primary),
+              child: Text('Next'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (dayName == null || dayName.isEmpty || !mounted) return;
+
+    // Generate group ID for this day template
+    final groupId = '${DateTime.now().millisecondsSinceEpoch}';
+
+    // Step 2: Show bottom sheet with meal slots
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      isDismissible: false,
+      builder: (sheetContext) => _DayTemplateBuilderSheet(
+        dayName: dayName,
+        groupId: groupId,
+        onDone: () {
+          Navigator.pop(sheetContext);
+          // Reload templates
+          _model.loadedMealTemplates = false;
+          _loadMealTemplates();
+        },
+        onNavigateToComposer: (MealTyp mealType, String? existingMealId) async {
+          // Navigate to MealComposer to build/edit a meal for this day slot
+          await context.pushNamed(
+            MealComposerWidget.routeName,
+            queryParameters: {
+              'editTemplateId': existingMealId ?? 'new',
+              'mealType': serializeParam(mealType, ParamType.Enum),
+              'dayTemplateGroup': groupId,
+              'dayTemplateName': dayName,
+            },
+          );
+          // Reload parent's templates too
+          _model.loadedMealTemplates = false;
+          _loadMealTemplates();
+        },
+      ),
+    );
+  }
+
+  /// Open the day template builder sheet for editing an existing saved day
+  void _showEditDayTemplateSheet(BuildContext context, String groupId, String dayName) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      isDismissible: false,
+      builder: (sheetContext) => _DayTemplateBuilderSheet(
+        dayName: dayName,
+        groupId: groupId,
+        onDone: () {
+          Navigator.pop(sheetContext);
+          _model.loadedMealTemplates = false;
+          _loadMealTemplates();
+        },
+        onNavigateToComposer: (MealTyp mealType, String? existingMealId) async {
+          await context.pushNamed(
+            MealComposerWidget.routeName,
+            queryParameters: {
+              'editTemplateId': existingMealId ?? 'new',
+              'mealType': serializeParam(mealType, ParamType.Enum),
+              'dayTemplateGroup': groupId,
+              'dayTemplateName': dayName,
+            },
+          );
+          _model.loadedMealTemplates = false;
+          _loadMealTemplates();
+        },
+      ),
+    );
+  }
+
+  /// Apply a saved day's templates to a chosen date in the meal planner
+  Future<void> _applyDayTemplateToDate(BuildContext context, List<MealComboRecord> templates, String groupName) async {
+    // Get dates from meal planner calendar selector, fall back to next 7 days
+    final plannerDates = FFAppState().mealPlanSelectedDates;
+    final dates = (plannerDates != null && plannerDates.isNotEmpty)
+        ? (List<DateTime>.from(plannerDates)..sort())
+        : List.generate(7, (i) => DateTime.now().add(Duration(days: i)));
+
+    // Fetch existing meal plans for all dates to show planned indicators
+    List<MealPlanRecord> allPlans = [];
+    try {
+      final earliest = DateTime(dates.first.year, dates.first.month, dates.first.day);
+      final latest = DateTime(dates.last.year, dates.last.month, dates.last.day).add(Duration(days: 1));
+      allPlans = await queryMealPlanRecordOnce(
+        queryBuilder: (q) => q
+            .where('user_ref', isEqualTo: currentUserReference)
+            .where('date', isGreaterThanOrEqualTo: earliest)
+            .where('date', isLessThan: latest),
+      );
+    } catch (_) {}
+
+    if (!mounted) return;
+
+    // Build a set of dates that already have meals
+    final plannedDates = <String>{};
+    for (final plan in allPlans) {
+      if (plan.date != null) {
+        plannedDates.add('${plan.date!.year}-${plan.date!.month}-${plan.date!.day}');
+      }
+    }
+
+    // Show bottom sheet with day chips
+    final picked = await showModalBottomSheet<DateTime>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) {
+        final theme = FlutterFlowTheme.of(sheetContext);
+        return Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20.0),
+              topRight: Radius.circular(20.0),
+            ),
+          ),
+          padding: EdgeInsets.fromLTRB(20.0, 16.0, 20.0, MediaQuery.of(sheetContext).padding.bottom + 20.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Handle bar
+              Center(
+                child: Container(
+                  width: 40.0,
+                  height: 4.0,
+                  decoration: BoxDecoration(
+                    color: Color(0xFFDDDDDD),
+                    borderRadius: BorderRadius.circular(2.0),
+                  ),
+                ),
+              ),
+              SizedBox(height: 16.0),
+              Text(
+                'Apply "$groupName" to:',
+                style: theme.titleSmall.override(
+                  fontFamily: 'Andika New Basic',
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0.0,
+                ),
+              ),
+              SizedBox(height: 4.0),
+              Text(
+                '${templates.length} meal${templates.length > 1 ? 's' : ''} will be added',
+                style: theme.bodySmall.override(
+                  fontFamily: 'Andika New Basic',
+                  color: Color(0xFF999999),
+                  fontSize: 12.0,
+                  letterSpacing: 0.0,
+                ),
+              ),
+              SizedBox(height: 16.0),
+              // Day chips
+              Wrap(
+                spacing: 8.0,
+                runSpacing: 8.0,
+                children: dates.map((date) {
+                  final normalized = DateTime(date.year, date.month, date.day);
+                  final dateKey = '${normalized.year}-${normalized.month}-${normalized.day}';
+                  final hasPlans = plannedDates.contains(dateKey);
+                  final isToday = normalized.year == DateTime.now().year &&
+                      normalized.month == DateTime.now().month &&
+                      normalized.day == DateTime.now().day;
+
+                  return InkWell(
+                    onTap: () => Navigator.pop(sheetContext, normalized),
+                    borderRadius: BorderRadius.circular(12.0),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 14.0, vertical: 10.0),
+                      decoration: BoxDecoration(
+                        color: isToday
+                            ? theme.primary.withOpacity(0.1)
+                            : Color(0xFFF5F5F5),
+                        borderRadius: BorderRadius.circular(12.0),
+                        border: Border.all(
+                          color: isToday
+                              ? theme.primary.withOpacity(0.4)
+                              : Color(0xFFE0E0E0),
+                        ),
+                      ),
+                      child: Column(
+                        children: [
+                          Text(
+                            dateTimeFormat('E', normalized),
+                            style: theme.bodySmall.override(
+                              fontFamily: 'Andika New Basic',
+                              fontSize: 11.0,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 0.0,
+                              color: isToday ? theme.primary : Color(0xFF666666),
+                            ),
+                          ),
+                          SizedBox(height: 2.0),
+                          Text(
+                            dateTimeFormat('MMMd', normalized),
+                            style: theme.bodySmall.override(
+                              fontFamily: 'Andika New Basic',
+                              fontSize: 12.0,
+                              fontWeight: FontWeight.w500,
+                              letterSpacing: 0.0,
+                            ),
+                          ),
+                          if (hasPlans) ...[
+                            SizedBox(height: 4.0),
+                            Container(
+                              padding: EdgeInsets.symmetric(horizontal: 6.0, vertical: 1.0),
+                              decoration: BoxDecoration(
+                                color: Color(0xFFFF9800).withOpacity(0.15),
+                                borderRadius: BorderRadius.circular(4.0),
+                              ),
+                              child: Text(
+                                'planned',
+                                style: theme.bodySmall.override(
+                                  fontFamily: 'Andika New Basic',
+                                  fontSize: 9.0,
+                                  color: Color(0xFFFF9800),
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 0.0,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+
+    if (picked == null || !mounted) return;
+
+    final targetDate = picked;
+
+    // Check existing meals on that specific day
+    final existingPlans = allPlans.where((p) {
+      if (p.date == null) return false;
+      return p.date!.year == targetDate.year &&
+             p.date!.month == targetDate.month &&
+             p.date!.day == targetDate.day;
+    }).toList();
+
+    // If meals exist, ask to replace or skip
+    bool replaceExisting = false;
+    if (existingPlans.isNotEmpty) {
+      final result = await showDialog<String>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
+          title: Text('Day Already Has Meals'),
+          content: Text(
+            '${dateTimeFormat('EEEE, MMMd', targetDate)} already has ${existingPlans.length} meal${existingPlans.length > 1 ? 's' : ''} planned. What would you like to do?',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, 'cancel'),
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, 'skip'),
+              child: Text('Keep Existing'),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.pop(ctx, 'replace'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: FlutterFlowTheme.of(ctx).primary,
+              ),
+              child: Text('Replace All'),
+            ),
+          ],
+        ),
+      );
+
+      if (result == null || result == 'cancel' || !mounted) return;
+      replaceExisting = result == 'replace';
+    }
+
+    // Show loading
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Row(children: [
+        SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)),
+        SizedBox(width: 12), Text('Applying meals...'),
+      ]), duration: Duration(seconds: 10)),
+    );
+
+    try {
+      // Delete existing meals if replacing
+      if (replaceExisting) {
+        for (final plan in existingPlans) {
+          await plan.reference.delete();
+        }
+      }
+
+      int addedCount = 0;
+      final existingTypes = replaceExisting
+          ? <String>{}
+          : existingPlans.map((p) => p.typ?.name ?? '').toSet();
+
+      for (final template in templates) {
+        final mealType = template.mealTyp;
+        if (mealType == null) continue;
+
+        // Skip if keeping existing and this meal type already has a plan
+        if (!replaceExisting && existingTypes.contains(mealType.name)) continue;
+
+        // Create meal plan record referencing this template
+        await MealPlanRecord.collection.add({
+          'user_ref': currentUserReference,
+          'date': targetDate,
+          'typ': mealType.name,
+          'meal_combo_ref': template.reference,
+        });
+        addedCount++;
+      }
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+
+      if (addedCount > 0) {
+        HapticFeedback.mediumImpact();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('$addedCount meal${addedCount > 1 ? 's' : ''} added to ${dateTimeFormat('EEEE, MMMd', targetDate)}!'),
+            backgroundColor: FlutterFlowTheme.of(context).primary,
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('No new meals to add'), backgroundColor: Colors.orange),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error applying day template'), backgroundColor: Colors.red),
+      );
+    }
+  }
+
+  /// Build the Saved Days view — groups day templates by their shared group ID
+  Widget _buildSavedDaysView(BuildContext context) {
+    // Filter templates that have a day_template_group
+    final dayTemplates = _model.mealTemplates
+        .where((t) => t.hasDayTemplateGroup())
+        .toList();
+
+    // Apply search filter
+    final searchFiltered = _model.searchQuery.isEmpty
+        ? dayTemplates
+        : dayTemplates.where((t) {
+            final query = _model.searchQuery.toLowerCase();
+            return t.dayTemplateName.toLowerCase().contains(query) ||
+                   t.name.toLowerCase().contains(query);
+          }).toList();
+
+    if (dayTemplates.isEmpty) {
+      return Padding(
+        padding: const EdgeInsetsDirectional.fromSTEB(16.0, 40.0, 16.0, 40.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.calendar_today_outlined,
+              size: 64.0,
+              color: FlutterFlowTheme.of(context).primary.withOpacity(0.5),
+            ),
+            const SizedBox(height: 16.0),
+            Text(
+              'No Saved Days Yet',
+              style: FlutterFlowTheme.of(context).bodyMedium.override(
+                    fontFamily: 'Andika New Basic',
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.0,
+                  ),
+            ),
+            const SizedBox(height: 12.0),
+            Text(
+              'Save an entire day\'s meals from your meal planner using the "Save Day" button. They\'ll show up here for easy reuse!',
+              textAlign: TextAlign.center,
+              style: FlutterFlowTheme.of(context).bodySmall.override(
+                    fontFamily: 'Andika New Basic',
+                    color: const Color(0xFF666666),
+                    letterSpacing: 0.0,
+                  ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    // Group by day_template_group
+    final Map<String, List<MealComboRecord>> grouped = {};
+    for (final t in searchFiltered) {
+      grouped.putIfAbsent(t.dayTemplateGroup, () => []).add(t);
+    }
+
+    if (grouped.isEmpty) {
+      return Padding(
+        padding: const EdgeInsetsDirectional.fromSTEB(16.0, 40.0, 16.0, 40.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.search_off, size: 64.0, color: FlutterFlowTheme.of(context).primary.withOpacity(0.5)),
+            const SizedBox(height: 16.0),
+            Text(
+              'No Results Found',
+              style: FlutterFlowTheme.of(context).bodyMedium.override(
+                    fontFamily: 'Andika New Basic',
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.0,
+                  ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    // Sort groups by created time (most recent first)
+    final sortedGroups = grouped.entries.toList()
+      ..sort((a, b) {
+        final aTime = a.value.first.createdTime ?? DateTime(2000);
+        final bTime = b.value.first.createdTime ?? DateTime(2000);
+        return bTime.compareTo(aTime);
+      });
+
+    return Padding(
+      padding: const EdgeInsetsDirectional.fromSTEB(0.0, 8.0, 0.0, 0.0),
+      child: Column(
+        children: sortedGroups.map((entry) {
+          final templates = entry.value;
+          final groupName = templates.first.dayTemplateName.isNotEmpty
+              ? templates.first.dayTemplateName
+              : 'Saved Day';
+          final createdDate = templates.first.createdTime;
+
+          return Padding(
+            padding: const EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 16.0),
+            child: Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(14.0),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Day header
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(14.0),
+                    decoration: BoxDecoration(
+                      color: FlutterFlowTheme.of(context).primary.withOpacity(0.08),
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(14.0),
+                        topRight: Radius.circular(14.0),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.calendar_today,
+                          size: 18.0,
+                          color: FlutterFlowTheme.of(context).primary,
+                        ),
+                        SizedBox(width: 8.0),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                groupName,
+                                style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                      fontFamily: 'Andika New Basic',
+                                      fontSize: 15.0,
+                                      fontWeight: FontWeight.w600,
+                                      letterSpacing: 0.0,
+                                    ),
+                              ),
+                              if (createdDate != null)
+                                Text(
+                                  'Saved ${dateTimeFormat('MMMd', createdDate)}',
+                                  style: FlutterFlowTheme.of(context).bodySmall.override(
+                                        fontFamily: 'Andika New Basic',
+                                        color: const Color(0xFF999999),
+                                        fontSize: 11.0,
+                                        letterSpacing: 0.0,
+                                      ),
+                                ),
+                            ],
+                          ),
+                        ),
+                        Text(
+                          '${templates.length} meal${templates.length > 1 ? 's' : ''}',
+                          style: FlutterFlowTheme.of(context).bodySmall.override(
+                                fontFamily: 'Andika New Basic',
+                                color: FlutterFlowTheme.of(context).primary,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: 0.0,
+                              ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Individual meals in this day (sorted: Breakfast, Lunch, Dinner, Snacks)
+                  ...(List<MealComboRecord>.from(templates)..sort((a, b) {
+                    const order = {MealTyp.Breakfast: 0, MealTyp.Lunch: 1, MealTyp.Dinner: 2, MealTyp.Snacks: 3};
+                    return (order[a.mealTyp] ?? 4).compareTo(order[b.mealTyp] ?? 4);
+                  })).map((template) {
+                    // For snacks, load first snack ref; for others, load entreeRef
+                    final isSnackType = template.mealTyp == MealTyp.Snacks;
+                    final snackRefs = template.snapshotData['snack_refs'] as List<dynamic>?;
+                    final firstSnackRef = (snackRefs != null && snackRefs.isNotEmpty && snackRefs.first is DocumentReference)
+                        ? snackRefs.first as DocumentReference
+                        : null;
+                    final recipeRef = template.entreeRef ?? firstSnackRef;
+
+                    return FutureBuilder<MealRecord?>(
+                      future: recipeRef != null
+                          ? recipeRef.get().then((doc) =>
+                              doc.exists ? MealRecord.fromSnapshot(doc) : null)
+                          : Future.value(null),
+                      builder: (context, snapshot) {
+                        final entree = snapshot.data;
+                        final mealTypeName = template.mealTyp?.name ?? '';
+
+                        // Check leftover flags
+                        final hasLeftover =
+                          template.snapshotData['is_leftover_entree'] == true ||
+                          template.snapshotData['is_leftover_side'] == true ||
+                          template.snapshotData['is_leftover_dessert'] == true ||
+                          template.snapshotData['is_leftover_snack'] == true;
+
+                        return InkWell(
+                          onTap: () {
+                            // Open in MealComposer for viewing/editing
+                            context.pushNamed(
+                              MealComposerWidget.routeName,
+                              queryParameters: {
+                                'date': serializeParam(DateTime.now(), ParamType.DateTime),
+                                'mealType': serializeParam(template.mealTyp ?? MealTyp.Dinner, ParamType.Enum),
+                                'editTemplateId': template.reference.id,
+                                'dayTemplateGroup': entry.key,
+                                'dayTemplateName': groupName,
+                              },
+                            ).then((_) {
+                              // Reload templates after returning
+                              _model.loadedMealTemplates = false;
+                              _loadMealTemplates();
+                            });
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 8.0),
+                            child: Row(
+                              children: [
+                                // Meal image
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  child: Container(
+                                    width: 44.0,
+                                    height: 44.0,
+                                    color: Color(0xFFE0E0E0),
+                                    child: entree != null && entree.imageUrl.isNotEmpty
+                                        ? Image.network(
+                                            _upgradePinterestImageUrl(entree.imageUrl),
+                                            fit: BoxFit.cover,
+                                            errorBuilder: (_, __, ___) => Icon(
+                                              Icons.restaurant,
+                                              color: Color(0xFF999999),
+                                              size: 22.0,
+                                            ),
+                                          )
+                                        : Icon(
+                                            Icons.restaurant,
+                                            color: Color(0xFF999999),
+                                            size: 22.0,
+                                          ),
+                                  ),
+                                ),
+                                SizedBox(width: 10.0),
+                                // Meal info
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        entree?.recipeName ?? template.name,
+                                        style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                              fontFamily: 'Andika New Basic',
+                                              fontSize: 13.0,
+                                              fontWeight: FontWeight.w500,
+                                              letterSpacing: 0.0,
+                                            ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      Row(
+                                        children: [
+                                          if (mealTypeName.isNotEmpty)
+                                            Container(
+                                              padding: EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
+                                              decoration: BoxDecoration(
+                                                color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
+                                                borderRadius: BorderRadius.circular(4.0),
+                                              ),
+                                              child: Text(
+                                                mealTypeName,
+                                                style: FlutterFlowTheme.of(context).bodySmall.override(
+                                                      fontFamily: 'Andika New Basic',
+                                                      fontSize: 10.0,
+                                                      color: FlutterFlowTheme.of(context).primary,
+                                                      fontWeight: FontWeight.w600,
+                                                      letterSpacing: 0.0,
+                                                    ),
+                                              ),
+                                            ),
+                                          if (hasLeftover) ...[
+                                            SizedBox(width: 5.0),
+                                            Container(
+                                              padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 1.0),
+                                              decoration: BoxDecoration(
+                                                color: Color(0xFFFF9800).withOpacity(0.15),
+                                                borderRadius: BorderRadius.circular(4.0),
+                                              ),
+                                              child: Text(
+                                                'L',
+                                                style: TextStyle(
+                                                  fontFamily: 'Andika New Basic',
+                                                  fontSize: 9.0,
+                                                  fontWeight: FontWeight.w700,
+                                                  color: Color(0xFFFF9800),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                          if (isSnackType && snackRefs != null && snackRefs.length > 1) ...[
+                                            SizedBox(width: 6.0),
+                                            Text(
+                                              '+${snackRefs.length - 1} more',
+                                              style: FlutterFlowTheme.of(context).bodySmall.override(
+                                                    fontFamily: 'Andika New Basic',
+                                                    fontSize: 10.0,
+                                                    color: Color(0xFF999999),
+                                                    letterSpacing: 0.0,
+                                                  ),
+                                            ),
+                                          ] else if (!isSnackType && template.sideRefs.isNotEmpty) ...[
+                                            SizedBox(width: 6.0),
+                                            Text(
+                                              '+${template.sideRefs.length} side${template.sideRefs.length > 1 ? 's' : ''}',
+                                              style: FlutterFlowTheme.of(context).bodySmall.override(
+                                                    fontFamily: 'Andika New Basic',
+                                                    fontSize: 10.0,
+                                                    color: Color(0xFF999999),
+                                                    letterSpacing: 0.0,
+                                                  ),
+                                            ),
+                                          ],
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Icon(
+                                  Icons.chevron_right,
+                                  size: 20.0,
+                                  color: Color(0xFFCCCCCC),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  }),
+                  SizedBox(height: 6.0),
+                  // Action buttons row
+                  Padding(
+                    padding: const EdgeInsets.only(left: 14.0, right: 14.0, bottom: 10.0),
+                    child: Row(
+                      children: [
+                        // Apply to Day button
+                        Expanded(
+                          child: InkWell(
+                            onTap: () => _applyDayTemplateToDate(context, templates, groupName),
+                            borderRadius: BorderRadius.circular(8.0),
+                            child: Container(
+                              padding: EdgeInsets.symmetric(vertical: 8.0),
+                              decoration: BoxDecoration(
+                                color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.add_circle_outline, size: 15.0, color: FlutterFlowTheme.of(context).primary),
+                                  SizedBox(width: 4.0),
+                                  Text(
+                                    'Apply to Day',
+                                    style: FlutterFlowTheme.of(context).bodySmall.override(
+                                          fontFamily: 'Andika New Basic',
+                                          color: FlutterFlowTheme.of(context).primary,
+                                          fontSize: 12.0,
+                                          fontWeight: FontWeight.w600,
+                                          letterSpacing: 0.0,
+                                        ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 8.0),
+                        // Share saved day button
+                        InkWell(
+                          onTap: () async {
+                            // Gather all meal refs from the templates
+                            final mealRefs = <DocumentReference>{};
+                            for (final t in templates) {
+                              if (t.entreeRef != null) mealRefs.add(t.entreeRef!);
+                              for (final ref in t.sideRefs) mealRefs.add(ref);
+                              for (final ref in t.dessertRefs) mealRefs.add(ref);
+                              final snackRefs = t.snapshotData['snack_refs'] as List<dynamic>?;
+                              if (snackRefs != null) {
+                                for (final ref in snackRefs) {
+                                  if (ref is DocumentReference) mealRefs.add(ref);
+                                }
+                              }
+                            }
+                            // Load all referenced meals
+                            final allMeals = <MealRecord>[];
+                            for (final ref in mealRefs) {
+                              final doc = await ref.get();
+                              if (doc.exists) {
+                                allMeals.add(MealRecord.fromSnapshot(doc));
+                              }
+                            }
+                            if (mounted) {
+                              showShareDayTemplateBottomSheet(
+                                context: context,
+                                dayTemplateName: groupName,
+                                templates: templates,
+                                allMeals: allMeals,
+                              );
+                            }
+                          },
+                          borderRadius: BorderRadius.circular(8.0),
+                          child: Container(
+                            padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                            decoration: BoxDecoration(
+                              color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            child: Icon(Icons.share_outlined, size: 16.0, color: FlutterFlowTheme.of(context).primary),
+                          ),
+                        ),
+                        SizedBox(width: 8.0),
+                        // Edit saved day button
+                        InkWell(
+                          onTap: () => _showEditDayTemplateSheet(context, entry.key, groupName),
+                          borderRadius: BorderRadius.circular(8.0),
+                          child: Container(
+                            padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                            decoration: BoxDecoration(
+                              color: FlutterFlowTheme.of(context).secondary.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            child: Icon(Icons.edit_outlined, size: 16.0, color: FlutterFlowTheme.of(context).secondary),
+                          ),
+                        ),
+                        SizedBox(width: 8.0),
+                        // Delete saved day button
+                        InkWell(
+                          onTap: () async {
+                            final confirm = await showDialog<bool>(
+                              context: context,
+                              builder: (ctx) => AlertDialog(
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
+                                title: Text('Delete "$groupName"?'),
+                                content: Text('This will delete all ${templates.length} templates in this saved day.'),
+                                actions: [
+                                  TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text('Cancel')),
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(ctx, true),
+                                    child: Text('Delete', style: TextStyle(color: Colors.red)),
+                                  ),
+                                ],
+                              ),
+                            );
+                            if (confirm == true) {
+                              for (final t in templates) {
+                                await t.reference.delete();
+                              }
+                              _model.loadedMealTemplates = false;
+                              await _loadMealTemplates();
+                            }
+                          },
+                          borderRadius: BorderRadius.circular(8.0),
+                          child: Container(
+                            padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                            decoration: BoxDecoration(
+                              color: Colors.red.withOpacity(0.08),
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            child: Icon(Icons.delete_outline, size: 16.0, color: Colors.red.withOpacity(0.6)),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
   /// Build the Meal Templates view
   Widget _buildTemplatesView(BuildContext context) {
+    // Exclude day templates — those show in the Saved Days tab
+    final regularTemplates = _model.mealTemplates
+        .where((t) => !t.hasDayTemplateGroup())
+        .toList();
+
     // Apply category filter
     final dietaryFilters = ['Gluten-Free', 'Dairy-Free', 'Nut-Free', 'Vegetarian', 'Vegan'];
     final filteredTemplates = _model.categoryFilter == 'All'
-        ? _model.mealTemplates
+        ? regularTemplates
         : dietaryFilters.contains(_model.categoryFilter)
-            ? _model.mealTemplates.where((template) {
+            ? regularTemplates.where((template) {
                 // For dietary filters, require ALL recipes in the template to match
                 final filterLower = _model.categoryFilter.toLowerCase();
                 final allRefs = <DocumentReference>[
@@ -2255,7 +3206,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                 }
                 return true;
               }).toList()
-            : _model.mealTemplates.where((template) {
+            : regularTemplates.where((template) {
                 // Meal type filter (Breakfast, Lunch, Dinner, Snacks)
                 if (template.mealTyp == null) return false;
                 final mealTypName = template.mealTyp!.name;
@@ -2270,7 +3221,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
             return template.name.toLowerCase().contains(query);
           }).toList();
 
-    if (_model.mealTemplates.isEmpty) {
+    if (regularTemplates.isEmpty) {
       // Empty state - no templates at all
       return Padding(
         padding: const EdgeInsetsDirectional.fromSTEB(16.0, 40.0, 16.0, 40.0),
@@ -2567,6 +3518,337 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
           ),
         );
       },
+    );
+  }
+}
+
+/// Day Template Builder — shows meal slots, each navigates to MealComposer
+class _DayTemplateBuilderSheet extends StatefulWidget {
+  final String dayName;
+  final String groupId;
+  final VoidCallback onDone;
+  final Future<void> Function(MealTyp mealType, String? existingMealId) onNavigateToComposer;
+
+  const _DayTemplateBuilderSheet({
+    required this.dayName,
+    required this.groupId,
+    required this.onDone,
+    required this.onNavigateToComposer,
+  });
+
+  @override
+  State<_DayTemplateBuilderSheet> createState() => _DayTemplateBuilderSheetState();
+}
+
+class _DayTemplateBuilderSheetState extends State<_DayTemplateBuilderSheet> {
+  List<MealComboRecord> _dayMeals = [];
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadDayMeals();
+  }
+
+  Future<void> _loadDayMeals() async {
+    try {
+      final results = await queryMealComboRecordOnce(
+        queryBuilder: (q) => q
+            .where('user_ref', isEqualTo: currentUserReference)
+            .where('day_template_group', isEqualTo: widget.groupId),
+      );
+      if (mounted) {
+        setState(() {
+          _dayMeals = results;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error loading day template meals: $e');
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = FlutterFlowTheme.of(context);
+
+    final filledTypes = _dayMeals.map((t) => t.mealTyp).whereType<MealTyp>().toSet();
+
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20.0),
+          topRight: Radius.circular(20.0),
+        ),
+      ),
+      padding: EdgeInsets.fromLTRB(20.0, 16.0, 20.0, MediaQuery.of(context).padding.bottom + 20.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Handle bar
+          Center(
+            child: Container(
+              width: 40.0,
+              height: 4.0,
+              decoration: BoxDecoration(
+                color: Color(0xFFDDDDDD),
+                borderRadius: BorderRadius.circular(2.0),
+              ),
+            ),
+          ),
+          SizedBox(height: 16.0),
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.dayName,
+                      style: theme.titleSmall.override(
+                        fontFamily: 'Andika New Basic',
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.0,
+                      ),
+                    ),
+                    Text(
+                      'Tap a meal to add it',
+                      style: theme.bodySmall.override(
+                        fontFamily: 'Andika New Basic',
+                        color: Color(0xFF999999),
+                        fontSize: 12.0,
+                        letterSpacing: 0.0,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              if (filledTypes.isNotEmpty)
+                Text(
+                  '${filledTypes.length}/4 meals',
+                  style: theme.bodySmall.override(
+                    fontFamily: 'Andika New Basic',
+                    color: theme.primary,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.0,
+                  ),
+                ),
+            ],
+          ),
+          SizedBox(height: 16.0),
+          if (_isLoading)
+            Center(child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 16.0),
+              child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)),
+            )),
+          // 4 meal slots — tap goes straight to MealComposer
+          if (!_isLoading)
+            ...MealTyp.values.map((mealType) {
+              final isFilled = filledTypes.contains(mealType);
+              final meal = _dayMeals.where((t) => t.mealTyp == mealType).firstOrNull;
+
+              // Check leftover flags from raw snapshot data
+              final hasLeftover = meal != null && (
+                meal.snapshotData['is_leftover_entree'] == true ||
+                meal.snapshotData['is_leftover_side'] == true ||
+                meal.snapshotData['is_leftover_dessert'] == true ||
+                meal.snapshotData['is_leftover_snack'] == true
+              );
+
+              return Padding(
+                padding: EdgeInsets.only(bottom: 10.0),
+                child: InkWell(
+                  onTap: () async {
+                    await widget.onNavigateToComposer(mealType, meal?.reference.id);
+                    // Reload after user returns from MealComposer
+                    if (mounted) _loadDayMeals();
+                  },
+                  borderRadius: BorderRadius.circular(12.0),
+                  child: Container(
+                    padding: EdgeInsets.all(12.0),
+                    decoration: BoxDecoration(
+                      color: isFilled
+                          ? theme.primary.withOpacity(0.05)
+                          : Color(0xFFF5F5F5),
+                      borderRadius: BorderRadius.circular(12.0),
+                      border: Border.all(
+                        color: isFilled
+                            ? theme.primary.withOpacity(0.3)
+                            : Color(0xFFE0E0E0),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        // Show entree/snack thumbnail when filled, add icon when empty
+                        if (isFilled && (meal?.entreeRef != null || (meal?.snapshotData['snack_refs'] as List<dynamic>?)?.isNotEmpty == true))
+                          Builder(
+                            builder: (context) {
+                              final snackRefsList = meal!.snapshotData['snack_refs'] as List<dynamic>?;
+                              final imageRef = meal.entreeRef
+                                  ?? ((snackRefsList != null && snackRefsList.isNotEmpty && snackRefsList.first is DocumentReference)
+                                      ? snackRefsList.first as DocumentReference : null);
+                              if (imageRef == null) {
+                                return Container(
+                                  width: 36.0, height: 36.0,
+                                  decoration: BoxDecoration(
+                                    color: theme.primary.withOpacity(0.15),
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                  child: Icon(Icons.restaurant, size: 16.0, color: theme.primary),
+                                );
+                              }
+                              return FutureBuilder<DocumentSnapshot>(
+                                future: imageRef.get(),
+                            builder: (context, snapshot) {
+                              final imageUrl = (snapshot.data?.data() as Map<String, dynamic>?)?['image_url'] as String?;
+                              if (imageUrl != null && imageUrl.isNotEmpty) {
+                                return ClipRRect(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  child: CachedNetworkImage(
+                                    imageUrl: imageUrl,
+                                    width: 36.0,
+                                    height: 36.0,
+                                    fit: BoxFit.cover,
+                                    placeholder: (_, __) => Container(
+                                      width: 36.0, height: 36.0,
+                                      decoration: BoxDecoration(
+                                        color: theme.primary.withOpacity(0.15),
+                                        borderRadius: BorderRadius.circular(8.0),
+                                      ),
+                                      child: Icon(Icons.restaurant, size: 16.0, color: theme.primary),
+                                    ),
+                                    errorWidget: (_, __, ___) => Container(
+                                      width: 36.0, height: 36.0,
+                                      decoration: BoxDecoration(
+                                        color: theme.primary.withOpacity(0.15),
+                                        borderRadius: BorderRadius.circular(8.0),
+                                      ),
+                                      child: Icon(Icons.restaurant, size: 16.0, color: theme.primary),
+                                    ),
+                                  ),
+                                );
+                              }
+                              return Container(
+                                width: 36.0, height: 36.0,
+                                decoration: BoxDecoration(
+                                  color: theme.primary.withOpacity(0.15),
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                                child: Icon(Icons.restaurant, size: 16.0, color: theme.primary),
+                              );
+                            },
+                              );
+                            },
+                          )
+                        else
+                          Container(
+                            width: 36.0,
+                            height: 36.0,
+                            decoration: BoxDecoration(
+                              color: isFilled
+                                  ? theme.primary.withOpacity(0.15)
+                                  : Color(0xFFE0E0E0),
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            child: Icon(
+                              isFilled ? Icons.restaurant : Icons.add,
+                              size: 18.0,
+                              color: isFilled ? theme.primary : Color(0xFF999999),
+                            ),
+                          ),
+                        SizedBox(width: 10.0),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Text(
+                                    mealType.name,
+                                    style: theme.bodyMedium.override(
+                                      fontFamily: 'Andika New Basic',
+                                      fontSize: 13.0,
+                                      fontWeight: FontWeight.w600,
+                                      letterSpacing: 0.0,
+                                    ),
+                                  ),
+                                  if (hasLeftover) ...[
+                                    SizedBox(width: 6.0),
+                                    Container(
+                                      padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 1.0),
+                                      decoration: BoxDecoration(
+                                        color: Color(0xFFFF9800).withOpacity(0.15),
+                                        borderRadius: BorderRadius.circular(4.0),
+                                      ),
+                                      child: Text(
+                                        'L',
+                                        style: TextStyle(
+                                          fontFamily: 'Andika New Basic',
+                                          fontSize: 10.0,
+                                          fontWeight: FontWeight.w700,
+                                          color: Color(0xFFFF9800),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ],
+                              ),
+                              Text(
+                                isFilled
+                                    ? meal?.name ?? 'Meal added'
+                                    : 'Tap to add',
+                                style: theme.bodySmall.override(
+                                  fontFamily: 'Andika New Basic',
+                                  fontSize: 11.0,
+                                  color: isFilled ? theme.primary : Color(0xFF999999),
+                                  letterSpacing: 0.0,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Icon(
+                          Icons.chevron_right,
+                          size: 20.0,
+                          color: Color(0xFFCCCCCC),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            }),
+          SizedBox(height: 8.0),
+          // Done button
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: filledTypes.isEmpty ? null : () => widget.onDone(),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: theme.primary,
+                foregroundColor: Colors.white,
+                disabledBackgroundColor: Color(0xFFE0E0E0),
+                padding: EdgeInsets.symmetric(vertical: 14.0),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.0)),
+              ),
+              child: Text(
+                filledTypes.isEmpty
+                    ? 'Add at least one meal'
+                    : 'Done',
+                style: TextStyle(
+                  fontFamily: 'Andika New Basic',
+                  fontSize: 15.0,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

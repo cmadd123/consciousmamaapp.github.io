@@ -1,6 +1,7 @@
 import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
 import '/backend/schema/enums/enums.dart';
+import '/components/home_nav_bar_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/index.dart';
@@ -23,12 +24,16 @@ class MealComposerWidget extends StatefulWidget {
     required this.mealType,
     this.existingMealPlan,
     this.editTemplateId,
+    this.dayTemplateGroup,
+    this.dayTemplateName,
   });
 
   final DateTime date;
   final MealTyp mealType;
   final MealPlanRecord? existingMealPlan;
   final String? editTemplateId; // If set, we're editing a template instead of a meal plan
+  final String? dayTemplateGroup; // If set, tag saved template with this day group
+  final String? dayTemplateName; // Display name for the day group
 
   static String routeName = 'MealComposer';
   static String routePath = '/meal-composer';
@@ -69,6 +74,13 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
 
   // For template creation - allow selecting meal type
   MealTyp? _selectedMealType;
+
+  // Name of the template being edited (for auto-save on back)
+  String? _templateName;
+
+  // Whether this is being used to build a meal for a day template (not a standalone template)
+  bool get _isDayTemplateMeal =>
+      widget.dayTemplateGroup != null && widget.dayTemplateGroup!.isNotEmpty;
 
   @override
   void initState() {
@@ -122,6 +134,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
 
           _selectedDrinkType = combo.drinkType;
           _customDrinkName = combo.drinkCustom;
+          _templateName = combo.name;
 
           // Load leftover flags from raw Firestore data
           final rawData = comboDoc.data() as Map<String, dynamic>?;
@@ -130,9 +143,22 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
             _isLeftoverSide = rawData['is_leftover_side'] == true;
             _isLeftoverDessert = rawData['is_leftover_dessert'] == true;
             _isLeftoverSnack = rawData['is_leftover_snack'] == true;
+
+            // Load snack item references for snack-type combos
+            final snackRefsList = rawData['snack_refs'] as List<dynamic>?;
+            if (snackRefsList != null) {
+              for (final ref in snackRefsList) {
+                if (ref is DocumentReference) {
+                  final snackDoc = await ref.get();
+                  if (snackDoc.exists) {
+                    _selectedSnackItems.add(MealRecord.fromSnapshot(snackDoc));
+                  }
+                }
+              }
+            }
           }
 
-          debugPrint('MealComposer: Loaded ${_selectedSides.length} sides, ${_selectedDesserts.length} desserts, entree: ${_selectedEntree?.recipeName}');
+          debugPrint('MealComposer: Loaded ${_selectedSides.length} sides, ${_selectedDesserts.length} desserts, ${_selectedSnackItems.length} snacks, entree: ${_selectedEntree?.recipeName}');
         }
       } catch (e) {
         debugPrint('Error loading template for editing: $e');
@@ -328,12 +354,24 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
 
         // Auto-save changes before popping if there are any items
         if (_hasAnyItems && !_isSaving) {
-          await _saveMealPlan();
+          if (widget.editTemplateId != null && widget.editTemplateId != 'new') {
+            // Editing an existing template — auto-update it
+            await _updateExistingCombo(_templateName ?? '');
+          } else if (widget.editTemplateId == 'new' && _isDayTemplateMeal) {
+            // Day template meal — auto-save directly
+            await _saveDayTemplateMeal();
+          } else if (widget.editTemplateId == 'new') {
+            // Creating a new standalone template — show save dialog
+            _showSaveAsMealDialog();
+          } else {
+            await _saveMealPlan();
+          }
         } else {
           Navigator.pop(context);
         }
       },
       child: Scaffold(
+        bottomNavigationBar: const HomeNavBarWidget(currentPage: HomeNavPage.meals),
         body: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
@@ -675,7 +713,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
 
         // Custom meal field
         _buildCustomMealField(context),
-        SizedBox(height: 100.0),
+        SizedBox(height: 16.0),
       ],
     );
   }
@@ -717,7 +755,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
         SizedBox(height: 20.0),
 
         _buildNotesSection(context),
-        SizedBox(height: 100.0),
+        SizedBox(height: 16.0),
       ],
     );
   }
@@ -1131,6 +1169,22 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
                     ),
                   ),
                 ),
+                // View recipe details icon
+                Positioned(
+                  bottom: 4.0,
+                  left: 4.0,
+                  child: InkWell(
+                    onTap: () => _viewRecipeDetails(item),
+                    child: Container(
+                      padding: EdgeInsets.all(4.0),
+                      decoration: BoxDecoration(
+                        color: Colors.black54,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(Icons.visibility_outlined, size: 14.0, color: Colors.white),
+                    ),
+                  ),
+                ),
               ],
             ),
             Padding(
@@ -1471,7 +1525,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
   Widget _buildBottomActions(BuildContext context) {
     final theme = FlutterFlowTheme.of(context);
     return Container(
-      padding: EdgeInsets.fromLTRB(16.0, 12.0, 16.0, 24.0 + MediaQuery.of(context).padding.bottom),
+      padding: EdgeInsets.fromLTRB(16.0, 12.0, 16.0, 12.0),
       decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: [
@@ -1488,7 +1542,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
                 child: _buildActionButton(
                   context,
                   icon: Icons.restaurant_menu,
-                  label: 'Saved Meals',
+                  label: 'Templates',
                   color: Color(0xFFFF9800), // Orange to match planner
                   onTap: _showMealComboPicker,
                 ),
@@ -1531,11 +1585,28 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
             SizedBox(height: 12.0),
             Row(
               children: [
-                // When editing an existing template, show Update + Save as New inline
-                if (widget.editTemplateId != null && widget.editTemplateId != 'new') ...[
+                // When editing an existing day template meal, show simple "Done" that updates in place
+                if (widget.editTemplateId != null && widget.editTemplateId != 'new' && _isDayTemplateMeal) ...[
+                  if (_hasAnyItems)
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: _isSaving ? null : () => _updateExistingCombo(_templateName ?? ''),
+                        child: _isSaving
+                            ? SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                            : Text('Done'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: theme.primary,
+                          foregroundColor: Colors.white,
+                          padding: EdgeInsets.symmetric(vertical: 12.0),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.0)),
+                        ),
+                      ),
+                    ),
+                // When editing an existing standalone template, show Update + Save as New inline
+                ] else if (widget.editTemplateId != null && widget.editTemplateId != 'new') ...[
                   Expanded(
                     child: ElevatedButton.icon(
-                      onPressed: _isSaving ? null : () => _updateExistingCombo(''),
+                      onPressed: _isSaving ? null : () => _updateExistingCombo(_templateName ?? ''),
                       icon: Icon(Icons.save, size: 18.0),
                       label: _isSaving
                           ? SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
@@ -1562,8 +1633,42 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
                       ),
                     ),
                   ),
+                ] else if (widget.editTemplateId == 'new' && _isDayTemplateMeal) ...[
+                  // Day template meal — same layout as normal: optional Templates + Done
+                  if (_canSaveAsMeal) ...[
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: _showSaveAsMealDialog,
+                        icon: Icon(Icons.bookmark_add_outlined, size: 18.0),
+                        label: Text('Templates', style: TextStyle(fontSize: 12.0)),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: theme.primary,
+                          side: BorderSide(color: theme.primary),
+                          padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 6.0),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.0)),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 8.0),
+                  ],
+                  if (_hasAnyItems)
+                    Expanded(
+                      flex: _canSaveAsMeal ? 1 : 2,
+                      child: ElevatedButton(
+                        onPressed: _isSaving ? null : _saveDayTemplateMeal,
+                        child: _isSaving
+                            ? SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                            : Text('Done'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: theme.primary,
+                          foregroundColor: Colors.white,
+                          padding: EdgeInsets.symmetric(vertical: 12.0),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.0)),
+                        ),
+                      ),
+                    ),
                 ] else if (widget.editTemplateId == 'new') ...[
-                  // Creating a new template
+                  // Creating a new standalone template
                   Expanded(
                     child: ElevatedButton.icon(
                       onPressed: _isSaving ? null : _showSaveAsMealDialog,
@@ -1586,7 +1691,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
                       child: OutlinedButton.icon(
                         onPressed: _showSaveAsMealDialog,
                         icon: Icon(Icons.bookmark_add_outlined, size: 18.0),
-                        label: Text('Save Template', style: TextStyle(fontSize: 12.0)),
+                        label: Text('Templates', style: TextStyle(fontSize: 12.0)),
                         style: OutlinedButton.styleFrom(
                           foregroundColor: theme.primary,
                           side: BorderSide(color: theme.primary),
@@ -1769,7 +1874,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
               Padding(
                 padding: EdgeInsets.all(16.0),
                 child: Text(
-                  'Your Saved Meals',
+                  'Your Templates',
                   style: theme.titleMedium.override(fontFamily: 'Andika New Basic', fontWeight: FontWeight.w600),
                 ),
               ),
@@ -1781,9 +1886,9 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
                           children: [
                             Icon(Icons.restaurant_menu, size: 48.0, color: Color(0xFFCCCCCC)),
                             SizedBox(height: 12.0),
-                            Text('No saved meals yet', style: theme.bodyMedium.override(fontFamily: 'Andika New Basic', color: theme.secondaryText)),
+                            Text('No templates yet', style: theme.bodyMedium.override(fontFamily: 'Andika New Basic', color: theme.secondaryText)),
                             SizedBox(height: 4.0),
-                            Text('Build a meal and tap "Save as Meal"', style: theme.bodySmall.override(fontFamily: 'Andika New Basic', color: theme.secondaryText)),
+                            Text('Build a meal and tap "Templates" to save one', style: theme.bodySmall.override(fontFamily: 'Andika New Basic', color: theme.secondaryText)),
                           ],
                         ),
                       )
@@ -1997,13 +2102,18 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
       context: context,
       builder: (dialogContext) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.0)),
-        title: Text(isEditing ? 'Save Template' : 'Save as Meal Template'),
+        title: Text(isEditing ? 'Save Template' : (_isDayTemplateMeal ? 'Save Meal' : 'Save as Meal Template')),
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(isEditing ? 'Update this template or save as a new one:' : 'Give this meal template a name:', style: theme.bodyMedium),
+              Text(
+                isEditing
+                    ? 'Update this template or save as a new one:'
+                    : (_isDayTemplateMeal ? 'Give this meal a name:' : 'Give this meal template a name:'),
+                style: theme.bodyMedium,
+              ),
               SizedBox(height: 8.0),
               TextField(
                 controller: nameController,
@@ -2019,7 +2129,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
               if (_selectedEntree != null) Text('  ${_selectedEntree!.recipeName} (entrée)'),
               ..._selectedSides.map((s) => Text('  ${s.recipeName} (side)')),
               ..._selectedDesserts.map((d) => Text('  ${d.recipeName} (dessert)')),
-              if (!isEditing) ...[
+              if (!isEditing && !_isDayTemplateMeal) ...[
                 SizedBox(height: 12.0),
                 Container(
                   padding: EdgeInsets.all(8.0),
@@ -2073,7 +2183,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
                 await _saveAsNewCombo(nameController.text);
               },
               style: ElevatedButton.styleFrom(backgroundColor: theme.primary),
-              child: Text('Save Template'),
+              child: Text(_isDayTemplateMeal ? 'Save Meal' : 'Save Template'),
             ),
         ],
       ),
@@ -2082,8 +2192,15 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
 
   /// Build combo data map for saving
   Map<String, dynamic> _buildComboData(String name) {
+    // Derive a meaningful name — prefer passed name, then entree, then first snack item
+    String effectiveName = name;
+    if (effectiveName.isEmpty || effectiveName == 'My Meal') {
+      effectiveName = _selectedEntree?.recipeName
+          ?? (_selectedSnackItems.isNotEmpty ? _selectedSnackItems.first.recipeName : '')
+          ?? '';
+    }
     final comboData = createMealComboRecordData(
-      name: name.isNotEmpty ? name : 'My Meal',
+      name: effectiveName.isNotEmpty ? effectiveName : 'My Meal',
       entreeRef: _selectedEntree?.reference,
       drinkType: _selectedDrinkType,
       drinkCustom: _customDrinkName,
@@ -2093,12 +2210,43 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
     );
     comboData['side_refs'] = _selectedSides.map((s) => s.reference).toList();
     comboData['dessert_refs'] = _selectedDesserts.map((d) => d.reference).toList();
+    // Persist snack item references for snack-type combos
+    if (_selectedSnackItems.isNotEmpty) {
+      comboData['snack_refs'] = _selectedSnackItems.map((s) => s.reference).toList();
+    }
     // Persist leftover flags in templates
     comboData['is_leftover_entree'] = _isLeftoverEntree;
     comboData['is_leftover_side'] = _isLeftoverSide;
     comboData['is_leftover_dessert'] = _isLeftoverDessert;
     comboData['is_leftover_snack'] = _isLeftoverSnack;
+    // Tag with day template group if creating as part of a saved day
+    if (widget.dayTemplateGroup != null && widget.dayTemplateGroup!.isNotEmpty) {
+      comboData['day_template_group'] = widget.dayTemplateGroup;
+      comboData['day_template_name'] = widget.dayTemplateName ?? '';
+    }
     return comboData;
+  }
+
+  /// Save a meal directly within a day template (no name dialog)
+  Future<void> _saveDayTemplateMeal() async {
+    setState(() => _isSaving = true);
+    try {
+      final name = _selectedEntree?.recipeName
+          ?? (_selectedSnackItems.isNotEmpty ? _selectedSnackItems.first.recipeName : null)
+          ?? 'My Meal';
+      final comboData = _buildComboData(name);
+      await MealComboRecord.collection.add(comboData);
+
+      FFAppState().MealCashtearm = true;
+      if (mounted) {
+        await MomRiseConfirmation.show(context, message: 'Meal Saved');
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      debugPrint('Error saving day template meal: $e');
+    } finally {
+      if (mounted) setState(() => _isSaving = false);
+    }
   }
 
   /// Update the existing template in-place
@@ -2109,7 +2257,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
 
       FFAppState().MealCashtearm = true;
       if (mounted) {
-        await MomRiseConfirmation.show(context, message: 'Template Updated');
+        await MomRiseConfirmation.show(context, message: _isDayTemplateMeal ? 'Meal Updated' : 'Template Updated');
         Navigator.pop(context);
       }
     } catch (e) {
@@ -2125,7 +2273,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
 
       FFAppState().MealCashtearm = true;
       if (mounted) {
-        await MomRiseConfirmation.show(context, message: 'Template Saved');
+        await MomRiseConfirmation.show(context, message: _isDayTemplateMeal ? 'Meal Saved' : 'Template Saved');
         if (widget.editTemplateId != null) {
           Navigator.pop(context); // Go back if we were in edit mode
         }

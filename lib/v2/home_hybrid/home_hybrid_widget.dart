@@ -498,19 +498,6 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
     );
   }
 
-  // Fetch meal name from reference
-  Future<String?> _fetchMealName(DocumentReference? mealRef) async {
-    if (mealRef == null) return null;
-    try {
-      final doc = await mealRef.get();
-      if (!doc.exists) return null;
-      final data = doc.data() as Map<String, dynamic>?;
-      return data?['recipe_name'] as String?;
-    } catch (e) {
-      return null;
-    }
-  }
-
   Widget _buildMealsCard(BuildContext context) {
     return StreamBuilder<List<MealPlanRecord>>(
       stream: queryMealPlanRecord(
@@ -519,24 +506,61 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
       ),
       builder: (context, mealsSnapshot) {
         final allMeals = mealsSnapshot.data ?? [];
+        final now = DateTime.now();
 
-        // Filter to today's meals
-        final today = DateTime.now();
-        final todaysMeals = allMeals.where((m) {
-          if (m.date == null) return false;
-          return dateTimeFormat('yMd', m.date!) == dateTimeFormat('yMd', today);
-        }).toList();
+        // Group meals by date using integer keys (YYYYMMDD) to avoid DateTime comparison issues
+        final int todayKey = now.year * 10000 + now.month * 100 + now.day;
 
-        // Debug: log meal plan info
-        debugPrint('HomeHybrid: Total meal plans: ${allMeals.length}, Today\'s meals: ${todaysMeals.length}');
-        for (final m in todaysMeals) {
-          debugPrint('HomeHybrid: Today meal - type=${m.typ?.name}, mealRef=${m.userFirebasemeal?.id}, comboRef=${m.mealComboRef?.id}');
+        // Build set of planned date keys from mealPlanSelectedDates (if available)
+        final plannerDates = FFAppState().mealPlanSelectedDates;
+        Set<int>? plannedKeys;
+        if (plannerDates != null && plannerDates.isNotEmpty) {
+          plannedKeys = plannerDates.map((d) {
+            final local = d.toLocal();
+            return local.year * 10000 + local.month * 100 + local.day;
+          }).toSet();
+        }
+
+        final Map<int, List<MealPlanRecord>> mealsByDate = {};
+        final Map<int, DateTime> dateForKey = {};
+        for (final m in allMeals) {
+          if (m.date == null) continue;
+          final localDate = m.date!.toLocal();
+          final key = localDate.year * 10000 + localDate.month * 100 + localDate.day;
+          // Skip meals for dates not in the user's planned dates (filters orphaned records)
+          if (plannedKeys != null && !plannedKeys.contains(key)) continue;
+          mealsByDate.putIfAbsent(key, () => []).add(m);
+          dateForKey.putIfAbsent(key, () => DateTime(localDate.year, localDate.month, localDate.day));
+        }
+
+        // Try today first, then find the nearest future day with meals
+        String headerLabel = "Today's Meals";
+        List<MealPlanRecord> displayMeals = mealsByDate[todayKey] ?? [];
+
+        if (displayMeals.isEmpty) {
+          // Find the nearest future date that has meals
+          final futureKeys = mealsByDate.keys
+              .where((k) => k > todayKey)
+              .toList()
+            ..sort();
+
+          if (futureKeys.isNotEmpty) {
+            final nextKey = futureKeys.first;
+            displayMeals = mealsByDate[nextKey] ?? [];
+
+            final nextDate = dateForKey[nextKey]!;
+            if (nextDate.difference(DateTime(now.year, now.month, now.day)).inDays == 1) {
+              headerLabel = "Tomorrow's Meals";
+            } else {
+              headerLabel = "${dateTimeFormat('EEEE', nextDate)}'s Meals";
+            }
+          }
         }
 
         // Get meal plans by type
-        final breakfastMeal = todaysMeals.where((m) => m.typ == MealTyp.Breakfast).firstOrNull;
-        final lunchMeal = todaysMeals.where((m) => m.typ == MealTyp.Lunch).firstOrNull;
-        final dinnerMeal = todaysMeals.where((m) => m.typ == MealTyp.Dinner).firstOrNull;
+        final breakfastMeal = displayMeals.where((m) => m.typ == MealTyp.Breakfast).firstOrNull;
+        final lunchMeal = displayMeals.where((m) => m.typ == MealTyp.Lunch).firstOrNull;
+        final dinnerMeal = displayMeals.where((m) => m.typ == MealTyp.Dinner).firstOrNull;
 
         return InkWell(
           onTap: () => context.pushNamed('Meals'),
@@ -571,7 +595,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                         ),
                         const SizedBox(width: 8.0),
                         Text(
-                          "Today's Meals",
+                          headerLabel,
                           style: FlutterFlowTheme.of(context).bodyLarge.override(
                             fontFamily: 'Andika New Basic',
                             color: const Color(0xFF5D4E60),
@@ -609,10 +633,10 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                   ],
                 ),
                 const SizedBox(height: 16.0),
-                // Meal list - fetch names from references (supports both single recipes and meal combos)
-                _buildMealRowWithFetch(context, 'Breakfast', breakfastMeal?.userFirebasemeal, breakfastMeal?.mealComboRef),
-                _buildMealRowWithFetch(context, 'Lunch', lunchMeal?.userFirebasemeal, lunchMeal?.mealComboRef),
-                _buildMealRowWithFetch(context, 'Dinner', dinnerMeal?.userFirebasemeal, dinnerMeal?.mealComboRef),
+                // Meal list - fetch names from references (supports single recipes, combos, and custom meals)
+                _buildMealRowWithFetch(context, 'Breakfast', breakfastMeal),
+                _buildMealRowWithFetch(context, 'Lunch', lunchMeal),
+                _buildMealRowWithFetch(context, 'Dinner', dinnerMeal),
               ],
             ),
           ),
@@ -621,57 +645,67 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
     );
   }
 
-  Widget _buildMealRowWithFetch(BuildContext context, String mealType, DocumentReference? mealRef, DocumentReference? mealComboRef) {
-    // If it's a meal combo, fetch the entree name from the combo
-    if (mealComboRef != null) {
-      return FutureBuilder<String?>(
-        future: _fetchMealComboEntreeName(mealComboRef),
-        builder: (context, snapshot) {
-          final entreeName = snapshot.data;
-          return _buildMealRow(context, mealType, entreeName ?? 'Planned');
+  Widget _buildMealRowWithFetch(BuildContext context, String mealType, MealPlanRecord? mealPlan) {
+    // If no meal plan at all
+    if (mealPlan == null) {
+      return _buildMealRow(context, mealType, null);
+    }
+
+    // If it's a custom meal (e.g., "Eating Out", "Pizza Delivery")
+    if (mealPlan.hasCustomMeal()) {
+      return _buildMealRow(context, mealType, mealPlan.customMeal);
+    }
+
+    // If it's a meal combo, use StreamBuilder to get live updates when combo changes
+    if (mealPlan.mealComboRef != null) {
+      return StreamBuilder<DocumentSnapshot>(
+        key: ValueKey(mealPlan.mealComboRef!.path),
+        stream: mealPlan.mealComboRef!.snapshots(),
+        builder: (context, comboSnapshot) {
+          if (!comboSnapshot.hasData || !comboSnapshot.data!.exists) {
+            return _buildMealRow(context, mealType, 'Planned');
+          }
+          final comboData = comboSnapshot.data!.data() as Map<String, dynamic>?;
+          if (comboData == null) return _buildMealRow(context, mealType, 'Planned');
+
+          final entreeRef = comboData['entree_ref'] as DocumentReference?;
+          if (entreeRef != null) {
+            return StreamBuilder<DocumentSnapshot>(
+              key: ValueKey(entreeRef.path),
+              stream: entreeRef.snapshots(),
+              builder: (context, entreeSnapshot) {
+                if (!entreeSnapshot.hasData || !entreeSnapshot.data!.exists) {
+                  return _buildMealRow(context, mealType, comboData['name'] as String? ?? 'Planned');
+                }
+                final entreeData = entreeSnapshot.data!.data() as Map<String, dynamic>?;
+                final entreeName = entreeData?['recipe_name'] as String? ?? comboData['name'] as String? ?? 'Planned';
+                return _buildMealRow(context, mealType, entreeName);
+              },
+            );
+          }
+          return _buildMealRow(context, mealType, comboData['name'] as String? ?? 'Planned');
         },
       );
     }
 
-    // If it's a single recipe, fetch the recipe name
-    if (mealRef != null) {
-      return FutureBuilder<String?>(
-        future: _fetchMealName(mealRef),
+    // If it's a single recipe, use StreamBuilder for live updates
+    if (mealPlan.userFirebasemeal != null) {
+      return StreamBuilder<DocumentSnapshot>(
+        key: ValueKey(mealPlan.userFirebasemeal!.path),
+        stream: mealPlan.userFirebasemeal!.snapshots(),
         builder: (context, snapshot) {
-          final mealName = snapshot.data;
-          return _buildMealRow(context, mealType, mealName ?? 'Planned');
+          if (!snapshot.hasData || !snapshot.data!.exists) {
+            return _buildMealRow(context, mealType, 'Planned');
+          }
+          final data = snapshot.data!.data() as Map<String, dynamic>?;
+          final mealName = data?['recipe_name'] as String? ?? 'Planned';
+          return _buildMealRow(context, mealType, mealName);
         },
       );
     }
 
-    // No meal planned
-    return _buildMealRow(context, mealType, null);
-  }
-
-  Future<String?> _fetchMealComboEntreeName(DocumentReference comboRef) async {
-    try {
-      final comboDoc = await comboRef.get();
-      if (!comboDoc.exists) return null;
-
-      final comboData = comboDoc.data() as Map<String, dynamic>?;
-      if (comboData == null) return null;
-
-      // Get entree reference from combo
-      final entreeRef = comboData['entree_ref'] as DocumentReference?;
-      if (entreeRef != null) {
-        final entreeDoc = await entreeRef.get();
-        if (entreeDoc.exists) {
-          final entreeData = entreeDoc.data() as Map<String, dynamic>?;
-          return entreeData?['recipe_name'] as String?;
-        }
-      }
-
-      // Fallback to combo name if no entree
-      return comboData['name'] as String? ?? 'Meal';
-    } catch (e) {
-      debugPrint('Error fetching meal combo entree: $e');
-      return null;
-    }
+    // Has a meal plan record but no identifiable content
+    return _buildMealRow(context, mealType, 'Planned');
   }
 
   Widget _buildMealRow(BuildContext context, String mealType, String? mealName) {
@@ -1854,54 +1888,60 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
           categoryProgress.add(progress);
         }
 
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Circle with segmented progress ring
-            SizedBox(
-              width: 72.0,  // Larger to accommodate ring
-              height: 72.0,
-              child: CustomPaint(
-                painter: _MilestoneProgressPainter(
-                  categoryProgress: categoryProgress,
-                  categoryColors: categoryColors,
-                ),
-                child: Center(
-                  child: Container(
-                    width: 56.0,  // Inner circle smaller to show ring around it
-                    height: 56.0,
-                    decoration: BoxDecoration(
-                      color: child.selectedColor ?? FlutterFlowTheme.of(context).primary,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Center(
-                      child: Text(
-                        child.name.isNotEmpty ? child.name[0].toUpperCase() : 'C',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 22.0,
-                          fontWeight: FontWeight.bold,
+        return GestureDetector(
+          onTap: () {
+            FFAppState().selectedChildForMilestone = child.reference;
+            context.pushNamed(MilstonesWidget.routeName);
+          },
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Circle with segmented progress ring
+              SizedBox(
+                width: 72.0,  // Larger to accommodate ring
+                height: 72.0,
+                child: CustomPaint(
+                  painter: _MilestoneProgressPainter(
+                    categoryProgress: categoryProgress,
+                    categoryColors: categoryColors,
+                  ),
+                  child: Center(
+                    child: Container(
+                      width: 56.0,  // Inner circle smaller to show ring around it
+                      height: 56.0,
+                      decoration: BoxDecoration(
+                        color: child.selectedColor ?? FlutterFlowTheme.of(context).primary,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Center(
+                        child: Text(
+                          child.name.isNotEmpty ? child.name[0].toUpperCase() : 'C',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 22.0,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(height: 6.0),
-            // Child name below circle
-            Text(
-              child.name,
-              style: FlutterFlowTheme.of(context).bodySmall.override(
-                fontFamily: 'Andika New Basic',
-                color: const Color(0xFF5D4E60),
-                fontSize: 12.0,
-                fontWeight: FontWeight.w500,
+              const SizedBox(height: 6.0),
+              // Child name below circle
+              Text(
+                child.name,
+                style: FlutterFlowTheme.of(context).bodySmall.override(
+                  fontFamily: 'Andika New Basic',
+                  color: const Color(0xFF5D4E60),
+                  fontSize: 12.0,
+                  fontWeight: FontWeight.w500,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
+            ],
+          ),
         );
       },
     );
@@ -1909,15 +1949,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
 
   // Milestones Card
   Widget _buildMilestonesCard(BuildContext context, List<ChildernRecord>? userChildren) {
-    return InkWell(
-      onTap: () {
-        if (userChildren != null && userChildren.isNotEmpty) {
-          FFAppState().selectedChildForMilestone = userChildren.first.reference;
-        }
-        context.pushNamed(MilstonesWidget.routeName);
-      },
-      borderRadius: BorderRadius.circular(20.0),
-      child: Container(
+    return Container(
         width: double.infinity,
         padding: const EdgeInsets.all(20.0),
         decoration: BoxDecoration(
@@ -1993,7 +2025,6 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
               ),
           ],
         ),
-      ),
     );
   }
 }

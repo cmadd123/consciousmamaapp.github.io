@@ -84,6 +84,16 @@ class MealComboRecord extends FirestoreRecord {
   DateTime? get createdTime => _createdTime;
   bool hasCreatedTime() => _createdTime != null;
 
+  // "day_template_group" field - Groups templates saved together as a "day"
+  String? _dayTemplateGroup;
+  String get dayTemplateGroup => _dayTemplateGroup ?? '';
+  bool hasDayTemplateGroup() => _dayTemplateGroup != null && _dayTemplateGroup!.isNotEmpty;
+
+  // "day_template_name" field - Display name for the saved day (e.g., "Monday", "Taco Night")
+  String? _dayTemplateName;
+  String get dayTemplateName => _dayTemplateName ?? '';
+  bool hasDayTemplateName() => _dayTemplateName != null && _dayTemplateName!.isNotEmpty;
+
   void _initializeFields() {
     _name = snapshotData['name'] as String?;
     _entreeRef = snapshotData['entree_ref'] as DocumentReference?;
@@ -102,6 +112,8 @@ class MealComboRecord extends FirestoreRecord {
         : deserializeEnum<MealTyp>(snapshotData['meal_typ']);
     _userRef = snapshotData['user_ref'] as DocumentReference?;
     _createdTime = snapshotData['created_time'] as DateTime?;
+    _dayTemplateGroup = snapshotData['day_template_group'] as String?;
+    _dayTemplateName = snapshotData['day_template_name'] as String?;
   }
 
   static CollectionReference get collection =>
@@ -188,7 +200,9 @@ class MealComboRecordDocumentEquality implements Equality<MealComboRecord> {
         e1?.isFavorite == e2?.isFavorite &&
         e1?.mealTyp == e2?.mealTyp &&
         e1?.userRef == e2?.userRef &&
-        e1?.createdTime == e2?.createdTime;
+        e1?.createdTime == e2?.createdTime &&
+        e1?.dayTemplateGroup == e2?.dayTemplateGroup &&
+        e1?.dayTemplateName == e2?.dayTemplateName;
   }
 
   @override
@@ -206,6 +220,8 @@ class MealComboRecordDocumentEquality implements Equality<MealComboRecord> {
         e?.mealTyp,
         e?.userRef,
         e?.createdTime,
+        e?.dayTemplateGroup,
+        e?.dayTemplateName,
       ]);
 
   @override

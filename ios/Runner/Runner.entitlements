@@ -6,5 +6,9 @@
 	<array>
 		<string>group.com.momrise.app</string>
 	</array>
+	<key>com.apple.developer.associated-domains</key>
+	<array>
+		<string>applinks:momrise.app</string>
+	</array>
 </dict>
 </plist>

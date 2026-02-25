@@ -1634,6 +1634,335 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
     );
   }
 
+  /// Build the day template import UI
+  Widget _buildDayTemplateContent(SharedContentRecord content) {
+    final contentData = content.contentData;
+    final dayTemplateName = contentData['day_template_name'] as String? ?? 'Day Template';
+    final templates = contentData['templates'] as List<dynamic>? ?? [];
+    final personalNote = contentData['personal_note'] as String?;
+
+    // Sort templates by meal type order
+    const mealOrder = {'Breakfast': 0, 'Lunch': 1, 'Dinner': 2, 'Snacks': 3};
+    final sortedTemplates = List<Map<String, dynamic>>.from(
+      templates.map((t) => t as Map<String, dynamic>),
+    )..sort((a, b) {
+      final aOrder = mealOrder[a['meal_type']] ?? 4;
+      final bOrder = mealOrder[b['meal_type']] ?? 4;
+      return aOrder.compareTo(bOrder);
+    });
+
+    return Column(
+      children: [
+        // Fixed header
+        Container(
+          padding: const EdgeInsets.all(16),
+          color: const Color(0xFFF5F5F5),
+          child: Row(
+            children: [
+              InkWell(
+                onTap: () => context.go('/'),
+                child: const Icon(Icons.arrow_back),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Text(
+                  'Shared Day Template',
+                  style: FlutterFlowTheme.of(context).titleLarge.override(
+                        fontFamily: 'Andika New Basic',
+                        letterSpacing: 0.0,
+                      ),
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        // Scrollable content
+        Expanded(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Shared by info card
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: FlutterFlowTheme.of(context).primary.withOpacity(0.05),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: FlutterFlowTheme.of(context).primary.withOpacity(0.15),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 48,
+                          height: 48,
+                          decoration: BoxDecoration(
+                            color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Center(
+                            child: Icon(
+                              Icons.calendar_view_day,
+                              color: FlutterFlowTheme.of(context).primary,
+                              size: 24,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                dayTemplateName,
+                                style: FlutterFlowTheme.of(context).titleMedium.override(
+                                      fontFamily: 'Andika New Basic',
+                                      fontWeight: FontWeight.bold,
+                                      letterSpacing: 0.0,
+                                    ),
+                              ),
+                              Text(
+                                'Shared by ${content.sharedByName}',
+                                style: FlutterFlowTheme.of(context).bodySmall.override(
+                                      fontFamily: 'Andika New Basic',
+                                      color: FlutterFlowTheme.of(context).secondaryText,
+                                      letterSpacing: 0.0,
+                                    ),
+                              ),
+                              Text(
+                                '${sortedTemplates.length} meal${sortedTemplates.length == 1 ? '' : 's'}',
+                                style: FlutterFlowTheme.of(context).bodySmall.override(
+                                      fontFamily: 'Andika New Basic',
+                                      color: FlutterFlowTheme.of(context).secondaryText,
+                                      letterSpacing: 0.0,
+                                    ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Personal note
+                  if (personalNote != null && personalNote.isNotEmpty) ...[
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        color: Colors.amber.withOpacity(0.08),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.amber.withOpacity(0.2)),
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Icon(Icons.chat_bubble_outline, size: 18, color: Colors.amber[700]),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              personalNote,
+                              style: TextStyle(
+                                fontFamily: 'Andika New Basic',
+                                fontSize: 14,
+                                color: Colors.amber[900],
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+
+                  // Meal template list
+                  Text(
+                    'Meals in this template:',
+                    style: FlutterFlowTheme.of(context).titleSmall.override(
+                          fontFamily: 'Andika New Basic',
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 0.0,
+                        ),
+                  ),
+                  const SizedBox(height: 12),
+
+                  ...sortedTemplates.map((template) {
+                    final mealType = template['meal_type'] as String? ?? 'Meal';
+                    final name = template['name'] as String? ?? '';
+                    final entree = template['entree'] as Map<String, dynamic>?;
+                    final sides = template['sides'] as List<dynamic>? ?? [];
+                    final desserts = template['desserts'] as List<dynamic>? ?? [];
+                    final snacks = template['snacks'] as List<dynamic>? ?? [];
+                    final imageUrl = entree?['image_url'] as String?
+                        ?? (snacks.isNotEmpty ? (snacks.first as Map<String, dynamic>)['image_url'] as String? : null);
+
+                    final displayName = name.isNotEmpty
+                        ? name
+                        : entree?['recipe_name'] as String?
+                          ?? (snacks.isNotEmpty ? (snacks.first as Map<String, dynamic>)['recipe_name'] as String? : null)
+                          ?? mealType;
+
+                    // Count items
+                    int itemCount = 0;
+                    if (entree != null) itemCount++;
+                    itemCount += sides.length;
+                    itemCount += desserts.length;
+                    itemCount += snacks.length;
+
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 8),
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.grey[200]!),
+                      ),
+                      child: Row(
+                        children: [
+                          // Thumbnail
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Container(
+                              width: 48,
+                              height: 48,
+                              color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
+                              child: imageUrl != null && imageUrl.isNotEmpty
+                                  ? Image.network(imageUrl, fit: BoxFit.cover)
+                                  : Center(
+                                      child: Icon(
+                                        Icons.restaurant,
+                                        color: FlutterFlowTheme.of(context).primary,
+                                        size: 20,
+                                      ),
+                                    ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  displayName,
+                                  style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                        fontFamily: 'Andika New Basic',
+                                        fontWeight: FontWeight.w600,
+                                        letterSpacing: 0.0,
+                                      ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                Text(
+                                  '$mealType${itemCount > 1 ? ' ($itemCount items)' : ''}',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey[600],
+                                    fontFamily: 'Andika New Basic',
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }),
+
+                  const SizedBox(height: 24),
+
+                  // Import button
+                  SizedBox(
+                    width: double.infinity,
+                    height: 56,
+                    child: ElevatedButton(
+                      onPressed: _isImporting ? null : () => _handleDayTemplateImport(content),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: FlutterFlowTheme.of(context).primary,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(28),
+                        ),
+                        elevation: 2,
+                      ),
+                      child: _isImporting
+                          ? const SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2.5,
+                              ),
+                            )
+                          : Text(
+                              'Save to My Cookbook',
+                              style: FlutterFlowTheme.of(context).titleMedium.override(
+                                    fontFamily: 'Andika New Basic',
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    letterSpacing: 0.0,
+                                  ),
+                            ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _handleDayTemplateImport(SharedContentRecord content) async {
+    setState(() => _isImporting = true);
+
+    try {
+      final importedCount = await SharingService.importDayTemplate(
+        sharedContent: content,
+      );
+
+      if (!mounted) return;
+
+      if (importedCount > 0) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Day template saved to your cookbook! ($importedCount meals)'),
+            backgroundColor: Colors.green,
+            duration: const Duration(seconds: 3),
+          ),
+        );
+
+        // Navigate to Cookbook page (FavMealPage)
+        context.goNamed('FavMealPage');
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Failed to import day template. Please try again.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        setState(() => _isImporting = false);
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      setState(() => _isImporting = false);
+    }
+  }
+
   Future<void> _handleActivityPlanImport(SharedContentRecord content) async {
     setState(() => _isImporting = true);
 
@@ -1692,6 +2021,11 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
     // Route to activity plan import for activity plan content type
     if (content.contentType == SharedContentType.activityPlan) {
       return _buildActivityPlanContent(content);
+    }
+
+    // Route to day template import
+    if (content.contentType == SharedContentType.dayTemplate) {
+      return _buildDayTemplateContent(content);
     }
 
     return Column(

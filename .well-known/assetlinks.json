@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.mycompany.momecoach",
+      "sha256_cert_fingerprints": [
+        "01:94:0A:98:19:BC:94:69:23:F3:2F:44:EF:E0:ED:D7:41:D4:61:A2:F8:DF:79:2A:C5:B6:EF:D5:72:D4:8B:E6"
+      ]
+    }
+  }
+]

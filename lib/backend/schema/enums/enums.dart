@@ -56,6 +56,7 @@ enum SharedContentType {
   learningPath,
   activity,
   activityPlan,
+  dayTemplate,
 }
 
 extension FFEnumExtensions<T extends Enum> on T {
