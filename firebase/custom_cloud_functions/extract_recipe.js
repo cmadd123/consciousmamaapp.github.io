@@ -1,6 +1,17 @@
 const functions = require("firebase-functions");
 const https = require("https");
 const http = require("http");
+const OpenAI = require("openai");
+
+let _openai;
+function getOpenAI() {
+  if (!_openai) {
+    _openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY || functions.config().openai?.key,
+    });
+  }
+  return _openai;
+}
 
 /**
  * Cloud Function to extract recipe details from a URL.
@@ -22,10 +33,25 @@ exports.extractRecipe = functions.https.onRequest(async (req, res) => {
   try {
     // Support both GET query param and POST body
     const url = req.body?.data?.url || req.body?.url || req.query?.url;
+    const recipeText = req.body?.data?.text || req.body?.text;
+
+    // AI text parsing mode - user pasted recipe text
+    if (recipeText && recipeText.trim().length > 0) {
+      console.log("AI text parsing mode, text length:", recipeText.length);
+      const recipe = await parseRecipeWithAI(recipeText);
+      if (recipe) {
+        res.status(200).json({ result: { success: true, recipe: recipe } });
+      } else {
+        res.status(400).json({
+          result: { success: false, error: "Could not parse recipe from the provided text. Try including the recipe name, ingredients, and instructions." }
+        });
+      }
+      return;
+    }
 
     if (!url) {
       res.status(400).json({
-        result: { success: false, error: "Missing 'url' in request" }
+        result: { success: false, error: "Missing 'url' or 'text' in request" }
       });
       return;
     }
@@ -507,6 +533,76 @@ function parseDuration(duration) {
   // Try simple number
   const num = parseInt(duration);
   return isNaN(num) ? 0 : num;
+}
+
+/**
+ * Parse recipe from pasted text using OpenAI
+ */
+async function parseRecipeWithAI(text) {
+  const openai = getOpenAI();
+
+  const response = await openai.chat.completions.create({
+    model: "gpt-4o-mini",
+    temperature: 0.1,
+    messages: [
+      {
+        role: "system",
+        content: `You are a recipe parser. Extract structured recipe data from user-provided text.
+Return ONLY valid JSON with this exact format:
+{
+  "name": "Recipe Name",
+  "description": "Brief description of the dish",
+  "ingredients": ["ingredient 1", "ingredient 2"],
+  "instructions": ["Step 1 text", "Step 2 text"],
+  "prepTime": 10,
+  "cookTime": 30,
+  "totalTime": 40,
+  "servings": "4"
+}
+
+Rules:
+- ingredients: array of strings, each a single ingredient with quantity (e.g. "2 cups flour")
+- instructions: array of strings, each a single step. Remove numbering prefixes like "1." or "Step 1:"
+- prepTime/cookTime/totalTime: integers in minutes, use 0 if unknown
+- servings: string, use "" if unknown
+- If the text is not a recipe at all, return null
+- Clean up any formatting artifacts, extra whitespace, or HTML
+- Do NOT invent or guess missing information`
+      },
+      {
+        role: "user",
+        content: text
+      }
+    ],
+    response_format: { type: "json_object" },
+  });
+
+  const content = response.choices[0]?.message?.content;
+  if (!content) return null;
+
+  try {
+    const parsed = JSON.parse(content);
+    // Validate minimum required fields
+    if (!parsed.name || !Array.isArray(parsed.ingredients) || parsed.ingredients.length === 0) {
+      console.log("AI response missing required fields:", parsed);
+      return null;
+    }
+    return {
+      name: parsed.name || "Untitled Recipe",
+      description: parsed.description || "",
+      imageUrl: "",
+      ingredients: parsed.ingredients || [],
+      instructions: parsed.instructions || [],
+      prepTime: parsed.prepTime || 0,
+      cookTime: parsed.cookTime || 0,
+      totalTime: parsed.totalTime || (parsed.prepTime || 0) + (parsed.cookTime || 0),
+      servings: String(parsed.servings || ""),
+      sourceUrl: ""
+    };
+  } catch (e) {
+    console.error("Failed to parse AI response:", content, e);
+    return null;
+  }
 }
 
 /**

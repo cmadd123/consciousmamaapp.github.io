@@ -12,7 +12,7 @@ import '/app_state.dart';
 import 'activity_results_model.dart';
 export 'activity_results_model.dart';
 
-/// Activity Results - Shows top 3 activities for selected feeling
+/// Activity Results - Shows top activities for selected category
 class ActivityResultsWidget extends StatefulWidget {
   const ActivityResultsWidget({
     super.key,

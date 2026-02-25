@@ -1,4 +1,5 @@
 import '/backend/schema/resource_article_record.dart';
+import '/components/home_nav_bar_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import 'package:flutter/material.dart';
@@ -52,6 +53,7 @@ class _ArticleDetailWidgetState extends State<ArticleDetailWidget> {
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
+        bottomNavigationBar: const HomeNavBarWidget(currentPage: HomeNavPage.homeSubpage),
         appBar: AppBar(
           backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
           automaticallyImplyLeading: false,

@@ -487,31 +487,49 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                             builder: (context, learningSnapshot) {
                               final learningTasks = learningSnapshot.data ?? _cachedLearningTasks ?? [];
 
+                          // Debug: log events count for calendar
+                          if (events.isNotEmpty) {
+                            final recurringEvents = events.where((e) => e.isrecurring).length;
+                            final withEndDate = events.where((e) => e.hasEndDate()).length;
+                            debugPrint('=== Calendar eventLoader: ${events.length} total events, $recurringEvents recurring, $withEndDate with endDate ===');
+                          }
+
                           return FlutterFlowCalendar(
+                            key: ValueKey('cal_${events.length}_${learningTasks.length}'),
+                            initialDate: _model.selecteddate,
                             color: FlutterFlowTheme.of(context).primary,
                             iconColor: FlutterFlowTheme.of(context).secondaryText,
                             weekFormat: false,
                             weekStartsMonday: false,
                             rowHeight: 56.0,
-                            animateDays: true,
+                            animateDays: false,
                             animationBaseDelayMs: 150,
                             rowStaggerMs: 80,
                             eventLoader: (day) {
+                              final dayOnly = DateTime(day.year, day.month, day.day);
                               var dayEvents = events
-                                  .where((event) =>
-                                      dateTimeFormat(
-                                        "yMd",
-                                        event.date,
-                                        locale: FFLocalizations.of(context)
-                                            .languageCode,
-                                      ) ==
-                                      dateTimeFormat(
-                                        "yMd",
-                                        day,
-                                        locale: FFLocalizations.of(context)
-                                            .languageCode,
-                                      ))
+                                  .where((event) {
+                                    if (event.date == null) return false;
+                                    final eventStart = DateTime(event.date!.year, event.date!.month, event.date!.day);
+
+                                    // Non-recurring multi-day event: show on each day in range
+                                    // (recurring events have individual docs per occurrence, so no expansion needed)
+                                    if (event.endDate != null && !event.isrecurring) {
+                                      final eventEnd = DateTime(event.endDate!.year, event.endDate!.month, event.endDate!.day);
+                                      return !dayOnly.isBefore(eventStart) && !dayOnly.isAfter(eventEnd);
+                                    }
+
+                                    // Exact date match (works for single-day, recurring instances, etc.)
+                                    return dayOnly == eventStart;
+                                  })
                                   .toList();
+
+                              // Deduplicate events by name for this day
+                              final seenEvents = <String>{};
+                              dayEvents = dayEvents.where((event) {
+                                final key = '${event.name}_${event.typ}';
+                                return seenEvents.add(key);
+                              }).toList();
 
                               // Apply multi-select child filter to calendar dots
                               if (_model.selectedChildFilters.isNotEmpty) {
@@ -795,6 +813,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                           AddcalenderWidget.routeName,
                                           queryParameters: {
                                             'fromPage': serializeParam('Calender', ParamType.String),
+                                            'initialDate': serializeParam(_model.selecteddate, ParamType.DateTime),
                                           }.withoutNulls,
                                         );
                                       },
@@ -941,19 +960,28 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                               }
 
                               // Filter by selected date
-                              var dayItems = allCalendarItems.where((item) =>
-                                  item.date != null &&
-                                  dateTimeFormat(
-                                    "yMd",
-                                    item.date,
-                                    locale: FFLocalizations.of(context).languageCode,
-                                  ) ==
-                                  dateTimeFormat(
-                                    "yMd",
-                                    _model.selecteddate,
-                                    locale: FFLocalizations.of(context).languageCode,
-                                  )
-                              ).toList();
+                              final selectedDay = _model.selecteddate ?? getCurrentTimestamp;
+                              final selDayOnly = DateTime(selectedDay.year, selectedDay.month, selectedDay.day);
+                              var dayItems = allCalendarItems.where((item) {
+                                if (item.date == null) return false;
+                                final itemStart = DateTime(item.date!.year, item.date!.month, item.date!.day);
+
+                                // Non-recurring multi-day event: show within date range
+                                if (item.endDate != null && !item.isRecurring) {
+                                  final itemEnd = DateTime(item.endDate!.year, item.endDate!.month, item.endDate!.day);
+                                  return !selDayOnly.isBefore(itemStart) && !selDayOnly.isAfter(itemEnd);
+                                }
+
+                                // Exact date match (recurring instances have individual docs)
+                                return selDayOnly == itemStart;
+                              }).toList();
+
+                              // Deduplicate items by name + type for this day
+                              final seenItems = <String>{};
+                              dayItems = dayItems.where((item) {
+                                final key = '${item.name}_${item.type}';
+                                return seenItems.add(key);
+                              }).toList();
 
                               scheduleContent = Container(
                                 key: ValueKey('schedule_content_${_model.selecteddate}'),
@@ -2207,6 +2235,10 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                           'fromPage': serializeParam(
                             'Calender',
                             ParamType.String,
+                          ),
+                          'initialDate': serializeParam(
+                            _model.selecteddate,
+                            ParamType.DateTime,
                           ),
                         }.withoutNulls,
                       );

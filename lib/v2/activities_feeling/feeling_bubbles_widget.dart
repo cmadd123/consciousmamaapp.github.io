@@ -14,8 +14,8 @@ import '/app_state.dart';
 import 'feeling_bubbles_model.dart';
 export 'feeling_bubbles_model.dart';
 
-/// Feeling Bubbles - Mom picks ONE feeling
-/// Shows 10 feeling options, routes to filtered activity results
+/// Activity Categories - Browse activities by practical categories
+/// Shows category cards, routes to filtered activity results
 class FeelingBubblesWidget extends StatefulWidget {
   const FeelingBubblesWidget({super.key});
 
@@ -37,7 +37,7 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
   void initState() {
     super.initState();
     _model = createModel(context, () => FeelingBubblesModel());
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 2, vsync: this);
     _loadParentInfo();
   }
 
@@ -156,8 +156,7 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
                                   ),
                               dividerColor: Colors.transparent,
                               tabs: [
-                                Tab(text: 'Feelings'),
-                                Tab(text: 'Situations'),
+                                Tab(text: 'Categories'),
                                 Tab(text: 'My Week'),
                               ],
                             ),
@@ -171,10 +170,8 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
                       child: CascadeItem(index: 1, staggerMs: 150, child: TabBarView(
                         controller: _tabController,
                         children: [
-                          // Feelings tab (formerly Find Activity)
-                          _buildFeelingsTab(context, isComfortMode),
-                          // Situations tab (NEW - categories)
-                          _buildSituationsTab(context, isComfortMode),
+                          // Categories tab
+                          _buildCategoriesTab(context, isComfortMode),
                           // My Week tab
                           _buildMyWeekTab(context, isComfortMode),
                         ],
@@ -197,263 +194,8 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
     );
   }
 
-  /// Build the "Feelings" tab content (mood bubbles)
-  Widget _buildFeelingsTab(BuildContext context, bool isComfortMode) {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 100.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'I need...',
-              style: FlutterFlowTheme.of(context)
-                  .bodyMedium
-                  .override(
-                    fontFamily: 'Andika New Basic',
-                    color: isComfortMode ? Colors.white70 : FlutterFlowTheme.of(context).secondaryText,
-                    fontSize: 16.0,
-                    letterSpacing: isComfortMode ? 0.5 : 0.0,
-                    fontWeight: isComfortMode ? FontWeight.w300 : null,
-                  ),
-            ),
-
-            SizedBox(height: 16.0),
-
-            // Favorites, Custom Activities, and Browse All buttons
-            Row(
-              children: [
-                // Favorites button
-                Expanded(
-                  child: InkWell(
-                    onTap: () {
-                      context.pushNamed('FavoriteActivities');
-                    },
-                    child: Container(
-                      padding: EdgeInsets.symmetric(vertical: 14.0, horizontal: 8.0),
-                      decoration: BoxDecoration(
-                        color: isComfortMode ? Colors.transparent : FlutterFlowTheme.of(context).secondaryBackground,
-                        borderRadius: BorderRadius.circular(14.0),
-                        border: isComfortMode
-                          ? Border.all(color: Colors.white.withValues(alpha: 0.3), width: 1.0)
-                          : null,
-                        boxShadow: isComfortMode ? null : [
-                          BoxShadow(
-                            blurRadius: 4.0,
-                            color: Color(0x1A000000),
-                            offset: Offset(0, 2),
-                          )
-                        ],
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.favorite,
-                            color: isComfortMode ? Colors.red.shade300 : Colors.red,
-                            size: 22.0,
-                          ),
-                          SizedBox(height: 6.0),
-                          Text(
-                            'Favorites',
-                            style: FlutterFlowTheme.of(context)
-                                .bodyLarge
-                                .override(
-                                  fontFamily: 'Andika New Basic',
-                                  color: isComfortMode ? Colors.white : null,
-                                  fontSize: 12.0,
-                                  letterSpacing: isComfortMode ? 0.5 : 0.0,
-                                  fontWeight: isComfortMode ? FontWeight.w300 : FontWeight.w500,
-                                ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(width: 10.0),
-                // Custom Activities button
-                Expanded(
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => const MyActivitiesWidget(),
-                        ),
-                      );
-                    },
-                    child: Container(
-                      padding: EdgeInsets.symmetric(vertical: 14.0, horizontal: 8.0),
-                      decoration: BoxDecoration(
-                        color: isComfortMode ? Colors.transparent : FlutterFlowTheme.of(context).secondaryBackground,
-                        borderRadius: BorderRadius.circular(14.0),
-                        border: isComfortMode
-                          ? Border.all(color: Colors.white.withValues(alpha: 0.3), width: 1.0)
-                          : null,
-                        boxShadow: isComfortMode ? null : [
-                          BoxShadow(
-                            blurRadius: 4.0,
-                            color: Color(0x1A000000),
-                            offset: Offset(0, 2),
-                          )
-                        ],
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.add_circle_outline,
-                            color: isComfortMode ? FlutterFlowTheme.of(context).primary.withValues(alpha: 0.8) : FlutterFlowTheme.of(context).primary,
-                            size: 22.0,
-                          ),
-                          SizedBox(height: 6.0),
-                          Text(
-                            'Custom',
-                            style: FlutterFlowTheme.of(context)
-                                .bodyLarge
-                                .override(
-                                  fontFamily: 'Andika New Basic',
-                                  color: isComfortMode ? Colors.white : null,
-                                  fontSize: 12.0,
-                                  letterSpacing: isComfortMode ? 0.5 : 0.0,
-                                  fontWeight: isComfortMode ? FontWeight.w300 : FontWeight.w500,
-                                ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(width: 10.0),
-                // Browse All button
-                Expanded(
-                  child: InkWell(
-                    onTap: () {
-                      context.pushNamed(
-                        'ActivityResults',
-                        queryParameters: {
-                          'bubbleType': serializeParam('all', ParamType.String),
-                        }.withoutNulls,
-                      );
-                    },
-                    child: Container(
-                      padding: EdgeInsets.symmetric(vertical: 14.0, horizontal: 8.0),
-                      decoration: BoxDecoration(
-                        color: isComfortMode ? Colors.transparent : FlutterFlowTheme.of(context).secondaryBackground,
-                        borderRadius: BorderRadius.circular(14.0),
-                        border: isComfortMode
-                          ? Border.all(color: Colors.white.withValues(alpha: 0.3), width: 1.0)
-                          : null,
-                        boxShadow: isComfortMode ? null : [
-                          BoxShadow(
-                            blurRadius: 4.0,
-                            color: Color(0x1A000000),
-                            offset: Offset(0, 2),
-                          )
-                        ],
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.list_alt,
-                            color: isComfortMode ? Color(0xFF9B8AA0) : Color(0xFF9B8AA0),
-                            size: 22.0,
-                          ),
-                          SizedBox(height: 6.0),
-                          Text(
-                            'Browse',
-                            style: FlutterFlowTheme.of(context)
-                                .bodyLarge
-                                .override(
-                                  fontFamily: 'Andika New Basic',
-                                  color: isComfortMode ? Colors.white : null,
-                                  fontSize: 12.0,
-                                  letterSpacing: isComfortMode ? 0.5 : 0.0,
-                                  fontWeight: isComfortMode ? FontWeight.w300 : FontWeight.w500,
-                                ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-
-            SizedBox(height: 24.0),
-
-            // Feeling bubbles - 2 per row
-            Row(
-              children: [
-                Expanded(
-                  child: _buildFeelingBubble(context, '😌', 'Something calming, please.', 'calm'),
-                ),
-                SizedBox(width: 12.0),
-                Expanded(
-                  child: _buildFeelingBubble(context, '⚡', 'They\'ve got allll the wiggles.', 'move'),
-                ),
-              ],
-            ),
-            SizedBox(height: 12.0),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildFeelingBubble(context, '🧩', 'Their brain wants a job.', 'brain'),
-                ),
-                SizedBox(width: 12.0),
-                Expanded(
-                  child: _buildFeelingBubble(context, '🎨', 'Let\'s spark some creativity.', 'creative'),
-                ),
-              ],
-            ),
-            SizedBox(height: 12.0),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildFeelingBubble(context, '🎯', 'I need them to play on their own for a bit.', 'independent'),
-                ),
-                SizedBox(width: 12.0),
-                Expanded(
-                  child: _buildFeelingBubble(context, '💕', 'We could use a little connection.', 'connection'),
-                ),
-              ],
-            ),
-            SizedBox(height: 12.0),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildFeelingBubble(context, '🌿', 'We should probably get outside.', 'outdoor'),
-                ),
-                SizedBox(width: 12.0),
-                Expanded(
-                  child: _buildFeelingBubble(context, '⏱️', 'No energy left for setup.', 'minimal'),
-                ),
-              ],
-            ),
-            SizedBox(height: 12.0),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildFeelingBubble(context, '✨', 'They\'re craving sensory stuff today.', 'sensory'),
-                ),
-                SizedBox(width: 12.0),
-                Expanded(
-                  child: _buildFeelingBubble(context, '🏃', 'Help me channel this energy somewhere.', 'channel'),
-                ),
-              ],
-            ),
-
-            SizedBox(height: 32.0),
-          ],
-        ),
-      ),
-    );
-  }
-
-  /// Build the "Situations" tab content (practical categories)
-  Widget _buildSituationsTab(BuildContext context, bool isComfortMode) {
+  /// Build the "Categories" tab content (practical categories)
+  Widget _buildCategoriesTab(BuildContext context, bool isComfortMode) {
     return SingleChildScrollView(
       child: Padding(
         padding: EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 100.0),
@@ -869,12 +611,22 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
         final allRecords = snapshot.data ?? [];
 
         // Filter to only next 7 days' activities (Task or Activity type, not Event)
-        final activities = allRecords.where((activity) {
+        final filteredActivities = allRecords.where((activity) {
           if (activity.date == null) return false;
           // Only show Task or Activity types (not Events)
           if (activity.typ != 'Task' && activity.typ != 'Activity') return false;
           final activityDate = DateTime(activity.date!.year, activity.date!.month, activity.date!.day);
           return !activityDate.isBefore(today) && !activityDate.isAfter(endDate);
+        }).toList();
+
+        // Deduplicate: same name + same date = keep only one
+        final seen = <String>{};
+        final activities = filteredActivities.where((activity) {
+          final dateStr = activity.date != null
+              ? '${activity.date!.year}-${activity.date!.month}-${activity.date!.day}'
+              : '';
+          final key = '${activity.name}_$dateStr';
+          return seen.add(key); // returns false if already in set
         }).toList();
 
         if (activities.isEmpty) {
@@ -1383,7 +1135,7 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
                         ),
                         child: Center(
                           child: Text(
-                            child.name.isNotEmpty ? child.name[0].toUpperCase() : 'C',
+                            child.name.isNotEmpty ? child.name[0].toLowerCase() : 'C',
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 11.0,
@@ -1720,7 +1472,7 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
                                       return _buildAssigneeChip(
                                         child.name,
                                         color,
-                                        child.name.isNotEmpty ? child.name[0].toUpperCase() : '?',
+                                        child.name.isNotEmpty ? child.name[0].toLowerCase() : '?',
                                         isComfortMode,
                                       );
                                     }).toList(),
@@ -1960,67 +1712,4 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
     );
   }
 
-  Widget _buildFeelingBubble(
-    BuildContext context,
-    String emoji,
-    String text,
-    String bubbleType,
-  ) {
-    final isComfortMode = FFAppState().isComfortMode;
-
-    return InkWell(
-      onTap: () {
-        // Navigate to activity results with selected bubble
-        context.pushNamed(
-          'ActivityResults',
-          queryParameters: {
-            'bubbleType': serializeParam(bubbleType, ParamType.String),
-          }.withoutNulls,
-        );
-      },
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 14.0),
-        decoration: BoxDecoration(
-          color: isComfortMode ? Colors.transparent : FlutterFlowTheme.of(context).secondaryBackground,
-          borderRadius: BorderRadius.circular(14.0),
-          border: isComfortMode
-            ? Border.all(color: Colors.white.withValues(alpha:0.3), width: 1.0)
-            : null,
-          boxShadow: isComfortMode ? null : [
-            BoxShadow(
-              blurRadius: 2.0,
-              color: Color(0x1A000000),
-              offset: Offset(0, 1),
-            )
-          ],
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (!isComfortMode)
-              Text(
-                emoji,
-                style: TextStyle(fontSize: 28.0),
-              ),
-            if (!isComfortMode) SizedBox(height: 6.0),
-            Text(
-              text,
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: FlutterFlowTheme.of(context)
-                  .bodyMedium
-                  .override(
-                    fontFamily: 'Andika New Basic',
-                    color: isComfortMode ? Colors.white : null,
-                    fontSize: 13.0,
-                    letterSpacing: isComfortMode ? 0.5 : 0.0,
-                    fontWeight: isComfortMode ? FontWeight.w300 : FontWeight.w500,
-                  ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 }

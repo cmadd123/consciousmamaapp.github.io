@@ -24,6 +24,7 @@ class AddcalenderWidget extends StatefulWidget {
     this.editTaskEvent,
     this.prefillName,
     this.prefillDescription,
+    this.initialDate,
   }) : this.fromPage = fromPage ?? 'Home';
 
   final String fromPage;
@@ -34,6 +35,9 @@ class AddcalenderWidget extends StatefulWidget {
 
   /// Pre-fill the description field (e.g., from My Activities)
   final String? prefillDescription;
+
+  /// Pre-fill the date (e.g., from calendar's selected day)
+  final DateTime? initialDate;
 
   static String routeName = 'addcalender';
   static String routePath = '/addcalender';
@@ -119,6 +123,10 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
         if (widget.fromPage == 'activities') {
           _model.selectedType = 'Activity';
         }
+        // Pre-fill date from calendar's selected day
+        if (widget.initialDate != null) {
+          _model.selectedDate = widget.initialDate;
+        }
       }
 
       safeSetState(() {});
@@ -172,6 +180,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
       maximumDate: DateTime(2050),
       showTime: true,
       title: 'End Date & Time',
+      minuteInterval: 5,
     );
 
     if (selectedDate != null) {
@@ -197,6 +206,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
       maximumDate: DateTime(2050),
       showTime: true,
       title: 'Start Date & Time',
+      minuteInterval: 5,
     );
 
     if (selectedDate != null) {

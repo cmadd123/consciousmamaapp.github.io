@@ -3,7 +3,7 @@
     "apps": [],
     "details": [
       {
-        "appID": "TEAM_ID.com.momrise.app",
+        "appID": "QD9XFTWRQ9.com.momrise.app",
         "paths": ["/s/*", "/shared/*"]
       }
     ]

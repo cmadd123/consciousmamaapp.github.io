@@ -1,3 +1,4 @@
+import '/components/home_nav_bar_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import 'package:flutter/material.dart';
@@ -43,6 +44,7 @@ class _WeekViewWidgetState extends State<WeekViewWidget> {
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: Color(0xFF2C3E50),
+        bottomNavigationBar: const HomeNavBarWidget(currentPage: HomeNavPage.homeSubpage),
         body: SafeArea(
           child: Container(
             width: double.infinity,

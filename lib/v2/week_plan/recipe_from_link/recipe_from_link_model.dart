@@ -47,6 +47,7 @@ class RecipeFromLinkModel extends FlutterFlowModel<RecipeFromLinkWidget> {
   bool hasExtracted = false;
   String? errorMessage;
   bool addToMealPlan = true; // Default to true, user can uncheck
+  bool isPasteMode = false; // Toggle between URL import and paste text mode
 
   // User-selected meal plan date and type (when not pre-selected)
   DateTime? selectedDate;
@@ -78,6 +79,10 @@ class RecipeFromLinkModel extends FlutterFlowModel<RecipeFromLinkWidget> {
   String? Function(BuildContext, String?)?
       instructionTextFieldTextControllerValidator;
 
+  // State field(s) for pasteTextField widget.
+  FocusNode? pasteTextFieldFocusNode;
+  TextEditingController? pasteTextFieldTextController;
+
   // State field(s) for recipeNameTextField widget.
   FocusNode? recipeNameTextFieldFocusNode;
   TextEditingController? recipeNameTextFieldTextController;
@@ -93,6 +98,8 @@ class RecipeFromLinkModel extends FlutterFlowModel<RecipeFromLinkWidget> {
     ingredientTextFieldTextController?.dispose();
     instructionTextFieldFocusNode?.dispose();
     instructionTextFieldTextController?.dispose();
+    pasteTextFieldFocusNode?.dispose();
+    pasteTextFieldTextController?.dispose();
     recipeNameTextFieldFocusNode?.dispose();
     recipeNameTextFieldTextController?.dispose();
   }
@@ -138,6 +145,18 @@ class RecipeFromLinkModel extends FlutterFlowModel<RecipeFromLinkWidget> {
     return cleaned.trim();
   }
 
+  /// Upgrade Pinterest image URLs to full resolution
+  String? _upgradePinterestUrl(String? url) {
+    if (url == null || url.isEmpty) return url;
+    if (url.contains('i.pinimg.com')) {
+      return url
+          .replaceFirst('/236x/', '/originals/')
+          .replaceFirst('/474x/', '/originals/')
+          .replaceFirst('/564x/', '/originals/');
+    }
+    return url;
+  }
+
   /// Populate from extracted recipe data
   void populateFromRecipe(Map<String, dynamic> recipe) {
     recipeName = _cleanText(recipe['name'] as String? ?? '');
@@ -145,7 +164,7 @@ class RecipeFromLinkModel extends FlutterFlowModel<RecipeFromLinkWidget> {
     recipeNameTextFieldTextController?.text = recipeName ?? '';
     recipeDescription = _cleanText(recipe['description'] as String? ?? '');
     if (recipeDescription!.isEmpty) recipeDescription = null;
-    mealImage = recipe['imageUrl'] as String?;
+    mealImage = _upgradePinterestUrl(recipe['imageUrl'] as String?);
     prepTime = (recipe['prepTime'] as num?)?.toInt() ?? 0;
     cookTime = (recipe['cookTime'] as num?)?.toInt() ?? 0;
     servings = recipe['servings']?.toString() ?? '';

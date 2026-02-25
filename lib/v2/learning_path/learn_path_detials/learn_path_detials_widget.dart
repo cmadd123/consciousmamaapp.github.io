@@ -1,5 +1,6 @@
 import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
+import '/components/home_nav_bar_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
@@ -355,6 +356,7 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget>
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: Color(0xFFEDFFFD),
+        bottomNavigationBar: const HomeNavBarWidget(currentPage: HomeNavPage.homeSubpage),
         body: SafeArea(
           top: true,
           child: Stack(

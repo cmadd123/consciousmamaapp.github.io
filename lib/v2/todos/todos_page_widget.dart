@@ -1,6 +1,7 @@
 import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
 import '/components/home_nav_bar_widget.dart';
+import '/components/parent_circle_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/components/page_animations.dart';
@@ -29,12 +30,24 @@ class _TodosPageWidgetState extends State<TodosPageWidget> with TickerProviderSt
   bool _assignToDad = false;
   List<DocumentReference> _selectedChildren = [];
   List<ChildernRecord>? _userChildren;
+  ParentDisplayInfo _parentInfo = ParentDisplayInfo.defaults();
 
   @override
   void initState() {
     super.initState();
     _loadChildren();
+    _loadParentInfo();
     initPageAnimations(itemCount: 1);
+  }
+
+  Future<void> _loadParentInfo() async {
+    if (currentUserReference == null) return;
+    final user = await UsersRecord.getDocumentOnce(currentUserReference!);
+    if (mounted) {
+      setState(() {
+        _parentInfo = ParentDisplayInfo.fromUser(user);
+      });
+    }
   }
 
   Future<void> _loadChildren() async {
@@ -554,20 +567,20 @@ class _TodosPageWidgetState extends State<TodosPageWidget> with TickerProviderSt
                       Container(
                         width: 18.0,
                         height: 18.0,
-                        decoration: const BoxDecoration(
-                          color: Color(0xFF1976D2),
+                        decoration: BoxDecoration(
+                          color: _parentInfo.partnerColor,
                           shape: BoxShape.circle,
                         ),
-                        child: const Center(
-                          child: Text('D', style: TextStyle(color: Colors.white, fontSize: 10.0, fontWeight: FontWeight.bold)),
+                        child: Center(
+                          child: Text(_parentInfo.partnerInitial, style: TextStyle(color: Colors.white, fontSize: 10.0, fontWeight: FontWeight.bold)),
                         ),
                       ),
                       const SizedBox(width: 6.0),
                       Text(
-                        'Dad',
+                        _parentInfo.partnerName,
                         style: FlutterFlowTheme.of(context).bodySmall.override(
                           fontFamily: 'Andika New Basic',
-                          color: _assignToDad ? const Color(0xFF1976D2) : const Color(0xFF9B8A9E),
+                          color: _assignToDad ? Color(_parentInfo.partnerColor.value) : const Color(0xFF9B8A9E),
                           fontSize: 12.0,
                           fontWeight: _assignToDad ? FontWeight.w600 : FontWeight.w500,
                         ),
@@ -793,6 +806,7 @@ class _TodosPageWidgetState extends State<TodosPageWidget> with TickerProviderSt
       builder: (context) => _AssignmentBottomSheet(
         todo: todo,
         onUpdate: () => setState(() {}),
+        parentInfo: _parentInfo,
       ),
     );
   }
@@ -933,10 +947,12 @@ class _TodosPageWidgetState extends State<TodosPageWidget> with TickerProviderSt
 class _AssignmentBottomSheet extends StatefulWidget {
   final TodoRecord todo;
   final VoidCallback onUpdate;
+  final ParentDisplayInfo parentInfo;
 
   const _AssignmentBottomSheet({
     required this.todo,
     required this.onUpdate,
+    required this.parentInfo,
   });
 
   @override
@@ -1104,13 +1120,13 @@ class _AssignmentBottomSheetState extends State<_AssignmentBottomSheet> {
                             Container(
                               width: 28.0,
                               height: 28.0,
-                              decoration: const BoxDecoration(
-                                color: Color(0xFF1976D2),
+                              decoration: BoxDecoration(
+                                color: widget.parentInfo.partnerColor,
                                 shape: BoxShape.circle,
                               ),
-                              child: const Center(
+                              child: Center(
                                 child: Text(
-                                  'D',
+                                  widget.parentInfo.partnerInitial,
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 14.0,
@@ -1121,7 +1137,7 @@ class _AssignmentBottomSheetState extends State<_AssignmentBottomSheet> {
                             ),
                             const SizedBox(width: 8.0),
                             Text(
-                              'Dad',
+                              widget.parentInfo.partnerName,
                               style: FlutterFlowTheme.of(context).bodyMedium.override(
                                 fontFamily: 'Andika New Basic',
                                 color: const Color(0xFF5D4E60),

@@ -81,6 +81,7 @@ class _AddtaskWidgetState extends State<AddtaskWidget> {
       maximumDate: DateTime(2050),
       showTime: true,
       title: 'Select Date & Time',
+      minuteInterval: 5,
     );
 
     if (selectedDate != null) {

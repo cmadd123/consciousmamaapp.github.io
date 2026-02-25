@@ -2,7 +2,7 @@ import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
 import '/backend/schema/enums/enums.dart';
 import '/components/empty_widget_component_widget.dart';
-import '/components/nav_bar_component_widget.dart';
+import '/components/home_nav_bar_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
@@ -245,9 +245,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
               ? _buildComfortModeLayout()
               : _buildStandardModeLayout(),
         ),
-        bottomNavigationBar: NavBarComponentWidget(
-          currentPAge: CurrentPage.Home,
-        ),
+        bottomNavigationBar: const HomeNavBarWidget(currentPage: HomeNavPage.home),
       ),
     );
   }

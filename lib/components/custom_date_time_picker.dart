@@ -278,12 +278,17 @@ class _CustomDateTimePickerState extends State<CustomDateTimePicker> {
                     });
                   },
                 ),
-                // Day wheel
+                // Day wheel (shows day-of-week abbreviation)
                 _buildWheelPicker(
                   controller: _dayController,
                   itemCount: daysInCurrentMonth,
-                  width: 60,
-                  itemBuilder: (index) => '${index + 1}',
+                  width: 80,
+                  itemBuilder: (index) {
+                    final date = DateTime(_selectedYear, _selectedMonth, index + 1);
+                    final dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+                    final dayName = dayNames[date.weekday - 1];
+                    return '$dayName ${index + 1}';
+                  },
                   onSelectedItemChanged: (index) {
                     setState(() {
                       _selectedDay = index + 1;

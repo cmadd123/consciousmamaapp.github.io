@@ -5,13 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MomRise</title>
   <script>
-    // Check if this is a share link (/s/CODE or /shared/CODE)
+    // Check if this is a share link and redirect to the landing page.
+    // Only handle /s/CODE paths. Do NOT redirect /shared/CODE paths here —
+    // those are meant for App Links / Universal Links to intercept directly.
+    // Redirecting /shared/CODE back to the landing page would cause an
+    // infinite loop since the landing page navigates to /shared/CODE.
     (function() {
       var path = window.location.pathname;
-      var match = path.match(/^\/(s|shared)\/([a-z0-9]{8})$/);
-      if (match) {
-        // Redirect to the share landing page with the code
-        window.location.replace('/s/index.html?code=' + match[2]);
+
+      // Handle /s/CODE → redirect to share landing page
+      var shortMatch = path.match(/^\/s\/([a-z0-9]{8})$/);
+      if (shortMatch) {
+        window.location.replace('/s/index.html?code=' + shortMatch[1]);
+        return;
+      }
+
+      // Handle /shared/CODE → show the landing page inline (don't redirect)
+      // This happens when App Links / Universal Links didn't intercept the URL
+      // (app not installed, or link verification not set up yet)
+      var sharedMatch = path.match(/^\/shared\/([a-z0-9]{8})$/);
+      if (sharedMatch) {
+        window.location.replace('/s/index.html?code=' + sharedMatch[1]);
+        return;
       }
     })();
   </script>

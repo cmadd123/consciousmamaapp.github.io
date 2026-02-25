@@ -4,6 +4,7 @@ import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
 import '/backend/firebase_storage/storage.dart';
 import '/backend/schema/enums/enums.dart';
+import '/components/home_nav_bar_widget.dart';
 import 'package:http/http.dart' as http;
 import '/flutter_flow/flutter_flow_drop_down.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
@@ -407,9 +408,9 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
 
     // Pick image based on selection
     final selectedMedia = await selectMedia(
-      maxWidth: 1200.00,
-      maxHeight: 1200.00,
-      imageQuality: 85,
+      maxWidth: 2048.00,
+      maxHeight: 2048.00,
+      imageQuality: 95,
       mediaSource: mediaSource == 'camera' ? MediaSource.camera : MediaSource.photoGallery,
     );
 
@@ -553,6 +554,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).secondaryBackground, // White background
+        bottomNavigationBar: const HomeNavBarWidget(currentPage: HomeNavPage.meals),
         body: SafeArea(
           top: true,
           child: Stack(
@@ -834,9 +836,9 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                           final selectedMedia =
                               await selectMediaWithSourceBottomSheet(
                             context: context,
-                            maxWidth: 1200.00,
-                            maxHeight: 1200.00,
-                            imageQuality: 85,
+                            maxWidth: 2048.00,
+                            maxHeight: 2048.00,
+                            imageQuality: 95,
                             allowPhoto: true,
                           );
                           if (selectedMedia != null &&

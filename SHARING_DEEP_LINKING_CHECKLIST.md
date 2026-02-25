@@ -64,6 +64,16 @@
 
 ## ⚠️ Critical TODO Before Launch
 
+### Release Checklist — assetlinks.json SHA Fingerprint
+
+**Before publishing a release build**, update `.well-known/assetlinks.json` with the **release keystore SHA-256 fingerprint** (the current fingerprint is from the debug keystore).
+
+To get the release SHA-256:
+```bash
+keytool -list -v -keystore <your-release-keystore>.jks -alias <alias>
+```
+Copy the `SHA256:` value and replace the fingerprint in `.well-known/assetlinks.json`. Without this, Android App Links will NOT work on release builds — share links will open the browser instead of the app.
+
 ### iOS Associated Domains (Required for Universal Links)
 
 **You MUST do this in Xcode before iOS deep linking will work:**

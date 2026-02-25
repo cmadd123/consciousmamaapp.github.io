@@ -2,7 +2,7 @@ import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
 import '/backend/schema/enums/enums.dart';
 import '/backend/schema/structs/index.dart';
-import '/components/nav_bar_component_widget.dart';
+import '/components/home_nav_bar_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
@@ -60,6 +60,7 @@ class _KindofActivityCopyCopyWidgetState
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
+        bottomNavigationBar: const HomeNavBarWidget(currentPage: HomeNavPage.homeSubpage),
         body: SafeArea(
           top: true,
           child: Stack(
@@ -548,20 +549,6 @@ class _KindofActivityCopyCopyWidgetState
                       ),
                     ),
                   ].addToEnd(SizedBox(height: 82.0)),
-                ),
-              ),
-              Align(
-                alignment: AlignmentDirectional(0.0, 1.0),
-                child: Container(
-                  height: 82.0,
-                  decoration: BoxDecoration(),
-                  child: wrapWithModel(
-                    model: _model.navBarComponentModel,
-                    updateCallback: () => safeSetState(() {}),
-                    child: NavBarComponentWidget(
-                      currentPAge: CurrentPage.Add,
-                    ),
-                  ),
                 ),
               ),
             ],

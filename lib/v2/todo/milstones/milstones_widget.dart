@@ -108,7 +108,13 @@ class _MilstonesWidgetState extends State<MilstonesWidget> {
           .get();
       _allChildren = childrenQuery.docs
           .map((doc) => ChildernRecord.fromSnapshot(doc))
-          .toList();
+          .toList()
+        ..sort((a, b) {
+          if (a.birthDay == null && b.birthDay == null) return 0;
+          if (a.birthDay == null) return 1;
+          if (b.birthDay == null) return -1;
+          return a.birthDay!.compareTo(b.birthDay!);
+        });
 
       // Load milestones for this age from Static_Milestones
       final milestonesQuery = await FirebaseFirestore.instance

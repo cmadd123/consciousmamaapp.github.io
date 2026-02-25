@@ -1,7 +1,7 @@
 import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
 import '/backend/schema/enums/enums.dart';
-import '/components/nav_bar_component_widget.dart';
+import '/components/home_nav_bar_widget.dart';
 import '/components/notifications_reminder_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -54,6 +54,7 @@ class _GenrateFormCookWidgetState extends State<GenrateFormCookWidget> {
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
+        bottomNavigationBar: const HomeNavBarWidget(currentPage: HomeNavPage.meals),
         body: SafeArea(
           top: true,
           child: Stack(
@@ -1502,20 +1503,6 @@ class _GenrateFormCookWidgetState extends State<GenrateFormCookWidget> {
                         ),
                       ),
                     ],
-                  ),
-                ),
-              ),
-              Align(
-                alignment: AlignmentDirectional(0.0, 1.0),
-                child: Container(
-                  height: 82.0,
-                  decoration: BoxDecoration(),
-                  child: wrapWithModel(
-                    model: _model.navBarComponentModel,
-                    updateCallback: () => safeSetState(() {}),
-                    child: NavBarComponentWidget(
-                      currentPAge: CurrentPage.Calendar,
-                    ),
                   ),
                 ),
               ),

@@ -2,6 +2,7 @@ import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
 import '/backend/cloud_functions/cloud_functions.dart';
 import '/backend/schema/enums/enums.dart';
+import '/components/home_nav_bar_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
@@ -59,6 +60,9 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
 
     _model.instructionTextFieldTextController ??= TextEditingController();
     _model.instructionTextFieldFocusNode ??= FocusNode();
+
+    _model.pasteTextFieldTextController ??= TextEditingController();
+    _model.pasteTextFieldFocusNode ??= FocusNode();
 
     _model.recipeNameTextFieldTextController ??= TextEditingController();
     _model.recipeNameTextFieldFocusNode ??= FocusNode();
@@ -161,6 +165,58 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
         } else {
           _model.errorMessage = 'Couldn\'t find recipe data on this page. This works best with recipe blogs like AllRecipes, Food Network, or Tasty.';
         }
+        _model.isLoading = false;
+      });
+    }
+  }
+
+  /// Extract recipe from pasted text using AI
+  Future<void> _extractFromText() async {
+    final text = _model.pasteTextFieldTextController?.text.trim() ?? '';
+    if (text.isEmpty) {
+      setState(() {
+        _model.errorMessage = 'Please paste your recipe text';
+      });
+      return;
+    }
+
+    if (text.length < 20) {
+      setState(() {
+        _model.errorMessage = 'Please paste more of the recipe — include ingredients and instructions';
+      });
+      return;
+    }
+
+    setState(() {
+      _model.isLoading = true;
+      _model.errorMessage = null;
+    });
+
+    try {
+      final result = await makeCloudCall('extractRecipe', {'text': text});
+
+      if (result['success'] == true && result['recipe'] != null) {
+        final recipe = result['recipe'] as Map<String, dynamic>;
+        setState(() {
+          _model.populateFromRecipe(recipe);
+          _model.isLoading = false;
+        });
+      } else {
+        setState(() {
+          _model.errorMessage = result['error'] as String? ??
+              'Could not parse the recipe. Try including the recipe name, ingredients, and instructions.';
+          _model.isLoading = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        String errorMsg = e.toString();
+        if (errorMsg.contains('Exception:')) {
+          errorMsg = errorMsg.replaceFirst('Exception:', '').trim();
+        }
+        _model.errorMessage = errorMsg.isNotEmpty
+            ? errorMsg
+            : 'Something went wrong. Please try again.';
         _model.isLoading = false;
       });
     }
@@ -325,6 +381,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
+        bottomNavigationBar: const HomeNavBarWidget(currentPage: HomeNavPage.meals),
         body: SafeArea(
           top: true,
           child: Form(
@@ -369,37 +426,127 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                         ),
                       ),
                     ),
-                    // Subtitle - tip for sharing
-                    Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(0.0, 8.0, 0.0, 0.0),
-                      child: Text(
-                        'Share a recipe link from Pinterest or the web',
-                        textAlign: TextAlign.center,
-                        style: FlutterFlowTheme.of(context).bodyMedium.override(
-                              fontFamily: 'Andika New Basic',
-                              color: Color(0xB71B1F26),
-                              fontSize: 14.0,
-                              letterSpacing: 0.0,
-                            ),
+                    // Mode toggle tabs
+                    if (!_model.hasExtracted)
+                      Padding(
+                        padding: EdgeInsetsDirectional.fromSTEB(0.0, 16.0, 0.0, 0.0),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF5F5F5),
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
+                          padding: const EdgeInsets.all(3.0),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: InkWell(
+                                  onTap: () {
+                                    if (_model.isPasteMode) {
+                                      setState(() {
+                                        _model.isPasteMode = false;
+                                        _model.errorMessage = null;
+                                      });
+                                    }
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(vertical: 10.0),
+                                    decoration: BoxDecoration(
+                                      color: !_model.isPasteMode ? Colors.white : Colors.transparent,
+                                      borderRadius: BorderRadius.circular(10.0),
+                                      boxShadow: !_model.isPasteMode
+                                          ? [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 4.0)]
+                                          : null,
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Icon(Icons.link, size: 16.0,
+                                          color: !_model.isPasteMode
+                                              ? FlutterFlowTheme.of(context).primary
+                                              : const Color(0xFF999999)),
+                                        const SizedBox(width: 6.0),
+                                        Text('From Link',
+                                          style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                fontFamily: 'Andika New Basic',
+                                                fontSize: 13.0,
+                                                fontWeight: !_model.isPasteMode ? FontWeight.w600 : FontWeight.normal,
+                                                color: !_model.isPasteMode
+                                                    ? FlutterFlowTheme.of(context).primaryText
+                                                    : const Color(0xFF999999),
+                                                letterSpacing: 0.0,
+                                              ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                child: InkWell(
+                                  onTap: () {
+                                    if (!_model.isPasteMode) {
+                                      setState(() {
+                                        _model.isPasteMode = true;
+                                        _model.errorMessage = null;
+                                      });
+                                    }
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(vertical: 10.0),
+                                    decoration: BoxDecoration(
+                                      color: _model.isPasteMode ? Colors.white : Colors.transparent,
+                                      borderRadius: BorderRadius.circular(10.0),
+                                      boxShadow: _model.isPasteMode
+                                          ? [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 4.0)]
+                                          : null,
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Icon(Icons.content_paste, size: 16.0,
+                                          color: _model.isPasteMode
+                                              ? FlutterFlowTheme.of(context).primary
+                                              : const Color(0xFF999999)),
+                                        const SizedBox(width: 6.0),
+                                        Text('Paste Recipe',
+                                          style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                fontFamily: 'Andika New Basic',
+                                                fontSize: 13.0,
+                                                fontWeight: _model.isPasteMode ? FontWeight.w600 : FontWeight.normal,
+                                                color: _model.isPasteMode
+                                                    ? FlutterFlowTheme.of(context).primaryText
+                                                    : const Color(0xFF999999),
+                                                letterSpacing: 0.0,
+                                              ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
-                    ),
-                    // Disclaimer
-                    Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(16.0, 4.0, 16.0, 0.0),
-                      child: Text(
-                        'Works best with recipe blogs. Sites like Instagram, TikTok, and Etsy don\'t share recipe data — this is a limitation of those platforms, not MomRise.',
-                        textAlign: TextAlign.center,
-                        style: FlutterFlowTheme.of(context).bodySmall.override(
-                              fontFamily: 'Andika New Basic',
-                              color: Color(0x801B1F26),
-                              fontSize: 12.0,
-                              letterSpacing: 0.0,
-                            ),
+                    // Subtitle - contextual based on mode
+                    if (!_model.hasExtracted)
+                      Padding(
+                        padding: EdgeInsetsDirectional.fromSTEB(16.0, 8.0, 16.0, 0.0),
+                        child: Text(
+                          _model.isPasteMode
+                              ? 'Copy a recipe from any website or message and paste it here — we will organize it for you'
+                              : 'Works best with recipe blogs. Sites like Instagram, TikTok, and Etsy don\'t share recipe data.',
+                          textAlign: TextAlign.center,
+                          style: FlutterFlowTheme.of(context).bodySmall.override(
+                                fontFamily: 'Andika New Basic',
+                                color: Color(0x801B1F26),
+                                fontSize: 12.0,
+                                letterSpacing: 0.0,
+                              ),
+                        ),
                       ),
-                    ),
-                    // Visual share flow - show when URL field is empty and not extracted
-                    // Flow: Share → MomRise (house) → Recipe saved
-                    if (!_model.hasExtracted && (_model.urlTextFieldTextController?.text.isEmpty ?? true))
+                    // Visual share flow - show when URL field is empty and not extracted (URL mode only)
+                    if (!_model.isPasteMode && !_model.hasExtracted && (_model.urlTextFieldTextController?.text.isEmpty ?? true))
                       Padding(
                         padding: const EdgeInsetsDirectional.fromSTEB(0.0, 20.0, 0.0, 0.0),
                         child: Row(
@@ -461,32 +608,109 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                           ],
                         ),
                       ),
-                    // URL Input
-                    Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: FlutterFlowTheme.of(context).prim30,
-                          borderRadius: BorderRadius.circular(14.0),
-                          border: Border.all(
-                            color: Color(0xFFCBE3E0),
-                            width: 1.0,
+                    // URL Input (link mode)
+                    if (!_model.isPasteMode)
+                      Padding(
+                        padding: EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: FlutterFlowTheme.of(context).prim30,
+                            borderRadius: BorderRadius.circular(14.0),
+                            border: Border.all(
+                              color: Color(0xFFCBE3E0),
+                              width: 1.0,
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: TextFormField(
+                                  controller: _model.urlTextFieldTextController,
+                                  focusNode: _model.urlTextFieldFocusNode,
+                                  autofocus: false,
+                                  obscureText: false,
+                                  decoration: InputDecoration(
+                                    isDense: true,
+                                    hintText: 'Paste your recipe URL here',
+                                    hintStyle: FlutterFlowTheme.of(context).labelMedium.override(
+                                          fontFamily: 'Andika New Basic',
+                                          color: FlutterFlowTheme.of(context).primaryText,
+                                          letterSpacing: 0.0,
+                                        ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(color: Color(0x00000000), width: 1.0),
+                                      borderRadius: BorderRadius.circular(14.0),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(color: Color(0x00000000), width: 1.0),
+                                      borderRadius: BorderRadius.circular(14.0),
+                                    ),
+                                    errorBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(color: FlutterFlowTheme.of(context).error, width: 1.0),
+                                      borderRadius: BorderRadius.circular(14.0),
+                                    ),
+                                    focusedErrorBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(color: FlutterFlowTheme.of(context).error, width: 1.0),
+                                      borderRadius: BorderRadius.circular(14.0),
+                                    ),
+                                  ),
+                                  style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                        fontFamily: 'Andika New Basic',
+                                        letterSpacing: 0.0,
+                                      ),
+                                  cursorColor: FlutterFlowTheme.of(context).primaryText,
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 8.0, 0.0),
+                                child: FFButtonWidget(
+                                  onPressed: (_model.isLoading || _model.hasExtracted) ? null : _extractRecipe,
+                                  text: _model.hasExtracted ? 'Extracted' : 'Extract',
+                                  options: FFButtonOptions(
+                                    height: 36.0,
+                                    padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
+                                    color: FlutterFlowTheme.of(context).primary,
+                                    textStyle: FlutterFlowTheme.of(context).titleSmall.override(
+                                          fontFamily: 'Andika New Basic',
+                                          color: Colors.white,
+                                          fontSize: 14.0,
+                                          letterSpacing: 0.0,
+                                        ),
+                                    elevation: 0.0,
+                                    borderRadius: BorderRadius.circular(14.0),
+                                    disabledColor: const Color(0xFFCCCCCC),
+                                    disabledTextColor: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        child: Row(
+                      ),
+                    // Paste text area (paste mode)
+                    if (_model.isPasteMode && !_model.hasExtracted)
+                      Padding(
+                        padding: EdgeInsetsDirectional.fromSTEB(0.0, 16.0, 0.0, 0.0),
+                        child: Column(
                           children: [
-                            Expanded(
+                            Container(
+                              decoration: BoxDecoration(
+                                color: FlutterFlowTheme.of(context).prim30,
+                                borderRadius: BorderRadius.circular(14.0),
+                                border: Border.all(
+                                  color: Color(0xFFCBE3E0),
+                                  width: 1.0,
+                                ),
+                              ),
                               child: TextFormField(
-                                controller: _model.urlTextFieldTextController,
-                                focusNode: _model.urlTextFieldFocusNode,
-                                autofocus: false,
-                                obscureText: false,
+                                controller: _model.pasteTextFieldTextController,
+                                focusNode: _model.pasteTextFieldFocusNode,
+                                maxLines: 8,
                                 decoration: InputDecoration(
-                                  isDense: true,
-                                  hintText: 'Paste your recipe URL here',
+                                  hintText: 'Paste your recipe here...\n\nInclude the name, ingredients, and instructions',
                                   hintStyle: FlutterFlowTheme.of(context).labelMedium.override(
                                         fontFamily: 'Andika New Basic',
-                                        color: FlutterFlowTheme.of(context).primaryText,
+                                        color: const Color(0x801B1F26),
                                         letterSpacing: 0.0,
                                       ),
                                   enabledBorder: OutlineInputBorder(
@@ -497,35 +721,29 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                                     borderSide: BorderSide(color: Color(0x00000000), width: 1.0),
                                     borderRadius: BorderRadius.circular(14.0),
                                   ),
-                                  errorBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(color: FlutterFlowTheme.of(context).error, width: 1.0),
-                                    borderRadius: BorderRadius.circular(14.0),
-                                  ),
-                                  focusedErrorBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(color: FlutterFlowTheme.of(context).error, width: 1.0),
-                                    borderRadius: BorderRadius.circular(14.0),
-                                  ),
                                 ),
                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
                                       fontFamily: 'Andika New Basic',
+                                      fontSize: 13.0,
                                       letterSpacing: 0.0,
                                     ),
-                                cursorColor: FlutterFlowTheme.of(context).primaryText,
                               ),
                             ),
-                            Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 8.0, 0.0),
+                            const SizedBox(height: 12.0),
+                            SizedBox(
+                              width: double.infinity,
                               child: FFButtonWidget(
-                                onPressed: (_model.isLoading || _model.hasExtracted) ? null : _extractRecipe,
-                                text: _model.hasExtracted ? 'Extracted' : 'Extract',
+                                onPressed: _model.isLoading ? null : _extractFromText,
+                                text: 'Import Recipe',
+                                icon: Icon(Icons.auto_awesome, size: 18.0, color: Colors.white),
                                 options: FFButtonOptions(
-                                  height: 36.0,
+                                  height: 44.0,
                                   padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
                                   color: FlutterFlowTheme.of(context).primary,
                                   textStyle: FlutterFlowTheme.of(context).titleSmall.override(
                                         fontFamily: 'Andika New Basic',
                                         color: Colors.white,
-                                        fontSize: 14.0,
+                                        fontSize: 15.0,
                                         letterSpacing: 0.0,
                                       ),
                                   elevation: 0.0,
@@ -538,7 +756,6 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                           ],
                         ),
                       ),
-                    ),
                     // Error/Warning message
                     if (_model.errorMessage != null)
                       Padding(
@@ -592,7 +809,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                             Padding(
                               padding: EdgeInsetsDirectional.fromSTEB(0.0, 12.0, 0.0, 0.0),
                               child: Text(
-                                'Extracting recipe...',
+                                _model.isPasteMode ? 'Reading your recipe...' : 'Extracting recipe...',
                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
                                       fontFamily: 'Andika New Basic',
                                       letterSpacing: 0.0,
@@ -1142,17 +1359,23 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                                   // Show date and meal type selectors when checked
                                   if (_model.addToMealPlan) ...[
                                     const SizedBox(height: 12.0),
-                                    // Day chips (7 days starting from today)
-                                    SingleChildScrollView(
+                                    // Day chips from meal planner's selected days (fallback to next 7 days)
+                                    Builder(
+                                      builder: (context) {
+                                        final plannerDates = FFAppState().mealPlanSelectedDates;
+                                        final dates = (plannerDates != null && plannerDates.isNotEmpty)
+                                            ? (List<DateTime>.from(plannerDates)..sort())
+                                            : List.generate(7, (i) => DateTime.now().add(Duration(days: i)));
+                                        return SingleChildScrollView(
                                       scrollDirection: Axis.horizontal,
                                       child: Row(
-                                        children: List.generate(7, (index) {
-                                          final date = DateTime.now().add(Duration(days: index));
+                                        children: List.generate(dates.length, (index) {
+                                          final date = dates[index];
                                           final isSelected = _model.selectedDate != null &&
                                               _model.selectedDate!.year == date.year &&
                                               _model.selectedDate!.month == date.month &&
                                               _model.selectedDate!.day == date.day;
-                                          final dayName = DateFormat('E').format(date); // "Sun", "Mon", etc.
+                                          final dayName = DateFormat('E').format(date);
                                           final dayNum = date.day.toString();
 
                                           return Padding(
@@ -1208,6 +1431,8 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                                           );
                                         }),
                                       ),
+                                    );
+                                      },
                                     ),
                                     const SizedBox(height: 12.0),
                                     // Meal type selector

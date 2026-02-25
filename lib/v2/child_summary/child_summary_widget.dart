@@ -568,13 +568,19 @@ class _ChildSummaryWidgetState extends State<ChildSummaryWidget> {
           StreamBuilder<List<EventAndTaskRecord>>(
             stream: queryEventAndTaskRecord(
               queryBuilder: (q) => q
-                  .where('selected_child', isEqualTo: widget.childRef)
+                  .where('user_ref', isEqualTo: currentUserReference)
                   .where('date', isGreaterThanOrEqualTo: DateTime.now())
-                  .orderBy('date')
-                  .limit(3),
+                  .orderBy('date'),
             ),
             builder: (context, eventSnapshot) {
-              if (!eventSnapshot.hasData || eventSnapshot.data!.isEmpty) {
+              // Filter client-side for events assigned to this child
+              // (supports both old selected_child and new selected_children fields)
+              final filteredEvents = (eventSnapshot.data ?? []).where((event) {
+                return event.selectedChild == widget.childRef ||
+                    event.selectedChildren.contains(widget.childRef);
+              }).take(3).toList();
+
+              if (!eventSnapshot.hasData || filteredEvents.isEmpty) {
                 return Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
@@ -594,7 +600,7 @@ class _ChildSummaryWidgetState extends State<ChildSummaryWidget> {
               }
 
               return Column(
-                children: eventSnapshot.data!.map((event) {
+                children: filteredEvents.map((event) {
                   return Container(
                     margin: const EdgeInsets.only(bottom: 8),
                     padding: const EdgeInsets.all(12),

@@ -1,7 +1,7 @@
 import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
 import '/backend/schema/enums/enums.dart';
-import '/components/nav_bar_component_widget.dart';
+import '/components/home_nav_bar_widget.dart';
 import '/flutter_flow/flutter_flow_button_tabbar.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -61,6 +61,7 @@ class _TasksWidgetState extends State<TasksWidget>
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
+        bottomNavigationBar: const HomeNavBarWidget(currentPage: HomeNavPage.calendar),
         body: SafeArea(
           top: true,
           child: Stack(
@@ -1155,20 +1156,6 @@ class _TasksWidgetState extends State<TasksWidget>
                     ),
                   ),
                 ],
-              ),
-              Align(
-                alignment: AlignmentDirectional(0.0, 1.0),
-                child: Container(
-                  height: 82.0,
-                  decoration: BoxDecoration(),
-                  child: wrapWithModel(
-                    model: _model.navBarComponentModel,
-                    updateCallback: () => safeSetState(() {}),
-                    child: NavBarComponentWidget(
-                      currentPAge: CurrentPage.Add,
-                    ),
-                  ),
-                ),
               ),
               Align(
                 alignment: AlignmentDirectional(1.0, 1.0),
