@@ -130,6 +130,17 @@ class _MyAppState extends State<MyApp> {
             deepLinkHandler.handlePendingDeepLink();
           });
         }
+
+        // Handle deferred share URL (received before login was restored)
+        if (user.loggedIn && _deferredShareUrl != null) {
+          final url = _deferredShareUrl!;
+          _deferredShareUrl = null;
+          debugPrint('ShareIntent: Processing deferred URL after login: $url');
+          Future.delayed(const Duration(milliseconds: 500), () {
+            FFAppState().sharedRecipeUrl = url;
+            _router.go('/recipeFromLink');
+          });
+        }
       });
     jwtTokenStream.listen((_) {});
     Future.delayed(
@@ -159,14 +170,23 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  String? _deferredShareUrl;
+
   /// Handle a shared recipe URL by navigating to the import page
   void _handleSharedUrl(String url) {
-    // Only handle if user is logged in
+    debugPrint('ShareIntent: _handleSharedUrl called with: $url');
+    debugPrint('ShareIntent: loggedIn=${_appStateNotifier.loggedIn}');
+
+    // Always store the URL so it's not lost
+    FFAppState().sharedRecipeUrl = url;
+
     if (_appStateNotifier.loggedIn) {
-      // Store the URL in app state so recipe_from_link can access it
-      FFAppState().sharedRecipeUrl = url;
-      // Navigate to recipe import page
+      debugPrint('ShareIntent: User logged in, navigating to /recipeFromLink');
       _router.go('/recipeFromLink');
+    } else {
+      // User not logged in yet — defer until auth is restored
+      debugPrint('ShareIntent: User not logged in, deferring URL');
+      _deferredShareUrl = url;
     }
   }
 

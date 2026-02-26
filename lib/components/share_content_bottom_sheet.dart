@@ -502,8 +502,10 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
         _shareUrl = SharingService.getShareUrl(code!);
         _isLoading = false;
       });
-      // Auto-trigger native share dialog
-      _shareViaSystem();
+      // Auto-trigger native share dialog after UI rebuilds
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _shareViaSystem();
+      });
     } else {
       setState(() => _isLoading = false);
       if (mounted) {
@@ -529,16 +531,29 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
     }
   }
 
-  void _shareViaSystem() async {
-    if (_shareCode != null) {
+  Future<void> _shareViaSystem() async {
+    if (_shareCode == null || _shareUrl == null) return;
+
+    try {
       await SharingService.shareViaSystem(
         shareCode: _shareCode!,
         title: widget.title,
         description: widget.description,
       );
-      // Close the bottom sheet after sharing
       if (mounted) {
         Navigator.of(context).pop();
+      }
+    } catch (e) {
+      print('Share failed: $e');
+      // Fallback: copy link to clipboard
+      if (mounted) {
+        Clipboard.setData(ClipboardData(text: _shareUrl!));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Link copied to clipboard!'),
+            backgroundColor: Color(0xFF52A097),
+          ),
+        );
       }
     }
   }

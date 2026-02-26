@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 // Begin custom action code
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
+import 'dart:io' show Platform;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 
@@ -56,12 +57,13 @@ Future<void> openInstacartWithGroceryList(
 
   debugPrint('🛒 Opening Instacart with ${searchTerms.length} items: $url');
 
-  // Launch URL directly (canLaunchUrl is unreliable on Android 11+)
+  // On iOS, use in-app browser to prevent the Instacart app from
+  // intercepting the URL via Universal Links and dropping to homepage.
   final uri = Uri.parse(url);
-  await launchUrl(
-    uri,
-    mode: LaunchMode.externalApplication,
-  );
+  final launchMode = Platform.isIOS
+      ? LaunchMode.inAppBrowserView
+      : LaunchMode.externalApplication;
+  await launchUrl(uri, mode: launchMode);
 }
 
 /// Build search terms from grocery items
