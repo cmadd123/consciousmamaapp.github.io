@@ -57,31 +57,28 @@ workflows:
           flutter analyze --no-fatal-infos
         ignore_failure: true
 
-      - name: Get latest build number from App Store Connect
+      - name: Build iOS IPA with auto-incremented build number
         script: |
           # Get latest build from TestFlight
           TF_BUILD=$(app-store-connect get-latest-testflight-build-number "$BUNDLE_ID" 2>/dev/null || echo "0")
           if [ -z "$TF_BUILD" ]; then TF_BUILD=0; fi
           echo "TestFlight latest: $TF_BUILD"
 
-          # Also read build number from pubspec.yaml as a floor (macOS-compatible)
-          PUBSPEC_BUILD=$(sed -n 's/^version:.*+\([0-9]*\)/\1/p' pubspec.yaml || echo "0")
+          # Read build number from pubspec.yaml (macOS-compatible)
+          PUBSPEC_BUILD=$(sed -n 's/^version:.*+\([0-9]*\)/\1/p' pubspec.yaml)
           if [ -z "$PUBSPEC_BUILD" ]; then PUBSPEC_BUILD=0; fi
           echo "Pubspec build number: $PUBSPEC_BUILD"
 
-          # Take the maximum of both sources, then add 1
-          if [ "$TF_BUILD" -gt "$PUBSPEC_BUILD" ]; then
-            BASE_BUILD=$TF_BUILD
-          else
-            BASE_BUILD=$PUBSPEC_BUILD
-          fi
-          NEW_BUILD=$((BASE_BUILD + 1))
-          echo "Base: $BASE_BUILD, new build number: $NEW_BUILD"
-          echo "BUILD_NUMBER=$NEW_BUILD" >> $CM_ENV
+          # Hardcoded floor — never go below the last known upload
+          FLOOR=506
 
-      - name: Build iOS IPA
-        script: |
-          echo "Building with build number: $BUILD_NUMBER"
+          # Take the maximum of all sources, then add 1
+          BASE_BUILD=$FLOOR
+          if [ "$TF_BUILD" -gt "$BASE_BUILD" ]; then BASE_BUILD=$TF_BUILD; fi
+          if [ "$PUBSPEC_BUILD" -gt "$BASE_BUILD" ]; then BASE_BUILD=$PUBSPEC_BUILD; fi
+          BUILD_NUMBER=$((BASE_BUILD + 1))
+          echo "=== FINAL BUILD NUMBER: $BUILD_NUMBER ==="
+
           flutter build ipa --release \
             --build-number=$BUILD_NUMBER \
             --export-options-plist=/Users/builder/export_options.plist
