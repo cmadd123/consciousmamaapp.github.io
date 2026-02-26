@@ -57,27 +57,12 @@ workflows:
           flutter analyze --no-fatal-infos
         ignore_failure: true
 
-      - name: Build iOS IPA with auto-incremented build number
+      - name: Build iOS IPA with timestamp build number
         script: |
-          # Get latest build from TestFlight
-          TF_BUILD=$(app-store-connect get-latest-testflight-build-number "$BUNDLE_ID" 2>/dev/null || echo "0")
-          if [ -z "$TF_BUILD" ]; then TF_BUILD=0; fi
-          echo "TestFlight latest: $TF_BUILD"
-
-          # Read build number from pubspec.yaml (macOS-compatible)
-          PUBSPEC_BUILD=$(sed -n 's/^version:.*+\([0-9]*\)/\1/p' pubspec.yaml)
-          if [ -z "$PUBSPEC_BUILD" ]; then PUBSPEC_BUILD=0; fi
-          echo "Pubspec build number: $PUBSPEC_BUILD"
-
-          # Hardcoded floor — never go below the last known upload
-          FLOOR=509
-
-          # Take the maximum of all sources, then add 1
-          BASE_BUILD=$FLOOR
-          if [ "$TF_BUILD" -gt "$BASE_BUILD" ]; then BASE_BUILD=$TF_BUILD; fi
-          if [ "$PUBSPEC_BUILD" -gt "$BASE_BUILD" ]; then BASE_BUILD=$PUBSPEC_BUILD; fi
-          BUILD_NUMBER=$((BASE_BUILD + 1))
-          echo "=== FINAL BUILD NUMBER: $BUILD_NUMBER ==="
+          # Use Unix timestamp as build number — always unique, always increasing,
+          # never collides with a previous upload. No API queries, no stale floors.
+          BUILD_NUMBER=$(date +%s)
+          echo "=== BUILD NUMBER (Unix timestamp): $BUILD_NUMBER ==="
 
           flutter build ipa --release \
             --build-number=$BUILD_NUMBER \
