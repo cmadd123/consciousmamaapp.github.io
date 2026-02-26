@@ -221,17 +221,18 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
           }
           safeSetState(() {});
 
-          // Second pass: add ingredients one by one with progress
+          // Second pass: add ingredients one by one, await each so progress
+          // reflects items actually ready (including AI matching)
           for (int i = 0; i < allIngredientSets.length; i++) {
             final ingredients = allIngredientSets[i];
             if (ingredients.isNotEmpty) {
               final mealType = eligibleMeals[i].typ?.name ?? 'Meal';
               for (final ingredient in ingredients) {
-                _addCurrent++;
-                _addStatusText = 'Adding $mealType: $ingredient';
+                _addStatusText = '$mealType: $ingredient';
                 safeSetState(() {});
-                FFAppState().addIngredientsFromRecipe([ingredient]);
-                await Future.delayed(const Duration(milliseconds: 30));
+                await FFAppState().addToUserGroceryList(ingredient);
+                _addCurrent++;
+                safeSetState(() {});
               }
             }
           }
@@ -625,7 +626,7 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
               const SizedBox(height: 10),
               // Counter
               Text(
-                '$_addCurrent of $_addTotal items',
+                '$_addCurrent of $_addTotal items ready to shop',
                 style: TextStyle(
                   fontFamily: 'Andika New Basic',
                   fontSize: 12,
@@ -1457,17 +1458,18 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
                           }
                           safeSetState(() {});
 
-                          // Second pass: add ingredients one by one with progress
+                          // Second pass: add ingredients one by one, await each so progress
+                          // reflects items actually ready (including AI matching)
                           for (int i = 0; i < allIngredientSets.length; i++) {
                             final ingredients = allIngredientSets[i];
                             if (ingredients.isNotEmpty) {
                               final mealType = selectedMeals[i].typ?.name ?? 'Meal';
                               for (final ingredient in ingredients) {
-                                _addCurrent++;
-                                _addStatusText = 'Adding $mealType: $ingredient';
+                                _addStatusText = '$mealType: $ingredient';
                                 safeSetState(() {});
-                                FFAppState().addIngredientsFromRecipe([ingredient]);
-                                await Future.delayed(const Duration(milliseconds: 30));
+                                await FFAppState().addToUserGroceryList(ingredient);
+                                _addCurrent++;
+                                safeSetState(() {});
                               }
                             }
                           }

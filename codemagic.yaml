@@ -60,11 +60,13 @@ workflows:
       - name: Get latest build number from App Store Connect
         script: |
           # Get latest build from TestFlight
-          TF_BUILD=$(app-store-connect get-latest-testflight-build-number "$BUNDLE_ID" || echo "0")
+          TF_BUILD=$(app-store-connect get-latest-testflight-build-number "$BUNDLE_ID" 2>/dev/null || echo "0")
+          if [ -z "$TF_BUILD" ]; then TF_BUILD=0; fi
           echo "TestFlight latest: $TF_BUILD"
 
-          # Also read build number from pubspec.yaml as a floor
-          PUBSPEC_BUILD=$(grep -oP '(?<=\+)\d+' pubspec.yaml || echo "0")
+          # Also read build number from pubspec.yaml as a floor (macOS-compatible)
+          PUBSPEC_BUILD=$(sed -n 's/^version:.*+\([0-9]*\)/\1/p' pubspec.yaml || echo "0")
+          if [ -z "$PUBSPEC_BUILD" ]; then PUBSPEC_BUILD=0; fi
           echo "Pubspec build number: $PUBSPEC_BUILD"
 
           # Take the maximum of both sources, then add 1
