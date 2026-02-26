@@ -70,7 +70,7 @@ workflows:
           echo "Pubspec build number: $PUBSPEC_BUILD"
 
           # Hardcoded floor — never go below the last known upload
-          FLOOR=506
+          FLOOR=509
 
           # Take the maximum of all sources, then add 1
           BASE_BUILD=$FLOOR
