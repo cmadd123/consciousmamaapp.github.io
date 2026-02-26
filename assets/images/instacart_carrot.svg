@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
+  <!-- Instacart carrot icon - brand representation -->
+  <path d="M24 4C22.5 4 21.2 5.1 21 6.6L18 28C17.5 31 19.5 33.5 22 34.5V42C22 43.1 22.9 44 24 44C25.1 44 26 43.1 26 42V34.5C28.5 33.5 30.5 31 30 28L27 6.6C26.8 5.1 25.5 4 24 4Z" fill="#FF6B00"/>
+  <!-- Carrot leaves -->
+  <path d="M24 4C24 4 20 1 17 2C14 3 16 6 18 6C20 6 22 4.5 24 4Z" fill="#00A862"/>
+  <path d="M24 4C24 4 28 1 31 2C34 3 32 6 30 6C28 6 26 4.5 24 4Z" fill="#00A862"/>
+  <path d="M24 4C24 4 24 0 24 0C24 0 23 3 24 4Z" fill="#00A862"/>
+</svg>

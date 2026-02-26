@@ -535,7 +535,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
       if (mealPlan.mealComboRef != null) {
         combo = await MealComboRecord.getDocumentOnce(mealPlan.mealComboRef!);
 
-        // Fetch combo meals (entree + sides)
+        // Fetch combo meals (entree + sides + desserts + snacks)
         comboMeals = [];
         if (combo.entreeRef != null) {
           try {
@@ -551,6 +551,27 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
             comboMeals.add(side);
           } catch (e) {
             debugPrint('Error fetching side: $e');
+          }
+        }
+        for (final dessertRef in combo.dessertRefs) {
+          try {
+            final dessert = await MealRecord.getDocumentOnce(dessertRef);
+            comboMeals.add(dessert);
+          } catch (e) {
+            debugPrint('Error fetching dessert: $e');
+          }
+        }
+        final snackRefs = combo.snapshotData['snack_refs'] as List<dynamic>?;
+        if (snackRefs != null) {
+          for (final ref in snackRefs) {
+            if (ref is DocumentReference) {
+              try {
+                final snack = await MealRecord.getDocumentOnce(ref);
+                comboMeals.add(snack);
+              } catch (e) {
+                debugPrint('Error fetching snack: $e');
+              }
+            }
           }
         }
       } else if (mealPlan.userFirebasemeal != null) {

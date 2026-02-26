@@ -801,20 +801,67 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
   /// Share template using existing combo sharing infrastructure
   void _shareTemplate(MealComboRecord template) async {
     try {
-      // Load entree and sides to pass to share function
+      // Load all meals: entree + sides + desserts + snacks
       List<MealRecord> comboMeals = [];
 
       // Load entree
       if (template.entreeRef != null) {
-        final entree = await MealRecord.getDocumentOnce(template.entreeRef!);
-        comboMeals.add(entree);
+        try {
+          final entree = await MealRecord.getDocumentOnce(template.entreeRef!);
+          comboMeals.add(entree);
+        } catch (e) {
+          debugPrint('_shareTemplate: Could not load entree: $e');
+        }
       }
 
       // Load sides
       for (final sideRef in template.sideRefs) {
-        final side = await MealRecord.getDocumentOnce(sideRef);
-        comboMeals.add(side);
+        try {
+          final side = await MealRecord.getDocumentOnce(sideRef);
+          comboMeals.add(side);
+        } catch (e) {
+          debugPrint('_shareTemplate: Could not load side: $e');
+        }
       }
+
+      // Load desserts
+      for (final dessertRef in template.dessertRefs) {
+        try {
+          final dessert = await MealRecord.getDocumentOnce(dessertRef);
+          comboMeals.add(dessert);
+        } catch (e) {
+          debugPrint('_shareTemplate: Could not load dessert: $e');
+        }
+      }
+
+      // Load snacks from snapshot data
+      final snackRefs = template.snapshotData['snack_refs'] as List<dynamic>?;
+      if (snackRefs != null) {
+        for (final ref in snackRefs) {
+          if (ref is DocumentReference) {
+            try {
+              final snack = await MealRecord.getDocumentOnce(ref);
+              comboMeals.add(snack);
+            } catch (e) {
+              debugPrint('_shareTemplate: Could not load snack: $e');
+            }
+          }
+        }
+      }
+
+      if (comboMeals.isEmpty) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('No meals found in "${template.name}"'),
+              backgroundColor: Colors.orange,
+            ),
+          );
+        }
+        return;
+      }
+
+      if (!mounted) return;
 
       // Use existing combo sharing functionality
       showShareComboBottomSheet(

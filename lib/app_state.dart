@@ -590,6 +590,44 @@ class FFAppState extends ChangeNotifier {
     }
   }
 
+  // ==================== INSTACART API ====================
+  String _instacartApiKey = '';
+  String get instacartApiKey => _instacartApiKey;
+
+  bool _instacartUseProd = false;
+  bool get instacartUseProd => _instacartUseProd;
+
+  /// Initialize Instacart API key from Firebase Remote Config
+  Future<void> initializeInstacartApiKey() async {
+    try {
+      final remoteConfig = FirebaseRemoteConfig.instance;
+      _instacartApiKey = remoteConfig.getString('instacart_api_key');
+      _instacartUseProd = remoteConfig.getBool('instacart_use_prod');
+      debugPrint('Instacart API: key=${_instacartApiKey.isNotEmpty ? 'set' : 'empty'}, prod=$_instacartUseProd');
+    } catch (e) {
+      debugPrint('Error fetching Instacart config: $e');
+    }
+  }
+
+  // ==================== WALMART API ====================
+  String _walmartApiKey = '';
+  String get walmartApiKey => _walmartApiKey;
+
+  String _walmartPublisherId = '';
+  String get walmartPublisherId => _walmartPublisherId;
+
+  /// Initialize Walmart API credentials from Firebase Remote Config
+  Future<void> initializeWalmartApiKey() async {
+    try {
+      final remoteConfig = FirebaseRemoteConfig.instance;
+      _walmartApiKey = remoteConfig.getString('walmart_api_key');
+      _walmartPublisherId = remoteConfig.getString('walmart_publisher_id');
+      debugPrint('Walmart API: key=${_walmartApiKey.isNotEmpty ? 'set' : 'empty'}, publisherId=${_walmartPublisherId.isNotEmpty ? 'set' : 'empty'}');
+    } catch (e) {
+      debugPrint('Error fetching Walmart config: $e');
+    }
+  }
+
   double _progress = 0.0;
   double get progress => _progress;
   set progress(double value) {

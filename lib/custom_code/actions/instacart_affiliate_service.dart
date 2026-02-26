@@ -56,17 +56,12 @@ Future<void> openInstacartWithGroceryList(
 
   debugPrint('🛒 Opening Instacart with ${searchTerms.length} items: $url');
 
-  // Try to launch URL
+  // Launch URL directly (canLaunchUrl is unreliable on Android 11+)
   final uri = Uri.parse(url);
-
-  if (await canLaunchUrl(uri)) {
-    await launchUrl(
-      uri,
-      mode: LaunchMode.externalApplication, // Open in external app/browser
-    );
-  } else {
-    throw 'Could not launch Instacart. Please check your internet connection.';
-  }
+  await launchUrl(
+    uri,
+    mode: LaunchMode.externalApplication,
+  );
 }
 
 /// Build search terms from grocery items

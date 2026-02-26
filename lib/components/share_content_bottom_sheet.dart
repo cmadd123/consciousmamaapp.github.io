@@ -1,10 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:collection/collection.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/custom_code/actions/sharing_service.dart';
 import '/backend/backend.dart';
+
+/// Simple data holder for overview items in the share preview
+class _OverviewItem {
+  final String name;
+  final String? role;
+  final String? imageUrl;
+  final String? cookTime;
+  final DateTime? date;
+
+  _OverviewItem({
+    required this.name,
+    this.role,
+    this.imageUrl,
+    this.cookTime,
+    this.date,
+  });
+}
 
 /// Bottom sheet for sharing content with other moms
 class ShareContentBottomSheet extends StatefulWidget {
@@ -148,32 +167,48 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
         MediaQuery.of(context).padding.bottom + 24;
 
     return Container(
-      constraints: BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height * 0.85,
-      ),
-      decoration: BoxDecoration(
-        color: FlutterFlowTheme.of(context).secondaryBackground,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(24),
-          topRight: Radius.circular(24),
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height * 0.85,
         ),
-      ),
-      child: Padding(
-        padding: EdgeInsets.fromLTRB(24, 16, 24, bottomPadding),
-        child: SingleChildScrollView(
+        decoration: BoxDecoration(
+          color: FlutterFlowTheme.of(context).secondaryBackground,
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(24),
+            topRight: Radius.circular(24),
+          ),
+        ),
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(24, 16, 24, bottomPadding),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Handle bar
-              Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(2),
+              // Handle bar — visual cue for drag-to-dismiss
+              GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onVerticalDragUpdate: (details) {
+                  if (details.primaryDelta != null && details.primaryDelta! > 8) {
+                    Navigator.of(context).pop();
+                  }
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
                 ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 16),
+              // Scrollable content
+              Flexible(
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
 
               // Title
               Row(
@@ -284,70 +319,9 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
                 const SizedBox(height: 16),
               ],
 
-              // Share link section (shown after generation)
+              // Link generated — show success indicator
               if (_shareUrl != null) ...[
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: FlutterFlowTheme.of(context).primary.withOpacity(0.05),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: FlutterFlowTheme.of(context).primary.withOpacity(0.2),
-                    ),
-                  ),
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              _shareUrl!,
-                              style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                fontFamily: 'Andika New Basic',
-                                color: FlutterFlowTheme.of(context).primary,
-                                letterSpacing: 0.0,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          InkWell(
-                            onTap: _copyToClipboard,
-                            child: Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: _copied
-                                    ? Colors.green.withOpacity(0.1)
-                                    : FlutterFlowTheme.of(context).primary.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Icon(
-                                _copied ? Icons.check : Icons.copy,
-                                color: _copied
-                                    ? Colors.green
-                                    : FlutterFlowTheme.of(context).primary,
-                                size: 20,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      if (_copied) ...[
-                        const SizedBox(height: 8),
-                        Text(
-                          'Link copied!',
-                          style: FlutterFlowTheme.of(context).bodySmall.override(
-                            fontFamily: 'Andika New Basic',
-                            color: Colors.green,
-                            letterSpacing: 0.0,
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 8),
               ],
 
               // Buttons
@@ -408,10 +382,13 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
                   ),
                 ),
               ),
+                    ],
+                  ),
+                ),
+              ),
             ],
           ),
         ),
-      ),
     );
   }
 
@@ -687,66 +664,74 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
         ),
       );
     } else if (widget.contentType == 'day_template' && widget.dayTemplates != null) {
-      // Day template preview
+      // Day template preview — show each meal template with its meals
+      final primary = FlutterFlowTheme.of(context).primary;
       final templateCount = widget.dayTemplates!.length;
-      final mealTypes = widget.dayTemplates!
-          .map((t) => t.mealTyp?.name ?? 'Meal')
-          .toSet();
+
+      // Build overview items from templates and their meals
+      final items = <_OverviewItem>[];
+      for (final template in widget.dayTemplates!) {
+        final typeName = template.mealTyp?.name ?? 'Meal';
+        // Try to find the entree meal for a name
+        if (widget.dayTemplateMeals != null && template.entreeRef != null) {
+          final entree = widget.dayTemplateMeals!.firstWhereOrNull((m) => m.reference == template.entreeRef);
+          if (entree != null) {
+            items.add(_OverviewItem(
+              name: entree.recipeName ?? template.name ?? typeName,
+              role: typeName,
+              imageUrl: entree.imageUrl,
+            ));
+            continue;
+          }
+        }
+        items.add(_OverviewItem(
+          name: template.name ?? typeName,
+          role: typeName,
+        ));
+      }
 
       return Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
           border: Border.all(color: Colors.grey[200]!),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'What you\'re sharing:',
-              style: FlutterFlowTheme.of(context).bodyMedium.override(
-                fontFamily: 'Andika New Basic',
-                fontWeight: FontWeight.w600,
-                letterSpacing: 0.0,
-              ),
-            ),
-            const SizedBox(height: 12),
             Row(
               children: [
                 Container(
-                  width: 44,
-                  height: 44,
+                  width: 32,
+                  height: 32,
                   decoration: BoxDecoration(
-                    color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
+                    color: primary.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Center(
-                    child: Icon(
-                      Icons.calendar_view_day,
-                      color: FlutterFlowTheme.of(context).primary,
-                      size: 24,
-                    ),
-                  ),
+                  child: Icon(Icons.calendar_view_day, size: 18, color: primary),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 10),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        widget.dayTemplateName ?? 'Day Template',
+                        widget.dayTemplateName ?? 'Saved Day',
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
                           fontFamily: 'Andika New Basic',
                           fontWeight: FontWeight.w600,
+                          fontSize: 15,
                           letterSpacing: 0.0,
                         ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                       Text(
                         '$templateCount meal${templateCount == 1 ? '' : 's'}',
                         style: TextStyle(
                           fontSize: 12,
-                          color: Colors.grey[600],
+                          color: Colors.grey[500],
                           fontFamily: 'Andika New Basic',
                         ),
                       ),
@@ -755,27 +740,57 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
                 ),
               ],
             ),
-            if (mealTypes.isNotEmpty) ...[
+            if (items.isNotEmpty) ...[
               const SizedBox(height: 12),
-              Wrap(
-                spacing: 6,
-                runSpacing: 6,
-                children: mealTypes.map((type) => Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
+              ...items.take(6).map((item) {
+                final hasImg = item.imageUrl != null && item.imageUrl!.isNotEmpty;
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Row(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: hasImg
+                            ? Image.network(
+                                item.imageUrl!,
+                                width: 40,
+                                height: 40,
+                                fit: BoxFit.cover,
+                                errorBuilder: (_, __, ___) => _buildInitialBox(item.name, primary),
+                              )
+                            : _buildInitialBox(item.name, primary),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              item.name,
+                              style: const TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500,
+                                fontFamily: 'Andika New Basic',
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            if (item.role != null)
+                              Text(
+                                item.role!,
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: Colors.grey[500],
+                                  fontFamily: 'Andika New Basic',
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                  child: Text(
-                    type,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: FlutterFlowTheme.of(context).primary,
-                      fontFamily: 'Andika New Basic',
-                    ),
-                  ),
-                )).toList(),
-              ),
+                );
+              }),
             ],
           ],
         ),
@@ -920,67 +935,334 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
       );
     }
 
+    // Build pretty overview of what's being shared
+    // Collect labeled recipe items for display
+    List<_OverviewItem> overviewItems = [];
+
+    if (widget.contentType == 'single_recipe' && widget.recipe != null) {
+      overviewItems.add(_OverviewItem(
+        name: widget.recipe!.recipeName ?? 'Recipe',
+        imageUrl: widget.recipe!.imageUrl,
+        cookTime: widget.recipe!.cookingTime > 0 ? '${widget.recipe!.cookingTime.toInt()} min' : null,
+      ));
+    } else if (widget.contentType == 'single_combo' && widget.combo != null) {
+      // Add entree
+      if (widget.comboMeals != null && widget.combo!.entreeRef != null) {
+        final entree = widget.comboMeals!.firstWhereOrNull((m) => m.reference == widget.combo!.entreeRef);
+        if (entree != null) {
+          overviewItems.add(_OverviewItem(
+            name: entree.recipeName ?? 'Entree',
+            role: 'Entree',
+            imageUrl: entree.imageUrl,
+          ));
+        }
+      }
+      // Add sides
+      if (widget.comboMeals != null) {
+        for (final sideRef in widget.combo!.sideRefs) {
+          final side = widget.comboMeals!.firstWhereOrNull((m) => m.reference == sideRef);
+          if (side != null) {
+            overviewItems.add(_OverviewItem(
+              name: side.recipeName ?? 'Side',
+              role: 'Side',
+              imageUrl: side.imageUrl,
+            ));
+          }
+        }
+      }
+      // Add desserts
+      if (widget.comboMeals != null) {
+        for (final dessertRef in widget.combo!.dessertRefs) {
+          final dessert = widget.comboMeals!.firstWhereOrNull((m) => m.reference == dessertRef);
+          if (dessert != null) {
+            overviewItems.add(_OverviewItem(
+              name: dessert.recipeName ?? 'Dessert',
+              role: 'Dessert',
+              imageUrl: dessert.imageUrl,
+            ));
+          }
+        }
+      }
+      // Add snacks from snapshot data
+      if (widget.comboMeals != null) {
+        final snackRefs = widget.combo!.snapshotData['snack_refs'] as List<dynamic>?;
+        if (snackRefs != null) {
+          for (final ref in snackRefs) {
+            if (ref is DocumentReference) {
+              final snack = widget.comboMeals!.firstWhereOrNull((m) => m.reference == ref);
+              if (snack != null) {
+                overviewItems.add(_OverviewItem(
+                  name: snack.recipeName ?? 'Snack',
+                  role: 'Snack',
+                  imageUrl: snack.imageUrl,
+                ));
+              }
+            }
+          }
+        }
+      }
+    } else if (widget.contentType == 'single_meal') {
+      if (widget.combo != null && widget.comboMeals != null) {
+        // Combo meal — show entree + sides + desserts
+        if (widget.combo!.entreeRef != null) {
+          final entree = widget.comboMeals!.firstWhereOrNull((m) => m.reference == widget.combo!.entreeRef);
+          if (entree != null) {
+            overviewItems.add(_OverviewItem(name: entree.recipeName ?? 'Entree', role: 'Entree', imageUrl: entree.imageUrl));
+          }
+        }
+        for (final sideRef in widget.combo!.sideRefs) {
+          final side = widget.comboMeals!.firstWhereOrNull((m) => m.reference == sideRef);
+          if (side != null) {
+            overviewItems.add(_OverviewItem(name: side.recipeName ?? 'Side', role: 'Side', imageUrl: side.imageUrl));
+          }
+        }
+        for (final dessertRef in widget.combo!.dessertRefs) {
+          final dessert = widget.comboMeals!.firstWhereOrNull((m) => m.reference == dessertRef);
+          if (dessert != null) {
+            overviewItems.add(_OverviewItem(name: dessert.recipeName ?? 'Dessert', role: 'Dessert', imageUrl: dessert.imageUrl));
+          }
+        }
+      } else if (widget.meal != null) {
+        overviewItems.add(_OverviewItem(
+          name: widget.meal!.recipeName ?? 'Meal',
+          imageUrl: widget.meal!.imageUrl,
+          cookTime: widget.meal!.cookingTime > 0 ? '${widget.meal!.cookingTime.toInt()} min' : null,
+        ));
+      }
+    } else if (widget.mealPlans != null && widget.meals != null) {
+      // Week plan or single day — sort by meal type order then date
+      final mealTypeOrder = {'Breakfast': 0, 'Lunch': 1, 'Dinner': 2, 'Snacks': 3};
+      final sortedPlans = List<MealPlanRecord>.from(widget.mealPlans!);
+      sortedPlans.sort((a, b) {
+        // Sort by date first, then meal type
+        final dateCompare = (a.date ?? DateTime(2099)).compareTo(b.date ?? DateTime(2099));
+        if (dateCompare != 0) return dateCompare;
+        final aOrder = mealTypeOrder[a.typ?.name] ?? 9;
+        final bOrder = mealTypeOrder[b.typ?.name] ?? 9;
+        return aOrder.compareTo(bOrder);
+      });
+
+      for (final plan in sortedPlans) {
+        final typeName = plan.typ?.name ?? 'Meal';
+        final planDate = plan.date;
+        if (plan.userFirebasemeal != null) {
+          final meal = widget.meals!.firstWhereOrNull((m) => m.reference == plan.userFirebasemeal);
+          if (meal != null) {
+            overviewItems.add(_OverviewItem(
+              name: meal.recipeName ?? 'Recipe',
+              role: typeName,
+              imageUrl: meal.imageUrl,
+              date: planDate,
+            ));
+          }
+        } else if (plan.mealComboRef != null && widget.combos != null) {
+          final combo = widget.combos!.firstWhereOrNull((c) => c.reference == plan.mealComboRef);
+          if (combo != null) {
+            // Show entree as the main item
+            if (combo.entreeRef != null && widget.meals != null) {
+              final entree = widget.meals!.firstWhereOrNull((m) => m.reference == combo.entreeRef);
+              if (entree != null) {
+                overviewItems.add(_OverviewItem(
+                  name: entree.recipeName ?? combo.name ?? 'Entree',
+                  role: typeName,
+                  imageUrl: entree.imageUrl,
+                  date: planDate,
+                ));
+              } else {
+                overviewItems.add(_OverviewItem(
+                  name: combo.name ?? 'Meal Template',
+                  role: typeName,
+                  date: planDate,
+                ));
+              }
+            } else {
+              overviewItems.add(_OverviewItem(
+                name: combo.name ?? 'Meal Template',
+                role: typeName,
+                date: planDate,
+              ));
+            }
+            // Add sides
+            if (widget.meals != null) {
+              for (final sideRef in combo.sideRefs) {
+                final side = widget.meals!.firstWhereOrNull((m) => m.reference == sideRef);
+                if (side != null) {
+                  overviewItems.add(_OverviewItem(
+                    name: side.recipeName ?? 'Side',
+                    role: 'Side',
+                    imageUrl: side.imageUrl,
+                    date: planDate,
+                  ));
+                }
+              }
+            }
+            // Add desserts
+            if (widget.meals != null) {
+              for (final dessertRef in combo.dessertRefs) {
+                final dessert = widget.meals!.firstWhereOrNull((m) => m.reference == dessertRef);
+                if (dessert != null) {
+                  overviewItems.add(_OverviewItem(
+                    name: dessert.recipeName ?? 'Dessert',
+                    role: 'Dessert',
+                    imageUrl: dessert.imageUrl,
+                    date: planDate,
+                  ));
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    final primary = FlutterFlowTheme.of(context).primary;
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Colors.grey[200]!),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'What you\'re sharing:',
-            style: FlutterFlowTheme.of(context).bodyMedium.override(
-              fontFamily: 'Andika New Basic',
-              fontWeight: FontWeight.w600,
-              letterSpacing: 0.0,
-            ),
-          ),
-          const SizedBox(height: 12),
+          // Header
           Row(
             children: [
-              // Meal count
-              _buildPreviewStat(
-                icon: Icons.restaurant,
-                value: mealCount.toString(),
-                label: mealCount == 1 ? 'Recipe' : 'Recipes',
+              Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  color: primary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  _getContentIcon(),
+                  size: 18,
+                  color: primary,
+                ),
               ),
-              if (dayCount > 0) ...[
-                const SizedBox(width: 24),
-                _buildPreviewStat(
-                  icon: Icons.calendar_today,
-                  value: dayCount.toString(),
-                  label: dayCount == 1 ? 'Day' : 'Days',
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.title,
+                      style: FlutterFlowTheme.of(context).bodyMedium.override(
+                        fontFamily: 'Andika New Basic',
+                        fontWeight: FontWeight.w600,
+                        fontSize: 15,
+                        letterSpacing: 0.0,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Text(
+                      _getSubtitleText(mealCount, dayCount),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey[500],
+                        fontFamily: 'Andika New Basic',
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-              if (mealTypes.isNotEmpty) ...[
-                const SizedBox(width: 24),
-                _buildPreviewStat(
-                  icon: Icons.category,
-                  value: mealTypes.length.toString(),
-                  label: mealTypes.length == 1 ? 'Meal Type' : 'Meal Types',
-                ),
-              ],
+              ),
             ],
           ),
-          if (mealTypes.isNotEmpty) ...[
+          // Item list
+          if (overviewItems.isNotEmpty) ...[
             const SizedBox(height: 12),
+            ...overviewItems.take(8).map((item) {
+              final hasImage = item.imageUrl != null && item.imageUrl!.isNotEmpty;
+              // Build subtitle parts: role, date, cook time
+              final subtitleParts = <String>[];
+              if (item.role != null) subtitleParts.add(item.role!);
+              if (item.date != null) subtitleParts.add(DateFormat('EEE, MMM d').format(item.date!));
+              if (item.cookTime != null) subtitleParts.add(item.cookTime!);
+
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Row(
+                  children: [
+                    // Thumbnail or initial
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: hasImage
+                          ? Image.network(
+                              item.imageUrl!,
+                              width: 40,
+                              height: 40,
+                              fit: BoxFit.cover,
+                              errorBuilder: (_, __, ___) => _buildInitialBox(item.name, primary),
+                            )
+                          : _buildInitialBox(item.name, primary),
+                    ),
+                    const SizedBox(width: 10),
+                    // Name, role, date
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            item.name,
+                            style: const TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                              fontFamily: 'Andika New Basic',
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          if (subtitleParts.isNotEmpty)
+                            Text(
+                              subtitleParts.join(' · '),
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: Colors.grey[500],
+                                fontFamily: 'Andika New Basic',
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }),
+            if (overviewItems.length > 8)
+              Padding(
+                padding: const EdgeInsets.only(top: 2),
+                child: Text(
+                  '+${overviewItems.length - 8} more',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey[500],
+                    fontFamily: 'Andika New Basic',
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+              ),
+          ],
+          // Meal type badges
+          if (mealTypes.isNotEmpty) ...[
+            const SizedBox(height: 10),
             Wrap(
               spacing: 6,
               runSpacing: 6,
               children: mealTypes.map((type) => Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
+                  color: primary.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
                   type,
                   style: TextStyle(
                     fontSize: 12,
-                    color: FlutterFlowTheme.of(context).primary,
+                    color: primary,
                     fontFamily: 'Andika New Basic',
                   ),
                 ),
@@ -990,6 +1272,67 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
         ],
       ),
     );
+  }
+
+  IconData _getContentIcon() {
+    switch (widget.contentType) {
+      case 'single_recipe':
+        return Icons.menu_book_rounded;
+      case 'single_combo':
+        return Icons.restaurant_menu;
+      case 'single_meal':
+        return Icons.dinner_dining;
+      case 'meal_plan':
+        return Icons.calendar_view_week;
+      case 'single_day':
+        return Icons.calendar_today;
+      default:
+        return Icons.restaurant_menu;
+    }
+  }
+
+  Widget _buildInitialBox(String name, Color color) {
+    return Container(
+      width: 40,
+      height: 40,
+      color: color.withOpacity(0.08),
+      child: Center(
+        child: Text(
+          name.isNotEmpty ? name[0].toUpperCase() : '?',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: color,
+            fontFamily: 'Andika New Basic',
+          ),
+        ),
+      ),
+    );
+  }
+
+  String _getSubtitleText(int mealCount, int dayCount) {
+    if (widget.contentType == 'single_recipe') {
+      return 'Recipe';
+    } else if (widget.contentType == 'single_combo') {
+      return '$mealCount recipe${mealCount == 1 ? '' : 's'} in template';
+    } else if (widget.contentType == 'single_meal') {
+      if (widget.mealPlan?.date != null) {
+        return DateFormat('EEE, MMM d').format(widget.mealPlan!.date!);
+      }
+      return 'Meal';
+    } else if (widget.contentType == 'meal_plan') {
+      if (widget.weekStart != null) {
+        final endDate = widget.weekStart!.add(const Duration(days: 6));
+        return '${DateFormat('MMM d').format(widget.weekStart!)} – ${DateFormat('MMM d').format(endDate)}';
+      }
+      return '$mealCount meal${mealCount == 1 ? '' : 's'} across $dayCount day${dayCount == 1 ? '' : 's'}';
+    } else if (widget.contentType == 'single_day') {
+      if (widget.dayDate != null) {
+        return DateFormat('EEEE, MMM d').format(widget.dayDate!);
+      }
+      return '$mealCount meal${mealCount == 1 ? '' : 's'}';
+    }
+    return '$mealCount item${mealCount == 1 ? '' : 's'}';
   }
 
   Widget _buildPreviewStat({
@@ -1044,6 +1387,7 @@ void showShareBottomSheet({
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
+    enableDrag: true,
     backgroundColor: Colors.transparent,
     builder: (context) => ShareContentBottomSheet(
       contentType: contentType,
@@ -1071,6 +1415,7 @@ void showShareDayBottomSheet({
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
+    enableDrag: true,
     backgroundColor: Colors.transparent,
     builder: (context) => ShareContentBottomSheet(
       contentType: 'single_day',
@@ -1095,6 +1440,7 @@ void showShareMealBottomSheet({
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
+    enableDrag: true,
     backgroundColor: Colors.transparent,
     builder: (context) => ShareContentBottomSheet(
       contentType: 'single_meal',
@@ -1115,6 +1461,7 @@ void showShareRecipeBottomSheet({
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
+    enableDrag: true,
     backgroundColor: Colors.transparent,
     builder: (context) => ShareContentBottomSheet(
       contentType: 'single_recipe',
@@ -1133,6 +1480,7 @@ void showShareComboBottomSheet({
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
+    enableDrag: true,
     backgroundColor: Colors.transparent,
     builder: (context) => ShareContentBottomSheet(
       contentType: 'single_combo',
@@ -1151,6 +1499,7 @@ void showShareActivityBottomSheet({
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
+    enableDrag: true,
     backgroundColor: Colors.transparent,
     builder: (context) => ShareContentBottomSheet(
       contentType: 'activity',
@@ -1171,6 +1520,7 @@ void showShareActivityPlanBottomSheet({
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
+    enableDrag: true,
     backgroundColor: Colors.transparent,
     builder: (context) => ShareContentBottomSheet(
       contentType: 'activity_plan',
@@ -1191,6 +1541,7 @@ void showShareDayTemplateBottomSheet({
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
+    enableDrag: true,
     backgroundColor: Colors.transparent,
     builder: (context) => ShareContentBottomSheet(
       contentType: 'day_template',

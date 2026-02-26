@@ -45,8 +45,10 @@ void main() async {
   final appState = FFAppState(); // Initialize FFAppState
   await appState.initializePersistedState();
 
-  // Initialize OpenAI key from Firebase Remote Config (secure)
+  // Initialize API keys from Firebase Remote Config (secure)
   await appState.initializeOpenAiKey();
+  await appState.initializeInstacartApiKey();
+  await appState.initializeWalmartApiKey();
 
   // Initialize share intent handler for receiving URLs from other apps
   shareIntentHandler.initialize();

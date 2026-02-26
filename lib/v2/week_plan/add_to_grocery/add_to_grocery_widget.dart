@@ -5,7 +5,7 @@ import '/components/home_nav_bar_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/v2/week_plan/create_grocery_list/grocery_list_bottom_sheet.dart';
-import '/custom_code/actions/instacart_affiliate_service.dart';
+import '/custom_code/actions/instacart_api_service.dart';
 import '/custom_code/actions/grocery_aisle_categorizer.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
@@ -39,6 +39,12 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
   late AddToGroceryModel _model;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
+
+  // Loading state for ingredient adding
+  bool _isAddingIngredients = false;
+  int _addTotal = 0;
+  int _addCurrent = 0;
+  String _addStatusText = '';
 
   /// Helper method to get all ingredients from a meal plan entry
   /// Handles both single recipes (userFirebasemeal) and meal combos (mealComboRef)
@@ -187,34 +193,51 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
         safeSetState(() {});
       } else if (widget.isellectAll || widget.isWeekly) {
         // Auto-add ingredients based on mode
-        int addedCount = 0;
+        // Build eligible meals list first for progress tracking
+        final eligibleMeals = <MealPlanRecord>[];
         for (final mealPlan in filteredMeals) {
-          // Check if meal plan has a recipe or combo
           if (mealPlan.userFirebasemeal != null || mealPlan.mealComboRef != null) {
-            // Check date filter for isellectAll (today only)
             if (widget.isellectAll && !widget.isWeekly) {
               final mealDate = DateTime(mealPlan.date!.year, mealPlan.date!.month, mealPlan.date!.day);
               if (!mealDate.isAtSameMomentAs(today)) continue;
             }
-            // Use helper to get ingredients from either single recipe or combo
-            final ingredients = await _getIngredientsFromMealPlan(mealPlan);
-            if (ingredients.isNotEmpty) {
-              FFAppState().addIngredientsFromRecipe(ingredients);
-              addedCount += ingredients.length;
-            }
+            eligibleMeals.add(mealPlan);
           }
         }
-        // Show confirmation
-        if (addedCount > 0 && mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Added $addedCount ingredients to your grocery list'),
-              backgroundColor: const Color(0xFF9B8AA0),
-              behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              duration: const Duration(seconds: 2),
-            ),
-          );
+
+        if (eligibleMeals.isNotEmpty) {
+          _addCurrent = 0;
+          _addTotal = 0;
+          _isAddingIngredients = true;
+          _addStatusText = 'Scanning meals for ingredients...';
+          safeSetState(() {});
+
+          // First pass: gather all ingredients to get total count
+          final allIngredientSets = <List<String>>[];
+          for (final mealPlan in eligibleMeals) {
+            final ingredients = await _getIngredientsFromMealPlan(mealPlan);
+            allIngredientSets.add(ingredients);
+            _addTotal += ingredients.length;
+          }
+          safeSetState(() {});
+
+          // Second pass: add ingredients one by one with progress
+          for (int i = 0; i < allIngredientSets.length; i++) {
+            final ingredients = allIngredientSets[i];
+            if (ingredients.isNotEmpty) {
+              final mealType = eligibleMeals[i].typ?.name ?? 'Meal';
+              for (final ingredient in ingredients) {
+                _addCurrent++;
+                _addStatusText = 'Adding $mealType: $ingredient';
+                safeSetState(() {});
+                FFAppState().addIngredientsFromRecipe([ingredient]);
+                await Future.delayed(const Duration(milliseconds: 30));
+              }
+            }
+          }
+
+          _isAddingIngredients = false;
+          safeSetState(() {});
         }
         safeSetState(() {});
       } else {
@@ -252,27 +275,33 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
         bottomNavigationBar: const HomeNavBarWidget(currentPage: HomeNavPage.meals),
         body: SafeArea(
           top: true,
-          child: _model.isSelectionMode
-              ? _buildMealSelectionMode(context)
-              : Column(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    // Header
-                    _buildHeader(context),
-                    // Summary bar
-                    if (groceryItems.isNotEmpty) _buildSummaryBar(context, groceryItems, hasCheckedItems),
-                    // Instacart button
-                    if (groceryItems.isNotEmpty) _buildInstacartButton(context, groceryItems),
-                    // Main list
-                    Expanded(
-                      child: groceryItems.isEmpty
-                          ? _buildEmptyState(context)
-                          : _buildGroceryList(context, groceryItems),
+          child: Stack(
+            children: [
+              _model.isSelectionMode
+                  ? _buildMealSelectionMode(context)
+                  : Column(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        // Header
+                        _buildHeader(context),
+                        // Summary bar
+                        if (groceryItems.isNotEmpty) _buildSummaryBar(context, groceryItems, hasCheckedItems),
+                        // Instacart button
+                        if (groceryItems.isNotEmpty) _buildInstacartButton(context, groceryItems),
+                        // Main list
+                        Expanded(
+                          child: groceryItems.isEmpty
+                              ? _buildEmptyState(context)
+                              : _buildGroceryList(context, groceryItems),
+                        ),
+                        // Add item section
+                        _buildAddItemSection(context),
+                      ],
                     ),
-                    // Add item section
-                    _buildAddItemSection(context),
-                  ],
-                ),
+              // Loading overlay
+              if (_isAddingIngredients) _buildLoadingOverlay(context),
+            ],
+          ),
         ),
       ),
     );
@@ -523,87 +552,223 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
     );
   }
 
+  Widget _buildLoadingOverlay(BuildContext context) {
+    final progress = _addTotal > 0 ? _addCurrent / _addTotal : 0.0;
+    final primary = FlutterFlowTheme.of(context).primary;
+
+    return Container(
+      color: const Color(0xFFF3EFF5).withOpacity(0.95),
+      child: Center(
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 40),
+          padding: const EdgeInsets.all(32),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(24),
+            boxShadow: [
+              BoxShadow(
+                color: primary.withOpacity(0.1),
+                blurRadius: 20,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Icon
+              Container(
+                width: 56,
+                height: 56,
+                decoration: BoxDecoration(
+                  color: primary.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.shopping_bag_rounded,
+                  color: primary,
+                  size: 28,
+                ),
+              ),
+              const SizedBox(height: 20),
+              // Title
+              const Text(
+                'Building Your Grocery List',
+                style: TextStyle(
+                  fontFamily: 'Andika New Basic',
+                  fontSize: 17,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 8),
+              // Status text
+              Text(
+                _addStatusText,
+                style: TextStyle(
+                  fontFamily: 'Andika New Basic',
+                  fontSize: 13,
+                  color: Colors.grey[600],
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 20),
+              // Progress bar
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: LinearProgressIndicator(
+                  value: progress,
+                  minHeight: 8,
+                  backgroundColor: primary.withOpacity(0.1),
+                  valueColor: AlwaysStoppedAnimation<Color>(primary),
+                ),
+              ),
+              const SizedBox(height: 10),
+              // Counter
+              Text(
+                '$_addCurrent of $_addTotal items',
+                style: TextStyle(
+                  fontFamily: 'Andika New Basic',
+                  fontSize: 12,
+                  color: Colors.grey[500],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  bool _isInstacartLoading = false;
+
   Widget _buildInstacartButton(BuildContext context, List<GroceryItemStruct> items) {
     final uncheckedItems = items.where((item) => !item.isChecked).toList();
     final itemCount = uncheckedItems.length;
 
+    // Instacart brand colors
+    const instacartGreen = Color(0xFF003D29);
+    const instacartAccent = Color(0xFF00884A);
+    const instacartCarrot = Color(0xFFFF6B00);
+
     return Container(
       margin: const EdgeInsets.fromLTRB(20.0, 12.0, 20.0, 0.0),
       child: InkWell(
-        onTap: () async {
-          // Import the custom action
-          await openInstacartWithGroceryList(uncheckedItems);
+        onTap: _isInstacartLoading ? null : () async {
+          safeSetState(() => _isInstacartLoading = true);
+          try {
+            final message = await openInstacartShoppingList(uncheckedItems);
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(message),
+                  backgroundColor: instacartGreen,
+                  duration: const Duration(seconds: 2),
+                ),
+              );
+            }
+          } catch (e) {
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Could not open Instacart: $e'),
+                  backgroundColor: Colors.red,
+                ),
+              );
+            }
+          } finally {
+            if (mounted) safeSetState(() => _isInstacartLoading = false);
+          }
         },
         borderRadius: BorderRadius.circular(14.0),
         child: Container(
           width: double.infinity,
-          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
           decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [Color(0xFF00A862), Color(0xFF00C878)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
+            color: instacartGreen,
             borderRadius: BorderRadius.circular(14.0),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFF00A862).withOpacity(0.3),
+                color: instacartGreen.withOpacity(0.3),
                 blurRadius: 12,
                 offset: const Offset(0, 4),
               ),
             ],
           ),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              // Instacart carrot icon
               Container(
-                padding: const EdgeInsets.all(8.0),
+                width: 40,
+                height: 40,
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white,
                   borderRadius: BorderRadius.circular(10.0),
                 ),
-                child: const Icon(
-                  Icons.shopping_cart_rounded,
-                  color: Colors.white,
-                  size: 22.0,
-                ),
+                child: _isInstacartLoading
+                    ? const Padding(
+                        padding: EdgeInsets.all(10.0),
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2.0,
+                          color: instacartGreen,
+                        ),
+                      )
+                    : Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          // Shopping cart
+                          Icon(
+                            Icons.shopping_cart_rounded,
+                            color: instacartGreen,
+                            size: 20.0,
+                          ),
+                          // Small carrot accent dot
+                          Positioned(
+                            top: 6,
+                            right: 7,
+                            child: Container(
+                              width: 8,
+                              height: 8,
+                              decoration: const BoxDecoration(
+                                color: instacartCarrot,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
               ),
               const SizedBox(width: 12.0),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Shop on Instacart',
-                    style: TextStyle(
-                      fontFamily: 'Andika New Basic',
-                      color: Colors.white,
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.w600,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      _isInstacartLoading ? 'Connecting...' : 'Shop with Instacart',
+                      style: const TextStyle(
+                        fontFamily: 'Andika New Basic',
+                        color: Colors.white,
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 2.0),
-                  Text(
-                    '$itemCount item${itemCount != 1 ? 's' : ''} ready to shop',
-                    style: TextStyle(
-                      fontFamily: 'Andika New Basic',
-                      color: Colors.white.withOpacity(0.9),
-                      fontSize: 12.0,
+                    const SizedBox(height: 2.0),
+                    Text(
+                      _isInstacartLoading
+                          ? 'Building your shopping list...'
+                          : '$itemCount item${itemCount != 1 ? 's' : ''} ready to shop',
+                      style: TextStyle(
+                        fontFamily: 'Andika New Basic',
+                        color: Colors.white.withOpacity(0.7),
+                        fontSize: 12.0,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-              const Spacer(),
-              Container(
-                padding: const EdgeInsets.all(6.0),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.arrow_forward_rounded,
-                  color: Colors.white,
-                  size: 18.0,
-                ),
+              Icon(
+                Icons.arrow_forward_rounded,
+                color: Colors.white.withOpacity(0.6),
+                size: 20.0,
               ),
             ],
           ),
@@ -1266,34 +1431,49 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
                   onTap: _model.selectedMealPlanIds.isEmpty
                       ? null
                       : () async {
-                          int addedCount = 0;
+                          // Collect eligible meals for progress
+                          final selectedMeals = <MealPlanRecord>[];
                           for (final mealPlanId in _model.selectedMealPlanIds) {
                             final mealPlan = meals.firstWhereOrNull(
                                 (m) => m.reference.id == mealPlanId);
                             if (mealPlan != null && (mealPlan.userFirebasemeal != null || mealPlan.mealComboRef != null)) {
-                              // Use helper to get ingredients from either single recipe or combo
-                              final ingredients = await _getIngredientsFromMealPlan(mealPlan);
-                              if (ingredients.isNotEmpty) {
-                                FFAppState().addIngredientsFromRecipe(ingredients);
-                                addedCount += ingredients.length;
+                              selectedMeals.add(mealPlan);
+                            }
+                          }
+
+                          _model.isSelectionMode = false;
+                          _addCurrent = 0;
+                          _addTotal = 0;
+                          _isAddingIngredients = true;
+                          _addStatusText = 'Scanning meals for ingredients...';
+                          safeSetState(() {});
+
+                          // First pass: gather all ingredients to get total count
+                          final allIngredientSets = <List<String>>[];
+                          for (final mealPlan in selectedMeals) {
+                            final ingredients = await _getIngredientsFromMealPlan(mealPlan);
+                            allIngredientSets.add(ingredients);
+                            _addTotal += ingredients.length;
+                          }
+                          safeSetState(() {});
+
+                          // Second pass: add ingredients one by one with progress
+                          for (int i = 0; i < allIngredientSets.length; i++) {
+                            final ingredients = allIngredientSets[i];
+                            if (ingredients.isNotEmpty) {
+                              final mealType = selectedMeals[i].typ?.name ?? 'Meal';
+                              for (final ingredient in ingredients) {
+                                _addCurrent++;
+                                _addStatusText = 'Adding $mealType: $ingredient';
+                                safeSetState(() {});
+                                FFAppState().addIngredientsFromRecipe([ingredient]);
+                                await Future.delayed(const Duration(milliseconds: 30));
                               }
                             }
                           }
-                          _model.isSelectionMode = false;
+
+                          _isAddingIngredients = false;
                           safeSetState(() {});
-                          if (addedCount > 0 && mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                    'Added $addedCount ingredients to your grocery list'),
-                                backgroundColor: const Color(0xFF9B8AA0),
-                                behavior: SnackBarBehavior.floating,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10)),
-                                duration: const Duration(seconds: 2),
-                              ),
-                            );
-                          }
                         },
                   child: Container(
                     padding: const EdgeInsets.symmetric(vertical: 14.0),
