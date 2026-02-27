@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_sharing_intent/flutter_sharing_intent.dart';
-import 'package:flutter_sharing_intent/model/sharing_file.dart';
+import 'package:flutter/services.dart';
 
 /// Handles incoming shared URLs from other apps (Pinterest, browsers, etc.)
+///
+/// Uses a native method channel (iOS) and intent filters (Android) to receive
+/// shared content without depending on Flutter plugins that break Xcode archive.
 ///
 /// Usage:
 /// 1. Call ShareIntentHandler.initialize() in main()
@@ -14,8 +16,9 @@ class ShareIntentHandler {
   factory ShareIntentHandler() => _instance;
   ShareIntentHandler._internal();
 
+  static const _channel = MethodChannel('com.momrise.app/sharing');
+
   final _sharedUrlController = StreamController<String>.broadcast();
-  StreamSubscription<List<SharedFile>>? _mediaSubscription;
   String? _pendingUrl;
   bool _initialized = false;
 
@@ -37,40 +40,44 @@ class ShareIntentHandler {
     if (_initialized || kIsWeb) return;
     _initialized = true;
 
-    // Handle shared text/URLs when app is running
-    _mediaSubscription = FlutterSharingIntent.instance
-        .getMediaStream()
-        .listen((List<SharedFile> files) {
-      for (final file in files) {
-        if (file.type == SharedMediaType.URL ||
-            file.type == SharedMediaType.TEXT) {
-          final text = file.value ?? '';
-          if (_isValidUrl(text)) {
-            _handleSharedUrl(text);
-            break;
-          }
+    // Listen for shared data pushed from native side (when app is running)
+    _channel.setMethodCallHandler((call) async {
+      if (call.method == 'onSharedData') {
+        final data = call.arguments as Map?;
+        if (data != null) {
+          _processSharedData(Map<String, dynamic>.from(data));
         }
       }
     });
 
-    // Handle initial share intent (when app was opened via share)
-    FlutterSharingIntent.instance
-        .getInitialSharing()
-        .then((List<SharedFile> files) {
-      for (final file in files) {
-        if (file.type == SharedMediaType.URL ||
-            file.type == SharedMediaType.TEXT) {
-          final text = file.value ?? '';
-          if (_isValidUrl(text)) {
-            _pendingUrl = _extractUrl(text);
-            _sharedUrlController.add(_pendingUrl!);
-            break;
-          }
-        }
+    // Check for shared data on startup (cold start)
+    _checkInitialSharedData();
+  }
+
+  Future<void> _checkInitialSharedData() async {
+    try {
+      final data = await _channel.invokeMethod<Map?>('getSharedData');
+      if (data != null) {
+        _processSharedData(Map<String, dynamic>.from(data));
       }
-      // Clear the intent after handling
-      FlutterSharingIntent.instance.reset();
-    });
+    } catch (e) {
+      // Method channel not available (web, or native side not set up)
+      if (kDebugMode) print('ShareIntentHandler: $e');
+    }
+  }
+
+  void _processSharedData(Map<String, dynamic> data) {
+    final value = data['value'] as String? ?? '';
+    final type = data['type'] as String? ?? '';
+
+    if (type == 'url' || type == 'text') {
+      if (_isValidUrl(value)) {
+        _handleSharedUrl(value);
+      }
+    }
+
+    // Clear after handling
+    _channel.invokeMethod('clearSharedData').catchError((_) {});
   }
 
   /// Check if text contains a valid URL
@@ -82,7 +89,6 @@ class ShareIntentHandler {
 
   /// Extract URL from text (handles cases where URL is embedded in text)
   String _extractUrl(String text) {
-    // Try to find a URL in the text
     final urlPattern = RegExp(
       r'https?://[^\s<>"{}|\\^`\[\]]+',
       caseSensitive: false,
@@ -105,7 +111,6 @@ class ShareIntentHandler {
 
   /// Clean up resources
   void dispose() {
-    _mediaSubscription?.cancel();
     _sharedUrlController.close();
   }
 }
