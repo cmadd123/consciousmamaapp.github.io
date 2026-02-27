@@ -20,6 +20,8 @@
 		<string>$(FLUTTER_BUILD_NAME)</string>
 		<key>CFBundleSignature</key>
 		<string>????</string>
+		<key>AppGroupId</key>
+		<string>group.com.momrise.app</string>
 		<key>CFBundleURLTypes</key>
 		<array>
 			<dict>
@@ -38,6 +40,14 @@
 				<key>CFBundleURLSchemes</key>
 				<array>
 					<string>momecoach</string>
+				</array>
+			</dict>
+			<dict>
+				<key>CFBundleTypeRole</key>
+				<string>Editor</string>
+				<key>CFBundleURLSchemes</key>
+				<array>
+					<string>SharingMedia-com.momrise.app</string>
 				</array>
 			</dict>
 		</array>

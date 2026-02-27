@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
-import 'package:receive_sharing_intent/receive_sharing_intent.dart';
+import 'package:flutter_sharing_intent/flutter_sharing_intent.dart';
+import 'package:flutter_sharing_intent/model/sharing_file.dart';
 
 /// Handles incoming shared URLs from other apps (Pinterest, browsers, etc.)
 ///
@@ -14,8 +15,7 @@ class ShareIntentHandler {
   ShareIntentHandler._internal();
 
   final _sharedUrlController = StreamController<String>.broadcast();
-  StreamSubscription<List<SharedMediaFile>>? _mediaSubscription;
-  StreamSubscription<String>? _textSubscription;
+  StreamSubscription<List<SharedFile>>? _mediaSubscription;
   String? _pendingUrl;
   bool _initialized = false;
 
@@ -38,28 +38,38 @@ class ShareIntentHandler {
     _initialized = true;
 
     // Handle shared text/URLs when app is running
-    _textSubscription = ReceiveSharingIntent.instance.getMediaStream()
-        .expand((files) => files)
-        .where((file) => file.type == SharedMediaType.url || file.type == SharedMediaType.text)
-        .map((file) => file.path)
-        .where((text) => _isValidUrl(text))
-        .listen((url) {
-          _handleSharedUrl(url);
-        });
+    _mediaSubscription = FlutterSharingIntent.instance
+        .getMediaStream()
+        .listen((List<SharedFile> files) {
+      for (final file in files) {
+        if (file.type == SharedMediaType.URL ||
+            file.type == SharedMediaType.TEXT) {
+          final text = file.value ?? '';
+          if (_isValidUrl(text)) {
+            _handleSharedUrl(text);
+            break;
+          }
+        }
+      }
+    });
 
     // Handle initial share intent (when app was opened via share)
-    ReceiveSharingIntent.instance.getInitialMedia().then((files) {
+    FlutterSharingIntent.instance
+        .getInitialSharing()
+        .then((List<SharedFile> files) {
       for (final file in files) {
-        if (file.type == SharedMediaType.url || file.type == SharedMediaType.text) {
-          if (_isValidUrl(file.path)) {
-            _pendingUrl = _extractUrl(file.path);
+        if (file.type == SharedMediaType.URL ||
+            file.type == SharedMediaType.TEXT) {
+          final text = file.value ?? '';
+          if (_isValidUrl(text)) {
+            _pendingUrl = _extractUrl(text);
             _sharedUrlController.add(_pendingUrl!);
             break;
           }
         }
       }
       // Clear the intent after handling
-      ReceiveSharingIntent.instance.reset();
+      FlutterSharingIntent.instance.reset();
     });
   }
 
@@ -96,7 +106,6 @@ class ShareIntentHandler {
   /// Clean up resources
   void dispose() {
     _mediaSubscription?.cancel();
-    _textSubscription?.cancel();
     _sharedUrlController.close();
   }
 }

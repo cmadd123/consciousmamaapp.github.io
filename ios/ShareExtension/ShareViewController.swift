@@ -1,6 +1,6 @@
-import receive_sharing_intent
+import flutter_sharing_intent
 
-class ShareViewController: RSIShareViewController {
+class ShareViewController: FSIShareViewController {
 
     // Auto-redirect to the main app after sharing
     override func shouldAutoRedirect() -> Bool {
