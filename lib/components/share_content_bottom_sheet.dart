@@ -1,3 +1,4 @@
+import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -497,15 +498,10 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
     }
 
     if (code != null) {
-      setState(() {
-        _shareCode = code;
-        _shareUrl = SharingService.getShareUrl(code!);
-        _isLoading = false;
-      });
-      // Auto-trigger native share dialog after UI rebuilds
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) _shareViaSystem();
-      });
+      _shareCode = code;
+      _shareUrl = SharingService.getShareUrl(code!);
+      // Auto-trigger native share dialog
+      _shareViaSystem();
     } else {
       setState(() => _isLoading = false);
       if (mounted) {
@@ -535,26 +531,28 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
     if (_shareCode == null || _shareUrl == null) return;
 
     try {
+      // On iOS, dismiss the bottom sheet first — iOS can't present
+      // UIActivityViewController from within another presented modal.
+      if (Platform.isIOS && mounted) {
+        Navigator.of(context).pop();
+        // Wait for the dismiss animation to complete
+        await Future.delayed(const Duration(milliseconds: 350));
+      }
+
       await SharingService.shareViaSystem(
         shareCode: _shareCode!,
         title: widget.title,
         description: widget.description,
       );
-      if (mounted) {
+
+      // On Android the bottom sheet is still open, dismiss it
+      if (!Platform.isIOS && mounted) {
         Navigator.of(context).pop();
       }
     } catch (e) {
       print('Share failed: $e');
       // Fallback: copy link to clipboard
-      if (mounted) {
-        Clipboard.setData(ClipboardData(text: _shareUrl!));
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Link copied to clipboard!'),
-            backgroundColor: Color(0xFF52A097),
-          ),
-        );
-      }
+      Clipboard.setData(ClipboardData(text: _shareUrl!));
     }
   }
 

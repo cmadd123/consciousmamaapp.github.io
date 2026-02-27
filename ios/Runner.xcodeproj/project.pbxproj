@@ -506,6 +506,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
+				CUSTOM_GROUP_ID = "group.com.momrise.app";
 				PRODUCT_BUNDLE_IDENTIFIER = com.momrise.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
@@ -647,6 +648,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
+				CUSTOM_GROUP_ID = "group.com.momrise.app";
 				PRODUCT_BUNDLE_IDENTIFIER = com.momrise.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
@@ -682,6 +684,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
+				CUSTOM_GROUP_ID = "group.com.momrise.app";
 				PRODUCT_BUNDLE_IDENTIFIER = com.momrise.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
@@ -707,6 +710,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = "$(FLUTTER_BUILD_NAME)";
+				CUSTOM_GROUP_ID = "group.com.momrise.app";
 				PRODUCT_BUNDLE_IDENTIFIER = com.momrise.app.ShareExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -733,6 +737,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = "$(FLUTTER_BUILD_NAME)";
+				CUSTOM_GROUP_ID = "group.com.momrise.app";
 				PRODUCT_BUNDLE_IDENTIFIER = com.momrise.app.ShareExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -759,6 +764,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = "$(FLUTTER_BUILD_NAME)";
+				CUSTOM_GROUP_ID = "group.com.momrise.app";
 				PRODUCT_BUNDLE_IDENTIFIER = com.momrise.app.ShareExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
