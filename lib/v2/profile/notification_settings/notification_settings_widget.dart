@@ -86,6 +86,7 @@ class _NotificationSettingsWidgetState
       await actions.notificationService.scheduleDailyMealReminder(
         hour: _mealReminderTime.hour,
         minute: _mealReminderTime.minute,
+        dayOfWeek: _mealReminderDay,
       );
     } else {
       await actions.notificationService.cancelMealReminders();

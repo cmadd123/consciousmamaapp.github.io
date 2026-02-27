@@ -174,10 +174,12 @@ class NotificationService {
 
   // ============ MEAL REMINDERS ============
 
-  /// Schedule daily meal reminder
+  /// Schedule meal reminder.
+  /// [dayOfWeek]: 0 = daily, 1 = Sunday, 2 = Monday, ... 7 = Saturday
   Future<void> scheduleDailyMealReminder({
     required int hour,
     required int minute,
+    int dayOfWeek = 0,
     String? customMessage,
   }) async {
     if (!await _isSettingEnabled(keyMealRemindersEnabled)) return;
@@ -186,16 +188,31 @@ class NotificationService {
       return;
     }
 
+    // dayOfWeek 0 = daily (fire every day), 1-7 = specific weekday
+    final bool isWeekly = dayOfWeek >= 1 && dayOfWeek <= 7;
+
+    // Map our index (1=Sun..7=Sat) to DateTime weekday (1=Mon..7=Sun)
+    // Our: 1=Sun, 2=Mon, 3=Tue, 4=Wed, 5=Thu, 6=Fri, 7=Sat
+    // Dart: 1=Mon, 2=Tue, 3=Wed, 4=Thu, 5=Fri, 6=Sat, 7=Sun
+    int? dartWeekday;
+    if (isWeekly) {
+      dartWeekday = dayOfWeek == 1 ? DateTime.sunday : dayOfWeek - 1;
+    }
+
+    final scheduledDate = isWeekly
+        ? _nextInstanceOfDayAndTime(dartWeekday!, hour, minute)
+        : _nextInstanceOfTime(hour, minute);
+
     await _notifications.zonedSchedule(
       mealNotificationId,
       '🍽️ MomRise',
       customMessage ?? 'Here\'s your reminder to meal plan for next week!',
-      _nextInstanceOfTime(hour, minute),
+      scheduledDate,
       NotificationDetails(
         android: AndroidNotificationDetails(
           mealChannelId,
           'Meal Reminders',
-          channelDescription: 'Daily meal plan reminders',
+          channelDescription: isWeekly ? 'Weekly meal plan reminders' : 'Daily meal plan reminders',
           importance: Importance.high,
           priority: Priority.high,
           icon: '@mipmap/ic_launcher',
@@ -209,8 +226,10 @@ class NotificationService {
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
-      matchDateTimeComponents: DateTimeComponents.time, // Repeat daily
-      payload: 'meal:daily',
+      matchDateTimeComponents: isWeekly
+          ? DateTimeComponents.dayOfWeekAndTime
+          : DateTimeComponents.time,
+      payload: 'meal:${isWeekly ? "weekly" : "daily"}',
     );
   }
 
@@ -475,6 +494,25 @@ class NotificationService {
 
     if (scheduled.isBefore(now)) {
       scheduled = scheduled.add(const Duration(days: 1));
+    }
+
+    return scheduled;
+  }
+
+  /// Get next instance of a specific weekday and time (for weekly scheduling).
+  /// [weekday] uses Dart convention: 1=Monday ... 7=Sunday.
+  tz.TZDateTime _nextInstanceOfDayAndTime(int weekday, int hour, int minute) {
+    final now = tz.TZDateTime.now(tz.local);
+    var scheduled = tz.TZDateTime(tz.local, now.year, now.month, now.day, hour, minute);
+
+    // Advance to the target weekday
+    while (scheduled.weekday != weekday) {
+      scheduled = scheduled.add(const Duration(days: 1));
+    }
+
+    // If that day/time has already passed this week, move to next week
+    if (scheduled.isBefore(now)) {
+      scheduled = scheduled.add(const Duration(days: 7));
     }
 
     return scheduled;
