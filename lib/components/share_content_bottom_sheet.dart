@@ -545,6 +545,18 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
         description: widget.description,
       );
 
+      // Show success feedback after sharing completes
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Share link created successfully!'),
+            backgroundColor: Colors.green,
+            duration: const Duration(seconds: 2),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+
       // On Android the bottom sheet is still open, dismiss it
       if (!Platform.isIOS && mounted) {
         Navigator.of(context).pop();

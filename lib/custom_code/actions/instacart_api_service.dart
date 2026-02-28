@@ -10,7 +10,6 @@ import 'package:flutter/material.dart';
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
 import 'dart:convert';
-import 'dart:io' show Platform;
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 import 'instacart_affiliate_service.dart';
@@ -101,13 +100,10 @@ Future<String> openInstacartShoppingList(
       if (productsLinkUrl != null && productsLinkUrl.isNotEmpty) {
         debugPrint('Instacart API: Opening link: $productsLinkUrl');
         final uri = Uri.parse(productsLinkUrl);
-        // On iOS, use in-app browser to prevent the Instacart app from
-        // intercepting the URL via Universal Links and dropping to homepage.
-        // Android handles the deep link correctly with external browser.
-        final launchMode = Platform.isIOS
-            ? LaunchMode.inAppBrowserView
-            : LaunchMode.externalApplication;
-        await launchUrl(uri, mode: launchMode);
+        // Use external browser on both platforms to preserve user's Instacart login
+        // This ensures product availability shows correctly when logged in to Instacart
+        // Note: Instacart app may intercept on iOS, but that's OK - user stays logged in
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
         return 'Opening Instacart with your list!';
       } else {
         debugPrint('Instacart API: No products_link_url in response');
