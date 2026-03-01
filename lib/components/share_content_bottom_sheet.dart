@@ -545,8 +545,9 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
         description: widget.description,
       );
 
-      // Show success feedback after sharing completes
-      if (mounted) {
+      // On Android, show success feedback and dismiss bottom sheet
+      // On iOS, bottom sheet is already dismissed and share dialog provides feedback
+      if (!Platform.isIOS && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: const Text('Share link created successfully!'),
@@ -555,10 +556,6 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
             behavior: SnackBarBehavior.floating,
           ),
         );
-      }
-
-      // On Android the bottom sheet is still open, dismiss it
-      if (!Platform.isIOS && mounted) {
         Navigator.of(context).pop();
       }
     } catch (e) {
