@@ -410,7 +410,7 @@ Future<DateTime?> showCustomDateTimePicker({
   final result = await showModalBottomSheet<bool>(
     context: context,
     backgroundColor: Colors.transparent,
-    barrierColor: Colors.black.withOpacity(0.5),
+    barrierColor: Colors.transparent,
     isScrollControlled: true,
     builder: (context) {
       return BackdropFilter(

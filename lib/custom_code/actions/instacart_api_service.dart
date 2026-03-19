@@ -100,10 +100,15 @@ Future<String> openInstacartShoppingList(
       if (productsLinkUrl != null && productsLinkUrl.isNotEmpty) {
         debugPrint('Instacart API: Opening link: $productsLinkUrl');
         final uri = Uri.parse(productsLinkUrl);
-        // Use external browser on both platforms to preserve user's Instacart login
-        // This ensures product availability shows correctly when logged in to Instacart
-        // Note: Instacart app may intercept on iOS, but that's OK - user stays logged in
+
+        // Instacart has Android App Links configured (www.instacart.com/.well-known/assetlinks.json)
+        // This means Android should automatically open the Instacart app if installed
+        // when we use externalApplication mode. No custom handling needed.
+        //
+        // iOS uses universal links which work the same way.
         await launchUrl(uri, mode: LaunchMode.externalApplication);
+        debugPrint('Instacart API: Link opened - should launch Instacart app if installed');
+
         return 'Opening Instacart with your list!';
       } else {
         debugPrint('Instacart API: No products_link_url in response');

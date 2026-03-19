@@ -6,9 +6,16 @@
       },
       "description": "OpenAI API key for AI-powered learning path generation",
       "valueType": "STRING"
+    },
+    "stripe_publishable_key": {
+      "defaultValue": {
+        "value": "pk_test_51TC2HICRBjG2EgUwZsY5sCTRnajWwCsPCD3JoWyTSTyafD9v3mnEZCtKjuP8hr1QDIvo3T3WGsvpOY5UDp5iqO1G00Ef14pQrJ"
+      },
+      "description": "Stripe publishable key (sandbox/test mode)",
+      "valueType": "STRING"
     }
   },
   "version": {
-    "versionNumber": "1"
+    "versionNumber": "2"
   }
 }

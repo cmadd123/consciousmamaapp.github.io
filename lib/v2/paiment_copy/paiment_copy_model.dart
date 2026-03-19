@@ -6,6 +6,12 @@ class PaimentCopyModel extends FlutterFlowModel<PaimentCopyWidget> {
   /// Selected plan: 'yearly' (default/best value) or 'monthly'
   String selectedPayment = 'yearly';
 
+  /// Processing state (shows loading during Stripe payment sheet)
+  bool isProcessing = false;
+
+  /// Success screen state
+  bool showSuccessScreen = false;
+
   @override
   void initState(BuildContext context) {}
 

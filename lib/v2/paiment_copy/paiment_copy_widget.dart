@@ -4,6 +4,7 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/index.dart';
+import '/custom_code/actions/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
@@ -45,6 +46,11 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
   void initState() {
     super.initState();
     _model = createModel(context, () => PaimentCopyModel());
+
+    // Initialize Stripe on page load
+    SchedulerBinding.instance.addPostFrameCallback((_) async {
+      await initializeStripe();
+    });
 
     _headerController = AnimationController(
       vsync: this,
@@ -130,25 +136,322 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
         onboardingCompleted: true,
       ));
     }
+
     // Update local state so the GoRouter redirect knows
-    final appState = Provider.of<AppStateNotifier>(context, listen: false);
-    appState.onboardingCompleted = true;
+    try {
+      final appState = Provider.of<AppStateNotifier>(context, listen: false);
+      appState.onboardingCompleted = true;
+    } catch (e) {
+      debugPrint('Could not update AppStateNotifier (might not be available): $e');
+      // Continue anyway - the Firestore update is what matters
+    }
 
     if (mounted) {
       context.goNamed(HomeHybridWidget.routeName);
     }
   }
 
-  void _handleSubscribe() {
+  Future<void> _handleSubscribe() async {
     HapticFeedback.mediumImpact();
-    // TODO: Wire up RevenueCat purchase flow here
-    // For now, mark onboarding complete and go home
-    _completeOnboardingAndGoHome();
+
+    // Show loading state
+    setState(() => _model.isProcessing = true);
+
+    try {
+      // Get selected plan type
+      final planType = _model.selectedPayment; // 'monthly' or 'yearly'
+
+      // Call Stripe service to create subscription and present payment sheet
+      final result = await createSubscription(planType: planType);
+
+      debugPrint('Stripe result: $result');
+
+      if (result == 'success') {
+        // Payment sheet completed successfully
+        // Show success screen
+        if (mounted) {
+          setState(() {
+            _model.isProcessing = false;
+            _model.showSuccessScreen = true;
+          });
+        }
+      } else if (result == 'Payment canceled') {
+        // User canceled payment sheet
+        if (mounted) {
+          setState(() => _model.isProcessing = false);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text('Payment canceled. You can try again anytime.'),
+              backgroundColor: FlutterFlowTheme.of(context).secondaryText,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              margin: const EdgeInsets.all(16),
+            ),
+          );
+        }
+      } else {
+        // Error occurred - Show debug dialog
+        if (mounted) {
+          setState(() => _model.isProcessing = false);
+
+          // Show detailed error dialog for debugging
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Debug: Subscription Error'),
+              content: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text('Error Details:', style: TextStyle(fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 8),
+                    SelectableText(result),
+                    const SizedBox(height: 16),
+                    const Text('Check Firebase logs for more details:', style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic)),
+                    const SizedBox(height: 4),
+                    const SelectableText('firebase functions:log --only createSubscription', style: TextStyle(fontSize: 11, fontFamily: 'monospace')),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('Close'),
+                ),
+              ],
+            ),
+          );
+
+          // Also show snackbar
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(result.length > 100 ? '${result.substring(0, 100)}...' : result),
+              backgroundColor: FlutterFlowTheme.of(context).error,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              margin: const EdgeInsets.all(16),
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      debugPrint('Error subscribing: $e');
+      if (mounted) {
+        setState(() => _model.isProcessing = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('An error occurred. Please try again.'),
+            backgroundColor: FlutterFlowTheme.of(context).error,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            margin: const EdgeInsets.all(16),
+          ),
+        );
+      }
+    }
   }
 
   void _handleSkip() {
     HapticFeedback.lightImpact();
     _completeOnboardingAndGoHome();
+  }
+
+  Widget _buildSuccessScreen() {
+    return Stack(
+      children: [
+        // Background gradient
+        Container(
+          width: double.infinity,
+          height: double.infinity,
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFFD7F2EB), Color(0xFFFFE9E1)],
+              stops: [0.0, 1.0],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+          ),
+        ),
+
+        // Center content
+        SafeArea(
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 40.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Spacer(flex: 2),
+
+                  // Animated emoji
+                  TweenAnimationBuilder(
+                    duration: const Duration(milliseconds: 800),
+                    tween: Tween<double>(begin: 0, end: 1),
+                    curve: Curves.elasticOut,
+                    builder: (context, double value, child) {
+                      return Transform.scale(
+                        scale: value,
+                        child: const Text(
+                          '🎉',
+                          style: TextStyle(fontSize: 80),
+                          textAlign: TextAlign.center,
+                        ),
+                      );
+                    },
+                  ),
+
+                  const SizedBox(height: 40),
+
+                  // Welcome text
+                  TweenAnimationBuilder(
+                    duration: const Duration(milliseconds: 500),
+                    tween: Tween<double>(begin: 0, end: 1),
+                    curve: Curves.easeOut,
+                    builder: (context, double value, child) {
+                      return Transform.translate(
+                        offset: Offset(0, 20 * (1 - value)),
+                        child: Opacity(
+                          opacity: value,
+                          child: Text(
+                            'You\'re In!',
+                            textAlign: TextAlign.center,
+                            style: FlutterFlowTheme.of(context).headlineLarge.override(
+                              fontFamily: 'Andika New Basic',
+                              fontSize: 36.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // Subtitle
+                  TweenAnimationBuilder(
+                    duration: const Duration(milliseconds: 500),
+                    tween: Tween<double>(begin: 0, end: 1),
+                    curve: Curves.easeOut,
+                    builder: (context, double value, child) {
+                      return Transform.translate(
+                        offset: Offset(0, 20 * (1 - value)),
+                        child: Opacity(
+                          opacity: value,
+                          child: Text(
+                            'Your family\'s journey starts now',
+                            textAlign: TextAlign.center,
+                            style: FlutterFlowTheme.of(context).bodyLarge.override(
+                              fontFamily: 'Andika New Basic',
+                              fontSize: 18.0,
+                              color: FlutterFlowTheme.of(context).secondaryText,
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+
+                  const Spacer(flex: 1),
+
+                  // Trial info card
+                  TweenAnimationBuilder(
+                    duration: const Duration(milliseconds: 700),
+                    tween: Tween<double>(begin: 0, end: 1),
+                    curve: Curves.easeOut,
+                    builder: (context, double value, child) {
+                      return Opacity(
+                        opacity: value,
+                        child: Container(
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.8),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Column(
+                            children: [
+                              Text(
+                                'Your 7-day trial starts today',
+                                style: FlutterFlowTheme.of(context).bodyLarge.override(
+                                  fontFamily: 'Andika New Basic',
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                'Then ${_model.selectedPayment == 'yearly' ? '\$69.99/year' : '\$6.99/month'}',
+                                style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                  fontFamily: 'Andika New Basic',
+                                  color: FlutterFlowTheme.of(context).secondaryText,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+
+                  const SizedBox(height: 32),
+
+                  // CTA Button
+                  TweenAnimationBuilder(
+                    duration: const Duration(milliseconds: 900),
+                    tween: Tween<double>(begin: 0, end: 1),
+                    curve: Curves.easeOut,
+                    builder: (context, double value, child) {
+                      return Opacity(
+                        opacity: value,
+                        child: FFButtonWidget(
+                          onPressed: () async {
+                            HapticFeedback.mediumImpact();
+                            try {
+                              debugPrint('Completing onboarding...');
+                              await _completeOnboardingAndGoHome();
+                              debugPrint('Onboarding completed successfully');
+                            } catch (e) {
+                              debugPrint('Error completing onboarding: $e');
+                              if (mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Navigation failed: $e'),
+                                    backgroundColor: FlutterFlowTheme.of(context).error,
+                                    duration: const Duration(seconds: 5),
+                                  ),
+                                );
+                              }
+                            }
+                          },
+                          text: 'Let\'s Go',
+                          options: FFButtonOptions(
+                            width: double.infinity,
+                            height: 56,
+                            color: FlutterFlowTheme.of(context).primary,
+                            textStyle: FlutterFlowTheme.of(context).titleLarge.override(
+                              fontFamily: 'Andika New Basic',
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                            elevation: 0,
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+
+                  const Spacer(flex: 2),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
   @override
@@ -171,7 +474,9 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
             ),
           ),
           child: SafeArea(
-            child: Column(
+            child: _model.showSuccessScreen
+              ? _buildSuccessScreen()
+              : Column(
               children: [
                 // Skip button top-right
                 Padding(
@@ -380,8 +685,8 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
                             );
                           },
                           child: FFButtonWidget(
-                            onPressed: _handleSubscribe,
-                            text: 'Start Free Trial',
+                            onPressed: _model.isProcessing ? null : _handleSubscribe,
+                            text: _model.isProcessing ? 'Processing...' : 'Start Free Trial',
                             options: FFButtonOptions(
                               width: double.infinity,
                               height: 56.0,
@@ -401,6 +706,7 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
                                 width: 1.0,
                               ),
                               borderRadius: BorderRadius.circular(28.0),
+                              disabledColor: FlutterFlowTheme.of(context).primary.withOpacity(0.6),
                             ),
                           ),
                         ),

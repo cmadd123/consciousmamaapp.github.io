@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import '/index.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/nav/nav.dart';
+import '/custom_code/actions/analytics_service.dart';
 
 /// Handles deep links for the app (e.g., momrise://shared/CODE, https://momrise.app/s/CODE)
 ///
@@ -92,6 +93,34 @@ class DeepLinkHandler {
     debugPrint('DeepLinkHandler: pathSegments=${uri.pathSegments}');
     debugPrint('DeepLinkHandler: query=${uri.query}');
     debugPrint('DeepLinkHandler: ========================================');
+
+    // Track campaign attribution from UTM parameters
+    final utmSource = uri.queryParameters['utm_source'];
+    final utmMedium = uri.queryParameters['utm_medium'];
+    final utmCampaign = uri.queryParameters['utm_campaign'];
+    final utmContent = uri.queryParameters['utm_content'];
+
+    if (utmSource != null) {
+      debugPrint('DeepLinkHandler: UTM tracking - source=$utmSource, medium=$utmMedium, campaign=$utmCampaign');
+
+      // Track campaign attribution
+      analyticsService.logCampaign(
+        source: utmSource,
+        medium: utmMedium ?? 'unknown',
+        campaign: utmCampaign,
+        content: utmContent,
+      );
+
+      // Track specific sources
+      if (utmSource == 'product_hunt' || utmSource == 'producthunt') {
+        analyticsService.logProductHuntVisit(referrer: utmMedium);
+      } else if (utmSource == 'reddit') {
+        analyticsService.logRedditVisit(
+          subreddit: utmContent, // e.g., utm_content=EatCheapAndHealthy
+          postId: utmCampaign,   // e.g., utm_campaign=abc123
+        );
+      }
+    }
 
     String? shareCode;
     final path = uri.path;

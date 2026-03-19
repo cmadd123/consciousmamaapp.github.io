@@ -366,12 +366,9 @@ class _FamilyPreviewWidgetState extends State<FamilyPreviewWidget>
                                 height: 56.0,
                                 child: FFButtonWidget(
                                   onPressed: () async {
-                                    // Mark onboarding as completed and navigate home
-                                    await currentUserReference?.update(createUsersRecordData(
-                                      onboardingCompleted: true,
-                                    ));
+                                    // Navigate to paywall (don't mark onboarding complete yet)
                                     if (mounted) {
-                                      context.goNamed(HomeHybridWidget.routeName);
+                                      context.goNamed(PaimentCopyWidget.routeName);
                                     }
                                   },
                                   text: 'Let\'s Get Started!',

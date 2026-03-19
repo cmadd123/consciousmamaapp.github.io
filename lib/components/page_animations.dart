@@ -123,7 +123,7 @@ Future<T?> showBlurredBottomSheet<T>({
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: blurAmount, sigmaY: blurAmount),
               child: Container(
-                color: Colors.black.withOpacity(0.2),
+                color: Colors.transparent,
               ),
             ),
           ),

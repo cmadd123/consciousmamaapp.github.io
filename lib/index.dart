@@ -162,7 +162,7 @@ export '/v2/todos/todos_page_widget.dart' show TodosPageWidget;
 export '/v2/my_activities/my_activities_widget.dart' show MyActivitiesWidget;
 export '/v2/auth/parent_setup/parent_setup_widget.dart' show ParentSetupWidget;
 export '/v2/auth/family_preview/family_preview_widget.dart' show FamilyPreviewWidget;
-export '/v2/auth/onboarding_selector_widget.dart' show OnboardingSelectorWidget;
+// REMOVED: OnboardingSelector testing page (production launch)
 export '/v2/auth/welcome_enhanced_widget.dart' show WelcomeEnhancedWidget;
 export '/v2/auth/add_child_enhanced_widget.dart' show AddChildEnhancedWidget;
 export '/v2/auth/parent_setup_enhanced_widget.dart' show ParentSetupEnhancedWidget;

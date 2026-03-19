@@ -628,6 +628,21 @@ class FFAppState extends ChangeNotifier {
     }
   }
 
+  // ==================== STRIPE SUBSCRIPTION ====================
+  String _stripePublishableKey = '';
+  String get stripePublishableKey => _stripePublishableKey;
+
+  /// Initialize Stripe publishable key from Firebase Remote Config
+  Future<void> initializeStripeKey() async {
+    try {
+      final remoteConfig = FirebaseRemoteConfig.instance;
+      _stripePublishableKey = remoteConfig.getString('stripe_publishable_key');
+      debugPrint('Stripe: key=${_stripePublishableKey.isNotEmpty ? 'set' : 'empty'}');
+    } catch (e) {
+      debugPrint('Error fetching Stripe config: $e');
+    }
+  }
+
   double _progress = 0.0;
   double get progress => _progress;
   set progress(double value) {

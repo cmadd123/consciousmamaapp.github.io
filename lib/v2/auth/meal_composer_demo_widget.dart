@@ -943,7 +943,7 @@ class _MealComposerDemoWidgetState extends State<MealComposerDemoWidget> {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
-      barrierColor: Colors.black.withOpacity(0.5),
+      barrierColor: Colors.transparent,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
       ),

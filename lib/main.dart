@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 import 'package:provider/provider.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +20,8 @@ import 'flutter_flow/nav/nav.dart';
 import 'flutter_flow/share_intent_handler.dart';
 import 'flutter_flow/deep_link_handler.dart';
 import 'custom_code/actions/notification_service.dart';
+import 'custom_code/actions/analytics_service.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'v2/auth/demo_data_notifier.dart';
 import 'index.dart';
 
@@ -42,6 +45,13 @@ void main() async {
 
   await initFirebase();
 
+  // Initialize Crashlytics for error reporting
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+  PlatformDispatcher.instance.onError = (error, stack) {
+    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+    return true;
+  };
+
   final appState = FFAppState(); // Initialize FFAppState
   await appState.initializePersistedState();
 
@@ -49,12 +59,16 @@ void main() async {
   await appState.initializeOpenAiKey();
   await appState.initializeInstacartApiKey();
   await appState.initializeWalmartApiKey();
+  await appState.initializeStripeKey();
 
   // Initialize share intent handler for receiving URLs from other apps
   shareIntentHandler.initialize();
 
   // Initialize notification service
   await notificationService.initialize();
+
+  // Track app open with analytics
+  await analyticsService.logAppOpen();
 
   runApp(MultiProvider(
     providers: [

@@ -6,6 +6,13 @@ const axios = require("axios").default;
 
 admin.initializeApp();
 
+// Import Stripe subscription functions
+const stripeFunctions = require("./stripe_functions");
+exports.createSubscription = stripeFunctions.createSubscription;
+exports.cancelSubscription = stripeFunctions.cancelSubscription;
+exports.restorePurchases = stripeFunctions.restorePurchases;
+exports.stripeWebhook = stripeFunctions.stripeWebhook;
+
 exports.onUserDeleted = functions.auth.user().onDelete(async (user) => {
   let firestore = admin.firestore();
   let userRef = firestore.doc("users/" + user.uid);

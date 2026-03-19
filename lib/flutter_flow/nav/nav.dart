@@ -98,10 +98,11 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         if (appStateNotifier.loading) return null;
 
         final loggedIn = appStateNotifier.loggedIn;
+        final onboardingCompleted = appStateNotifier.onboardingCompleted;
         final currentPath = state.uri.path;
 
-        // If user is logged in and on the welcome/init page, send to home
-        if (loggedIn && (currentPath == '/' || currentPath == '/welcome-enhanced')) {
+        // If user is logged in, has completed onboarding, and on welcome/init page, send to home
+        if (loggedIn && onboardingCompleted && (currentPath == '/' || currentPath == '/welcome-enhanced')) {
           return '/home-hybrid';
         }
 
@@ -141,11 +142,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           path: SignUpWidget.routePath,
           builder: (context, params) => SignUpWidget(),
         ),
-        FFRoute(
-          name: OnboardingSelectorWidget.routeName,
-          path: OnboardingSelectorWidget.routePath,
-          builder: (context, params) => OnboardingSelectorWidget(),
-        ),
+        // REMOVED: OnboardingSelector testing page (production launch)
         FFRoute(
           name: WelcomeEnhancedWidget.routeName,
           path: WelcomeEnhancedWidget.routePath,

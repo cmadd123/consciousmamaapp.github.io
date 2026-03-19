@@ -125,12 +125,35 @@ class NotificationService {
 
   /// Handle notification tap
   void _onNotificationTapped(NotificationResponse response) {
-    // Handle navigation based on payload
-    final String? payload = response.payload;
-    if (payload != null) {
-      // payload format: "type:data" e.g., "meal:breakfast" or "learning:pathId"
-      // Navigation will be handled by the app
-      debugPrint('Notification tapped with payload: $payload');
+    try {
+      // Handle navigation based on payload
+      final String? payload = response.payload;
+      if (payload != null) {
+        // payload format: "type:data" e.g., "meal:breakfast" or "learning:pathId"
+        // Validate payload format before processing
+        if (payload.contains(':')) {
+          final parts = payload.split(':');
+          if (parts.length == 2) {
+            final type = parts[0];
+            final data = parts[1];
+
+            // Log valid payload for debugging
+            debugPrint('Notification tapped - Type: $type, Data: $data');
+
+            // Navigation will be handled by the app based on type
+            // Valid types: meal, learning, calendar, encouragement
+          } else {
+            debugPrint('Invalid notification payload format: $payload');
+          }
+        } else {
+          debugPrint('Malformed notification payload (missing separator): $payload');
+        }
+      }
+    } catch (e, stackTrace) {
+      // Catch any errors to prevent app crashes
+      debugPrint('Error handling notification tap: $e');
+      debugPrint('Stack trace: $stackTrace');
+      // Don't rethrow - just log and gracefully fail
     }
   }
 
