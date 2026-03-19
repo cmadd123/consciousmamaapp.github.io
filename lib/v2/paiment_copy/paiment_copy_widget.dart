@@ -158,13 +158,20 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
     setState(() => _model.isProcessing = true);
 
     try {
+      debugPrint('━━━━━ START SUBSCRIPTION FLOW ━━━━━');
+      debugPrint('Platform: ${Theme.of(context).platform}');
+      debugPrint('Selected plan: ${_model.selectedPayment}');
+
       // Get selected plan type
       final planType = _model.selectedPayment; // 'monthly' or 'yearly'
+
+      debugPrint('Calling createSubscription with planType: $planType');
 
       // Call Stripe service to create subscription and present payment sheet
       final result = await createSubscription(planType: planType);
 
       debugPrint('Stripe result: $result');
+      debugPrint('━━━━━ END SUBSCRIPTION FLOW ━━━━━');
 
       if (result == 'success') {
         // Payment sheet completed successfully
@@ -478,12 +485,37 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
               ? _buildSuccessScreen()
               : Column(
               children: [
-                // Skip button top-right
+                // Back button and Skip button
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+                      // Back button
+                      GestureDetector(
+                        onTap: () => context.pop(),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.arrow_back_ios_rounded,
+                              size: 18,
+                              color: FlutterFlowTheme.of(context).secondaryText,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              'Back',
+                              style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                    fontFamily: 'Andika New Basic',
+                                    color: FlutterFlowTheme.of(context).secondaryText,
+                                    fontSize: 14.0,
+                                    letterSpacing: 0.0,
+                                  ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      // Skip button
                       GestureDetector(
                         onTap: _handleSkip,
                         child: Text(
