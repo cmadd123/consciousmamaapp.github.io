@@ -154,24 +154,30 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
   Future<void> _handleSubscribe() async {
     HapticFeedback.mediumImpact();
 
-    // Show loading state
-    setState(() => _model.isProcessing = true);
+    // Show loading state and clear previous errors
+    setState(() {
+      _model.isProcessing = true;
+      _model.debugError = null;
+      _model.debugLogs.clear();
+    });
 
     try {
-      debugPrint('━━━━━ START SUBSCRIPTION FLOW ━━━━━');
-      debugPrint('Platform: ${Theme.of(context).platform}');
-      debugPrint('Selected plan: ${_model.selectedPayment}');
+      _model.addDebugLog('START SUBSCRIPTION FLOW');
+      _model.addDebugLog('Platform: ${Theme.of(context).platform}');
+      _model.addDebugLog('Selected plan: ${_model.selectedPayment}');
+      setState(() {}); // Update UI with logs
 
       // Get selected plan type
       final planType = _model.selectedPayment; // 'monthly' or 'yearly'
 
-      debugPrint('Calling createSubscription with planType: $planType');
+      _model.addDebugLog('Calling createSubscription...');
+      setState(() {}); // Update UI
 
       // Call Stripe service to create subscription and present payment sheet
       final result = await createSubscription(planType: planType);
 
-      debugPrint('Stripe result: $result');
-      debugPrint('━━━━━ END SUBSCRIPTION FLOW ━━━━━');
+      _model.addDebugLog('Result: $result');
+      setState(() {}); // Update UI
 
       if (result == 'success') {
         // Payment sheet completed successfully
@@ -197,64 +203,22 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
           );
         }
       } else {
-        // Error occurred - Show debug dialog
+        // Error occurred - Store in debug field and show
         if (mounted) {
-          setState(() => _model.isProcessing = false);
-
-          // Show detailed error dialog for debugging
-          showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: const Text('Debug: Subscription Error'),
-              content: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text('Error Details:', style: TextStyle(fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 8),
-                    SelectableText(result),
-                    const SizedBox(height: 16),
-                    const Text('Check Firebase logs for more details:', style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic)),
-                    const SizedBox(height: 4),
-                    const SelectableText('firebase functions:log --only createSubscription', style: TextStyle(fontSize: 11, fontFamily: 'monospace')),
-                  ],
-                ),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('Close'),
-                ),
-              ],
-            ),
-          );
-
-          // Also show snackbar
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(result.length > 100 ? '${result.substring(0, 100)}...' : result),
-              backgroundColor: FlutterFlowTheme.of(context).error,
-              behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              margin: const EdgeInsets.all(16),
-            ),
-          );
+          setState(() {
+            _model.isProcessing = false;
+            _model.debugError = result;
+            _model.addDebugLog('ERROR: $result');
+          });
         }
       }
     } catch (e) {
-      debugPrint('Error subscribing: $e');
+      _model.addDebugLog('EXCEPTION: $e');
       if (mounted) {
-        setState(() => _model.isProcessing = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('An error occurred. Please try again.'),
-            backgroundColor: FlutterFlowTheme.of(context).error,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            margin: const EdgeInsets.all(16),
-          ),
-        );
+        setState(() {
+          _model.isProcessing = false;
+          _model.debugError = 'Exception: $e';
+        });
       }
     }
   }
@@ -785,6 +749,89 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
                             ),
                           ),
                         ),
+
+                        // Debug card - visible inline
+                        if (_model.debugLogs.isNotEmpty || _model.debugError != null) ...[
+                          const SizedBox(height: 24.0),
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: Colors.black.withOpacity(0.8),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: _model.debugError != null ? Colors.red : Colors.blue,
+                                width: 2,
+                              ),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(
+                                      _model.debugError != null ? Icons.error : Icons.bug_report,
+                                      color: _model.debugError != null ? Colors.red : Colors.blue,
+                                      size: 20,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      'DEBUG INFO',
+                                      style: TextStyle(
+                                        color: _model.debugError != null ? Colors.red : Colors.blue,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14,
+                                        fontFamily: 'monospace',
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 12),
+                                if (_model.debugError != null) ...[
+                                  Text(
+                                    'ERROR:',
+                                    style: TextStyle(
+                                      color: Colors.red[300],
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12,
+                                      fontFamily: 'monospace',
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  SelectableText(
+                                    _model.debugError!,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 11,
+                                      fontFamily: 'monospace',
+                                    ),
+                                  ),
+                                  const SizedBox(height: 12),
+                                ],
+                                Text(
+                                  'LOGS:',
+                                  style: TextStyle(
+                                    color: Colors.blue[300],
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12,
+                                    fontFamily: 'monospace',
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                ...(_model.debugLogs.map((log) => Padding(
+                                  padding: const EdgeInsets.only(bottom: 2),
+                                  child: SelectableText(
+                                    log,
+                                    style: const TextStyle(
+                                      color: Colors.white70,
+                                      fontSize: 10,
+                                      fontFamily: 'monospace',
+                                    ),
+                                  ),
+                                )).toList()),
+                              ],
+                            ),
+                          ),
+                        ],
                       ],
                     ),
                   ),

@@ -12,6 +12,19 @@ class PaimentCopyModel extends FlutterFlowModel<PaimentCopyWidget> {
   /// Success screen state
   bool showSuccessScreen = false;
 
+  /// Debug error message (visible on screen)
+  String? debugError;
+
+  /// Debug logs (visible on screen)
+  List<String> debugLogs = [];
+
+  void addDebugLog(String log) {
+    debugLogs.add('${DateTime.now().toLocal().toString().substring(11, 19)} - $log');
+    if (debugLogs.length > 10) {
+      debugLogs.removeAt(0); // Keep only last 10 logs
+    }
+  }
+
   @override
   void initState(BuildContext context) {}
 
