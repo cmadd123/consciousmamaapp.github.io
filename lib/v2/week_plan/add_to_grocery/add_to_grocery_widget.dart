@@ -657,16 +657,8 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
         onTap: _isInstacartLoading ? null : () async {
           safeSetState(() => _isInstacartLoading = true);
           try {
-            final message = await openInstacartShoppingList(uncheckedItems);
-            if (mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(message),
-                  backgroundColor: instacartGreen,
-                  duration: const Duration(seconds: 2),
-                ),
-              );
-            }
+            await openInstacartShoppingList(uncheckedItems);
+            // Instacart opens automatically, no need for success message
           } catch (e) {
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(

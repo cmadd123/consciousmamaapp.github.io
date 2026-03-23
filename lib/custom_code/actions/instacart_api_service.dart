@@ -98,18 +98,32 @@ Future<String> openInstacartShoppingList(
       final productsLinkUrl = data['products_link_url'] as String?;
 
       if (productsLinkUrl != null && productsLinkUrl.isNotEmpty) {
-        debugPrint('Instacart API: Opening link: $productsLinkUrl');
+        debugPrint('Instacart API: Raw URL from API: $productsLinkUrl');
+
+        // Add UTM parameters for affiliate tracking (Partner ID: 5928554)
+        // Instacart API doesn't automatically include these, so we append them
         final uri = Uri.parse(productsLinkUrl);
+        final urlWithTracking = uri.replace(queryParameters: {
+          ...uri.queryParameters, // Preserve any existing parameters
+          'utm_campaign': 'instacart-idp',
+          'utm_medium': 'affiliate',
+          'utm_source': 'instacart_idp',
+          'utm_term': 'partnertype-mediapartner',
+          'utm_content': 'campaignid-20313_partnerid-5928554',
+        });
+
+        debugPrint('Instacart API: URL with tracking: $urlWithTracking');
 
         // Instacart has Android App Links configured (www.instacart.com/.well-known/assetlinks.json)
         // This means Android should automatically open the Instacart app if installed
         // when we use externalApplication mode. No custom handling needed.
         //
         // iOS uses universal links which work the same way.
-        await launchUrl(uri, mode: LaunchMode.externalApplication);
+        await launchUrl(urlWithTracking, mode: LaunchMode.externalApplication);
         debugPrint('Instacart API: Link opened - should launch Instacart app if installed');
 
-        return 'Opening Instacart with your list!';
+        // Return the URL with tracking for debugging
+        return urlWithTracking.toString();
       } else {
         debugPrint('Instacart API: No products_link_url in response');
       }

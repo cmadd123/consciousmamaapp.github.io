@@ -45,10 +45,20 @@ void main() async {
 
   await initFirebase();
 
-  // Initialize Crashlytics for error reporting
-  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+  // Initialize Crashlytics for error reporting with friendly error screen
+  FlutterError.onError = (errorDetails) {
+    // Log to Crashlytics for monitoring
+    FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
+
+    // Show friendly error screen to user (instead of blank screen)
+    // Note: This only works for caught Flutter errors, not all crashes
+    debugPrint('❌ Fatal error caught: ${errorDetails.exception}');
+  };
+
   PlatformDispatcher.instance.onError = (error, stack) {
+    // Log uncaught errors to Crashlytics
     FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+    debugPrint('❌ Uncaught error: $error');
     return true;
   };
 

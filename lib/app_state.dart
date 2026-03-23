@@ -585,8 +585,16 @@ class FFAppState extends ChangeNotifier {
       ));
       final activated = await remoteConfig.fetchAndActivate();
       _openAiKey = remoteConfig.getString('openai_api_key');
+
+      // Validate that critical API keys are configured
+      if (_openAiKey.isEmpty) {
+        debugPrint('⚠️ CRITICAL: openai_api_key is empty in Remote Config');
+        debugPrint('   Learning path generation will fail. Set this in Firebase Console → Remote Config.');
+      } else {
+        debugPrint('✓ OpenAI API key configured');
+      }
     } catch (e) {
-      debugPrint('Error fetching Remote Config: $e');
+      debugPrint('❌ ERROR: Failed to fetch Remote Config: $e');
     }
   }
 
@@ -603,9 +611,15 @@ class FFAppState extends ChangeNotifier {
       final remoteConfig = FirebaseRemoteConfig.instance;
       _instacartApiKey = remoteConfig.getString('instacart_api_key');
       _instacartUseProd = remoteConfig.getBool('instacart_use_prod');
-      debugPrint('Instacart API: key=${_instacartApiKey.isNotEmpty ? 'set' : 'empty'}, prod=$_instacartUseProd');
+
+      if (_instacartApiKey.isEmpty) {
+        debugPrint('⚠️ WARNING: instacart_api_key is empty in Remote Config');
+        debugPrint('   Instacart grocery integration will not work.');
+      } else {
+        debugPrint('✓ Instacart API configured (${_instacartUseProd ? 'PRODUCTION' : 'sandbox'})');
+      }
     } catch (e) {
-      debugPrint('Error fetching Instacart config: $e');
+      debugPrint('❌ ERROR: Failed to fetch Instacart config: $e');
     }
   }
 
@@ -637,9 +651,15 @@ class FFAppState extends ChangeNotifier {
     try {
       final remoteConfig = FirebaseRemoteConfig.instance;
       _stripePublishableKey = remoteConfig.getString('stripe_publishable_key');
-      debugPrint('Stripe: key=${_stripePublishableKey.isNotEmpty ? 'set' : 'empty'}');
+
+      if (_stripePublishableKey.isEmpty) {
+        debugPrint('⚠️ CRITICAL: stripe_publishable_key is empty in Remote Config');
+        debugPrint('   Subscription payments will not work. Set this in Firebase Console → Remote Config.');
+      } else {
+        debugPrint('✓ Stripe configured');
+      }
     } catch (e) {
-      debugPrint('Error fetching Stripe config: $e');
+      debugPrint('❌ ERROR: Failed to fetch Stripe config: $e');
     }
   }
 
