@@ -87,7 +87,11 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
   void _checkForSharedUrl() {
     final sharedUrl = FFAppState().consumeSharedRecipeUrl();
     if (sharedUrl != null && sharedUrl.isNotEmpty) {
-      _model.urlTextFieldTextController?.text = sharedUrl;
+      // Clear previous recipe data before loading new one
+      setState(() {
+        _model.clearRecipe();
+        _model.urlTextFieldTextController?.text = sharedUrl;
+      });
       // Auto-extract the recipe
       _extractRecipe();
     }
