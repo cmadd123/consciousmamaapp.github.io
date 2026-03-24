@@ -61,9 +61,13 @@ class HomeNavBarWidget extends StatelessWidget {
         (page == HomeNavPage.home && currentPage == HomeNavPage.homeSubpage);
 
     return InkWell(
-      onTap: () {
+      onTap: () async {
+        // Prevent double-tap issues with small delay
         // Always allow navigation - even if button is lit (user might be on a subpage)
         // Use goNamed to replace current page instead of stacking
+        await Future.delayed(const Duration(milliseconds: 50));
+        if (!context.mounted) return;
+
         switch (page) {
           case HomeNavPage.home:
             context.goNamed(HomeHybridWidget.routeName);
@@ -119,7 +123,10 @@ class HomeNavBarWidget extends StatelessWidget {
     final isSelected = currentPage == HomeNavPage.settings;
 
     return InkWell(
-      onTap: () {
+      onTap: () async {
+        // Prevent double-tap issues with small delay
+        await Future.delayed(const Duration(milliseconds: 50));
+        if (!context.mounted) return;
         context.goNamed(ProfileWidget.routeName);
       },
       borderRadius: BorderRadius.circular(12.0),
