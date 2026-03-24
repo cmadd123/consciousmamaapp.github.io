@@ -69,13 +69,28 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
 
     // Check for shared URL from external apps (Pinterest, browser, etc.)
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final sharedUrl = FFAppState().consumeSharedRecipeUrl();
-      if (sharedUrl != null && sharedUrl.isNotEmpty) {
-        _model.urlTextFieldTextController?.text = sharedUrl;
-        // Auto-extract the recipe
-        _extractRecipe();
-      }
+      _checkForSharedUrl();
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Check for new shared URL each time page becomes active
+    // (handles multiple shares in a row)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkForSharedUrl();
+    });
+  }
+
+  /// Check if there's a shared URL and auto-extract it
+  void _checkForSharedUrl() {
+    final sharedUrl = FFAppState().consumeSharedRecipeUrl();
+    if (sharedUrl != null && sharedUrl.isNotEmpty) {
+      _model.urlTextFieldTextController?.text = sharedUrl;
+      // Auto-extract the recipe
+      _extractRecipe();
+    }
   }
 
   @override
