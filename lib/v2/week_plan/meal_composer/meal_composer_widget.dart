@@ -2413,7 +2413,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
         if (_selectedDrinkType != null) {
           fullData['drink_type'] = _selectedDrinkType!.name;
         }
-        if (_customDrinkName.isNotEmpty) {
+        if (_customDrinkName?.isNotEmpty ?? false) {
           fullData['drink_custom'] = _customDrinkName;
         }
 
@@ -2438,7 +2438,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
         if (_selectedDrinkType != null) {
           fullData['drink_type'] = _selectedDrinkType!.name;
         }
-        if (_customDrinkName.isNotEmpty) {
+        if (_customDrinkName?.isNotEmpty ?? false) {
           fullData['drink_custom'] = _customDrinkName;
         }
 
@@ -2459,21 +2459,11 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
         if (_selectedDrinkType != null) {
           fullData['drink_type'] = _selectedDrinkType!.name;
         }
-        if (_customDrinkName.isNotEmpty) {
+        if (_customDrinkName?.isNotEmpty ?? false) {
           fullData['drink_custom'] = _customDrinkName;
         }
 
         await MealPlanRecord.collection.doc().set(fullData);
-      } else {
-        // Nothing selected - shouldn't happen (save button should be disabled)
-        debugPrint('Warning: Attempted to save meal plan with no selections');
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Please select at least one item'), backgroundColor: Colors.orange),
-          );
-        }
-        setState(() => _isSaving = false);
-        return;
       } else if (_selectedSnackItems.isNotEmpty) {
         // For snacks, only the first one gets the notes and leftover flag
         for (int i = 0; i < _selectedSnackItems.length; i++) {
@@ -2488,6 +2478,16 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
             ),
           );
         }
+      } else {
+        // Nothing selected - shouldn't happen (save button should be disabled)
+        debugPrint('Warning: Attempted to save meal plan with no selections');
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Please select at least one item'), backgroundColor: Colors.orange),
+          );
+        }
+        setState(() => _isSaving = false);
+        return;
       }
 
       FFAppState().MealCashtearm = true;
