@@ -138,6 +138,9 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
           _model.populateFromRecipe(recipe);
           _model.isLoading = false;
 
+          // Auto-detect meal type categories from recipe name/description
+          _autoDetectCategories(recipe);
+
           // Show warning if recipe is incomplete (website doesn't have full recipe data)
           if (ingredients.isEmpty && instructions.isEmpty) {
             _model.errorMessage = 'This website doesn\'t share full recipe details. You can add ingredients and instructions manually, or try a different link from a recipe blog.';
@@ -189,6 +192,48 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
     }
   }
 
+  /// Auto-detect meal type categories from recipe name and description
+  void _autoDetectCategories(Map<String, dynamic> recipe) {
+    final name = (recipe['name'] as String? ?? '').toLowerCase();
+    final description = (recipe['description'] as String? ?? '').toLowerCase();
+    final combinedText = '$name $description';
+
+    // Keywords for each category
+    final breakfastKeywords = ['breakfast', 'pancake', 'waffle', 'oatmeal', 'cereal', 'toast', 'eggs', 'bacon', 'sausage', 'brunch', 'muffin', 'bagel', 'croissant', 'french toast', 'scrambled', 'omelet', 'smoothie bowl'];
+    final lunchKeywords = ['lunch', 'sandwich', 'wrap', 'salad', 'soup', 'panini', 'burger', 'sub', 'hoagie'];
+    final dinnerKeywords = ['dinner', 'roast', 'steak', 'chicken breast', 'pork chop', 'salmon', 'pasta', 'casserole', 'curry', 'stir fry', 'grilled', 'baked chicken', 'pot roast', 'lasagna', 'enchilada', 'risotto'];
+    final sideKeywords = ['side', 'sides', 'side dish', 'fries', 'mashed potato', 'coleslaw', 'green beans', 'corn', 'rice', 'roasted vegetables'];
+    final snackKeywords = ['snack', 'appetizer', 'dip', 'chip', 'cracker', 'finger food', 'bite', 'ball'];
+    final dessertKeywords = ['dessert', 'cake', 'cookie', 'brownie', 'pie', 'ice cream', 'chocolate', 'sweet', 'pudding', 'tart', 'cupcake', 'cheesecake', 'candy', 'fudge', 'truffle'];
+
+    // Check for matches (allowing multiple categories)
+    if (breakfastKeywords.any((keyword) => combinedText.contains(keyword))) {
+      _model.selectedCategories.add('Breakfast');
+    }
+    if (lunchKeywords.any((keyword) => combinedText.contains(keyword))) {
+      _model.selectedCategories.add('Lunch');
+    }
+    if (dinnerKeywords.any((keyword) => combinedText.contains(keyword))) {
+      _model.selectedCategories.add('Dinner');
+    }
+    if (sideKeywords.any((keyword) => combinedText.contains(keyword))) {
+      _model.selectedCategories.add('Side');
+    }
+    if (snackKeywords.any((keyword) => combinedText.contains(keyword))) {
+      _model.selectedCategories.add('Snacks');
+    }
+    if (dessertKeywords.any((keyword) => combinedText.contains(keyword))) {
+      _model.selectedCategories.add('Desserts');
+    }
+
+    // If no categories detected, default to Dinner (most common)
+    if (_model.selectedCategories.isEmpty) {
+      _model.selectedCategories.add('Dinner');
+    }
+
+    debugPrint('Auto-detected categories: ${_model.selectedCategories.join(', ')}');
+  }
+
   /// Extract recipe from pasted text using AI
   Future<void> _extractFromText() async {
     final text = _model.pasteTextFieldTextController?.text.trim() ?? '';
@@ -218,6 +263,8 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
         final recipe = result['recipe'] as Map<String, dynamic>;
         setState(() {
           _model.populateFromRecipe(recipe);
+          // Auto-detect meal type categories from recipe name/description
+          _autoDetectCategories(recipe);
           _model.isLoading = false;
         });
       } else {
