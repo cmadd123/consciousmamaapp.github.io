@@ -206,7 +206,10 @@ class _MyAppState extends State<MyApp> {
 
     if (_appStateNotifier.loggedIn) {
       debugPrint('ShareIntent: User logged in, navigating to /recipeFromLink');
-      _router.go('/recipeFromLink');
+      // Add delay to ensure navigation stack is ready (especially after app was backgrounded)
+      Future.delayed(const Duration(milliseconds: 800), () {
+        _router.go('/recipeFromLink');
+      });
     } else {
       // User not logged in yet — defer until auth is restored
       debugPrint('ShareIntent: User not logged in, deferring URL');
