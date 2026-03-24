@@ -1092,7 +1092,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
             ElevatedButton(
               onPressed: () => Navigator.pop(dialogContext, true),
               style: ElevatedButton.styleFrom(backgroundColor: dialogTheme.primary),
-              child: Text('Save Templates'),
+              child: Text('Save Saved Days'),
             ),
           ],
         );
@@ -1107,7 +1107,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Row(children: [
         SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)),
-        SizedBox(width: 12), Text('Saving templates...'),
+        SizedBox(width: 12), Text('Saving saved days...'),
       ]), duration: Duration(seconds: 10)),
     );
 
@@ -1179,20 +1179,20 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
         HapticFeedback.mediumImpact();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('$savedCount template${savedCount > 1 ? 's' : ''} saved!'),
+            content: Text('$savedCount saved day${savedCount > 1 ? 's' : ''} saved!'),
             backgroundColor: primaryColor,
           ),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('No meals to save as templates'), backgroundColor: Colors.orange),
+          SnackBar(content: Text('No meals to save as saved days'), backgroundColor: Colors.orange),
         );
       }
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error saving templates'), backgroundColor: Colors.red),
+        SnackBar(content: Text('Error saving saved days'), backgroundColor: Colors.red),
       );
     }
   }
@@ -3210,7 +3210,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
     if (grouped.isEmpty) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('No saved day templates yet. Use "Save" to create one first.')),
+          SnackBar(content: Text('No saved days yet. Use "Save" to create one first.')),
         );
       }
       return;

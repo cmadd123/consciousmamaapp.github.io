@@ -1661,7 +1661,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
                       child: OutlinedButton.icon(
                         onPressed: _showSaveAsMealDialog,
                         icon: Icon(Icons.bookmark_add_outlined, size: 18.0),
-                        label: Text('Templates', style: TextStyle(fontSize: 12.0)),
+                        label: Text('Saved Days', style: TextStyle(fontSize: 12.0)),
                         style: OutlinedButton.styleFrom(
                           foregroundColor: theme.primary,
                           side: BorderSide(color: theme.primary),
@@ -1696,7 +1696,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
                       icon: Icon(Icons.bookmark_add_outlined, size: 18.0),
                       label: _isSaving
                           ? SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                          : Text('Save Template'),
+                          : Text('Save Saved Day'),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: theme.primary,
                         foregroundColor: Colors.white,
@@ -1712,7 +1712,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
                       child: OutlinedButton.icon(
                         onPressed: _showSaveAsMealDialog,
                         icon: Icon(Icons.bookmark_add_outlined, size: 18.0),
-                        label: Text('Templates', style: TextStyle(fontSize: 12.0)),
+                        label: Text('Saved Days', style: TextStyle(fontSize: 12.0)),
                         style: OutlinedButton.styleFrom(
                           foregroundColor: theme.primary,
                           side: BorderSide(color: theme.primary),
@@ -1907,9 +1907,9 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
                           children: [
                             Icon(Icons.restaurant_menu, size: 48.0, color: Color(0xFFCCCCCC)),
                             SizedBox(height: 12.0),
-                            Text('No templates yet', style: theme.bodyMedium.override(fontFamily: 'Andika New Basic', color: theme.secondaryText)),
+                            Text('No saved days yet', style: theme.bodyMedium.override(fontFamily: 'Andika New Basic', color: theme.secondaryText)),
                             SizedBox(height: 4.0),
-                            Text('Build a meal and tap "Templates" to save one', style: theme.bodySmall.override(fontFamily: 'Andika New Basic', color: theme.secondaryText)),
+                            Text('Build a meal and tap "Saved Days" to save one', style: theme.bodySmall.override(fontFamily: 'Andika New Basic', color: theme.secondaryText)),
                           ],
                         ),
                       )
@@ -2090,7 +2090,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
       context: context,
       builder: (dialogContext) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.0)),
-        title: Text('Save as New Template'),
+        title: Text('Save as New Saved Day'),
         content: TextField(
           controller: nameController,
           decoration: InputDecoration(
@@ -2145,7 +2145,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
                 autofocus: true,
               ),
               SizedBox(height: 16.0),
-              Text('This template includes:', style: theme.bodySmall.override(fontFamily: 'Andika New Basic', color: theme.secondaryText)),
+              Text('This saved day includes:', style: theme.bodySmall.override(fontFamily: 'Andika New Basic', color: theme.secondaryText)),
               SizedBox(height: 4.0),
               if (_selectedEntree != null) Text('  ${_selectedEntree!.recipeName} (entrée)'),
               ..._selectedSides.map((s) => Text('  ${s.recipeName} (side)')),
@@ -2195,7 +2195,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
                 await _updateExistingCombo(nameController.text);
               },
               style: ElevatedButton.styleFrom(backgroundColor: theme.primary),
-              child: Text('Update Template'),
+              child: Text('Update Saved Day'),
             ),
           ] else
             ElevatedButton(
