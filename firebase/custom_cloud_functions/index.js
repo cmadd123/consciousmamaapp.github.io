@@ -16,3 +16,5 @@ exports.extractRecipe = extractRecipe.extractRecipe;
 const generateDailyRecurringTasks = require("./generate_daily_recurring_tasks.js");
 exports.generateDailyRecurringTasks =
   generateDailyRecurringTasks.generateDailyRecurringTasks;
+const verifyMealTags = require("./verify_meal_tags.js");
+exports.verifyMealTags = verifyMealTags.verifyMealTags;
