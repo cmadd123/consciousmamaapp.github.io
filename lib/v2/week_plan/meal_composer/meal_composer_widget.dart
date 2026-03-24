@@ -2393,73 +2393,87 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
 
       // Creating a new meal plan
       if (_selectedEntree != null) {
-        if (_selectedSides.isNotEmpty || _selectedDesserts.isNotEmpty || _selectedDrinkType != null) {
-          final comboData = createMealComboRecordData(
-            name: '',
-            entreeRef: _selectedEntree!.reference,
-            drinkType: _selectedDrinkType,
-            drinkCustom: _customDrinkName,
-            mealTyp: widget.mealType,
-            userRef: currentUserReference,
-            createdTime: DateTime.now(),
-          );
-          comboData['side_refs'] = _selectedSides.map((s) => s.reference).toList();
-          comboData['dessert_refs'] = _selectedDesserts.map((d) => d.reference).toList();
+        // Save meal plan with entree + sides/desserts directly (NO auto-template creation)
+        final mealPlanData = createMealPlanRecordData(
+          date: widget.date,
+          typ: widget.mealType,
+          userRef: currentUserReference,
+          userFirebasemeal: _selectedEntree!.reference,
+          notes: notes.isNotEmpty ? notes : null,
+          isLeftoverEntree: _isLeftoverEntree,
+          isLeftoverSide: _isLeftoverSide,
+          isLeftoverDessert: _isLeftoverDessert,
+          isLeftoverSnack: _isLeftoverSnack,
+        );
 
-          final comboRef = await MealComboRecord.collection.add(comboData);
+        // Add sides/desserts/drinks directly to meal plan (not through combo)
+        final Map<String, dynamic> fullData = Map<String, dynamic>.from(mealPlanData);
+        fullData['side_refs'] = _selectedSides.map((s) => s.reference).toList();
+        fullData['dessert_refs'] = _selectedDesserts.map((d) => d.reference).toList();
+        if (_selectedDrinkType != null) {
+          fullData['drink_type'] = _selectedDrinkType!.name;
+        }
+        if (_customDrinkName.isNotEmpty) {
+          fullData['drink_custom'] = _customDrinkName;
+        }
 
-          await MealPlanRecord.collection.doc().set(
-            createMealPlanRecordData(
-              date: widget.date,
-              typ: widget.mealType,
-              userRef: currentUserReference,
-              mealComboRef: comboRef,
-              notes: notes.isNotEmpty ? notes : null,
-              isLeftoverEntree: _isLeftoverEntree,
-              isLeftoverSide: _isLeftoverSide,
-              isLeftoverDessert: _isLeftoverDessert,
-              isLeftoverSnack: _isLeftoverSnack,
-            ),
-          );
-        } else {
-          await MealPlanRecord.collection.doc().set(
-            createMealPlanRecordData(
-              date: widget.date,
-              typ: widget.mealType,
-              userRef: currentUserReference,
-              userFirebasemeal: _selectedEntree!.reference,
-              notes: notes.isNotEmpty ? notes : null,
-              isLeftoverEntree: _isLeftoverEntree,
-              isLeftoverSide: _isLeftoverSide,
-              isLeftoverDessert: _isLeftoverDessert,
-              isLeftoverSnack: _isLeftoverSnack,
-            ),
+        await MealPlanRecord.collection.doc().set(fullData);
+      } else if (_selectedSides.isNotEmpty) {
+        // Saving just sides without an entree - store directly (NO auto-template)
+        final mealPlanData = createMealPlanRecordData(
+          date: widget.date,
+          typ: widget.mealType,
+          userRef: currentUserReference,
+          notes: notes.isNotEmpty ? notes : null,
+          isLeftoverSide: _isLeftoverSide,
+          isLeftoverDessert: _isLeftoverDessert,
+          isLeftoverSnack: _isLeftoverSnack,
+        );
+
+        final Map<String, dynamic> fullData = Map<String, dynamic>.from(mealPlanData);
+        fullData['side_refs'] = _selectedSides.map((s) => s.reference).toList();
+        if (_selectedDesserts.isNotEmpty) {
+          fullData['dessert_refs'] = _selectedDesserts.map((d) => d.reference).toList();
+        }
+        if (_selectedDrinkType != null) {
+          fullData['drink_type'] = _selectedDrinkType!.name;
+        }
+        if (_customDrinkName.isNotEmpty) {
+          fullData['drink_custom'] = _customDrinkName;
+        }
+
+        await MealPlanRecord.collection.doc().set(fullData);
+      } else if (_selectedDesserts.isNotEmpty) {
+        // Saving just desserts - store directly
+        final mealPlanData = createMealPlanRecordData(
+          date: widget.date,
+          typ: widget.mealType,
+          userRef: currentUserReference,
+          notes: notes.isNotEmpty ? notes : null,
+          isLeftoverDessert: _isLeftoverDessert,
+          isLeftoverSnack: _isLeftoverSnack,
+        );
+
+        final Map<String, dynamic> fullData = Map<String, dynamic>.from(mealPlanData);
+        fullData['dessert_refs'] = _selectedDesserts.map((d) => d.reference).toList();
+        if (_selectedDrinkType != null) {
+          fullData['drink_type'] = _selectedDrinkType!.name;
+        }
+        if (_customDrinkName.isNotEmpty) {
+          fullData['drink_custom'] = _customDrinkName;
+        }
+
+        await MealPlanRecord.collection.doc().set(fullData);
+      } else {
+        // Nothing selected - shouldn't happen (save button should be disabled)
+        debugPrint('Warning: Attempted to save meal plan with no selections');
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Please select at least one item'), backgroundColor: Colors.orange),
           );
         }
-      } else if (_selectedSides.isNotEmpty) {
-        // Saving just sides without an entree - create a combo with only sides
-        final comboData = createMealComboRecordData(
-          name: '',
-          entreeRef: null,  // No entree
-          drinkType: _selectedDrinkType,
-          drinkCustom: _customDrinkName,
-          mealTyp: widget.mealType,
-          userRef: currentUserReference,
-          createdTime: DateTime.now(),
-        );
-        comboData['side_refs'] = _selectedSides.map((s) => s.reference).toList();
-
-        final comboRef = await MealComboRecord.collection.add(comboData);
-
-        await MealPlanRecord.collection.doc().set(
-          createMealPlanRecordData(
-            date: widget.date,
-            typ: widget.mealType,
-            userRef: currentUserReference,
-            mealComboRef: comboRef,
-            notes: notes.isNotEmpty ? notes : null,
-          ),
-        );
+        setState(() => _isSaving = false);
+        return;
       } else if (_selectedSnackItems.isNotEmpty) {
         // For snacks, only the first one gets the notes and leftover flag
         for (int i = 0; i < _selectedSnackItems.length; i++) {
