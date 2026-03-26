@@ -394,10 +394,15 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
   }
 
   Future<void> _generateShareLink() async {
+    print('🔵🔵🔵 _generateShareLink called! Platform: ${Platform.operatingSystem}');
+    print('🔵 Content type: ${widget.contentType}');
+
     setState(() => _isLoading = true);
+    print('🔵 Loading state set to true');
 
     String? code;
     final personalNote = _noteController.text.trim();
+    print('🔵 Personal note length: ${personalNote.length}');
 
     switch (widget.contentType) {
       case 'meal_plan':

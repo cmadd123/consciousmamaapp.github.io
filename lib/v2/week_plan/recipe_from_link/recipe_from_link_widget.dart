@@ -371,20 +371,25 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
       String? mealTypValue;
       String mainOrSidesValue = 'Main';
 
+      debugPrint('🔵 SAVING RECIPE - selectedCategories: ${_model.selectedCategories}');
       if (_model.selectedCategories.isNotEmpty) {
         // Check for Side separately since it goes in main_or_sides field
         if (_model.selectedCategories.contains('Side')) {
           mainOrSidesValue = 'Side';
+          debugPrint('🔵 Set mainOrSides to: Side');
         }
         // Get all non-Side categories and join them with commas for filtering
         final mealCategories = _model.selectedCategories.where((c) => c != 'Side').toList();
         if (mealCategories.isNotEmpty) {
           // Store all selected categories as comma-separated for multi-category filtering
           mealTypValue = mealCategories.join(',');
+          debugPrint('🔵 Set mealTyp to: $mealTypValue');
         }
       } else if (widget.dateTyyp != null) {
         mealTypValue = widget.dateTyyp!.name;
+        debugPrint('🔵 Using widget.dateTyyp: $mealTypValue');
       }
+      debugPrint('🔵 Final values - mealTyp: $mealTypValue, mainOrSides: $mainOrSidesValue');
 
       // Create the meal record
       var mealRecordReference = MealRecord.collection.doc();
