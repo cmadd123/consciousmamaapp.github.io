@@ -3065,6 +3065,23 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                                                 ),
                                                           ),
                                                         ),
+                                                        // Saved Days button - only show when expanded
+                                                        if (isExpanded) InkWell(
+                                                          onTap: () => _showSavedDaysPickerForDate(context, day),
+                                                          child: Padding(
+                                                            padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                                                            child: Text(
+                                                              'Saved Days',
+                                                              style: FlutterFlowTheme.of(context).bodySmall.override(
+                                                                fontFamily: 'Andika New Basic',
+                                                                color: FlutterFlowTheme.of(context).primary,
+                                                                fontSize: 12.0,
+                                                                fontWeight: FontWeight.w600,
+                                                                letterSpacing: 0.0,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
                                                         // Meal indicators (dots) - 3 meals grouped, snack offset
                                                         if (!isExpanded) ...[
                                                           Row(
@@ -3524,6 +3541,184 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
     );
   }
 
+  /// Show saved days picker for a specific date
+  void _showSavedDaysPickerForDate(BuildContext context, DateTime day) async {
+    // Load all day templates (grouped by day_template_group)
+    final allTemplates = await queryMealComboRecordOnce(
+      queryBuilder: (q) => q.where('user_ref', isEqualTo: currentUserReference),
+    );
+
+    final dayTemplates = allTemplates.where((t) => t.dayTemplateGroup.isNotEmpty).toList();
+
+    // Group by day_template_group
+    final Map<String, List<MealComboRecord>> grouped = {};
+    for (final t in dayTemplates) {
+      grouped.putIfAbsent(t.dayTemplateGroup, () => []).add(t);
+    }
+
+    if (grouped.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('No Saved Days found. Create one from the Cookbook!')),
+      );
+      return;
+    }
+
+    // Show bottom sheet with saved day options
+    final selectedGroup = await showModalBottomSheet<String>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) {
+        return Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
+          ),
+          padding: EdgeInsets.fromLTRB(20.0, 16.0, 20.0, MediaQuery.of(sheetContext).padding.bottom + 20.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Handle bar
+              Center(
+                child: Container(
+                  width: 40.0,
+                  height: 4.0,
+                  decoration: BoxDecoration(
+                    color: Color(0xFFDDDDDD),
+                    borderRadius: BorderRadius.circular(2.0),
+                  ),
+                ),
+              ),
+              SizedBox(height: 16.0),
+              Text(
+                'Choose Saved Day for ${dateTimeFormat('EEE, MMM d', day)}',
+                style: FlutterFlowTheme.of(sheetContext).titleSmall.override(
+                  fontFamily: 'Andika New Basic',
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0.0,
+                ),
+              ),
+              SizedBox(height: 16.0),
+              ...grouped.entries.map((entry) {
+                final groupName = entry.value.first.dayTemplateName.isNotEmpty
+                    ? entry.value.first.dayTemplateName
+                    : 'Unnamed Group';
+                final mealCount = entry.value.length;
+
+                return InkWell(
+                  onTap: () => Navigator.pop(sheetContext, entry.key),
+                  child: Container(
+                    margin: EdgeInsets.only(bottom: 12.0),
+                    padding: EdgeInsets.all(16.0),
+                    decoration: BoxDecoration(
+                      color: Color(0xFFF5F5F5),
+                      borderRadius: BorderRadius.circular(12.0),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.event, color: FlutterFlowTheme.of(sheetContext).primary),
+                        SizedBox(width: 12.0),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                groupName,
+                                style: FlutterFlowTheme.of(sheetContext).bodyMedium.override(
+                                  fontFamily: 'Andika New Basic',
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 0.0,
+                                ),
+                              ),
+                              Text(
+                                '$mealCount meal${mealCount > 1 ? 's' : ''}',
+                                style: FlutterFlowTheme.of(sheetContext).bodySmall.override(
+                                  fontFamily: 'Andika New Basic',
+                                  color: Color(0xFF999999),
+                                  fontSize: 12.0,
+                                  letterSpacing: 0.0,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }).toList(),
+            ],
+          ),
+        );
+      },
+    );
+
+    if (selectedGroup == null) return;
+
+    // Apply the selected saved day to this specific date
+    final templatesForGroup = grouped[selectedGroup]!;
+    await _applySavedDayToDate(day, templatesForGroup, templatesForGroup.first.dayTemplateName);
+  }
+
+  /// Apply saved day templates to a specific date
+  Future<void> _applySavedDayToDate(DateTime day, List<MealComboRecord> templates, String groupName) async {
+    try {
+      final normalized = DateTime(day.year, day.month, day.day);
+
+      for (final template in templates) {
+        // Skip templates without a meal type
+        if (template.mealTyp == null) {
+          debugPrint('Skipping template without mealTyp: ${template.name}');
+          continue;
+        }
+
+        final mealPlanData = createMealPlanRecordData(
+          date: normalized,
+          typ: template.mealTyp,
+          userRef: currentUserReference,
+          userFirebasemeal: template.entreeRef,
+        );
+
+        final Map<String, dynamic> fullData = Map<String, dynamic>.from(mealPlanData);
+        fullData['side_refs'] = template.sideRefs.toList();
+        fullData['dessert_refs'] = template.dessertRefs.toList();
+        if (template.drinkType != null) {
+          fullData['drink_type'] = template.drinkType!.serialize();
+        }
+
+        debugPrint('Creating meal plan for ${template.mealTyp} on $normalized');
+        await MealPlanRecord.collection.doc().set(fullData);
+      }
+
+      if (mounted) {
+        // Refresh the meal plans to show new meals
+        await _model.refreshMealPlans();
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Applied "$groupName" to ${dateTimeFormat('EEE, MMM d', day)}'),
+            duration: Duration(seconds: 2),
+            backgroundColor: FlutterFlowTheme.of(context).primary,
+          ),
+        );
+        // Trigger rebuild to show new meals
+        setState(() {});
+      }
+
+    } catch (e) {
+      debugPrint('Error applying saved day: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error applying saved day: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
   /// Drink icon matching the meal composer's mapping
   IconData _getPreviewDrinkIcon(DrinkType drink) {
     switch (drink) {
@@ -3750,15 +3945,6 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                     label: 'Save',
                     color: FlutterFlowTheme.of(context).primary,
                     onTap: () => _saveDayAsTemplates(context, day, dayMealPlans),
-                  ),
-                  SizedBox(width: 6.0),
-                  // Template button - apply a saved day template to this day
-                  _buildDayActionChip(
-                    context,
-                    icon: Icons.calendar_today,
-                    label: 'Template',
-                    color: Color(0xFFFF9800),
-                    onTap: () => _applyTemplateToDay(context, day),
                   ),
                   SizedBox(width: 6.0),
                   // Clear button

@@ -18,3 +18,5 @@ exports.generateDailyRecurringTasks =
   generateDailyRecurringTasks.generateDailyRecurringTasks;
 const verifyMealTags = require("./verify_meal_tags.js");
 exports.verifyMealTags = verifyMealTags.verifyMealTags;
+const cleanupUnlabeledContent = require("./cleanup_unlabeled_content.js");
+exports.cleanupUnlabeledContent = cleanupUnlabeledContent.cleanupUnlabeledContent;

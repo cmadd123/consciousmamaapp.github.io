@@ -19,6 +19,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '/components/page_animations.dart';
 import '/v2/profile/edit_parent_info_sheet.dart' show EditParentInfoPage;
+import '/custom_code/actions/index.dart' as actions;
 import 'profile_model.dart';
 export 'profile_model.dart';
 
@@ -1075,7 +1076,106 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                       ),
                     ),
                   )),
-                  CascadeItem(index: 7, baseDelayMs: 400, staggerMs: 80, child: Builder(
+                  // Clean Up Unlabeled Content Button
+                  CascadeItem(index: 7, baseDelayMs: 400, staggerMs: 80, child: Padding(
+                    padding: EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),
+                    child: InkWell(
+                      splashColor: Colors.transparent,
+                      focusColor: Colors.transparent,
+                      hoverColor: Colors.transparent,
+                      highlightColor: Colors.transparent,
+                      onTap: () async {
+                        // Show loading indicator
+                        showDialog(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (context) => const Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        );
+
+                        try {
+                          // Call cleanup function
+                          final result = await actions.cleanupUnlabeledContent();
+
+                          // Close loading indicator
+                          if (mounted) Navigator.of(context).pop();
+
+                          // Show result message
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(result),
+                                duration: const Duration(seconds: 4),
+                                backgroundColor: FlutterFlowTheme.of(context).primary,
+                              ),
+                            );
+                          }
+                        } catch (e) {
+                          // Close loading indicator
+                          if (mounted) Navigator.of(context).pop();
+
+                          // Show error message
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Error: ${e.toString()}'),
+                                duration: const Duration(seconds: 4),
+                                backgroundColor: FlutterFlowTheme.of(context).error,
+                              ),
+                            );
+                          }
+                        }
+                      },
+                      child: Container(
+                        width: double.infinity,
+                        height: 60.0,
+                        decoration: BoxDecoration(
+                          color: FlutterFlowTheme.of(context).secondaryBackground,
+                          borderRadius: BorderRadius.circular(14.0),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
+                                  child: Icon(
+                                    Icons.cleaning_services,
+                                    color: FlutterFlowTheme.of(context).primary,
+                                    size: 24.0,
+                                  ),
+                                ),
+                                Text(
+                                  'Delete All Recipes & Templates',
+                                  style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                    fontFamily: 'Andika New Basic',
+                                    fontSize: 16.0,
+                                    letterSpacing: 0.0,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Padding(
+                              padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
+                              child: Icon(
+                                Icons.arrow_forward_ios,
+                                color: FlutterFlowTheme.of(context).primaryText,
+                                size: 18.0,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  )),
+                  // Delete Account Button
+                  CascadeItem(index: 8, baseDelayMs: 400, staggerMs: 80, child: Builder(
                     builder: (context) => Padding(
                       padding:
                           EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),

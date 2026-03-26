@@ -1,0 +1,17 @@
+appId: com.mycompany.momecoach
+---
+# Test: Meal dropdown filtering by meal type AND recipe type
+# Navigate to meal composer and verify filtering works
+
+- launchApp
+- tapOn: "Let's Get Started"
+- waitForAnimationToEnd
+# Should be at login/signup - assume already logged in
+- tapOn: "Meals"  # Tap meals in navbar
+- waitForAnimationToEnd
+# Tap on a meal slot to open composer
+- tapOn:
+    point: "50%,30%"  # Approximate location of breakfast slot
+- waitForAnimationToEnd
+# Should see meal composer
+- takeScreenshot: "meal_composer_opened.png"

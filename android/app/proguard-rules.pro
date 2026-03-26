@@ -10,6 +10,10 @@
 -dontwarn org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider
 -keep class org.xmlpull.v1.** { *; }
 
+# Stripe push provisioning (optional feature, not used by MomRise)
+-dontwarn com.stripe.android.pushProvisioning.**
+-keep class com.stripe.android.pushProvisioning.** { *; }
+
 
 
 

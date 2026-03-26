@@ -1,0 +1,14 @@
+appId: com.mycompany.momecoach
+---
+# Test #9: Navbar Navigation Reliability
+# Tests that navigation from Calendar to Home works consistently
+
+- launchApp
+- tapOn: "Calendar"  # Tap calendar icon in navbar
+- assertVisible: "Calendar"  # Verify we're on calendar page
+- tapOn: "Home"  # Tap home icon in navbar
+- assertVisible: "Home"  # Verify we navigated to home
+- tapOn: "Meals"  # Tap meals icon
+- assertVisible: "Meals"  # Verify navigation works
+- tapOn: "Home"  # Go back to home
+- assertVisible: "Home"  # Verify navigation works

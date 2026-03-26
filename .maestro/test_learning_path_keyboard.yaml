@@ -1,0 +1,18 @@
+appId: com.mycompany.momecoach
+---
+# Test #10: Keyboard doesn't cover text input on learning path creation
+
+- launchApp
+- tapOn: "Home"
+# Navigate to learning path creation (adjust based on your UI)
+- tapOn:
+    text: ".*Learning.*"
+    regex: true
+- tapOn: "Create.*"  # Create learning path button
+- waitForAnimationToEnd
+# Tap on the text input field
+- tapOn: "What.*challenge.*"
+- assertVisible: "What.*challenge.*"  # Input should still be visible above keyboard
+# Try typing to ensure keyboard doesn't cover input
+- inputText: "Test challenge"
+- assertVisible: "Test challenge"  # Verify text is visible

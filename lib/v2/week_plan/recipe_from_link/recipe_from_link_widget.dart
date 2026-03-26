@@ -67,6 +67,10 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
     _model.recipeNameTextFieldTextController ??= TextEditingController();
     _model.recipeNameTextFieldFocusNode ??= FocusNode();
 
+    // CRITICAL: Clear any previous recipe data on fresh widget creation
+    // This ensures clean state when pushReplacement creates new widget
+    _model.clearRecipe();
+
     // Check for shared URL from external apps (Pinterest, browser, etc.)
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkForSharedUrl();
@@ -76,24 +80,33 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Check for new shared URL each time page becomes active
-    // (handles multiple shares in a row)
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _checkForSharedUrl();
-    });
+    // DO NOT check for shared URL here - only in initState
+    // This prevents premature consumption during navigation transitions
+    // The initState check is sufficient for handling shared URLs
   }
 
   /// Check if there's a shared URL and auto-extract it
   void _checkForSharedUrl() {
     final sharedUrl = FFAppState().consumeSharedRecipeUrl();
     if (sharedUrl != null && sharedUrl.isNotEmpty) {
-      // Clear previous recipe data before loading new one
+      debugPrint('RecipeFromLink: New shared URL detected: $sharedUrl');
+      // Clear ALL previous recipe data before loading new one
       setState(() {
         _model.clearRecipe();
+        // Clear all text controllers
+        _model.urlTextFieldTextController?.clear();
+        _model.recipeNameTextFieldTextController?.clear();
+        _model.ingredientTextFieldTextController?.clear();
+        _model.instructionTextFieldTextController?.clear();
+        _model.pasteTextFieldTextController?.clear();
+        // Set new URL
         _model.urlTextFieldTextController?.text = sharedUrl;
       });
-      // Auto-extract the recipe
-      _extractRecipe();
+      // Small delay to ensure UI clears before extracting
+      Future.delayed(const Duration(milliseconds: 100), () {
+        // Auto-extract the recipe
+        _extractRecipe();
+      });
     }
   }
 
@@ -129,8 +142,10 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
     try {
       final result = await makeCloudCall('extractRecipe', {'url': url});
 
-      if (result['success'] == true && result['recipe'] != null) {
-        final recipe = result['recipe'] as Map<String, dynamic>;
+      // The cloud function returns the recipe directly (no wrapper)
+      // Check if we got a valid recipe object
+      if (result.isNotEmpty && result['name'] != null) {
+        final recipe = result;
         final ingredients = recipe['ingredients'] as List? ?? [];
         final instructions = recipe['instructions'] as List? ?? [];
 

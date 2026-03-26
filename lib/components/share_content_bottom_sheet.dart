@@ -533,10 +533,23 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
     try {
       // On iOS, dismiss the bottom sheet first — iOS can't present
       // UIActivityViewController from within another presented modal.
-      if (Platform.isIOS && mounted) {
+      if (Platform.isIOS) {
+        if (!mounted) return;
+
+        // Dismiss keyboard first (prevents modal dismissal issues)
+        FocusScope.of(context).unfocus();
+        await Future.delayed(const Duration(milliseconds: 100));
+
+        if (!mounted) return;
+
+        // Dismiss the bottom sheet
         Navigator.of(context).pop();
-        // Wait for the dismiss animation to complete
-        await Future.delayed(const Duration(milliseconds: 350));
+
+        // Wait longer for dismiss animation to complete (increased from 350ms to 500ms)
+        // This gives more time on slower devices or when system is busy
+        await Future.delayed(const Duration(milliseconds: 500));
+
+        print('iOS share: Modal dismissed, presenting share dialog');
       }
 
       await SharingService.shareViaSystem(
@@ -545,14 +558,16 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
         description: widget.description,
       );
 
+      print('Share dialog presented successfully');
+
       // On Android, show success feedback and dismiss bottom sheet
       // On iOS, bottom sheet is already dismissed and share dialog provides feedback
       if (!Platform.isIOS && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('Share link created successfully!'),
+          const SnackBar(
+            content: Text('Share link created successfully!'),
             backgroundColor: Colors.green,
-            duration: const Duration(seconds: 2),
+            duration: Duration(seconds: 2),
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -562,6 +577,17 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
       print('Share failed: $e');
       // Fallback: copy link to clipboard
       Clipboard.setData(ClipboardData(text: _shareUrl!));
+
+      // Show error message
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Share failed. Link copied to clipboard instead.'),
+            backgroundColor: Colors.orange,
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
     }
   }
 

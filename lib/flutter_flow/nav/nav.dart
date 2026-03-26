@@ -1099,28 +1099,33 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
             'isReplceItem': getDoc(['meal_plan'], MealPlanRecord.fromSnapshot),
             'editCookingMeal': getDoc(['meal'], MealRecord.fromSnapshot),
           },
-          builder: (context, params) => RecipeFromLinkWidget(
-            weekData: params.getParam(
-              'weekData',
-              ParamType.DateTime,
-            ),
-            dateTyyp: params.getParam<MealTyp>(
-              'dateTyyp',
-              ParamType.Enum,
-            ),
-            isGenrateForm: params.getParam(
-              'isGenrateForm',
-              ParamType.bool,
-            ),
-            isReplceItem: params.getParam(
-              'isReplceItem',
-              ParamType.Document,
-            ),
-            editCookingMeal: params.getParam(
-              'editCookingMeal',
-              ParamType.Document,
-            ),
-          ),
+          builder: (context, params) {
+            // Use ValueKey with timestamp to force new widget when sharing multiple recipes
+            final timestamp = params.getParam('t', ParamType.int) ?? DateTime.now().millisecondsSinceEpoch;
+            return RecipeFromLinkWidget(
+              key: ValueKey('recipe_$timestamp'),
+              weekData: params.getParam(
+                'weekData',
+                ParamType.DateTime,
+              ),
+              dateTyyp: params.getParam<MealTyp>(
+                'dateTyyp',
+                ParamType.Enum,
+              ),
+              isGenrateForm: params.getParam(
+                'isGenrateForm',
+                ParamType.bool,
+              ),
+              isReplceItem: params.getParam(
+                'isReplceItem',
+                ParamType.Document,
+              ),
+              editCookingMeal: params.getParam(
+                'editCookingMeal',
+                ParamType.Document,
+              ),
+            );
+          },
         ),
         FFRoute(
           name: WeekViewWidget.routeName,

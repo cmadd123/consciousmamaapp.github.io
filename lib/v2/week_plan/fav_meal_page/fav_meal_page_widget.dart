@@ -1318,7 +1318,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                                 borderRadius: BorderRadius.circular(8.0),
                                               ),
                                               child: Text(
-                                                'Saved Days',
+                                                'Templates',
                                                 textAlign: TextAlign.center,
                                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                   fontFamily: 'Andika New Basic',
