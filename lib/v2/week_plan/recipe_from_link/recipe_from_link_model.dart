@@ -56,6 +56,9 @@ class RecipeFromLinkModel extends FlutterFlowModel<RecipeFromLinkWidget> {
   // Multi-select categories for the recipe (Breakfast, Lunch, Dinner, Snacks)
   Set<String> selectedCategories = {};
 
+  // Selected recipe type (Entree, Side, or Dessert) - defaults to Entree
+  String selectedRecipeType = 'Entree';
+
   // Created meal reference
   MealRecord? createdMeal;
 

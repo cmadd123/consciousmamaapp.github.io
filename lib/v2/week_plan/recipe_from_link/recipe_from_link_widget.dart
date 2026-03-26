@@ -391,6 +391,21 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
       }
       debugPrint('🔵 Final values - mealTyp: $mealTypValue, mainOrSides: $mainOrSidesValue');
 
+      // Convert selectedRecipeType string to RecipeType enum
+      RecipeType? recipeTypeEnum;
+      switch (_model.selectedRecipeType) {
+        case 'Entree':
+          recipeTypeEnum = RecipeType.Entree;
+          break;
+        case 'Side':
+          recipeTypeEnum = RecipeType.Side;
+          break;
+        case 'Dessert':
+          recipeTypeEnum = RecipeType.Dessert;
+          break;
+      }
+      debugPrint('🔵 Recipe type: ${_model.selectedRecipeType} -> $recipeTypeEnum');
+
       // Create the meal record
       var mealRecordReference = MealRecord.collection.doc();
       await mealRecordReference.set({
@@ -403,6 +418,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
           prepareTime: _model.prepTime.toDouble(),
           cookingTime: _model.cookTime.toDouble(),
           sourceUrl: _model.sourceUrl,
+          recipeType: recipeTypeEnum,
         ),
         ...mapToFirestore({
           'ingredients': _model.ingredientsList,
@@ -420,6 +436,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
           prepareTime: _model.prepTime.toDouble(),
           cookingTime: _model.cookTime.toDouble(),
           sourceUrl: _model.sourceUrl,
+          recipeType: recipeTypeEnum,
         ),
         ...mapToFirestore({
           'ingredients': _model.ingredientsList,
@@ -1377,6 +1394,54 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                                     ),
                                     child: Text(
                                       displayText,
+                                      style: FlutterFlowTheme.of(context).bodySmall.override(
+                                            fontFamily: 'Andika New Basic',
+                                            color: isSelected ? Colors.white : FlutterFlowTheme.of(context).primaryText,
+                                            letterSpacing: 0.0,
+                                          ),
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                            const SizedBox(height: 20),
+
+                            // Recipe Type (Entree/Side/Dessert)
+                            Text(
+                              'What type of dish is this?',
+                              style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                    fontFamily: 'Andika New Basic',
+                                    fontWeight: FontWeight.w600,
+                                    letterSpacing: 0.0,
+                                  ),
+                            ),
+                            const SizedBox(height: 8.0),
+                            Wrap(
+                              spacing: 8.0,
+                              runSpacing: 8.0,
+                              children: ['Entree', 'Side', 'Dessert'].map((recipeType) {
+                                final isSelected = _model.selectedRecipeType == recipeType;
+                                return InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      _model.selectedRecipeType = recipeType;
+                                    });
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                                    decoration: BoxDecoration(
+                                      color: isSelected
+                                          ? FlutterFlowTheme.of(context).primary
+                                          : Colors.transparent,
+                                      border: Border.all(
+                                        color: isSelected
+                                            ? FlutterFlowTheme.of(context).primary
+                                            : const Color(0xFFCCCCCC),
+                                      ),
+                                      borderRadius: BorderRadius.circular(20.0),
+                                    ),
+                                    child: Text(
+                                      recipeType,
                                       style: FlutterFlowTheme.of(context).bodySmall.override(
                                             fontFamily: 'Andika New Basic',
                                             color: isSelected ? Colors.white : FlutterFlowTheme.of(context).primaryText,

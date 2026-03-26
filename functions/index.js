@@ -256,18 +256,35 @@ exports.extractRecipe = onRequest({ secrets: [openaiApiKey] }, async (request, r
     return;
   }
 
-  // Extract URL from request body
+  // Extract URL or text from request body
   const { data } = request.body;
-  const { url } = data || {};
+  const { url, text } = data || {};
 
-  if (!url) {
+  if (!url && !text) {
     response.status(400).json({
-      result: { error: 'URL is required' }
+      result: { error: 'URL or text is required' }
     });
     return;
   }
 
-  console.log(`Extracting recipe from: ${url}`);
+  // If text is provided, use AI to extract recipe from pasted text
+  if (text && !url) {
+    console.log(`Extracting recipe from pasted text (length: ${text.length})`);
+    try {
+      const recipe = await extractRecipeFromTextWithAI(text, openaiApiKey.value());
+      console.log(`AI extracted recipe: ${recipe.name}`);
+      response.status(200).json({ result: { success: true, recipe } });
+      return;
+    } catch (error) {
+      console.error(`Text extraction error: ${error.message}`);
+      response.status(500).json({
+        result: { success: false, error: `Failed to extract recipe from text: ${error.message}` }
+      });
+      return;
+    }
+  }
+
+  console.log(`Extracting recipe from URL: ${url}`);
 
   try {
     // Fetch the URL with redirect following
@@ -801,6 +818,82 @@ CRITICAL:
     req.setTimeout(30000, () => {
       req.destroy();
       reject(new Error('Validation timeout'));
+    });
+
+    req.write(requestBody);
+    req.end();
+  });
+}
+
+
+// Helper: Extract recipe from pasted text using AI
+async function extractRecipeFromTextWithAI(text, apiKey) {
+  console.log(`Extracting recipe from text with AI (length: ${text.length})`);
+
+  const prompt = `Extract the recipe from this pasted text. Return ONLY valid JSON with this exact structure:
+{
+  "name": "Recipe Name",
+  "description": "Brief description if available",
+  "imageUrl": "",
+  "ingredients": ["ingredient 1", "ingredient 2", ...],
+  "instructions": ["step 1", "step 2", ...],
+  "servings": "number of servings if mentioned"
+}
+
+PASTED TEXT:
+${text}
+
+CRITICAL:
+- Extract the recipe name from the text
+- Parse all ingredients into separate array items
+- Parse all instructions/steps into separate array items
+- Each instruction should be ONE step only
+- Return only valid JSON, no markdown formatting`;
+
+  const requestBody = JSON.stringify({
+    model: 'gpt-4o-mini',
+    messages: [
+      { role: 'system', content: 'You are a recipe extraction assistant. Return only valid JSON, no markdown formatting.' },
+      { role: 'user', content: prompt }
+    ],
+    temperature: 0.1,
+    max_tokens: 2000
+  });
+
+  return new Promise((resolve, reject) => {
+    const req = https.request('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`
+      }
+    }, (res) => {
+      let data = '';
+      res.on('data', chunk => { data += chunk; });
+      res.on('end', () => {
+        try {
+          const response = JSON.parse(data);
+          if (response.error) {
+            reject(new Error(`OpenAI API error: ${response.error.message}`));
+            return;
+          }
+
+          const content = response.choices[0].message.content.trim();
+          console.log(`AI response length: ${content.length}`);
+
+          // Parse the JSON response
+          const recipe = JSON.parse(content);
+          resolve(recipe);
+        } catch (parseError) {
+          reject(new Error(`Failed to parse AI response: ${parseError.message}`));
+        }
+      });
+    });
+
+    req.on('error', reject);
+    req.setTimeout(30000, () => {
+      req.destroy();
+      reject(new Error('AI extraction timeout'));
     });
 
     req.write(requestBody);

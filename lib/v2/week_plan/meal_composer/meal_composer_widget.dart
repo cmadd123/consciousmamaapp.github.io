@@ -2652,13 +2652,28 @@ class _RecipePickerSheet extends StatefulWidget {
 
 class _RecipePickerSheetState extends State<_RecipePickerSheet> {
   List<MealRecord> get _filteredUserRecipes {
-    if (widget.filterType == null) return widget.userRecipes;
-    var filtered = widget.userRecipes.where((r) => r.recipeType == widget.filterType).toList();
-    // Filter ALL recipe types by meal type (Breakfast, Lunch, Dinner, Snacks)
+    var filtered = widget.userRecipes;
+
+    // Filter by recipe type (Entree/Side/Dessert)
+    // Include recipes with null recipeType - they should be treated as Entree by default
+    if (widget.filterType != null) {
+      filtered = filtered.where((r) =>
+        r.recipeType == widget.filterType ||
+        (r.recipeType == null && widget.filterType == RecipeType.Entree)
+      ).toList();
+    }
+
+    // Filter by meal type (Breakfast/Lunch/Dinner/Snacks)
     final mealTypeName = widget.mealType.name.toLowerCase();
-    filtered = filtered.where((r) =>
-      r.mealTyp.isEmpty || r.mealTyp.toLowerCase().contains(mealTypeName)
-    ).toList();
+    filtered = filtered.where((r) {
+      // Recipe must have mealTyp set (not empty) to appear in any meal type filter
+      if (r.mealTyp.isEmpty) return false;
+
+      // Check if the recipe's mealTyp contains this meal type
+      // mealTyp can be comma-separated like "Lunch,Dinner"
+      return r.mealTyp.toLowerCase().contains(mealTypeName);
+    }).toList();
+
     return filtered;
   }
 
