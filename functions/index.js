@@ -335,12 +335,16 @@ exports.extractRecipe = onRequest({ secrets: [openaiApiKey] }, async (request, r
       }
     } else {
       // Recipe extracted successfully from structured data, but let AI validate and fix any issues
-      console.log('Recipe extracted, sending to AI for validation...');
+      console.log(`Recipe extracted: ${recipe.name}, ${recipe.instructions.length} instructions`);
+      console.log(`First instruction: ${recipe.instructions[0]?.substring(0, 100)}...`);
+      console.log('Sending to AI for validation...');
       try {
         const validatedRecipe = await validateRecipeWithAI(recipe, html, openaiApiKey.value());
         if (validatedRecipe) {
+          console.log(`AI improved recipe: ${recipe.instructions.length} -> ${validatedRecipe.instructions.length} steps`);
           recipe = validatedRecipe;
-          console.log('AI validated and corrected recipe');
+        } else {
+          console.log('AI validation: no improvements needed');
         }
       } catch (validationError) {
         console.error(`AI validation failed: ${validationError.message}`);
@@ -348,7 +352,9 @@ exports.extractRecipe = onRequest({ secrets: [openaiApiKey] }, async (request, r
       }
     }
 
-    console.log(`Successfully extracted recipe: ${recipe.name}`);
+    console.log(`Returning recipe: ${recipe.name}`);
+    console.log(`Instructions count: ${recipe.instructions.length}`);
+    console.log(`Instructions: ${JSON.stringify(recipe.instructions).substring(0, 500)}...`);
     response.status(200).json({ result: recipe });
 
   } catch (error) {
@@ -517,13 +523,25 @@ function normalizeRecipe(recipe, sourceUrl) {
   let instructions = [];
   if (recipe.recipeInstructions) {
     if (Array.isArray(recipe.recipeInstructions)) {
-      instructions = recipe.recipeInstructions.map(step => {
-        if (typeof step === 'string') return step;
-        if (step.text) return step.text;
-        if (step.itemListElement) {
-          return step.itemListElement.map(s => s.text || s).join(' ');
+      recipe.recipeInstructions.forEach(step => {
+        if (typeof step === 'string') {
+          instructions.push(step);
+        } else if (step.text) {
+          instructions.push(step.text);
+        } else if (step.itemListElement && Array.isArray(step.itemListElement)) {
+          // HowToSection with nested steps - extract each step separately
+          step.itemListElement.forEach(item => {
+            if (typeof item === 'string') {
+              instructions.push(item);
+            } else if (item.text) {
+              instructions.push(item.text);
+            } else if (typeof item === 'object') {
+              instructions.push(String(item));
+            }
+          });
+        } else {
+          instructions.push(String(step));
         }
-        return String(step);
       });
     } else if (typeof recipe.recipeInstructions === 'string') {
       instructions = recipe.recipeInstructions.split(/\n+/).filter(s => s.trim());
