@@ -333,6 +333,19 @@ exports.extractRecipe = onRequest({ secrets: [openaiApiKey] }, async (request, r
         });
         return;
       }
+    } else {
+      // Recipe extracted successfully from structured data, but let AI validate and fix any issues
+      console.log('Recipe extracted, sending to AI for validation...');
+      try {
+        const validatedRecipe = await validateRecipeWithAI(recipe, html, openaiApiKey.value());
+        if (validatedRecipe) {
+          recipe = validatedRecipe;
+          console.log('AI validated and corrected recipe');
+        }
+      } catch (validationError) {
+        console.error(`AI validation failed: ${validationError.message}`);
+        // Continue with original recipe if validation fails
+      }
     }
 
     console.log(`Successfully extracted recipe: ${recipe.name}`);
@@ -634,6 +647,112 @@ ${truncatedHtml}`;
     req.setTimeout(30000, () => {
       req.destroy();
       reject(new Error('OpenAI request timeout'));
+    });
+
+    req.write(requestBody);
+    req.end();
+  });
+}
+
+// Helper: Validate and fix recipe extracted from structured data
+async function validateRecipeWithAI(recipe, html, apiKey) {
+  // Strip HTML for context
+  const cleanHtml = html
+    .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
+    .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .substring(0, 8000); // Smaller context since we already have partial data
+
+  const prompt = `Review and correct this recipe that was extracted from structured data. Fix any errors:
+
+CURRENT RECIPE:
+${JSON.stringify(recipe, null, 2)}
+
+ISSUES TO FIX:
+1. If "instructions" array has combined steps (like "Preheat...Place chicken...In a bowl..."), split them into separate steps
+2. If "servings" has duplicated text like "4,serves 4" or "4,4 servings", clean to just "4"
+3. If ingredients are missing, extract them from the webpage
+4. If instructions are incomplete or only 1 step, extract all steps from the webpage
+5. Make sure each instruction is a single clear step
+
+WEBPAGE CONTENT (for reference):
+${cleanHtml}
+
+Return ONLY valid JSON with the CORRECTED recipe in this exact structure:
+{
+  "name": "Recipe Name",
+  "description": "Brief description",
+  "imageUrl": "image URL",
+  "ingredients": ["ingredient 1", "ingredient 2", ...],
+  "instructions": ["step 1", "step 2", "step 3", ...],
+  "servings": "4",
+  "sourceUrl": "${recipe.sourceUrl}"
+}
+
+CRITICAL:
+- Split combined instruction steps into separate array items
+- Each instruction should be ONE action/step only
+- Do not combine multiple steps into one string
+- Clean up servings format`;
+
+  const requestBody = JSON.stringify({
+    model: 'gpt-4o-mini',
+    messages: [
+      { role: 'system', content: 'You are a recipe validation assistant. Return only valid JSON with corrected recipe data.' },
+      { role: 'user', content: prompt }
+    ],
+    temperature: 0.1,
+    max_tokens: 2000
+  });
+
+  return new Promise((resolve, reject) => {
+    const options = {
+      hostname: 'api.openai.com',
+      path: '/v1/chat/completions',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Length': Buffer.byteLength(requestBody)
+      }
+    };
+
+    const req = https.request(options, (res) => {
+      let data = '';
+      res.on('data', chunk => data += chunk);
+      res.on('end', () => {
+        if (res.statusCode !== 200) {
+          reject(new Error(`OpenAI API error: ${res.statusCode}`));
+          return;
+        }
+
+        try {
+          const response = JSON.parse(data);
+          const content = response.choices[0].message.content.trim();
+          const jsonContent = content.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+          const validatedRecipe = JSON.parse(jsonContent);
+
+          // Only return if we actually improved the recipe
+          if (validatedRecipe.instructions.length > recipe.instructions.length ||
+              validatedRecipe.ingredients.length > recipe.ingredients.length ||
+              validatedRecipe.servings !== recipe.servings) {
+            console.log(`Validation improved recipe: ${recipe.instructions.length} -> ${validatedRecipe.instructions.length} steps`);
+            resolve(validatedRecipe);
+          } else {
+            resolve(null); // No improvements needed
+          }
+        } catch (parseError) {
+          reject(new Error(`Failed to parse AI validation: ${parseError.message}`));
+        }
+      });
+    });
+
+    req.on('error', reject);
+    req.setTimeout(30000, () => {
+      req.destroy();
+      reject(new Error('Validation timeout'));
     });
 
     req.write(requestBody);
