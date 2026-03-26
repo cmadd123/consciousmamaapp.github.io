@@ -109,3 +109,4 @@ tools/recipe_import/serviceAccountKey.json
 **/environment.json
 firebase/public/
 json
+remoteconfig.json

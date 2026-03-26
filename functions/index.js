@@ -1,6 +1,6 @@
 // MomRise Cloud Functions - v2 (Node 22)
 const { onDocumentCreated } = require('firebase-functions/v2/firestore');
-const { onRequest } = require('firebase-functions/v2/https');
+const { onCall, onRequest } = require('firebase-functions/v2/https');
 const { defineString, defineSecret } = require('firebase-functions/params');
 const { initializeApp } = require('firebase-admin/app');
 const { getFirestore, FieldValue } = require('firebase-admin/firestore');
@@ -10,25 +10,13 @@ const http = require('http');
 
 initializeApp();
 
-// ── Stripe Subscription Functions ────────────────────
-const {
-  createSubscription,
-  cancelSubscription,
-  restorePurchases,
-  stripeWebhook,
-} = require('./stripe_functions');
-
-exports.createSubscription = createSubscription;
-exports.cancelSubscription = cancelSubscription;
-exports.restorePurchases = restorePurchases;
-exports.stripeWebhook = stripeWebhook;
-
 // ── Configuration ─────────────────────────────────────
 // Non-secret values from .env
 const sendgridFromEmail = defineString('SENDGRID_FROM_EMAIL');
 
 // Secret values from Cloud Secret Manager
 const sendgridApiKey = defineSecret('SENDGRID_API_KEY');
+const openaiApiKey = defineSecret('OPENAI_API_KEY');
 
 // ── Waitlist Welcome Email ───────────────────────────
 // Triggered when new document created in 'waitlist' collection
@@ -256,7 +244,7 @@ To unsubscribe, email hello@momrise.app
 // ── Recipe Extraction Function ──────────────────────
 // HTTP request function to extract recipe from URL
 // This uses onRequest to bypass App Check (matching the Flutter code expectation)
-exports.extractRecipe = onRequest(async (request, response) => {
+exports.extractRecipe = onRequest({ secrets: [openaiApiKey] }, async (request, response) => {
   // Set CORS headers
   response.set('Access-Control-Allow-Origin', '*');
   response.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -309,20 +297,42 @@ exports.extractRecipe = onRequest(async (request, response) => {
       // No source URL found or recipe extraction failed
       response.status(404).json({
         result: {
-          error: 'This Pinterest pin doesn\'t link to a recipe page. Please open the pin in Pinterest and share the original recipe website instead.'
+          error: 'This pin was uploaded directly to Pinterest (no recipe link). To add this recipe:\n\n1. Open the pin in Pinterest\n2. Look for "Visit" or website link\n3. Share that recipe website instead\n\nOr you can manually enter the recipe details.'
         }
       });
       return;
     }
 
-    // Extract recipe from HTML
-    const recipe = extractRecipeFromHtml(html, url);
+    // Extract recipe from HTML using structured data
+    let recipe = extractRecipeFromHtml(html, url);
 
-    if (!recipe) {
-      response.status(404).json({
-        result: { error: 'No recipe found at this URL' }
-      });
-      return;
+    // Check if recipe is incomplete (no ingredients or only 1 instruction)
+    const isIncomplete = !recipe ||
+      recipe.ingredients.length === 0 ||
+      recipe.instructions.length <= 1;
+
+    if (isIncomplete) {
+      console.log('Recipe extraction incomplete or failed, trying OpenAI fallback...');
+
+      try {
+        recipe = await extractRecipeWithAI(html, url, openaiApiKey.value());
+        console.log(`AI extracted recipe: ${recipe.name}`);
+      } catch (aiError) {
+        console.error(`AI extraction failed: ${aiError.message}`);
+
+        // If we have a partial recipe from structured data, return it
+        if (recipe) {
+          console.log('Returning partial recipe from structured data');
+          response.status(200).json({ result: recipe });
+          return;
+        }
+
+        // Complete failure
+        response.status(404).json({
+          result: { error: 'No recipe found at this URL' }
+        });
+        return;
+      }
     }
 
     console.log(`Successfully extracted recipe: ${recipe.name}`);
@@ -424,8 +434,9 @@ function fetchUrl(url, redirectCount = 0) {
 // Helper: Extract recipe from HTML using JSON-LD
 function extractRecipeFromHtml(html, sourceUrl) {
   // Try to find JSON-LD structured data
-  // Match both quoted and unquoted type attributes: type="application/ld+json" OR type=application/ld+json
-  const jsonLdMatches = html.match(/<scripts*[^>]*type=["']?application\/ld\+json["']?[^>]*>([\s\S]*?)<\/script>/gi);
+  // Match both quoted and unquoted type attributes, with or without space after <script
+  // Handles: <script type="application/ld+json">, <script type=application/ld+json>, <scripttype=application/ld+json>
+  const jsonLdMatches = html.match(/<script\s*[^>]*type=["']?application\/ld\+json["']?[^>]*>([\s\S]*?)<\/script>/gi);
 
   console.log(`Found JSON-LD blocks: ${jsonLdMatches ? jsonLdMatches.length : 0}`);
 
@@ -528,4 +539,104 @@ function normalizeRecipe(recipe, sourceUrl) {
     servings: recipe.recipeYield ? String(recipe.recipeYield) : '',
     sourceUrl: sourceUrl
   };
+}
+
+// Helper: Extract recipe using OpenAI when structured data fails
+async function extractRecipeWithAI(html, sourceUrl, apiKey) {
+  // Strip HTML to just text content (remove scripts, styles, etc.)
+  const cleanHtml = html
+    .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
+    .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  // Truncate to fit in OpenAI context (keep first 12000 chars, roughly 3000 tokens)
+  const truncatedHtml = cleanHtml.substring(0, 12000);
+
+  const prompt = `Extract the recipe from this webpage content. Return ONLY valid JSON with this exact structure:
+{
+  "name": "Recipe Name",
+  "description": "Brief description",
+  "imageUrl": "image URL if found, empty string if not",
+  "ingredients": ["ingredient 1", "ingredient 2", ...],
+  "instructions": ["step 1", "step 2", ...],
+  "servings": "number of servings"
+}
+
+Important:
+- Extract ALL ingredients as separate array items
+- Extract ALL instruction steps as separate array items
+- If servings shows "4,serves 4", just return "4"
+- Do not include any text outside the JSON
+- Return empty strings/arrays if data not found
+
+Webpage content:
+${truncatedHtml}`;
+
+  const requestBody = JSON.stringify({
+    model: 'gpt-4o-mini',
+    messages: [
+      { role: 'system', content: 'You are a recipe extraction assistant. Return only valid JSON, no markdown formatting.' },
+      { role: 'user', content: prompt }
+    ],
+    temperature: 0.1,
+    max_tokens: 2000
+  });
+
+  return new Promise((resolve, reject) => {
+    const options = {
+      hostname: 'api.openai.com',
+      path: '/v1/chat/completions',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Length': Buffer.byteLength(requestBody)
+      }
+    };
+
+    const req = https.request(options, (res) => {
+      let data = '';
+      res.on('data', chunk => data += chunk);
+      res.on('end', () => {
+        if (res.statusCode !== 200) {
+          reject(new Error(`OpenAI API error: ${res.statusCode} - ${data}`));
+          return;
+        }
+
+        try {
+          const response = JSON.parse(data);
+          const content = response.choices[0].message.content.trim();
+
+          // Remove markdown code blocks if present
+          const jsonContent = content.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+
+          const recipe = JSON.parse(jsonContent);
+
+          // Add sourceUrl
+          recipe.sourceUrl = sourceUrl;
+
+          // Validate required fields
+          if (!recipe.name || !Array.isArray(recipe.ingredients) || !Array.isArray(recipe.instructions)) {
+            reject(new Error('AI returned invalid recipe structure'));
+            return;
+          }
+
+          resolve(recipe);
+        } catch (parseError) {
+          reject(new Error(`Failed to parse AI response: ${parseError.message}`));
+        }
+      });
+    });
+
+    req.on('error', reject);
+    req.setTimeout(30000, () => {
+      req.destroy();
+      reject(new Error('OpenAI request timeout'));
+    });
+
+    req.write(requestBody);
+    req.end();
+  });
 }
