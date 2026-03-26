@@ -659,7 +659,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
     // If it's a meal combo, use StreamBuilder to get live updates when combo changes
     if (mealPlan.mealComboRef != null) {
       return StreamBuilder<DocumentSnapshot>(
-        key: ValueKey(mealPlan.mealComboRef!.path),
+        key: ValueKey('${mealPlan.reference.id}_combo'),
         stream: mealPlan.mealComboRef!.snapshots(),
         builder: (context, comboSnapshot) {
           if (!comboSnapshot.hasData || !comboSnapshot.data!.exists) {
@@ -671,7 +671,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
           final entreeRef = comboData['entree_ref'] as DocumentReference?;
           if (entreeRef != null) {
             return StreamBuilder<DocumentSnapshot>(
-              key: ValueKey(entreeRef.path),
+              key: ValueKey('${mealPlan.reference.id}_entree'),
               stream: entreeRef.snapshots(),
               builder: (context, entreeSnapshot) {
                 if (!entreeSnapshot.hasData || !entreeSnapshot.data!.exists) {
@@ -691,7 +691,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
     // If it's a single recipe, use StreamBuilder for live updates
     if (mealPlan.userFirebasemeal != null) {
       return StreamBuilder<DocumentSnapshot>(
-        key: ValueKey(mealPlan.userFirebasemeal!.path),
+        key: ValueKey('${mealPlan.reference.id}_meal'),
         stream: mealPlan.userFirebasemeal!.snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData || !snapshot.data!.exists) {
