@@ -420,6 +420,14 @@ function fetchUrl(url, redirectCount = 0) {
       if (response.statusCode >= 300 && response.statusCode < 400 && response.headers.location) {
         let redirectUrl = response.headers.location;
         console.log(`Redirect to: ${redirectUrl}`);
+
+        // Detect Pinterest shortlinks that redirect to homepage (pin not accessible)
+        if ((url.includes('pin.it') || url.includes('pinterest.com')) &&
+            redirectUrl === 'https://www.pinterest.com' || redirectUrl === 'https://www.pinterest.com/') {
+          reject(new Error('Pinterest isn\'t sharing the recipe link for this pin. The pin may be private or have no website link. Try opening the pin in Pinterest and looking for a "Visit" button.'));
+          return;
+        }
+
         if (redirectUrl.startsWith('/')) {
           const urlObj = new URL(url);
           redirectUrl = `${urlObj.protocol}//${urlObj.host}${redirectUrl}`;
@@ -561,13 +569,35 @@ function normalizeRecipe(recipe, sourceUrl) {
     }
   }
 
+  // Fix WordPress thumbnail URLs - remove size suffixes like -150x150-1, -300x200, etc.
+  // Example: image-150x150-1.webp -> image.webp
+  if (imageUrl && imageUrl.includes('wp-content/uploads')) {
+    imageUrl = imageUrl.replace(/-\d+x\d+(-\d+)?\.(jpg|jpeg|png|webp|gif)/i, '.$2');
+    console.log(`Fixed WordPress thumbnail URL to full-size: ${imageUrl}`);
+  }
+
+  // Parse servings - handle arrays and clean duplicate text
+  let servings = '';
+  if (recipe.recipeYield) {
+    if (Array.isArray(recipe.recipeYield)) {
+      // Take the first numeric value or first item
+      const numericItem = recipe.recipeYield.find(item => /^\d+$/.test(String(item).trim()));
+      servings = numericItem ? String(numericItem) : String(recipe.recipeYield[0]);
+    } else {
+      servings = String(recipe.recipeYield);
+    }
+    // Clean duplicate text like "4,4 servings" or "4,serves 4"
+    servings = servings.replace(/^(\d+),\s*(\d+\s*servings?|serves?\s*\d+)$/i, '$1');
+    console.log(`Cleaned servings from "${recipe.recipeYield}" to "${servings}"`);
+  }
+
   return {
     name: recipe.name || 'Untitled Recipe',
     description: recipe.description || '',
     imageUrl: imageUrl,
     ingredients: ingredients.filter(i => i && i.trim()),
     instructions: instructions.filter(i => i && i.trim()),
-    servings: recipe.recipeYield ? String(recipe.recipeYield) : '',
+    servings: servings,
     sourceUrl: sourceUrl
   };
 }

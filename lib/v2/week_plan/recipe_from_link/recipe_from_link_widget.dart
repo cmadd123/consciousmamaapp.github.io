@@ -1,3 +1,4 @@
+// Recipe import from URL with Pinterest error handling
 import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
 import '/backend/cloud_functions/cloud_functions.dart';
@@ -140,11 +141,48 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
     });
 
     try {
+      debugPrint('🔵 Calling extractRecipe cloud function with URL: $url');
       final result = await makeCloudCall('extractRecipe', {'url': url});
+      debugPrint('🔵 Cloud function result type: ${result.runtimeType}');
+      debugPrint('🔵 Cloud function keys: ${result.keys.toList()}');
+      debugPrint('🔵 Has error key: ${result.containsKey('error')}');
+      debugPrint('🔵 Has name key: ${result.containsKey('name')}');
+      if (result.containsKey('error')) {
+        debugPrint('🔵 Error value: ${result['error']}');
+      }
+      if (result.containsKey('name')) {
+        debugPrint('🔵 Name value: ${result['name']}');
+      }
+
+      // Check if cloud function returned an error
+      if (result['error'] != null) {
+        debugPrint('❌ Cloud function returned error: ${result['error']}');
+        final errorMsg = result['error'].toString();
+        setState(() {
+          // Check if it's a Pinterest error or other specific error
+          if (errorMsg.contains('Pinterest')) {
+            _model.errorMessage = errorMsg;
+          } else {
+            final url = _model.urlTextFieldTextController?.text.toLowerCase() ?? '';
+            if (url.contains('pinterest.com') || url.contains('pin.it')) {
+              _model.errorMessage = 'Pinterest isn\'t sharing the recipe link for this pin. This happens when:\n\n• The pin is a saved photo (no website link)\n• The creator didn\'t add a source link\n\nOpen this pin in Pinterest, tap "Visit", then paste that website URL here instead.';
+            } else {
+              _model.errorMessage = errorMsg;
+            }
+          }
+          _model.isLoading = false;
+        });
+        return;
+      }
 
       // The cloud function returns the recipe directly (no wrapper)
       // Check if we got a valid recipe object
       if (result.isNotEmpty && result['name'] != null) {
+        debugPrint('✅ Recipe extracted successfully: ${result['name']}');
+        debugPrint('   - ${(result['ingredients'] as List?)?.length ?? 0} ingredients');
+        debugPrint('   - ${(result['instructions'] as List?)?.length ?? 0} instructions');
+        debugPrint('   - Image URL: ${result['imageUrl'] ?? 'none'}');
+        debugPrint('   - Servings: ${result['servings'] ?? 'none'}');
         final recipe = result;
         final ingredients = recipe['ingredients'] as List? ?? [];
         final instructions = recipe['instructions'] as List? ?? [];
@@ -166,12 +204,14 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
           }
         });
       } else {
+        debugPrint('❌ Cloud function returned invalid recipe data: ${result.toString()}');
         setState(() {
           _model.errorMessage = 'Could not extract recipe from this URL. Try a different link or add the recipe manually.';
           _model.isLoading = false;
         });
       }
     } catch (e) {
+      debugPrint('❌ Error calling extractRecipe: $e');
       setState(() {
         // Try to extract the actual error message from the cloud function
         String errorMsg = e.toString();
@@ -181,7 +221,9 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
 
         // Detect common non-recipe sites and give helpful message
         final url = _model.urlTextFieldTextController?.text.toLowerCase() ?? '';
-        if (url.contains('etsy.com')) {
+        if (url.contains('pinterest.com') || url.contains('pin.it')) {
+          _model.errorMessage = 'Pinterest isn\'t sharing the recipe link for this pin. This happens when:\n\n• The pin is a saved photo (no website link)\n• The creator didn\'t add a source link\n\nOpen this pin in Pinterest, tap "Visit", then paste that website URL here instead.';
+        } else if (url.contains('etsy.com')) {
           _model.errorMessage = 'This is a product page, not a recipe. Try sharing a link from a recipe blog instead.';
         } else if (url.contains('amazon.com')) {
           _model.errorMessage = 'This is a product page, not a recipe. Try sharing a link from a recipe blog instead.';
