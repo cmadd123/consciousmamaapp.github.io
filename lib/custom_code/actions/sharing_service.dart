@@ -1436,15 +1436,29 @@ class SharingService {
     required String title,
     String? description,
   }) async {
+    print('🔵 shareViaSystem called');
+    print('🔵 shareCode: $shareCode');
+    print('🔵 title: $title');
+
     final url = getShareUrl(shareCode);
+    print('🔵 Share URL: $url');
+
     final text = description != null
         ? '$title\n\n$description\n\n$url'
         : '$title\n\n$url';
+    print('🔵 Share text length: ${text.length} chars');
 
-    await Share.share(
-      text,
-      subject: title,
-    );
+    try {
+      print('🔵 Calling Share.share()...');
+      await Share.share(
+        text,
+        subject: title,
+      );
+      print('✅ Share.share() completed');
+    } catch (e) {
+      print('❌ Share.share() threw exception: $e');
+      rethrow;
+    }
   }
 
   /// Increment view count when someone opens a shared link

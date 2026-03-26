@@ -528,12 +528,28 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
   }
 
   Future<void> _shareViaSystem() async {
-    if (_shareCode == null || _shareUrl == null) return;
+    print('🔵 _shareViaSystem called');
+    print('🔵 _shareCode: $_shareCode');
+    print('🔵 _shareUrl: $_shareUrl');
+
+    if (_shareCode == null || _shareUrl == null) {
+      print('❌ Share code or URL is null, returning early');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Error: Share link not generated. Please try again.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+      return;
+    }
 
     try {
       // On iOS, dismiss the bottom sheet first — iOS can't present
       // UIActivityViewController from within another presented modal.
       if (Platform.isIOS) {
+        print('🔵 iOS detected, dismissing modal first');
         if (!mounted) return;
 
         // Dismiss keyboard first (prevents modal dismissal issues)
@@ -549,16 +565,17 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
         // This gives more time on slower devices or when system is busy
         await Future.delayed(const Duration(milliseconds: 500));
 
-        print('iOS share: Modal dismissed, presenting share dialog');
+        print('🔵 iOS share: Modal dismissed, presenting share dialog');
       }
 
+      print('🔵 Calling SharingService.shareViaSystem...');
       await SharingService.shareViaSystem(
         shareCode: _shareCode!,
         title: widget.title,
         description: widget.description,
       );
 
-      print('Share dialog presented successfully');
+      print('✅ Share dialog presented successfully');
 
       // On Android, show success feedback and dismiss bottom sheet
       // On iOS, bottom sheet is already dismissed and share dialog provides feedback

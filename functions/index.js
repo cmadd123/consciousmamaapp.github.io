@@ -424,7 +424,8 @@ function fetchUrl(url, redirectCount = 0) {
 // Helper: Extract recipe from HTML using JSON-LD
 function extractRecipeFromHtml(html, sourceUrl) {
   // Try to find JSON-LD structured data
-  const jsonLdMatches = html.match(/<script[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi);
+  // Match both quoted and unquoted type attributes: type="application/ld+json" OR type=application/ld+json
+  const jsonLdMatches = html.match(/<scripts*[^>]*type=["']?application\/ld\+json["']?[^>]*>([\s\S]*?)<\/script>/gi);
 
   console.log(`Found JSON-LD blocks: ${jsonLdMatches ? jsonLdMatches.length : 0}`);
 
