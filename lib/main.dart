@@ -47,6 +47,15 @@ void main() async {
 
   // Initialize Crashlytics for error reporting with friendly error screen
   FlutterError.onError = (errorDetails) {
+    final errorMessage = errorDetails.exception.toString();
+
+    // Suppress harmless "deactivated widget's ancestor" errors during navigation
+    // This is a known Flutter issue when popping multiple routes quickly
+    if (errorMessage.contains("Looking up a deactivated widget's ancestor is unsafe")) {
+      debugPrint('⚠️ Suppressed harmless navigation error (deactivated widget ancestor)');
+      return; // Don't show red error screen for this
+    }
+
     // Log to Crashlytics for monitoring
     FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
 

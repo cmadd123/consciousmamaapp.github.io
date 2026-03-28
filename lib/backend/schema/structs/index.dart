@@ -1,6 +1,8 @@
 export '/backend/schema/util/schema_util.dart';
 
 export 'grocery_item_struct.dart';
+export 'skill_sub_milestone_struct.dart';
+export 'skill_milestone_struct.dart';
 export 'home_activty_model_struct.dart';
 export 'messages_for_steam_struct.dart';
 export 'activity_model_struct.dart';

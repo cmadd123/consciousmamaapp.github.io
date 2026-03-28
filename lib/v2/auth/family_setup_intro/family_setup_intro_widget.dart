@@ -212,9 +212,9 @@ class _FamilySetupIntroWidgetState extends State<FamilySetupIntroWidget>
                       FFButtonWidget(
                           onPressed: () async {
                             context.pushNamed(
-                              AddChildxWidget.routeName,
+                              AddChildEnhancedWidget.routeName,
                               queryParameters: {
-                                'isFirst': serializeParam(true, ParamType.bool),
+                                'isOnboarding': serializeParam(true, ParamType.bool),
                               }.withoutNulls,
                             );
                           },

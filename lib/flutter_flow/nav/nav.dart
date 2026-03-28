@@ -19,6 +19,7 @@ import 'serialization_util.dart';
 
 import '/index.dart';
 import '/components/animated_splash_screen.dart';
+import '/v2/skills_preview/skills_home_preview_widget.dart';
 
 export 'package:go_router/go_router.dart';
 export 'serialization_util.dart';
@@ -151,7 +152,9 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: AddChildEnhancedWidget.routeName,
           path: AddChildEnhancedWidget.routePath,
-          builder: (context, params) => AddChildEnhancedWidget(),
+          builder: (context, params) => AddChildEnhancedWidget(
+            isOnboarding: params.getParam('isOnboarding', ParamType.bool) ?? true,
+          ),
         ),
         FFRoute(
           name: ParentSetupEnhancedWidget.routeName,
@@ -1132,26 +1135,29 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           path: WeekViewWidget.routePath,
           builder: (context, params) => WeekViewWidget(),
         ),
-        FFRoute(
-          name: FeelingBubblesWidget.routeName,
-          path: FeelingBubblesWidget.routePath,
-          builder: (context, params) => FeelingBubblesWidget(),
-        ),
-        FFRoute(
-          name: ActivityResultsWidget.routeName,
-          path: ActivityResultsWidget.routePath,
-          builder: (context, params) => ActivityResultsWidget(
-            bubbleType: params.getParam(
-              'bubbleType',
-              ParamType.String,
-            ),
-          ),
-        ),
-        FFRoute(
-          name: FavoriteActivitiesWidget.routeName,
-          path: FavoriteActivitiesWidget.routePath,
-          builder: (context, params) => FavoriteActivitiesWidget(),
-        ),
+        // REMOVED: Activities feature being replaced
+        // FFRoute(
+        //   name: FeelingBubblesWidget.routeName,
+        //   path: FeelingBubblesWidget.routePath,
+        //   builder: (context, params) => FeelingBubblesWidget(),
+        // ),
+        // REMOVED: Activities feature being replaced
+        // FFRoute(
+        //   name: ActivityResultsWidget.routeName,
+        //   path: ActivityResultsWidget.routePath,
+        //   builder: (context, params) => ActivityResultsWidget(
+        //     bubbleType: params.getParam(
+        //       'bubbleType',
+        //       ParamType.String,
+        //     ),
+        //   ),
+        // ),
+        // REMOVED: Activities feature being replaced
+        // FFRoute(
+        //   name: FavoriteActivitiesWidget.routeName,
+        //   path: FavoriteActivitiesWidget.routePath,
+        //   builder: (context, params) => FavoriteActivitiesWidget(),
+        // ),
         FFRoute(
           name: CreateMealComboWidget.routeName,
           path: CreateMealComboWidget.routePath,
@@ -1264,10 +1270,17 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           path: TodosPageWidget.routePath,
           builder: (context, params) => const TodosPageWidget(),
         ),
+        // REMOVED: Activities feature being replaced
+        // FFRoute(
+        //   name: MyActivitiesWidget.routeName,
+        //   path: MyActivitiesWidget.routePath,
+        //   builder: (context, params) => const MyActivitiesWidget(),
+        // ),
+        // TEMPORARY: Skills & Hobbies Preview
         FFRoute(
-          name: MyActivitiesWidget.routeName,
-          path: MyActivitiesWidget.routePath,
-          builder: (context, params) => const MyActivitiesWidget(),
+          name: 'skillsPreview',
+          path: '/skillsPreview',
+          builder: (context, params) => SkillsHomePreviewWidget(),
         ),
       ].map((r) => r.toRoute(appStateNotifier)).toList(),
     );

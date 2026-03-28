@@ -199,7 +199,7 @@ class _WelcomeWidgetState extends State<WelcomeWidget>
                               context,
                               Icons.child_care,
                               'Child Development',
-                              'Track milestones and activities',
+                              'Track milestones and learning paths',
                               Color(0xFF9C27B0), // Purple
                               Color(0xFFF3E5F5), // Light purple bg
                             ),
@@ -254,6 +254,30 @@ class _WelcomeWidgetState extends State<WelcomeWidget>
                               ),
                             ),
                             SizedBox(height: 16.0),
+                            // Skip to sign in
+                            GestureDetector(
+                              onTap: () {
+                                context.pushNamed(Loginv2Widget.routeName);
+                              },
+                              behavior: HitTestBehavior.opaque,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+                                child: Text(
+                                  'Skip to Sign In',
+                                  style: FlutterFlowTheme.of(context)
+                                      .bodyMedium
+                                      .override(
+                                        fontFamily: 'Andika New Basic',
+                                        color: FlutterFlowTheme.of(context).primary,
+                                        fontSize: 16.0,
+                                        fontWeight: FontWeight.w600,
+                                        letterSpacing: 0.0,
+                                        decoration: TextDecoration.underline,
+                                      ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 8.0),
                             // Already have account
                             GestureDetector(
                               onTap: () {

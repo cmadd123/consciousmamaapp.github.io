@@ -15,7 +15,12 @@ import 'add_child_enhanced_model.dart';
 export 'add_child_enhanced_model.dart';
 
 class AddChildEnhancedWidget extends StatefulWidget {
-  const AddChildEnhancedWidget({super.key});
+  const AddChildEnhancedWidget({
+    super.key,
+    this.isOnboarding = true,
+  });
+
+  final bool isOnboarding; // true = onboarding flow, false = settings flow
 
   static String routeName = 'AddChildEnhanced';
   static String routePath = '/add-child-enhanced';
@@ -242,27 +247,69 @@ class _AddChildEnhancedWidgetState extends State<AddChildEnhancedWidget>
     );
   }
 
+  Future<void> _saveChildToFirestore() async {
+    // Save directly to Firestore (for settings mode)
+    final userId = currentUserUid;
+    if (userId.isEmpty) return;
+
+    await FirebaseFirestore.instance.collection('childern').add({
+      'name': _model.nameController.text.trim(),
+      'birth_day': _model.selectedBirthday!,
+      'gender': _model.selectedGender,
+      'selected_color': _model.selectedColor != null
+          ? '#${_model.selectedColor!.value.toRadixString(16).substring(2)}'
+          : null,
+      'user_ref': FirebaseFirestore.instance.doc('users/$userId'),
+      'created_time': FieldValue.serverTimestamp(),
+    });
+  }
+
   Future<void> _saveChild() async {
     HapticFeedback.mediumImpact();
     if (!_validateInputs()) return;
 
-    _saveCurrentChild();
-
-    // Dismiss keyboard before navigation
+    // Dismiss keyboard before saving
     FocusScope.of(context).unfocus();
 
-    // Navigate to parent setup
-    if (mounted) {
-      context.pushNamed(
-        'ParentSetupEnhanced',
-        extra: <String, dynamic>{
-          kTransitionInfoKey: const TransitionInfo(
-            hasTransition: true,
-            transitionType: PageTransitionType.fade,
-            duration: Duration(milliseconds: 300),
-          ),
-        },
-      );
+    if (widget.isOnboarding) {
+      // Onboarding mode: Save to DemoDataNotifier, navigate to parent setup
+      _saveCurrentChild();
+
+      if (mounted) {
+        context.pushNamed(
+          'ParentSetupEnhanced',
+          extra: <String, dynamic>{
+            kTransitionInfoKey: const TransitionInfo(
+              hasTransition: true,
+              transitionType: PageTransitionType.fade,
+              duration: Duration(milliseconds: 300),
+            ),
+          },
+        );
+      }
+    } else {
+      // Settings mode: Save directly to Firestore, pop back
+      try {
+        await _saveChildToFirestore();
+        if (mounted) {
+          Navigator.of(context).pop();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('${_model.nameController.text} added!'),
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error saving child: $e'),
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        }
+      }
     }
   }
 
@@ -270,7 +317,27 @@ class _AddChildEnhancedWidgetState extends State<AddChildEnhancedWidget>
     HapticFeedback.mediumImpact();
     if (!_validateInputs()) return;
 
-    _saveCurrentChild();
+    final childName = _model.nameController.text.trim();
+
+    if (widget.isOnboarding) {
+      // Onboarding mode: Save to DemoDataNotifier
+      _saveCurrentChild();
+    } else {
+      // Settings mode: Save to Firestore
+      try {
+        await _saveChildToFirestore();
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error saving child: $e'),
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        }
+        return;
+      }
+    }
 
     // Reset form for next child
     setState(() {
@@ -285,10 +352,9 @@ class _AddChildEnhancedWidgetState extends State<AddChildEnhancedWidget>
 
     // Show confirmation
     if (mounted) {
-      final demoData = Provider.of<DemoDataNotifier>(context, listen: false);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('${demoData.children.last.name} added! Add your next child.'),
+          content: Text('$childName added! Add your next child.'),
           backgroundColor: FlutterFlowTheme.of(context).primary,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),

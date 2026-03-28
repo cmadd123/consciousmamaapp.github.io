@@ -204,7 +204,7 @@ class _ChildSummaryWidgetState extends State<ChildSummaryWidget> {
                       )
                     : Center(
                         child: Text(
-                          child.name.isNotEmpty ? child.name[0].toLowerCase() : 'C',
+                          child.name.isNotEmpty ? child.name[0].toLowerCase() : 'c',
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 32,

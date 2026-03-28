@@ -396,7 +396,7 @@ class _MilstonesWidgetState extends State<MilstonesWidget> {
                       ),
                       child: Center(
                         child: Text(
-                          child.name.isNotEmpty ? child.name[0].toLowerCase() : 'C',
+                          child.name.isNotEmpty ? child.name[0].toLowerCase() : 'c',
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 20,

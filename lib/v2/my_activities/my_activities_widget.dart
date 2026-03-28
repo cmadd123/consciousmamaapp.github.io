@@ -1342,7 +1342,7 @@ class _CreateActivityBottomSheetState extends State<CreateActivityBottomSheet> {
                                     ),
                                     child: Center(
                                       child: Text(
-                                        child.name.isNotEmpty ? child.name[0].toLowerCase() : 'C',
+                                        child.name.isNotEmpty ? child.name[0].toLowerCase() : 'c',
                                         style: const TextStyle(
                                           color: Colors.white,
                                           fontSize: 12.0,
@@ -2110,7 +2110,7 @@ class _QuickAddAssignmentSheetState extends State<QuickAddAssignmentSheet> {
                               ),
                               child: Center(
                                 child: Text(
-                                  child.name.isNotEmpty ? child.name[0].toLowerCase() : 'C',
+                                  child.name.isNotEmpty ? child.name[0].toLowerCase() : 'c',
                                   style: const TextStyle(color: Colors.white, fontSize: 14.0, fontWeight: FontWeight.bold),
                                 ),
                               ),

@@ -28,6 +28,7 @@ import 'schema/shared_content_record.dart';
 import 'schema/todo_record.dart';
 import 'schema/planned_activity_record.dart';
 import 'schema/user_activity_record.dart';
+import 'schema/skill_path_record.dart';
 
 export 'dart:async' show StreamSubscription;
 export 'package:cloud_firestore/cloud_firestore.dart' hide Order;
@@ -59,6 +60,7 @@ export 'schema/shared_content_record.dart';
 export 'schema/todo_record.dart';
 export 'schema/planned_activity_record.dart';
 export 'schema/user_activity_record.dart';
+export 'schema/skill_path_record.dart';
 
 /// Functions to query UsersRecords (as a Stream and as a Future).
 Future<int> queryUsersRecordCount({

@@ -1135,7 +1135,7 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
                         ),
                         child: Center(
                           child: Text(
-                            child.name.isNotEmpty ? child.name[0].toLowerCase() : 'C',
+                            child.name.isNotEmpty ? child.name[0].toLowerCase() : 'c',
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 11.0,

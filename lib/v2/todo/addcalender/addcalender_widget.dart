@@ -348,31 +348,32 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                     ),
                                   ),
                                 ),
-                                InkWell(
-                                  onTap: () => setState(() => _model.selectedType = 'Activity'),
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                                    decoration: BoxDecoration(
-                                      color: _model.selectedType == 'Activity'
-                                          ? (isComfort ? const Color(0xFF7F8C8D) : theme.primary)
-                                          : Colors.transparent,
-                                      borderRadius: BorderRadius.circular(21.0),
-                                    ),
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      'Activity',
-                                      style: theme.bodyMedium.override(
-                                        fontFamily: 'Andika New Basic',
-                                        color: _model.selectedType == 'Activity'
-                                            ? Colors.white
-                                            : (isComfort ? const Color(0xFFECF0F1) : theme.primaryText),
-                                        fontSize: 14.0,
-                                        fontWeight: FontWeight.w600,
-                                        letterSpacing: 0.0,
-                                      ),
-                                    ),
-                                  ),
-                                ),
+                                // REMOVED: Activity type selector - feature being replaced
+                                // InkWell(
+                                //   onTap: () => setState(() => _model.selectedType = 'Activity'),
+                                //   child: Container(
+                                //     padding: const EdgeInsets.symmetric(horizontal: 20),
+                                //     decoration: BoxDecoration(
+                                //       color: _model.selectedType == 'Activity'
+                                //           ? (isComfort ? const Color(0xFF7F8C8D) : theme.primary)
+                                //           : Colors.transparent,
+                                //       borderRadius: BorderRadius.circular(21.0),
+                                //     ),
+                                //     alignment: Alignment.center,
+                                //     child: Text(
+                                //       'Activity',
+                                //       style: theme.bodyMedium.override(
+                                //         fontFamily: 'Andika New Basic',
+                                //         color: _model.selectedType == 'Activity'
+                                //             ? Colors.white
+                                //             : (isComfort ? const Color(0xFFECF0F1) : theme.primaryText),
+                                //         fontSize: 14.0,
+                                //         fontWeight: FontWeight.w600,
+                                //         letterSpacing: 0.0,
+                                //       ),
+                                //     ),
+                                //   ),
+                                // ),
                               ],
                             ),
                           ),
@@ -980,7 +981,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                                 ),
                                                 child: Center(
                                                   child: Text(
-                                                    child.name.isNotEmpty ? child.name[0].toUpperCase() : 'C',
+                                                    child.name.isNotEmpty ? child.name[0].toLowerCase() : 'c',
                                                     style: const TextStyle(
                                                       color: Colors.white,
                                                       fontSize: 12.0,

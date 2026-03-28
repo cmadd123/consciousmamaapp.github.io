@@ -97,15 +97,19 @@ class _AnimatedSplashScreenState extends State<AnimatedSplashScreen>
   void _startAnimations() async {
     // 1. Wait 100ms after gradient appears (reduced for faster fade-in)
     await Future.delayed(const Duration(milliseconds: 100));
+    if (!mounted) return;
 
     // 2. Fade IN logo and text (700ms)
     await _fadeInController.forward();
+    if (!mounted) return;
 
     // 3. Hold for 2.5 seconds while home page loads
     await Future.delayed(widget.holdDuration);
+    if (!mounted) return;
 
     // 4. Fade OUT logo and text (700ms)
     await _fadeOutController.forward();
+    if (!mounted) return;
 
     // 5. Call onComplete - this will trigger the home page to show
     widget.onComplete?.call();

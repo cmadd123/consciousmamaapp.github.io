@@ -95,9 +95,9 @@ class DemoDataNotifier extends ChangeNotifier {
       for (final child in children) {
         await FirebaseFirestore.instance.collection('childern').add({
           'name': child.name,
-          'birthday': child.birthdate,
+          'birth_day': child.birthdate,
           'gender': child.gender,
-          'color': child.color != null ? '#${child.color!.value.toRadixString(16).substring(2)}' : null,
+          'selected_color': child.color != null ? '#${child.color!.value.toRadixString(16).substring(2)}' : null,
           'user_ref': FirebaseFirestore.instance.doc('users/$userId'),
           'created_time': FieldValue.serverTimestamp(),
         });

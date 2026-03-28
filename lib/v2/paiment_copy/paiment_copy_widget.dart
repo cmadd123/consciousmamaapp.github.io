@@ -5,6 +5,7 @@ import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/index.dart';
 import '/custom_code/actions/index.dart';
+import '/v2/auth/demo_data_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
@@ -130,6 +131,16 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
   }
 
   Future<void> _completeOnboardingAndGoHome() async {
+    // Save children from DemoDataNotifier to Firestore
+    try {
+      final demoData = Provider.of<DemoDataNotifier>(context, listen: false);
+      await demoData.saveToFirestore();
+      debugPrint('✓ Demo data (children) saved to Firestore');
+    } catch (e) {
+      debugPrint('❌ Error saving demo data to Firestore: $e');
+      // Continue anyway - don't block user from accessing app
+    }
+
     // Mark onboarding as completed in Firestore
     if (currentUserReference != null) {
       await currentUserReference!.update(createUsersRecordData(

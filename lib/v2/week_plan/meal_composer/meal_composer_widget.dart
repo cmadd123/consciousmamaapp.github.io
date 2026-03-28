@@ -351,23 +351,32 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
       canPop: false,
       onPopInvokedWithResult: (didPop, result) async {
         if (didPop) return;
+        if (!mounted) return; // Don't do anything if widget is already disposed
 
-        // Auto-save changes before popping if there are any items
-        if (_hasAnyItems && !_isSaving) {
-          if (widget.editTemplateId != null && widget.editTemplateId != 'new') {
-            // Editing an existing template — auto-update it
-            await _updateExistingCombo(_templateName ?? '');
-          } else if (widget.editTemplateId == 'new' && _isDayTemplateMeal) {
-            // Day template meal — auto-save directly
-            await _saveDayTemplateMeal();
-          } else if (widget.editTemplateId == 'new') {
-            // Creating a new standalone template — show save dialog
-            _showSaveAsMealDialog();
-          } else {
-            await _saveMealPlan();
+        try {
+          // Auto-save changes before popping if there are any items
+          if (_hasAnyItems && !_isSaving && mounted) {
+            if (widget.editTemplateId != null && widget.editTemplateId != 'new') {
+              // Editing an existing template — auto-update it
+              await _updateExistingCombo(_templateName ?? '');
+            } else if (widget.editTemplateId == 'new' && _isDayTemplateMeal) {
+              // Day template meal — auto-save directly
+              await _saveDayTemplateMeal();
+            } else if (widget.editTemplateId == 'new') {
+              // Creating a new standalone template — show save dialog
+              if (mounted) _showSaveAsMealDialog();
+              return; // Don't pop, dialog will handle it
+            } else {
+              await _saveMealPlan();
+            }
           }
-        } else {
-          Navigator.pop(context);
+
+          // Pop after save completes (or if no save needed)
+          if (mounted) Navigator.pop(context);
+        } catch (e) {
+          debugPrint('Error during pop save: $e');
+          // Still allow navigation even if save fails
+          if (mounted) Navigator.pop(context);
         }
       },
       child: Scaffold(
@@ -1932,6 +1941,11 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
     return FutureBuilder<Map<String, dynamic>>(
       future: _loadMealComboDetails(combo),
       builder: (context, snapshot) {
+        // Handle errors silently to prevent red flash
+        if (snapshot.hasError) {
+          debugPrint('Error loading meal combo details: ${snapshot.error}');
+        }
+
         final entreeName = snapshot.data?['entreeName'] as String? ?? '';
         final sideNames = snapshot.data?['sideNames'] as List<String>? ?? [];
         final drinkDisplay = _getDrinkDisplay(combo);

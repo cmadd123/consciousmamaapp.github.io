@@ -751,8 +751,9 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                             _buildFilterChip('Event'),
                             SizedBox(width: 8.0),
                             _buildFilterChip('Learning'),
-                            SizedBox(width: 8.0),
-                            _buildFilterChip('Activity'),
+                            // REMOVED: Activity filter - feature being replaced
+                            // SizedBox(width: 8.0),
+                            // _buildFilterChip('Activity'),
                           ],
                         ),
                       ),

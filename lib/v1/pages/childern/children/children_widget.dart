@@ -70,11 +70,11 @@ class _ChildrenWidgetState extends State<ChildrenWidget> {
             padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 75.0),
             child: FloatingActionButton(
               onPressed: () async {
-                // Navigate to full-page Add Child flow
+                // Navigate to full-page Add Child flow (settings mode)
                 context.pushNamed(
-                  AddChildxWidget.routeName,
+                  AddChildEnhancedWidget.routeName,
                   queryParameters: {
-                    'isFirst': serializeParam(false, ParamType.bool),
+                    'isOnboarding': serializeParam(false, ParamType.bool),
                   },
                 );
               },

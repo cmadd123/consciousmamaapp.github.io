@@ -7,6 +7,7 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/custom_functions.dart' as functions;
 import '/index.dart';
+import '/v2/skills_preview/skill_detail_preview_widget.dart';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -198,12 +199,16 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                         _animatedCard(6, _buildLearningPathCard(context)),
                         const SizedBox(height: 16.0),
 
-                        // Activities Card (animated)
-                        _animatedCard(7, _buildActivitiesCard(context)),
-                        const SizedBox(height: 16.0),
+                        // Activities Card (animated) - REMOVED: Feature being replaced
+                        // _animatedCard(7, _buildActivitiesCard(context)),
+                        // const SizedBox(height: 16.0),
 
                         // Milestones Card (animated)
-                        _animatedCard(8, _buildMilestonesCard(context, sortedChildren)),
+                        _animatedCard(7, _buildMilestonesCard(context, sortedChildren)),
+                        const SizedBox(height: 16.0),
+
+                        // TEMPORARY: Skills & Hobbies Preview Button
+                        _animatedCard(8, _buildSkillsPreviewButton(context)),
                         const SizedBox(height: 24.0),
                       ],
                     ),
@@ -788,22 +793,25 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
           return dateTimeFormat('yMd', record.date!) == dateTimeFormat('yMd', today);
         }).toList();
 
-        // Also stream planned activities for today
-        return StreamBuilder<List<PlannedActivityRecord>>(
-          stream: queryPlannedActivityRecord(
-            queryBuilder: (plannedActivityRecord) => plannedActivityRecord
-                .where('user_ref', isEqualTo: currentUserReference),
-          ),
-          builder: (context, activitySnapshot) {
-            // Filter to today's incomplete planned activities
-            final allPlannedActivities = activitySnapshot.data ?? [];
-            final plannedActivities = allPlannedActivities.where((activity) {
-              if (activity.isCompleted) return false;
-              if (activity.date == null) return false;
-              return dateTimeFormat('yMd', activity.date!) == dateTimeFormat('yMd', today);
-            }).toList();
+        // REMOVED: Planned activities feature being replaced
+        // return StreamBuilder<List<PlannedActivityRecord>>(
+        //   stream: queryPlannedActivityRecord(
+        //     queryBuilder: (plannedActivityRecord) => plannedActivityRecord
+        //         .where('user_ref', isEqualTo: currentUserReference),
+        //   ),
+        //   builder: (context, activitySnapshot) {
+        //     // Filter to today's incomplete planned activities
+        //     final allPlannedActivities = activitySnapshot.data ?? [];
+        //     final plannedActivities = allPlannedActivities.where((activity) {
+        //       if (activity.isCompleted) return false;
+        //       if (activity.date == null) return false;
+        //       return dateTimeFormat('yMd', activity.date!) == dateTimeFormat('yMd', today);
+        //     }).toList();
+        //
+        //     final totalItems = events.length + plannedActivities.length;
+        //     final hasItems = totalItems > 0;
 
-            final totalItems = events.length + plannedActivities.length;
+            final totalItems = events.length;
             final hasItems = totalItems > 0;
 
             return InkWell(
@@ -910,11 +918,12 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                       const SizedBox(height: 12.0),
                       // Show events first
                       ...events.take(3).map((event) => _buildEventRow(context, event)),
-                      // Show planned activities (if room)
-                      if (events.length < 3)
-                        ...plannedActivities.take(3 - events.length).map(
-                          (activity) => _buildPlannedActivityRow(context, activity),
-                        ),
+                      // REMOVED: Planned activities feature being replaced
+                      // // Show planned activities (if room)
+                      // if (events.length < 3)
+                      //   ...plannedActivities.take(3 - events.length).map(
+                      //     (activity) => _buildPlannedActivityRow(context, activity),
+                      //   ),
                       // Show "more" indicator if there are more items
                       if (totalItems > 3)
                         Padding(
@@ -934,8 +943,8 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                 ),
               ),
             );
-          },
-        );
+          // }, // REMOVED: Closing bracket for StreamBuilder<PlannedActivityRecord>
+        // ); // REMOVED: Closing bracket for StreamBuilder<PlannedActivityRecord>
       },
     );
   }
@@ -996,67 +1005,68 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
     );
   }
 
-  /// Builds a single planned activity row for the schedule card
-  Widget _buildPlannedActivityRow(BuildContext context, PlannedActivityRecord activity) {
-    return FutureBuilder<ActivityRecord?>(
-      future: activity.activityRef != null
-          ? ActivityRecord.getDocumentOnce(activity.activityRef!)
-          : Future.value(null),
-      builder: (context, snapshot) {
-        final activityData = snapshot.data;
-        final activityName = activityData?.title ?? 'Activity';
-
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 8.0),
-          child: Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 12.0,
-              vertical: 10.0,
-            ),
-            decoration: BoxDecoration(
-              color: const Color(0xFFFFF3E0), // Orange-ish for planned activities
-              borderRadius: BorderRadius.circular(14.0),
-            ),
-            child: Row(
-              children: [
-                // Show assignee icons for planned activities
-                _buildPlannedActivityAssigneeIcons(activity),
-                const SizedBox(width: 10.0),
-                // Activity icon
-                Container(
-                  padding: const EdgeInsets.all(4.0),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFFF9800).withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(6.0),
-                  ),
-                  child: const Icon(
-                    Icons.play_circle_outline,
-                    size: 14.0,
-                    color: Color(0xFFFF9800),
-                  ),
-                ),
-                const SizedBox(width: 8.0),
-                Expanded(
-                  child: Text(
-                    activityName,
-                    style: FlutterFlowTheme.of(context).bodyMedium.override(
-                      fontFamily: 'Andika New Basic',
-                      color: const Color(0xFF5D4E60),
-                      fontSize: 14.0,
-                      fontWeight: FontWeight.w500,
-                      letterSpacing: 0.0,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
+  // REMOVED: Planned activities feature being replaced
+  // /// Builds a single planned activity row for the schedule card
+  // Widget _buildPlannedActivityRow(BuildContext context, PlannedActivityRecord activity) {
+  //   return FutureBuilder<ActivityRecord?>(
+  //     future: activity.activityRef != null
+  //         ? ActivityRecord.getDocumentOnce(activity.activityRef!)
+  //         : Future.value(null),
+  //     builder: (context, snapshot) {
+  //       final activityData = snapshot.data;
+  //       final activityName = activityData?.title ?? 'Activity';
+  //
+  //       return Padding(
+  //         padding: const EdgeInsets.only(bottom: 8.0),
+  //         child: Container(
+  //           padding: const EdgeInsets.symmetric(
+  //             horizontal: 12.0,
+  //             vertical: 10.0,
+  //           ),
+  //           decoration: BoxDecoration(
+  //             color: const Color(0xFFFFF3E0), // Orange-ish for planned activities
+  //             borderRadius: BorderRadius.circular(14.0),
+  //           ),
+  //           child: Row(
+  //             children: [
+  //               // Show assignee icons for planned activities
+  //               _buildPlannedActivityAssigneeIcons(activity),
+  //               const SizedBox(width: 10.0),
+  //               // Activity icon
+  //               Container(
+  //                 padding: const EdgeInsets.all(4.0),
+  //                 decoration: BoxDecoration(
+  //                   color: const Color(0xFFFF9800).withOpacity(0.2),
+  //                   borderRadius: BorderRadius.circular(6.0),
+  //                 ),
+  //                 child: const Icon(
+  //                   Icons.play_circle_outline,
+  //                   size: 14.0,
+  //                   color: Color(0xFFFF9800),
+  //                 ),
+  //               ),
+  //               const SizedBox(width: 8.0),
+  //               Expanded(
+  //                 child: Text(
+  //                   activityName,
+  //                   style: FlutterFlowTheme.of(context).bodyMedium.override(
+  //                     fontFamily: 'Andika New Basic',
+  //                     color: const Color(0xFF5D4E60),
+  //                     fontSize: 14.0,
+  //                     fontWeight: FontWeight.w500,
+  //                     letterSpacing: 0.0,
+  //                   ),
+  //                   maxLines: 1,
+  //                   overflow: TextOverflow.ellipsis,
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 
   /// Builds assignee icons for events - shows all assigned children and parents
   Widget _buildAssigneeIcons(EventAndTaskRecord event) {
@@ -1118,37 +1128,38 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
     );
   }
 
-  /// Builds assignee icons for planned activities
-  Widget _buildPlannedActivityAssigneeIcons(PlannedActivityRecord activity) {
-    final List<Widget> icons = [];
-
-    // Add child icons for selected children
-    if (activity.selectedChildren.isNotEmpty) {
-      for (var i = 0; i < activity.selectedChildren.length && i < 2; i++) {
-        icons.add(_buildChildIcon(activity.selectedChildren[i]));
-      }
-      if (activity.selectedChildren.length > 2) {
-        icons.add(_buildMoreIndicator(activity.selectedChildren.length - 2));
-      }
-    }
-
-    if (icons.isEmpty) {
-      return const SizedBox.shrink();
-    }
-
-    return SizedBox(
-      width: 24.0 + (icons.length - 1) * 14.0,
-      height: 24.0,
-      child: Stack(
-        children: icons.asMap().entries.map((entry) {
-          return Positioned(
-            left: entry.key * 14.0,
-            child: entry.value,
-          );
-        }).toList(),
-      ),
-    );
-  }
+  // REMOVED: Planned activities feature being replaced
+  // /// Builds assignee icons for planned activities
+  // Widget _buildPlannedActivityAssigneeIcons(PlannedActivityRecord activity) {
+  //   final List<Widget> icons = [];
+  //
+  //   // Add child icons for selected children
+  //   if (activity.selectedChildren.isNotEmpty) {
+  //     for (var i = 0; i < activity.selectedChildren.length && i < 2; i++) {
+  //       icons.add(_buildChildIcon(activity.selectedChildren[i]));
+  //     }
+  //     if (activity.selectedChildren.length > 2) {
+  //       icons.add(_buildMoreIndicator(activity.selectedChildren.length - 2));
+  //     }
+  //   }
+  //
+  //   if (icons.isEmpty) {
+  //     return const SizedBox.shrink();
+  //   }
+  //
+  //   return SizedBox(
+  //     width: 24.0 + (icons.length - 1) * 14.0,
+  //     height: 24.0,
+  //     child: Stack(
+  //       children: icons.asMap().entries.map((entry) {
+  //         return Positioned(
+  //           left: entry.key * 14.0,
+  //           child: entry.value,
+  //         );
+  //       }).toList(),
+  //     ),
+  //   );
+  // }
 
   Widget _buildMomIcon() {
     return Container(
@@ -1501,160 +1512,161 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
     );
   }
 
-  Widget _buildActivitiesCard(BuildContext context) {
-    // Query today's activities (Tasks from calendar)
-    return StreamBuilder<List<EventAndTaskRecord>>(
-      stream: queryEventAndTaskRecord(
-        queryBuilder: (eventAndTaskRecord) => eventAndTaskRecord
-            .where('user_ref', isEqualTo: currentUserReference),
-      ),
-      builder: (context, snapshot) {
-        // Filter to today's incomplete activities (Task or Activity type, not Events)
-        final today = DateTime.now();
-        final allRecords = snapshot.data ?? [];
-        final todaysActivities = allRecords.where((record) {
-          if (record.isCompleted) return false;
-          if (record.date == null) return false;
-          // Include both Task and Activity types
-          if (record.typ != 'Task' && record.typ != 'Activity') return false;
-          return dateTimeFormat('yMd', record.date!) == dateTimeFormat('yMd', today);
-        }).toList();
-
-        final hasActivities = todaysActivities.isNotEmpty;
-        final displayActivities = todaysActivities.take(3).toList();
-        final remainingCount = todaysActivities.length > 3 ? todaysActivities.length - 3 : 0;
-
-        return InkWell(
-          onTap: () => context.pushNamed(FeelingBubblesWidget.routeName),
-          borderRadius: BorderRadius.circular(20.0),
-          child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(20.0),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(20.0),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Icon(
-                      Icons.play_circle_outline_rounded,
-                      color: FlutterFlowTheme.of(context).primary,
-                      size: 26.0,
-                    ),
-                    const SizedBox(width: 8.0),
-                    Text(
-                      hasActivities ? "Today's Activities" : 'Find an activity',
-                      style: FlutterFlowTheme.of(context).bodyLarge.override(
-                        fontFamily: 'Andika New Basic',
-                        color: const Color(0xFF5D4E60),
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 0.0,
-                      ),
-                    ),
-                    if (hasActivities) ...[
-                      const SizedBox(width: 8.0),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
-                        decoration: BoxDecoration(
-                          color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(14.0),
-                        ),
-                        child: Text(
-                          '${todaysActivities.length}',
-                          style: FlutterFlowTheme.of(context).bodySmall.override(
-                            fontFamily: 'Andika New Basic',
-                            color: FlutterFlowTheme.of(context).primary,
-                            fontSize: 12.0,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ],
-                    const Spacer(),
-                    // Add/Find button
-                    InkWell(
-                      onTap: () => context.pushNamed(FeelingBubblesWidget.routeName),
-                      borderRadius: BorderRadius.circular(14.0),
-                      child: Container(
-                        padding: const EdgeInsets.all(6.0),
-                        decoration: BoxDecoration(
-                          color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(14.0),
-                        ),
-                        child: Icon(
-                          hasActivities ? Icons.add_rounded : Icons.search_rounded,
-                          color: FlutterFlowTheme.of(context).primary,
-                          size: 18.0,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                if (hasActivities) ...[
-                  const SizedBox(height: 12.0),
-                  // Show today's activities
-                  ...displayActivities.map((activity) => _buildActivityRow(context, activity)),
-                  // Show "more" indicator if there are more items
-                  if (remainingCount > 0)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 4.0),
-                      child: Text(
-                        '+$remainingCount more',
-                        style: FlutterFlowTheme.of(context).bodySmall.override(
-                          fontFamily: 'Andika New Basic',
-                          color: const Color(0xFF9B8A9E),
-                          fontSize: 12.0,
-                          fontStyle: FontStyle.italic,
-                        ),
-                      ),
-                    ),
-                ],
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  /// Builds a single activity row for the activities card
-  Widget _buildActivityRow(BuildContext context, EventAndTaskRecord activity) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8.0),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              activity.name,
-              style: FlutterFlowTheme.of(context).bodyMedium.override(
-                fontFamily: 'Andika New Basic',
-                color: const Color(0xFF5D4E60),
-                fontSize: 14.0,
-                fontWeight: FontWeight.w500,
-                letterSpacing: 0.0,
-              ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-          const SizedBox(width: 8.0),
-          // Show assignee icons on the right (child/mom/dad circles)
-          _buildAssigneeIcons(activity),
-        ],
-      ),
-    );
-  }
+  // REMOVED: Activities feature being replaced
+  // Widget _buildActivitiesCard(BuildContext context) {
+  //   // Query today's activities (Tasks from calendar)
+  //   return StreamBuilder<List<EventAndTaskRecord>>(
+  //     stream: queryEventAndTaskRecord(
+  //       queryBuilder: (eventAndTaskRecord) => eventAndTaskRecord
+  //           .where('user_ref', isEqualTo: currentUserReference),
+  //     ),
+  //     builder: (context, snapshot) {
+  //       // Filter to today's incomplete activities (Task or Activity type, not Events)
+  //       final today = DateTime.now();
+  //       final allRecords = snapshot.data ?? [];
+  //       final todaysActivities = allRecords.where((record) {
+  //         if (record.isCompleted) return false;
+  //         if (record.date == null) return false;
+  //         // Include both Task and Activity types
+  //         if (record.typ != 'Task' && record.typ != 'Activity') return false;
+  //         return dateTimeFormat('yMd', record.date!) == dateTimeFormat('yMd', today);
+  //       }).toList();
+  //
+  //       final hasActivities = todaysActivities.isNotEmpty;
+  //       final displayActivities = todaysActivities.take(3).toList();
+  //       final remainingCount = todaysActivities.length > 3 ? todaysActivities.length - 3 : 0;
+  //
+  //       return InkWell(
+  //         onTap: () => context.pushNamed(FeelingBubblesWidget.routeName),
+  //         borderRadius: BorderRadius.circular(20.0),
+  //         child: Container(
+  //           width: double.infinity,
+  //           padding: const EdgeInsets.all(20.0),
+  //           decoration: BoxDecoration(
+  //             color: Colors.white,
+  //             borderRadius: BorderRadius.circular(20.0),
+  //             boxShadow: [
+  //               BoxShadow(
+  //                 color: Colors.black.withOpacity(0.05),
+  //                 blurRadius: 10,
+  //                 offset: const Offset(0, 4),
+  //               ),
+  //             ],
+  //           ),
+  //           child: Column(
+  //             crossAxisAlignment: CrossAxisAlignment.start,
+  //             children: [
+  //               Row(
+  //                 children: [
+  //                   Icon(
+  //                     Icons.play_circle_outline_rounded,
+  //                     color: FlutterFlowTheme.of(context).primary,
+  //                     size: 26.0,
+  //                   ),
+  //                   const SizedBox(width: 8.0),
+  //                   Text(
+  //                     hasActivities ? "Today's Activities" : 'Find an activity',
+  //                     style: FlutterFlowTheme.of(context).bodyLarge.override(
+  //                       fontFamily: 'Andika New Basic',
+  //                       color: const Color(0xFF5D4E60),
+  //                       fontSize: 18.0,
+  //                       fontWeight: FontWeight.w600,
+  //                       letterSpacing: 0.0,
+  //                     ),
+  //                   ),
+  //                   if (hasActivities) ...[
+  //                     const SizedBox(width: 8.0),
+  //                     Container(
+  //                       padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
+  //                       decoration: BoxDecoration(
+  //                         color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
+  //                         borderRadius: BorderRadius.circular(14.0),
+  //                       ),
+  //                       child: Text(
+  //                         '${todaysActivities.length}',
+  //                         style: FlutterFlowTheme.of(context).bodySmall.override(
+  //                           fontFamily: 'Andika New Basic',
+  //                           color: FlutterFlowTheme.of(context).primary,
+  //                           fontSize: 12.0,
+  //                           fontWeight: FontWeight.w600,
+  //                         ),
+  //                       ),
+  //                     ),
+  //                   ],
+  //                   const Spacer(),
+  //                   // Add/Find button
+  //                   InkWell(
+  //                     onTap: () => context.pushNamed(FeelingBubblesWidget.routeName),
+  //                     borderRadius: BorderRadius.circular(14.0),
+  //                     child: Container(
+  //                       padding: const EdgeInsets.all(6.0),
+  //                       decoration: BoxDecoration(
+  //                         color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
+  //                         borderRadius: BorderRadius.circular(14.0),
+  //                       ),
+  //                       child: Icon(
+  //                         hasActivities ? Icons.add_rounded : Icons.search_rounded,
+  //                         color: FlutterFlowTheme.of(context).primary,
+  //                         size: 18.0,
+  //                       ),
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //               if (hasActivities) ...[
+  //                 const SizedBox(height: 12.0),
+  //                 // Show today's activities
+  //                 ...displayActivities.map((activity) => _buildActivityRow(context, activity)),
+  //                 // Show "more" indicator if there are more items
+  //                 if (remainingCount > 0)
+  //                   Padding(
+  //                     padding: const EdgeInsets.only(top: 4.0),
+  //                     child: Text(
+  //                       '+$remainingCount more',
+  //                       style: FlutterFlowTheme.of(context).bodySmall.override(
+  //                         fontFamily: 'Andika New Basic',
+  //                         color: const Color(0xFF9B8A9E),
+  //                         fontSize: 12.0,
+  //                         fontStyle: FontStyle.italic,
+  //                       ),
+  //                     ),
+  //                   ),
+  //               ],
+  //             ],
+  //           ),
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
+  //
+  // /// Builds a single activity row for the activities card
+  // Widget _buildActivityRow(BuildContext context, EventAndTaskRecord activity) {
+  //   return Padding(
+  //     padding: const EdgeInsets.only(bottom: 8.0),
+  //     child: Row(
+  //       children: [
+  //         Expanded(
+  //           child: Text(
+  //             activity.name,
+  //             style: FlutterFlowTheme.of(context).bodyMedium.override(
+  //               fontFamily: 'Andika New Basic',
+  //               color: const Color(0xFF5D4E60),
+  //               fontSize: 14.0,
+  //               fontWeight: FontWeight.w500,
+  //               letterSpacing: 0.0,
+  //             ),
+  //             maxLines: 1,
+  //             overflow: TextOverflow.ellipsis,
+  //           ),
+  //         ),
+  //         const SizedBox(width: 8.0),
+  //         // Show assignee icons on the right (child/mom/dad circles)
+  //         _buildAssigneeIcons(activity),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget _buildLearningPathCard(BuildContext context) {
     // Get today's date boundaries for filtering
@@ -1915,7 +1927,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                       ),
                       child: Center(
                         child: Text(
-                          child.name.isNotEmpty ? child.name[0].toUpperCase() : 'C',
+                          child.name.isNotEmpty ? child.name[0].toLowerCase() : 'c',
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 22.0,
@@ -2027,6 +2039,80 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
         ),
     );
   }
+
+  // Skills & Hobbies Preview Card
+  Widget _buildSkillsPreviewButton(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        context.pushNamed('skillsPreview');
+      },
+      borderRadius: BorderRadius.circular(20.0),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(20.0),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20.0),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Icon(
+              Icons.build_outlined,
+              color: FlutterFlowTheme.of(context).primary,
+              size: 26.0,
+            ),
+            const SizedBox(width: 8.0),
+            Text(
+              'Skills & Hobbies',
+              style: FlutterFlowTheme.of(context).bodyLarge.override(
+                fontFamily: 'Andika New Basic',
+                color: const Color(0xFF5D4E60),
+                fontSize: 18.0,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 0.0,
+              ),
+            ),
+            const SizedBox(width: 8.0),
+            // Preview badge
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 3.0),
+              decoration: BoxDecoration(
+                color: const Color(0xFF6EC6CA).withOpacity(0.15),
+                borderRadius: BorderRadius.circular(12.0),
+                border: Border.all(
+                  color: const Color(0xFF6EC6CA),
+                  width: 1.0,
+                ),
+              ),
+              child: const Text(
+                'Preview',
+                style: TextStyle(
+                  fontFamily: 'Andika New Basic',
+                  color: Color(0xFF6EC6CA),
+                  fontSize: 10.0,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            const Spacer(),
+            const Icon(
+              Icons.arrow_forward_ios,
+              color: Color(0xFF9B8A9E),
+              size: 16.0,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
 }
 
 // Custom painter for milestone progress ring (must be outside State class)

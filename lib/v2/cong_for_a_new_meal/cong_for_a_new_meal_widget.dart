@@ -29,6 +29,7 @@ class CongForANewMealWidget extends StatefulWidget {
 
 class _CongForANewMealWidgetState extends State<CongForANewMealWidget> {
   late CongForANewMealModel _model;
+  bool _isNavigating = false;
 
   @override
   void setState(VoidCallback callback) {
@@ -57,25 +58,27 @@ class _CongForANewMealWidgetState extends State<CongForANewMealWidget> {
       ),
       child: Padding(
         padding: EdgeInsetsDirectional.fromSTEB(24.0, 24.0, 24.0, 24.0),
-        child: Container(
-          decoration: BoxDecoration(
-            color: FlutterFlowTheme.of(context).secondaryBackground,
-            boxShadow: [
-              BoxShadow(
-                blurRadius: 12.0,
-                color: Color(0x33000000),
-                offset: Offset(
-                  0.0,
-                  4.0,
-                ),
-                spreadRadius: 0.0,
-              )
-            ],
-            borderRadius: BorderRadius.circular(14.0),
-          ),
-          child: Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Column(
+        child: Stack(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                color: FlutterFlowTheme.of(context).secondaryBackground,
+                boxShadow: [
+                  BoxShadow(
+                    blurRadius: 12.0,
+                    color: Color(0x33000000),
+                    offset: Offset(
+                      0.0,
+                      4.0,
+                    ),
+                    spreadRadius: 0.0,
+                  )
+                ],
+                borderRadius: BorderRadius.circular(14.0),
+              ),
+              child: Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Column(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -124,8 +127,15 @@ class _CongForANewMealWidgetState extends State<CongForANewMealWidget> {
                 if (widget.showNavigationOptions) ...[
                   FFButtonWidget(
                     onPressed: () async {
+                      // Close dialog first
                       Navigator.of(context).pop();
-                      context.pushNamed(CreateMealPlanWidget.routeName);
+
+                      // Wait a frame then navigate
+                      await Future.delayed(const Duration(milliseconds: 50));
+                      if (mounted) {
+                        // Pop recipe page and push to meal plan in one operation
+                        context.goNamed(CreateMealPlanWidget.routeName);
+                      }
                     },
                     text: 'Go to Meal Plan',
                     options: FFButtonOptions(
@@ -149,8 +159,15 @@ class _CongForANewMealWidgetState extends State<CongForANewMealWidget> {
                   ),
                   FFButtonWidget(
                     onPressed: () async {
+                      // Close dialog first
                       Navigator.of(context).pop();
-                      context.pushNamed(FavMealPageWidget.routeName);
+
+                      // Wait a frame then navigate
+                      await Future.delayed(const Duration(milliseconds: 50));
+                      if (mounted) {
+                        // Pop recipe page and push to cookbook in one operation
+                        context.goNamed(FavMealPageWidget.routeName);
+                      }
                     },
                     text: 'Go to Cookbook',
                     options: FFButtonOptions(
@@ -175,24 +192,23 @@ class _CongForANewMealWidgetState extends State<CongForANewMealWidget> {
                 ] else
                   FFButtonWidget(
                     onPressed: () async {
+                      // Close dialog first
+                      Navigator.of(context).pop();
+
+                      // Wait a frame then navigate
+                      await Future.delayed(const Duration(milliseconds: 50));
+                      if (!mounted) return;
+
                       if (widget!.isMealPlan == true) {
                         if (widget!.isGenrateForm == false) {
-                          if (Navigator.of(context).canPop()) {
-                            context.pop();
-                          }
-                          context.pushNamed(CreateMealPlanWidget.routeName);
+                          // Pop recipe page and push to meal planner in one operation
+                          context.goNamed(CreateMealPlanWidget.routeName);
                         } else {
-                          if (Navigator.of(context).canPop()) {
-                            context.pop();
-                          }
-                          context.pushNamed(GenrateFormCookWidget.routeName);
+                          context.goNamed(GenrateFormCookWidget.routeName);
                         }
                       } else {
                         // Recipe saved to cookbook - navigate to cookbook
-                        if (Navigator.of(context).canPop()) {
-                          context.pop();
-                        }
-                        context.pushNamed(FavMealPageWidget.routeName);
+                        context.goNamed(FavMealPageWidget.routeName);
                       }
                     },
                     text: 'Continue',
@@ -219,6 +235,18 @@ class _CongForANewMealWidgetState extends State<CongForANewMealWidget> {
               ].divide(SizedBox(height: 20.0)),
             ),
           ),
+        ),
+            // White overlay to cover any transition flashes
+            if (_isNavigating)
+              Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: FlutterFlowTheme.of(context).secondaryBackground,
+                    borderRadius: BorderRadius.circular(14.0),
+                  ),
+                ),
+              ),
+          ],
         ),
       ),
     );
