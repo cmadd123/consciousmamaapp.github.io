@@ -70,6 +70,36 @@ class SkillPathRecord extends FirestoreRecord {
   DateTime? get lastUpdated => _lastUpdated;
   bool hasLastUpdated() => _lastUpdated != null;
 
+  // "user_ref" field.
+  DocumentReference? _userRef;
+  DocumentReference? get userRef => _userRef;
+  bool hasUserRef() => _userRef != null;
+
+  // "expert_source" field.
+  String? _expertSource;
+  String get expertSource => _expertSource ?? '';
+  bool hasExpertSource() => _expertSource != null;
+
+  // "generation_goal" field.
+  String? _generationGoal;
+  String get generationGoal => _generationGoal ?? '';
+  bool hasGenerationGoal() => _generationGoal != null;
+
+  // "tools_available" field.
+  List<String>? _toolsAvailable;
+  List<String> get toolsAvailable => _toolsAvailable ?? const [];
+  bool hasToolsAvailable() => _toolsAvailable != null;
+
+  // "time_per_session" field.
+  String? _timePerSession;
+  String get timePerSession => _timePerSession ?? '';
+  bool hasTimePerSession() => _timePerSession != null;
+
+  // "safety_level" field.
+  String? _safetyLevel;
+  String get safetyLevel => _safetyLevel ?? '';
+  bool hasSafetyLevel() => _safetyLevel != null;
+
   void _initializeFields() {
     _skillName = snapshotData['skill_name'] as String?;
     _skillIcon = snapshotData['skill_icon'] as String?;
@@ -85,6 +115,12 @@ class SkillPathRecord extends FirestoreRecord {
     _progressPercentage = castToType<double>(snapshotData['progress_percentage']);
     _startedDate = snapshotData['started_date'] as DateTime?;
     _lastUpdated = snapshotData['last_updated'] as DateTime?;
+    _userRef = snapshotData['user_ref'] as DocumentReference?;
+    _expertSource = snapshotData['expert_source'] as String?;
+    _generationGoal = snapshotData['generation_goal'] as String?;
+    _toolsAvailable = getDataList(snapshotData['tools_available']);
+    _timePerSession = snapshotData['time_per_session'] as String?;
+    _safetyLevel = snapshotData['safety_level'] as String?;
   }
 
   static CollectionReference get collection =>
@@ -132,6 +168,11 @@ Map<String, dynamic> createSkillPathRecordData({
   double? progressPercentage,
   DateTime? startedDate,
   DateTime? lastUpdated,
+  DocumentReference? userRef,
+  String? expertSource,
+  String? generationGoal,
+  String? timePerSession,
+  String? safetyLevel,
 }) {
   final firestoreData = mapToFirestore(
     <String, dynamic>{
@@ -145,6 +186,11 @@ Map<String, dynamic> createSkillPathRecordData({
       'progress_percentage': progressPercentage,
       'started_date': startedDate,
       'last_updated': lastUpdated,
+      'user_ref': userRef,
+      'expert_source': expertSource,
+      'generation_goal': generationGoal,
+      'time_per_session': timePerSession,
+      'safety_level': safetyLevel,
     }.withoutNulls,
   );
 
@@ -167,7 +213,13 @@ class SkillPathRecordDocumentEquality implements Equality<SkillPathRecord> {
         e1?.completedSubMilestones == e2?.completedSubMilestones &&
         e1?.progressPercentage == e2?.progressPercentage &&
         e1?.startedDate == e2?.startedDate &&
-        e1?.lastUpdated == e2?.lastUpdated;
+        e1?.lastUpdated == e2?.lastUpdated &&
+        e1?.userRef == e2?.userRef &&
+        e1?.expertSource == e2?.expertSource &&
+        e1?.generationGoal == e2?.generationGoal &&
+        listEquality.equals(e1?.toolsAvailable, e2?.toolsAvailable) &&
+        e1?.timePerSession == e2?.timePerSession &&
+        e1?.safetyLevel == e2?.safetyLevel;
   }
 
   @override
@@ -182,7 +234,13 @@ class SkillPathRecordDocumentEquality implements Equality<SkillPathRecord> {
         e?.completedSubMilestones,
         e?.progressPercentage,
         e?.startedDate,
-        e?.lastUpdated
+        e?.lastUpdated,
+        e?.userRef,
+        e?.expertSource,
+        e?.generationGoal,
+        e?.toolsAvailable,
+        e?.timePerSession,
+        e?.safetyLevel
       ]);
 
   @override

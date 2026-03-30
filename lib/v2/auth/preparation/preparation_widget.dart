@@ -46,7 +46,7 @@ class _PreparationWidgetState extends State<PreparationWidget>
     _PrepStep(
       icon: Icons.auto_awesome,
       title: 'Get personalized content',
-      subtitle: 'Meals, activities & milestones',
+      subtitle: 'Meals & milestones',
       color: Color(0xFF9B8AA0),
       stepNumber: '3',
     ),

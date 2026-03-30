@@ -95,7 +95,7 @@ class _FeatureWalkthroughWidgetState extends State<FeatureWalkthroughWidget>
       // 5. Calendar - ties it all together
       _PageData(
         title: 'Your whole family in one calendar',
-        subtitle: 'Meals, activities, appointments, and learning tasks — all at a glance',
+        subtitle: 'Meals, appointments, and learning tasks — all at a glance',
         preview: const CalendarPreview(),
         accentColor: const Color(0xFF52A097),
         icon: Icons.calendar_month,
@@ -108,15 +108,7 @@ class _FeatureWalkthroughWidgetState extends State<FeatureWalkthroughWidget>
         accentColor: const Color(0xFF5C6BC0),
         icon: Icons.checklist_rounded,
       ),
-      // 7. Activities - value, lighter tone
-      _PageData(
-        title: 'Plenty of ideas for every kind of day',
-        subtitle: 'Browse activities by age, setting, and how much time you have',
-        preview: const ActivitiesPreview(),
-        accentColor: const Color(0xFFFF8C00),
-        icon: Icons.palette,
-      ),
-      // 6. Milestones - emotional close
+      // 7. Milestones - emotional close
       _PageData(
         title: 'Track every milestone as it happens',
         subtitle: 'From rolling over to first words — see how far they\'ve come',
@@ -159,7 +151,7 @@ class _FeatureWalkthroughWidgetState extends State<FeatureWalkthroughWidget>
   void _navigateToSetup() {
     HapticFeedback.mediumImpact();
     context.pushNamed(
-      'SetupTransition',
+      'Loginv2',
       extra: <String, dynamic>{
         kTransitionInfoKey: const TransitionInfo(
           hasTransition: true,

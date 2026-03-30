@@ -881,6 +881,43 @@ Future<List<UserActivityRecord>> queryUserActivityRecordOnce({
       singleRecord: singleRecord,
     );
 
+/// Functions to query SkillPathRecords (as a Stream and as a Future).
+Future<int> querySkillPathRecordCount({
+  Query Function(Query)? queryBuilder,
+  int limit = -1,
+}) =>
+    queryCollectionCount(
+      SkillPathRecord.collection,
+      queryBuilder: queryBuilder,
+      limit: limit,
+    );
+
+Stream<List<SkillPathRecord>> querySkillPathRecord({
+  Query Function(Query)? queryBuilder,
+  int limit = -1,
+  bool singleRecord = false,
+}) =>
+    queryCollection(
+      SkillPathRecord.collection,
+      SkillPathRecord.fromSnapshot,
+      queryBuilder: queryBuilder,
+      limit: limit,
+      singleRecord: singleRecord,
+    );
+
+Future<List<SkillPathRecord>> querySkillPathRecordOnce({
+  Query Function(Query)? queryBuilder,
+  int limit = -1,
+  bool singleRecord = false,
+}) =>
+    queryCollectionOnce(
+      SkillPathRecord.collection,
+      SkillPathRecord.fromSnapshot,
+      queryBuilder: queryBuilder,
+      limit: limit,
+      singleRecord: singleRecord,
+    );
+
 Future<int> queryCollectionCount(
   Query collection, {
   Query Function(Query)? queryBuilder,

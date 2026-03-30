@@ -386,15 +386,6 @@ class _FeaturesEnhancedWidgetState extends State<FeaturesEnhancedWidget>
                           iconColor: const Color(0xFFFFD700),
                         ),
 
-                        // Activities feature
-                        _buildFeatureCard(
-                          index: 4,
-                          icon: '🎨',
-                          title: 'Never scramble for "what to do today" again',
-                          subtitle: 'Plenty of activities matched to your child\'s mood and your energy',
-                          iconColor: const Color(0xFFFF8C00),
-                        ),
-
                         const SizedBox(height: 24),
                       ],
                     ),
