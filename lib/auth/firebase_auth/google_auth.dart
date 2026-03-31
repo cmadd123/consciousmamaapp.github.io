@@ -4,8 +4,6 @@ import 'package:google_sign_in/google_sign_in.dart';
 
 final _googleSignIn = GoogleSignIn(
   scopes: ['profile', 'email'],
-  // Web client ID from Firebase Console (required for Android)
-  serverClientId: '67449654316-nj10g9vm0vsv3to58gfountgep6cool4.apps.googleusercontent.com',
 );
 
 Future<UserCredential?> googleSignInFunc() async {
