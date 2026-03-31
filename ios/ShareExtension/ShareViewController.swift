@@ -9,6 +9,19 @@ class ShareViewController: SLComposeServiceViewController {
     private let sharedKey = "SharedData"
     private let urlScheme = "SharingMedia-com.momrise.app"
 
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        // Set placeholder text to make the UI look intentional
+        placeholder = "Importing recipe to MomRise..."
+
+        // Customize the appearance
+        if let textView = textView {
+            textView.isEditable = false
+            textView.textColor = .secondaryLabel
+        }
+    }
+
     override func isContentValid() -> Bool {
         return true
     }
