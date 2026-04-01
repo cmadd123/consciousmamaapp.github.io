@@ -47,21 +47,33 @@ class ShareViewController: SLComposeServiceViewController {
     }
 
     override func didSelectPost() {
+        NSLog("📱 ShareExtension: didSelectPost called")
+
         guard let items = extensionContext?.inputItems as? [NSExtensionItem] else {
+            NSLog("📱 ShareExtension: No input items, completing")
             completeRequest()
             return
         }
 
         let group = DispatchGroup()
+        var foundContent = false
 
         for item in items {
             guard let attachments = item.attachments else { continue }
+            NSLog("📱 ShareExtension: Processing \(attachments.count) attachments")
+
             for provider in attachments {
                 // Handle URLs
                 if provider.hasItemConformingToTypeIdentifier(UTType.url.identifier) {
+                    foundContent = true
                     group.enter()
-                    provider.loadItem(forTypeIdentifier: UTType.url.identifier, options: nil) { [weak self] data, _ in
+                    NSLog("📱 ShareExtension: Loading URL item")
+                    provider.loadItem(forTypeIdentifier: UTType.url.identifier, options: nil) { [weak self] data, error in
+                        if let error = error {
+                            NSLog("❌ ShareExtension: URL load error: \(error.localizedDescription)")
+                        }
                         if let url = data as? URL {
+                            NSLog("📱 ShareExtension: Got URL: \(url.absoluteString)")
                             self?.saveAndRedirect(value: url.absoluteString, type: "url")
                         }
                         group.leave()
@@ -69,9 +81,15 @@ class ShareViewController: SLComposeServiceViewController {
                 }
                 // Handle plain text
                 else if provider.hasItemConformingToTypeIdentifier(UTType.plainText.identifier) {
+                    foundContent = true
                     group.enter()
-                    provider.loadItem(forTypeIdentifier: UTType.plainText.identifier, options: nil) { [weak self] data, _ in
+                    NSLog("📱 ShareExtension: Loading text item")
+                    provider.loadItem(forTypeIdentifier: UTType.plainText.identifier, options: nil) { [weak self] data, error in
+                        if let error = error {
+                            NSLog("❌ ShareExtension: Text load error: \(error.localizedDescription)")
+                        }
                         if let text = data as? String {
+                            NSLog("📱 ShareExtension: Got text: \(text.prefix(100))...")
                             self?.saveAndRedirect(value: text, type: "text")
                         }
                         group.leave()
@@ -80,8 +98,25 @@ class ShareViewController: SLComposeServiceViewController {
             }
         }
 
+        // Add timeout protection
+        let timeout = DispatchTime.now() + .seconds(10)
+        let timeoutResult = group.wait(timeout: timeout)
+
+        if timeoutResult == .timedOut {
+            NSLog("⚠️ ShareExtension: Timed out waiting for content")
+        }
+
         group.notify(queue: .main) { [weak self] in
+            NSLog("📱 ShareExtension: All content processed, completing request")
             self?.completeRequest()
+        }
+
+        if !foundContent {
+            NSLog("⚠️ ShareExtension: No compatible content found")
+            // Complete immediately if no content to process
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+                self?.completeRequest()
+            }
         }
     }
 
@@ -90,6 +125,8 @@ class ShareViewController: SLComposeServiceViewController {
     }
 
     private func saveAndRedirect(value: String, type: String) {
+        NSLog("📱 ShareExtension: Saving data - type: \(type), value: \(value.prefix(100))...")
+
         // Save to App Group shared UserDefaults
         let userDefaults = UserDefaults(suiteName: appGroupId)
         let sharedData: [String: Any] = [
@@ -98,38 +135,55 @@ class ShareViewController: SLComposeServiceViewController {
             "timestamp": Date().timeIntervalSince1970
         ]
         userDefaults?.set(sharedData, forKey: sharedKey)
-        userDefaults?.synchronize()
+        let syncResult = userDefaults?.synchronize()
+        NSLog("📱 ShareExtension: UserDefaults sync result: \(syncResult ?? false)")
 
         // Open the main app via URL scheme
-        let urlString = "\(urlScheme)://shared?type=\(type)&value=\(value.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")"
+        let urlString = "\(urlScheme)://shared?type=\(type)"
+        NSLog("📱 ShareExtension: Opening URL: \(urlString)")
         if let url = URL(string: urlString) {
             openURL(url)
+        } else {
+            NSLog("❌ ShareExtension: Failed to create URL from: \(urlString)")
         }
     }
 
     private func completeRequest() {
-        extensionContext?.completeRequest(returningItems: [], completionHandler: nil)
+        NSLog("📱 ShareExtension: Completing request and dismissing")
+        extensionContext?.completeRequest(returningItems: [], completionHandler: { expired in
+            NSLog("📱 ShareExtension: Request completed, expired: \(expired)")
+        })
     }
 
     // Open URL from extension (uses responder chain)
     @objc private func openURL(_ url: URL) {
+        NSLog("📱 ShareExtension: Attempting to open URL: \(url)")
+
         var responder: UIResponder? = self
         while responder != nil {
             if let application = responder as? UIApplication {
-                application.open(url, options: [:], completionHandler: nil)
+                NSLog("📱 ShareExtension: Found UIApplication, opening URL")
+                application.open(url, options: [:], completionHandler: { success in
+                    NSLog("📱 ShareExtension: URL open result: \(success)")
+                })
                 return
             }
             responder = responder?.next
         }
+
         // Fallback for iOS 16+
+        NSLog("📱 ShareExtension: Using fallback selector method")
         let selector = sel_registerName("openURL:")
         var response: UIResponder? = self
         while response != nil {
             if response!.responds(to: selector) {
+                NSLog("📱 ShareExtension: Found responder with openURL selector")
                 response!.perform(selector, with: url)
                 return
             }
             response = response?.next
         }
+
+        NSLog("❌ ShareExtension: No way to open URL found")
     }
 }
