@@ -20,7 +20,7 @@ class _SkillsHomePreviewWidgetState extends State<SkillsHomePreviewWidget> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   // PREVIEW MODE: Set to false to use real Firestore data
-  final bool _usePreviewData = false;
+  final bool _usePreviewData = true;
 
   @override
   Widget build(BuildContext context) {
