@@ -263,6 +263,13 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
     final snackKeywords = ['snack', 'appetizer', 'dip', 'chip', 'cracker', 'finger food', 'bite', 'ball'];
     final dessertKeywords = ['dessert', 'cake', 'cookie', 'brownie', 'pie', 'ice cream', 'chocolate', 'sweet', 'pudding', 'tart', 'cupcake', 'cheesecake', 'candy', 'fudge', 'truffle'];
 
+    // Keywords for dietary restrictions
+    final glutenFreeKeywords = ['gluten-free', 'gluten free', 'gf', 'celiac'];
+    final dairyFreeKeywords = ['dairy-free', 'dairy free', 'lactose-free', 'lactose free', 'vegan'];
+    final nutFreeKeywords = ['nut-free', 'nut free', 'peanut-free', 'peanut free'];
+    final vegetarianKeywords = ['vegetarian', 'veggie', 'meatless'];
+    final veganKeywords = ['vegan', 'plant-based', 'plant based'];
+
     // Check for matches (allowing multiple categories)
     if (breakfastKeywords.any((keyword) => combinedText.contains(keyword))) {
       _model.selectedCategories.add('Breakfast');
@@ -283,8 +290,26 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
       _model.selectedCategories.add('Desserts');
     }
 
-    // If no categories detected, default to Dinner (most common)
-    if (_model.selectedCategories.isEmpty) {
+    // Check for dietary restrictions
+    if (glutenFreeKeywords.any((keyword) => combinedText.contains(keyword))) {
+      _model.selectedCategories.add('Gluten-Free');
+    }
+    if (dairyFreeKeywords.any((keyword) => combinedText.contains(keyword))) {
+      _model.selectedCategories.add('Dairy-Free');
+    }
+    if (nutFreeKeywords.any((keyword) => combinedText.contains(keyword))) {
+      _model.selectedCategories.add('Nut-Free');
+    }
+    if (vegetarianKeywords.any((keyword) => combinedText.contains(keyword))) {
+      _model.selectedCategories.add('Vegetarian');
+    }
+    if (veganKeywords.any((keyword) => combinedText.contains(keyword))) {
+      _model.selectedCategories.add('Vegan');
+    }
+
+    // If no meal type categories detected, default to Dinner (most common)
+    final mealTypes = _model.selectedCategories.where((c) => ['Breakfast', 'Lunch', 'Dinner', 'Snacks', 'Desserts'].contains(c)).toList();
+    if (mealTypes.isEmpty) {
       _model.selectedCategories.add('Dinner');
     }
 
@@ -378,11 +403,13 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
           mainOrSidesValue = 'Side';
           debugPrint('🔵 Set mainOrSides to: Side');
         }
-        // Get all non-Side categories and join them with commas for filtering
-        final mealCategories = _model.selectedCategories.where((c) => c != 'Side').toList();
-        if (mealCategories.isNotEmpty) {
-          // Store all selected categories as comma-separated for multi-category filtering
-          mealTypValue = mealCategories.join(',');
+        // Build mealTyp in canonical order: Breakfast, Lunch, Dinner, Snacks, then dietary
+        final canonicalOrder = ['Breakfast', 'Lunch', 'Dinner', 'Snacks', 'Gluten-Free', 'Dairy-Free', 'Nut-Free', 'Vegetarian', 'Vegan'];
+        final mealAndDietaryCategories = canonicalOrder
+            .where((c) => _model.selectedCategories.contains(c))
+            .toList();
+        if (mealAndDietaryCategories.isNotEmpty) {
+          mealTypValue = mealAndDietaryCategories.join(',');
           debugPrint('🔵 Set mealTyp to: $mealTypValue');
         }
       } else if (widget.dateTyyp != null) {
@@ -1397,6 +1424,80 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                                       style: FlutterFlowTheme.of(context).bodySmall.override(
                                             fontFamily: 'Andika New Basic',
                                             color: isSelected ? Colors.white : FlutterFlowTheme.of(context).primaryText,
+                                            letterSpacing: 0.0,
+                                          ),
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                            const SizedBox(height: 20),
+
+                            // Dietary & Allergen Info
+                            Text(
+                              'Dietary & Allergen Info (optional)',
+                              style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                    fontFamily: 'Andika New Basic',
+                                    fontSize: 13.0,
+                                    fontWeight: FontWeight.w600,
+                                    letterSpacing: 0.0,
+                                  ),
+                            ),
+                            const SizedBox(height: 8.0),
+                            Wrap(
+                              spacing: 8.0,
+                              runSpacing: 8.0,
+                              children: [
+                                {'label': 'Gluten-Free', 'emoji': '🌾'},
+                                {'label': 'Dairy-Free', 'emoji': '🥛'},
+                                {'label': 'Nut-Free', 'emoji': '🥜'},
+                                {'label': 'Vegetarian', 'emoji': '🥕'},
+                                {'label': 'Vegan', 'emoji': '🌱'},
+                              ].map((dietary) {
+                                final label = dietary['label']!;
+                                final emoji = dietary['emoji']!;
+                                final isSelected = _model.selectedCategories.contains(label);
+                                return InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      if (isSelected) {
+                                        _model.selectedCategories.remove(label);
+                                      } else {
+                                        _model.selectedCategories.add(label);
+                                      }
+                                    });
+                                  },
+                                  borderRadius: BorderRadius.circular(14.0),
+                                  child: AnimatedContainer(
+                                    duration: const Duration(milliseconds: 200),
+                                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+                                    decoration: BoxDecoration(
+                                      color: isSelected
+                                          ? Color(0xFF52A097)
+                                          : Color(0xFF52A097).withValues(alpha: 0.1),
+                                      border: Border.all(
+                                        color: isSelected
+                                            ? Color(0xFF52A097)
+                                            : Color(0xFF52A097).withValues(alpha: 0.3),
+                                        width: isSelected ? 2.0 : 1.0,
+                                      ),
+                                      borderRadius: BorderRadius.circular(14.0),
+                                      boxShadow: isSelected
+                                          ? [
+                                              BoxShadow(
+                                                color: Color(0xFF52A097).withValues(alpha: 0.3),
+                                                blurRadius: 8.0,
+                                                offset: const Offset(0, 2),
+                                              ),
+                                            ]
+                                          : null,
+                                    ),
+                                    child: Text(
+                                      '$emoji $label',
+                                      style: FlutterFlowTheme.of(context).bodySmall.override(
+                                            fontFamily: 'Andika New Basic',
+                                            color: isSelected ? Colors.white : Color(0xFF52A097),
+                                            fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
                                             letterSpacing: 0.0,
                                           ),
                                     ),
