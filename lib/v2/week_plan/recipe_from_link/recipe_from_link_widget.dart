@@ -1393,37 +1393,49 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                             Wrap(
                               spacing: 8.0,
                               runSpacing: 8.0,
-                              children: ['Breakfast', 'Lunch', 'Dinner', 'Side', 'Snacks', 'Desserts'].map((category) {
-                                final isSelected = _model.selectedCategories.contains(category);
-                                final displayText = category;
+                              children: ['Breakfast', 'Lunch', 'Dinner', 'Snacks'].map((mealType) {
+                                final isSelected = _model.selectedCategories.contains(mealType);
                                 return InkWell(
                                   onTap: () {
                                     setState(() {
                                       if (isSelected) {
-                                        _model.selectedCategories.remove(category);
+                                        _model.selectedCategories.remove(mealType);
                                       } else {
-                                        _model.selectedCategories.add(category);
+                                        _model.selectedCategories.add(mealType);
                                       }
                                     });
                                   },
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                                  borderRadius: BorderRadius.circular(14.0),
+                                  child: AnimatedContainer(
+                                    duration: const Duration(milliseconds: 200),
+                                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
                                     decoration: BoxDecoration(
                                       color: isSelected
                                           ? FlutterFlowTheme.of(context).primary
-                                          : Colors.transparent,
+                                          : FlutterFlowTheme.of(context).primary.withValues(alpha: 0.1),
                                       border: Border.all(
                                         color: isSelected
                                             ? FlutterFlowTheme.of(context).primary
-                                            : const Color(0xFFCCCCCC),
+                                            : FlutterFlowTheme.of(context).primary.withValues(alpha: 0.3),
+                                        width: isSelected ? 2.0 : 1.0,
                                       ),
-                                      borderRadius: BorderRadius.circular(20.0),
+                                      borderRadius: BorderRadius.circular(14.0),
+                                      boxShadow: isSelected
+                                          ? [
+                                              BoxShadow(
+                                                color: FlutterFlowTheme.of(context).primary.withValues(alpha: 0.3),
+                                                blurRadius: 8.0,
+                                                offset: const Offset(0, 2),
+                                              ),
+                                            ]
+                                          : null,
                                     ),
                                     child: Text(
-                                      displayText,
+                                      mealType,
                                       style: FlutterFlowTheme.of(context).bodySmall.override(
                                             fontFamily: 'Andika New Basic',
-                                            color: isSelected ? Colors.white : FlutterFlowTheme.of(context).primaryText,
+                                            color: isSelected ? Colors.white : FlutterFlowTheme.of(context).primary,
+                                            fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
                                             letterSpacing: 0.0,
                                           ),
                                     ),
@@ -1520,32 +1532,51 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                             Wrap(
                               spacing: 8.0,
                               runSpacing: 8.0,
-                              children: ['Entree', 'Side', 'Dessert'].map((recipeType) {
-                                final isSelected = _model.selectedRecipeType == recipeType;
+                              children: [
+                                {'label': 'Entree', 'emoji': '🍖'},
+                                {'label': 'Side', 'emoji': '🥗'},
+                                {'label': 'Dessert', 'emoji': '🍰'},
+                              ].map((recipeType) {
+                                final label = recipeType['label']!;
+                                final emoji = recipeType['emoji']!;
+                                final isSelected = _model.selectedRecipeType == label;
                                 return InkWell(
                                   onTap: () {
                                     setState(() {
-                                      _model.selectedRecipeType = recipeType;
+                                      _model.selectedRecipeType = label;
                                     });
                                   },
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                                  borderRadius: BorderRadius.circular(14.0),
+                                  child: AnimatedContainer(
+                                    duration: const Duration(milliseconds: 200),
+                                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
                                     decoration: BoxDecoration(
                                       color: isSelected
-                                          ? FlutterFlowTheme.of(context).primary
-                                          : Colors.transparent,
+                                          ? FlutterFlowTheme.of(context).secondary
+                                          : FlutterFlowTheme.of(context).secondary.withValues(alpha: 0.1),
                                       border: Border.all(
                                         color: isSelected
-                                            ? FlutterFlowTheme.of(context).primary
-                                            : const Color(0xFFCCCCCC),
+                                            ? FlutterFlowTheme.of(context).secondary
+                                            : FlutterFlowTheme.of(context).secondary.withValues(alpha: 0.3),
+                                        width: isSelected ? 2.0 : 1.0,
                                       ),
-                                      borderRadius: BorderRadius.circular(20.0),
+                                      borderRadius: BorderRadius.circular(14.0),
+                                      boxShadow: isSelected
+                                          ? [
+                                              BoxShadow(
+                                                color: FlutterFlowTheme.of(context).secondary.withValues(alpha: 0.3),
+                                                blurRadius: 8.0,
+                                                offset: const Offset(0, 2),
+                                              ),
+                                            ]
+                                          : null,
                                     ),
                                     child: Text(
-                                      recipeType,
+                                      '$emoji $label',
                                       style: FlutterFlowTheme.of(context).bodySmall.override(
                                             fontFamily: 'Andika New Basic',
-                                            color: isSelected ? Colors.white : FlutterFlowTheme.of(context).primaryText,
+                                            color: isSelected ? Colors.white : FlutterFlowTheme.of(context).secondary,
+                                            fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
                                             letterSpacing: 0.0,
                                           ),
                                     ),
