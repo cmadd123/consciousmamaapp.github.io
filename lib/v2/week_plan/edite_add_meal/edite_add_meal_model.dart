@@ -86,31 +86,74 @@ class EditeAddMealModel extends FlutterFlowModel<EditeAddMealWidget> {
   FocusNode? textFieldFocusNode2;
   TextEditingController? textController2;
   String? Function(BuildContext, String?)? textController2Validator;
-  // State field(s) for TextField widget.
-  FocusNode? textFieldFocusNode3;
-  TextEditingController? textController3;
-  String? Function(BuildContext, String?)? textController3Validator;
-  // Cook time is optional - accepts integers or decimals
-  String? _textController3Validator(BuildContext context, String? val) {
+  // State field(s) for Cook Time Hours widget.
+  FocusNode? cookTimeHoursFocusNode;
+  TextEditingController? cookTimeHoursController;
+  String? Function(BuildContext, String?)? cookTimeHoursValidator;
+  String? _cookTimeHoursValidator(BuildContext context, String? val) {
     if (val != null && val.isNotEmpty) {
-      if (double.tryParse(val) == null) {
-        return 'Please enter a valid number';
+      final hours = int.tryParse(val);
+      if (hours == null || hours < 0) {
+        return 'Enter valid hours';
       }
     }
     return null;
   }
 
-  // State field(s) for TextField widget.
+  // State field(s) for Cook Time Minutes widget.
+  FocusNode? cookTimeMinutesFocusNode;
+  TextEditingController? cookTimeMinutesController;
+  String? Function(BuildContext, String?)? cookTimeMinutesValidator;
+  String? _cookTimeMinutesValidator(BuildContext context, String? val) {
+    if (val != null && val.isNotEmpty) {
+      final minutes = int.tryParse(val);
+      if (minutes == null || minutes < 0 || minutes >= 60) {
+        return 'Enter 0-59';
+      }
+    }
+    return null;
+  }
+
+  // State field(s) for Prep Time Hours widget.
+  FocusNode? prepTimeHoursFocusNode;
+  TextEditingController? prepTimeHoursController;
+  String? Function(BuildContext, String?)? prepTimeHoursValidator;
+  String? _prepTimeHoursValidator(BuildContext context, String? val) {
+    if (val != null && val.isNotEmpty) {
+      final hours = int.tryParse(val);
+      if (hours == null || hours < 0) {
+        return 'Enter valid hours';
+      }
+    }
+    return null;
+  }
+
+  // State field(s) for Prep Time Minutes widget.
+  FocusNode? prepTimeMinutesFocusNode;
+  TextEditingController? prepTimeMinutesController;
+  String? Function(BuildContext, String?)? prepTimeMinutesValidator;
+  String? _prepTimeMinutesValidator(BuildContext context, String? val) {
+    if (val != null && val.isNotEmpty) {
+      final minutes = int.tryParse(val);
+      if (minutes == null || minutes < 0 || minutes >= 60) {
+        return 'Enter 0-59';
+      }
+    }
+    return null;
+  }
+
+  // Legacy fields - kept for backward compatibility but no longer used in UI
+  FocusNode? textFieldFocusNode3;
+  TextEditingController? textController3;
+  String? Function(BuildContext, String?)? textController3Validator;
+  String? _textController3Validator(BuildContext context, String? val) {
+    return null;
+  }
+
   FocusNode? textFieldFocusNode4;
   TextEditingController? textController4;
   String? Function(BuildContext, String?)? textController4Validator;
-  // Prep time is optional - accepts integers or decimals
   String? _textController4Validator(BuildContext context, String? val) {
-    if (val != null && val.isNotEmpty) {
-      if (double.tryParse(val) == null) {
-        return 'Please enter a valid number';
-      }
-    }
     return null;
   }
 
@@ -129,6 +172,10 @@ class EditeAddMealModel extends FlutterFlowModel<EditeAddMealWidget> {
   @override
   void initState(BuildContext context) {
     textController1Validator = _textController1Validator;
+    cookTimeHoursValidator = _cookTimeHoursValidator;
+    cookTimeMinutesValidator = _cookTimeMinutesValidator;
+    prepTimeHoursValidator = _prepTimeHoursValidator;
+    prepTimeMinutesValidator = _prepTimeMinutesValidator;
     textController3Validator = _textController3Validator;
     textController4Validator = _textController4Validator;
   }
@@ -140,6 +187,18 @@ class EditeAddMealModel extends FlutterFlowModel<EditeAddMealWidget> {
 
     textFieldFocusNode2?.dispose();
     textController2?.dispose();
+
+    cookTimeHoursFocusNode?.dispose();
+    cookTimeHoursController?.dispose();
+
+    cookTimeMinutesFocusNode?.dispose();
+    cookTimeMinutesController?.dispose();
+
+    prepTimeHoursFocusNode?.dispose();
+    prepTimeHoursController?.dispose();
+
+    prepTimeMinutesFocusNode?.dispose();
+    prepTimeMinutesController?.dispose();
 
     textFieldFocusNode3?.dispose();
     textController3?.dispose();

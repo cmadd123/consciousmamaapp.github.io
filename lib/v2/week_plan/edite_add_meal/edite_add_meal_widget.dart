@@ -134,6 +134,33 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
         TextEditingController(text: widget!.editCookingMeal?.cost?.toString());
     _model.textFieldFocusNode2 ??= FocusNode();
 
+    // Initialize cook time hours and minutes from total minutes
+    int cookTimeMinutes = widget!.editCookingMeal?.cookingTime?.toInt() ?? 0;
+    int cookHours = cookTimeMinutes ~/ 60;
+    int cookMins = cookTimeMinutes % 60;
+
+    _model.cookTimeHoursController ??= TextEditingController(
+        text: cookTimeMinutes > 0 ? cookHours.toString() : '');
+    _model.cookTimeHoursFocusNode ??= FocusNode();
+
+    _model.cookTimeMinutesController ??= TextEditingController(
+        text: cookTimeMinutes > 0 ? cookMins.toString() : '');
+    _model.cookTimeMinutesFocusNode ??= FocusNode();
+
+    // Initialize prep time hours and minutes from total minutes
+    int prepTimeMinutes = widget!.editCookingMeal?.prepareTime?.toInt() ?? 0;
+    int prepHours = prepTimeMinutes ~/ 60;
+    int prepMins = prepTimeMinutes % 60;
+
+    _model.prepTimeHoursController ??= TextEditingController(
+        text: prepTimeMinutes > 0 ? prepHours.toString() : '');
+    _model.prepTimeHoursFocusNode ??= FocusNode();
+
+    _model.prepTimeMinutesController ??= TextEditingController(
+        text: prepTimeMinutes > 0 ? prepMins.toString() : '');
+    _model.prepTimeMinutesFocusNode ??= FocusNode();
+
+    // Legacy controllers - kept for backward compatibility
     _model.textController3 ??= TextEditingController(
         text: widget!.editCookingMeal?.cookingTime != null
             ? (widget!.editCookingMeal!.cookingTime! % 1 == 0
@@ -313,8 +340,16 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
           mealTyp: mealTypValue,
           userRef: currentUserReference,
           isCurated: false,
-          prepareTime: double.tryParse(_model.textController4.text),
-          cookingTime: double.tryParse(_model.textController3.text),
+          prepareTime: () {
+            final hours = int.tryParse(_model.prepTimeHoursController.text) ?? 0;
+            final minutes = int.tryParse(_model.prepTimeMinutesController.text) ?? 0;
+            return (hours * 60 + minutes).toDouble();
+          }(),
+          cookingTime: () {
+            final hours = int.tryParse(_model.cookTimeHoursController.text) ?? 0;
+            final minutes = int.tryParse(_model.cookTimeMinutesController.text) ?? 0;
+            return (hours * 60 + minutes).toDouble();
+          }(),
         ),
         ...mapToFirestore(
           {
@@ -460,10 +495,18 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
         _model.textController1?.text = recipeData['name'].toString();
       }
       if (recipeData['prepTime'] != null && recipeData['prepTime'] != 0) {
-        _model.textController4?.text = recipeData['prepTime'].toString();
+        int totalMinutes = (recipeData['prepTime'] as num).toInt();
+        int hours = totalMinutes ~/ 60;
+        int minutes = totalMinutes % 60;
+        _model.prepTimeHoursController?.text = hours > 0 ? hours.toString() : '';
+        _model.prepTimeMinutesController?.text = minutes > 0 ? minutes.toString() : '';
       }
       if (recipeData['cookTime'] != null && recipeData['cookTime'] != 0) {
-        _model.textController3?.text = recipeData['cookTime'].toString();
+        int totalMinutes = (recipeData['cookTime'] as num).toInt();
+        int hours = totalMinutes ~/ 60;
+        int minutes = totalMinutes % 60;
+        _model.cookTimeHoursController?.text = hours > 0 ? hours.toString() : '';
+        _model.cookTimeMinutesController?.text = minutes > 0 ? minutes.toString() : '';
       }
       if (recipeData['ingredients'] != null && recipeData['ingredients'] is List) {
         _model.ingredientsList = List<String>.from(recipeData['ingredients']);
@@ -1336,96 +1379,163 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                     ),
                                   ),
                                 ),
-                                Container(
-                              width: 200.0,
-                              height: 45.0,
-                              decoration: BoxDecoration(
-                                color: FlutterFlowTheme.of(context).prim30,
-                                borderRadius: BorderRadius.circular(14.0),
-                                border: Border.all(
-                                  color: Color(0xFFCBE3E0),
-                                  width: 1.0,
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Container(
+                                        height: 45.0,
+                                        decoration: BoxDecoration(
+                                          color: FlutterFlowTheme.of(context).prim30,
+                                          borderRadius: BorderRadius.circular(14.0),
+                                          border: Border.all(
+                                            color: Color(0xFFCBE3E0),
+                                            width: 1.0,
+                                          ),
+                                        ),
+                                        child: TextFormField(
+                                          controller: _model.cookTimeHoursController,
+                                          focusNode: _model.cookTimeHoursFocusNode,
+                                          autofocus: false,
+                                          obscureText: false,
+                                          decoration: InputDecoration(
+                                            isDense: true,
+                                            hintText: '0',
+                                            hintStyle: FlutterFlowTheme.of(context)
+                                                .labelMedium
+                                                .override(
+                                                  fontFamily: 'Andika New Basic',
+                                                  color: FlutterFlowTheme.of(context).primaryText,
+                                                  fontSize: 12.0,
+                                                  letterSpacing: 0.0,
+                                                ),
+                                            suffixText: 'hr',
+                                            suffixStyle: FlutterFlowTheme.of(context)
+                                                .bodySmall
+                                                .override(
+                                                  fontFamily: 'Andika New Basic',
+                                                  color: FlutterFlowTheme.of(context).secondaryText,
+                                                  letterSpacing: 0.0,
+                                                ),
+                                            enabledBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                color: Color(0x00000000),
+                                                width: 1.0,
+                                              ),
+                                              borderRadius: BorderRadius.circular(14.0),
+                                            ),
+                                            focusedBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                color: Color(0x00000000),
+                                                width: 1.0,
+                                              ),
+                                              borderRadius: BorderRadius.circular(14.0),
+                                            ),
+                                            errorBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                color: FlutterFlowTheme.of(context).error,
+                                                width: 1.0,
+                                              ),
+                                              borderRadius: BorderRadius.circular(14.0),
+                                            ),
+                                            focusedErrorBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                color: FlutterFlowTheme.of(context).error,
+                                                width: 1.0,
+                                              ),
+                                              borderRadius: BorderRadius.circular(14.0),
+                                            ),
+                                          ),
+                                          style: FlutterFlowTheme.of(context)
+                                              .bodyMedium
+                                              .override(
+                                                fontFamily: 'Andika New Basic',
+                                                letterSpacing: 0.0,
+                                              ),
+                                          keyboardType: TextInputType.number,
+                                          cursorColor: FlutterFlowTheme.of(context).primaryText,
+                                          validator: _model.cookTimeHoursValidator.asValidator(context),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(width: 8.0),
+                                    Expanded(
+                                      child: Container(
+                                        height: 45.0,
+                                        decoration: BoxDecoration(
+                                          color: FlutterFlowTheme.of(context).prim30,
+                                          borderRadius: BorderRadius.circular(14.0),
+                                          border: Border.all(
+                                            color: Color(0xFFCBE3E0),
+                                            width: 1.0,
+                                          ),
+                                        ),
+                                        child: TextFormField(
+                                          controller: _model.cookTimeMinutesController,
+                                          focusNode: _model.cookTimeMinutesFocusNode,
+                                          autofocus: false,
+                                          obscureText: false,
+                                          decoration: InputDecoration(
+                                            isDense: true,
+                                            hintText: '0',
+                                            hintStyle: FlutterFlowTheme.of(context)
+                                                .labelMedium
+                                                .override(
+                                                  fontFamily: 'Andika New Basic',
+                                                  color: FlutterFlowTheme.of(context).primaryText,
+                                                  fontSize: 12.0,
+                                                  letterSpacing: 0.0,
+                                                ),
+                                            suffixText: 'min',
+                                            suffixStyle: FlutterFlowTheme.of(context)
+                                                .bodySmall
+                                                .override(
+                                                  fontFamily: 'Andika New Basic',
+                                                  color: FlutterFlowTheme.of(context).secondaryText,
+                                                  letterSpacing: 0.0,
+                                                ),
+                                            enabledBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                color: Color(0x00000000),
+                                                width: 1.0,
+                                              ),
+                                              borderRadius: BorderRadius.circular(14.0),
+                                            ),
+                                            focusedBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                color: Color(0x00000000),
+                                                width: 1.0,
+                                              ),
+                                              borderRadius: BorderRadius.circular(14.0),
+                                            ),
+                                            errorBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                color: FlutterFlowTheme.of(context).error,
+                                                width: 1.0,
+                                              ),
+                                              borderRadius: BorderRadius.circular(14.0),
+                                            ),
+                                            focusedErrorBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                color: FlutterFlowTheme.of(context).error,
+                                                width: 1.0,
+                                              ),
+                                              borderRadius: BorderRadius.circular(14.0),
+                                            ),
+                                          ),
+                                          style: FlutterFlowTheme.of(context)
+                                              .bodyMedium
+                                              .override(
+                                                fontFamily: 'Andika New Basic',
+                                                letterSpacing: 0.0,
+                                              ),
+                                          keyboardType: TextInputType.number,
+                                          cursorColor: FlutterFlowTheme.of(context).primaryText,
+                                          validator: _model.cookTimeMinutesValidator.asValidator(context),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ),
-                              child: Container(
-                                width: double.infinity,
-                                child: TextFormField(
-                                  controller: _model.textController3,
-                                  focusNode: _model.textFieldFocusNode3,
-                                  autofocus: false,
-                                  obscureText: false,
-                                  decoration: InputDecoration(
-                                    isDense: true,
-                                    labelStyle: FlutterFlowTheme.of(context)
-                                        .labelMedium
-                                        .override(
-                                          fontFamily: 'Andika New Basic',
-                                          letterSpacing: 0.0,
-                                        ),
-                                    hintText: 'Cook time (min)',
-                                    hintStyle: FlutterFlowTheme.of(context)
-                                        .labelMedium
-                                        .override(
-                                          fontFamily: 'Andika New Basic',
-                                          color: FlutterFlowTheme.of(context)
-                                              .primaryText,
-                                          fontSize: 12.0,
-                                          letterSpacing: 0.0,
-                                        ),
-                                    suffixText: 'min',
-                                    suffixStyle: FlutterFlowTheme.of(context)
-                                        .bodySmall
-                                        .override(
-                                          fontFamily: 'Andika New Basic',
-                                          color: FlutterFlowTheme.of(context).secondaryText,
-                                          letterSpacing: 0.0,
-                                        ),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: Color(0x00000000),
-                                        width: 1.0,
-                                      ),
-                                      borderRadius: BorderRadius.circular(14.0),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: Color(0x00000000),
-                                        width: 1.0,
-                                      ),
-                                      borderRadius: BorderRadius.circular(14.0),
-                                    ),
-                                    errorBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color:
-                                            FlutterFlowTheme.of(context).error,
-                                        width: 1.0,
-                                      ),
-                                      borderRadius: BorderRadius.circular(14.0),
-                                    ),
-                                    focusedErrorBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color:
-                                            FlutterFlowTheme.of(context).error,
-                                        width: 1.0,
-                                      ),
-                                      borderRadius: BorderRadius.circular(14.0),
-                                    ),
-                                  ),
-                                  style: FlutterFlowTheme.of(context)
-                                      .bodyMedium
-                                      .override(
-                                        fontFamily: 'Andika New Basic',
-                                        letterSpacing: 0.0,
-                                      ),
-                                  keyboardType: TextInputType.number,
-                                  cursorColor:
-                                      FlutterFlowTheme.of(context).primaryText,
-                                  enableInteractiveSelection: true,
-                                  validator: _model.textController3Validator
-                                      .asValidator(context),
-                                ),
-                              ),
-                            ),
                               ],
                             ),
                           ),
@@ -1446,96 +1556,163 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                     ),
                                   ),
                                 ),
-                                Container(
-                              width: 200.0,
-                              height: 45.0,
-                              decoration: BoxDecoration(
-                                color: FlutterFlowTheme.of(context).prim30,
-                                borderRadius: BorderRadius.circular(14.0),
-                                border: Border.all(
-                                  color: Color(0xFFCBE3E0),
-                                  width: 1.0,
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Container(
+                                        height: 45.0,
+                                        decoration: BoxDecoration(
+                                          color: FlutterFlowTheme.of(context).prim30,
+                                          borderRadius: BorderRadius.circular(14.0),
+                                          border: Border.all(
+                                            color: Color(0xFFCBE3E0),
+                                            width: 1.0,
+                                          ),
+                                        ),
+                                        child: TextFormField(
+                                          controller: _model.prepTimeHoursController,
+                                          focusNode: _model.prepTimeHoursFocusNode,
+                                          autofocus: false,
+                                          obscureText: false,
+                                          decoration: InputDecoration(
+                                            isDense: true,
+                                            hintText: '0',
+                                            hintStyle: FlutterFlowTheme.of(context)
+                                                .labelMedium
+                                                .override(
+                                                  fontFamily: 'Andika New Basic',
+                                                  color: FlutterFlowTheme.of(context).primaryText,
+                                                  fontSize: 12.0,
+                                                  letterSpacing: 0.0,
+                                                ),
+                                            suffixText: 'hr',
+                                            suffixStyle: FlutterFlowTheme.of(context)
+                                                .bodySmall
+                                                .override(
+                                                  fontFamily: 'Andika New Basic',
+                                                  color: FlutterFlowTheme.of(context).secondaryText,
+                                                  letterSpacing: 0.0,
+                                                ),
+                                            enabledBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                color: Color(0x00000000),
+                                                width: 1.0,
+                                              ),
+                                              borderRadius: BorderRadius.circular(14.0),
+                                            ),
+                                            focusedBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                color: Color(0x00000000),
+                                                width: 1.0,
+                                              ),
+                                              borderRadius: BorderRadius.circular(14.0),
+                                            ),
+                                            errorBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                color: FlutterFlowTheme.of(context).error,
+                                                width: 1.0,
+                                              ),
+                                              borderRadius: BorderRadius.circular(14.0),
+                                            ),
+                                            focusedErrorBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                color: FlutterFlowTheme.of(context).error,
+                                                width: 1.0,
+                                              ),
+                                              borderRadius: BorderRadius.circular(14.0),
+                                            ),
+                                          ),
+                                          style: FlutterFlowTheme.of(context)
+                                              .bodyMedium
+                                              .override(
+                                                fontFamily: 'Andika New Basic',
+                                                letterSpacing: 0.0,
+                                              ),
+                                          keyboardType: TextInputType.number,
+                                          cursorColor: FlutterFlowTheme.of(context).primaryText,
+                                          validator: _model.prepTimeHoursValidator.asValidator(context),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(width: 8.0),
+                                    Expanded(
+                                      child: Container(
+                                        height: 45.0,
+                                        decoration: BoxDecoration(
+                                          color: FlutterFlowTheme.of(context).prim30,
+                                          borderRadius: BorderRadius.circular(14.0),
+                                          border: Border.all(
+                                            color: Color(0xFFCBE3E0),
+                                            width: 1.0,
+                                          ),
+                                        ),
+                                        child: TextFormField(
+                                          controller: _model.prepTimeMinutesController,
+                                          focusNode: _model.prepTimeMinutesFocusNode,
+                                          autofocus: false,
+                                          obscureText: false,
+                                          decoration: InputDecoration(
+                                            isDense: true,
+                                            hintText: '0',
+                                            hintStyle: FlutterFlowTheme.of(context)
+                                                .labelMedium
+                                                .override(
+                                                  fontFamily: 'Andika New Basic',
+                                                  color: FlutterFlowTheme.of(context).primaryText,
+                                                  fontSize: 12.0,
+                                                  letterSpacing: 0.0,
+                                                ),
+                                            suffixText: 'min',
+                                            suffixStyle: FlutterFlowTheme.of(context)
+                                                .bodySmall
+                                                .override(
+                                                  fontFamily: 'Andika New Basic',
+                                                  color: FlutterFlowTheme.of(context).secondaryText,
+                                                  letterSpacing: 0.0,
+                                                ),
+                                            enabledBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                color: Color(0x00000000),
+                                                width: 1.0,
+                                              ),
+                                              borderRadius: BorderRadius.circular(14.0),
+                                            ),
+                                            focusedBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                color: Color(0x00000000),
+                                                width: 1.0,
+                                              ),
+                                              borderRadius: BorderRadius.circular(14.0),
+                                            ),
+                                            errorBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                color: FlutterFlowTheme.of(context).error,
+                                                width: 1.0,
+                                              ),
+                                              borderRadius: BorderRadius.circular(14.0),
+                                            ),
+                                            focusedErrorBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                color: FlutterFlowTheme.of(context).error,
+                                                width: 1.0,
+                                              ),
+                                              borderRadius: BorderRadius.circular(14.0),
+                                            ),
+                                          ),
+                                          style: FlutterFlowTheme.of(context)
+                                              .bodyMedium
+                                              .override(
+                                                fontFamily: 'Andika New Basic',
+                                                letterSpacing: 0.0,
+                                              ),
+                                          keyboardType: TextInputType.number,
+                                          cursorColor: FlutterFlowTheme.of(context).primaryText,
+                                          validator: _model.prepTimeMinutesValidator.asValidator(context),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ),
-                              child: Container(
-                                width: 200.0,
-                                child: TextFormField(
-                                  controller: _model.textController4,
-                                  focusNode: _model.textFieldFocusNode4,
-                                  autofocus: false,
-                                  obscureText: false,
-                                  decoration: InputDecoration(
-                                    isDense: true,
-                                    labelStyle: FlutterFlowTheme.of(context)
-                                        .labelMedium
-                                        .override(
-                                          fontFamily: 'Andika New Basic',
-                                          letterSpacing: 0.0,
-                                        ),
-                                    hintText: 'Prep time (min)',
-                                    hintStyle: FlutterFlowTheme.of(context)
-                                        .labelMedium
-                                        .override(
-                                          fontFamily: 'Andika New Basic',
-                                          color: FlutterFlowTheme.of(context)
-                                              .primaryText,
-                                          fontSize: 12.0,
-                                          letterSpacing: 0.0,
-                                        ),
-                                    suffixText: 'min',
-                                    suffixStyle: FlutterFlowTheme.of(context)
-                                        .bodySmall
-                                        .override(
-                                          fontFamily: 'Andika New Basic',
-                                          color: FlutterFlowTheme.of(context).secondaryText,
-                                          letterSpacing: 0.0,
-                                        ),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: Color(0x00000000),
-                                        width: 1.0,
-                                      ),
-                                      borderRadius: BorderRadius.circular(14.0),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: Color(0x00000000),
-                                        width: 1.0,
-                                      ),
-                                      borderRadius: BorderRadius.circular(14.0),
-                                    ),
-                                    errorBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color:
-                                            FlutterFlowTheme.of(context).error,
-                                        width: 1.0,
-                                      ),
-                                      borderRadius: BorderRadius.circular(14.0),
-                                    ),
-                                    focusedErrorBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color:
-                                            FlutterFlowTheme.of(context).error,
-                                        width: 1.0,
-                                      ),
-                                      borderRadius: BorderRadius.circular(14.0),
-                                    ),
-                                  ),
-                                  style: FlutterFlowTheme.of(context)
-                                      .bodyMedium
-                                      .override(
-                                        fontFamily: 'Andika New Basic',
-                                        letterSpacing: 0.0,
-                                      ),
-                                  keyboardType: TextInputType.number,
-                                  cursorColor:
-                                      FlutterFlowTheme.of(context).primaryText,
-                                  enableInteractiveSelection: true,
-                                  validator: _model.textController4Validator
-                                      .asValidator(context),
-                                ),
-                              ),
-                            ),
                               ],
                             ),
                           ),
@@ -2234,12 +2411,16 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                               mealTyp: mealTypValue,
                                               userRef: currentUserReference,
                                               isCurated: false,
-                                              prepareTime: double.tryParse(
-                                                  _model
-                                                      .textController4.text),
-                                              cookingTime: double.tryParse(
-                                                  _model
-                                                      .textController3.text),
+                                              prepareTime: () {
+                                                final hours = int.tryParse(_model.prepTimeHoursController.text) ?? 0;
+                                                final minutes = int.tryParse(_model.prepTimeMinutesController.text) ?? 0;
+                                                return (hours * 60 + minutes).toDouble();
+                                              }(),
+                                              cookingTime: () {
+                                                final hours = int.tryParse(_model.cookTimeHoursController.text) ?? 0;
+                                                final minutes = int.tryParse(_model.cookTimeMinutesController.text) ?? 0;
+                                                return (hours * 60 + minutes).toDouble();
+                                              }(),
                                             ),
                                             ...mapToFirestore(
                                               {

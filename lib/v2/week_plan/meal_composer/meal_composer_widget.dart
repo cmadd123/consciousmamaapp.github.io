@@ -1670,7 +1670,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
                       child: OutlinedButton.icon(
                         onPressed: _showSaveAsMealDialog,
                         icon: Icon(Icons.bookmark_add_outlined, size: 18.0),
-                        label: Text('Saved Days', style: TextStyle(fontSize: 12.0)),
+                        label: Text('Meal Templates', style: TextStyle(fontSize: 12.0)),
                         style: OutlinedButton.styleFrom(
                           foregroundColor: theme.primary,
                           side: BorderSide(color: theme.primary),
@@ -1705,7 +1705,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
                       icon: Icon(Icons.bookmark_add_outlined, size: 18.0),
                       label: _isSaving
                           ? SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                          : Text('Save Saved Day'),
+                          : Text('Save Meal Template'),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: theme.primary,
                         foregroundColor: Colors.white,
@@ -1721,7 +1721,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
                       child: OutlinedButton.icon(
                         onPressed: _showSaveAsMealDialog,
                         icon: Icon(Icons.bookmark_add_outlined, size: 18.0),
-                        label: Text('Saved Days', style: TextStyle(fontSize: 12.0)),
+                        label: Text('Meal Templates', style: TextStyle(fontSize: 12.0)),
                         style: OutlinedButton.styleFrom(
                           foregroundColor: theme.primary,
                           side: BorderSide(color: theme.primary),
@@ -1874,9 +1874,13 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
   void _showMealComboPicker() async {
     final theme = FlutterFlowTheme.of(context);
 
-    final combos = await queryMealComboRecordOnce(
+    final allCombos = await queryMealComboRecordOnce(
       queryBuilder: (q) => q.where('user_ref', isEqualTo: currentUserReference),
     );
+
+    // Filter out day templates (those saved via "Save" button on calendar days)
+    // Only show standalone meal templates that were explicitly saved as reusable templates
+    final combos = allCombos.where((t) => !t.hasDayTemplateGroup()).toList();
 
     if (!mounted) return;
 
@@ -1916,9 +1920,9 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
                           children: [
                             Icon(Icons.restaurant_menu, size: 48.0, color: Color(0xFFCCCCCC)),
                             SizedBox(height: 12.0),
-                            Text('No saved days yet', style: theme.bodyMedium.override(fontFamily: 'Andika New Basic', color: theme.secondaryText)),
+                            Text('No meal templates yet', style: theme.bodyMedium.override(fontFamily: 'Andika New Basic', color: theme.secondaryText)),
                             SizedBox(height: 4.0),
-                            Text('Build a meal and tap "Saved Days" to save one', style: theme.bodySmall.override(fontFamily: 'Andika New Basic', color: theme.secondaryText)),
+                            Text('Build a meal and tap "Save Meal Template" to save one', style: theme.bodySmall.override(fontFamily: 'Andika New Basic', color: theme.secondaryText)),
                           ],
                         ),
                       )

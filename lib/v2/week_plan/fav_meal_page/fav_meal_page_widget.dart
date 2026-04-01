@@ -222,7 +222,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error adding saved day: ${e.toString()}'),
+            content: Text('Error adding meal template: ${e.toString()}'),
             backgroundColor: Colors.red,
             behavior: SnackBarBehavior.floating,
           ),
@@ -529,7 +529,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error adding saved day'),
+            content: Text('Error adding meal template'),
             backgroundColor: Colors.red,
             behavior: SnackBarBehavior.floating,
           ),
@@ -603,7 +603,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
               // Action buttons
               ListTile(
                 leading: Icon(Icons.edit, color: FlutterFlowTheme.of(context).primary),
-                title: Text('Edit Saved Day'),
+                title: Text('Edit Meal Template'),
                 subtitle: Text('Change entrée, sides, and drink', style: TextStyle(fontSize: 12.0)),
                 onTap: () {
                   Navigator.pop(context);
@@ -612,7 +612,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
               ),
               ListTile(
                 leading: Icon(Icons.edit_note, color: FlutterFlowTheme.of(context).primary),
-                title: Text('Rename Saved Day'),
+                title: Text('Rename Meal Template'),
                 onTap: () {
                   Navigator.pop(context);
                   _renameTemplate(template);
@@ -620,7 +620,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
               ),
               ListTile(
                 leading: Icon(Icons.share, color: FlutterFlowTheme.of(context).primary),
-                title: Text('Share Saved Day'),
+                title: Text('Share Meal Template'),
                 onTap: () {
                   Navigator.pop(context);
                   _shareTemplate(template);
@@ -629,7 +629,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
               Divider(height: 1),
               ListTile(
                 leading: Icon(Icons.delete, color: Colors.red),
-                title: Text('Delete Saved Day', style: TextStyle(color: Colors.red)),
+                title: Text('Delete Meal Template', style: TextStyle(color: Colors.red)),
                 onTap: () {
                   Navigator.pop(context);
                   _deleteTemplate(template);
@@ -675,7 +675,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
       context: context,
       builder: (dialogContext) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.0)),
-        title: Text('Rename Saved Day'),
+        title: Text('Rename Meal Template'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -711,7 +711,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                 if (mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('Saved Day renamed!'),
+                      content: Text('Meal Template renamed!'),
                       backgroundColor: Colors.green,
                       behavior: SnackBarBehavior.floating,
                     ),
@@ -722,7 +722,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                 if (mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('Error renaming saved day'),
+                      content: Text('Error renaming meal template'),
                       backgroundColor: Colors.red,
                       behavior: SnackBarBehavior.floating,
                     ),
@@ -771,7 +771,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                 if (mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('Saved Day deleted'),
+                      content: Text('Meal Template deleted'),
                       backgroundColor: Colors.orange,
                       behavior: SnackBarBehavior.floating,
                     ),
@@ -782,7 +782,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                 if (mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('Error deleting saved day'),
+                      content: Text('Error deleting meal template'),
                       backgroundColor: Colors.red,
                       behavior: SnackBarBehavior.floating,
                     ),
@@ -874,7 +874,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error sharing saved day'),
+            content: Text('Error sharing meal template'),
             backgroundColor: Colors.red,
             behavior: SnackBarBehavior.floating,
           ),
@@ -996,7 +996,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                   _deleteAllMealTemplates();
                 },
                 icon: Icon(Icons.restaurant_menu),
-                label: Text('Delete ALL Saved Days'),
+                label: Text('Delete ALL Meal Templates'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.orange,
                   foregroundColor: Colors.white,
@@ -1257,7 +1257,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                       ],
                                     ),
                                   ),
-                                // My Recipes / Templates / Saved Days tab toggle
+                                // My Recipes / Templates / Meal Templates tab toggle
                                 Padding(
                                   padding: EdgeInsetsDirectional.fromSTEB(
                                       8.0, 12.0, 8.0, 12.0),
@@ -1351,7 +1351,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                                 borderRadius: BorderRadius.circular(8.0),
                                               ),
                                               child: Text(
-                                                'Saved Days',
+                                                'Meal Templates',
                                                 textAlign: TextAlign.center,
                                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                   fontFamily: 'Andika New Basic',
@@ -1422,7 +1422,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                     ),
                                   ),
                                 ),
-                                // Filter chips - grouped by category (show for My Recipes and Templates, not Saved Days)
+                                // Filter chips - grouped by category (show for My Recipes and Templates, not Meal Templates)
                                 if (_model.recipeSourceTab != 'savedDays')
                                 Padding(
                                   padding: EdgeInsetsDirectional.fromSTEB(
@@ -1675,7 +1675,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                       return _buildTemplatesView(context);
                                     }
 
-                                    // Handle saved days tab
+                                    // Handle meal templates tab
                                     if (_model.recipeSourceTab == 'savedDays') {
                                       return _buildSavedDaysView(context);
                                     }
@@ -2429,7 +2429,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
     );
   }
 
-  /// Open the day template builder sheet for editing an existing saved day
+  /// Open the day template builder sheet for editing an existing meal template
   void _showEditDayTemplateSheet(BuildContext context, String groupId, String dayName) {
     showModalBottomSheet(
       context: context,
@@ -2461,7 +2461,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
     );
   }
 
-  /// Apply a saved day's templates to a chosen date in the meal planner
+  /// Apply a meal template's templates to a chosen date in the meal planner
   Future<void> _applyDayTemplateToDate(BuildContext context, List<MealComboRecord> templates, String groupName) async {
     // Get dates from meal planner calendar selector, fall back to next 7 days
     final plannerDates = FFAppState().mealPlanSelectedDates;
@@ -2730,12 +2730,12 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error applying saved day'), backgroundColor: Colors.red),
+        SnackBar(content: Text('Error applying meal template'), backgroundColor: Colors.red),
       );
     }
   }
 
-  /// Build the Saved Days view — groups day templates by their shared group ID
+  /// Build the Meal Templates view — groups day templates by their shared group ID
   Widget _buildSavedDaysView(BuildContext context) {
     // Filter templates that have a day_template_group
     final dayTemplates = _model.mealTemplates
@@ -2764,7 +2764,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
             ),
             const SizedBox(height: 16.0),
             Text(
-              'No Saved Days Yet',
+              'No Meal Templates Yet',
               style: FlutterFlowTheme.of(context).bodyMedium.override(
                     fontFamily: 'Andika New Basic',
                     fontSize: 18.0,
@@ -2830,7 +2830,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
           final templates = entry.value;
           final groupName = templates.first.dayTemplateName.isNotEmpty
               ? templates.first.dayTemplateName
-              : 'Saved Day';
+              : 'Meal Template';
           final createdDate = templates.first.createdTime;
 
           return Padding(
@@ -3117,7 +3117,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                           ),
                         ),
                         SizedBox(width: 8.0),
-                        // Share saved day button
+                        // Share meal template button
                         InkWell(
                           onTap: () async {
                             // Gather all meal refs from the templates
@@ -3161,7 +3161,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                           ),
                         ),
                         SizedBox(width: 8.0),
-                        // Edit saved day button
+                        // Edit meal template button
                         InkWell(
                           onTap: () => _showEditDayTemplateSheet(context, entry.key, groupName),
                           borderRadius: BorderRadius.circular(8.0),
@@ -3175,7 +3175,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                           ),
                         ),
                         SizedBox(width: 8.0),
-                        // Delete saved day button
+                        // Delete meal template button
                         InkWell(
                           onTap: () async {
                             final confirm = await showDialog<bool>(
@@ -3183,7 +3183,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                               builder: (ctx) => AlertDialog(
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
                                 title: Text('Delete "$groupName"?'),
-                                content: Text('This will delete all ${templates.length} templates in this saved day.'),
+                                content: Text('This will delete all ${templates.length} templates in this meal template.'),
                                 actions: [
                                   TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text('Cancel')),
                                   TextButton(
@@ -3225,7 +3225,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
 
   /// Build the Meal Templates view
   Widget _buildTemplatesView(BuildContext context) {
-    // Exclude day templates — those show in the Saved Days tab
+    // Exclude day templates — those show in the Meal Templates tab
     final regularTemplates = _model.mealTemplates
         .where((t) => !t.hasDayTemplateGroup())
         .toList();
@@ -4051,7 +4051,7 @@ class _TemplateDetailsSheet extends StatelessWidget {
                       ListTile(
                         dense: true,
                         leading: Icon(Icons.edit, color: FlutterFlowTheme.of(context).primary, size: 20.0),
-                        title: Text('Edit Saved Day', style: TextStyle(fontSize: 14.0)),
+                        title: Text('Edit Meal Template', style: TextStyle(fontSize: 14.0)),
                         onTap: onEdit,
                       ),
                     if (onRename != null)
