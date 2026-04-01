@@ -9,6 +9,15 @@ class ShareViewController: SLComposeServiceViewController {
     private let sharedKey = "SharedData"
     private let urlScheme = "SharingMedia-com.momrise.app"
 
+    override func presentationAnimationDidFinish() {
+        super.presentationAnimationDidFinish()
+
+        // Set light background to avoid dark overlay appearance
+        if let presentationController = presentationController {
+            presentationController.containerView?.backgroundColor = .clear
+        }
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -19,6 +28,17 @@ class ShareViewController: SLComposeServiceViewController {
         if let textView = textView {
             textView.isEditable = false
             textView.textColor = .secondaryLabel
+        }
+
+        // Make the view controller background lighter
+        if let navController = navigationController {
+            navController.view.backgroundColor = .systemBackground
+        }
+        view.backgroundColor = .systemBackground
+
+        // Auto-submit after a brief moment to allow UI to appear
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+            self?.didSelectPost()
         }
     }
 
