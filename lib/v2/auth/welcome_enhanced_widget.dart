@@ -112,7 +112,7 @@ class _WelcomeEnhancedWidgetState extends State<WelcomeEnhancedWidget>
 
                       // Tagline
                       Text(
-                        'rising above the chaos',
+                        'Mom life, simplified',
                         style: FlutterFlowTheme.of(context)
                             .bodyLarge
                             .override(
@@ -127,11 +127,11 @@ class _WelcomeEnhancedWidgetState extends State<WelcomeEnhancedWidget>
 
                       const SizedBox(height: 48),
 
-                      // Main message - Beautiful chaos copy
+                      // Main message
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 24.0),
                         child: Text(
-                          'Motherhood is beautiful chaos.\nWe\'ll handle the chaos,\nso you can focus on the beautiful.',
+                          'Helping you rise above the chaos and bring order to your home',
                           textAlign: TextAlign.center,
                           style: FlutterFlowTheme.of(context)
                               .headlineSmall
