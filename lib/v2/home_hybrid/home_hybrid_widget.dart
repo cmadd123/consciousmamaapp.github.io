@@ -2084,7 +2084,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                     ),
                     const SizedBox(width: 8.0),
                     Text(
-                      'Skills & Hobbies',
+                      'Skill Paths',
                       style: FlutterFlowTheme.of(context).bodyLarge.override(
                         fontFamily: 'Andika New Basic',
                         color: const Color(0xFF5D4E60),
@@ -2141,20 +2141,19 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                   const SizedBox(height: 12.0),
                   Row(
                     children: [
-                      Icon(
-                        Icons.add_circle_outline,
-                        color: const Color(0xFF9B8A9E),
-                        size: 20.0,
-                      ),
-                      const SizedBox(width: 8.0),
                       Text(
-                        'Create your first skill path',
+                        'Create a Skill Path',
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
                           fontFamily: 'Andika New Basic',
                           color: const Color(0xFF9B8A9E),
                           fontSize: 14.0,
-                          fontStyle: FontStyle.italic,
                         ),
+                      ),
+                      const Spacer(),
+                      Icon(
+                        Icons.add_circle_outline,
+                        color: const Color(0xFF9B8A9E),
+                        size: 20.0,
                       ),
                     ],
                   ),

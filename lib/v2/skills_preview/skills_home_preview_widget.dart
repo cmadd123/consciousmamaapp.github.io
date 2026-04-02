@@ -2,6 +2,7 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/backend/backend.dart';
 import '/auth/firebase_auth/auth_util.dart';
+import '/components/home_nav_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'skill_preview_data.dart';
@@ -52,6 +53,7 @@ class _SkillsHomePreviewWidgetState extends State<SkillsHomePreviewWidget> {
                 return _buildContent(context, skillPaths);
               },
             ),
+      bottomNavigationBar: const HomeNavBarWidget(currentPage: HomeNavPage.home),
     );
   }
 
@@ -120,7 +122,7 @@ class _SkillsHomePreviewWidgetState extends State<SkillsHomePreviewWidget> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Skills & Hobbies',
+                    'Skill Paths',
                     style: TextStyle(
                       fontFamily: 'Andika New Basic',
                       color: Color(0xFF5D4E60),

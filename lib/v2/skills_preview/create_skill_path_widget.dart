@@ -164,7 +164,15 @@ class _CreateSkillPathWidgetState extends State<CreateSkillPathWidget> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Color(0xFF5D4E60)),
-          onPressed: () => _previousStep(),
+          onPressed: () {
+            // If on skill selection page, go back to skills home
+            if (_model.selectedSkill == null) {
+              context.pop();
+            } else {
+              // Otherwise, go to previous step in creation flow
+              _previousStep();
+            }
+          },
         ),
         title: Text(
           _model.selectedSkill == null
