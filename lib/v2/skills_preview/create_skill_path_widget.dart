@@ -575,12 +575,177 @@ class _CreateSkillPathWidgetState extends State<CreateSkillPathWidget> {
 
   Widget _buildComboInputs(Map<String, dynamic> step) {
     final fields = step['fields'] as List;
+    final stepKey = 'step_${step['step_number']}';
 
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: fields.map((field) {
         final fieldMap = field as Map<String, dynamic>;
-        // TODO: Implement combo field rendering (slider, text input, etc.)
-        return Text('Combo field: ${fieldMap['field_name']}');
+        final fieldName = fieldMap['field_name'] as String;
+        final label = fieldMap['label'] as String;
+        final type = fieldMap['type'] as String;
+        final fullFieldKey = '${stepKey}_$fieldName';
+
+        if (type == 'slider') {
+          final min = (fieldMap['min'] as num).toDouble();
+          final max = (fieldMap['max'] as num).toDouble();
+          final stepValue = (fieldMap['step'] as num).toDouble();
+          final unit = fieldMap['unit'] as String? ?? '';
+          final defaultValue = (fieldMap['default'] as num?)?.toDouble() ?? min;
+          final currentValue = (_model.userChoices[fullFieldKey] as num?)?.toDouble() ?? defaultValue;
+
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 24.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: const TextStyle(
+                    fontFamily: 'Andika New Basic',
+                    color: Color(0xFF5D4E60),
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 8.0),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Slider(
+                        value: currentValue,
+                        min: min,
+                        max: max,
+                        divisions: ((max - min) / stepValue).round(),
+                        activeColor: const Color(0xFF6EC6CA),
+                        inactiveColor: const Color(0xFFE0E0E0),
+                        onChanged: (value) {
+                          setState(() {
+                            _model.userChoices[fullFieldKey] = value;
+                          });
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 12.0),
+                    Container(
+                      width: 80,
+                      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF6EC6CA).withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(8.0),
+                        border: Border.all(
+                          color: const Color(0xFF6EC6CA),
+                          width: 1.0,
+                        ),
+                      ),
+                      child: Text(
+                        '${currentValue.round()} $unit',
+                        style: const TextStyle(
+                          fontFamily: 'Andika New Basic',
+                          color: Color(0xFF5D4E60),
+                          fontSize: 14.0,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          );
+        } else if (type == 'single_choice') {
+          final options = fieldMap['options'] as List;
+          final currentChoice = _model.userChoices[fullFieldKey] as String?;
+
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 24.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: const TextStyle(
+                    fontFamily: 'Andika New Basic',
+                    color: Color(0xFF5D4E60),
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 12.0),
+                ...options.map((option) {
+                  final optionMap = option as Map<String, dynamic>;
+                  final optionLabel = optionMap['label'] as String;
+                  final optionDesc = optionMap['description'] as String;
+                  final isSelected = currentChoice == optionLabel;
+
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: InkWell(
+                      onTap: () {
+                        setState(() {
+                          _model.userChoices[fullFieldKey] = optionLabel;
+                        });
+                      },
+                      borderRadius: BorderRadius.circular(12.0),
+                      child: Container(
+                        padding: const EdgeInsets.all(12.0),
+                        decoration: BoxDecoration(
+                          color: isSelected ? const Color(0xFF6EC6CA).withValues(alpha: 0.1) : Colors.white,
+                          border: Border.all(
+                            color: isSelected ? const Color(0xFF6EC6CA) : const Color(0xFFE0E0E0),
+                            width: isSelected ? 2.0 : 1.0,
+                          ),
+                          borderRadius: BorderRadius.circular(12.0),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              isSelected ? Icons.radio_button_checked : Icons.radio_button_unchecked,
+                              color: isSelected ? const Color(0xFF6EC6CA) : const Color(0xFF9B8A9E),
+                              size: 20.0,
+                            ),
+                            const SizedBox(width: 12.0),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    optionLabel,
+                                    style: TextStyle(
+                                      fontFamily: 'Andika New Basic',
+                                      color: const Color(0xFF5D4E60),
+                                      fontSize: 14.0,
+                                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 2.0),
+                                  Text(
+                                    optionDesc,
+                                    style: const TextStyle(
+                                      fontFamily: 'Andika New Basic',
+                                      color: Color(0xFF9B8A9E),
+                                      fontSize: 12.0,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ],
+            ),
+          );
+        } else {
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 12.0),
+            child: Text('Unsupported combo field type: $type'),
+          );
+        }
       }).toList(),
     );
   }
@@ -630,9 +795,31 @@ class _CreateSkillPathWidgetState extends State<CreateSkillPathWidget> {
     } else if (inputType == 'multiple_choice') {
       final selected = _model.userChoices[stepKey] as List<String>?;
       return selected != null && selected.isNotEmpty;
+    } else if (inputType == 'combo') {
+      // Validate all combo fields are filled
+      final fields = currentStep['fields'] as List;
+      for (final field in fields) {
+        final fieldMap = field as Map<String, dynamic>;
+        final fieldName = fieldMap['field_name'] as String;
+        final fieldType = fieldMap['type'] as String;
+        final fullFieldKey = '${stepKey}_$fieldName';
+
+        // Sliders auto-populate with default, so always valid
+        if (fieldType == 'slider') {
+          continue;
+        }
+
+        // Single choice within combo must be selected
+        if (fieldType == 'single_choice') {
+          if (!_model.userChoices.containsKey(fullFieldKey)) {
+            return false;
+          }
+        }
+      }
+      return true;
     }
 
-    // For combo and other types, allow proceeding for now
+    // For other types, allow proceeding
     return true;
   }
 }
