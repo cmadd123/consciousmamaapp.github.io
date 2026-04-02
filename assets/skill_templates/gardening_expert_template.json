@@ -1,0 +1,338 @@
+{
+  "skill_name": "Gardening",
+  "skill_icon": "🌱",
+  "description": "Master fundamental gardening skills and grow your own food. This curriculum blends teaching approaches from Charles Dowding (no-dig methods), Rodale Institute (organic practices), and Square Foot Gardening's Mel Bartholomew (intensive small-space growing).",
+  "total_milestones": 15,
+  "milestones": [
+    {
+      "milestone_number": 1,
+      "title": "Understanding Your Growing Space",
+      "description": "Learn to assess your garden site using principles from permaculture experts and university extension services.",
+      "sub_steps": [
+        {
+          "step_number": 1,
+          "title": "Observe Sunlight Patterns",
+          "content": "Successful gardening starts with understanding light. Track your space throughout one full day: note where sun hits at 9am, noon, 3pm, and 6pm. Full sun = 6+ hours direct light (best for tomatoes, peppers, squash). Partial sun = 3-6 hours (good for lettuce, herbs, root vegetables). Shade = under 3 hours (challenging for vegetables). Use your phone to take photos at each time—patterns become obvious. South-facing spaces get the most sun in northern hemisphere. Rodale Institute teaches that light is the #1 factor determining what will thrive."
+        },
+        {
+          "step_number": 2,
+          "title": "Test Your Soil",
+          "content": "Healthy soil grows healthy plants. Grab a handful: if it forms a ball that crumbles when poked, texture is good. Too sandy = falls apart immediately (drains too fast). Too clay-heavy = stays in a hard ball (drains too slowly). For pH and nutrients, get a soil test from your local extension office ($10-20, incredibly valuable). Most vegetables prefer pH 6.0-7.0. Charles Dowding emphasizes soil testing before adding amendments—you might waste money 'fixing' soil that's already balanced."
+        },
+        {
+          "step_number": 3,
+          "title": "Plan Your First Garden Size",
+          "content": "Mel Bartholomew's Square Foot Gardening revolutionized beginners by teaching: start small. A 4x4 foot raised bed (16 square feet) can produce a surprising amount of food and is manageable for a beginner. Traditional row gardens require far more space and weeding. Mark your space with stakes and string before building anything. Consider: water access (you'll water 2-3 times weekly in summer), proximity to house (closer = more likely to maintain), and existing trees (roots compete for water and nutrients within 3-6 feet)."
+        }
+      ]
+    },
+    {
+      "milestone_number": 2,
+      "title": "Building Healthy Soil",
+      "description": "Master soil improvement using Charles Dowding's no-dig method and organic principles from Rodale Institute.",
+      "sub_steps": [
+        {
+          "step_number": 4,
+          "title": "Understand the No-Dig Philosophy",
+          "content": "Charles Dowding proves through 40 years of trials: don't till or dig your soil. Tilling destroys soil structure, kills beneficial organisms, and brings weed seeds to the surface. Instead, build soil by layering organic matter on top (sheet mulching). Nature doesn't till—forests create soil through falling leaves. Your garden can work the same way. This method requires patience (takes a season to build great soil) but rewards you with less work long-term. No-dig gardens have fewer weeds, better water retention, and healthier plants."
+        },
+        {
+          "step_number": 5,
+          "title": "Layer Your First Compost Mulch",
+          "content": "Start with cardboard or thick newspaper layer (smothers existing grass/weeds—wet it first). Then add 4-6 inches of compost or aged manure. That's it. Plant directly into the compost. Over months, cardboard breaks down, worms move in, soil life flourishes. For ongoing feeding, add 1-2 inches of compost yearly—Dowding applies his in fall or spring. Good compost smells earthy, not rotten. Aged manure is at least 6 months old (fresh manure burns plants). Start small: one 4x4 bed requires about 5 cubic feet of compost."
+        },
+        {
+          "step_number": 6,
+          "title": "Learn About Soil Amendments",
+          "content": "Based on your soil test, you may need amendments. Low pH (acidic)? Add lime. High pH (alkaline)? Add sulfur. Low nitrogen? Add blood meal or composted manure. Low phosphorus? Add bone meal. Rodale Institute teaches: organic matter (compost) solves most problems over time. Chemical fertilizers give quick results but don't build soil structure. Organic amendments feed the soil, which feeds the plants. Mix amendments into the top 2-3 inches of your compost layer. Follow package rates precisely—more is not better and can harm plants."
+        }
+      ]
+    },
+    {
+      "milestone_number": 3,
+      "title": "Starting Seeds Indoors",
+      "description": "Master seed starting using techniques from university extension guides and expert growers.",
+      "sub_steps": [
+        {
+          "step_number": 7,
+          "title": "Choose What to Start Indoors",
+          "content": "Some plants need a head start; others prefer direct sowing. Start indoors 6-8 weeks before last frost: tomatoes, peppers, eggplant (long season). Start 4-6 weeks before: herbs, broccoli, cabbage. Direct sow (plant straight in garden): beans, peas, carrots, radishes, squash (hate transplanting or grow too fast). Check your last frost date (search '[your city] last frost date')—this is your planting calendar anchor. Seed packets tell you when to start. Johnny's Seeds and university extensions provide detailed timing charts."
+        },
+        {
+          "step_number": 8,
+          "title": "Set Up Your Seed Starting Station",
+          "content": "You need: seed starting mix (not garden soil—too heavy), containers with drainage holes (yogurt cups work, poke holes in bottom), and strong light. Windowsills are usually insufficient—seedlings stretch and weaken (etiolate). Use grow lights or shop lights (fluorescent or LED) positioned 2-3 inches above seedlings, raised as they grow. Light 14-16 hours daily. Temperature: 65-75°F ideal. Water from below (set containers in a tray of water, let soil wick it up) to prevent damping off disease. Label everything—seedlings look identical for weeks."
+        },
+        {
+          "step_number": 9,
+          "title": "Germinate and Care for Seedlings",
+          "content": "Plant seeds at depth = 2-3 times seed diameter (tiny lettuce seeds barely covered, large bean seeds 1 inch deep). Cover with plastic wrap or dome to retain moisture until germination (remove once sprouts appear). Most seeds germinate in 5-14 days. When seedlings have 2 true leaves (not the first round 'baby' leaves), transplant to larger containers. Fertilize weekly with half-strength liquid fertilizer. Before transplanting outdoors, 'harden off' for 7-10 days: set outside in shade for 2 hours, gradually increasing time and sun exposure. This prevents shock."
+        }
+      ]
+    },
+    {
+      "milestone_number": 4,
+      "title": "Direct Sowing & Transplanting",
+      "description": "Learn proper planting techniques for both seeds and transplants using Square Foot Gardening spacing methods.",
+      "sub_steps": [
+        {
+          "step_number": 10,
+          "title": "Master Direct Sowing Technique",
+          "content": "For crops that prefer direct sowing (carrots, radishes, beans, peas): prepare soil by raking smooth, create shallow furrow at proper depth (seed packet specifies), space seeds according to packet (usually 1-2 inches apart initially), cover lightly with soil, water gently with fine spray (strong stream displaces seeds). Mark rows with labels. Seeds need consistent moisture to germinate—check daily, water lightly if top inch is dry. After germination, thin seedlings to final spacing (hardest part for beginners, but crowding reduces yields). Use thinned greens in salads—nothing is wasted."
+        },
+        {
+          "step_number": 11,
+          "title": "Transplant Without Shocking Plants",
+          "content": "Transplant on a cloudy day or in evening (reduces stress). Water transplants an hour before moving them. Dig hole slightly larger than root ball. Gently remove plant from container (squeeze sides, tap bottom, slide out—never pull by stem). Place in hole at same depth it was growing (exception: tomatoes can be buried deeper, they'll root along the stem). Fill around roots, firm gently, water thoroughly. For the first week, shade transplants during hottest part of day if possible. This gentleness helps roots establish quickly."
+        },
+        {
+          "step_number": 12,
+          "title": "Use Square Foot Garden Spacing",
+          "content": "Mel Bartholomew's innovation: divide your 4x4 bed into 16 squares (1 foot each). Plant per square based on size: 1 large plant (tomato, pepper, cabbage), 4 medium (lettuce, chard), 9 small (bush beans, beets), 16 tiny (carrots, radishes). This intensive spacing maximizes production and minimizes weeding (plants shade out weeds). It seems crowded, but works because you're adding compost regularly. Traditional row spacing wastes space—developed for tractor access, not hand gardens. This method produces 5x more food in the same space."
+        }
+      ]
+    },
+    {
+      "milestone_number": 5,
+      "title": "Your First Crop: Salad Greens",
+      "description": "Master the easiest, fastest crop for beginners—perfect for building confidence and enjoying quick harvests.",
+      "sub_steps": [
+        {
+          "step_number": 13,
+          "title": "Choose and Plant Salad Mix",
+          "content": "Buy a mesclun or salad mix blend (contains 5-10 lettuce and green varieties). These germinate in 4-7 days and are ready to harvest in 21-30 days. Sow in early spring (4 weeks before last frost) or late summer for fall harvest—lettuce bolts (goes to seed) in heat. Scatter seeds thinly over a 1-foot square section, cover lightly, water gently. Or sow in rows 2 inches apart. Germination needs consistent moisture and temperatures above 40°F. This is the most forgiving crop—nearly impossible to kill."
+        },
+        {
+          "step_number": 14,
+          "title": "Maintain and Thin Your Greens",
+          "content": "Keep soil moist but not waterlogged—lettuce is 95% water, so irregular watering causes bitterness. When seedlings are 2 inches tall, thin to 4 inches apart (eat the thinnings). For ongoing harvest, plant a new square every 2 weeks (succession planting)—you'll have salad continuously. Watch for pests: slugs (handpick at night, use beer traps) and aphids (spray with water). Lettuce grows fast in cool weather (spring and fall) and tolerates light frost. If leaves taste bitter, plants are stressed (usually heat or drought)."
+        },
+        {
+          "step_number": 15,
+          "title": "Harvest Cut-and-Come-Again Style",
+          "content": "The sustainable harvest method: when plants are 4-6 inches tall, cut outer leaves with scissors, leaving the center growing point intact. The plant keeps producing new leaves for weeks. Or harvest whole heads by cutting at soil level. Morning harvest has crispest leaves. Rinse immediately in cold water, spin dry, store in fridge with a damp paper towel. Homegrown lettuce is incomparably better than store-bought—you'll taste the difference immediately. This first success builds confidence for tackling longer-season crops."
+        }
+      ]
+    },
+    {
+      "milestone_number": 6,
+      "title": "Watering Wisdom",
+      "description": "Master efficient watering techniques using principles from xeriscaping experts and university research.",
+      "sub_steps": [
+        {
+          "step_number": 16,
+          "title": "Understand When and How Much to Water",
+          "content": "The amateur gardener waters a little every day; the experienced gardener waters deeply and less frequently. Why? Deep watering encourages deep root growth (drought-resistant plants). Shallow watering creates shallow roots (plants dependent on you). General rule: 1 inch of water weekly (including rain). Use the finger test: stick your finger 2 inches into soil—if dry, water. Or use the screwdriver test: push a screwdriver into soil—if it penetrates easily 6 inches, moisture is adequate. Morning watering is best (less evaporation, foliage dries quickly, fewer diseases)."
+        },
+        {
+          "step_number": 17,
+          "title": "Learn Efficient Watering Methods",
+          "content": "Sprinklers waste 30-50% of water to evaporation and runoff. Better: soaker hoses (lay along plant rows, water seeps slowly into root zones) or drip irrigation (delivers water directly to each plant). Simplest: hand water with a wand or watering can at soil level (not overhead—wet foliage invites disease). Mulch around plants (straw, shredded leaves, grass clippings) conserves moisture dramatically—university studies show 50-70% reduction in watering needs. A 2-3 inch mulch layer also suppresses weeds and moderates soil temperature."
+        },
+        {
+          "step_number": 18,
+          "title": "Recognize Water Stress and Overwatering",
+          "content": "Underwatered plants: wilted leaves, dry soil, slow growth, leaf edges brown and crispy. Overwatered plants: wilted leaves (yes, same symptom!), soggy soil, yellowing leaves, root rot smell. Check soil before deciding. Most beginners overwater. Tomatoes and peppers prefer slightly dry soil between waterings (deeper roots, better flavor). Lettuce and cucumbers need consistent moisture (shallow roots, water-filled tissues). Container plants dry faster than ground beds. Adjust your watering based on weather—a week of rain means no watering needed; a heat wave means daily checks."
+        }
+      ]
+    },
+    {
+      "milestone_number": 7,
+      "title": "Feeding Your Plants",
+      "description": "Learn organic fertilization methods from Rodale Institute and sustainable agriculture experts.",
+      "sub_steps": [
+        {
+          "step_number": 19,
+          "title": "Understand N-P-K and Plant Nutrition",
+          "content": "Fertilizer labels show three numbers (e.g., 5-10-5): Nitrogen-Phosphorus-Potassium (N-P-K). Nitrogen promotes leafy growth (green color, lush foliage)—crucial for lettuce, spinach, herbs. Phosphorus promotes root development and flowering (essential for tomatoes, peppers, fruit production). Potassium promotes overall plant health, disease resistance, and flavor. Balanced fertilizer (10-10-10) works for most vegetables. Specialty fertilizers: tomato fertilizer is higher in P and K (5-10-10), lawn fertilizer is high in N (20-5-5—don't use on vegetables or you'll get all leaves, no fruit)."
+        },
+        {
+          "step_number": 20,
+          "title": "Master Compost Tea and Organic Feeding",
+          "content": "Rodale Institute method for quick organic fertilizer: fill a 5-gallon bucket with water, add 2-3 cups finished compost in a mesh bag or old pillowcase, steep 3-5 days (stir daily), dilute to light tea color, water plants at base. This provides gentle, slow-release nutrition. Alternatives: fish emulsion (strong smell but fast-acting, use 1 tablespoon per gallon weekly), liquid kelp (trace minerals, every 2 weeks), or granular organic fertilizer scratched into soil surface monthly. Organic fertilizers feed soil organisms, which then feed plants—slower but more sustainable than synthetic."
+        },
+        {
+          "step_number": 21,
+          "title": "Recognize Nutrient Deficiencies",
+          "content": "Nitrogen deficiency: older leaves yellow, plant stunted, pale green overall—add compost or fish emulsion. Phosphorus deficiency: purple-tinged leaves, poor flowering/fruiting—add bone meal. Potassium deficiency: brown leaf edges, weak stems—add wood ash or kelp. Calcium deficiency: blossom end rot on tomatoes/peppers (dark sunken spots on fruit bottoms)—add crushed eggshells or lime. Most deficiencies are prevented by starting with good compost-rich soil and adding organic fertilizer monthly. Soil pH affects nutrient availability—if you're fertilizing but still see deficiencies, retest pH."
+        }
+      ]
+    },
+    {
+      "milestone_number": 8,
+      "title": "Pest and Disease Basics",
+      "description": "Learn integrated pest management (IPM) using organic methods from Rodale Institute and extension services.",
+      "sub_steps": [
+        {
+          "step_number": 22,
+          "title": "Practice Prevention First",
+          "content": "Healthy plants resist pests and diseases better than stressed plants. Prevention strategies: proper spacing (air circulation prevents fungal diseases), crop rotation (don't plant same family in same spot annually—breaks disease cycles), remove diseased leaves immediately (prevents spread), water at soil level (wet foliage invites fungi), attract beneficial insects with flowers (marigolds, alyssum, yarrow). Rodale Institute finds that prevention eliminates 70% of pest/disease problems. Observation is key: walk your garden daily, catch problems early when easier to manage."
+        },
+        {
+          "step_number": 23,
+          "title": "Identify and Address Common Pests",
+          "content": "Aphids (tiny soft-bodied insects clustering on new growth): blast with water, spray with diluted dish soap (1 teaspoon per quart water). Cabbage worms (green caterpillars on brassicas): handpick, use Bt spray (organic bacteria that kills only caterpillars). Slugs (holes in leaves, slime trails): handpick at night, use beer traps, sprinkle diatomaceous earth around plants. Tomato hornworms (huge green caterpillars): handpick (wear gloves, they're startling but harmless). Most pests can be managed by manual removal in small gardens—don't rush to spray. Learn to recognize beneficial insects: ladybugs, lacewings, and parasitic wasps are your allies."
+        },
+        {
+          "step_number": 24,
+          "title": "Manage Diseases Organically",
+          "content": "Powdery mildew (white powder on leaves): improve air circulation, prune overcrowded growth, spray with 1 part milk to 9 parts water (changes leaf pH). Blight (brown spots, wilting): remove affected plants immediately (don't compost—burn or trash), rotate crops next year. Damping off (seedlings fall over and die): use sterile seed-starting mix, don't overwater, provide air circulation. Fungal diseases thrive in damp, stagnant air. Water in morning so foliage dries by evening. Copper or sulfur fungicides are organic options for serious outbreaks, but prevention through good practices is always superior."
+        }
+      ]
+    },
+    {
+      "milestone_number": 9,
+      "title": "Your Second Crop: Tomatoes",
+      "description": "Master the most popular garden vegetable using techniques from university trials and experienced growers.",
+      "sub_steps": [
+        {
+          "step_number": 25,
+          "title": "Choose and Plant Tomato Transplants",
+          "content": "Determinate varieties (bush types, set all fruit at once, 4-5 feet tall—good for paste/canning). Indeterminate varieties (vine types, produce until frost, 6-8+ feet tall—good for slicing/salads). For first-timers, try a reliable variety like 'Early Girl' or 'Celebrity' (disease-resistant, heavy producing). Plant after all frost danger has passed and soil is 60°F+. Bury stem deep—up to first true leaves (roots form along buried stem, creating stronger plant). Space 24-36 inches apart. Stake or cage immediately (supporting later damages roots). Water deeply at planting."
+        },
+        {
+          "step_number": 26,
+          "title": "Support, Prune, and Maintain",
+          "content": "Indeterminate tomatoes need strong support: 6-foot stakes or large cages. Tie stems loosely with cloth strips as they grow (twine cuts into stems). Prune 'suckers'—shoots that grow between main stem and branches. Pinch these out when small (2-3 inches). Why? Suckers become unproductive branches that crowd the plant. Determinate varieties don't need pruning. Mulch around plants heavily (straw or grass clippings) to conserve moisture and prevent soil-borne disease splash. Tomatoes are heavy feeders: fertilize every 2-3 weeks with balanced organic fertilizer or compost tea."
+        },
+        {
+          "step_number": 27,
+          "title": "Harvest at Peak Ripeness",
+          "content": "Tomatoes are ripe when fully colored and slightly soft to gentle pressure. They'll continue ripening after picking if mostly colored. For best flavor, leave on vine until fully ripe—supermarket tomatoes are picked green, which is why yours will taste 10x better. Harvest regularly: leaving overripe fruit on the plant signals it to stop producing. Store at room temperature, never refrigerate (cold destroys flavor compounds). At season's end before frost, pick all green tomatoes: ripen on a windowsill or make fried green tomatoes. Your first homegrown tomato is a revelation—you'll never stop gardening after this."
+        }
+      ]
+    },
+    {
+      "milestone_number": 10,
+      "title": "Succession Planting & Season Extension",
+      "description": "Maximize harvests by planting in waves and extending your growing season using techniques from intensive market gardeners.",
+      "sub_steps": [
+        {
+          "step_number": 28,
+          "title": "Master Succession Planting",
+          "content": "Instead of planting all lettuce at once (which produces a glut, then nothing), plant a small amount every 2 weeks. Same for beans, carrots, radishes, and herbs. This provides continuous harvest rather than feast-or-famine. Market gardeners use this method to supply restaurants weekly. Keep notes: 'Planted lettuce April 1, April 15, April 29—perfect supply.' Some crops (tomatoes, peppers) produce all summer from one planting; others (lettuce, cilantro) need succession. Plan your spring garden with succession in mind: reserve a square for each biweekly planting."
+        },
+        {
+          "step_number": 29,
+          "title": "Extend Spring Season with Cold Frames",
+          "content": "A cold frame is a bottomless box with a transparent lid (glass or plastic) that captures solar heat. Place over garden bed: grow lettuce, spinach, kale 4-6 weeks earlier in spring and later in fall. Temperatures inside can be 10-20°F warmer than outside. Prop open on warm days (over 60°F) to prevent overheating. Build simple version: bale of straw on three sides, old window on top. Or buy lightweight plastic cloches. Eliot Coleman (four-season gardening expert) uses this method to harvest greens year-round in Maine. Even a simple floating row cover (lightweight fabric) extends season 2-3 weeks."
+        },
+        {
+          "step_number": 30,
+          "title": "Plan Fall and Winter Gardens",
+          "content": "Many crops prefer cool weather and taste better after frost: kale, collards, Brussels sprouts, carrots, beets, turnips. Plant these in mid-summer (6-10 weeks before first fall frost—check your local date). They mature in fall and, in mild climates, overwinter for spring harvest. Charles Dowding harvests kale and chard all winter in England. In cold climates, mulch heavily with straw before hard freeze—you can often dig carrots and leeks from under snow. Fall gardening has fewer pests (less insect pressure) and less watering needed (cooler temperatures, more rain). Many gardeners prefer fall gardening once they try it."
+        }
+      ]
+    },
+    {
+      "milestone_number": 11,
+      "title": "Companion Planting & Garden Design",
+      "description": "Learn which plants help each other using traditional knowledge and modern permaculture principles.",
+      "sub_steps": [
+        {
+          "step_number": 31,
+          "title": "Understand Companion Planting Benefits",
+          "content": "Some plant combinations benefit each other: tall plants shade heat-sensitive crops (lettuce in tomato shade), strong-smelling herbs confuse pests (basil with tomatoes deters aphids and whiteflies), nitrogen-fixers feed heavy feeders (beans enrich soil for corn), different root depths reduce competition (deep carrots with shallow lettuce). Classic 'Three Sisters': corn (tall support), beans (climb corn, fix nitrogen), squash (sprawls below, shades soil, prickly stems deter raccoons). Native American method used for centuries. Not all companion planting claims are proven, but many are worth trying."
+        },
+        {
+          "step_number": 32,
+          "title": "Learn Problem Combinations",
+          "content": "Some plants compete or inhibit each other: tomatoes and brassicas (both heavy feeders, compete for nutrients), beans and alliums (onions/garlic inhibit bean growth), fennel and most vegetables (fennel chemicals inhibit neighbors—plant it alone), cucumbers and aromatic herbs (cucumber flavor becomes bitter). These effects are subtle in home gardens but worth noting. More important: don't crowd plants (reduces air circulation, increases disease). Leave recommended spacing even if it seems wasteful. The empty space fills quickly as plants mature. Square Foot Gardening spacing prevents most competition issues."
+        },
+        {
+          "step_number": 33,
+          "title": "Design a Polyculture Garden Bed",
+          "content": "Instead of monoculture rows (traditional farming), mix crops in one bed: center with tomatoes (tall), surround with basil (aromatic pest deterrent), edge with marigolds (attract beneficial insects), underplant with lettuce early season (harvested before tomatoes shade them). This diversity attracts beneficial insects, confuses pests, and maximizes space. Permaculture teaches: diversity equals resilience. If one crop fails, others succeed. Keep paths between beds for access—you should reach bed center without stepping on soil (compaction damages structure). Curves and aesthetics matter too—make your garden beautiful and you'll spend more time in it."
+        }
+      ]
+    },
+    {
+      "milestone_number": 12,
+      "title": "Composting Your Garden Waste",
+      "description": "Learn to create 'black gold' soil amendment using methods from composting experts and university research.",
+      "sub_steps": [
+        {
+          "step_number": 34,
+          "title": "Build a Simple Compost System",
+          "content": "Compost converts kitchen scraps and yard waste into nutrient-rich soil amendment. Simple method: designate a 3x3 foot area, layer 'browns' (dry leaves, straw, shredded paper—carbon) and 'greens' (kitchen scraps, grass clippings, weeds—nitrogen) in roughly equal proportions. Browns provide structure, greens provide nutrients and moisture. Add water if dry (should feel like wrung-out sponge). Turn pile weekly with a pitchfork (adds oxygen, speeds decomposition). Or use a tumbler bin (easier turning). Avoid: meat, dairy, oils (attract pests), diseased plants, pet waste. In 2-6 months you'll have finished compost."
+        },
+        {
+          "step_number": 35,
+          "title": "Understand Hot vs. Cold Composting",
+          "content": "Hot compost (Berkeley method): precise ratios of carbon to nitrogen (30:1), turned every 3 days, reaches 130-150°F (kills weed seeds and pathogens), finished in 18 days. Requires effort but produces lots of compost quickly. Cold compost (pile method): add materials as available, turn occasionally or never, takes 6-12 months, doesn't kill weed seeds. Easier but slower. Most home gardeners use a hybrid: add materials regularly, turn when convenient, harvest after several months. Either method works. Finished compost is dark, crumbly, smells earthy, and original materials are unrecognizable."
+        },
+        {
+          "step_number": 36,
+          "title": "Use Compost Effectively",
+          "content": "Apply finished compost: (1) As mulch—spread 1-2 inches around growing plants (feeds slowly as it breaks down). (2) As soil amendment—mix into top 2-3 inches before planting. (3) As potting mix component—mix 1/3 compost, 1/3 peat or coco coir, 1/3 perlite or vermiculite for containers. (4) As compost tea—steep in water for fertilizer. Charles Dowding applies compost once annually and grows incredibly productive gardens. You can't overdo compost—it's impossible to add too much. If you don't make enough, buy it in bulk from local suppliers or buy bags (ensure it's well-aged and screened)."
+        }
+      ]
+    },
+    {
+      "milestone_number": 13,
+      "title": "Your Third Crop: Zucchini & Summer Squash",
+      "description": "Master prolific, easy-to-grow summer vegetables—perfect for building confidence and feeding neighbors.",
+      "sub_steps": [
+        {
+          "step_number": 37,
+          "title": "Plant and Care for Squash",
+          "content": "Zucchini and summer squash are famously productive—one plant feeds a family. Direct sow after last frost when soil is 60°F+: plant 2-3 seeds 1 inch deep in a 1-foot diameter mound (mound ensures good drainage), thin to strongest seedling when 3 inches tall. Or transplant seedlings. Space 3 feet apart (they get huge—3-4 foot spread). Water deeply at soil level (wet leaves invite powdery mildew). Fertilize every 2-3 weeks once flowering begins (heavy feeders). Mulch around plants to conserve moisture and keep fruit clean. They grow fast—you'll see visible growth daily."
+        },
+        {
+          "step_number": 38,
+          "title": "Hand-Pollinate for Maximum Production",
+          "content": "Squash have separate male and female flowers (females have tiny fruit at base, males have plain stems). Bees pollinate, but you can help: pick a male flower in early morning (when pollen is fresh), remove petals, rub pollen-covered stamen onto center stigma of female flower. Or use a small paintbrush to transfer pollen. Hand-pollination increases fruit set dramatically, especially early season when bee activity is low. If female flowers drop without forming fruit, it's usually a pollination issue. Once bees discover your squash, they'll handle pollination—but hand-pollinating the first few flowers jumpstarts production."
+        },
+        {
+          "step_number": 39,
+          "title": "Harvest Young and Often",
+          "content": "Harvest zucchini when 6-8 inches long (tender, better flavor). Giant baseball-bat zucchini are seedy and watery—only good for bread. Summer squash when 4-6 inches. Check daily during peak season—they go from perfect to overgrown in 2 days. Use a knife to cut, leaving 1-inch stem (twisting damages plant). Harvesting signals the plant to produce more—if you let fruits get huge, production slows. You'll have so much you'll give it away (gardening tradition: leave bags of zucchini on neighbors' porches and run). Grill it, spiralize it, bake it into bread. This crop alone justifies having a garden."
+        }
+      ]
+    },
+    {
+      "milestone_number": 14,
+      "title": "Saving Seeds & Planning Next Year",
+      "description": "Learn seed saving basics and how to improve your garden year over year through observation and notes.",
+      "sub_steps": [
+        {
+          "step_number": 40,
+          "title": "Understand Which Seeds to Save",
+          "content": "Easy seeds for beginners: tomatoes, beans, peas, lettuce, herbs (self-pollinating or don't cross easily—seeds grow true to type). Harder: squash, cucumbers, corn (cross-pollinate with other varieties—require isolation or hand-pollination). Don't save: hybrid seeds (F1 on packet)—they don't breed true, offspring are unpredictable. Save only open-pollinated or heirloom varieties. Legal note: some seeds are patented (especially hybrids)—saving them is technically illegal, though rarely enforced. Seed Savers Exchange preserves heirloom varieties—join their network to trade rare seeds and preserve genetic diversity."
+        },
+        {
+          "step_number": 41,
+          "title": "Save Tomato and Bean Seeds",
+          "content": "Tomato seeds: choose the best fruit from healthiest plant, scoop seeds and gel into jar, add water, ferment 3-5 days (breaks down gel, kills diseases), pour off floating material, rinse seeds, dry on paper plate for 1 week, store in paper envelope in cool, dry place. Bean/pea seeds: leave pods on plant until completely dry and brown, shell out seeds, dry another week indoors, store in jar or envelope. Label everything: variety name, date saved, plant characteristics. Seeds remain viable 3-5 years if stored cool and dry. This is the most sustainable gardening—you become independent from seed companies."
+        },
+        {
+          "step_number": 42,
+          "title": "Keep a Garden Journal",
+          "content": "Record throughout the season: what you planted and when, when harvest began/ended, total yield, weather patterns, pest/disease issues, what worked/failed, ideas for next year. Include photos—they're incredibly useful for planning. Sketching your garden layout helps plan crop rotation. Note varieties: 'Celebrity tomatoes produced heavily in heat; Early Girl got blight.' This becomes your personalized guide—more valuable than any book because it's specific to your soil, climate, and conditions. After 3-5 years, you'll be the expert on your garden's unique ecosystem. Every experienced gardener keeps records—it's the secret to continual improvement."
+        }
+      ]
+    },
+    {
+      "milestone_number": 15,
+      "title": "Gardening Mastery: Review & Next Steps",
+      "description": "Reflect on your growing journey and plan your path toward advanced techniques and food self-sufficiency.",
+      "sub_steps": [
+        {
+          "step_number": 43,
+          "title": "Review Your Core Skills",
+          "content": "You've learned the fundamentals: site assessment, soil building, seed starting, direct sowing, transplanting, watering, fertilizing, pest/disease management, harvesting, succession planting, composting, and seed saving. You've grown three complete crops: salad greens (fast success), tomatoes (garden staple), and zucchini (abundant harvest). These techniques work worldwide—the specific crops change by climate, but the principles are universal. Charles Dowding teaches that good gardening is patient observation and gentle intervention, not constant fussing. You're building a relationship with your specific piece of land."
+        },
+        {
+          "step_number": 44,
+          "title": "Explore Advanced Techniques",
+          "content": "Now you're ready for: fruit trees and berry bushes (perennial food production), season extension structures (greenhouses, hoop houses for year-round growing), no-dig deep mulch gardening (Charles Dowding's full system), permaculture food forests (mimicking natural ecosystems), grafting and propagation (multiplying favorite plants), preserved food production (fermenting, canning, drying), rainwater harvesting (water independence), and integrated animal systems (chickens for eggs, pest control, and compost). Study Dowding's YouTube channel, Rodale's guides, university extension resources, and join local gardening groups. Each skill compounds your self-sufficiency."
+        },
+        {
+          "step_number": 45,
+          "title": "Develop Your Garden Vision",
+          "content": "Where do you want this to go? Some gardeners focus on high nutrition (growing nutrient-dense foods for health). Some focus on self-sufficiency (producing significant calories). Some focus on beauty (edible flowers, ornamental vegetables). Some focus on specific cuisines (Italian garden with tomatoes and herbs, Asian garden with bok choy and lemongrass). Your garden can evolve toward any goal. Visit other gardens, take classes, read widely. Most importantly: keep growing. Every season teaches you something. Every harvest rewards you. You're now connected to the oldest human practice—growing your own food. Welcome to the gardening community."
+        }
+      ]
+    }
+  ]
+}

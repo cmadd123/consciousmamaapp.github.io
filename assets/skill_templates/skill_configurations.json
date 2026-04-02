@@ -1,0 +1,1013 @@
+{
+  "woodworking": {
+    "skill_name": "Woodworking",
+    "skill_icon": "🪵",
+    "creation_steps": [
+      {
+        "step_number": 1,
+        "step_title": "Choose Your Focus",
+        "question": "What aspect of woodworking interests you most?",
+        "input_type": "single_choice",
+        "options": [
+          {
+            "label": "Hand Tools Only",
+            "description": "Traditional techniques, minimal power tools, quieter workspace",
+            "expert_context": "Paul Sellers approach - muscle memory, hand plane mastery, traditional joinery"
+          },
+          {
+            "label": "Power Tools & Efficiency",
+            "description": "Modern methods, faster projects, shop equipment",
+            "expert_context": "Modern woodworking - table saw, router, power tools for speed"
+          },
+          {
+            "label": "Furniture Making",
+            "description": "Build functional pieces like tables, chairs, cabinets",
+            "expert_context": "North Bennet Street School - precise joinery, furniture construction"
+          },
+          {
+            "label": "Small Projects & Gifts",
+            "description": "Cutting boards, boxes, decorative items",
+            "expert_context": "Beginner-friendly projects with quick satisfaction"
+          }
+        ]
+      },
+      {
+        "step_number": 2,
+        "step_title": "Tools Available",
+        "question": "What tools do you have access to?",
+        "input_type": "multiple_choice",
+        "options": [
+          {
+            "label": "Basic Hand Tools",
+            "description": "Hammer, saw, screwdriver, measuring tape"
+          },
+          {
+            "label": "Power Drill & Sander",
+            "description": "Electric drill, orbital sander"
+          },
+          {
+            "label": "Table Saw / Miter Saw",
+            "description": "Major cutting equipment"
+          },
+          {
+            "label": "Router & Specialty Tools",
+            "description": "Advanced shaping and joinery tools"
+          },
+          {
+            "label": "Full Workshop",
+            "description": "Comprehensive tool collection"
+          }
+        ]
+      },
+      {
+        "step_number": 3,
+        "step_title": "Time & Safety Level",
+        "question": "How much time per session and what safety level?",
+        "input_type": "combo",
+        "fields": [
+          {
+            "field_name": "session_duration",
+            "label": "Time per session",
+            "type": "slider",
+            "min": 15,
+            "max": 120,
+            "step": 15,
+            "unit": "minutes",
+            "default": 45
+          },
+          {
+            "field_name": "safety_level",
+            "label": "Safety & supervision level",
+            "type": "single_choice",
+            "options": [
+              {
+                "label": "Child (supervised)",
+                "description": "Adult must be present, focus on hand tools"
+              },
+              {
+                "label": "Teen (some independence)",
+                "description": "Can use power tools with training"
+              },
+              {
+                "label": "Adult (full access)",
+                "description": "All tools and techniques available"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "step_number": 4,
+        "step_title": "Teaching Approach",
+        "question": "Which expert approach resonates with you?",
+        "input_type": "single_choice",
+        "options": [
+          {
+            "label": "Paul Sellers - Hand Tool Mastery",
+            "description": "Traditional techniques, muscle memory, quiet workshop, satisfying hand work",
+            "expert_bio": "British master craftsman teaching hand tool fundamentals for 50+ years",
+            "rag_weight": "primary"
+          },
+          {
+            "label": "North Bennet Street School - Precision & Tradition",
+            "description": "Safety-first, professional joinery, furniture-grade results",
+            "expert_bio": "America's oldest craft school, training professional furniture makers since 1881",
+            "rag_weight": "primary"
+          },
+          {
+            "label": "Fine Woodworking - Modern Hybrid",
+            "description": "Best of both worlds, practical efficiency, project-focused",
+            "expert_bio": "Leading woodworking magazine blending traditional and modern methods",
+            "rag_weight": "primary"
+          },
+          {
+            "label": "Balanced Approach",
+            "description": "Draw from all experts equally",
+            "expert_bio": "Blend wisdom from multiple master craftsmen",
+            "rag_weight": "balanced"
+          }
+        ]
+      }
+    ]
+  },
+  "cooking": {
+    "skill_name": "Cooking",
+    "skill_icon": "👨‍🍳",
+    "creation_steps": [
+      {
+        "step_number": 1,
+        "step_title": "Choose Your Focus",
+        "question": "What type of cooking interests you most?",
+        "input_type": "single_choice",
+        "options": [
+          {
+            "label": "Everyday Family Meals",
+            "description": "Practical weeknight dinners, batch cooking, meal prep",
+            "expert_context": "America's Test Kitchen - reliable, tested recipes for home cooks"
+          },
+          {
+            "label": "French Technique Foundations",
+            "description": "Master classical methods, knife skills, mother sauces",
+            "expert_context": "Jacques Pépin - technical precision and fundamental techniques"
+          },
+          {
+            "label": "Intuitive & Creative Cooking",
+            "description": "Learn principles, improvise, taste and adjust",
+            "expert_context": "Samin Nosrat (Salt Fat Acid Heat) - understanding vs following recipes"
+          },
+          {
+            "label": "Baking & Pastry",
+            "description": "Breads, cakes, cookies, precision baking",
+            "expert_context": "King Arthur Baking - science-based baking techniques"
+          }
+        ]
+      },
+      {
+        "step_number": 2,
+        "step_title": "Dietary Preferences",
+        "question": "Any dietary considerations?",
+        "input_type": "multiple_choice",
+        "options": [
+          {
+            "label": "Vegetarian",
+            "description": "No meat, but includes dairy and eggs"
+          },
+          {
+            "label": "Vegan",
+            "description": "No animal products"
+          },
+          {
+            "label": "Gluten-Free",
+            "description": "Avoid wheat, barley, rye"
+          },
+          {
+            "label": "Dairy-Free",
+            "description": "Avoid milk, cheese, butter"
+          },
+          {
+            "label": "No Restrictions",
+            "description": "Open to all ingredients"
+          }
+        ]
+      },
+      {
+        "step_number": 3,
+        "step_title": "Kitchen Setup & Time",
+        "question": "What's your kitchen situation?",
+        "input_type": "combo",
+        "fields": [
+          {
+            "field_name": "kitchen_equipment",
+            "label": "Available equipment",
+            "type": "multiple_choice",
+            "options": [
+              {"label": "Full kitchen", "description": "Oven, stove, full cookware"},
+              {"label": "Basic setup", "description": "Stovetop, limited tools"},
+              {"label": "Minimal", "description": "Microwave, hot plate only"}
+            ]
+          },
+          {
+            "field_name": "session_duration",
+            "label": "Time per cooking session",
+            "type": "slider",
+            "min": 20,
+            "max": 120,
+            "step": 10,
+            "unit": "minutes",
+            "default": 45
+          },
+          {
+            "field_name": "skill_level",
+            "label": "Current skill level",
+            "type": "single_choice",
+            "options": [
+              {"label": "Complete beginner", "description": "Rarely cook, need basics"},
+              {"label": "Some experience", "description": "Can follow recipes, want to improve"},
+              {"label": "Confident cook", "description": "Ready for advanced techniques"}
+            ]
+          }
+        ]
+      },
+      {
+        "step_number": 4,
+        "step_title": "Teaching Approach",
+        "question": "Which cooking philosophy speaks to you?",
+        "input_type": "single_choice",
+        "options": [
+          {
+            "label": "Jacques Pépin - French Technique",
+            "description": "Master classical methods, knife skills, build strong foundation",
+            "expert_bio": "French master chef, taught at Boston University for 30+ years",
+            "rag_weight": "primary"
+          },
+          {
+            "label": "Samin Nosrat - Salt Fat Acid Heat",
+            "description": "Learn principles, taste as you go, intuitive cooking",
+            "expert_bio": "Author of Salt Fat Acid Heat, teaches understanding over recipes",
+            "rag_weight": "primary"
+          },
+          {
+            "label": "America's Test Kitchen - Science & Testing",
+            "description": "Foolproof methods, understand why techniques work",
+            "expert_bio": "Test kitchen that scientifically validates every recipe",
+            "rag_weight": "primary"
+          },
+          {
+            "label": "Balanced Approach",
+            "description": "Blend technique, intuition, and tested methods",
+            "rag_weight": "balanced"
+          }
+        ]
+      }
+    ]
+  },
+  "gardening": {
+    "skill_name": "Gardening",
+    "skill_icon": "🌱",
+    "creation_steps": [
+      {
+        "step_number": 1,
+        "step_title": "Choose Your Focus",
+        "question": "What type of gardening interests you?",
+        "input_type": "single_choice",
+        "options": [
+          {
+            "label": "Vegetable Garden",
+            "description": "Grow your own food, tomatoes, lettuce, herbs",
+            "expert_context": "Mel Bartholomew Square Foot Gardening - intensive small-space growing"
+          },
+          {
+            "label": "No-Dig / Organic Methods",
+            "description": "Sustainable, build soil health, minimal tilling",
+            "expert_context": "Charles Dowding no-dig philosophy - layer compost, let nature work"
+          },
+          {
+            "label": "Container / Patio Gardening",
+            "description": "Small space, balcony, pots and raised beds",
+            "expert_context": "Urban gardening techniques for limited space"
+          },
+          {
+            "label": "Flowers & Ornamental",
+            "description": "Beautiful blooms, landscaping, curb appeal",
+            "expert_context": "Ornamental gardening and design principles"
+          }
+        ]
+      },
+      {
+        "step_number": 2,
+        "step_title": "Garden Space & Climate",
+        "question": "What's your growing situation?",
+        "input_type": "combo",
+        "fields": [
+          {
+            "field_name": "space_available",
+            "label": "Available space",
+            "type": "single_choice",
+            "options": [
+              {"label": "Large yard", "description": "Can create in-ground beds"},
+              {"label": "Small yard/patio", "description": "Limited space, containers"},
+              {"label": "Balcony/windowsill", "description": "Very small, pots only"}
+            ]
+          },
+          {
+            "field_name": "sunlight",
+            "label": "Sunlight conditions",
+            "type": "single_choice",
+            "options": [
+              {"label": "Full sun (6+ hours)", "description": "Best for vegetables"},
+              {"label": "Partial sun (3-6 hours)", "description": "Good for greens, herbs"},
+              {"label": "Shade (under 3 hours)", "description": "Limited options"}
+            ]
+          },
+          {
+            "field_name": "climate_zone",
+            "label": "Climate / Growing zone",
+            "type": "text_input",
+            "placeholder": "e.g., Zone 7, Midwest, Southern California",
+            "helper_text": "Optional: Helps tailor plant recommendations"
+          }
+        ]
+      },
+      {
+        "step_number": 3,
+        "step_title": "Time & Commitment",
+        "question": "How much time can you dedicate?",
+        "input_type": "combo",
+        "fields": [
+          {
+            "field_name": "weekly_hours",
+            "label": "Hours per week",
+            "type": "slider",
+            "min": 1,
+            "max": 10,
+            "step": 1,
+            "unit": "hours",
+            "default": 3
+          },
+          {
+            "field_name": "season_focus",
+            "label": "When do you want to garden?",
+            "type": "single_choice",
+            "options": [
+              {"label": "Spring/Summer", "description": "Traditional growing season"},
+              {"label": "Year-round", "description": "Use season extension, cold frames"},
+              {"label": "Starting now", "description": "Adapt to current season"}
+            ]
+          }
+        ]
+      },
+      {
+        "step_number": 4,
+        "step_title": "Teaching Approach",
+        "question": "Which gardening philosophy resonates?",
+        "input_type": "single_choice",
+        "options": [
+          {
+            "label": "Charles Dowding - No-Dig Organic",
+            "description": "Build soil, minimal work, sustainable long-term",
+            "expert_bio": "40+ years proving no-dig methods produce more with less effort",
+            "rag_weight": "primary"
+          },
+          {
+            "label": "Mel Bartholomew - Square Foot Gardening",
+            "description": "Maximum production in minimal space, intensive planting",
+            "expert_bio": "Created Square Foot Gardening method used worldwide",
+            "rag_weight": "primary"
+          },
+          {
+            "label": "Rodale Institute - Organic Principles",
+            "description": "Scientific organic methods, soil health focus",
+            "expert_bio": "Leading organic agriculture research for 70+ years",
+            "rag_weight": "primary"
+          },
+          {
+            "label": "Balanced Approach",
+            "description": "Blend methods based on your situation",
+            "rag_weight": "balanced"
+          }
+        ]
+      }
+    ]
+  },
+  "music": {
+    "skill_name": "Music (Piano)",
+    "skill_icon": "🎹",
+    "creation_steps": [
+      {
+        "step_number": 1,
+        "step_title": "Choose Your Focus",
+        "question": "What type of music do you want to learn?",
+        "input_type": "single_choice",
+        "options": [
+          {
+            "label": "Classical Piano",
+            "description": "Traditional technique, reading music, classical repertoire",
+            "expert_context": "Suzuki Method or traditional conservatory approach"
+          },
+          {
+            "label": "Popular / Contemporary",
+            "description": "Play songs you love, chords, lead sheets",
+            "expert_context": "Modern chord-based approach, less formal"
+          },
+          {
+            "label": "Jazz / Improvisation",
+            "description": "Chord progressions, improvise, jazz standards",
+            "expert_context": "Jazz piano pedagogy, harmony focus"
+          },
+          {
+            "label": "Songwriting / Composition",
+            "description": "Create your own music, theory for writing",
+            "expert_context": "Creative focus with theory foundation"
+          }
+        ]
+      },
+      {
+        "step_number": 2,
+        "step_title": "Instrument Access",
+        "question": "What instrument do you have?",
+        "input_type": "single_choice",
+        "options": [
+          {
+            "label": "Acoustic Piano",
+            "description": "Full piano, ideal for serious study"
+          },
+          {
+            "label": "Digital Piano (88 weighted keys)",
+            "description": "Good quality, similar feel to acoustic"
+          },
+          {
+            "label": "Keyboard (61/76 keys, unweighted)",
+            "description": "Portable, limited range, different feel"
+          },
+          {
+            "label": "No instrument yet",
+            "description": "Will guide you on what to get"
+          }
+        ]
+      },
+      {
+        "step_number": 3,
+        "step_title": "Practice Time & Goals",
+        "question": "How much time can you practice?",
+        "input_type": "combo",
+        "fields": [
+          {
+            "field_name": "daily_practice",
+            "label": "Minutes per day",
+            "type": "slider",
+            "min": 10,
+            "max": 120,
+            "step": 5,
+            "unit": "minutes",
+            "default": 30
+          },
+          {
+            "field_name": "current_level",
+            "label": "Current skill level",
+            "type": "single_choice",
+            "options": [
+              {"label": "Never played", "description": "Complete beginner"},
+              {"label": "Some basics", "description": "Can play simple melodies"},
+              {"label": "Intermediate", "description": "Can read music, play with both hands"}
+            ]
+          },
+          {
+            "field_name": "goal",
+            "label": "Main goal",
+            "type": "single_choice",
+            "options": [
+              {"label": "Play for fun", "description": "Enjoyment, no pressure"},
+              {"label": "Perform / play with others", "description": "Build performance skills"},
+              {"label": "Professional track", "description": "Serious, conservatory-level"}
+            ]
+          }
+        ]
+      },
+      {
+        "step_number": 4,
+        "step_title": "Teaching Approach",
+        "question": "Which teaching method appeals to you?",
+        "input_type": "single_choice",
+        "options": [
+          {
+            "label": "Suzuki Method",
+            "description": "Learn by ear first, listening, imitation, delayed reading",
+            "expert_bio": "Dr. Shinichi Suzuki - 'Talent is not inherited' philosophy",
+            "rag_weight": "primary"
+          },
+          {
+            "label": "Traditional / Alfred / Faber",
+            "description": "Reading music from day 1, progressive method books",
+            "expert_bio": "Classical conservatory approach used for centuries",
+            "rag_weight": "primary"
+          },
+          {
+            "label": "Popular Music / Hoffman Academy",
+            "description": "Play songs quickly, chords, less theory initially",
+            "expert_bio": "Modern approach for students who want fast results",
+            "rag_weight": "primary"
+          },
+          {
+            "label": "Balanced Approach",
+            "description": "Mix reading, ear training, and popular repertoire",
+            "rag_weight": "balanced"
+          }
+        ]
+      }
+    ]
+  },
+  "drawing_art": {
+    "skill_name": "Drawing & Art",
+    "skill_icon": "🎨",
+    "creation_steps": [
+      {
+        "step_number": 1,
+        "step_title": "Choose Your Focus",
+        "question": "What type of art interests you most?",
+        "input_type": "single_choice",
+        "options": [
+          {
+            "label": "Pencil Drawing & Sketching",
+            "description": "Realistic drawing, shading, proportions, portraits",
+            "expert_context": "Betty Edwards (Drawing on the Right Side of the Brain) - seeing like an artist"
+          },
+          {
+            "label": "Painting (Watercolor / Acrylic)",
+            "description": "Color mixing, brush techniques, composition",
+            "expert_context": "Bob Ross philosophy - happy accidents, confidence building"
+          },
+          {
+            "label": "Cartooning & Illustration",
+            "description": "Character design, storytelling, expressive style",
+            "expert_context": "Lynda Barry - creative confidence, visual thinking"
+          },
+          {
+            "label": "Mixed Media & Experimentation",
+            "description": "Combine materials, explore techniques, creative freedom",
+            "expert_context": "Process over product, exploration-focused learning"
+          }
+        ]
+      },
+      {
+        "step_number": 2,
+        "step_title": "Art Supplies Available",
+        "question": "What materials do you have?",
+        "input_type": "multiple_choice",
+        "options": [
+          {
+            "label": "Basic Drawing Supplies",
+            "description": "Pencils, eraser, paper"
+          },
+          {
+            "label": "Colored Pencils / Markers",
+            "description": "Color drawing tools"
+          },
+          {
+            "label": "Paints (watercolor/acrylic)",
+            "description": "Brushes, paints, canvas/paper"
+          },
+          {
+            "label": "Digital Tablet",
+            "description": "iPad, drawing tablet, stylus"
+          },
+          {
+            "label": "Nothing yet",
+            "description": "Will guide you on materials"
+          }
+        ]
+      },
+      {
+        "step_number": 3,
+        "step_title": "Time & Skill Level",
+        "question": "How much time can you practice?",
+        "input_type": "combo",
+        "fields": [
+          {
+            "field_name": "session_duration",
+            "label": "Time per session",
+            "type": "slider",
+            "min": 15,
+            "max": 90,
+            "step": 15,
+            "unit": "minutes",
+            "default": 30
+          },
+          {
+            "field_name": "current_level",
+            "label": "Current skill level",
+            "type": "single_choice",
+            "options": [
+              {"label": "Complete beginner", "description": "Haven't drawn since elementary school"},
+              {"label": "Some experience", "description": "Doodle occasionally, want to improve"},
+              {"label": "Intermediate", "description": "Can draw recognizable things, want advanced skills"}
+            ]
+          }
+        ]
+      },
+      {
+        "step_number": 4,
+        "step_title": "Teaching Approach",
+        "question": "Which art philosophy speaks to you?",
+        "input_type": "single_choice",
+        "options": [
+          {
+            "label": "Betty Edwards - Drawing on the Right Side",
+            "description": "Learn to see like an artist, realistic drawing techniques",
+            "expert_bio": "Revolutionary method teaching anyone can learn to draw through perception",
+            "rag_weight": "primary"
+          },
+          {
+            "label": "Bob Ross - Confidence & Joy",
+            "description": "No mistakes, happy accidents, painting is relaxing",
+            "expert_bio": "Beloved PBS painter who made art accessible and joyful",
+            "rag_weight": "primary"
+          },
+          {
+            "label": "Lynda Barry - Creative Freedom",
+            "description": "Overcome perfectionism, explore, think visually",
+            "expert_bio": "Author/artist teaching creative confidence and visual thinking",
+            "rag_weight": "primary"
+          },
+          {
+            "label": "Balanced Approach",
+            "description": "Blend technique, confidence, and creative exploration",
+            "rag_weight": "balanced"
+          }
+        ]
+      }
+    ]
+  },
+  "coding": {
+    "skill_name": "Coding & Tech",
+    "skill_icon": "💻",
+    "creation_steps": [
+      {
+        "step_number": 1,
+        "step_title": "Choose Your Focus",
+        "question": "What type of coding interests you?",
+        "input_type": "single_choice",
+        "options": [
+          {
+            "label": "Web Development",
+            "description": "Build websites, HTML/CSS/JavaScript, apps people use",
+            "expert_context": "freeCodeCamp approach - real projects, portfolio building"
+          },
+          {
+            "label": "Python Programming",
+            "description": "Beginner-friendly language, data science, automation",
+            "expert_context": "Al Sweigart (Automate the Boring Stuff) - practical Python skills"
+          },
+          {
+            "label": "Game Development",
+            "description": "Create games, Scratch, Unity, interactive experiences",
+            "expert_context": "Game-based learning, motivation through creation"
+          },
+          {
+            "label": "App Development",
+            "description": "Mobile apps, iOS/Android, Flutter",
+            "expert_context": "Modern app frameworks, real-world development"
+          }
+        ]
+      },
+      {
+        "step_number": 2,
+        "step_title": "Computer Access & Experience",
+        "question": "What's your tech setup?",
+        "input_type": "combo",
+        "fields": [
+          {
+            "field_name": "device_type",
+            "label": "Available device",
+            "type": "single_choice",
+            "options": [
+              {"label": "Desktop/Laptop (Mac/PC)", "description": "Full computer, ideal for coding"},
+              {"label": "iPad/Tablet", "description": "Can code with limitations"},
+              {"label": "Chromebook", "description": "Web-based coding works great"}
+            ]
+          },
+          {
+            "field_name": "current_level",
+            "label": "Current skill level",
+            "type": "single_choice",
+            "options": [
+              {"label": "Never coded", "description": "Complete beginner, need basics"},
+              {"label": "Some exposure", "description": "Tried Scratch or Hour of Code"},
+              {"label": "Can code basics", "description": "Written simple programs"}
+            ]
+          }
+        ]
+      },
+      {
+        "step_number": 3,
+        "step_title": "Time & Goals",
+        "question": "How much time can you dedicate?",
+        "input_type": "combo",
+        "fields": [
+          {
+            "field_name": "session_duration",
+            "label": "Time per session",
+            "type": "slider",
+            "min": 20,
+            "max": 120,
+            "step": 10,
+            "unit": "minutes",
+            "default": 45
+          },
+          {
+            "field_name": "goal",
+            "label": "Main goal",
+            "type": "single_choice",
+            "options": [
+              {"label": "Explore & have fun", "description": "See if coding is interesting"},
+              {"label": "Build real projects", "description": "Create apps/websites people use"},
+              {"label": "Career preparation", "description": "Serious study, college/job track"}
+            ]
+          }
+        ]
+      },
+      {
+        "step_number": 4,
+        "step_title": "Teaching Approach",
+        "question": "Which learning philosophy resonates?",
+        "input_type": "single_choice",
+        "options": [
+          {
+            "label": "freeCodeCamp - Project-Based",
+            "description": "Learn by building real projects, portfolio focus",
+            "expert_bio": "Free coding curriculum used by millions to land tech jobs",
+            "rag_weight": "primary"
+          },
+          {
+            "label": "Harvard CS50 - Fundamentals First",
+            "description": "Computer science concepts, theory then practice",
+            "expert_bio": "Harvard's legendary intro CS course, rigorous foundation",
+            "rag_weight": "primary"
+          },
+          {
+            "label": "Al Sweigart - Practical & Fun",
+            "description": "Learn Python through useful, playful projects",
+            "expert_bio": "Author of 'Automate the Boring Stuff', makes coding accessible",
+            "rag_weight": "primary"
+          },
+          {
+            "label": "Balanced Approach",
+            "description": "Mix fundamentals with practical projects",
+            "rag_weight": "balanced"
+          }
+        ]
+      }
+    ]
+  },
+  "sewing": {
+    "skill_name": "Sewing & Textiles",
+    "skill_icon": "🧵",
+    "creation_steps": [
+      {
+        "step_number": 1,
+        "step_title": "Choose Your Focus",
+        "question": "What type of sewing interests you?",
+        "input_type": "single_choice",
+        "options": [
+          {
+            "label": "Hand Sewing Basics",
+            "description": "Mending, embroidery, simple projects, no machine needed",
+            "expert_context": "Traditional hand sewing, meditative and practical"
+          },
+          {
+            "label": "Machine Sewing Fundamentals",
+            "description": "Learn your machine, straight seams, simple garments",
+            "expert_context": "Build foundation for all machine sewing projects"
+          },
+          {
+            "label": "Garment Making",
+            "description": "Sew your own clothes, patterns, fitting, tailoring",
+            "expert_context": "Pattern reading, construction techniques, wardrobe building"
+          },
+          {
+            "label": "Upcycling & Alterations",
+            "description": "Repair, modify, transform existing clothes",
+            "expert_context": "Sustainability focus, make old clothes fit and look new"
+          }
+        ]
+      },
+      {
+        "step_number": 2,
+        "step_title": "Equipment Available",
+        "question": "What sewing equipment do you have?",
+        "input_type": "multiple_choice",
+        "options": [
+          {
+            "label": "Sewing Machine",
+            "description": "Basic or advanced machine"
+          },
+          {
+            "label": "Hand Sewing Supplies",
+            "description": "Needles, thread, thimble, scissors"
+          },
+          {
+            "label": "Serger / Overlock",
+            "description": "Professional edge finishing"
+          },
+          {
+            "label": "Iron & Ironing Board",
+            "description": "Essential for pressing seams"
+          },
+          {
+            "label": "Nothing yet",
+            "description": "Will guide you on what to get"
+          }
+        ]
+      },
+      {
+        "step_number": 3,
+        "step_title": "Time & Skill Level",
+        "question": "What's your sewing situation?",
+        "input_type": "combo",
+        "fields": [
+          {
+            "field_name": "session_duration",
+            "label": "Time per session",
+            "type": "slider",
+            "min": 30,
+            "max": 180,
+            "step": 30,
+            "unit": "minutes",
+            "default": 60
+          },
+          {
+            "field_name": "current_level",
+            "label": "Current skill level",
+            "type": "single_choice",
+            "options": [
+              {"label": "Never sewn", "description": "Complete beginner, need all basics"},
+              {"label": "Some hand sewing", "description": "Can sew buttons, basic repairs"},
+              {"label": "Can use a machine", "description": "Made simple projects"}
+            ]
+          }
+        ]
+      },
+      {
+        "step_number": 4,
+        "step_title": "Teaching Approach",
+        "question": "Which sewing philosophy appeals to you?",
+        "input_type": "single_choice",
+        "options": [
+          {
+            "label": "Traditional Technique Focus",
+            "description": "Proper methods, precision, professional results",
+            "expert_bio": "Sewing school approach - build skills systematically",
+            "rag_weight": "primary"
+          },
+          {
+            "label": "Project-Based Learning",
+            "description": "Jump into making things, learn techniques as needed",
+            "expert_bio": "Maker approach - motivation through creation",
+            "rag_weight": "primary"
+          },
+          {
+            "label": "Sustainable & Upcycling Focus",
+            "description": "Repair, alter, transform, reduce waste",
+            "expert_bio": "Mending culture revival, slow fashion movement",
+            "rag_weight": "primary"
+          },
+          {
+            "label": "Balanced Approach",
+            "description": "Blend technique, projects, and sustainability",
+            "rag_weight": "balanced"
+          }
+        ]
+      }
+    ]
+  },
+  "photography": {
+    "skill_name": "Photography",
+    "skill_icon": "📷",
+    "creation_steps": [
+      {
+        "step_number": 1,
+        "step_title": "Choose Your Focus",
+        "question": "What type of photography interests you?",
+        "input_type": "single_choice",
+        "options": [
+          {
+            "label": "Smartphone Photography",
+            "description": "Master your phone camera, composition, mobile editing",
+            "expert_context": "Modern mobile photography - accessible and powerful"
+          },
+          {
+            "label": "DSLR / Mirrorless Fundamentals",
+            "description": "Manual mode, aperture, shutter speed, proper camera",
+            "expert_context": "Technical photography, full creative control"
+          },
+          {
+            "label": "Portrait Photography",
+            "description": "People photography, lighting, posing, capturing personality",
+            "expert_context": "Human-focused photography, connection and expression"
+          },
+          {
+            "label": "Nature & Landscape",
+            "description": "Outdoor photography, composition, light, seasons",
+            "expert_context": "Environmental awareness, patience, seeing beauty"
+          }
+        ]
+      },
+      {
+        "step_number": 2,
+        "step_title": "Camera Equipment",
+        "question": "What camera will you use?",
+        "input_type": "single_choice",
+        "options": [
+          {
+            "label": "Smartphone (iPhone/Android)",
+            "description": "Modern phone with good camera"
+          },
+          {
+            "label": "DSLR Camera",
+            "description": "Traditional digital SLR with interchangeable lenses"
+          },
+          {
+            "label": "Mirrorless Camera",
+            "description": "Modern mirrorless with interchangeable lenses"
+          },
+          {
+            "label": "Point & Shoot / Compact",
+            "description": "Fixed lens digital camera"
+          },
+          {
+            "label": "No camera yet",
+            "description": "Will guide you on what to get"
+          }
+        ]
+      },
+      {
+        "step_number": 3,
+        "step_title": "Time & Goals",
+        "question": "What's your photography journey?",
+        "input_type": "combo",
+        "fields": [
+          {
+            "field_name": "weekly_time",
+            "label": "Hours per week for photography",
+            "type": "slider",
+            "min": 1,
+            "max": 15,
+            "step": 1,
+            "unit": "hours",
+            "default": 3
+          },
+          {
+            "field_name": "goal",
+            "label": "Main goal",
+            "type": "single_choice",
+            "options": [
+              {"label": "Personal enjoyment", "description": "Capture family, travels, memories"},
+              {"label": "Creative expression", "description": "Art, storytelling, visual communication"},
+              {"label": "Professional path", "description": "Build portfolio, monetize skills"}
+            ]
+          },
+          {
+            "field_name": "current_level",
+            "label": "Current skill level",
+            "type": "single_choice",
+            "options": [
+              {"label": "Auto mode only", "description": "Never adjusted settings"},
+              {"label": "Some understanding", "description": "Know about exposure, composition basics"},
+              {"label": "Comfortable with manual", "description": "Understand settings, want to refine"}
+            ]
+          }
+        ]
+      },
+      {
+        "step_number": 4,
+        "step_title": "Teaching Approach",
+        "question": "Which photography philosophy resonates?",
+        "input_type": "single_choice",
+        "options": [
+          {
+            "label": "Technical Mastery First",
+            "description": "Learn camera settings, exposure triangle, precise control",
+            "expert_bio": "Traditional photography education - master the tool",
+            "rag_weight": "primary"
+          },
+          {
+            "label": "Composition & Storytelling",
+            "description": "Visual communication, emotion, seeing photographically",
+            "expert_bio": "Creative approach - story over settings",
+            "rag_weight": "primary"
+          },
+          {
+            "label": "Mobile Photography Excellence",
+            "description": "Master smartphone, mobile editing, modern workflow",
+            "expert_bio": "Contemporary approach - democratize great photography",
+            "rag_weight": "primary"
+          },
+          {
+            "label": "Balanced Approach",
+            "description": "Blend technical skills with creative vision",
+            "rag_weight": "balanced"
+          }
+        ]
+      }
+    ]
+  }
+}

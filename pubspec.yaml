@@ -205,6 +205,7 @@ flutter:
     - assets/jsons/
     - assets/animations/
     - assets/environment_values/
+    - assets/skill_templates/
   fonts:
     - family: 'Andika New Basic'
       fonts:

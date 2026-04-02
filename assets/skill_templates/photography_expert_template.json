@@ -1,0 +1,338 @@
+{
+  "skill_name": "Photography",
+  "skill_icon": "📷",
+  "description": "Master visual storytelling through professional photography techniques. This curriculum blends technical mastery (exposure triangle, camera settings, optics), composition fundamentals (rule of thirds, leading lines, visual hierarchy), and modern smartphone excellence. From camera basics to portfolio-quality work, develop both technical proficiency and your unique visual voice through hands-on practice with smartphone and DSLR/mirrorless cameras.",
+  "total_milestones": 15,
+  "milestones": [
+    {
+      "milestone_number": 1,
+      "title": "Know Your Camera - Smartphone vs DSLR Basics",
+      "description": "Learn the fundamentals of how cameras capture light, whether you're using a smartphone or dedicated camera.",
+      "sub_steps": [
+        {
+          "title": "Understand the three paths: smartphone, DSLR, or mirrorless",
+          "content": "Smartphones (iPhone, Android) have fixed or zoom lenses with automatic settings - perfect for beginning. DSLR cameras (Canon, Nikon) use mirrors and interchangeable lenses - professional choice. Mirrorless cameras (Sony, Canon R) offer fast autofocus and compact size. All three can create stunning photos. Start with what you have - a smartphone is 100% sufficient to learn composition and light. Equipment doesn't matter; vision does. Many professional photographers shoot with phones now.",
+          "video_search": "smartphone vs DSLR vs mirrorless camera comparison beginners"
+        },
+        {
+          "title": "If using DSLR/mirrorless: Learn the camera body controls and menu system",
+          "content": "Locate: shutter button, mode dial (P, A, S, M for automatic/aperture/shutter priority/manual), viewfinder, LCD screen, buttons for focus modes, metering modes. Spend 30 minutes reading your camera manual or watching tutorials specific to your model. Every camera arranges buttons differently, so know YOUR camera. Practice pressing buttons without looking at the LCD - familiarity builds confidence. Smartphones: settings are in the Photos app or camera app settings.",
+          "video_search": "DSLR camera body buttons tutorial for beginners"
+        },
+        {
+          "title": "Learn how light enters the lens and hits the sensor",
+          "content": "Light bounces off your subject, enters the lens (glass elements bend the light), passes through an aperture (adjustable opening), and exposes the camera sensor (digital chip that captures the image). This is how EVERY camera works - smartphone to professional. Understanding this flow helps you understand why changing settings changes your photos. The sensor is like film - it captures the light pattern. Digital sensors are invisible but behave like film.",
+          "video_search": "how camera sensors work photography basics"
+        }
+      ]
+    },
+    {
+      "milestone_number": 2,
+      "title": "The Exposure Triangle - Master ISO, Aperture, Shutter Speed",
+      "description": "Learn the three interconnected settings that control how bright or dark your photos appear.",
+      "sub_steps": [
+        {
+          "title": "Understand Shutter Speed and motion blur",
+          "content": "Shutter Speed is how long the sensor is exposed to light. Measured in fractions of a second: 1/1000 (very fast, freezes motion), 1/250 (normal), 1 second (long, blurs motion). Fast shutter speeds (1/500 or faster) freeze action - great for sports, kids, moving subjects. Slow shutter speeds (1 second or longer) create motion blur - great for waterfalls, light trails, artistic effects. Smartphones on auto typically use 1/30 to 1/250. Try this: pan your phone while taking a photo at 1/250 - subject is sharp but background blurs. This is shutter speed at work.",
+          "video_search": "shutter speed photography explained motion blur"
+        },
+        {
+          "title": "Understand Aperture (f-stops) and depth of field",
+          "content": "Aperture is the opening in the lens that lets light through. Measured in f-numbers: f/1.8 (very wide open, lots of light, blurry background), f/5.6 (normal), f/16 (very small, lots of background sharp). LOWER f-number = WIDER aperture = BLURRIER BACKGROUND. This blurry background is 'depth of field.' Smartphone cameras typically have f/1.8 to f/2.4 aperture (pretty wide). Professional cameras with fast lenses reach f/1.4 or f/1.2 for dreamy blurry backgrounds. Try this: in portrait mode on your phone, notice the background blur? That's simulating low f-number. Wide aperture (f/1.8) = shallow depth of field = background blurs (great for portraits). Small aperture (f/16) = deep depth of field = everything sharp (great for landscapes).",
+          "video_search": "aperture f-stops depth of field photography explained"
+        },
+        {
+          "title": "Understand ISO and sensor sensitivity",
+          "content": "ISO is how sensitive the sensor is to light. Low ISO (100, 200) = less sensitive, darker photos, less noise, best in bright conditions. High ISO (1600, 3200, 6400) = more sensitive, brighter photos, more grain/noise, best in dim conditions. Smartphones automatically adjust ISO - you rarely see it. Professional cameras let you control it. Rule: Use the LOWEST ISO that gets a proper exposure, because high ISO adds visible grain (noise). In bright daylight use ISO 100-200. In dim indoor light use ISO 800-1600. In very dark conditions use ISO 3200+. Smartphones handle this well automatically - trust the auto ISO for now.",
+          "video_search": "ISO photography explained sensor sensitivity noise"
+        }
+      ]
+    },
+    {
+      "milestone_number": 3,
+      "title": "Light - The Foundation of Photography",
+      "description": "Learn to see and manipulate light to create mood, dimension, and visual impact.",
+      "sub_steps": [
+        {
+          "title": "Recognize the quality of light: hard vs soft",
+          "content": "Hard light (direct sun, bare bulb) creates sharp shadows and high contrast - great for dramatic, moody photos. Soft light (overcast sky, diffused through a window) creates gentle shadows and even exposure - great for flattering portraits. Noon sun is harsh and unflattering (shadows under eyes, squinting). Golden hour (first hour after sunrise, last hour before sunset) has warm, soft light at an angle - professional photographers' favorite time. Try this: photograph the same subject at noon and at golden hour - notice the difference. Learn to move your subject to find soft light (shade from a tree, window light indoors). This single skill transforms mediocre photos into beautiful ones.",
+          "video_search": "hard light vs soft light photography golden hour"
+        },
+        {
+          "title": "Master the direction of light: front, side, backlit",
+          "content": "Front lighting (light behind camera, shining on subject's face) - even, safe, but flat. Side lighting (light from left or right of camera) - creates dimension, texture, drama. Backlit (light behind subject, facing camera) - creates rim light/halo effect, silhouettes, mood. Different directions evoke different feelings. Front light = safe and even. Side light = interesting and dimensional. Backlit = intimate and glowing. Try this: photograph someone's face from the same distance but move the light source (sun, lamp) to three positions: front, side, back. Same person, completely different feelings in the photos.",
+          "video_search": "direction of light photography backlit rim light"
+        },
+        {
+          "title": "Learn to expose for highlights and use shadows intentionally",
+          "content": "Exposure is about managing light and dark. NEVER let important highlights blow out (pure white with no detail) - overexposed highlights are irrecoverable. Underexposed shadows (pure black) are less critical - you can sometimes recover shadow detail but blown highlights are lost forever. Pro tip: expose for the highlights (let shadows go darker), then recover shadow detail in editing if needed. In challenging lighting, expose for the bright part of the scene first, then check if shadows are acceptable. Smartphone cameras meter (expose) for the center of the frame - tap on the subject to expose for them, not the background.",
+          "video_search": "exposure metering highlights shadows photography"
+        }
+      ]
+    },
+    {
+      "milestone_number": 4,
+      "title": "Composition Fundamentals - Rule of Thirds, Framing, Depth",
+      "description": "Learn how to arrange elements in your frame for maximum visual impact.",
+      "sub_steps": [
+        {
+          "title": "Master the Rule of Thirds and alignment",
+          "content": "Divide your frame into 9 equal sections (3x3 grid). Place your subject at one of the four intersection points - NOT the center. This creates more dynamic, interesting compositions than centered subjects. Imagine: grid lines running horizontally (dividing into thirds) and vertically. Place a person's eyes on the upper horizontal line, not in the middle. Place a horizon line on the upper or lower third, not in the middle. Enable grid overlay on your phone's camera app or camera settings to see the grid live while composing. Compose three photos using the rule of thirds: landscape with horizon on upper third, portrait with eyes on upper intersection, subject positioned on right or left vertical line (not centered).",
+          "video_search": "rule of thirds composition photography explained"
+        },
+        {
+          "title": "Use leading lines to guide the viewer's eye",
+          "content": "Leading lines are lines in the scene that draw the viewer's eye toward the main subject. Roads, paths, fences, rivers, shadows - anything linear. Position your subject at the END of the leading line, not at the beginning. This creates depth and movement. Example: photograph a path that leads to a person walking away - the path lines draw your eye toward that person. Compose five photos using different leading lines: a road, a fence line, a shadow, a row of trees, a shoreline. Notice how the viewer's eye follows the lines toward your subject.",
+          "video_search": "leading lines photography composition technique"
+        },
+        {
+          "title": "Create depth through foreground, middle ground, background",
+          "content": "Depth makes flat 2D photos feel three-dimensional. Foreground: something close to camera (in focus or slightly blurred). Middle ground: your main subject. Background: landscape or context behind subject. Include all three layers. Example: photograph someone standing in a field - foreground has tall grass (blurred), middle ground has the person (sharp), background has trees/sky. This layering creates depth even though your phone/camera can only capture flat images. Try this: take a landscape photo with something very close to the lens (foreground), something important in the middle, and scenery far away. The three-layer approach feels more immersive than just wide shots.",
+          "video_search": "depth photography foreground middle ground background"
+        }
+      ]
+    },
+    {
+      "milestone_number": 5,
+      "title": "Portrait Photography - Capturing Expression and Connection",
+      "description": "Master the art of photographing people with flattering light, composition, and emotion.",
+      "sub_steps": [
+        {
+          "title": "Position your subject using the rule of thirds and flattering angles",
+          "content": "Never place a person's face dead center - position eyes on the upper intersection of the rule of thirds grid. Find the subject's 'better side' (everyone has one) and shoot from that angle. Shoot slightly above eye level and tilt the camera down a bit - this is flattering and slimming. Avoid shooting from directly below (unflattering, creates double chin). For full-body portraits, tilt the hips, slightly angle the body away from camera - stiff straight-on positions look awkward. Have the subject lean slightly toward the camera - creates a sense of connection. Position yourself at their eye level - don't shoot down at them (unless intentional).",
+          "video_search": "portrait photography positioning angles flattering"
+        },
+        {
+          "title": "Use light to flatter the face - golden hour and window light",
+          "content": "Golden hour (hour before sunset) is magical for portraits - warm, soft light at an angle that sculpts the face beautifully. Position your subject so the golden light catches their face (side-lit for dimension). Overcast days are also wonderful - even, diffused light that's forgiving. Indoors, photograph people near a window - window light is soft and directional. Avoid harsh noon sun (unflattering, shadows under eyes, squinting). Indoor harsh overhead lights also unflattering - move to window light or turn off overhead lights, use a single lamp. Backlit people with window light behind them creates a glowing rim light around hair - very professional looking.",
+          "video_search": "portrait lighting window light golden hour photography"
+        },
+        {
+          "title": "Capture genuine emotion - connection over perfection",
+          "content": "Technical perfection (sharp, exposed, composed) is meaningless if the expression is fake or stiff. Direct your subject: 'Tell me about something that makes you happy' (gets genuine smile), 'Look just past my shoulder and think about your favorite memory' (gets thoughtful, genuine expression), 'Don't smile - just be present' (gets authentic, non-cheesy look). Take MANY photos during conversation, not just posed moments. Genuine emotions appear in between poses - laugh a little, tell a joke, keep the mood light. Professional portrait photographers talk constantly, keeping subjects relaxed. The best portrait isn't the stiffest pose - it's the most genuine moment. Edit out the forced smiles - keep the moments of real joy.",
+          "video_search": "portrait photography capturing genuine emotion expression"
+        }
+      ]
+    },
+    {
+      "milestone_number": 6,
+      "title": "Landscape and Nature Photography - Storytelling with Scenery",
+      "description": "Learn to compose landscapes that feel immersive and communicate mood.",
+      "sub_steps": [
+        {
+          "title": "Find compelling foreground, middle ground, and background elements",
+          "content": "A landscape with just sky and distant hills is boring - it lacks depth. Instead: include foreground (wildflowers, rocks, grass in focus or soft focus), middle ground (main landscape feature you want prominent), and background (sky, distant mountains, horizon). Foreground especially is crucial - viewers need something to hold their attention at all distances. Example composition: flowers (foreground, in soft focus) → meadow with barn (middle ground) → mountains (background). The eye travels from front to back. Spend time finding the foreground that frames your main subject best. Sometimes this means getting on the ground to shoot up at the landscape.",
+          "video_search": "landscape photography composition foreground depth"
+        },
+        {
+          "title": "Use the rule of thirds to position horizon and key features",
+          "content": "Horizon line is the most important compositional line in landscapes. Never place it in the middle (splits the photo in half, feels dull). Instead: place horizon on upper third if sky is interesting (dramatic clouds, sunset), place horizon on lower third if ground/foreground is interesting (wildflower field, beautiful meadow). Compose to emphasize the stronger element. If sunset clouds are dramatic, give them 2/3 of the frame. If foreground is beautiful, give it 2/3, sky gets 1/3. Position other features (trees, rocks, water) on intersections of the thirds grid - not scattered randomly. Intentional placement communicates that you made deliberate choices.",
+          "video_search": "landscape composition rule of thirds horizon placement"
+        },
+        {
+          "title": "Shoot during golden hour for magical light and color",
+          "content": "Landscapes photographed at noon under harsh bright sun look flat and uninteresting. Same location at golden hour (first hour after sunrise, last hour before sunset) transforms into a painting - warm orange light, long shadows, dimensional contrast. This is why professional landscape photographers wake up early and stay late. Golden hour happens daily - 2-3 hours total (1 hour before and after sunrise/sunset). Plan trips around golden hour timing. Even mediocre subjects look beautiful in golden hour light. Clear your schedule to be at your location 30 minutes before sunset - wait for the light to transform the scene. Phone apps like 'Golden Hour' or 'Sun Surveyor' tell you exactly when golden hour occurs at your location.",
+          "video_search": "landscape photography golden hour timing"
+        }
+      ]
+    },
+    {
+      "milestone_number": 7,
+      "title": "Smartphone Photography Excellence - Maximizing Mobile Capabilities",
+      "description": "Master smartphone-specific features to rival professional equipment.",
+      "sub_steps": [
+        {
+          "title": "Understand smartphone computational photography and portrait mode",
+          "content": "Modern smartphones use software (not just hardware) to create professional-quality photos. Portrait mode on iPhones and Android phones simulates shallow depth of field (f/1.4 to f/2.0 equivalent) by using machine learning to blur the background while keeping the person sharp. This is 'computational photography' - the software makes the camera smarter than just the hardware alone. Night mode on newer phones captures long exposures electronically, brightening dark scenes that would be black on older cameras. Ultra-wide and telephoto lenses give you multiple focal lengths (equivalent to 14mm, 26mm, 48mm, 77mm on different phones). Learn what modes your phone has - they're genuinely powerful. Portrait mode is especially valuable - use it for flattering people portraits with blurry backgrounds.",
+          "video_search": "smartphone portrait mode depth of field explanation"
+        },
+        {
+          "title": "Master exposure and focus - tap to meter and focus on your subject",
+          "content": "On your phone camera app, the center of the screen is where the camera meters exposure. If your subject is small (far away), the camera exposes for the whole scene, possibly underexposing your subject. Solution: tap directly on your subject's face - this locks exposure and focus on them. Watch the exposure shift as you tap different parts of the scene. You can also swipe up/down after tapping to manually adjust exposure - swipe up to brighten (increase exposure), down to darken. This gives you manual control over exposure compensation. Lock focus and exposure by holding your finger on the subject for 2-3 seconds until you see a yellow box (iPhone) or similar indicator. Now recompose - the focus/exposure stays locked even as you move the phone.",
+          "video_search": "smartphone camera focus exposure tap settings"
+        },
+        {
+          "title": "Compose using grid overlay and practice clean, intentional framing",
+          "content": "Enable grid overlay in camera settings (iPhone: Settings → Camera → Grid toggle on). This shows the 3x3 rule of thirds grid in real-time while composing. This grid is your composition guide - use the intersections for subjects, use the lines for horizons and vertical elements. Grid overlay takes the guesswork out of composition. Practice composing several photos using the grid as your guide until it becomes automatic. As you improve, you'll compose without needing the grid, but it's an invaluable training tool. Also: smartphones have digital zoom - AVOID IT when possible. Digital zoom crops the image, losing quality. Instead, step closer or use the 2x/3x telephoto lens if your phone has one.",
+          "video_search": "smartphone camera grid overlay composition settings"
+        }
+      ]
+    },
+    {
+      "milestone_number": 8,
+      "title": "Creative Camera Settings - Manual Mode, ISO, and Advanced Controls",
+      "description": "For DSLR/mirrorless users: move beyond auto to creative control.",
+      "sub_steps": [
+        {
+          "title": "Learn camera exposure modes: Auto (P), Aperture Priority (A), Shutter Priority (S), Manual (M)",
+          "content": "P (Program/Auto): Camera sets aperture and shutter speed - easy but limiting. A (Aperture Priority): You choose aperture (depth of field), camera chooses shutter speed - great for learning. S (Shutter Priority): You choose shutter speed (to freeze/blur motion), camera chooses aperture - good for action. M (Manual): You choose both aperture and shutter speed - total control. Smartphones: always on full auto, which is fine. DSLR/Mirrorless: start in Aperture Priority (A mode). This lets you control background blur while the camera handles exposure. Once comfortable, try Shutter Priority (S mode) for moving subjects. Manual (M mode) is for advanced users who want complete control. Each mode has a dial or menu option on your camera body - learn where it is on YOUR camera.",
+          "video_search": "camera exposure modes P A S M explained beginners"
+        },
+        {
+          "title": "Use ISO settings strategically based on lighting conditions",
+          "content": "Bright outdoor daylight: ISO 100-400 (low). Cloudy day indoors: ISO 400-800 (medium). Dark indoors or evening: ISO 1600-3200 (high). Very dark (concerts, night): ISO 3200-6400+ (very high). Higher ISO introduces grain (noise) - visible as speckles in the photo. Professional cameras have LESS noise at high ISO than budget cameras. To minimize grain: use lowest ISO that still captures a proper exposure. If the scene is too dark with ISO 1600, use a slower shutter speed (like 1/15) rather than jumping to ISO 6400, assuming subject isn't moving. If subject IS moving, you need fast shutter, so increase ISO instead. It's a tradeoff: grain (high ISO) vs blur (slow shutter). Usually grain is preferable to blur.",
+          "video_search": "ISO settings photography lighting conditions noise"
+        },
+        {
+          "title": "Master Manual mode for creative control over exposure and depth",
+          "content": "In Manual (M mode): you set aperture (f-stop), shutter speed, and sometimes ISO. Use exposure meter in the viewfinder - adjust settings until the meter reads correct exposure (usually a 0 in the center). Start with aperture: f/5.6 (balanced), f/2.0 (shallow depth, blurry background), f/16 (deep depth, everything sharp). Then adjust shutter speed: 1/250 (normal, freezes motion), 1/1000 (fast, definite freeze), 1/15 (slow, blur). Let the meter guide you - if underexposed, increase shutter speed to let more light in, or increase aperture (lower f-number), or increase ISO. Manual mode feels intimidating but it's learnable. Practice in good lighting first - adjust settings and watch the meter respond. Take the shot. Check the result. This feedback loop teaches you faster than any tutorial.",
+          "video_search": "manual mode M camera exposure meter tutorial"
+        }
+      ]
+    },
+    {
+      "milestone_number": 9,
+      "title": "Action and Motion Photography - Freezing or Creating Movement",
+      "description": "Master techniques to capture dynamic subjects and convey motion.",
+      "sub_steps": [
+        {
+          "title": "Freeze motion with fast shutter speeds",
+          "content": "To freeze action (sports, kids playing, animals running): use fast shutter speeds. Kids running: 1/500 or faster. Dogs running: 1/500 or faster. Cars driving: 1/1000 or faster. Ball mid-flight: 1/1000 or faster. The faster the subject moves, the faster the shutter needs to be. In bright sunlight you can use 1/1000 with wide open aperture (f/2.8). In dimmer conditions, 1/500 might blur moving subjects - you'll need wider aperture or higher ISO or both. Smartphones automatically use fast shutter speeds, so action freeze is usually handled well. For DSLR/Mirrorless in Shutter Priority mode (S mode): dial in 1/500 minimum, and let the camera adjust aperture to expose properly.",
+          "video_search": "freeze motion fast shutter speed sports photography"
+        },
+        {
+          "title": "Create motion blur intentionally - slow shutter and panning",
+          "content": "Slow shutter speed (1/30 to 1 second) creates motion blur - subject blurs as it moves across the frame, showing motion. This is artistic and dynamic. Panning: track a moving subject with your camera (follow them), use slow shutter (1/60 to 1/125), keep the subject sharp while background blurs - shows motion and speed. This is technique-intensive and requires practice, but creates dramatic photos. Example: photograph a cyclist panning - the rider is sharp, street blurs behind them showing speed. To pan: start tracking the subject before you press the shutter, press shutter while moving the camera with the subject, continue moving after the shutter closes. Smooth is key - jerky panning looks bad. Smartphones are harder to pan with (too light, hard to track smoothly) - better with heavier DSLR/Mirrorless. Try panning with at least 1/60 shutter speed (fast enough that slight camera movement doesn't ruin focus).",
+          "video_search": "motion blur panning photography technique tutorial"
+        },
+        {
+          "title": "Use focus tracking and continuous autofocus for moving subjects",
+          "content": "Your camera has autofocus modes: AF-S (single, focuses once then locks) and AF-C (continuous, tracks moving subject). For moving subjects, use AF-C (Continuous) mode - the camera tracks the subject and adjusts focus as they move. DSLR cameras: change focus mode on lens or camera body (look for AF/MF switch). Mirrorless: usually in menu or quick button. Select center focus point (or all focus points for advanced tracking). Frame the subject in the center, press shutter halfway - camera keeps focus locked on moving subject. Smartphones: tap the subject before they move - the phone attempts to track them (though smartphones don't track as well as dedicated cameras). Understanding focus mode dramatically improves action photography success.",
+          "video_search": "autofocus tracking AF-S AF-C continuous autofocus"
+        }
+      ]
+    },
+    {
+      "milestone_number": 10,
+      "title": "Editing Fundamentals - Develop Your Post-Processing Style",
+      "description": "Learn basic editing to enhance light, color, and storytelling.",
+      "sub_steps": [
+        {
+          "title": "Master exposure, contrast, and highlights/shadows adjustments",
+          "content": "Exposure slider: brightens or darkens the entire photo (use if you exposed slightly wrong in camera). Contrast slider: makes lights lighter and darks darker (medium increase adds pop). Highlights: brightens bright areas (recover detail in overexposed areas if possible). Shadows: brightens dark areas (recover detail in underexposed areas). Blacks: darkens the darkest areas (increases contrast at bottom end). Whites: brightens brightest areas. These five sliders handle 80% of photo fixing. For a underexposed photo: increase Exposure first, then increase Shadows to recover dark areas. For blown highlights: decrease Highlights to recover detail. For flat photos: increase Contrast and Blacks. Learn these five sliders in any editing app (iPhone Photos, Lightroom, Snapseed, Capture One) - they're industry standard. Most apps work the same way with slightly different names.",
+          "video_search": "photo editing exposure contrast highlights shadows"
+        },
+        {
+          "title": "Adjust color: temperature, vibrance, saturation, and white balance",
+          "content": "Temperature: makes photos warmer (orange, inviting) or cooler (blue, calm). Golden hour photos need warm temperature. Indoor photos with warm bulbs need cool temperature to offset the orange. Vibrance: increases saturation of less-saturated colors (more natural than flat saturation increase). Saturation: increases intensity of all colors (use carefully - can look unnatural). White balance: corrects color cast. Photos taken in shade can have blue cast - warming them looks more natural. Photos taken indoors under yellow bulbs have orange cast - cooling them looks natural. Learn to spot white balance issues: notice if an entire photo looks too blue or too orange. Adjust temperature slider until it looks neutral (skin tones especially reveal white balance - they should look natural, not orange or blue). These color adjustments change the mood dramatically - warm images feel cozy, cool images feel calm or dramatic.",
+          "video_search": "white balance temperature vibrance photo editing"
+        },
+        {
+          "title": "Create a consistent editing style through presets or manual adjustments",
+          "content": "Consistency is professional. Decide: Do your edited photos look warm or cool? High contrast or soft? Saturated or muted? This is your 'editing style.' Professional photographers have recognizable styles - viewers can identify a photo as theirs. Create a preset in Lightroom (or your editing app) with your preferred adjustments: +15 Contrast, +10 Vibrance, +1.2 Temperature, for example. Apply this preset to all photos as a starting point, then fine-tune each for its unique needs. This way, your portfolio has consistent look and feel. Many smartphone apps (Snapseed, Lightroom Mobile) let you create custom presets. Apps like VSCO have built-in filter presets - use one consistently to develop a style. Your style should suit your subject matter: landscapes might be cool and high-contrast, portraits might be warm and soft, street photography might be moody and desaturated.",
+          "video_search": "photo editing presets creating consistent style"
+        }
+      ]
+    },
+    {
+      "milestone_number": 11,
+      "title": "Advanced Editing - Selective Adjustments, Retouching, and Local Edits",
+      "description": "Learn to edit specific areas without affecting the entire photo.",
+      "sub_steps": [
+        {
+          "title": "Use masks and selective edits to adjust specific areas",
+          "content": "Global edits affect the entire photo. Local edits affect only selected areas. Tools include: brush masks (paint to select an area), range masks (select by color or luminance), and gradient masks (apply adjustments gradually). Use cases: brighten a person's face without brightening the entire photo, darken a blown-out sky without darkening the person, increase saturation of flowers while keeping the rest neutral. Lightroom has extensive masking tools (new in 2023: AI-powered brush that automatically selects subjects). Snapseed has brush and lens correction tools. Start simple: use brush mask to brighten a person's eyes, or darken a too-bright sky. These selective edits elevate photos from 'okay' to 'professional' - the difference is often subtle but significant.",
+          "video_search": "photo editing masks selective adjustments Lightroom"
+        },
+        {
+          "title": "Retouch portraits - skin smoothing, blemish removal, eye enhancement",
+          "content": "Portrait retouching includes: removing blemishes/pimples (clone stamp or healing tool), smoothing skin texture without looking plastic, brightening eyes, whitening teeth slightly, removing stray hairs. Key principle: retouching enhances reality, not creates a different person. Subtle is professional - obvious retouching (plastic-looking skin, alien eyes) looks amateur. Apps: Lightroom has spot removal, Snapseed has healing tool, specific apps like FaceTune or TouchRetouch specialize in portrait retouching. For subtle skin smoothing: use high-radius blur on a layers mask (paint on skin, avoid edges like ears and hair). Eyes: slightly brighten and increase contrast. Teeth: subtle white-only increase (avoid blue cast). Blemishes: heal or clone nearby skin texture. Spend time on retouching - it separates amateur from professional.",
+          "video_search": "portrait retouching healing tool skin smoothing tutorial"
+        },
+        {
+          "title": "Use curves for advanced tonal control and creative looks",
+          "content": "Curves are powerful but seem intimidating. Curves graph shows tones from dark (left) to bright (right). The diagonal line represents no change. Pull the line UP to brighten that tone range, DOWN to darken. Adjust the curve shape to recover highlights (pull down at the far right), brighten shadows (pull up at far left), increase mid-tone contrast (create an S-curve). An S-curve (shadows darker, highlights brighter) is a classic look - cinematic, punchy. Flipped S-curve (shadows brighter, highlights darker) creates moody, flat look. Curves feel complex but they're just visual tone adjustments. Start with preset curves in your app or study curves tutorials. Curves are available in Lightroom, Capture One, and many advanced apps - once you understand them, you can create any tonal look imaginable.",
+          "video_search": "curves adjustment photography editing S-curve"
+        }
+      ]
+    },
+    {
+      "milestone_number": 12,
+      "title": "Building a Portfolio - Curating Your Best Work and Telling a Story",
+      "description": "Learn to select, organize, and present your strongest images.",
+      "sub_steps": [
+        {
+          "title": "Curate your best 50-100 photos from thousands of shots",
+          "content": "Professional photographers take far more photos than they show - ratio is often 100 photos shot, 5-10 selected for portfolio. Review your work critically: which photos make you stop and look? Which tell a story or evoke emotion? Which show technical skill and creative vision? Discard technically sound but boring photos. Keep photos that are either technically excellent OR emotionally compelling (preferably both). Organize selected photos into series or themes: portraits, landscapes, stories, etc. Create separate portfolios for different styles if you have variety (portrait photographer's portfolio looks different from photojournalist's). Quality over quantity always - a 20-photo portfolio with 20 stunning images beats 100 mediocre images. Have critical feedback from photographers you respect - they spot blind spots. Don't include photos just because 'you worked hard on them' - include them because they're genuinely good.",
+          "video_search": "photography portfolio curation best work selection"
+        },
+        {
+          "title": "Organize your portfolio to tell a story - edit sequence and flow",
+          "content": "Portfolio sequence matters. Don't group all similar photos together (gets boring). Instead: open with a stunning attention-grabbing image, establish the story, show variety, build to a strong closing image. Example portrait portfolio: open with powerful headshot, show different moods/expressions, show diverse subjects (ages, ethnicities), close with an intimate, moving image. The viewer should feel a narrative journey, not just see random good photos. Consider: what story are you telling? Portfolio of social justice photography needs different sequence than travel photography or fashion photography. Each image should reference or enhance the previous one - visual and emotional flow. Many photographers spend 10 hours shooting for every 1 hour spent editing sequences. Sequence is that important.",
+          "video_search": "photography portfolio sequencing storytelling"
+        },
+        {
+          "title": "Present your portfolio professionally - website, prints, or digital book",
+          "content": "Online portfolio: website (Squarespace, Format, Adobe Portfolio) or Instagram (@handle with consistent aesthetic). Print portfolio: book (Blurb, Lulu) or physical prints in a leather portfolio. Digital slideshow: PDF or Vimeo gallery. Each format serves different purposes. Website is accessible globally, shows professionalism. Instagram is social and builds community. Print is tangible, impressive in person. Professional photographers maintain multiple formats. Website should be clean, not busy - let the photos speak. Minimal text, clear navigation. Add a brief bio (who you are, why you make photos), not a novel. Include contact information for inquiries. Organize into galleries by theme or style. Portfolio updates as you grow - retire weaker images, add new series. Your portfolio is your resume - it communicates your skill, taste, and vision instantly. Make it count.",
+          "video_search": "photography portfolio website presentation format"
+        }
+      ]
+    },
+    {
+      "milestone_number": 13,
+      "title": "Develop Your Visual Voice - Finding Your Unique Style",
+      "description": "Move beyond technical skill to discover what makes your photography distinctly yours.",
+      "sub_steps": [
+        {
+          "title": "Study photographers you admire and identify what resonates with you",
+          "content": "Find 5-10 photographers whose work you love (can be famous or Instagram photographers). Analyze: What draws you to their work? Is it the color palette? The composition approach? The subjects? The light they choose? The storytelling? The mood? Save images that inspire you into a collection. Over time, patterns emerge - you're naturally drawn to certain aesthetics. Maybe you gravitate toward warm, golden-hour light. Maybe you love high-contrast black and white. Maybe you photograph intimate moments or grand landscapes. These patterns reveal your emerging style. Your style is not something you force - it's the natural result of your visual obsessions. Lynda Barry says 'Your style is the sum of your visual interests.' You can't fake a style; it emerges from what you genuinely love photographing.",
+          "video_search": "finding photography style inspiration mood board"
+        },
+        {
+          "title": "Create variations of the same subject in different approaches",
+          "content": "Choose a subject (landscape, portrait, street scene) and photograph it multiple ways: once in color/vibrant, once in cool/moody, once in warm/golden, once in high-contrast/bold, once in soft/dreamy. Notice which approach feels most natural, most 'you.' Some photographers' work naturally looks warm and inviting. Others look cool and moody. Others are high-contrast and bold. Neither is 'better' - they're different. Once you identify YOUR natural preference, lean into it. This doesn't mean never vary - it means having a core aesthetic identity. Even versatile photographers (who shoot many styles) often have recognizable 'handwriting' - aspects of their approach that are distinctly theirs. Colors they favor, compositions they gravitate toward, subjects that attract them. Spend time exploring different approaches and noticing which feels most like 'you.'",
+          "video_search": "photography style variation same subject different approaches"
+        },
+        {
+          "title": "Complete a personal photo series exploring a subject you care about",
+          "content": "Create a series of 15-25 cohesive photos on one theme: your city, a person over time, a season's changes, a social issue, a place you love. Work over weeks or months. Each photo should stand alone but also strengthen the series. Think like a photojournalist or storyteller - you're documenting something that matters. Series work deepens your vision faster than random photos. It forces you to explore angles, lighting, composition, emotion in depth. Example series: 'Hands' (25 detail photos of hands showing emotion and context), 'Morning Light' (series of same room across different mornings), 'Street Musicians' (photojournalistic documentation of performers in your city). The series becomes your artistic statement. Professional photographers build their portfolios from strong series, not random great shots. Series work is where personal vision develops.",
+          "video_search": "photography series project personal story"
+        }
+      ]
+    },
+    {
+      "milestone_number": 14,
+      "title": "Mastering Different Genres - Specialty Techniques for Portraits, Landscapes, Street",
+      "description": "Develop expertise in specific photography genres.",
+      "sub_steps": [
+        {
+          "title": "Portrait photography mastery - posing, lighting, connection",
+          "content": "Professional portraits require: flattering positioning (three-quarter angle, slight lean), professional lighting (natural window light or reflectors), genuine connection with subject (conversation while shooting), and patience. Posing: tilt the chin slightly forward (flattering), angle body away from camera slightly, have one arm closer than the other (creates dimension), vary heights if multiple people. Lighting: side-lit or backlit often more interesting than front-lit. Connection: joke, tell stories, make them comfortable - rushed portraits look stiff. Editing: skin should look like skin (subtle texture, natural tone), eyes should sparkle (slight brightening and contrast), overall image should feel warm and inviting. Study professional portrait photographers and notice: how they position bodies, how they light faces, how subjects look relaxed. Great portrait photographers make people feel beautiful - that's the art.",
+          "video_search": "professional portrait photography posing lighting connection"
+        },
+        {
+          "title": "Landscape photography mastery - composition, light, and patience",
+          "content": "Master landscapes through: composition (layered depth, rule of thirds, leading lines), light (golden hour timing, directional light), and patience (waiting for perfect conditions). Location scouting: visit locations at different times to see light angles. Come back to favorite locations repeatedly at different seasons - same place, different moods. Foreground: always include something interesting close to camera. Middle ground: your main subject. Background: context or scenery. Use filters: graduated neutral density (ND grad) darkens bright sky while keeping foreground exposed, polarizing filter reduces glare and increases color saturation. Editing: landscapes often need slightly increased contrast, vibrance, and carefully managed highlights. Study Ansel Adams, Galen Rowell, landscape masters - notice their patience, light, and composition. Great landscape photographers spend hours in a single location waiting for light to shift.",
+          "video_search": "landscape photography composition light golden hour"
+        },
+        {
+          "title": "Street photography and photojournalism - capturing authentic moments",
+          "content": "Street photography requires: fast reflexes, ability to read scenes before they happen, respect for subjects (ethics matter), and minimal gear (usually fast prime lens, 35mm or 50mm equivalent). Skills: pre-focus on a spot you expect action (zone focusing), compose loosely leaving room for subjects to enter frame, shoot continuously during interesting moments (burst mode), respect subjects' privacy (get permission or follow ethical guidelines). This genre celebrates authenticity over perfection - slightly soft images, odd compositions, real moments trump technical perfection. Documentary style values truth over aesthetics. Laws vary by country - know your local laws about photography in public. Be respectful even where legal - approach people, explain your work, ask permission when possible. Study Henri Cartier-Bresson, Vivian Maier, Joel Meyerowitz - street photography legends known for authentic moments and human connection despite fast-paced work.",
+          "video_search": "street photography techniques decisive moment ethical"
+        }
+      ]
+    },
+    {
+      "milestone_number": 15,
+      "title": "Building a Photography Business and Sharing Your Work",
+      "description": "Learn to monetize your skills and build audience for your photography.",
+      "sub_steps": [
+        {
+          "title": "Create a professional presence - website, Instagram, pricing strategy",
+          "content": "Professional photographer needs: portfolio website (Squarespace, Format, Wix, Wordpress), Instagram (@username with consistent aesthetic), and clear pricing. Website should include: portfolio gallery, about you, services offered, pricing, contact form, blog (optional). Instagram: post consistently (3x weekly), use relevant hashtags, engage with followers, tell behind-the-scenes stories. Pricing varies: portrait session $150-500, wedding $1500-5000, product photography $500-2000 per day, stock photos $20-500 per license. Research local rates and competitive pricing. Never undercharge - you're not building a business at bargain rates. Clear pricing eliminates awkward conversations. Include usage rights (can client use commercially? Unlimited prints?). Professional photographers charge what their work is worth, not what they hope someone pays.",
+          "video_search": "photography business pricing rates website portfolio"
+        },
+        {
+          "title": "Develop client-facing skills - communication, contracts, delivery",
+          "content": "Business requires: clear communication, written contracts protecting both sides, and professional delivery. Contracts should specify: session date/time, location, deliverables (number of edited photos, file formats), usage rights, payment terms, cancellation policy. Client communication: respond promptly, clarify expectations before shooting, provide proofs quickly, gather feedback, deliver final images professionally. Editing timeline: deliver proofs within 3-5 days, edited finals within 1-2 weeks (set realistic deadlines). Use online galleries (Pixieset, ShootProof, SmugMug) to deliver photos professionally - clients order prints through your system, you earn margin, reduces your administrative work. Invoice professionally, specify payment due date and method. Treat photography as a business, not a hobby - professional practices build reputation and repeat clients.",
+          "video_search": "photography contracts client communication business"
+        },
+        {
+          "title": "Explore monetization paths - client work, licensing, prints, teaching",
+          "content": "Income sources: (1) Commissioned work (portraits, events, product photography) - highest hourly rate, one-time payment. (2) Stock photography (sell licenses through Unsplash, Pexels, Shutterstocmk, Adobe Stock) - passive, low per-image revenue but accumulates. (3) Prints (fine art prints sold through your website or galleries) - medium revenue, requires inventory or print-on-demand. (4) Teaching (workshops, online courses, mentoring) - leverage expertise, scalable. (5) Licensing for editorial/commercial use - photographs appear in magazines, books, advertising. Most professional photographers combine multiple income streams. Start with client work (most immediate revenue), add stock photography (long-tail passive income), then prints or teaching as secondary income. Diversified income is more stable than single source. As your business grows, delegate what you dislike (editing, admin, printing) to focus on what you're best at.",
+          "video_search": "photography business income streams stock photos print"
+        }
+      ]
+    }
+  ]
+}

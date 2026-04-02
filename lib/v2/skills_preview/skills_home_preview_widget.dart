@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'skill_preview_data.dart';
 import 'skill_detail_preview_widget.dart';
-import 'create_skill_path_preview_widget.dart';
+import 'create_skill_path_widget.dart';
 
 class SkillsHomePreviewWidget extends StatefulWidget {
   const SkillsHomePreviewWidget({super.key});
@@ -146,7 +146,7 @@ class _SkillsHomePreviewWidgetState extends State<SkillsHomePreviewWidget> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const CreateSkillPathPreviewWidget(),
+                builder: (context) => const CreateSkillPathWidget(),
               ),
             );
           },
@@ -279,12 +279,16 @@ class _SkillsHomePreviewWidgetState extends State<SkillsHomePreviewWidget> {
 
             return InkWell(
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const SkillDetailPreviewWidget(),
-                  ),
-                );
+                if (skillPaths != null) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SkillDetailPreviewWidget(
+                        skillPathRef: skillPaths[index].reference,
+                      ),
+                    ),
+                  );
+                }
               },
               borderRadius: BorderRadius.circular(20.0),
               child: Container(
@@ -297,7 +301,7 @@ class _SkillsHomePreviewWidgetState extends State<SkillsHomePreviewWidget> {
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.06),
+                      color: Colors.black.withValues(alpha: 0.06),
                       blurRadius: 12,
                       offset: const Offset(0, 4),
                     ),

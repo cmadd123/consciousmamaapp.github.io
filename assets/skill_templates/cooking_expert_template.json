@@ -1,0 +1,338 @@
+{
+  "skill_name": "Cooking",
+  "skill_icon": "👨‍🍳",
+  "description": "Master fundamental cooking techniques and build culinary confidence. This curriculum blends teaching approaches from Jacques Pépin (French technique foundations), America's Test Kitchen (science-based methods), and Salt Fat Acid Heat's Samin Nosrat (intuitive cooking principles).",
+  "total_milestones": 15,
+  "milestones": [
+    {
+      "milestone_number": 1,
+      "title": "Kitchen Safety & Knife Fundamentals",
+      "description": "Learn essential kitchen safety and proper knife handling using techniques from culinary schools like the Culinary Institute of America and Jacques Pépin's teaching methods.",
+      "sub_steps": [
+        {
+          "step_number": 1,
+          "title": "Set Up a Safe Workspace",
+          "content": "Professional chefs organize their mise en place (everything in its place) before cooking. Clear your counter, gather tools, and read the entire recipe. Keep a damp towel under your cutting board to prevent slipping—a trick from culinary schools worldwide. Have a 'garbage bowl' nearby for scraps (Rachael Ray's time-saver). Clean as you go: professional kitchens operate this way, and it prevents accidents from cluttered spaces."
+        },
+        {
+          "step_number": 2,
+          "title": "Master the Chef's Knife Grip",
+          "content": "Jacques Pépin teaches the pinch grip: pinch the blade where it meets the handle with thumb and forefinger, wrap remaining fingers around the handle. This gives maximum control. Your other hand uses the 'claw'—fingertips curl inward, knuckles forward as a guide. The knife blade rests against your knuckles, protecting fingertips. Practice this grip by slowly slicing a cucumber, focusing on form not speed. Speed comes with thousands of repetitions."
+        },
+        {
+          "step_number": 3,
+          "title": "Learn Three Essential Cuts",
+          "content": "Master these foundational cuts: (1) Slice—straight cuts creating flat pieces. (2) Dice—cubes, achieved by first slicing, stacking, then cutting crosswise. (3) Mince—very fine cuts for garlic and herbs, using a rocking motion. America's Test Kitchen emphasizes uniform cuts cook evenly. Practice on an onion: halve it through root, peel, make horizontal cuts (don't cut through root), vertical cuts, then slice crosswise. The root holds layers together—brilliant traditional technique."
+        }
+      ]
+    },
+    {
+      "milestone_number": 2,
+      "title": "Understanding Heat & Temperature",
+      "description": "Learn how different heat levels affect food, following principles from The Food Lab's J. Kenji López-Alt and professional culinary training.",
+      "sub_steps": [
+        {
+          "step_number": 4,
+          "title": "Understand Your Stovetop",
+          "content": "Professional chefs know their equipment intimately. Test your burners: set one to medium-high, hold your palm 6 inches above—you should feel strong heat in 3-4 seconds. This is searing temperature. Medium heat takes 6-7 seconds, low heat 10+ seconds. Gas provides instant temperature control; electric retains heat longer (remove pans when adjusting down). Learn your stove's personality—each one is different. Write notes: 'Medium on my stove = dial at 4.'"
+        },
+        {
+          "step_number": 5,
+          "title": "Master the Sear",
+          "content": "The Maillard reaction (browning) starts around 300°F and creates incredible flavor. J. Kenji López-Alt teaches: dry your protein with paper towels (moisture prevents browning), heat pan until a water drop sizzles and evaporates instantly, add oil (it should shimmer), lay protein away from you (prevents splatter burns). Don't move it for 3-4 minutes—a crust is forming. When it releases easily, it's ready to flip. Patience creates restaurant-quality sears."
+        },
+        {
+          "step_number": 6,
+          "title": "Learn When Food Is Done",
+          "content": "Professional cooks use multiple senses. For proteins: touch test (press gently—rare feels soft like your cheek, medium like your chin, well-done like your forehead). Instant-read thermometers are foolproof: chicken to 165°F, pork to 145°F, medium steak to 135°F. Vegetables: taste them. Pasta: al dente has slight resistance when bitten—test 2 minutes before package time. Samin Nosrat teaches tasting throughout cooking, adjusting as you go. Your palate is your best tool."
+        }
+      ]
+    },
+    {
+      "milestone_number": 3,
+      "title": "Salt, Fat, Acid, Heat - The Four Elements",
+      "description": "Master Samin Nosrat's framework for intuitive cooking—understanding how these four elements create balanced, delicious food.",
+      "sub_steps": [
+        {
+          "step_number": 7,
+          "title": "Master Salting Techniques",
+          "content": "Salt doesn't just make food salty—it enhances all flavors. Samin Nosrat teaches: salt in layers (season meat before cooking, pasta water, vegetables as they cook, then taste and adjust at the end). Use more than you think: pasta water should taste like the sea. For proteins, salt 40 minutes ahead (allows it to penetrate) or right before cooking (prevents moisture loss). Taste constantly—your tongue learns to calibrate proper seasoning through repetition."
+        },
+        {
+          "step_number": 8,
+          "title": "Understand Fat's Role",
+          "content": "Fat carries flavor and creates texture. Butter for richness (add at the end to sauces—French technique), olive oil for vegetables (coats and helps browning), neutral oils for high-heat cooking (avocado, grapeseed). Jacques Pépin teaches: fat should glisten, not pool. For roasting vegetables, use enough oil to coat each piece—they'll caramelize beautifully. For sautéing, a thin film prevents sticking. Too little fat means steaming; too much means greasy food."
+        },
+        {
+          "step_number": 9,
+          "title": "Balance with Acid",
+          "content": "Acid (lemon, vinegar, tomatoes) brightens flavors and balances richness. Taste your dish: if it's flat or heavy, add acid. Start with a squeeze of lemon or splash of vinegar, taste, repeat. Italian grandmothers finish pasta with lemon zest and juice—it transforms the dish. America's Test Kitchen adds vinegar to stews and braises in the last 10 minutes. Acid should be noticeable but not dominate. Your palate will learn to recognize when a dish needs brightening."
+        }
+      ]
+    },
+    {
+      "milestone_number": 4,
+      "title": "Vegetable Cooking Methods",
+      "description": "Learn fundamental techniques for cooking vegetables using methods from professional kitchens and culinary schools.",
+      "sub_steps": [
+        {
+          "step_number": 10,
+          "title": "Perfect the Sauté",
+          "content": "Sauté means 'to jump' in French—vegetables should move in the pan. Heat pan over medium-high, add oil (should shimmer), add vegetables in a single layer. Don't overcrowd or they'll steam. Let them sit 2 minutes to develop color, then toss. For perfect Brussels sprouts: halve them, sear cut-side down without moving for 4 minutes (creates caramelization), then flip and cook until tender. Season at the end—salt draws out moisture if added too early."
+        },
+        {
+          "step_number": 11,
+          "title": "Master Roasting",
+          "content": "Roasting concentrates flavors through caramelization. America's Test Kitchen method: oven to 425°F, toss vegetables in enough oil to coat, spread in single layer on sheet pan (don't crowd), roast until edges are deeply brown. For root vegetables: 30-40 minutes. For tender vegetables like zucchini: 20-25 minutes. Flip halfway through for even browning. The darker the edges (without burning), the deeper the flavor. This is how restaurants make vegetables irresistible."
+        },
+        {
+          "step_number": 12,
+          "title": "Learn Blanching & Shocking",
+          "content": "French technique for vibrant green vegetables: bring salted water to rolling boil, add vegetables, cook until bright green and barely tender (green beans: 3-4 minutes, broccoli: 2-3 minutes). Immediately plunge into ice water to stop cooking—this 'shocks' them, preserving color and texture. Drain well. This technique lets you prep vegetables hours ahead, then quickly sauté or serve cold. Professional caterers rely on this method for perfectly cooked, brilliantly colored vegetables."
+        }
+      ]
+    },
+    {
+      "milestone_number": 5,
+      "title": "Your First Recipe: Perfect Scrambled Eggs",
+      "description": "Master the breakfast staple using techniques from Jacques Pépin, Gordon Ramsay, and French culinary traditions.",
+      "sub_steps": [
+        {
+          "step_number": 13,
+          "title": "Prepare Your Eggs",
+          "content": "Crack 3 eggs into a bowl, add a pinch of salt and pepper. Jacques Pépin teaches: whisk until just combined, not frothy (overbeating creates rubbery eggs). Some chefs add a tablespoon of milk or cream; others use only eggs. Both work—experiment to find your preference. Room temperature eggs cook more evenly than cold. Let them sit 10 minutes before cooking if you have time."
+        },
+        {
+          "step_number": 14,
+          "title": "Master Low and Slow Cooking",
+          "content": "Gordon Ramsay's method: medium-low heat, add butter (1 tablespoon for 3 eggs), swirl to coat pan. Add eggs. Stir constantly with a silicone spatula, scraping the bottom and sides. Remove pan from heat occasionally to prevent overcooking—eggs continue cooking off heat. This takes 4-5 minutes. When eggs are soft curds and slightly wet-looking, remove from heat. They'll finish cooking on the plate. Creamy, custardy eggs come from patience, not high heat."
+        },
+        {
+          "step_number": 15,
+          "title": "Finish Like a Professional",
+          "content": "The final touches make restaurant-quality eggs: French chefs stir in a small knob of cold butter at the end (makes them silky and stops cooking). Add fresh herbs (chives, parsley) just before serving. Season again if needed—taste first. Serve immediately—scrambled eggs don't wait. You've now mastered a recipe that professional brunch chefs make thousands of times. The technique applies to any stovetop eggs: gentle heat, constant attention, remove just before they look done."
+        }
+      ]
+    },
+    {
+      "milestone_number": 6,
+      "title": "Building Flavor: Aromatics & Bases",
+      "description": "Learn how professional cooks build layered flavors using aromatics—the foundation of most cuisines worldwide.",
+      "sub_steps": [
+        {
+          "step_number": 16,
+          "title": "Master the French Mirepoix",
+          "content": "Mirepoix is the holy trinity of French cooking: 2 parts onion, 1 part carrot, 1 part celery, all diced. This base builds flavor in soups, stews, and sauces. Technique: heat oil over medium, add vegetables, cook slowly (8-10 minutes) until softened and sweet—not browned. This is called sweating. The vegetables release water and sugars, creating a flavor foundation. Italian soffritto is similar but adds garlic. Spanish sofrito includes tomatoes. These aromatics are the secret to depth in one-pot dishes."
+        },
+        {
+          "step_number": 17,
+          "title": "Learn When to Add Garlic",
+          "content": "America's Test Kitchen discovered garlic timing matters enormously. Raw garlic is sharp and pungent. Cooked 30 seconds is mellow. Cooked 2 minutes is sweet. Burned is bitter (disaster). Add minced garlic in the last 30-60 seconds of sautéing aromatics—just until fragrant. For roasted garlic: whole heads roasted 40 minutes at 400°F become sweet and spreadable (Italian technique). For maximum punch: add raw minced garlic at the very end. Match garlic treatment to your desired intensity."
+        },
+        {
+          "step_number": 18,
+          "title": "Build an Herb Bundle (Bouquet Garni)",
+          "content": "French technique for infusing flavor: tie fresh herbs (parsley stems, thyme sprigs, bay leaf) with kitchen twine, or wrap in cheesecloth. Drop into simmering soups or stews, remove before serving. The herbs perfume the dish without leaving bits behind. Dried herbs go at the beginning (need time to rehydrate); fresh herbs go at the end (preserve brightness). Professional chefs keep both on hand and know which dish needs which. This small technique elevates home cooking to restaurant level."
+        }
+      ]
+    },
+    {
+      "milestone_number": 7,
+      "title": "Mastering Stocks & Soups",
+      "description": "Learn to make foundational stocks and soups using classical French techniques and modern shortcuts from America's Test Kitchen.",
+      "sub_steps": [
+        {
+          "step_number": 19,
+          "title": "Make a Simple Chicken Stock",
+          "content": "Classic French method: place chicken bones (raw or from a roasted chicken), mirepoix, herbs, and cold water in a pot. Bring to bare simmer—bubbles should barely break the surface. Simmer 3-4 hours, skimming foam occasionally. Strain through fine mesh strainer. The longer, slower simmer extracts maximum gelatin and flavor. Quick version (weeknight): pressure cook for 1 hour. Stock transforms rice, sauces, and soups. Professional chefs consider it liquid gold. Freeze in ice cube trays for easy portioning."
+        },
+        {
+          "step_number": 20,
+          "title": "Build a Soup from Scratch",
+          "content": "Formula for any vegetable soup: (1) Sweat aromatics in oil. (2) Add vegetables, cook 5 minutes. (3) Add stock to cover, simmer until tender. (4) Blend if desired. (5) Season with salt, acid, fresh herbs. For chicken soup: add shredded cooked chicken at the end. For minestrone: add beans and pasta. This framework works for infinite variations. Italian grandmothers and French chefs use the same basic method—aromatics first, build from there."
+        },
+        {
+          "step_number": 21,
+          "title": "Master Seasoning to Taste",
+          "content": "Professional chefs taste constantly and adjust. Make your soup, then taste with a spoon (cool it first—you can't taste properly when it's scalding). Too flat? Add salt, 1/4 teaspoon at a time, tasting between additions. Still flat? Add acid (lemon juice or vinegar), 1 teaspoon at a time. Too salty? Add more liquid or a diced potato (absorbs salt). Too thin? Simmer uncovered to reduce. Too thick? Add stock. Samin Nosrat teaches this iterative tasting as the core skill of good cooking."
+        }
+      ]
+    },
+    {
+      "milestone_number": 8,
+      "title": "Protein Basics: Chicken",
+      "description": "Master chicken preparation using techniques from Jacques Pépin (French butchery) and J. Kenji López-Alt (science-based methods).",
+      "sub_steps": [
+        {
+          "step_number": 22,
+          "title": "Learn to Season and Prep Chicken",
+          "content": "Jacques Pépin teaches: dry chicken thoroughly with paper towels (wet skin won't crisp). Season generously all over—1 teaspoon salt per pound of chicken. For best results, season 1-24 hours ahead and refrigerate uncovered (air-dries skin for crispness). Before cooking, bring to room temperature (30 minutes on counter). For even cooking, butterfly thick breasts: slice horizontally halfway through, open like a book, pound gently to even thickness. Uniform thickness = uniform doneness."
+        },
+        {
+          "step_number": 23,
+          "title": "Perfect the Pan-Roasted Breast",
+          "content": "Restaurant technique combining stovetop and oven: heat oven to 425°F. Heat oven-safe skillet over medium-high, add oil. Place chicken skin-side down, press gently with spatula for even contact. Don't move it. Cook 6-7 minutes until skin is deeply golden. Flip, transfer entire pan to oven. Roast 10-12 minutes until internal temperature reaches 160°F (carryover cooking brings it to 165°F). Rest 5 minutes before slicing. This method guarantees crispy skin and juicy meat—exactly how fine dining restaurants do it."
+        },
+        {
+          "step_number": 24,
+          "title": "Master the Pan Sauce",
+          "content": "French technique to create sauce from pan drippings: after removing cooked chicken, pour off most fat, leaving about 1 tablespoon and all the browned bits. Add 1/4 cup wine or stock, scrape bottom with wooden spoon (this is deglazing—releases stuck-on flavor). Simmer until reduced by half. Add 2 tablespoons cold butter, swirl until melted and glossy. Season with salt and lemon juice. Pour over chicken. This 3-minute sauce elevates simple chicken to elegant. Professional cooks make pan sauces automatically—it's second nature."
+        }
+      ]
+    },
+    {
+      "milestone_number": 9,
+      "title": "Pasta & Grains",
+      "description": "Learn to cook pasta, rice, and grains properly using Italian traditions and America's Test Kitchen methods.",
+      "sub_steps": [
+        {
+          "step_number": 25,
+          "title": "Cook Perfect Pasta",
+          "content": "Italian method: use 4-6 quarts water per pound of pasta (plenty of room to move), salt generously (1-2 tablespoons—should taste like seawater). Boil vigorously, add pasta, stir immediately to prevent sticking. Cook 2 minutes less than package directions, then taste. Al dente has slight resistance in the center. Reserve 1 cup pasta water before draining (starchy water helps sauce cling). Never rinse pasta—you'll wash away the starch that holds sauce. Toss with sauce immediately. Italians would never serve naked pasta with sauce on top."
+        },
+        {
+          "step_number": 26,
+          "title": "Master Pasta and Sauce Marriage",
+          "content": "Italian grandmothers know: pasta and sauce must marry in the pan. After draining pasta (reserving water), return it to the pot or add to your sauce. Toss over medium heat, adding pasta water 1/4 cup at a time until sauce coats pasta glossy but not soupy. The starch in pasta water creates silky texture. Cook together 1-2 minutes—pasta absorbs sauce, sauce clings to pasta. Finish with grated cheese, fresh herbs, and olive oil. This technique separates good pasta from restaurant-quality pasta."
+        },
+        {
+          "step_number": 27,
+          "title": "Cook Fluffy Rice",
+          "content": "America's Test Kitchen ratio: 1 cup rice to 1.5 cups water (for long-grain white rice). Rinse rice until water runs clear (removes excess starch that causes gumminess). Bring water to boil, add rice and salt, stir once. Cover, reduce heat to low, cook 15 minutes without lifting lid (steam escapes). Remove from heat, let stand covered 10 minutes (finishes cooking in residual heat). Fluff with fork. Each grain should be separate and tender. This method works for any rice variety—adjust water ratio based on type."
+        }
+      ]
+    },
+    {
+      "milestone_number": 10,
+      "title": "Your Second Recipe: Simple Tomato Sauce",
+      "description": "Master the foundational Italian sauce using Marcella Hazan's famous technique—simplicity perfected.",
+      "sub_steps": [
+        {
+          "step_number": 28,
+          "title": "Gather Ingredients",
+          "content": "Marcella Hazan's legendary recipe uses just 4 ingredients: 1 can (28 oz) whole tomatoes (San Marzano if possible), 5 tablespoons butter, 1 onion (peeled and halved), salt to taste. That's it. No garlic, no herbs initially. This sauce teaches you that quality ingredients and proper technique create extraordinary flavor without complexity. Italian cooking at its essence: few ingredients, treated with respect."
+        },
+        {
+          "step_number": 29,
+          "title": "Simmer and Develop Flavor",
+          "content": "Place everything in a saucepan: crush tomatoes by hand as you add them, nestle onion halves in the tomatoes, add butter and a pinch of salt. Bring to simmer, then reduce heat to gentle bubble. Cook uncovered 45 minutes, stirring occasionally and crushing tomatoes against the side of pan. The butter enriches, the onion sweetens (but isn't eaten—discard before serving), the long simmer concentrates. Taste and add salt until it sings. This slow method develops deep, sweet, complex flavor from almost nothing."
+        },
+        {
+          "step_number": 30,
+          "title": "Finish and Customize",
+          "content": "After 45 minutes, discard onion halves. Taste and adjust salt. For smooth sauce, blend with immersion blender; for rustic, leave chunky. Now you can customize: add fresh basil, dried oregano, red pepper flakes, or sautéed garlic. But first taste it plain—you'll understand why this simple sauce is legendary. Toss with pasta, spoon over chicken, use in lasagna. Professional Italian chefs learn this sauce as a foundation, then build variations. You've mastered a recipe that will serve you for life."
+        }
+      ]
+    },
+    {
+      "milestone_number": 11,
+      "title": "Baking Basics: Quick Breads & Muffins",
+      "description": "Learn fundamental baking techniques from King Arthur Baking and America's Test Kitchen's science-based methods.",
+      "sub_steps": [
+        {
+          "step_number": 31,
+          "title": "Understand Baking as Science",
+          "content": "Unlike cooking (where you can adjust as you go), baking is chemistry. Measure precisely using cups (scoop and level) or, better, a kitchen scale (professional standard). Mix in the order specified—it matters. Don't overmix once flour is added—gluten develops and creates tough, dense results. King Arthur Baking teaches: mix until 'just combined' means you should still see a few flour streaks. Those final few strokes happen as you pour into the pan. Gentle handling creates tender crumb."
+        },
+        {
+          "step_number": 32,
+          "title": "Master the Muffin Method",
+          "content": "Basic technique for quick breads, muffins, pancakes: (1) Whisk all dry ingredients in one bowl (flour, sugar, baking powder, salt). (2) Whisk all wet ingredients in another bowl (eggs, milk, melted butter, vanilla). (3) Pour wet into dry, fold gently with spatula just until combined. Some lumps are fine. Overmixing creates tunnels and toughness. (4) Scoop into prepared pan immediately (baking powder activates on contact with liquid). This two-bowl method is your foundation for hundreds of recipes."
+        },
+        {
+          "step_number": 33,
+          "title": "Bake and Test for Doneness",
+          "content": "Oven temperature matters: use an oven thermometer (home ovens are often 25°F off). For muffins, 375°F is standard. Fill cups 2/3 full (room to rise). Bake 18-22 minutes. Signs of doneness: golden tops, springs back when lightly pressed, toothpick inserted in center comes out with a few moist crumbs (not wet batter). Cool 5 minutes in pan, then remove to a wire rack. Cooling in the pan too long creates soggy bottoms. These small details separate okay muffins from bakery-quality ones."
+        }
+      ]
+    },
+    {
+      "milestone_number": 12,
+      "title": "Salad Fundamentals & Dressings",
+      "description": "Master salads and vinaigrettes using French techniques and ratios from classic culinary training.",
+      "sub_steps": [
+        {
+          "step_number": 34,
+          "title": "Build a Balanced Salad",
+          "content": "Professional salads have layers: base greens (mix textures—crisp romaine, tender butter lettuce, peppery arugula), vegetables (tomatoes, cucumbers, peppers), something rich (cheese, nuts, avocado), something sweet or acidic (dried fruit, citrus), and protein if desired. Toss gently in a large bowl—room to move means even coating. Dress just before serving (dressed greens wilt). Use enough dressing to lightly coat, not drown. Taste a leaf—should be flavorful but not swimming in dressing."
+        },
+        {
+          "step_number": 35,
+          "title": "Master the Classic Vinaigrette",
+          "content": "French ratio: 3 parts oil to 1 part acid (vinegar or lemon juice). In a jar: add 1 tablespoon Dijon mustard (emulsifier that keeps it mixed), 3 tablespoons vinegar, 1/2 teaspoon salt, pepper to taste. Shake. Add 9 tablespoons (about 1/2 cup) oil. Shake vigorously 30 seconds. Taste on a lettuce leaf, adjust. Too acidic? Add more oil. Too oily? Add vinegar. Too flat? Add salt. This ratio works for any vinegar (red wine, balsamic, sherry) and any oil (olive, walnut, neutral). Once you know this, you'll never buy bottled dressing again."
+        },
+        {
+          "step_number": 36,
+          "title": "Learn Creamy Dressing Technique",
+          "content": "For Caesar, ranch, or blue cheese dressing: start with a creamy base (mayonnaise, sour cream, or Greek yogurt), add acid (lemon juice or vinegar), add flavorings (garlic, herbs, cheese), thin with milk or buttermilk to desired consistency, season with salt and pepper. For Caesar: 1/2 cup mayo, 2 tablespoons lemon juice, 2 minced garlic cloves, 1/2 cup grated Parmesan, 2 teaspoons Worcestershire, salt and pepper. Whisk until smooth. Authentic Caesar uses raw egg yolk, but mayo is safer and nearly identical. These dressings keep 5-7 days refrigerated."
+        }
+      ]
+    },
+    {
+      "milestone_number": 13,
+      "title": "Meal Planning & Recipe Adaptation",
+      "description": "Learn to plan balanced meals and adapt recipes based on what you have—skills from experienced home cooks and professional chefs.",
+      "sub_steps": [
+        {
+          "step_number": 37,
+          "title": "Plan a Balanced Plate",
+          "content": "Culinary schools teach the balanced plate: half vegetables (one cooked, one raw or salad), quarter protein (meat, fish, beans, tofu), quarter starch (rice, potato, pasta, bread). This ensures nutritional variety and visual appeal. Plan your week: choose 3-4 dinner proteins, pick complementary sides, shop once. Batch cook components: roast vegetables for 3 days, cook grains in advance, prep sauces ahead. Professional meal prep isn't complicated recipes—it's smart component cooking and assembly. Monday's roasted vegetables become Wednesday's frittata."
+        },
+        {
+          "step_number": 38,
+          "title": "Learn Recipe Substitutions",
+          "content": "Experienced cooks know equivalents: no buttermilk? Add 1 tablespoon lemon juice to regular milk, wait 5 minutes. No brown sugar? Mix white sugar with a bit of molasses (or just use white). No fresh herbs? Use 1/3 the amount dried. No wine for deglazing? Use stock. No heavy cream? Use half-and-half or milk (won't be as rich but works). America's Test Kitchen has tested these swaps extensively. Keep a substitution chart in your kitchen—it prevents mid-recipe panic and wasted trips to the store."
+        },
+        {
+          "step_number": 39,
+          "title": "Improvise with Confidence",
+          "content": "Once you understand technique (not just recipes), you can improvise. Making soup? Any aromatic base + any vegetables + stock + seasoning works. Making pasta? Any sauce base (tomato, cream, oil) + any protein + any vegetable + pasta works. Samin Nosrat's Salt Fat Acid Heat framework lets you taste and adjust anything. The recipe is a guideline; your palate is the boss. Professional chefs riff on classics constantly. Start by making small changes to recipes (different herb, different vegetable), building confidence to eventually create your own dishes."
+        }
+      ]
+    },
+    {
+      "milestone_number": 14,
+      "title": "Your Third Recipe: Sheet Pan Dinner",
+      "description": "Master the efficient, balanced one-pan meal using America's Test Kitchen techniques and professional timing.",
+      "sub_steps": [
+        {
+          "step_number": 40,
+          "title": "Choose and Prep Your Components",
+          "content": "Select: 1 protein (chicken thighs, salmon, sausage, tofu), 2-3 vegetables (choose ones with similar cooking times—Brussels sprouts and carrots work together; asparagus and tomatoes work together). Cut everything to similar size for even cooking. Toss vegetables in oil, salt, and pepper. Season protein generously. America's Test Kitchen tip: use two sheet pans if needed—crowding causes steaming, not roasting. Leave space between pieces for air circulation and browning."
+        },
+        {
+          "step_number": 41,
+          "title": "Master Staggered Timing",
+          "content": "Not everything cooks at the same rate—professional cooks add ingredients in waves. For chicken thighs (40 minutes) and Brussels sprouts (25 minutes): roast chicken alone 15 minutes at 425°F, add vegetables, roast together 25 minutes until chicken reaches 165°F and vegetables are caramelized. For salmon (12 minutes) and asparagus (15 minutes): roast asparagus 3 minutes, add salmon, roast together 12 minutes. Keep notes on your successful combinations and timing—you're building your personal cookbook."
+        },
+        {
+          "step_number": 42,
+          "title": "Finish and Serve",
+          "content": "Fresh elements at the end elevate sheet pan dinners: squeeze lemon over everything, sprinkle fresh herbs (parsley, cilantro, basil), drizzle with good olive oil or add a flavorful sauce (the quick pan sauce you learned earlier, pesto, tahini sauce). These finishing touches add brightness and complexity. Serve family-style on the sheet pan or plate individually. You've created a balanced, delicious meal with minimal cleanup—exactly what professional caterers and smart home cooks do. This technique will become a weeknight staple."
+        }
+      ]
+    },
+    {
+      "milestone_number": 15,
+      "title": "Cooking Mastery: Review & Next Steps",
+      "description": "Reflect on your culinary journey and plan your path toward advanced techniques and recipe development.",
+      "sub_steps": [
+        {
+          "step_number": 43,
+          "title": "Review Your Core Techniques",
+          "content": "You've learned the fundamentals that separate confident cooks from recipe followers: knife skills, heat control, seasoning to taste, building flavor with aromatics, cooking proteins properly, making sauces, and balancing a plate. You've mastered three complete recipes: scrambled eggs, tomato sauce, and sheet pan dinner. These techniques appear in cuisines worldwide—French, Italian, Chinese, Mexican cooking all use these same principles with different ingredients. Jacques Pépin teaches that technique, not recipes, makes you a cook."
+        },
+        {
+          "step_number": 44,
+          "title": "Explore Advanced Skills",
+          "content": "Now you're ready for: braising (low and slow cooking in liquid), making emulsified sauces (hollandaise, mayonnaise), baking yeasted breads, butchering whole proteins, making fresh pasta, advanced knife skills (julienne, brunoise, tournée), and plating techniques. Study Samin Nosrat's Salt Fat Acid Heat, Jacques Pépin's technique videos, J. Kenji López-Alt's The Food Lab, and America's Test Kitchen. Consider taking a culinary class or finding a cooking mentor. Each advanced technique opens new creative possibilities."
+        },
+        {
+          "step_number": 45,
+          "title": "Develop Your Cooking Voice",
+          "content": "Professional chefs develop signature styles by mastering fundamentals, then innovating. Cook each recipe multiple times—the third attempt is always better than the first. Keep a cooking journal: note what worked, what didn't, substitutions that succeeded. Taste broadly: try unfamiliar cuisines, restaurants, ingredients. Your palate develops through exposure. Eventually you'll taste a dish and know how to recreate it. You'll open the fridge and improvise dinner without a recipe. That's when you've become a cook, not just someone who follows instructions. Now go cook something delicious."
+        }
+      ]
+    }
+  ]
+}

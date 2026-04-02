@@ -1,0 +1,338 @@
+{
+  "skill_name": "Drawing & Art",
+  "skill_icon": "🎨",
+  "description": "Master artistic fundamentals through expert-guided progression. This curriculum blends Betty Edwards' perceptual drawing techniques, Bob Ross's confidence-building philosophy, and Lynda Barry's creative freedom approach. From basic shapes to advanced composition, develop both technical skill and artistic voice through hands-on practice and guided observation.",
+  "total_milestones": 15,
+  "milestones": [
+    {
+      "milestone_number": 1,
+      "title": "See Like an Artist - Basic Shapes",
+      "description": "Learn the fundamental skill of observational drawing by breaking complex subjects into simple shapes.",
+      "sub_steps": [
+        {
+          "title": "Draw the 5 basic shapes from observation",
+          "content": "Betty Edwards teaches that everything you see can be broken down into five shapes: circle, square, triangle, rectangle, and organic curved shapes. Practice drawing these shapes from real objects around you - a mug (cylinder/circle), a book (rectangle), a plant pot (cone/triangle). The key is to draw what you actually SEE, not what you THINK it should look like. Spend 5 minutes per shape.",
+          "video_search": "Betty Edwards basic shapes drawing tutorial"
+        },
+        {
+          "title": "Practice contour drawing without looking at paper",
+          "content": "Place your pencil on paper, look ONLY at the object (not your paper), and slowly trace the edges with your eyes while your hand follows. This feels awkward at first - your drawing will look wonky - but it trains your hand-eye connection. Betty Edwards calls this 'pure contour drawing.' Try drawing your non-dominant hand this way for 10 minutes. The 'mistakes' are actually progress.",
+          "video_search": "contour drawing exercise Betty Edwards"
+        },
+        {
+          "title": "Draw an everyday object using only shapes",
+          "content": "Choose a simple object like scissors, a shoe, or a bottle. Before drawing, identify which basic shapes make up the object. Then lightly sketch those shapes first, then refine into the actual object. This is how professional artists start every drawing - rough shapes first, details later. Bob Ross would say 'there are no mistakes, just happy accidents' - if a shape is wrong, adjust it!",
+          "video_search": "drawing objects using basic shapes tutorial"
+        }
+      ]
+    },
+    {
+      "milestone_number": 2,
+      "title": "Understanding Proportions & Measurement",
+      "description": "Develop accuracy by learning to measure and compare proportions visually.",
+      "sub_steps": [
+        {
+          "title": "Use pencil sight-measuring technique",
+          "content": "Hold your pencil at arm's length, close one eye, and use the pencil to measure the width of an object (align pencil tip with one edge, use thumb to mark the other edge). Now compare that measurement to the object's height. This is how artists check proportions. Practice measuring a doorway, a window, a chair - always compare width to height. Betty Edwards emphasizes this eliminates guessing.",
+          "video_search": "pencil sight measuring drawing technique"
+        },
+        {
+          "title": "Draw a self-portrait using grid method",
+          "content": "Take a photo of yourself, print it, and draw a 1-inch grid over it. On your drawing paper, draw the same grid (or make it bigger for enlargement). Now copy one square at a time - this breaks the overwhelming task of 'drawing a face' into simple chunks of 'drawing shapes in squares.' You'll be amazed how accurate your portrait becomes. This method has been used since the Renaissance.",
+          "video_search": "grid method drawing tutorial portrait"
+        },
+        {
+          "title": "Practice negative space drawing",
+          "content": "Instead of drawing the object, draw the SPACES AROUND the object. Place a chair against a plain wall and draw only the wall shapes visible between/around the chair legs and back. Your brain can't trick you about 'what a chair should look like' when you're drawing abstract shapes. Betty Edwards proves this unlocks everyone's ability to draw accurately. Try it with scissors, a stool, or your hand.",
+          "video_search": "negative space drawing exercise Betty Edwards"
+        }
+      ]
+    },
+    {
+      "milestone_number": 3,
+      "title": "Light, Shadow & Form",
+      "description": "Learn to create three-dimensional form through value and shading techniques.",
+      "sub_steps": [
+        {
+          "title": "Create a value scale from white to black",
+          "content": "Draw 10 boxes in a row. Leave the first white, make the last solid black, and fill the 8 boxes in between with gradually darker shades of pencil. Practice smooth transitions - press lighter for light values, harder for dark values. This value scale is your 'color palette' for pencil drawing. Professional artists reference their value scale constantly to match shadows correctly.",
+          "video_search": "pencil value scale shading tutorial"
+        },
+        {
+          "title": "Draw a sphere with realistic shading",
+          "content": "Place a white ball (tennis ball, styrofoam ball, or crumpled paper ball) under a single lamp. Observe where the light hits (highlight), where it gradually darkens (midtone), the darkest part (core shadow), and the shadow on the table (cast shadow). Draw the sphere and match each value zone to your value scale. Bob Ross would remind you: 'Gotta have dark for the light to show' - the dark shadows make the highlight pop.",
+          "video_search": "drawing sphere with shading tutorial"
+        },
+        {
+          "title": "Practice cross-hatching and blending techniques",
+          "content": "Learn two shading methods: cross-hatching (layers of parallel lines at different angles) and blending (smooth gradients with your finger, tissue, or blending stump). Try both on the same cylinder drawing. Cross-hatching gives texture and control, blending gives smoothness. Neither is 'better' - they're different tools for different effects. Practice both, see which you prefer.",
+          "video_search": "cross hatching vs blending shading techniques"
+        }
+      ]
+    },
+    {
+      "milestone_number": 4,
+      "title": "Drawing Eyes & Facial Features",
+      "description": "Master the most expressive parts of portraiture through careful observation and proportion.",
+      "sub_steps": [
+        {
+          "title": "Study and draw eye anatomy",
+          "content": "The eye is NOT an almond shape - it's a sphere sitting in a socket, with an eyelid wrapping over it. Draw a circle (eyeball), add the iris (circle within circle), then drape the lids over the sphere. Add the tear duct, eyelashes last. Use reference photos and draw 5 different eyes to understand variation. Betty Edwards emphasizes: see the actual 3D structure, not the symbol your brain remembers from childhood.",
+          "video_search": "how to draw realistic eyes step by step"
+        },
+        {
+          "title": "Map facial proportions using horizontal lines",
+          "content": "On a face: eyes are halfway down the head (not higher like cartoons suggest), nose is halfway between eyes and chin, mouth is one-third down from nose to chin, ears align from eyebrow to nose bottom. Draw light horizontal guidelines at these points, then add features. This structure prevents wonky proportions. Practice on 3 different face photos to prove the proportions are universal.",
+          "video_search": "facial proportions guidelines drawing tutorial"
+        },
+        {
+          "title": "Draw a complete face focusing on expression",
+          "content": "Choose a photo of someone showing clear emotion (laughing, surprised, sad). Use your proportion guidelines, but now focus on what makes that expression unique: How do the eyebrows angle? Are the eyes squinted? How does the mouth curve? Lynda Barry teaches that capturing expression is more important than perfect symmetry - a 'wonky' but expressive face is better than a lifeless 'perfect' one. Let yourself be bold.",
+          "video_search": "drawing facial expressions tutorial"
+        }
+      ]
+    },
+    {
+      "milestone_number": 5,
+      "title": "Composition & Visual Balance",
+      "description": "Learn how to arrange elements in your artwork for maximum visual impact.",
+      "sub_steps": [
+        {
+          "title": "Practice the rule of thirds",
+          "content": "Divide your paper into 9 equal sections (3x3 grid). Place your main subject at one of the four intersection points - NOT the center. This creates more interesting, dynamic compositions. Try drawing the same still life object in the center, then at a thirds intersection - feel the difference. Photographers use this rule constantly. It's called a 'rule' but Bob Ross would say it's more of a gentle suggestion.",
+          "video_search": "rule of thirds composition drawing art"
+        },
+        {
+          "title": "Create a balanced composition with multiple objects",
+          "content": "Arrange 3-5 objects (mugs, fruit, books) on a table. Use the rule of thirds, vary heights, create depth by overlapping objects (some in front, some behind). The negative space between objects is as important as the objects themselves. Sketch the arrangement lightly first, adjust until it feels balanced, then commit to the final drawing. Professional artists might sketch 5 arrangements before settling on one.",
+          "video_search": "still life composition arrangement drawing"
+        },
+        {
+          "title": "Study and sketch a master artwork's composition",
+          "content": "Find a famous painting you love (Rembrandt, Van Gogh, Monet - anyone). Don't copy the painting; instead, draw simple shapes showing where the artist placed elements. Draw lines showing where your eye travels in the composition. Notice how masters use diagonal lines for energy, horizontal lines for calm, and guide your eye to focal points. This is reading art like a book - understanding the artist's choices.",
+          "video_search": "analyzing composition in master paintings"
+        }
+      ]
+    },
+    {
+      "milestone_number": 6,
+      "title": "Texture & Surface Quality",
+      "description": "Capture the unique qualities of different materials through mark-making and observation.",
+      "sub_steps": [
+        {
+          "title": "Create a texture sampler sheet",
+          "content": "Draw 12 small squares. In each, practice rendering a different texture: wood grain, fur, fabric, metal, glass, stone, water, bark, grass, hair, clouds, brick. Use different pencil strokes, cross-hatching patterns, and pressure levels. This becomes your texture reference library. Pin it near your workspace. Bob Ross had specific brush strokes for everything - 'little criss-crosses' for bushes, 'pull straight down' for tree trunks. You're building your mark vocabulary.",
+          "video_search": "drawing different textures tutorial pencil"
+        },
+        {
+          "title": "Draw a fabric with folds and shading",
+          "content": "Drape a towel or shirt over a chair, creating natural folds. The key: shadows hide in the creases (darkest values), light catches the peaks (highlights), everything else is midtone. Squint your eyes to simplify the values - you'll see 3-5 value zones instead of overwhelming details. Draw what you see when squinting, not what your brain says 'fabric should look like.' This squinting trick is Betty Edwards' secret weapon.",
+          "video_search": "drawing fabric folds and drapery tutorial"
+        },
+        {
+          "title": "Render a reflective object like a metal spoon",
+          "content": "Metal and glass challenge you to draw reflections and distortions. A spoon reflects everything around it in a warped, fun-house way. Don't draw 'a spoon' - draw the exact patches of light and dark you see on its surface. Use your darkest darks for the deepest shadows, leave white paper for the brightest reflections. This teaches you to trust observation over assumption.",
+          "video_search": "drawing reflective metal surfaces tutorial"
+        }
+      ]
+    },
+    {
+      "milestone_number": 7,
+      "title": "Gesture Drawing & Capturing Movement",
+      "description": "Learn to capture the essence and energy of a subject with quick, confident marks.",
+      "sub_steps": [
+        {
+          "title": "30-second gesture sketches of people",
+          "content": "Use online reference tools (Line of Action, Quickposes) or sketch family members. Set a timer for 30 seconds per pose. Don't draw details - capture the gesture, the flow of the pose, the energy. Use flowing lines, exaggerate curves, ignore details. This feels chaotic but trains you to see the BIG picture first. Lynda Barry champions this approach: 'capture the spirit, not the perfect likeness.' Fill a whole page with 20+ tiny gesture sketches.",
+          "video_search": "gesture drawing tutorial 30 second poses"
+        },
+        {
+          "title": "Draw animals in motion from photos",
+          "content": "Find photos of dogs running, birds flying, cats jumping. Sketch the action lines first - the invisible line of motion from head to tail, the arc of a leap, the curve of a swoop. Then build the animal around that action line. Action happens in the spine, limbs follow. This is how animators work. Even a still drawing can convey motion if the gesture is strong.",
+          "video_search": "drawing animals in motion action lines"
+        },
+        {
+          "title": "Create a 5-minute continuous line drawing",
+          "content": "Choose a complex subject (potted plant, bicycle, person). Set a timer for 5 minutes. Put pencil to paper and DON'T LIFT IT for the entire 5 minutes. Your line must be continuous, wandering over the subject, doubling back, exploring. This forces you to really SEE, to slow down, to make committed marks. The result won't be 'realistic' but it will have life and energy. Lynda Barry: 'Done is better than perfect.'",
+          "video_search": "continuous line drawing exercise tutorial"
+        }
+      ]
+    },
+    {
+      "milestone_number": 8,
+      "title": "Color Theory Basics (Optional: Colored Pencils/Paints)",
+      "description": "Understand how colors relate, mix, and create mood in artwork.",
+      "sub_steps": [
+        {
+          "title": "Create a color wheel with 12 colors",
+          "content": "Using colored pencils or paints, create a color wheel: Red, Orange, Yellow, Green, Blue, Purple (primary and secondary colors), plus the in-between colors. Notice how colors opposite each other (red-green, blue-orange, yellow-purple) are 'complementary' and make each other pop when placed side-by-side. This wheel is your color relationship map. Bob Ross used complementary colors constantly to create visual drama.",
+          "video_search": "color wheel tutorial colored pencil painting"
+        },
+        {
+          "title": "Practice color mixing to create new hues",
+          "content": "If using paints: start with primary colors (red, yellow, blue) and mix to create orange, green, purple. Then mix further: add white for tints (lighter), black for shades (darker), complementary color for tones (muted). If using colored pencils: layer colors on top of each other to create new colors. Discover that layering blue over yellow creates green. This is how artists expand a limited palette into hundreds of colors.",
+          "video_search": "color mixing basics tutorial for beginners"
+        },
+        {
+          "title": "Create a simple painting/drawing using a limited palette",
+          "content": "Choose only 3 colors (e.g., blue, yellow, brown) and create a small landscape or still life. This constraint forces you to think about color relationships rather than getting overwhelmed by choice. Notice how limited palettes often look MORE sophisticated than using every color. Bob Ross's landscapes used perhaps 8-10 colors total. Restraint creates harmony.",
+          "video_search": "limited palette painting drawing tutorial"
+        }
+      ]
+    },
+    {
+      "milestone_number": 9,
+      "title": "Perspective - One Point & Two Point",
+      "description": "Learn to create convincing depth and space on a flat surface.",
+      "sub_steps": [
+        {
+          "title": "Draw a road/hallway using one-point perspective",
+          "content": "Draw a horizon line across your paper (your eye level). Mark a vanishing point on that line. Draw a road/hallway/railroad tracks where all parallel lines converge to that single point. This is how things look when you're looking straight ahead. The further from the vanishing point, the closer to you it appears. This is the foundation of realistic space - everything follows these rules, whether you consciously draw the lines or not.",
+          "video_search": "one point perspective drawing tutorial for beginners"
+        },
+        {
+          "title": "Draw a building corner using two-point perspective",
+          "content": "Draw a horizon line with two vanishing points (one on far left, one on far right). Draw a vertical line (the corner of a building). Connect the top and bottom of that line to both vanishing points. This creates a building corner receding into space in two directions. Fill in windows, doors using the same vanishing points. This is how cities are drawn - every building follows the same two points.",
+          "video_search": "two point perspective building drawing tutorial"
+        },
+        {
+          "title": "Sketch your room from your seat",
+          "content": "Sit in one spot and sketch your room. Identify the vanishing point(s) - probably where your gaze naturally falls. Notice how the ceiling and floor lines converge, how rectangles (pictures, windows, doors) become trapezoids as they recede. Don't measure precisely; just observe the angles. Betty Edwards teaches this is how you naturally see - perspective is already in front of you, you just need to draw what's there.",
+          "video_search": "drawing a room in perspective from observation"
+        }
+      ]
+    },
+    {
+      "milestone_number": 10,
+      "title": "Portrait Drawing - Capturing Likeness",
+      "description": "Combine all skills to create recognizable, expressive portraits.",
+      "sub_steps": [
+        {
+          "title": "Draw a portrait from a reference photo",
+          "content": "Choose a clear photo of someone. Use facial proportion guidelines (eyes halfway down, etc.), measure carefully with pencil sight-measuring, check angles. Work from general to specific: big shapes first (head oval, neck cylinder), then place features, then add details and shading last. Spend 1-2 hours. The key to likeness is accurate proportions and angles - if the spacing between eyes matches the photo, the portrait will look like them.",
+          "video_search": "portrait drawing tutorial from photo realistic"
+        },
+        {
+          "title": "Practice drawing different ages and ethnicities",
+          "content": "Find reference photos of children, elderly people, different ethnic backgrounds. Notice how proportions shift: babies have eyes lower on the head, elderly faces have more pronounced bone structure, different ethnicities have different nose shapes, eye shapes, lip fullness. Drawing many faces trains you to see and celebrate human diversity. Each face has unique proportions - there's no 'standard' face template.",
+          "video_search": "drawing faces different ages ethnicities tutorial"
+        },
+        {
+          "title": "Draw someone from life (family member or self-portrait)",
+          "content": "Drawing from life (not a photo) is the ultimate challenge - the subject moves, breathing changes their posture, lighting shifts. But it's also the most rewarding. Have someone sit for 20-30 minutes, or set up a mirror and draw yourself. Work quickly to capture the essentials before they move. Lynda Barry encourages this: embrace the wonkiness, the imperfection. A drawing made from life has an energy that photos can't capture.",
+          "video_search": "drawing portraits from life tips tutorial"
+        }
+      ]
+    },
+    {
+      "milestone_number": 11,
+      "title": "Landscape & Nature Drawing",
+      "description": "Learn to capture outdoor scenes, trees, and natural elements.",
+      "sub_steps": [
+        {
+          "title": "Draw different types of trees and foliage",
+          "content": "Oak trees have wide, rounded canopies and gnarled branches. Pine trees taper upward with clustered needles. Willow trees droop. Don't draw 'a tree' - observe the specific tree in front of you. Start with the trunk structure (like bones), then add major branches, then mass foliage as shapes (not individual leaves). Bob Ross: 'Happy little trees don't all look the same - give them personality!' Practice 5 different tree types.",
+          "video_search": "drawing different types of trees tutorial"
+        },
+        {
+          "title": "Create a landscape with foreground, middle ground, background",
+          "content": "Depth in landscapes comes from layering: dark, detailed foreground (grass, rocks, flowers); lighter, less detailed middle ground (trees, buildings); lightest, simplest background (mountains, sky). This is atmospheric perspective - distant objects are lighter, less detailed, bluer. Sketch a simple landscape using this principle. Even a few layers create convincing depth.",
+          "video_search": "landscape drawing foreground middle ground background"
+        },
+        {
+          "title": "Go outside and sketch from observation",
+          "content": "Bring a sketchbook outside (backyard, park, anywhere with nature). Spend 30-60 minutes sketching what you see. Don't aim for perfection - observe and capture. How do shadows fall across grass? What shapes are the clouds? Sketching from life trains your observation skills faster than anything else. Bring a stool, get comfortable, and just draw. This is how all master artists practiced.",
+          "video_search": "outdoor sketching tips plein air drawing"
+        }
+      ]
+    },
+    {
+      "milestone_number": 12,
+      "title": "Hands & Feet - Challenging Anatomy",
+      "description": "Tackle the most difficult but expressive parts of the human body.",
+      "sub_steps": [
+        {
+          "title": "Study hand bone structure and simplified forms",
+          "content": "The hand is a palm (trapezoid shape) plus four fingers (3 segments each) and a thumb (2 segments). Sketch the palm as a solid shape, then add fingers as cylinders with joints. Draw your own hand in 5 different positions. The key: see the hand as geometric forms, not as 'hand.' Betty Edwards: your brain has a simplified symbol for 'hand' that won't work - observe the actual structure instead.",
+          "video_search": "drawing hands anatomy structure tutorial"
+        },
+        {
+          "title": "Draw hands in various gestures and positions",
+          "content": "Hands communicate emotion: relaxed, clenched, pointing, reaching, grasping. Find reference photos or use your own hands. Draw 10 different hand gestures. Notice how finger lengths relate to each other, how knuckles create bumps, how nails catch light. Hands are hard because they're complex - but breaking them into simple forms (palm + cylinders) makes them manageable. Practice is the only path through this challenge.",
+          "video_search": "drawing hands different positions gestures"
+        },
+        {
+          "title": "Practice drawing feet and shoes",
+          "content": "Feet have similar structure to hands: a blocky form (foot) plus five toes. But feet are usually in shoes, which are simpler. Draw 5 different types of shoes from reference photos: sneakers, boots, sandals, heels. Shoes follow perspective and have volume - they're not flat. Getting comfortable with shoes makes drawing people in full context much easier. Don't avoid feet/shoes; embrace them as solvable challenges.",
+          "video_search": "drawing feet and shoes tutorial reference"
+        }
+      ]
+    },
+    {
+      "milestone_number": 13,
+      "title": "Developing Personal Style",
+      "description": "Move beyond copying references to finding your unique artistic voice.",
+      "sub_steps": [
+        {
+          "title": "Study artists you admire and identify what appeals to you",
+          "content": "Find 3-5 artists whose work you love (can be famous or Instagram artists). What draws you to their work? Is it their line quality? Their color choices? Their subject matter? Their loose/tight style? Write notes. Your style emerges from what you naturally gravitate toward. Lynda Barry: 'Your style is the sum of your visual obsessions.' You can't force a style - it develops from what you love.",
+          "video_search": "how to develop your own art style"
+        },
+        {
+          "title": "Create variations of the same subject in different styles",
+          "content": "Draw the same object (a mug, a plant, a face) three times: once realistically, once cartoon/simplified, once abstract/expressive. Notice which feels most natural, most fun. Some artists love precision, others love chaos. There's no 'best' style - only what resonates with you. Bob Ross made painting accessible by saying 'this is MY way - find your way.' Give yourself permission to experiment.",
+          "video_search": "drawing same subject different styles exercise"
+        },
+        {
+          "title": "Complete a personal project combining multiple skills",
+          "content": "Choose a small project that excites you: a 5-drawing series of family members, a sketchbook page of your favorite things, an illustrated recipe, a comic strip. Use all the skills you've learned (composition, shading, gesture, etc.) but in service of YOUR idea. This is where learning becomes art-making. The technical skills are tools; your ideas and choices are what make it uniquely yours. Make something for the joy of making.",
+          "video_search": "personal art project ideas sketchbook"
+        }
+      ]
+    },
+    {
+      "milestone_number": 14,
+      "title": "Mixed Media Experimentation",
+      "description": "Expand your toolkit by combining different materials and techniques.",
+      "sub_steps": [
+        {
+          "title": "Combine pencil with ink, watercolor, or markers",
+          "content": "Start a drawing in pencil, then add ink outlines for boldness, or watercolor washes for color, or marker accents. Each medium has different properties - watercolor is transparent, markers are bold, ink is permanent. Experimenting shows you what each can do. Bob Ross constantly mixed techniques - oil paints with palette knife, with brush, with his fingers. Rules are guidelines, not laws. Try something weird and see what happens.",
+          "video_search": "mixed media drawing techniques tutorial"
+        },
+        {
+          "title": "Create texture with collage, stamps, or found objects",
+          "content": "Glue fabric scraps into a drawing for texture. Use a sponge dipped in paint to create foliage. Press bubble wrap into paint for pattern. Draw over newspaper for interesting backgrounds. Lynda Barry is queen of mixed media - her work combines drawing, collage, writing, whatever serves the idea. Art isn't just 'drawing with pencils' - it's using any materials that communicate your vision. Play.",
+          "video_search": "mixed media collage art techniques"
+        },
+        {
+          "title": "Start a daily sketch practice with varied media",
+          "content": "Commit to 15 minutes of drawing per day for 2 weeks. Each day, use a different medium or approach: Monday pencil, Tuesday marker, Wednesday watercolor, Thursday collage, Friday contour drawing, etc. This daily practice builds momentum and skill faster than occasional long sessions. It also helps you discover what media you love. Keep it low-pressure - Lynda Barry: 'The point is to make marks, not masterpieces.' Document your progress.",
+          "video_search": "daily sketching habit tips motivation"
+        }
+      ]
+    },
+    {
+      "milestone_number": 15,
+      "title": "Creating a Finished Artwork & Portfolio",
+      "description": "Apply everything learned to create polished pieces you're proud to share.",
+      "sub_steps": [
+        {
+          "title": "Plan and execute a finished piece from concept to completion",
+          "content": "Choose a meaningful subject (person you love, place that matters, object with history). Sketch several composition ideas, choose the best, refine it, plan values and colors. Work through the full process: light sketch → refine proportions → add values → details last. Take your time (3-5 hours). This is where all your practice pays off - you're not just drawing, you're creating a finished artwork. Sign it. It's real.",
+          "video_search": "creating a finished drawing artwork process"
+        },
+        {
+          "title": "Photograph or scan your work properly",
+          "content": "Good documentation makes your art look professional. For 2D work: photograph in even, natural light (near a window, not direct sun). Hold camera parallel to the artwork (not at an angle). Crop out background. Or scan if it fits your scanner. Save high-resolution files. This is how you'll share work online, submit to shows, or print. Your art deserves to be seen clearly, not shadowy phone photos.",
+          "video_search": "how to photograph artwork for portfolio"
+        },
+        {
+          "title": "Assemble a portfolio of your best 10-15 works",
+          "content": "Review everything you've created during this curriculum. Choose your 10-15 best pieces - the ones that show your range, your growth, your unique voice. Arrange them in a digital portfolio (Google Drive, website, Instagram) or physical portfolio (folder, sketchbook). This collection proves your skill to yourself and others. Update it as you grow. Betty Edwards: 'You can learn to draw - and here's your proof.' You did it.",
+          "video_search": "creating an art portfolio tips beginner"
+        }
+      ]
+    }
+  ]
+}

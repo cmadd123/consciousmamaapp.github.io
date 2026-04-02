@@ -1,0 +1,338 @@
+{
+  "skill_name": "Woodworking",
+  "skill_icon": "🪵",
+  "description": "Master the fundamentals of traditional woodworking through hands-on projects. This curriculum blends teaching approaches from Paul Sellers (hand tool fundamentals), North Bennet Street School (traditional techniques), and Fine Woodworking magazine (safety-first practices).",
+  "total_milestones": 15,
+  "milestones": [
+    {
+      "milestone_number": 1,
+      "title": "Workshop Safety & Tool Identification",
+      "description": "Learn to identify basic hand tools and understand fundamental workshop safety principles, following North Bennet Street School's safety-first methodology.",
+      "sub_steps": [
+        {
+          "step_number": 1,
+          "title": "Identify Your First Five Tools",
+          "content": "Start with the 'essential five' that Paul Sellers recommends for beginners: a hand saw (crosscut), a bench plane (no. 4 or 5), a marking knife, a combination square, and a chisel (3/4 inch). Handle each tool carefully and notice how it feels in your hands. These tools will become extensions of your body as you develop muscle memory."
+        },
+        {
+          "step_number": 2,
+          "title": "Learn Safe Tool Handling",
+          "content": "Practice the 'cutting zone' principle from North Bennet Street School: always keep your body parts outside the path of any cutting tool. When using a hand saw, keep your free hand behind the blade. When using a chisel, always cut away from your body. Practice these movements slowly until they become automatic."
+        },
+        {
+          "step_number": 3,
+          "title": "Set Up Your First Workbench Area",
+          "content": "Create a dedicated workspace following traditional workshop layout principles. Your bench should be at the height where your wrist rests comfortably on the surface with your elbow at 90 degrees. Clear away clutter—master craftsmen work in organized spaces. Even a simple plywood board clamped to sawhorses can be your first bench."
+        }
+      ]
+    },
+    {
+      "milestone_number": 2,
+      "title": "Hand Saw Fundamentals",
+      "description": "Master the crosscut hand saw using Paul Sellers' muscle memory approach and traditional sawing techniques.",
+      "sub_steps": [
+        {
+          "step_number": 4,
+          "title": "Practice the Starting Cut",
+          "content": "Paul Sellers teaches that starting the cut is crucial. Place your thumbnail against the saw blade as a guide. Draw the saw backward (toward you) 3-4 times to create a kerf (initial groove). Keep the saw at a 45-degree angle. Don't press down—let the saw's weight do the work. Practice this on scrap pine until you can start a cut in one smooth motion."
+        },
+        {
+          "step_number": 5,
+          "title": "Develop the Sawing Rhythm",
+          "content": "Once your kerf is established, find your natural sawing rhythm. Use the full length of the saw blade—about 80% of its length. Think 'long, smooth strokes' not 'fast, short strokes.' Count to yourself: 'one-two, one-two.' Expert sawyers make about 40-60 strokes per minute. Your arm, shoulder, and core should move together as one unit."
+        },
+        {
+          "step_number": 6,
+          "title": "Cut Your First Square Line",
+          "content": "Mark a square line across a piece of scrap 1x6 pine using your combination square and marking knife. Position your saw on the waste side of the line (the part you're removing). Saw slowly, checking every few strokes that you're still on the line. Your first cuts won't be perfect—North Bennet instructors say it takes 50-100 cuts to develop consistency."
+        }
+      ]
+    },
+    {
+      "milestone_number": 3,
+      "title": "Bench Plane Setup & Sharpening",
+      "description": "Learn to sharpen and set up your bench plane following Paul Sellers' hand tool preparation methods.",
+      "sub_steps": [
+        {
+          "step_number": 7,
+          "title": "Understand Plane Anatomy",
+          "content": "Take your plane apart completely. Identify these parts: the iron (blade), chip breaker, lever cap, frog (the angled base), and adjustment mechanisms. The iron must be sharp—Paul Sellers says 'a dull tool is dangerous and frustrating.' Notice how the chip breaker sits just behind the cutting edge, breaking shavings as they curl up."
+        },
+        {
+          "step_number": 8,
+          "title": "Sharpen Your Plane Iron",
+          "content": "Use a sharpening stone (1000 grit to start). Hold the iron at 25-30 degrees—imagine the angle of a skateboard ramp. Push forward on the stone, applying even pressure. Count 20 strokes, then flip and make 20 strokes the other direction. You'll feel a burr (tiny wire edge) forming on the back. Flatten the back on the stone until the burr disappears. Test sharpness: the iron should slice paper cleanly."
+        },
+        {
+          "step_number": 9,
+          "title": "Set Your First Shaving",
+          "content": "Reassemble your plane. Set the iron for a paper-thin shaving by turning the adjustment wheel while sighting down the sole (bottom). The iron should barely peek out—Paul Sellers uses the phrase 'whisper-thin.' Test on scrap pine. A properly set plane removes shavings so thin you can read through them. If it's too heavy or won't cut, adjust and try again."
+        }
+      ]
+    },
+    {
+      "milestone_number": 4,
+      "title": "Planing Flat Surfaces",
+      "description": "Master the fundamental skill of creating flat, square surfaces using hand plane techniques from master craftsmen.",
+      "sub_steps": [
+        {
+          "step_number": 10,
+          "title": "Plane With the Grain",
+          "content": "Place a board on your bench and secure it with a stop or clamp. Feel the wood's grain direction by running your hand across it—planing 'with' the grain feels smooth, 'against' feels rough. Start at one end and push your plane forward in long, even strokes. Your back leg drives the motion, front leg stabilizes. Keep your plane sole flat on the wood throughout the entire stroke."
+        },
+        {
+          "step_number": 11,
+          "title": "Check for Flatness",
+          "content": "Traditional craftsmen use 'winding sticks'—two straight sticks placed at each end of your board. Sight across them to see if the board twists. You can also use a straightedge to check for hollows or humps. Place the straightedge across the width, then diagonally, then lengthwise. Light showing under the straightedge reveals high and low spots."
+        },
+        {
+          "step_number": 12,
+          "title": "Plane Your First Board Flat",
+          "content": "Choose a rough pine board (8-12 inches long). Mark the high spots with chalk. Plane those areas first, checking progress frequently. This is where Paul Sellers' muscle memory training shows results—your body learns to feel when the plane is cutting properly. A flat board will have shavings of equal thickness across its entire width. This might take 30-60 minutes for your first board—master craftsmen expect this."
+        }
+      ]
+    },
+    {
+      "milestone_number": 5,
+      "title": "Marking & Measuring Accurately",
+      "description": "Learn precision marking and measuring techniques used by traditional cabinetmakers and fine furniture makers.",
+      "sub_steps": [
+        {
+          "step_number": 13,
+          "title": "Master the Marking Knife",
+          "content": "A marking knife cuts fibers cleanly, unlike a pencil which crushes them. Hold your combination square firmly against the wood edge. Place your marking knife against the square's blade and draw it toward you in one smooth motion. The knife should lean slightly into the square. This creates a crisp line that your saw or chisel can register against. Practice until your knife lines are hair-thin and perfectly straight."
+        },
+        {
+          "step_number": 14,
+          "title": "Use the Combination Square for 90° Angles",
+          "content": "The combination square is your precision tool for checking square (90-degree angles). Place the handle flush against your wood's edge and slide the blade along the surface. Mark your line with the knife. Then check the opposite face of the board—if your edge is truly square, the line should match on both sides. North Bennet instructors teach: measure twice, cut once."
+        },
+        {
+          "step_number": 15,
+          "title": "Practice 1/16\" Precision",
+          "content": "Fine woodworking requires accuracy to 1/16 of an inch or better. Practice measuring and marking lines at specific intervals: 1/2\", 1 1/4\", 2 3/8\". Use your combination square or a ruler. Check your marks with calipers or a second measurement. Master craftsmen can work to 1/32\" precision by hand—this comes from thousands of repetitions building visual and tactile memory."
+        }
+      ]
+    },
+    {
+      "milestone_number": 6,
+      "title": "Chisel Basics & Paring",
+      "description": "Develop chisel control using Paul Sellers' hand pressure techniques and traditional paring methods.",
+      "sub_steps": [
+        {
+          "step_number": 16,
+          "title": "Sharpen Your Chisel to Razor Sharpness",
+          "content": "Like plane irons, chisels must be extremely sharp. Use the same sharpening technique: 25-30 degree angle on a 1000-grit stone, then polish on a 4000-grit stone. A properly sharpened chisel will shave hair off your arm (test carefully!). Paul Sellers teaches that dull chisels cause more accidents than sharp ones because they require excessive force."
+        },
+        {
+          "step_number": 17,
+          "title": "Practice Vertical Paring",
+          "content": "Secure a piece of scrap wood upright in a vise. Hold your chisel with your dominant hand on the handle, other hand controlling the blade (fingers behind the cutting edge). Push the chisel straight down, removing thin slices of wood. The motion comes from your shoulder and core, not just your wrist. Practice removing exactly 1/16\" with each cut. This develops the 'feel' that master carvers rely on."
+        },
+        {
+          "step_number": 18,
+          "title": "Practice Horizontal Paring",
+          "content": "Mark a line 1/4\" from the edge of a board. Secure the board flat on your bench. Hold the chisel with the bevel facing down, and pare away waste wood, working back from your line. Take thin cuts—thick cuts tear the wood. Your chisel should glide through the wood like butter. This technique is used for fitting joints and cleaning up saw cuts. Master this, and you can achieve glass-smooth surfaces."
+        }
+      ]
+    },
+    {
+      "milestone_number": 7,
+      "title": "Your First Project: Simple Cutting Board",
+      "description": "Apply fundamental skills to create a functional cutting board using edge-grain construction.",
+      "sub_steps": [
+        {
+          "step_number": 19,
+          "title": "Select and Prepare Your Wood",
+          "content": "Choose a hardwood like maple, cherry, or walnut—these are food-safe and durable. You'll need a board about 3/4\" thick, 8\" wide, and 12\" long. Check for defects: avoid knots, cracks, or spalting (dark lines that indicate rot). Plane one face flat (reference face), then plane the opposite face parallel. Mark your reference face with a triangle symbol—traditional cabinetmaker's mark."
+        },
+        {
+          "step_number": 20,
+          "title": "Cut to Final Dimensions",
+          "content": "Mark your final dimensions: 7 1/2\" x 11 1/2\" (leaving room for error). Use your combination square to ensure corners are exactly 90 degrees. Saw carefully on the waste side of your lines. After sawing, plane all four edges smooth and square. Each edge should be perfectly straight when checked with your straightedge. Your corners should measure exactly 90° when checked with your square."
+        },
+        {
+          "step_number": 21,
+          "title": "Finish and Food-Safe Treatment",
+          "content": "Sand your board smooth, starting with 120-grit sandpaper, then 180, then 220. Sand with the grain, never across it. Remove all saw marks and plane tracks. Apply food-safe finish: mineral oil or a mixture of mineral oil and beeswax. Flood the surface, let it soak 20 minutes, then wipe off excess. Repeat 3 times over 3 days. You've now built your first woodworking project using hand tools—treasure this piece."
+        }
+      ]
+    },
+    {
+      "milestone_number": 8,
+      "title": "Understanding Wood Movement & Grain Direction",
+      "description": "Learn how wood moves with humidity changes and how grain direction affects your work—critical knowledge for all woodworking.",
+      "sub_steps": [
+        {
+          "step_number": 22,
+          "title": "Observe Wood Grain Patterns",
+          "content": "Look at the end grain of your board—those are the tree's growth rings. Wood expands and contracts across the rings (across the grain), not along the length (with the grain). This is why cutting boards are made with grain running lengthwise. Study different boards and notice how grain can be straight, wavy, or interlocked. Paul Sellers teaches that understanding grain is like reading the wood's story."
+        },
+        {
+          "step_number": 23,
+          "title": "Learn to 'Read' Grain for Planing",
+          "content": "Run your hand along a board's surface. One direction feels smooth (with the grain), the other rough (against the grain). When planing, always work with the grain or you'll get tearout (rough, torn fibers). If grain changes direction mid-board, plane from each end toward the middle. Look at the edge grain—grain lines pointing 'down' toward the bench indicate planing direction."
+        },
+        {
+          "step_number": 24,
+          "title": "Understand Seasonal Wood Movement",
+          "content": "Wood absorbs moisture in summer (expands) and releases it in winter (contracts). A 12\" wide oak board can move 1/8\" between seasons. This is why table tops have special fasteners that allow movement. Build projects in the season they'll be used—a cutting board made in humid summer will shrink in dry winter. Traditional furniture makers always account for movement in their designs."
+        }
+      ]
+    },
+    {
+      "milestone_number": 9,
+      "title": "Basic Joinery: Edge Joints",
+      "description": "Master the edge joint—the foundation of panel glue-ups and wider boards—using hand tool techniques.",
+      "sub_steps": [
+        {
+          "step_number": 25,
+          "title": "Plane a Perfect Edge",
+          "content": "Secure a board on edge in your vise. Plane the edge straight and square to the face. Check straightness with your straightedge—no light should show underneath. Check square by placing your combination square against the face at multiple points. A perfect edge is straight in length and width, and exactly 90° to the face. This is the most fundamental skill in woodworking—master craftsmen can do this in 5-10 minutes."
+        },
+        {
+          "step_number": 26,
+          "title": "Fit Two Boards Together",
+          "content": "Plane edges on two boards. Place them together and check for gaps by holding them up to light. Even a hairline gap means the joint will be weak. If you see gaps, determine where (ends, middle, or along the length) and plane those high spots. The 'perfect fit' test: the boards should hold together from friction alone when placed on edge. This is called a 'rubbed joint.'"
+        },
+        {
+          "step_number": 27,
+          "title": "Glue Your First Panel",
+          "content": "Apply wood glue (Titebond or hide glue) to both edges using a small brush or roller. Press the boards together and secure with bar clamps every 12\". Alternate clamps above and below to prevent bowing. Tighten until glue squeezes out along the entire joint—but don't over-tighten. Let dry 24 hours. A well-fitted edge joint is stronger than the wood itself. North Bennet instructors say this joint is the heart of traditional furniture making."
+        }
+      ]
+    },
+    {
+      "milestone_number": 10,
+      "title": "Basic Joinery: Mortise & Tenon",
+      "description": "Learn the king of wood joints—the mortise and tenon—following traditional hand-cut methods used for centuries.",
+      "sub_steps": [
+        {
+          "step_number": 28,
+          "title": "Lay Out a Simple Mortise",
+          "content": "A mortise is a rectangular hole; a tenon is the matching projection. Start with a simple joint: 1/4\" thick tenon, centered on 3/4\" stock. Mark the mortise using your combination square and marking knife: 1\" long, 1/4\" wide, 1/2\" deep. Mark all four sides of the board so lines connect. Use a marking gauge to scribe consistent width lines. Accuracy here determines joint strength—traditional joiners spend more time marking than cutting."
+        },
+        {
+          "step_number": 29,
+          "title": "Chop Your First Mortise",
+          "content": "Secure your wood in a vise. Using a 1/4\" chisel (same width as your mortise), chop vertically along your knife lines. Start 1/8\" from the end lines, not right on them. Chop about 1/8\" deep, working along the length. Then pare out waste from the middle. Repeat: chop, pare, chop, pare. Work down to your 1/2\" depth. Corners should be crisp and square. Paul Sellers teaches this methodical approach: 'steady, controlled cuts beat rushing.'"
+        },
+        {
+          "step_number": 30,
+          "title": "Cut a Matching Tenon",
+          "content": "Mark the tenon on your mating board: 1/4\" thick, 1\" long. Use your marking gauge to scribe shoulder lines all around. Saw the shoulders first (crosscut) then saw the cheeks (rip cut). Your tenon should be slightly fat—1/64\" oversized. Test fit in the mortise, marking tight spots with pencil. Pare those spots with your chisel until the tenon slips in with hand pressure—not loose, not forced. A perfect mortise and tenon can support hundreds of pounds and last centuries."
+        }
+      ]
+    },
+    {
+      "milestone_number": 11,
+      "title": "Your Second Project: Simple Stool",
+      "description": "Build a three-legged stool using mortise and tenon joinery—a functional furniture piece.",
+      "sub_steps": [
+        {
+          "step_number": 31,
+          "title": "Design Your Stool Dimensions",
+          "content": "Traditional three-legged stools are stable on uneven floors. Design your stool: 12\" round seat, three legs 16\" tall, splayed 15° outward. The seat will have three angled mortises for legs. Splay (angled legs) adds strength and style. Sketch your design, noting all measurements. North Bennet students learn that time spent planning saves hours of mistakes. Use the rule of thirds: seat thickness should be roughly 1/3 of leg thickness."
+        },
+        {
+          "step_number": 32,
+          "title": "Cut and Shape the Components",
+          "content": "Mill your stock: seat is 3/4\" thick hardwood (maple or oak), legs are 1 1/2\" x 1 1/2\" square stock. Plane all pieces flat and square. Cut legs to length (16\"). Cut seat to rough 12\" diameter using a bow saw or coping saw—you'll refine the circle later. Cut angled tenons on leg tops to match your mortise angle. This introduces compound angles—advanced skill, but achievable with careful marking and patient sawing."
+        },
+        {
+          "step_number": 33,
+          "title": "Assemble and Finish Your Stool",
+          "content": "Dry-fit (assemble without glue) to check all joints. Adjust as needed. When perfect, glue one leg at a time, letting each dry before adding the next—this prevents the stool from racking (twisting). After glue dries, plane the seat smooth and round over sharp edges with sandpaper. Finish with oil or wax. You've now built real furniture using traditional joinery. This stool will last decades—possibly lifetimes—with proper care."
+        }
+      ]
+    },
+    {
+      "milestone_number": 12,
+      "title": "Hand Sawing Joinery: Dovetails Introduction",
+      "description": "Begin learning the dovetail joint—the hallmark of fine woodworking and hand tool mastery.",
+      "sub_steps": [
+        {
+          "step_number": 34,
+          "title": "Understand Dovetail Anatomy",
+          "content": "A dovetail joint has 'pins' (narrower parts) and 'tails' (wider, flared parts) that interlock. The flare angle is typically 1:8 for hardwoods, 1:6 for softwoods. The joint is incredibly strong because it resists pulling apart. Study examples: drawer corners, box corners, traditional case furniture. Paul Sellers calls dovetails 'the joint that separates hobbyists from craftsmen'—not because they're hard, but because they require patience and precision."
+        },
+        {
+          "step_number": 35,
+          "title": "Layout Your First Practice Dovetail",
+          "content": "Start with a simple joint: one tail, two half-pins on scrap pine (3/4\" thick, 3\" wide, 6\" long). Mark your baseline (how deep the joint goes) 3/4\" from the end using a marking gauge. Mark your tail slope using a dovetail marker or by measuring: 1\" wide at baseline, 3/4\" wide at the end. Connect these points with your marking knife. Accuracy in layout is 80% of success—rushing here guarantees failure."
+        },
+        {
+          "step_number": 36,
+          "title": "Saw Your First Tail",
+          "content": "Secure your board vertically in a vise, baseline horizontal. Using a dovetail saw (or thin crosscut saw), saw down your tail lines, stopping exactly at the baseline. Saw on the waste side of the line, leaving the line visible. This requires sawing at an angle—practice this on scrap first. Then use your coping saw to remove waste between tails. Pare the baseline flat with your chisel. A perfect tail has crisp edges and a glass-smooth baseline—this takes practice."
+        }
+      ]
+    },
+    {
+      "milestone_number": 13,
+      "title": "Finishing Techniques: Sanding & Oil",
+      "description": "Learn traditional finishing methods to bring out wood's beauty and protect your work.",
+      "sub_steps": [
+        {
+          "step_number": 37,
+          "title": "Master Progressive Sanding",
+          "content": "Sanding is removing tool marks and preparing for finish. Start with 120-grit sandpaper, then 150, then 180, then 220. Always sand with the grain—never across it, or scratches will show. Sand using a block (wood wrapped with sandpaper) for flat surfaces—your hand alone creates uneven pressure. Each grit removes the scratches from the previous grit. Skip a grit, and you'll see those scratches under finish. Traditional finishers spend 30-40% of project time on sanding."
+        },
+        {
+          "step_number": 38,
+          "title": "Apply Oil Finish (Linseed or Tung Oil)",
+          "content": "Oil finishes are traditional, easy, and beautiful. Flood the surface with oil using a brush or rag. Let it soak 15-20 minutes, then wipe off all excess—if you leave puddles, finish will be gummy. Wait 24 hours, then apply a second coat. Wait another 24 hours, apply a third coat. Each coat builds depth and protection. Linseed oil brings out warm tones; tung oil dries faster. This finish method has been used for centuries on everything from tool handles to fine furniture."
+        },
+        {
+          "step_number": 39,
+          "title": "Buffing and Final Polish",
+          "content": "After your final oil coat dries (48-72 hours), buff the surface with 0000 steel wool or a brown paper bag. This removes any tiny raised fibers and creates a silky-smooth feel. Then apply paste wax (Johnson's paste wax or beeswax) with a soft cloth, let dry 10 minutes, and buff to a soft luster. This protective layer brings out depth and feel that distinguishes hand-finished work from factory pieces."
+        }
+      ]
+    },
+    {
+      "milestone_number": 14,
+      "title": "Your Third Project: Dovetailed Box",
+      "description": "Create a small dovetailed box—demonstrating mastery of joinery, planning, and finishing.",
+      "sub_steps": [
+        {
+          "step_number": 40,
+          "title": "Design Your Box and Mill Stock",
+          "content": "Design a simple box: 6\" long, 4\" wide, 3\" tall, with a sliding lid. Choose a beautiful hardwood—walnut, cherry, or maple. Mill your stock to 3/8\" thickness (thin boxes are elegant). Cut four sides to exact dimensions, ensuring they're perfectly square. Cut the bottom from 1/4\" plywood to fit in a groove. The precision here sets up success—every dimension affects how joints fit. North Bennet instructors say: 'a box teaches you everything.'"
+        },
+        {
+          "step_number": 41,
+          "title": "Cut Dovetails on All Four Corners",
+          "content": "Layout dovetails on all four corners. For a 3\" tall box, use 3 tails per corner (12 tails total, 16 pins total). This is where all your practice pays off. Cut tails first on the front and back boards. Use the tails to mark pins on the side boards—this ensures perfect fit. Saw carefully, staying on your lines. Remove waste with a coping saw and pare baselines flat. Test-fit frequently, adjusting as needed. These dovetails tell the world: 'this box was made by hand, with care.'"
+        },
+        {
+          "step_number": 42,
+          "title": "Final Assembly and Sliding Lid",
+          "content": "Cut a 1/4\" groove on the inside bottom of all four sides for the plywood base. Dry-fit the entire box to check everything. When satisfied, glue up one joint at a time, clamping carefully. After glue dries, plane all surfaces flush and smooth. Sand progressively to 220 grit. Make a sliding lid from 1/4\" wood, sized to slip into the top opening with light friction. Finish with oil and wax. This box is an heirloom—it can last hundreds of years."
+        }
+      ]
+    },
+    {
+      "milestone_number": 15,
+      "title": "Woodworking Mastery: Skills Review & Next Steps",
+      "description": "Reflect on your journey, review core skills, and plan your path toward advanced woodworking and furniture making.",
+      "sub_steps": [
+        {
+          "step_number": 43,
+          "title": "Review Your Core Skills",
+          "content": "You've learned the essential hand tool skills that generations of craftsmen have passed down: sharpening, sawing, planing, marking, chiseling, joinery, and finishing. Review your three projects: cutting board (basics), stool (joinery), box (precision). Notice how each built on previous skills. Paul Sellers teaches that mastery comes from 'ten thousand hours of doing it wrong until you do it right.' You've started that journey."
+        },
+        {
+          "step_number": 44,
+          "title": "Explore Advanced Techniques",
+          "content": "Now you're ready for advanced skills: complex dovetails (half-blind, sliding), curved work (spokeshaves, drawknives), veneering, inlay, carving, and steam bending. Study master craftsmen: watch Paul Sellers' videos, read Fine Woodworking magazine, visit North Bennet Street School's online resources. Consider classes or mentorships—traditional skills are best learned alongside experienced makers. Each technique opens new creative possibilities."
+        },
+        {
+          "step_number": 45,
+          "title": "Plan Your Next Furniture Project",
+          "content": "Design a piece of furniture: a side table, bookshelf, or small chest of drawers. Sketch it, noting dimensions and joinery methods. Calculate materials needed. Consider: how will wood movement affect this design? Which joints are strongest for which stresses? How will you finish it? Building furniture is where woodworking becomes art—you're not just following instructions, you're solving problems and expressing creativity. The skills you've learned are timeless, connecting you to centuries of makers. Now go build something beautiful."
+        }
+      ]
+    }
+  ]
+}

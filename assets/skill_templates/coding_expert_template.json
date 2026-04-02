@@ -1,0 +1,338 @@
+{
+  "skill_name": "Coding & Tech",
+  "skill_icon": "💻",
+  "description": "Master programming fundamentals through expert-guided progression. This curriculum blends freeCodeCamp's project-based learning, Harvard's CS50 rigorous foundation, and Al Sweigart's practical Python approach. From basic syntax to building real projects—websites, games, and automation tools—develop both technical skill and the problem-solving mindset of professional developers. Start with fundamentals, build your first program, graduate to web development and Python, and finish with a portfolio of real projects.",
+  "total_milestones": 15,
+  "milestones": [
+    {
+      "milestone_number": 1,
+      "title": "Programming Fundamentals - Variables & Data Types",
+      "description": "Understand the core building blocks that every program uses to store and organize information.",
+      "sub_steps": [
+        {
+          "title": "Understand what variables are and why they matter",
+          "content": "A variable is a named container that holds data. Think of it like a labeled box: you put something inside, label it, and later you can look inside that box by using its label. Harvard's CS50 teaches that variables are fundamental because they let you store information you'll use later. In Python, creating a variable is simple: name = 'Alice' stores the text 'Alice' in a variable called 'name'. Practice creating 5 variables with different types of data: text (strings), whole numbers (integers), decimal numbers (floats), and true/false values (booleans). Write them down and explain what each one stores.",
+          "video_search": "Python variables for beginners tutorial CS50"
+        },
+        {
+          "title": "Practice different data types and operations",
+          "content": "Every programming language has data types: strings (text), integers (whole numbers), floats (decimals), and booleans (true/false). Al Sweigart's 'Automate the Boring Stuff with Python' emphasizes that understanding data types prevents bugs. Try these operations: add two numbers (5 + 3), combine two strings ('Hello' + 'World'), check if something is true (5 > 3 is True). Python shows the result immediately. This hands-on practice teaches you how the computer thinks about different types of data.",
+          "video_search": "Python data types integers strings floats tutorial"
+        },
+        {
+          "title": "Write a program using variables and basic operations",
+          "content": "Write a simple program that: creates 3 variables (name, age, city), combines them into a sentence, and prints the result. For example: name = 'Sarah', age = 8, city = 'Portland' → prints 'Sarah is 8 years old and lives in Portland.' This teaches variable assignment and string combination. Don't worry about being fancy—the goal is to see variables in action. freeCodeCamp teaches that the fastest way to learn is to write real code, no matter how simple. Save your program and run it.",
+          "video_search": "Python first program with variables tutorial"
+        }
+      ]
+    },
+    {
+      "milestone_number": 2,
+      "title": "Making Decisions - If Statements & Logic",
+      "description": "Learn how programs make decisions and respond differently based on conditions.",
+      "sub_steps": [
+        {
+          "title": "Understand if, elif, and else statements",
+          "content": "Programs make decisions using 'if' statements. If something is true, do this. If it's false, do that. Harvard's CS50 explains that decision-making is what makes programs interactive. If you're 8 years old, you get a kids' menu. If you're 18, you get the adult menu. In Python: if age < 13: print('Kids program') elif age >= 13: print('Teen program'). The computer checks each condition in order and follows the matching path. Practice writing 3 if-statements that respond differently based on age, grade level, or temperature. Test each one with different inputs.",
+          "video_search": "Python if elif else statements tutorial for beginners"
+        },
+        {
+          "title": "Practice combining conditions with AND and OR",
+          "content": "Real decisions often involve multiple conditions. Al Sweigart shows that 'AND' requires both conditions true (if age > 8 AND grade > 3), while 'OR' requires at least one true (if it's raining OR it's cold). You can combine these to build complex logic: if (temperature > 85) AND (no pool nearby): print('Go to the library!') Versus if (temperature > 85) OR (I want swimming): print('Go to the pool!'). Practice writing 5 decision statements that use AND or OR. Predict what the program will do, then test it.",
+          "video_search": "Python AND OR operators boolean logic tutorial"
+        },
+        {
+          "title": "Build a simple quiz program with if statements",
+          "content": "Create a program that asks a question, checks the answer, and responds. Example: print('What is 5 + 3?') answer = input() if answer == '8': print('Correct!') else: print('Try again!'). The program checks if the user's answer matches the correct answer. freeCodeCamp emphasizes that building actual programs (even tiny ones) teaches faster than just reading. Make a 3-question quiz. If they get all 3 right, print 'You're a math expert!'. If they get 2 right, print 'Good job!' If they get 1 or fewer, print 'Keep practicing!'",
+          "video_search": "Python quiz program if statements tutorial"
+        }
+      ]
+    },
+    {
+      "milestone_number": 3,
+      "title": "Repeating Actions - Loops (For & While)",
+      "description": "Master the power of loops to automate repetitive tasks and process multiple items.",
+      "sub_steps": [
+        {
+          "title": "Understand for loops and iteration",
+          "content": "A for loop repeats a block of code multiple times. Instead of writing print('1') print('2') print('3')... you write: for i in range(1, 4): print(i). This prints 1, 2, 3. Harvard's CS50 teaches that loops are one of programming's superpowers—they let you do the same thing hundreds or millions of times without writing it hundreds of times. Practice: write a for loop that prints numbers 1-10. Write another that prints your name 5 times. Write a third that counts down from 10 to 1. Each loop should take 1-2 lines of code, not 10.",
+          "video_search": "Python for loops tutorial range iteration"
+        },
+        {
+          "title": "Practice while loops for conditional repetition",
+          "content": "While loops repeat AS LONG AS a condition is true. While temperature < 32: water stays frozen. Al Sweigart shows that while loops are useful when you don't know exactly how many repeats you need. Example: password = '' while password != 'secret': password = input('What is the password?') print('Access granted!'). This keeps asking until the correct password is entered. Write a program that asks 'Guess my number!' repeatedly until the user guesses correctly. Each time they guess wrong, print 'Try again!'",
+          "video_search": "Python while loops tutorial conditional repetition"
+        },
+        {
+          "title": "Combine loops and decisions to build a simple game",
+          "content": "Create a number-guessing game: computer picks a number 1-10, player has 3 tries to guess it. Use a while loop to repeat, an if statement to check if the guess is correct, and a counter to track remaining tries. pseudocode: secret = 5, tries = 3, while tries > 0: ask for guess, if guess == secret print 'You won!', break, if guess < secret print 'Too low', tries -= 1. freeCodeCamp teaches that combining loops + decisions creates real interactive programs. Test your game with different numbers and make sure it works.",
+          "video_search": "Python number guessing game with loops and if statements"
+        }
+      ]
+    },
+    {
+      "milestone_number": 4,
+      "title": "Organizing Code - Functions & Reusability",
+      "description": "Learn to write reusable code blocks that make programs cleaner and easier to understand.",
+      "sub_steps": [
+        {
+          "title": "Understand functions and why they prevent repetition",
+          "content": "A function is a reusable block of code that does one job. Instead of writing the same calculation 10 times, you write it once as a function and call it whenever needed. def greet(name): return 'Hello, ' + name. Now you can call greet('Alice'), greet('Bob'), greet('Charlie') and each returns a personalized greeting. Harvard's CS50 emphasizes that functions make code DRY: Don't Repeat Yourself. Write 3 functions: one that adds two numbers, one that converts Fahrenheit to Celsius, one that checks if a word is longer than 5 letters. Each function should take inputs and return a result.",
+          "video_search": "Python functions tutorial def return parameters"
+        },
+        {
+          "title": "Practice functions with inputs and outputs",
+          "content": "Functions take inputs (called parameters) and produce outputs (called return values). def multiply(x, y): return x * y. Now calling multiply(4, 5) returns 20. Al Sweigart shows that the power of functions is that you write the logic ONCE and use it MANY times. Write a function called calculate_grade(score) that takes a test score (0-100) and returns the letter grade (A=90+, B=80-89, C=70-79, D=60-69, F=below 60). Test it with 10 different scores.",
+          "video_search": "Python functions with parameters and return values tutorial"
+        },
+        {
+          "title": "Build a program using multiple functions",
+          "content": "Create a simple calculator program with separate functions for add, subtract, multiply, and divide. Then write a main program that: asks the user which operation they want, asks for two numbers, calls the appropriate function, and prints the result. Example: operation = input('Add, subtract, multiply, or divide?') if operation == 'add': result = add(num1, num2) print(result). freeCodeCamp teaches that breaking code into functions makes programs easier to understand and fix. Test all 4 operations.",
+          "video_search": "Python calculator program with multiple functions tutorial"
+        }
+      ]
+    },
+    {
+      "milestone_number": 5,
+      "title": "Handling Collections - Lists & Dictionaries",
+      "description": "Learn to work with groups of data efficiently using lists and dictionaries.",
+      "sub_steps": [
+        {
+          "title": "Understand lists and how to use them",
+          "content": "A list stores multiple items in order: fruits = ['apple', 'banana', 'orange']. You can access items by position: fruits[0] is 'apple' (counting starts at 0, not 1). You can add items: fruits.append('grape'). You can remove items: fruits.remove('banana'). Harvard's CS50 teaches that lists are essential for storing related data. Create a list of 5 favorite books, then: add 2 more books, remove 1 book, print the 3rd book, print how many total books. Practice indexing (accessing by position) with lists of numbers, colors, and friends' names.",
+          "video_search": "Python lists tutorial append remove indexing"
+        },
+        {
+          "title": "Practice looping through lists to process data",
+          "content": "You can loop through a list to do something with each item. scores = [85, 92, 78, 95] for score in scores: print('Score: ' + str(score)) prints each score. Al Sweigart shows that looping through lists is how you process data efficiently. Write a program that: creates a list of numbers, loops through and prints each one multiplied by 2, then calculates and prints the total sum. Create another list of student names and loop through printing 'Hello [name]!' for each.",
+          "video_search": "Python for loops through lists iteration tutorial"
+        },
+        {
+          "title": "Introduce dictionaries for labeled data",
+          "content": "Dictionaries store data with labels (keys): student = {'name': 'Alice', 'grade': 8, 'city': 'Portland'}. Instead of remembering position 0, 1, 2, you use the label: student['name'] is 'Alice'. This makes code clearer. Create a dictionary for a favorite movie with keys: title, director, year, rating. Create another for a favorite restaurant with: name, cuisine, rating. Practice accessing each value by its key. Al Sweigart emphasizes that dictionaries make code more readable—you don't have to remember 'is the name at position 0 or 1?'",
+          "video_search": "Python dictionaries tutorial keys values tutorial"
+        }
+      ]
+    },
+    {
+      "milestone_number": 6,
+      "title": "Working with Text - String Manipulation",
+      "description": "Master text processing and manipulation—essential for real-world programs.",
+      "sub_steps": [
+        {
+          "title": "Learn string methods: uppercase, lowercase, split, join",
+          "content": "Strings have built-in methods that transform text. text.upper() makes it UPPERCASE, text.lower() makes it lowercase, text.split() breaks it into pieces. 'Hello World'.split() becomes ['Hello', 'World']. 'Hello World'.upper() becomes 'HELLO WORLD'. Al Sweigart's 'Automate the Boring Stuff' shows that string methods save hours of manual work. Practice: create a sentence and convert to uppercase, lowercase, reverse it, count how many letters it has, replace certain words. These are real skills you'll use constantly.",
+          "video_search": "Python string methods upper lower split join tutorial"
+        },
+        {
+          "title": "Practice string formatting and combining",
+          "content": "You can combine variables into readable text using f-strings: name = 'Alice', age = 8, message = f'{name} is {age} years old' prints 'Alice is 8 years old'. This is cleaner than concatenation: message = name + ' is ' + str(age) + ' years old'. Write a program that takes a user's first name, last name, and age, then prints a formatted sentence: '[First] [Last] is [age] years old and will graduate in [year]' (where year is calculated).",
+          "video_search": "Python f-strings string formatting tutorial"
+        },
+        {
+          "title": "Build a text processing tool (word counter, text analyzer)",
+          "content": "Create a program that takes a sentence from the user and: counts the total words, counts the total letters, finds the longest word, replaces certain words. Example: text = 'The quick brown fox' → word count = 4, letter count = 15 (without spaces), longest word = 'quick' (5 letters). freeCodeCamp teaches that text processing is how real programs work—email filters, spam detectors, chatbots all process text. Build this tool step by step.",
+          "video_search": "Python text analyzer word counter project tutorial"
+        }
+      ]
+    },
+    {
+      "milestone_number": 7,
+      "title": "Reading & Writing Files - Persistent Data",
+      "description": "Learn to save and load data from files so programs can remember information between sessions.",
+      "sub_steps": [
+        {
+          "title": "Understand file operations: read, write, append",
+          "content": "Programs need to save data to files so it persists after the program ends. with open('data.txt', 'w') as file: file.write('Hello') creates a file and writes text. 'w' means write (overwrites), 'a' means append (adds to the end), 'r' means read (view existing). Al Sweigart shows that file operations are fundamental for any program that tracks data. Practice: create a file, write 3 lines to it, close it, then read it back and print the content. Create another file and append new lines without overwriting the original content.",
+          "video_search": "Python file operations read write append tutorial"
+        },
+        {
+          "title": "Practice reading files and processing their content",
+          "content": "Create a file with a list of numbers (one per line). Write a program that: reads the file, loops through each line, converts to numbers, calculates the sum and average, and prints results. This teaches file I/O plus list processing. Create another file with a list of names and write a program that: reads it, prints 'Hello [name]!' for each, and counts total names. freeCodeCamp emphasizes that working with files is how you create programs that persist data.",
+          "video_search": "Python read file process lines sum average tutorial"
+        },
+        {
+          "title": "Build a simple data tracker (journal, to-do list, expense tracker)",
+          "content": "Create a program that: saves user input to a file (append mode), allows reading all saved entries, and optionally searches for specific entries. For a journal: user types an entry → saved with date → can view all past entries. For to-do list: add tasks → saved → view all tasks → mark complete. Store data in a file so it persists. This is the foundation for real applications. Al Sweigart's automation scripts use this pattern constantly.",
+          "video_search": "Python todo list journal program save to file tutorial"
+        }
+      ]
+    },
+    {
+      "milestone_number": 8,
+      "title": "Handling Errors - Exception Handling & Debugging",
+      "description": "Learn to handle errors gracefully so programs don't crash when users make mistakes.",
+      "sub_steps": [
+        {
+          "title": "Understand try/except for error handling",
+          "content": "Programs crash when unexpected things happen. A user enters text when you ask for a number, a file doesn't exist, a calculation divides by zero. Using try/except lets you handle errors gracefully. try: age = int(input('Age?')) except ValueError: print('Enter a number please!'). The try block runs, if an error occurs, except catches it and handles it. Harvard's CS50 teaches that robust programs expect errors and handle them. Write a program that asks for a number: if the user enters text, catch the error, ask again, keep asking until valid. Do the same for file operations—try to read a file, catch if it doesn't exist.",
+          "video_search": "Python try except error handling tutorial"
+        },
+        {
+          "title": "Practice defensive programming with validation",
+          "content": "Validate input before using it. If asking for age (0-120), check if it's in range. If asking for email, check if it contains '@'. Al Sweigart's automation scripts validate extensively because bad data breaks programs. Write a program that: asks for age and validates it's 0-120, asks for email and validates it contains '@' and '.', asks for yes/no and only accepts 'yes' or 'no'. If invalid, show an error and ask again.",
+          "video_search": "Python input validation tutorial data validation"
+        },
+        {
+          "title": "Debug a broken program by adding print statements",
+          "content": "Debugging is figuring out why a program doesn't work. The simplest technique: add print statements to see what's happening. If a calculation is wrong, print each step: print(f'x = {x}'), print(f'y = {y}'), print(f'result = {result}'). Read through the output and find where it goes wrong. You're given a broken program (perhaps a faulty quiz or calculator). Add print statements, find the bug, fix it. freeCodeCamp teaches that debugging is a learnable skill—even professionals spend hours debugging.",
+          "video_search": "Python debugging print statements tutorial finding bugs"
+        }
+      ]
+    },
+    {
+      "milestone_number": 9,
+      "title": "HTML & CSS Basics - Building Web Pages",
+      "description": "Learn the foundation of web development—creating and styling web pages.",
+      "sub_steps": [
+        {
+          "title": "Understand HTML structure and basic tags",
+          "content": "HTML (HyperText Markup Language) structures web pages using tags. <!DOCTYPE html> declares it's HTML, <html> wraps everything, <head> contains meta info, <body> contains visible content. Inside you use tags like <h1> for headlines, <p> for paragraphs, <a> for links, <img> for images, <button> for buttons. freeCodeCamp teaches that HTML is NOT programming—it's a markup language that tells browsers 'this is a headline, this is a paragraph.' Create a simple HTML page with a headline, 3 paragraphs, 2 links, and an image. Open it in a browser and see it render.",
+          "video_search": "HTML tutorial beginner basic tags structure"
+        },
+        {
+          "title": "Practice CSS for styling and layout",
+          "content": "CSS (Cascading Style Sheets) makes HTML beautiful. Add color: <p style='color: red'> makes red text. Add size: <h1 style='font-size: 48px'> makes big text. Add layout: <body style='background-color: blue'> makes blue background. Better practice: separate CSS in a <style> section. h1 { color: blue; font-size: 48px; } styles all h1s. Create a webpage with: headline (blue), paragraph (larger text), link (red), button (styled with color and size). Learn that CSS separates structure (HTML) from appearance (CSS).",
+          "video_search": "CSS tutorial beginner styling colors fonts layout"
+        },
+        {
+          "title": "Build a personal profile webpage",
+          "content": "Create a webpage about yourself: headline with your name, paragraph about your interests, list of hobbies, photo (or placeholder), contact button. Use HTML for structure and CSS for styling. Make it colorful and clean. Harvard's CS50 web track starts here. Save as .html and open in a browser. This is the foundation—millions of websites start exactly this way.",
+          "video_search": "HTML CSS personal profile webpage project tutorial"
+        }
+      ]
+    },
+    {
+      "milestone_number": 10,
+      "title": "JavaScript Basics - Making Websites Interactive",
+      "description": "Learn to add interactivity to web pages with JavaScript—the language of web browsers.",
+      "sub_steps": [
+        {
+          "title": "Understand JavaScript variables and DOM manipulation",
+          "content": "JavaScript runs in browsers and can change HTML in real-time. The DOM (Document Object Model) is the structure of the page. document.getElementById('myButton').onclick = function() { ... } makes something happen when a button is clicked. Variables in JavaScript work like Python: var age = 8, but modern JavaScript uses let age = 8. Harvard's CS50 teaches that JavaScript is what makes websites interactive (buttons that do things, forms that validate, animations). Create a button that, when clicked, changes a headline color from black to blue.",
+          "video_search": "JavaScript tutorial beginners variables DOM manipulation"
+        },
+        {
+          "title": "Practice events, functions, and interactivity",
+          "content": "JavaScript responds to user events: clicks, typing, mouse movements. Write a function triggered by an event: function sayHello() { alert('Hello!'); } then attach it to a button: <button onclick='sayHello()'>Click Me</button>. When clicked, an alert pops up. Al Sweigart's approach applies here: write one small function, test it, build on it. Create a webpage with: a text input, a button that reads the input and displays it below. Practice writing event handlers.",
+          "video_search": "JavaScript events onclick functions tutorial"
+        },
+        {
+          "title": "Build an interactive calculator or game webpage",
+          "content": "Create a simple interactive game in JavaScript: a number guessing game. Show a button 'Guess a number 1-10' → user enters a number → JavaScript checks if correct → shows 'Too high', 'Too low', or 'Correct!' with color changes. Use HTML for structure, CSS for styling, JavaScript for logic. This combines all three technologies. freeCodeCamp's front-end curriculum builds here. Test it works smoothly.",
+          "video_search": "JavaScript game number guessing interactive tutorial"
+        }
+      ]
+    },
+    {
+      "milestone_number": 11,
+      "title": "Python Web Development - Building Dynamic Websites",
+      "description": "Learn server-side programming to create dynamic websites that respond to user actions.",
+      "sub_steps": [
+        {
+          "title": "Introduce Flask—a Python web framework",
+          "content": "Flask is a Python framework that runs on servers and creates dynamic websites. A Flask app: imports Flask, creates an app, defines routes (URLs), runs the server. from flask import Flask; app = Flask(__name__); @app.route('/'): def hello(): return 'Hello World'. Run it and visit http://localhost:5000 to see 'Hello World'. Al Sweigart covers Flask automation but web development is the next natural step. Create a simple Flask app with: home page, about page, contact page. Each route returns HTML. Test visiting each page in your browser.",
+          "video_search": "Flask Python web development tutorial for beginners"
+        },
+        {
+          "title": "Practice dynamic content and user input",
+          "content": "Instead of static HTML, Flask generates dynamic content based on user input. A route /greet/<name> can say 'Hello [name]!' for any name. A form sends user input to Flask, Flask processes it, sends back results. Create a Flask app with a form that asks for the user's name and age, Flask calculates when they'll turn 18, returns a personalized page. freeCodeCamp's server-side content covers this. You're now creating real dynamic websites—not just static pages.",
+          "video_search": "Flask Python form input dynamic content tutorial"
+        },
+        {
+          "title": "Build a simple webpage with user accounts",
+          "content": "Create a Flask app with user accounts: signup page (user enters name, email, password), login page (user enters email, password), home page (user sees 'Hello [name]'). Store user data in a Python dictionary (simplified, no database yet). This teaches form handling, session management concepts, and the flow of real web apps. Harvard's CS50 web track builds toward this. Your app should let multiple users sign up and login.",
+          "video_search": "Flask Python user authentication login signup tutorial"
+        }
+      ]
+    },
+    {
+      "milestone_number": 12,
+      "title": "Working with Data - APIs & JSON",
+      "description": "Learn to work with external data sources and real-world APIs.",
+      "sub_steps": [
+        {
+          "title": "Understand JSON and APIs",
+          "content": "JSON (JavaScript Object Notation) is a data format used everywhere online. APIs (Application Programming Interfaces) let programs request data from servers. A weather API returns JSON: {\"temp\": 72, \"city\": \"Portland\", \"condition\": \"sunny\"}. Al Sweigart's 'Automate the Boring Stuff' chapter on web APIs is foundational. Python can fetch this data: import requests; data = requests.get('api-url').json() parses the JSON. Practice: install requests library, fetch data from a free API (weather, jokes, or NASA), print the results. Explore the JSON structure.",
+          "video_search": "Python API requests JSON tutorial for beginners"
+        },
+        {
+          "title": "Practice fetching real API data and processing it",
+          "content": "Use the OpenWeatherMap API (free tier available) to fetch weather data for a city. Parse the JSON response and extract: temperature, humidity, description. Create a program that asks the user for a city, fetches its weather, and displays formatted results: 'Portland: 72°F, Sunny'. Or use a different API (Pokemon, Star Wars, random user generator—many free APIs exist). freeCodeCamp has hundreds of public APIs you can explore. Build your program step-by-step: get API working, parse JSON, format output.",
+          "video_search": "Python OpenWeatherMap API tutorial fetch weather data"
+        },
+        {
+          "title": "Build a program combining web scraping or API usage",
+          "content": "Create a program that: fetches data from an API, processes it, saves results to a file, displays a summary. Example: fetch top 10 jokes from a jokes API, save to file, print 5 random ones to console. Or: fetch data about 5 different countries (population, capital, etc.), save to file, print the largest. Al Sweigart's automation scripts constantly combine APIs + file writing. This is real-world programming.",
+          "video_search": "Python API data processing project tutorial"
+        }
+      ]
+    },
+    {
+      "milestone_number": 13,
+      "title": "Databases & Persistence - Storing Complex Data",
+      "description": "Learn to use databases to store, organize, and retrieve large amounts of data efficiently.",
+      "sub_steps": [
+        {
+          "title": "Understand relational databases and SQL basics",
+          "content": "Databases store large amounts of organized data. SQL (Structured Query Language) is how you talk to databases. A table is like a spreadsheet: rows are records, columns are fields. A 'students' table has columns: id, name, grade, age. CREATE TABLE creates the table, INSERT adds data, SELECT retrieves data. SELECT * FROM students WHERE grade=8 gets all 8th graders. Harvard's CS50 has a full SQL section. SQLite is a simple database perfect for learning. Create a students database with 5 students, practice SELECT commands to find specific students.",
+          "video_search": "SQL tutorial beginners database tutorial SQLite"
+        },
+        {
+          "title": "Practice CRUD operations: Create, Read, Update, Delete",
+          "content": "These four operations handle all data management. CREATE (insert): add new student. READ (select): retrieve students matching criteria. UPDATE: change a student's grade. DELETE: remove a student. Al Sweigart's SQL section covers this. Using Python with SQLite: import sqlite3; conn = sqlite3.connect('data.db'). Then execute SQL commands via Python. Create a student database, add 3 students (CREATE), retrieve them (READ), change a grade (UPDATE), delete one (DELETE). Each operation should be a Python function.",
+          "video_search": "Python SQLite CRUD operations database tutorial"
+        },
+        {
+          "title": "Build a data management app (student grade tracker, expense manager)",
+          "content": "Create a program that: manages a database of students (or expenses, or books). User can: add a new record, view all records, find specific records, update records, delete records. Use SQLite backend and command-line interface. Example: 'add Sarah grade 8' saves to DB. 'show grades' displays all. 'update Sarah 95' changes her grade. 'delete Sarah' removes her. freeCodeCamp projects often use SQLite. This is professional-level data management.",
+          "video_search": "Python SQLite student database project tutorial"
+        }
+      ]
+    },
+    {
+      "milestone_number": 14,
+      "title": "Building Complete Projects - Full-Stack Development",
+      "description": "Combine frontend, backend, and database skills to build a complete working application.",
+      "sub_steps": [
+        {
+          "title": "Plan and design a simple web application",
+          "content": "Before coding, plan: what will your app do? Who uses it? What features does it need? Example app: a to-do list website where users can add tasks, mark complete, delete tasks, see all tasks. Features: user accounts, database storage, web interface. Harvard's CS50 final project starts with planning. Design on paper: what pages do you need? What data needs storing? What does each button do? Create a simple diagram showing flow: signup → login → home → add task → see tasks → mark complete.",
+          "video_search": "web app planning design before coding tutorial"
+        },
+        {
+          "title": "Implement the database and backend (Flask + SQLite)",
+          "content": "Start with backend: create SQLite database with tables (users, tasks). Write Flask routes: /login, /register, /add-task, /view-tasks, /complete-task, /delete-task. Each route handles one action: add-task receives user input, writes to database, returns success. Complete-task receives task id, updates database to mark complete, returns success. Al Sweigart and freeCodeCamp both emphasize building backend before frontend. Test each route with simple HTML responses (no styling yet). Make sure data persists correctly.",
+          "video_search": "Flask SQLite backend development tutorial"
+        },
+        {
+          "title": "Build the frontend and integrate with backend",
+          "content": "Create beautiful HTML + CSS for each page: login page, register page, dashboard showing tasks, add task form. JavaScript makes it interactive: submit button sends data to Flask route, Flask processes, returns success/error, page updates (or redirects). Connect it all: user signs up → Flask saves to database → redirects to login → user logs in → sees their tasks → can add/complete/delete. Test end-to-end: sign up as new user, verify account created, login, add task, verify in database. freeCodeCamp projects do exactly this. You've now built a real web application.",
+          "video_search": "Flask HTML CSS JavaScript full-stack project tutorial"
+        }
+      ]
+    },
+    {
+      "milestone_number": 15,
+      "title": "Portfolio & Next Steps - Becoming a Developer",
+      "description": "Showcase your projects and plan your continued growth as a programmer.",
+      "sub_steps": [
+        {
+          "title": "Document your projects and create a portfolio",
+          "content": "Professional developers have portfolios showing their work. For each project: write a clear description (what does it do?), include a screenshot or video, explain what you learned, share the code on GitHub. Create a simple personal website listing your projects: 'Number Guessing Game - JavaScript game where users guess 1-10', 'To-Do List App - Flask web app with user accounts and SQLite database', 'Weather Fetcher - Python program that uses OpenWeatherMap API'. Document what technologies you used. GitHub Pages (free hosting) can host your portfolio. This is what employers look at.",
+          "video_search": "creating a programming portfolio GitHub Pages tutorial"
+        },
+        {
+          "title": "Study code from real projects and other programmers",
+          "content": "Now that you have fundamentals, read others' code to learn advanced techniques. GitHub has millions of open-source projects. Pick one you're interested in, read the code, understand how it works. Al Sweigart recommends this: study code, don't just write it. Find a project similar to yours but better-written, understand why it's better. This is how professionals learn. Study 2-3 projects: read the main files, understand the overall structure, look for patterns.",
+          "video_search": "learning by reading open source code GitHub tutorial"
+        },
+        {
+          "title": "Commit to continuous learning and specialization",
+          "content": "Programming evolves constantly. Choose an area that excites you: web development (build more full-stack apps), game development (learn Pygame), data science (learn pandas + matplotlib), artificial intelligence (learn machine learning), mobile apps (learn Flutter like this app!). Pick one and dedicate time. freeCodeCamp has thousands of free courses in every specialization. Harvard's CS50 can be followed by CS50 Web, CS50 AI, etc. You now have the fundamentals to learn anything. Set a goal: 'I'll build 5 web apps this year' or 'I'll learn game development.' Consistency beats intensity. Welcome to programming—you're officially a developer.",
+          "video_search": "programming specialization path recommendations 2024"
+        }
+      ]
+    }
+  ]
+}

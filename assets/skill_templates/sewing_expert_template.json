@@ -1,0 +1,338 @@
+{
+  "skill_name": "Sewing & Textiles",
+  "skill_icon": "🧵",
+  "description": "Master sewing fundamentals through expert-guided progression. This curriculum blends traditional sewing school techniques, sustainable mending culture, and project-based learning. From essential hand stitches to machine mastery, develop practical skills for making, mending, and creating beautiful textiles. Learn the discipline and patience of traditional sewing while building confidence through completed projects.",
+  "total_milestones": 15,
+  "milestones": [
+    {
+      "milestone_number": 1,
+      "title": "Essential Hand Stitches & Needle Control",
+      "description": "Learn the foundational hand stitches that form the basis of all sewing - develop needle control and stitch consistency.",
+      "sub_steps": [
+        {
+          "title": "Thread the needle, tie a knot, and practice basic grip",
+          "content": "Hold the needle like a pencil, not a chopstick - control comes from your fingers, not wrist. Tie a small knot at thread end by wrapping thread around needle twice, pulling tight. Practice on scrap fabric first. The fundamental grip: thumb and forefinger hold fabric taut, middle finger guides needle from behind, needle pushed through with thimble on middle finger to protect your hand. This proper grip prevents hand fatigue and gives you precision control. Spend 10 minutes just practicing grip and needle movement without worrying about stitch quality.",
+          "video_search": "how to hold needle and thread proper hand sewing grip"
+        },
+        {
+          "title": "Master the Running Stitch - the most basic stitch",
+          "content": "Running stitch is a straight line of evenly-spaced stitches. Push needle through fabric with an even rhythm - up and down, up and down. Goal: 8-12 stitches per inch. Mark a straight line on fabric with pencil, follow it precisely. The key to sewing is consistency - same stitch length, same distance from fabric edge, same rhythm. This stitch holds 90% of traditional handsewing together. Practice on scrap fabric, aim for a full 12-inch line of consistent stitches. Uneven is normal at first - repetition creates muscle memory.",
+          "video_search": "running stitch hand sewing tutorial beginners"
+        },
+        {
+          "title": "Learn the Backstitch - strongest hand stitch",
+          "content": "Backstitch overlaps each stitch with the previous one, creating incredible strength. Bring needle up one stitch length ahead, then push needle DOWN through the end of the previous stitch, come out one stitch length ahead. This creates a overlapped pattern. Backstitch is used for repairs and seams that must hold forever. Sewing machines can't match backstitch strength - it's the reason hand-sewn garments last generations. Practice 12 inches of backstitch. Notice how it's slower than running stitch but you'll see why - it's indestructible.",
+          "video_search": "backstitch hand sewing strongest stitch tutorial"
+        }
+      ]
+    },
+    {
+      "milestone_number": 2,
+      "title": "Essential Stitches - Whip Stitch & Slip Stitch",
+      "description": "Learn utility stitches for invisible seams and finishing work - critical for professional results.",
+      "sub_steps": [
+        {
+          "title": "Master the Whip Stitch for binding fabric edges",
+          "content": "Whip stitch closes folded edges invisibly - bring needle up through one folded edge, then directly across through the opposite folded edge, then back through first folded edge. The needle travels mostly INSIDE the fold, creating invisible stitching on the outside. Used for closing pillows, attaching appliqué, binding edges. This is the stitch between the folds that nobody sees - magic. Practice on two folded fabric edges pressed together. Create 12 inches of whip stitch. The goal: stitches completely hidden when viewed from front.",
+          "video_search": "whip stitch invisible seam tutorial hand sewing"
+        },
+        {
+          "title": "Learn Slip Stitch for invisible seams and hems",
+          "content": "Slip stitch is the invisible seam - used in almost every handsewn project for closures. Bring needle up through fold of fabric, travel 1/4 inch inside the fold, come out and go directly through opposite fabric, back into that fold, travel and repeat. This creates a nearly invisible line. Traditional garment construction uses slip stitch constantly for invisible closures. Practice on two pieces of fabric with folded edges. Create 12 inches. You should see almost nothing on the outside except a thin line.",
+          "video_search": "slip stitch invisible hand sewing tutorial"
+        },
+        {
+          "title": "Practice Ladder Stitch for soft toy/pillow closures",
+          "content": "Ladder stitch (also called mattress stitch) is the invisible way to close pillows and stuffed items after turning right-side-out. Bring needle up through one seam, travel across INSIDE the seam (1/4 inch), come out, go straight across to opposite side and travel inside THAT seam, back across and repeat. The needle travels side-to-side horizontally, creating ladders of thread inside the seam. Pull every 2-3 stitches to close the opening invisibly. This is the stitch that makes pillows look professionally finished. Practice on a small fabric square folded and partially closed.",
+          "video_search": "ladder stitch mattress stitch invisible closing tutorial"
+        }
+      ]
+    },
+    {
+      "milestone_number": 3,
+      "title": "Decorative Stitches & Embellishment",
+      "description": "Learn decorative stitches that add beauty and detail to your work.",
+      "sub_steps": [
+        {
+          "title": "Master French Knots for textured embellishment",
+          "content": "French knot creates a textured dot - wrap thread around needle 1-2 times, push needle back through fabric very close to (but not in) the entry hole, and pull thread taut as you push needle through to back. This creates a raised knot on the surface. Used on embroidered flowers, embellished garments, decorative detail. Practice 20 French knots in a random pattern on scrap fabric. Vary the number of wraps (1 wrap = small knot, 2 wraps = larger) to create dimension. These are finicky at first but become meditative with practice.",
+          "video_search": "french knot embroidery stitch tutorial"
+        },
+        {
+          "title": "Learn Chain Stitch for flowing lines and flowers",
+          "content": "Chain stitch creates a linked chain effect - bring needle up, make a loop with thread, put needle down next to hole and back up inside the loop, pull thread gently. Repeat. Used for outlines, flower stems, and decorative lines. Each stitch creates a little chain link. This stitch requires less skill than french knots but looks beautiful when done with intention. Practice 12 inches of chain stitch in a winding pattern. Notice how it looks like small interlocking loops.",
+          "video_search": "chain stitch hand embroidery tutorial"
+        },
+        {
+          "title": "Practice Satin Stitch for filled areas and shapes",
+          "content": "Satin stitch fills a shape with parallel straight stitches lying flat against the fabric. Create outline of shape (circle, heart, etc.), then fill with parallel stitches very close together (1/16 inch apart) that completely cover the area. The stitches should lie flat and glossy like satin. This is labor-intensive but creates stunning results. Practice filling a simple circle or diamond shape (about 1x1 inch). Work slowly and evenly - this teaches patience and precision that transfers to all sewing.",
+          "video_search": "satin stitch embroidery filling shapes tutorial"
+        }
+      ]
+    },
+    {
+      "milestone_number": 4,
+      "title": "Seam Allowance & Fabric Preparation",
+      "description": "Learn how to properly prepare fabric and understand the critical seam allowance concept.",
+      "sub_steps": [
+        {
+          "title": "Understand seam allowance - the space between stitch line and fabric edge",
+          "content": "Seam allowance is the space between where you sew and the fabric edge - typically 1/2 inch or 5/8 inch in garment sewing. This seems simple but it's CRITICAL to understand: if you sew 1/4 inch from edge instead of 1/2 inch, your garment will be too small. Always mark your seam allowance line BEFORE you sew. Use a ruler, mark with chalk or pencil, or use sewing tape as a guide. Practice marking 1/2-inch seams on multiple pieces of scrap fabric. This becomes automatic after repetition, but it's too important to guess.",
+          "video_search": "what is seam allowance in sewing explained"
+        },
+        {
+          "title": "Learn to square cut fabric and understand grain line",
+          "content": "Grain line is the direction of threads in fabric - either lengthwise (warp) or crosswise (weft). Garments are typically cut with grain line running vertically for stability. Before cutting, identify fabric grain (usually you can see or feel the direction of the weave). Use a ruler and rotary cutter or scissors, cut in straight lines. Fabric cut off-grain will look wonky and hang badly. Cut three practice squares from scrap fabric, paying attention to grain direction. Uneven cuts lead to uneven seams and wonky finished projects.",
+          "video_search": "fabric grain line sewing how to identify and use"
+        },
+        {
+          "title": "Press fabric before and after sewing for professional results",
+          "content": "Pressing (using an iron) is different from ironing (moving iron back and forth). For sewing, you press DOWN gently to flatten seams without disturbing stitches. Press fabric BEFORE sewing to remove wrinkles - flat fabric is easier to sew straight. Press seams open AFTER sewing to reduce bulk and help garment lay flat. Use medium heat (check fabric content), press seams to one side or open depending on project. This step is non-negotiable for professional results. Practice pressing on seams you've already sewn - notice how they lay flatter and look neater.",
+          "video_search": "pressing seams in sewing tutorial iron technique"
+        }
+      ]
+    },
+    {
+      "milestone_number": 5,
+      "title": "Mending Mastery - Repairing Holes & Tears",
+      "description": "Learn how to invisibly repair common clothing damage - the most practical sewing skill.",
+      "sub_steps": [
+        {
+          "title": "Patch a hole with invisible patch method",
+          "content": "Invisible patching means the patch is on the INSIDE, hidden when wearing. Cut a patch 1 inch larger than hole on all sides. Place patch on wrong side of fabric (inside of garment), use slip stitch around all edges to attach patch. The garment is now stronger than before the hole. This is how vintage garments get repaired and are good as new. Alternatively, use a web adhesive patch (heat-activated) under the fabric, then whip stitch around edges for reinforcement. Practice on a test fabric with a small hole (2 inches). Notice how the repair is strong and invisible from outside.",
+          "video_search": "invisible patch repair hole in fabric sewing"
+        },
+        {
+          "title": "Learn stitching a seam that's started to rip",
+          "content": "Seams rip because thread breaks or stitches were uneven. When a seam starts ripping, don't ignore it - it will get worse. Backstitch or running stitch along the original seam line, overlapping 1 inch beyond the damage on both sides. Use thread that matches the garment if visible, or invisible thread if not. This takes 5 minutes but saves a beloved garment. Practice by deliberately ripping a test seam, then restitching it. Experience how the repair is actually stronger than the original seam when done with backstitch.",
+          "video_search": "how to repair ripped seam in sewing"
+        },
+        {
+          "title": "Darn a small hole with darning techniques",
+          "content": "Darning creates new fabric where fabric is damaged. Traditional darning works over and under like weaving - you recreate the weave pattern in that spot. Mark area of damage (hole), thread needle with thread matching fabric, create a grid pattern (back and forth horizontally, then vertically) weaving over and under to rebuild the fabric. This ancient technique is slow but creates strong repairs. Modern alternative: use iron-on patch with decorative blanket stitch around edges. Practice darning on an old sock or knit fabric - the repetitive motion is meditative and creates satisfaction of seeing damage disappear.",
+          "video_search": "darning holes in fabric traditional darning stitch"
+        }
+      ]
+    },
+    {
+      "milestone_number": 6,
+      "title": "Introduction to Sewing Machine - Threading & Basic Operation",
+      "description": "Transition from hand sewing to machine - learn safety and basic machine mechanics.",
+      "sub_steps": [
+        {
+          "title": "Thread the machine correctly and understand machine anatomy",
+          "content": "Read your machine's manual - each brand is slightly different. General process: needle is UP, bobbin is wound with thread (usually done with special winding mechanism), top thread goes through guides and tension discs and into needle from FRONT, threading is critical because loose threading causes skipped stitches. Test thread on scrap fabric - if thread breaks easily or skips stitches, rethread. This frustrates many beginners because slight variations in threading cause problems. Spend 20 minutes just threading and rethreading your machine until it's automatic. Keep manual accessible - it's your friend.",
+          "video_search": "how to thread a sewing machine step by step"
+        },
+        {
+          "title": "Learn basic machine controls - tension, stitch length, presser foot",
+          "content": "Tension is the tightness of thread - too tight pulls fabric, too loose creates loops. Stitch length is measured in millimeters - 2.0-2.5mm is standard, shorter stitches are stronger, longer stitches are looser. Presser foot holds fabric down while needle moves - lift it to insert fabric, lower it before sewing. Bobbin is the thread underneath that interlocks with top thread. Practice on scrap fabric, adjusting tension and stitch length to feel the difference. Notice how tight tension vs loose tension creates different stitches. This hands-on exploration builds intuition faster than reading.",
+          "video_search": "sewing machine tension stitch length explained"
+        },
+        {
+          "title": "Practice basic straight stitch on scrap fabric",
+          "content": "Place fabric under presser foot (aligned with 1/2-inch marking on needle plate), lower presser foot, adjust your seam guide. Sew in a straight line - the machine does the repetitive needle motion, you guide direction. Don't force fabric - let machine do the work. Keep fingers away from needle area. Start and end with backstitching (use reverse button) to lock stitches. Practice sewing straight lines on scrap fabric - aim for perfectly straight, not speed. The first few lines will be wobbly - normal. This is learning how to guide, not control. After 20 minutes of straight lines, try sewing curves gently - this teaches how to guide without forcing.",
+          "video_search": "sewing machine for beginners straight stitch tutorial"
+        }
+      ]
+    },
+    {
+      "milestone_number": 7,
+      "title": "Machine Sewing Basics - Seams & Corners",
+      "description": "Learn machine-specific techniques for creating strong, professional seams.",
+      "sub_steps": [
+        {
+          "title": "Sew a straight seam with consistent seam allowance",
+          "content": "This is the foundation of all machine sewing. Place two fabric pieces right-sides-together (pretty sides facing, wrong sides facing you). Align edges, insert under presser foot with 1/2-inch seam allowance using the needle plate guides. Backstitch 2-3 stitches at start, sew straight line, backstitch 2-3 stitches at end to lock seam. Press seam to one side or open. The backstitch at start/end prevents seam from unraveling. Consistent seam allowance creates garments that fit correctly. Practice 10 seams on scrap fabric - by the 10th, this should feel automatic.",
+          "video_search": "sewing a straight seam with consistent seam allowance"
+        },
+        {
+          "title": "Master sewing corners and pivot turns",
+          "content": "When sewing a corner (like sewing two sides of a square), you need to pivot. When you reach corner, sew up to it, lower presser foot, turn fabric 90 degrees around needle (needle stays in fabric), lower presser foot again, continue sewing. This prevents threads from catching and creates a clean corner. For a right angle corner, you want to stop 1/4-inch from edge, pivot, then sew to edge. This is critical for every garment - sleeves, collars, necklines all have corners. Practice sewing a square (four sides with four corners). Notice how the pivot creates a sharp corner without puckering.",
+          "video_search": "sewing machine corners pivot turn tutorial"
+        },
+        {
+          "title": "Learn to backstitch properly and lock stitches",
+          "content": "Backstitch means pressing the reverse button and sewing 2-3 stitches backwards at the start and end of every seam. This locks stitches so they don't unravel when you pull on them. Many beginners skip this and their seams fall apart. ALWAYS backstitch at start and end. Also backstitch when you tie off by hand - makes threads secure. This is a non-negotiable sewing habit - build it now and it becomes automatic. Practice on 10 seams, deliberately backstitching at both ends, then try to pull the seam apart - notice how the backstitch prevents unraveling.",
+          "video_search": "how to backstitch on sewing machine lock stitches"
+        }
+      ]
+    },
+    {
+      "milestone_number": 8,
+      "title": "French Seams - The Sustainable Seam",
+      "description": "Learn the beautiful, durable seam used in fine clothing and sustainable fashion.",
+      "sub_steps": [
+        {
+          "title": "Understand what makes a French seam beautiful and durable",
+          "content": "A French seam has thread and raw edges enclosed INSIDE the seam - you see a neat line on the outside with no raw edges visible. This prevents fraying, looks professional, and lasts longer. Traditional garment makers use French seams constantly. The seam is slightly thicker because it's doubled, but the durability is worth it. French seams are essential for transparent fabrics (you see raw edges otherwise), delicate fabrics, and fine garments. The process is two-step sewing, which takes longer but creates something beautiful and lasting - perfect for mindful sewing practice.",
+          "video_search": "french seam tutorial how to sew step by step"
+        },
+        {
+          "title": "Sew a proper French seam - first step with wrong sides together",
+          "content": "Step one: Place fabric WRONG SIDES TOGETHER (opposite of normal - wrong sides facing each other), sew 1/4-inch seam (narrower than usual). Now you'll see the raw edges. Trim raw edges close to seam, then press seam flat. Step two (next task) will fold and sew again to enclose those raw edges. The first seam is the trickiest part - getting the width right is essential. Practice on test fabrics. This first step will look wrong because you're sewing wrong-sides-together instead of right-sides, but that's correct for French seams.",
+          "video_search": "french seam first step wrong sides together"
+        },
+        {
+          "title": "Complete the French seam - second step with right sides together",
+          "content": "After first seam and trimming, fold fabric right sides together (folding the seam inside), press carefully so the seam is on the fold edge. Sew 3/8-inch seam (wider than first step) that encloses the raw edges inside. Now when you unfold, you see a neat seam with no raw edges visible - the inside edges are safely enclosed. This is the mark of fine sewing. Practice on test fabric. The second seam is easier than first because you're just sewing straight. The finished seam is durable and beautiful - you've created something that will last.",
+          "video_search": "french seam second step enclosing edges tutorial"
+        }
+      ]
+    },
+    {
+      "milestone_number": 9,
+      "title": "Gathering & Smocking - Creating Controlled Fullness",
+      "description": "Learn techniques to add controlled fullness and texture to fabric.",
+      "sub_steps": [
+        {
+          "title": "Create gathered fabric with running stitches",
+          "content": "Gathering adds fullness while keeping one edge straight - used on skirts, sleeves, smocking. Sew two parallel running stitches (1/4-inch apart) along edge you want to gather, leaving long thread tails. Gently pull thread tails to compress fabric. Adjust gathers evenly, secure thread by wrapping around pin in figure-8. The gathered edge becomes shorter (say 3 inches becomes 2 inches) and creates soft, controlled folds. Practice gathering a 6-inch piece of fabric to about 4 inches. The key: even gathers look professional, bunched gathers look amateur. Distribute gathers evenly before securing.",
+          "video_search": "how to gather fabric running stitch gathering tutorial"
+        },
+        {
+          "title": "Sew gathered fabric to a flat piece using French seams",
+          "content": "Once fabric is gathered, sew it to another piece (like gathering a sleeve to a bodice). Place gathered fabric on top of flat fabric, pin carefully distributing gathers, sew with French seam or regular seam. The gathered side has more fabric that bunches slightly as you sew - let gathers feed into the needle naturally. Don't force gathers flat. The result is a garment with beautiful, controlled fullness that's both functional (allows movement) and beautiful (creates visual interest). Practice by sewing gathered test strip to flat test strip. Notice how gathers compress further when sewn - plan accordingly.",
+          "video_search": "sewing gathered fabric to flat piece sleeve tutorial"
+        },
+        {
+          "title": "Learn smocking stitch for gathered fabric embellishment",
+          "content": "After gathering fabric, smocking secures gathers with decorative stitching. English smocking uses patterned stitches (honeycomb, cable, wave) to hold gathers in place while creating beautiful texture. This is decorative and functional. Traditionally used on children's smocks (the garment gave smocking its name). Honeycomb stitch is most common: working on gathered fabric, sew diagonal stitches between folds, creating diamond patterns. This is labor-intensive but creates heirloom-quality decoration. Practice 6 inches of honeycomb smocking on gathered practice fabric. This connects back to embroidery skills - you're combining gathering with decorative stitching.",
+          "video_search": "honeycomb smocking stitch tutorial embroidery gathered"
+        }
+      ]
+    },
+    {
+      "milestone_number": 10,
+      "title": "Darts & Fitted Garments - Creating Three-Dimensional Shape",
+      "description": "Learn how to fit fabric to body curves using darts.",
+      "sub_steps": [
+        {
+          "title": "Understand dart anatomy and why darts are essential for fitting",
+          "content": "A dart is a pointed fold of fabric that removes excess fabric and creates shape. Front bodice darts point toward bust, skirt darts point toward hip curves. Without darts, garments hang flat and shapeless. With darts, they follow body contours. A dart has three points: the point (tip), and two legs (the seam lines). The width at the base affects how much shaping happens. Wide dart = more shaping, narrow dart = less. This is how tailored garments achieve fit. Understanding darts is understanding how flat fabric becomes three-dimensional clothing.",
+          "video_search": "sewing dart tutorial how to sew fit shaping"
+        },
+        {
+          "title": "Mark and sew a proper dart with neat point",
+          "content": "Mark dart with chalk or tailor's tape - mark both legs and point. Fold fabric right sides together along one leg, align the two legs of the dart, pin carefully. Sew from wide base toward the point in a gradual taper, ending at the point. This is tricky - sewing INTO a point without overshooting takes practice. The last 1 inch should be very narrow stitches to avoid pulling fabric. Backstitch at the point to lock stitch (since you end in the middle of fabric, you can't backstitchat the edge). Press dart to one side. Practice on test fabric - uneven darts look amateur, tapered darts look professional.",
+          "video_search": "how to sew a dart step by step sewing machine"
+        },
+        {
+          "title": "Try multiple darts on a garment piece and adjust as needed",
+          "content": "A fitted dress or blouse might have 2-4 darts per side. Each dart removes a specific amount of excess fabric, working together they create overall fitted shape. Sew a piece with multiple darts (practice bodice front might have 2 darts), pressing each toward the center. Try the piece on a dress form or yourself - notice how the shape changes compared to flat fabric. Most darts start at pattern piece edge and taper toward bust/hip. This teaches you that sewing isn't just following lines - it's understanding how fabric transforms into wearable shape. The learning moment: seeing how individual darts create overall fitted silhouette.",
+          "video_search": "sewing multiple darts fitted garment tutorial"
+        }
+      ]
+    },
+    {
+      "milestone_number": 11,
+      "title": "First Simple Garment - Pillowcase or Simple Skirt",
+      "description": "Complete your first small garment project to bring all skills together.",
+      "sub_steps": [
+        {
+          "title": "Cut and prepare fabric pieces for pillowcase project",
+          "content": "Pillowcase is perfect first project - just two rectangles sewn together! Choose fabric (cotton is easiest). Measure desired size (standard pillowcase is 20x30 inches), cut two rectangles with 1/2-inch seam allowance all around. Mark seam allowance lines with chalk if it helps. Press fabric before starting. Cut away selvage (finished edges that don't need processing) unless you want to use them. Lay out pieces and double-check measurements before sewing. This teaches planning and measurement accuracy - the most common sewing mistakes happen because measurements are wrong.",
+          "video_search": "how to make a pillowcase sewing first project"
+        },
+        {
+          "title": "Sew pillowcase sides using French seams for professional finish",
+          "content": "Place two rectangles wrong sides together (using French seam method), sew 1/4-inch seam around three sides, leaving one side open for turning and stuffing. Press seam, then fold right sides together and sew 3/8-inch seam enclosing raw edges. Turn right side out through opening, press seams carefully flat. The French seam prevents fraying and looks professional on the inside too. This is the complete French seam technique from previous milestone applied to a real project. Notice how your seams look neat and controlled - that's from all your practice.",
+          "video_search": "sewing pillowcase with French seams tutorial"
+        },
+        {
+          "title": "Add finishing closure - slip stitched opening",
+          "content": "Fold raw edges of opening inward 1/2 inch and press. Hand-sew opening closed with slip stitch (the invisible seam from earlier). This creates an invisible seam matching the other seams. Now you have a finished pillowcase - beautiful inside and outside, professionally finished, completely usable. Step back and admire what you made - flat pieces of fabric transformed through your skill into a finished object. This moment teaches that sewing is transformation. Take a photo of your finished pillowcase, document the learning process.",
+          "video_search": "closing pillowcase opening invisible slip stitch"
+        }
+      ]
+    },
+    {
+      "milestone_number": 12,
+      "title": "Elastic Casings & Waistbands - Functional Finishing",
+      "description": "Learn how to create functional closures and casing techniques used in countless garments.",
+      "sub_steps": [
+        {
+          "title": "Create a simple elastic casing for drawstring waist",
+          "content": "Casing is a fold of fabric that contains elastic or drawstring. Create casing by folding fabric edge over (say 1 inch) and sewing parallel to fold, creating a tunnel. Thread elastic or drawstring through tunnel using safety pin attached to one end. Pull elastic to desired tightness, overlap ends and stitch together securely. This is used in PJs, elastic-waist skirts, drawstring pants. The key: casing width must be slightly wider than elastic (if elastic is 1 inch, make casing 1.25 inch). Practice on test fabric - sew casing, insert elastic, secure. This is the technique in countless garments - understand it well.",
+          "video_search": "how to sew elastic casing tutorial for beginners"
+        },
+        {
+          "title": "Attach an elastic waistband to a skirt or pants",
+          "content": "Waistband is a strip of fabric folded with elastic inside, then sewn to pants/skirt waist. Cut waistband strip 2 inches wide and circumference of waist plus 1 inch seam allowance. Fold in half lengthwise, insert elastic inside (elastic is slightly shorter than waistband), stitch ends together, then sew waistband to garment. This is how professional elastic-waist garments are made. The elastic is contained inside the waistband, not visible. Sewing a waistband requires precision - measuring the elastic correctly affects how garment fits. Practice on test skirt. When done properly, the waistband rolls slightly creating a finished look.",
+          "video_search": "how to attach elastic waistband to skirt pants"
+        },
+        {
+          "title": "Understand stretchy fabric considerations - ballpoint needles and stretch thread",
+          "content": "Elastic and stretchy fabrics need special treatment. Use ballpoint or stretch needle (prevents skipped stitches on stretch fabric). Use thread with slight give (polyester thread has more give than cotton). When sewing elastic to fabric, hold elastic slightly stretched (don't fully stretch, just eliminate bunching). The stitches need to have some give or they'll break when garment stretches. Test on scrap stretchy fabric first - notice how regular needle and regular thread causes skipped stitches, while ballpoint needle and stretchy fabric work together smoothly. This teaches that sewing requires understanding your materials.",
+          "video_search": "sewing with elastic and stretchy fabric tips tutorial"
+        }
+      ]
+    },
+    {
+      "milestone_number": 13,
+      "title": "Binding Edges & Finishing Seams - Professional Finishes",
+      "description": "Learn how to beautifully finish raw edges using binding and techniques that prevent fraying.",
+      "sub_steps": [
+        {
+          "title": "Create bias tape binding for curved and straight edges",
+          "content": "Bias tape is fabric cut on the bias (diagonal grain) that stretches slightly to follow curves. Use bias tape to finish armholes, necklines, edges. Fold tape in half around fabric edge, sew through all layers. Bias tape looks professional and prevents fraying. You can buy pre-made bias tape or make your own from fabric strips cut on the bias. Making your own teaches fabric grain and bias concepts. Practice binding a straight edge first (easier), then a curved edge (binding hugs the curve). The satisfaction of a perfectly bound edge is high - it looks intentional and professional.",
+          "video_search": "how to sew bias tape binding to edges tutorial"
+        },
+        {
+          "title": "Apply pinking shears and zigzag finish to seam edges",
+          "content": "Raw edges fray when washed. Common finishes include: zigzag stitch (sew along edge with zigzag stitch that prevents fraying), pinking shears (cut edge with pinking shears that create diagonal notches reducing raveling), bound finish (use bias tape). Choose based on fabric - delicate fabrics look better bound, sturdy fabrics can use zigzag. Practice on test seams - sew a seam, then finish edge with zigzag (most common machine technique). Notice how finished edges look neater and more professional than raw edges. This is detail work but separates homemade from handmade.",
+          "video_search": "finishing seam edges zigzag stitch prevent fraying"
+        },
+        {
+          "title": "Understand different seam finish techniques for different fabrics",
+          "content": "Seam finish depends on fabric: knits use ballpoint needle and no finish (stitches don't fray), cotton knits might use zigzag, delicate fabrics use bound finishes, sturdy wovens use pinking or zigzag. Understanding fabric behavior teaches you to match technique to material. A fine linen dress deserves bias tape binding - careful and intentional. A casual cotton sundress might just have zigzag. This develops the judgment that makes garments look handmade rather than homemade. Sew practice seams on different fabric types (cotton, linen, knit, delicate), finish each appropriately, notice differences.",
+          "video_search": "seam finishing techniques different fabrics tutorial"
+        }
+      ]
+    },
+    {
+      "milestone_number": 14,
+      "title": "Closures - Buttons, Zippers & Hand-Sewn Buttonholes",
+      "description": "Master the functional closures that keep garments together and wearable.",
+      "sub_steps": [
+        {
+          "title": "Hand-sew a button securely with thread shank",
+          "content": "Button sewing seems simple but technique matters for durability. Thread needle, place small piece of toothpick or matchstick under button (creates a shank - tiny space under button that allows movement), sew through button holes 4-6 times, wrap thread around shank, come out back side, secure with tiny stitches. The thread shank prevents buttons from snapping off under stress - this is the professional difference. Practice on test fabric. Buttons fall off cheaply-made garments because no shank, your buttons will stay through years of wearing. This is satisfying detail work.",
+          "video_search": "how to sew a button with thread shank securely"
+        },
+        {
+          "title": "Learn to hand-sew a buttonhole and attach button opposite",
+          "content": "Buttonhole (hand-sewn) is a slit with thread worked around the edges to prevent fraying. Mark buttonhole length (slightly longer than button diameter), cut slit carefully, thread needle, sew buttonhole stitch (also called blanket stitch) around edges. This is advanced and takes practice - edges should be even and neat. Machine buttonholes are easier, but hand-sewn buttonholes are more beautiful and stronger. Alternatively, create thread loop instead of buttonhole (loop of thread between two seam allowances). Either way, practice both options. Hand-sewn details elevate a garment from casual to heirloom quality.",
+          "video_search": "hand sewn buttonhole tutorial step by step"
+        },
+        {
+          "title": "Install a zipper using hand stitching or machine",
+          "content": "Zipper installation is precise work. For hand insertion: place fabric pieces right sides together, mark zipper placement (usually a centered seam), baste zipper in place (temporary loose stitching), then hand-stitch with back stitch 1/4 inch from zipper on both sides. The stitches should be invisible from front and follow the zipper edge exactly. For machine insertion: similar process but uses machine foot designed for zippers. Both require precision - uneven stitches look amateur. Practice on test seams - baste (loosen seams), insert zipper, hand-stitch or machine-stitch. Zippers seem intimidating but become manageable with practice.",
+          "video_search": "how to install zipper by hand sewing tutorial"
+        }
+      ]
+    },
+    {
+      "milestone_number": 15,
+      "title": "Complete Your First Wearable - A Skirt or Simple Top",
+      "description": "Apply all skills to create a finished, wearable garment you made with your own hands.",
+      "sub_steps": [
+        {
+          "title": "Choose and prepare a simple garment pattern",
+          "content": "Select a pattern for a simple skirt (gathered, elastic waist, or A-line) or simple top (tank, t-shirt, or sleeveless tunic). Simple patterns have fewer pieces and fewer techniques - perfect for consolidation. Read pattern completely before starting. Pre-wash fabric if washable. Cut all pieces carefully, mark seam allowances and darts with chalk, prepare all pieces before sewing (this is professional workflow). Many beginners jump to sewing without prep and make mistakes - taking time for prep prevents mistakes. Lay out all cut pieces on a table, review against pattern instructions. This preparation step teaches patience and thoroughness.",
+          "video_search": "how to choose your first sewing pattern beginner"
+        },
+        {
+          "title": "Sew the garment following pattern instructions sequentially",
+          "content": "Follow pattern step-by-step: sew darts first, construct bodice/main pieces, attach sleeves (if any), add waistband or binding, install closures. Work in order - skipping steps or doing things out of order creates problems. Use techniques you've learned: French seams for fine finishing, proper seam allowance, backstitch at starts and ends, press after each major step. The garment slowly takes shape under your hands. This is the payoff for all the practice - you're not drilling exercises, you're making something real. Take photos as you progress through each major step.",
+          "video_search": "sewing a skirt from pattern tutorial step by step"
+        },
+        {
+          "title": "Finish the garment completely and wear your creation with pride",
+          "content": "After all major sewing, finish edge seams, secure any remaining loose threads, press entire garment (dry clean if needed). Try garment on and adjust if needed (you can take in seams if slightly too loose, let out if slightly too tight). The moment you put on a garment you made is transformative - you created something functional, beautiful, and wearable. Understand that sewing mastery doesn't mean perfection - it means understanding your materials, respecting the craft, and creating something that lasts and improves with wear. Traditional garments improve with age - yours will too. Document this moment - you've joined centuries of makers.",
+          "video_search": "finishing and pressing a completed garment tutorial"
+        }
+      ]
+    }
+  ]
+}
