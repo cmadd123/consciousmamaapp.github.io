@@ -2040,75 +2040,196 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
     );
   }
 
-  // Skills & Hobbies Preview Card
+  // Skills & Hobbies Card
   Widget _buildSkillsPreviewButton(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        context.pushNamed('skillsPreview');
-      },
-      borderRadius: BorderRadius.circular(20.0),
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(20.0),
-        decoration: BoxDecoration(
-          color: Colors.white,
+    return StreamBuilder<List<SkillPathRecord>>(
+      stream: querySkillPathRecord(
+        queryBuilder: (q) => q
+            .where('user_ref', isEqualTo: currentUserReference)
+            .orderBy('last_updated', descending: true)
+            .limit(5),
+      ),
+      builder: (context, snapshot) {
+        final skillPaths = snapshot.data ?? [];
+        final displaySkills = skillPaths.take(3).toList();
+        final hasSkills = skillPaths.isNotEmpty;
+
+        return InkWell(
+          onTap: () => context.pushNamed('skillsPreview'),
           borderRadius: BorderRadius.circular(20.0),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(20.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20.0),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
             ),
-          ],
-        ),
-        child: Row(
-          children: [
-            Icon(
-              Icons.build_outlined,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header row
+                Row(
+                  children: [
+                    Icon(
+                      Icons.build_outlined,
+                      color: FlutterFlowTheme.of(context).primary,
+                      size: 26.0,
+                    ),
+                    const SizedBox(width: 8.0),
+                    Text(
+                      'Skills & Hobbies',
+                      style: FlutterFlowTheme.of(context).bodyLarge.override(
+                        fontFamily: 'Andika New Basic',
+                        color: const Color(0xFF5D4E60),
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.0,
+                      ),
+                    ),
+                    if (hasSkills) ...[
+                      const SizedBox(width: 8.0),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
+                        decoration: BoxDecoration(
+                          color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(14.0),
+                        ),
+                        child: Text(
+                          '${skillPaths.length}',
+                          style: FlutterFlowTheme.of(context).bodySmall.override(
+                            fontFamily: 'Andika New Basic',
+                            color: FlutterFlowTheme.of(context).primary,
+                            fontSize: 12.0,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
+                    const Spacer(),
+                    const Icon(
+                      Icons.arrow_forward_ios,
+                      color: Color(0xFF9B8A9E),
+                      size: 16.0,
+                    ),
+                  ],
+                ),
+                if (hasSkills) ...[
+                  const SizedBox(height: 16.0),
+                  // Show active skills with progress
+                  ...displaySkills.map((skill) => _buildSkillRow(context, skill)),
+                  if (skillPaths.length > 3)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4.0),
+                      child: Text(
+                        '+${skillPaths.length - 3} more',
+                        style: FlutterFlowTheme.of(context).bodySmall.override(
+                          fontFamily: 'Andika New Basic',
+                          color: const Color(0xFF9B8A9E),
+                          fontSize: 12.0,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    ),
+                ] else ...[
+                  const SizedBox(height: 12.0),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.add_circle_outline,
+                        color: const Color(0xFF9B8A9E),
+                        size: 20.0,
+                      ),
+                      const SizedBox(width: 8.0),
+                      Text(
+                        'Create your first skill path',
+                        style: FlutterFlowTheme.of(context).bodyMedium.override(
+                          fontFamily: 'Andika New Basic',
+                          color: const Color(0xFF9B8A9E),
+                          fontSize: 14.0,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildSkillRow(BuildContext context, SkillPathRecord skill) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: Row(
+        children: [
+          // Skill icon in a circle
+          Container(
+            width: 32.0,
+            height: 32.0,
+            decoration: BoxDecoration(
+              color: const Color(0xFF9B8A9E).withOpacity(0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Center(
+              child: Text(
+                skill.skillIcon,
+                style: const TextStyle(fontSize: 18.0),
+              ),
+            ),
+          ),
+          const SizedBox(width: 12.0),
+          // Skill name and progress
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  skill.skillName,
+                  style: FlutterFlowTheme.of(context).bodyMedium.override(
+                    fontFamily: 'Andika New Basic',
+                    color: const Color(0xFF5D4E60),
+                    fontSize: 14.0,
+                    fontWeight: FontWeight.w500,
+                    letterSpacing: 0.0,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 2.0),
+                Text(
+                  '${skill.completedMilestones} of ${skill.totalMilestones} milestones',
+                  style: FlutterFlowTheme.of(context).bodySmall.override(
+                    fontFamily: 'Andika New Basic',
+                    color: const Color(0xFF9B8A9E),
+                    fontSize: 12.0,
+                    letterSpacing: 0.0,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Progress percentage
+          Text(
+            '${skill.progressPercentage.toInt()}%',
+            style: FlutterFlowTheme.of(context).bodySmall.override(
+              fontFamily: 'Andika New Basic',
               color: FlutterFlowTheme.of(context).primary,
-              size: 26.0,
+              fontSize: 12.0,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.0,
             ),
-            const SizedBox(width: 8.0),
-            Text(
-              'Skills & Hobbies',
-              style: FlutterFlowTheme.of(context).bodyLarge.override(
-                fontFamily: 'Andika New Basic',
-                color: const Color(0xFF5D4E60),
-                fontSize: 18.0,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 0.0,
-              ),
-            ),
-            const SizedBox(width: 8.0),
-            // Preview badge
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 3.0),
-              decoration: BoxDecoration(
-                color: const Color(0xFF6EC6CA).withOpacity(0.15),
-                borderRadius: BorderRadius.circular(12.0),
-                border: Border.all(
-                  color: const Color(0xFF6EC6CA),
-                  width: 1.0,
-                ),
-              ),
-              child: const Text(
-                'Preview',
-                style: TextStyle(
-                  fontFamily: 'Andika New Basic',
-                  color: Color(0xFF6EC6CA),
-                  fontSize: 10.0,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-            const Spacer(),
-            const Icon(
-              Icons.arrow_forward_ios,
-              color: Color(0xFF9B8A9E),
-              size: 16.0,
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
