@@ -103,21 +103,21 @@
         "input_type": "single_choice",
         "options": [
           {
-            "label": "Paul Sellers - Hand Tool Mastery",
+            "label": "Hand Tool Mastery",
             "description": "Traditional techniques, muscle memory, quiet workshop, satisfying hand work",
-            "expert_bio": "British master craftsman teaching hand tool fundamentals for 50+ years",
+            "expert_bio": "Master craftsman approach teaching hand tool fundamentals",
             "rag_weight": "primary"
           },
           {
-            "label": "North Bennet Street School - Precision & Tradition",
+            "label": "Precision & Traditional Joinery",
             "description": "Safety-first, professional joinery, furniture-grade results",
-            "expert_bio": "America's oldest craft school, training professional furniture makers since 1881",
+            "expert_bio": "Professional furniture-making approach with rigorous technique",
             "rag_weight": "primary"
           },
           {
-            "label": "Fine Woodworking - Modern Hybrid",
+            "label": "Modern Hybrid Methods",
             "description": "Best of both worlds, practical efficiency, project-focused",
-            "expert_bio": "Leading woodworking magazine blending traditional and modern methods",
+            "expert_bio": "Contemporary approach blending traditional and modern methods",
             "rag_weight": "primary"
           },
           {
@@ -235,21 +235,21 @@
         "input_type": "single_choice",
         "options": [
           {
-            "label": "Jacques Pépin - French Technique",
+            "label": "Classical French Technique",
             "description": "Master classical methods, knife skills, build strong foundation",
-            "expert_bio": "French master chef, taught at Boston University for 30+ years",
+            "expert_bio": "Traditional culinary school approach emphasizing fundamentals",
             "rag_weight": "primary"
           },
           {
-            "label": "Samin Nosrat - Salt Fat Acid Heat",
-            "description": "Learn principles, taste as you go, intuitive cooking",
-            "expert_bio": "Author of Salt Fat Acid Heat, teaches understanding over recipes",
+            "label": "Principles-Based Intuitive",
+            "description": "Learn core principles, taste as you go, intuitive cooking",
+            "expert_bio": "Understanding-focused approach that teaches why over what",
             "rag_weight": "primary"
           },
           {
-            "label": "America's Test Kitchen - Science & Testing",
+            "label": "Science-Based & Tested",
             "description": "Foolproof methods, understand why techniques work",
-            "expert_bio": "Test kitchen that scientifically validates every recipe",
+            "expert_bio": "Scientific approach that validates every technique and recipe",
             "rag_weight": "primary"
           },
           {
@@ -363,21 +363,21 @@
         "input_type": "single_choice",
         "options": [
           {
-            "label": "Charles Dowding - No-Dig Organic",
+            "label": "No-Dig Organic Method",
             "description": "Build soil, minimal work, sustainable long-term",
-            "expert_bio": "40+ years proving no-dig methods produce more with less effort",
+            "expert_bio": "Proven approach producing more with less effort over decades",
             "rag_weight": "primary"
           },
           {
-            "label": "Mel Bartholomew - Square Foot Gardening",
+            "label": "Intensive Space-Efficient",
             "description": "Maximum production in minimal space, intensive planting",
-            "expert_bio": "Created Square Foot Gardening method used worldwide",
+            "expert_bio": "Square-foot method maximizing yields in small gardens",
             "rag_weight": "primary"
           },
           {
-            "label": "Rodale Institute - Organic Principles",
+            "label": "Science-Based Organic",
             "description": "Scientific organic methods, soil health focus",
-            "expert_bio": "Leading organic agriculture research for 70+ years",
+            "expert_bio": "Research-backed organic agriculture principles",
             "rag_weight": "primary"
           },
           {
@@ -490,19 +490,19 @@
         "input_type": "single_choice",
         "options": [
           {
-            "label": "Suzuki Method",
-            "description": "Learn by ear first, listening, imitation, delayed reading",
-            "expert_bio": "Dr. Shinichi Suzuki - 'Talent is not inherited' philosophy",
+            "label": "Ear-First Method",
+            "description": "Learn by listening and imitation, delayed note reading",
+            "expert_bio": "'Talent is not inherited' philosophy - build natural musicianship",
             "rag_weight": "primary"
           },
           {
-            "label": "Traditional / Alfred / Faber",
+            "label": "Traditional Reading-Based",
             "description": "Reading music from day 1, progressive method books",
             "expert_bio": "Classical conservatory approach used for centuries",
             "rag_weight": "primary"
           },
           {
-            "label": "Popular Music / Hoffman Academy",
+            "label": "Popular Music-Focused",
             "description": "Play songs quickly, chords, less theory initially",
             "expert_bio": "Modern approach for students who want fast results",
             "rag_weight": "primary"
@@ -611,21 +611,21 @@
         "input_type": "single_choice",
         "options": [
           {
-            "label": "Betty Edwards - Drawing on the Right Side",
+            "label": "Perceptual Drawing Method",
             "description": "Learn to see like an artist, realistic drawing techniques",
             "expert_bio": "Revolutionary method teaching anyone can learn to draw through perception",
             "rag_weight": "primary"
           },
           {
-            "label": "Bob Ross - Confidence & Joy",
+            "label": "Joy-Centered Painting",
             "description": "No mistakes, happy accidents, painting is relaxing",
-            "expert_bio": "Beloved PBS painter who made art accessible and joyful",
+            "expert_bio": "Approach that makes art accessible and joyful for everyone",
             "rag_weight": "primary"
           },
           {
-            "label": "Lynda Barry - Creative Freedom",
+            "label": "Creative Freedom Approach",
             "description": "Overcome perfectionism, explore, think visually",
-            "expert_bio": "Author/artist teaching creative confidence and visual thinking",
+            "expert_bio": "Method teaching creative confidence and visual thinking",
             "rag_weight": "primary"
           },
           {
@@ -732,21 +732,21 @@
         "input_type": "single_choice",
         "options": [
           {
-            "label": "freeCodeCamp - Project-Based",
+            "label": "Project-Based Learning",
             "description": "Learn by building real projects, portfolio focus",
-            "expert_bio": "Free coding curriculum used by millions to land tech jobs",
+            "expert_bio": "Curriculum approach used by millions to land tech jobs",
             "rag_weight": "primary"
           },
           {
-            "label": "Harvard CS50 - Fundamentals First",
+            "label": "Fundamentals-First Academic",
             "description": "Computer science concepts, theory then practice",
-            "expert_bio": "Harvard's legendary intro CS course, rigorous foundation",
+            "expert_bio": "University-level rigorous foundation approach",
             "rag_weight": "primary"
           },
           {
-            "label": "Al Sweigart - Practical & Fun",
-            "description": "Learn Python through useful, playful projects",
-            "expert_bio": "Author of 'Automate the Boring Stuff', makes coding accessible",
+            "label": "Practical & Playful",
+            "description": "Learn through useful, fun projects and automation",
+            "expert_bio": "Accessible approach making coding practical for everyone",
             "rag_weight": "primary"
           },
           {

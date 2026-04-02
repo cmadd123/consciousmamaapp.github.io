@@ -169,6 +169,7 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
 
     return Container(
         constraints: BoxConstraints(
+          minHeight: 400, // Ensure minimum height for visibility
           maxHeight: MediaQuery.of(context).size.height * 0.85,
         ),
         decoration: BoxDecoration(

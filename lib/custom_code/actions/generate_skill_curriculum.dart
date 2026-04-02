@@ -86,10 +86,17 @@ Future<DocumentReference?> generateSkillCurriculum(
     }
 
     final responseData = jsonDecode(response.body);
-    final content = responseData['choices'][0]['message']['content'] as String;
-    final generatedCurriculum = jsonDecode(content) as Map<String, dynamic>;
+    debugPrint('✅ Got OpenAI response');
 
-    debugPrint('✅ Successfully generated curriculum');
+    final content = responseData['choices'][0]['message']['content'] as String;
+    debugPrint('🔵 Content length: ${content.length} characters');
+    debugPrint('🔵 First 200 chars: ${content.substring(0, content.length > 200 ? 200 : content.length)}');
+
+    final generatedCurriculum = jsonDecode(content) as Map<String, dynamic>;
+    debugPrint('✅ Parsed JSON successfully');
+    debugPrint('🔵 Skill name: ${generatedCurriculum['skill_name']}');
+    debugPrint('🔵 Total milestones: ${generatedCurriculum['total_milestones']}');
+    debugPrint('🔵 Milestones array length: ${(generatedCurriculum['milestones'] as List?)?.length}');
 
     // Create the SkillPathRecord in Firestore
     final skillPathRef = await _createSkillPath(
