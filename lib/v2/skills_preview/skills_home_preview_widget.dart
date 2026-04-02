@@ -56,16 +56,8 @@ class _SkillsHomePreviewWidgetState extends State<SkillsHomePreviewWidget> {
   }
 
   Widget _buildPreviewContent(BuildContext context) {
-    // Preview data - Woodworking skill
-    final previewSkillPaths = [
-      _PreviewSkillPath(
-        skillName: 'Woodworking',
-        skillIcon: '🔨',
-        progressPercentage: 13.33,
-        completedMilestones: 2,
-        totalMilestones: 15,
-      ),
-    ];
+    // No preview data - show empty state
+    final previewSkillPaths = <_PreviewSkillPath>[];
 
     return _buildContentFromPreview(context, previewSkillPaths);
   }
@@ -121,45 +113,19 @@ class _SkillsHomePreviewWidgetState extends State<SkillsHomePreviewWidget> {
               ],
             ),
           ),
-          child: SafeArea(
+          child: const SafeArea(
             child: Padding(
-              padding: const EdgeInsets.only(top: 8.0),
+              padding: EdgeInsets.only(top: 8.0),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text(
-                    '🎨',
-                    style: TextStyle(fontSize: 32.0),
-                  ),
-                  const SizedBox(height: 2.0),
-                  const Text(
+                  Text(
                     'Skills & Hobbies',
                     style: TextStyle(
                       fontFamily: 'Andika New Basic',
                       color: Color(0xFF5D4E60),
                       fontSize: 20.0,
                       fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(height: 4.0),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 3.0),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.9),
-                      borderRadius: BorderRadius.circular(12.0),
-                      border: Border.all(
-                        color: const Color(0xFF6EC6CA),
-                        width: 1.5,
-                      ),
-                    ),
-                    child: const Text(
-                      '✨ Preview',
-                      style: TextStyle(
-                        fontFamily: 'Andika New Basic',
-                        color: Color(0xFF6EC6CA),
-                        fontSize: 10.0,
-                        fontWeight: FontWeight.w600,
-                      ),
                     ),
                   ),
                 ],
@@ -205,8 +171,8 @@ class _SkillsHomePreviewWidgetState extends State<SkillsHomePreviewWidget> {
                 ),
               ],
             ),
-            child: Row(
-              children: const [
+            child: const Row(
+              children: [
                 Icon(
                   Icons.add_circle_outline,
                   color: Colors.white,
@@ -214,28 +180,14 @@ class _SkillsHomePreviewWidgetState extends State<SkillsHomePreviewWidget> {
                 ),
                 SizedBox(width: 16.0),
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Create New Skill Path',
-                        style: TextStyle(
-                          fontFamily: 'Andika New Basic',
-                          color: Colors.white,
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      SizedBox(height: 4.0),
-                      Text(
-                        'AI-generated curriculum from expert sources',
-                        style: TextStyle(
-                          fontFamily: 'Andika New Basic',
-                          color: Colors.white,
-                          fontSize: 13.0,
-                        ),
-                      ),
-                    ],
+                  child: Text(
+                    'Create New Skill Path',
+                    style: TextStyle(
+                      fontFamily: 'Andika New Basic',
+                      color: Colors.white,
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
                 Icon(
