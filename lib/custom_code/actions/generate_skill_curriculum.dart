@@ -116,13 +116,21 @@ String _buildPrompt(
   // Extract user preferences
   final step1Choice = userChoices['step_1_full'] as Map<String, dynamic>?;
   final step2Choice = userChoices['step_2'];
-  final step3Choice = userChoices['step_3'];
   final step4Choice = userChoices['step_4_full'] as Map<String, dynamic>?;
 
   final focusArea = step1Choice?['label'] ?? 'General';
   final expertApproach = step4Choice?['label'] ?? 'Balanced Approach';
   final expertContext = step4Choice?['expert_context'] ?? '';
   final ragWeight = step4Choice?['rag_weight'] ?? 'balanced';
+
+  // Extract step 3 combo field data (session_duration, current_level, etc.)
+  final step3Data = <String, dynamic>{};
+  userChoices.forEach((key, value) {
+    if (key.startsWith('step_3_')) {
+      final fieldName = key.replaceFirst('step_3_', '');
+      step3Data[fieldName] = value;
+    }
+  });
 
   // Extract sample milestones from expert template for RAG
   final expertMilestones = expertTemplate['milestones'] as List? ?? [];
@@ -149,7 +157,7 @@ USER PREFERENCES:
 - Teaching Approach: $expertApproach
 - Expert Context: $expertContext
 - Step 2 Choices: $step2Choice
-- Step 3 Choices: $step3Choice
+- Step 3 Details: ${jsonEncode(step3Data)}
 - RAG Weight: $ragWeight (${ragWeight == 'primary' ? 'heavily reference this expert' : 'blend from multiple experts'})
 
 TASK:
@@ -210,7 +218,35 @@ Future<DocumentReference?> _createSkillPath(
     final skillName = generatedCurriculum['skill_name'] as String? ?? skillKey;
     final skillIcon = generatedCurriculum['skill_icon'] as String? ?? '📚';
     final totalMilestones = generatedCurriculum['total_milestones'] as int? ?? 15;
-    final milestones = generatedCurriculum['milestones'] as List? ?? [];
+    final rawMilestones = generatedCurriculum['milestones'] as List? ?? [];
+
+    // Transform AI-generated milestones to match Firestore schema
+    final milestones = rawMilestones.map((m) {
+      final milestone = m as Map<String, dynamic>;
+      final rawSubSteps = milestone['sub_steps'] as List? ?? [];
+
+      return {
+        'number': milestone['milestone_number'] ?? milestone['number'] ?? 0,
+        'title': milestone['title'] ?? '',
+        'completed': false,
+        'completed_date': null,
+        'sub_milestones': rawSubSteps.map((s) {
+          final subStep = s as Map<String, dynamic>;
+          return {
+            'title': subStep['title'] ?? subStep['content'] ?? '',
+            'video_search': '', // Will be auto-generated later if needed
+            'completed': false,
+            'completed_date': null,
+          };
+        }).toList(),
+      };
+    }).toList();
+
+    // Calculate total sub-milestones
+    final totalSubMilestones = milestones.fold<int>(
+      0,
+      (sum, m) => sum + ((m['sub_milestones'] as List).length),
+    );
 
     // Create the skill path document
     final skillPathData = {
@@ -218,7 +254,9 @@ Future<DocumentReference?> _createSkillPath(
       'skill_icon': skillIcon,
       'user_ref': currentUser,
       'total_milestones': totalMilestones,
+      'total_sub_milestones': totalSubMilestones,
       'completed_milestones': 0,
+      'completed_sub_milestones': 0,
       'progress_percentage': 0.0,
       'milestones': milestones,
       'user_preferences': userChoices, // Store for reference

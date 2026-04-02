@@ -639,7 +639,7 @@ class _CreateSkillPathWidgetState extends State<CreateSkillPathWidget> {
                         ),
                       ),
                       child: Text(
-                        '${currentValue.round()} $unit',
+                        '${currentValue.round()} ${unit == "minutes" ? "min" : unit}',
                         style: const TextStyle(
                           fontFamily: 'Andika New Basic',
                           color: Color(0xFF5D4E60),
