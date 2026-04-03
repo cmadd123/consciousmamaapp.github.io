@@ -4,6 +4,7 @@ import 'dart:convert';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/custom_code/actions/generate_skill_curriculum.dart';
+import '/components/debug_overlay_widget.dart';
 import 'skill_config_loader.dart';
 import 'create_skill_path_model.dart';
 export 'create_skill_path_model.dart';
@@ -18,6 +19,10 @@ class CreateSkillPathWidget extends StatefulWidget {
 class _CreateSkillPathWidgetState extends State<CreateSkillPathWidget> {
   late CreateSkillPathModel _model;
   final scaffoldKey = GlobalKey<ScaffoldState>();
+
+  // Debug state
+  Map<String, dynamic> _debugData = {};
+  bool _showDebugOverlay = false;
 
   @override
   void initState() {
@@ -99,16 +104,36 @@ class _CreateSkillPathWidgetState extends State<CreateSkillPathWidget> {
 
     setState(() {
       _model.isGenerating = true;
+      _showDebugOverlay = true;
+      _debugData = {
+        'status': 'Starting generation...',
+        'skill_key': _model.selectedSkill!.key,
+        'timestamp': DateTime.now().toIso8601String(),
+      };
     });
 
     try {
       // Load expert template for RAG context
+      setState(() {
+        _debugData['status'] = 'Loading expert template...';
+      });
+
       final expertTemplate = await rootBundle.loadString(
         'assets/skill_templates/${_model.selectedSkill!.key}_expert_template.json',
       );
       final expertTemplateMap = jsonDecode(expertTemplate) as Map<String, dynamic>;
 
+      setState(() {
+        _debugData['status'] = 'Expert template loaded';
+        _debugData['template_loaded'] = true;
+        _debugData['user_choices'] = _model.userChoices;
+      });
+
       // Call AI curriculum generator
+      setState(() {
+        _debugData['status'] = 'Calling OpenAI API...';
+      });
+
       final skillPathRef = await generateSkillCurriculum(
         _model.selectedSkill!.key,
         _model.userChoices,
@@ -118,6 +143,12 @@ class _CreateSkillPathWidgetState extends State<CreateSkillPathWidget> {
       if (!mounted) return;
 
       if (skillPathRef != null) {
+        setState(() {
+          _debugData['status'] = 'SUCCESS';
+          _debugData['skill_path_created'] = true;
+          _debugData['firestore_ref'] = skillPathRef.id;
+        });
+
         // Success! Navigate back to skills home
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -125,11 +156,17 @@ class _CreateSkillPathWidgetState extends State<CreateSkillPathWidget> {
             backgroundColor: Color(0xFF6EC6CA),
           ),
         );
+
+        // Wait a moment so user can see success in debug overlay
+        await Future.delayed(const Duration(seconds: 2));
+        if (!mounted) return;
         context.pop();
       } else {
         // Error generating
         setState(() {
           _model.isGenerating = false;
+          _debugData['status'] = 'FAILED - API returned null';
+          _debugData['error'] = 'generateSkillCurriculum returned null (check Firebase Remote Config for openai_api_key)';
         });
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -138,11 +175,14 @@ class _CreateSkillPathWidgetState extends State<CreateSkillPathWidget> {
           ),
         );
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
       if (!mounted) return;
 
       setState(() {
         _model.isGenerating = false;
+        _debugData['status'] = 'ERROR';
+        _debugData['error_message'] = e.toString();
+        _debugData['stack_trace'] = stackTrace.toString().split('\n').take(5).join('\n');
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -186,12 +226,44 @@ class _CreateSkillPathWidgetState extends State<CreateSkillPathWidget> {
           ),
         ),
         centerTitle: true,
+        actions: [
+          // Debug toggle button
+          IconButton(
+            icon: Icon(
+              Icons.bug_report,
+              color: _showDebugOverlay ? Colors.amberAccent : const Color(0xFF9B8A9E),
+            ),
+            onPressed: () {
+              setState(() {
+                _showDebugOverlay = !_showDebugOverlay;
+                if (_showDebugOverlay && _debugData.isEmpty) {
+                  _debugData = {
+                    'status': 'Debug mode enabled',
+                    'timestamp': DateTime.now().toIso8601String(),
+                  };
+                }
+              });
+            },
+          ),
+        ],
       ),
-      body: _model.isLoadingConfig
-          ? const Center(child: CircularProgressIndicator())
-          : _model.selectedSkill == null
-              ? _buildSkillPicker()
-              : _buildCreationFlow(),
+      body: Stack(
+        children: [
+          // Main content
+          _model.isLoadingConfig
+              ? const Center(child: CircularProgressIndicator())
+              : _model.selectedSkill == null
+                  ? _buildSkillPicker()
+                  : _buildCreationFlow(),
+
+          // Debug overlay
+          DebugOverlayWidget(
+            title: 'Skill Generation Debug',
+            debugData: _debugData,
+            isVisible: _showDebugOverlay,
+          ),
+        ],
+      ),
     );
   }
 

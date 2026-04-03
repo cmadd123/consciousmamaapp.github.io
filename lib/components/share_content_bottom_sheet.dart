@@ -8,6 +8,7 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/custom_code/actions/sharing_service.dart';
 import '/backend/backend.dart';
+import '/components/debug_overlay_widget.dart';
 
 /// Simple data holder for overview items in the share preview
 class _OverviewItem {
@@ -100,6 +101,40 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
   bool _copied = false;
   final TextEditingController _noteController = TextEditingController();
 
+  // Debug state
+  Map<String, dynamic> _debugData = {};
+  bool _showDebugOverlay = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _initDebugData();
+  }
+
+  void _initDebugData() {
+    final screenSize = WidgetsBinding.instance.platformDispatcher.views.first.physicalSize /
+        WidgetsBinding.instance.platformDispatcher.views.first.devicePixelRatio;
+
+    _debugData = {
+      'platform': Platform.operatingSystem,
+      'screen_width': screenSize.width.toStringAsFixed(1),
+      'screen_height': screenSize.height.toStringAsFixed(1),
+      'content_type': widget.contentType,
+      'title': widget.title,
+      'timestamp': DateTime.now().toIso8601String(),
+    };
+  }
+
+  void _updateDebugData(String status, [Map<String, dynamic>? additionalData]) {
+    setState(() {
+      _debugData['status'] = status;
+      _debugData['last_update'] = DateTime.now().toIso8601String();
+      if (additionalData != null) {
+        _debugData.addAll(additionalData);
+      }
+    });
+  }
+
   @override
   void dispose() {
     _noteController.dispose();
@@ -179,31 +214,62 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
             topRight: Radius.circular(24),
           ),
         ),
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(24, 16, 24, bottomPadding),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Handle bar — visual cue for drag-to-dismiss
-              GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onVerticalDragUpdate: (details) {
-                  if (details.primaryDelta != null && details.primaryDelta! > 8) {
-                    Navigator.of(context).pop();
-                  }
-                },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: Container(
-                    width: 40,
-                    height: 4,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[300],
-                      borderRadius: BorderRadius.circular(2),
-                    ),
+        child: Stack(
+          children: [
+            Padding(
+              padding: EdgeInsets.fromLTRB(24, 16, 24, bottomPadding),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Handle bar and debug button
+                  Row(
+                    children: [
+                      // Handle bar — visual cue for drag-to-dismiss
+                      Expanded(
+                        child: GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onVerticalDragUpdate: (details) {
+                            if (details.primaryDelta != null && details.primaryDelta! > 8) {
+                              Navigator.of(context).pop();
+                            }
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            child: Center(
+                              child: Container(
+                                width: 40,
+                                height: 4,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[300],
+                                  borderRadius: BorderRadius.circular(2),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      // Debug toggle button
+                      IconButton(
+                        icon: Icon(
+                          Icons.bug_report,
+                          color: _showDebugOverlay ? Colors.amberAccent : Colors.grey[400],
+                          size: 20,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _showDebugOverlay = !_showDebugOverlay;
+                            if (_showDebugOverlay) {
+                              _updateDebugData('Debug enabled', {
+                                'widget_build_context': 'MediaQuery.of(context).size = ${MediaQuery.of(context).size}',
+                                'bottom_padding': bottomPadding.toStringAsFixed(1),
+                                'view_insets_bottom': MediaQuery.of(context).viewInsets.bottom.toStringAsFixed(1),
+                              });
+                            }
+                          });
+                        },
+                      ),
+                    ],
                   ),
-                ),
-              ),
               const SizedBox(height: 16),
               // Scrollable content
               Flexible(
@@ -388,8 +454,23 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
                   ),
                 ),
               ),
-            ],
-          ),
+                ],
+              ),
+            ),
+
+            // Debug overlay
+            if (_showDebugOverlay)
+              Positioned(
+                bottom: 20,
+                left: 20,
+                right: 20,
+                child: DebugOverlayWidget(
+                  title: 'Share Bottom Sheet Debug',
+                  debugData: _debugData,
+                  isVisible: _showDebugOverlay,
+                ),
+              ),
+          ],
         ),
     );
   }
@@ -397,6 +478,11 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
   Future<void> _generateShareLink() async {
     print('🔵🔵🔵 _generateShareLink called! Platform: ${Platform.operatingSystem}');
     print('🔵 Content type: ${widget.contentType}');
+
+    _updateDebugData('Generating share link...', {
+      'method_called': '_generateShareLink',
+      'personal_note_length': _noteController.text.trim().length,
+    });
 
     setState(() => _isLoading = true);
     print('🔵 Loading state set to true');
@@ -506,9 +592,22 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
     if (code != null) {
       _shareCode = code;
       _shareUrl = SharingService.getShareUrl(code!);
+
+      _updateDebugData('SUCCESS - Share link created', {
+        'share_code': code,
+        'share_url': _shareUrl,
+        'url_length': _shareUrl?.length,
+      });
+
       // Auto-trigger native share dialog
       _shareViaSystem();
     } else {
+      _updateDebugData('FAILED - Code is null', {
+        'error': 'SharingService returned null code',
+        'content_type': widget.contentType,
+        'data_provided': _getDebugDataProvided(),
+      });
+
       setState(() => _isLoading = false);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -519,6 +618,24 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
         );
       }
     }
+  }
+
+  Map<String, dynamic> _getDebugDataProvided() {
+    return {
+      'weekStart': widget.weekStart != null,
+      'mealPlans': widget.mealPlans?.length,
+      'meals': widget.meals?.length,
+      'combos': widget.combos?.length,
+      'dayDate': widget.dayDate != null,
+      'mealPlan': widget.mealPlan != null,
+      'meal': widget.meal != null,
+      'combo': widget.combo != null,
+      'recipe': widget.recipe != null,
+      'learningPath': widget.learningPath != null,
+      'tasks': widget.tasks?.length,
+      'activity': widget.activity != null,
+      'weekActivities': widget.weekActivities?.length,
+    };
   }
 
   void _copyToClipboard() {
