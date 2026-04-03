@@ -31,12 +31,16 @@ Future<DocumentReference?> generateSkillCurriculum(
 ) async {
   try {
     // Get OpenAI API key from Firebase Remote Config
+    debugPrint('🔵 Fetching Remote Config...');
     final remoteConfig = FirebaseRemoteConfig.instance;
     await remoteConfig.fetchAndActivate();
     final apiKey = remoteConfig.getString('openai_api_key');
 
+    debugPrint('🔵 API key retrieved: ${apiKey.isEmpty ? "EMPTY" : "EXISTS (${apiKey.length} chars)"}');
+
     if (apiKey.isEmpty) {
       debugPrint('❌ OpenAI API key not configured in Remote Config');
+      debugPrint('❌ Please add "openai_api_key" to Firebase Remote Config');
       return null;
     }
 
@@ -216,16 +220,25 @@ Future<DocumentReference?> _createSkillPath(
   Map<String, dynamic> generatedCurriculum,
 ) async {
   try {
+    debugPrint('🔵 _createSkillPath called');
+    debugPrint('🔵 Skill key: $skillKey');
+
     final currentUser = currentUserReference;
     if (currentUser == null) {
-      debugPrint('❌ No current user');
+      debugPrint('❌ No current user (currentUserReference is null)');
       return null;
     }
+
+    debugPrint('🔵 Current user: ${currentUser.id}');
 
     final skillName = generatedCurriculum['skill_name'] as String? ?? skillKey;
     final skillIcon = generatedCurriculum['skill_icon'] as String? ?? '📚';
     final totalMilestones = generatedCurriculum['total_milestones'] as int? ?? 15;
     final rawMilestones = generatedCurriculum['milestones'] as List? ?? [];
+
+    debugPrint('🔵 Skill name: $skillName');
+    debugPrint('🔵 Total milestones: $totalMilestones');
+    debugPrint('🔵 Raw milestones count: ${rawMilestones.length}');
 
     // Transform AI-generated milestones to match Firestore schema
     final milestones = rawMilestones.map((m) {
@@ -255,6 +268,9 @@ Future<DocumentReference?> _createSkillPath(
       (sum, m) => sum + ((m['sub_milestones'] as List).length),
     );
 
+    debugPrint('🔵 Total sub-milestones: $totalSubMilestones');
+    debugPrint('🔵 Creating Firestore document...');
+
     // Create the skill path document
     final skillPathData = {
       'skill_name': skillName,
@@ -275,9 +291,12 @@ Future<DocumentReference?> _createSkillPath(
         .collection('skill_path')
         .add(skillPathData);
 
+    debugPrint('✅ Firestore document created: ${docRef.id}');
     return docRef;
-  } catch (e) {
+  } catch (e, stackTrace) {
     debugPrint('❌ Error creating skill path: $e');
+    debugPrint('❌ Stack trace:');
+    debugPrint(stackTrace.toString().split('\n').take(10).join('\n'));
     return null;
   }
 }
