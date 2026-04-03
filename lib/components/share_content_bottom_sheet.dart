@@ -691,8 +691,9 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
         // Dismiss the bottom sheet
         Navigator.of(context).pop();
 
-        // Wait for bottom sheet animation to complete
-        await Future.delayed(const Duration(milliseconds: 300));
+        // Wait longer for bottom sheet animation to complete and view hierarchy to settle
+        // iOS needs time for the presentation context to be ready
+        await Future.delayed(const Duration(milliseconds: 600));
       }
 
       print('🔵 Calling SharingService.shareViaSystem...');
