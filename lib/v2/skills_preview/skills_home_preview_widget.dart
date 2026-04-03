@@ -21,7 +21,7 @@ class _SkillsHomePreviewWidgetState extends State<SkillsHomePreviewWidget> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   // PREVIEW MODE: Set to false to use real Firestore data
-  final bool _usePreviewData = true;
+  final bool _usePreviewData = false;
 
   @override
   Widget build(BuildContext context) {
@@ -115,19 +115,28 @@ class _SkillsHomePreviewWidgetState extends State<SkillsHomePreviewWidget> {
               ],
             ),
           ),
-          child: const SafeArea(
+          child: SafeArea(
             child: Padding(
-              padding: EdgeInsets.only(top: 8.0),
+              padding: const EdgeInsets.only(top: 8.0),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
+                  const Text(
                     'Skill Paths',
                     style: TextStyle(
                       fontFamily: 'Andika New Basic',
                       color: Color(0xFF5D4E60),
                       fontSize: 20.0,
                       fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 4.0),
+                  const Text(
+                    'High-level milestones - not exhaustive lesson plans',
+                    style: TextStyle(
+                      fontFamily: 'Andika New Basic',
+                      color: Color(0xB35D4E60), // 70% opacity
+                      fontSize: 13.0,
                     ),
                   ),
                 ],

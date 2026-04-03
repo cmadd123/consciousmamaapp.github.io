@@ -34,6 +34,13 @@ service cloud.firestore {
       allow create: if isAuthenticated();
     }
 
+    // Skill paths - users can only access their own
+    match /skill_paths/{pathId} {
+      allow read, write: if isAuthenticated() &&
+        (resource == null || resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid));
+      allow create: if isAuthenticated();
+    }
+
     // Accomplished milestones - users can read/write if authenticated
     // TYPO WARNING: "accomlished" should be "accomplished" - verify your collection name!
     match /children_accomlished_milestones/{id} {

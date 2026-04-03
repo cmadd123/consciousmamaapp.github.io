@@ -669,21 +669,33 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
     }
 
     try {
-      // iOS: Keep bottom sheet open so debug panel remains visible
-      // Just dismiss keyboard to prevent issues with share dialog
+      // iOS: Dismiss the bottom sheet first to allow share dialog to present
+      // Newer iOS versions (iPhone 14+) won't present share dialog over active modals
       if (Platform.isIOS) {
-        print('🔵 iOS detected, preparing for share dialog');
+        print('🔵 iOS detected, dismissing bottom sheet before share dialog');
+
+        // Show success message in debug overlay first
+        _updateDebugData('Preparing share dialog...', {
+          'share_method': 'native_share_dialog',
+          'platform': Platform.operatingSystem,
+          'note': 'Dismissing bottom sheet for iOS compatibility',
+        });
+
+        // Dismiss keyboard
         FocusScope.of(context).unfocus();
-        await Future.delayed(const Duration(milliseconds: 100));
+
+        // Give user a moment to see the debug info, then dismiss bottom sheet
+        await Future.delayed(const Duration(milliseconds: 500));
         if (!mounted) return;
+
+        // Dismiss the bottom sheet
+        Navigator.of(context).pop();
+
+        // Wait for bottom sheet animation to complete
+        await Future.delayed(const Duration(milliseconds: 300));
       }
 
       print('🔵 Calling SharingService.shareViaSystem...');
-
-      _updateDebugData('Sharing via system...', {
-        'share_method': 'native_share_dialog',
-        'platform': Platform.operatingSystem,
-      });
 
       await SharingService.shareViaSystem(
         shareCode: _shareCode!,
@@ -693,12 +705,8 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
 
       print('✅ Share dialog presented successfully');
 
-      _updateDebugData('Share dialog completed', {
-        'shared_at': DateTime.now().toIso8601String(),
-      });
-
-      // Don't auto-dismiss the bottom sheet - let user see debug info and close manually
-      // Show success feedback only
+      // Show success feedback
+      // Note: On iOS, bottom sheet is already dismissed. On Android, it stays open.
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(

@@ -81,23 +81,32 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                         Padding(
                           padding: EdgeInsetsDirectional.fromSTEB(
                               20.0, 50.0, 20.0, 0.0),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.max,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Align(
-                                alignment: AlignmentDirectional(-1.0, -1.0),
-                                child: Text(
-                                  'Milestones',
-                                  textAlign: TextAlign.start,
-                                  style: FlutterFlowTheme.of(context)
-                                      .bodyMedium
-                                      .override(
-                                        fontFamily: 'Andika New Basic',
-                                        fontSize: 20.0,
-                                        letterSpacing: 0.0,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                ),
+                              Text(
+                                'Milestones',
+                                textAlign: TextAlign.start,
+                                style: FlutterFlowTheme.of(context)
+                                    .bodyMedium
+                                    .override(
+                                      fontFamily: 'Andika New Basic',
+                                      fontSize: 20.0,
+                                      letterSpacing: 0.0,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                              ),
+                              const SizedBox(height: 4.0),
+                              Text(
+                                'General guidelines - every child develops at their own pace',
+                                style: FlutterFlowTheme.of(context)
+                                    .bodySmall
+                                    .override(
+                                      fontFamily: 'Andika New Basic',
+                                      fontSize: 13.0,
+                                      color: const Color(0xFF9B8A9E),
+                                      letterSpacing: 0.0,
+                                    ),
                               ),
                             ],
                           ),

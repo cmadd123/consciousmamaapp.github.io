@@ -60,7 +60,7 @@ Future<DocumentReference?> generateSkillCurriculum(
         'Authorization': 'Bearer $apiKey',
       },
       body: jsonEncode({
-        'model': 'gpt-4-turbo-preview',
+        'model': 'gpt-4o',
         'messages': [
           {
             'role': 'system',
@@ -143,7 +143,8 @@ Future<DocumentReference?> generateSkillCurriculum(
   } catch (e, stackTrace) {
     debugPrint('❌ Error generating skill curriculum: $e');
     debugPrint('❌ Stack trace: $stackTrace');
-    return null;
+    // Re-throw the exception so it reaches the UI layer with full error details
+    rethrow;
   }
 }
 
@@ -317,7 +318,7 @@ Future<DocumentReference?> _createSkillPath(
     };
 
     final docRef = await FirebaseFirestore.instance
-        .collection('skill_path')
+        .collection('skill_paths')
         .add(skillPathData);
 
     debugPrint('✅ Firestore document created: ${docRef.id}');
@@ -326,7 +327,8 @@ Future<DocumentReference?> _createSkillPath(
     debugPrint('❌ Error creating skill path: $e');
     debugPrint('❌ Stack trace:');
     debugPrint(stackTrace.toString().split('\n').take(10).join('\n'));
-    return null;
+    // Re-throw so error details reach the UI layer
+    rethrow;
   }
 }
 

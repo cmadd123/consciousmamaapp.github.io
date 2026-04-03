@@ -2084,7 +2084,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                     ),
                     const SizedBox(width: 8.0),
                     Text(
-                      'Skill Paths',
+                      hasSkills ? 'Skill Paths' : 'Create a Skill Path',
                       style: FlutterFlowTheme.of(context).bodyLarge.override(
                         fontFamily: 'Andika New Basic',
                         color: const Color(0xFF5D4E60),
@@ -2113,10 +2113,18 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                       ),
                     ],
                     const Spacer(),
-                    Icon(
-                      Icons.add_circle_outline,
-                      color: FlutterFlowTheme.of(context).primary,
-                      size: 24.0,
+                    // Add button matching learning path card style
+                    Container(
+                      padding: const EdgeInsets.all(6.0),
+                      decoration: BoxDecoration(
+                        color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(14.0),
+                      ),
+                      child: Icon(
+                        Icons.add_rounded,
+                        color: FlutterFlowTheme.of(context).primary,
+                        size: 18.0,
+                      ),
                     ),
                   ],
                 ),
@@ -2137,17 +2145,6 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                         ),
                       ),
                     ),
-                ] else ...[
-                  const SizedBox(height: 12.0),
-                  Text(
-                    'Create a Skill Path',
-                    style: FlutterFlowTheme.of(context).bodyMedium.override(
-                      fontFamily: 'Andika New Basic',
-                      color: const Color(0xFF9B8A9E),
-                      fontSize: 14.0,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
                 ],
               ],
             ),

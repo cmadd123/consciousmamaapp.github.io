@@ -5,6 +5,7 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/custom_code/actions/generate_skill_curriculum.dart';
 import '/components/debug_overlay_widget.dart';
+import '/v2/learning_path/loading_learn_pass/loading_learn_pass_widget.dart';
 import 'skill_config_loader.dart';
 import 'create_skill_path_model.dart';
 export 'create_skill_path_model.dart';
@@ -19,6 +20,7 @@ class CreateSkillPathWidget extends StatefulWidget {
 class _CreateSkillPathWidgetState extends State<CreateSkillPathWidget> {
   late CreateSkillPathModel _model;
   final scaffoldKey = GlobalKey<ScaffoldState>();
+  final _loadingKey = GlobalKey<LoadingLearnPassWidgetState>();
 
   // Debug state
   Map<String, dynamic> _debugData = {};
@@ -144,6 +146,9 @@ class _CreateSkillPathWidgetState extends State<CreateSkillPathWidget> {
       if (!mounted) return;
 
       if (skillPathRef != null) {
+        // Complete the loading animation
+        _loadingKey.currentState?.completeLoading();
+
         setState(() {
           _debugData['status'] = 'SUCCESS';
           _debugData['skill_path_created'] = true;
@@ -881,33 +886,12 @@ class _CreateSkillPathWidgetState extends State<CreateSkillPathWidget> {
 
   Widget _buildGeneratingView() {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF6EC6CA)),
-          ),
-          const SizedBox(height: 24.0),
-          Text(
-            'Generating your personalized\n${_model.selectedSkill!.name} curriculum...',
-            style: const TextStyle(
-              fontFamily: 'Andika New Basic',
-              color: Color(0xFF5D4E60),
-              fontSize: 18.0,
-              fontWeight: FontWeight.w600,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 12.0),
-          const Text(
-            'This will take about 30 seconds',
-            style: TextStyle(
-              fontFamily: 'Andika New Basic',
-              color: Color(0xFF9B8A9E),
-              fontSize: 14.0,
-            ),
-          ),
-        ],
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: LoadingLearnPassWidget(
+          key: _loadingKey,
+          title: 'Creating your ${_model.selectedSkill!.name} path...',
+        ),
       ),
     );
   }

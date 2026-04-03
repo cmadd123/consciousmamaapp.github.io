@@ -9,6 +9,14 @@
         { "fieldPath": "is_completed", "order": "ASCENDING" },
         { "fieldPath": "task_time", "order": "ASCENDING" }
       ]
+    },
+    {
+      "collectionGroup": "skill_paths",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "user_ref", "order": "ASCENDING" },
+        { "fieldPath": "last_updated", "order": "DESCENDING" }
+      ]
     }
   ],
   "fieldOverrides": []
