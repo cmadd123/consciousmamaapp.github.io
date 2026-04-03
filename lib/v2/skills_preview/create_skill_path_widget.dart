@@ -406,62 +406,64 @@ class _CreateSkillPathWidgetState extends State<CreateSkillPathWidget> {
 
         // Navigation buttons
         if (!_model.isGenerating)
-          Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Row(
-              children: [
-                if (_model.currentStepIndex > 0)
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: _previousStep,
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16.0),
-                        side: const BorderSide(
-                          color: Color(0xFF9B8A9E),
-                          width: 2.0,
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(20.0, 12.0, 20.0, 20.0),
+              child: Row(
+                children: [
+                  if (_model.currentStepIndex > 0)
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: _previousStep,
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 16.0),
+                          side: const BorderSide(
+                            color: Color(0xFF9B8A9E),
+                            width: 2.0,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
                         ),
+                        child: const Text(
+                          'Back',
+                          style: TextStyle(
+                            fontFamily: 'Andika New Basic',
+                            color: Color(0xFF5D4E60),
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                  if (_model.currentStepIndex > 0) const SizedBox(width: 12.0),
+                  Expanded(
+                    flex: _model.currentStepIndex > 0 ? 1 : 1,
+                    child: ElevatedButton(
+                      onPressed: _canProceed() ? _nextStep : null,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF6EC6CA),
+                        padding: const EdgeInsets.symmetric(vertical: 16.0),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12.0),
                         ),
+                        elevation: 4,
                       ),
-                      child: const Text(
-                        'Back',
-                        style: TextStyle(
+                      child: Text(
+                        _model.currentStepIndex == _model.creationSteps.length - 1
+                            ? 'Create Path'
+                            : 'Next',
+                        style: const TextStyle(
                           fontFamily: 'Andika New Basic',
-                          color: Color(0xFF5D4E60),
+                          color: Colors.white,
                           fontSize: 16.0,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),
                   ),
-                if (_model.currentStepIndex > 0) const SizedBox(width: 12.0),
-                Expanded(
-                  flex: _model.currentStepIndex > 0 ? 1 : 1,
-                  child: ElevatedButton(
-                    onPressed: _canProceed() ? _nextStep : null,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF6EC6CA),
-                      padding: const EdgeInsets.symmetric(vertical: 16.0),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                      ),
-                      elevation: 4,
-                    ),
-                    child: Text(
-                      _model.currentStepIndex == _model.creationSteps.length - 1
-                          ? 'Generate Curriculum'
-                          : 'Next',
-                      style: const TextStyle(
-                        fontFamily: 'Andika New Basic',
-                        color: Colors.white,
-                        fontSize: 16.0,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
       ],
