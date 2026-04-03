@@ -2113,10 +2113,10 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                       ),
                     ],
                     const Spacer(),
-                    const Icon(
-                      Icons.arrow_forward_ios,
-                      color: Color(0xFF9B8A9E),
-                      size: 16.0,
+                    Icon(
+                      Icons.add_circle_outline,
+                      color: FlutterFlowTheme.of(context).primary,
+                      size: 24.0,
                     ),
                   ],
                 ),
@@ -2139,23 +2139,13 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                     ),
                 ] else ...[
                   const SizedBox(height: 12.0),
-                  Row(
-                    children: [
-                      Text(
-                        'Create a Skill Path',
-                        style: FlutterFlowTheme.of(context).bodyMedium.override(
-                          fontFamily: 'Andika New Basic',
-                          color: const Color(0xFF9B8A9E),
-                          fontSize: 14.0,
-                        ),
-                      ),
-                      const Spacer(),
-                      Icon(
-                        Icons.add_circle_outline,
-                        color: const Color(0xFF9B8A9E),
-                        size: 20.0,
-                      ),
-                    ],
+                  Text(
+                    'Create a Skill Path',
+                    style: FlutterFlowTheme.of(context).bodyMedium.override(
+                      fontFamily: 'Andika New Basic',
+                      color: const Color(0xFF9B8A9E),
+                      fontSize: 14.0,
+                    ),
                   ),
                 ],
               ],

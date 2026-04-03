@@ -132,6 +132,7 @@ class _CreateSkillPathWidgetState extends State<CreateSkillPathWidget> {
       // Call AI curriculum generator
       setState(() {
         _debugData['status'] = 'Calling OpenAI API...';
+        _debugData['api_call_time'] = DateTime.now().toIso8601String();
       });
 
       final skillPathRef = await generateSkillCurriculum(
@@ -147,6 +148,7 @@ class _CreateSkillPathWidgetState extends State<CreateSkillPathWidget> {
           _debugData['status'] = 'SUCCESS';
           _debugData['skill_path_created'] = true;
           _debugData['firestore_ref'] = skillPathRef.id;
+          _debugData['completion_time'] = DateTime.now().toIso8601String();
         });
 
         // Success! Navigate back to skills home
@@ -162,16 +164,34 @@ class _CreateSkillPathWidgetState extends State<CreateSkillPathWidget> {
         if (!mounted) return;
         context.pop();
       } else {
-        // Error generating
+        // Error generating - API returned null
         setState(() {
           _model.isGenerating = false;
           _debugData['status'] = 'FAILED - API returned null';
-          _debugData['error'] = 'generateSkillCurriculum returned null (check Firebase Remote Config for openai_api_key)';
+          _debugData['failure_time'] = DateTime.now().toIso8601String();
+
+          // Provide detailed troubleshooting info
+          _debugData['possible_causes'] = [
+            '1. OpenAI API key missing in Firebase Remote Config',
+            '2. OpenAI API key invalid or expired',
+            '3. User not authenticated (currentUserReference is null)',
+            '4. Network error during API call',
+            '5. OpenAI API quota exceeded or rate limited',
+            '6. Firestore write permissions denied',
+          ];
+
+          _debugData['next_steps'] = [
+            '1. Check Flutter console logs for specific error',
+            '2. Verify openai_api_key in Firebase Console → Remote Config',
+            '3. Verify user is logged in',
+            '4. Check device network connection',
+          ];
         });
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Failed to generate curriculum. Please try again.'),
+            content: Text('Failed to generate curriculum. Check debug overlay for details.'),
             backgroundColor: Colors.red,
+            duration: Duration(seconds: 4),
           ),
         );
       }
