@@ -24,6 +24,8 @@ import 'package:firebase_remote_config/firebase_remote_config.dart';
 /// - expertTemplate: The loaded expert template JSON (RAG context)
 ///
 /// Returns: The document reference of the created skill path
+///
+/// Throws: Exception with detailed error message if generation fails
 Future<DocumentReference?> generateSkillCurriculum(
   String skillKey,
   Map<String, dynamic> userChoices,
@@ -40,8 +42,7 @@ Future<DocumentReference?> generateSkillCurriculum(
 
     if (apiKey.isEmpty) {
       debugPrint('❌ OpenAI API key not configured in Remote Config');
-      debugPrint('❌ Please add "openai_api_key" to Firebase Remote Config');
-      return null;
+      throw Exception('MISSING_API_KEY: OpenAI API key is empty in Firebase Remote Config. Add "openai_api_key" parameter.');
     }
 
     // Build the prompt for OpenAI
@@ -84,9 +85,37 @@ Future<DocumentReference?> generateSkillCurriculum(
     );
 
     if (response.statusCode != 200) {
+      final errorBody = response.body;
       debugPrint('❌ OpenAI API error: ${response.statusCode}');
-      debugPrint('❌ Response: ${response.body}');
-      return null;
+      debugPrint('❌ Response: $errorBody');
+
+      // Try to parse error message from OpenAI response
+      String errorMessage = 'API_ERROR_${response.statusCode}';
+      try {
+        final errorJson = jsonDecode(errorBody) as Map<String, dynamic>;
+        if (errorJson.containsKey('error')) {
+          final error = errorJson['error'];
+          if (error is Map && error.containsKey('message')) {
+            errorMessage += ': ${error['message']}';
+          } else {
+            errorMessage += ': ${error.toString()}';
+          }
+          // Also include error type if available
+          if (error is Map && error.containsKey('type')) {
+            errorMessage += ' (${error['type']})';
+          }
+        }
+      } catch (e) {
+        // If we can't parse JSON, include raw body (truncated)
+        if (errorBody.length > 200) {
+          errorMessage += ': ${errorBody.substring(0, 200)}...';
+        } else {
+          errorMessage += ': $errorBody';
+        }
+      }
+
+      debugPrint('❌ Formatted error: $errorMessage');
+      throw Exception(errorMessage);
     }
 
     final responseData = jsonDecode(response.body);
@@ -226,7 +255,7 @@ Future<DocumentReference?> _createSkillPath(
     final currentUser = currentUserReference;
     if (currentUser == null) {
       debugPrint('❌ No current user (currentUserReference is null)');
-      return null;
+      throw Exception('USER_NOT_AUTHENTICATED: User must be logged in to create skill paths');
     }
 
     debugPrint('🔵 Current user: ${currentUser.id}');
