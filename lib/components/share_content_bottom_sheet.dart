@@ -669,29 +669,22 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
     }
 
     try {
-      // On iOS, dismiss the bottom sheet first — iOS can't present
-      // UIActivityViewController from within another presented modal.
+      // iOS: Keep bottom sheet open so debug panel remains visible
+      // Just dismiss keyboard to prevent issues with share dialog
       if (Platform.isIOS) {
-        print('🔵 iOS detected, dismissing modal first');
-        if (!mounted) return;
-
-        // Dismiss keyboard first (prevents modal dismissal issues)
+        print('🔵 iOS detected, preparing for share dialog');
         FocusScope.of(context).unfocus();
         await Future.delayed(const Duration(milliseconds: 100));
-
         if (!mounted) return;
-
-        // Dismiss the bottom sheet
-        Navigator.of(context).pop();
-
-        // Wait longer for dismiss animation to complete (increased from 350ms to 500ms)
-        // This gives more time on slower devices or when system is busy
-        await Future.delayed(const Duration(milliseconds: 500));
-
-        print('🔵 iOS share: Modal dismissed, presenting share dialog');
       }
 
       print('🔵 Calling SharingService.shareViaSystem...');
+
+      _updateDebugData('Sharing via system...', {
+        'share_method': 'native_share_dialog',
+        'platform': Platform.operatingSystem,
+      });
+
       await SharingService.shareViaSystem(
         shareCode: _shareCode!,
         title: widget.title,
@@ -700,9 +693,13 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
 
       print('✅ Share dialog presented successfully');
 
-      // On Android, show success feedback and dismiss bottom sheet
-      // On iOS, bottom sheet is already dismissed and share dialog provides feedback
-      if (!Platform.isIOS && mounted) {
+      _updateDebugData('Share dialog completed', {
+        'shared_at': DateTime.now().toIso8601String(),
+      });
+
+      // Don't auto-dismiss the bottom sheet - let user see debug info and close manually
+      // Show success feedback only
+      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Share link created successfully!'),
@@ -711,7 +708,6 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
             behavior: SnackBarBehavior.floating,
           ),
         );
-        Navigator.of(context).pop();
       }
     } catch (e) {
       print('Share failed: $e');

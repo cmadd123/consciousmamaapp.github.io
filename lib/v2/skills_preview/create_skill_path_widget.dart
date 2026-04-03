@@ -165,10 +165,21 @@ class _CreateSkillPathWidgetState extends State<CreateSkillPathWidget> {
         context.pop();
       } else {
         // Error generating - API returned null
+        // Log console output to help debug
+        debugPrint('❌❌❌ SKILL GENERATION FAILED - Check logs above for details ❌❌❌');
+
         setState(() {
           _model.isGenerating = false;
           _debugData['status'] = 'FAILED - API returned null';
           _debugData['failure_time'] = DateTime.now().toIso8601String();
+
+          // Show what WAS successful to narrow down the issue
+          _debugData['successful_steps'] = {
+            'template_loaded': _debugData['template_loaded'] == true,
+            'api_call_started': _debugData['api_call_time'] != null,
+            'skill_key': _model.selectedSkill!.key,
+            'user_choices_count': _model.userChoices.length,
+          };
 
           // Provide detailed troubleshooting info
           _debugData['possible_causes'] = [
@@ -178,14 +189,30 @@ class _CreateSkillPathWidgetState extends State<CreateSkillPathWidget> {
             '4. Network error during API call',
             '5. OpenAI API quota exceeded or rate limited',
             '6. Firestore write permissions denied',
+            '7. OpenAI returned invalid JSON format',
+            '8. API timeout (exceeded 60 seconds)',
           ];
 
           _debugData['next_steps'] = [
-            '1. Check Flutter console logs for specific error',
+            '1. CHECK FLUTTER CONSOLE for red error messages (MOST IMPORTANT)',
             '2. Verify openai_api_key in Firebase Console → Remote Config',
-            '3. Verify user is logged in',
-            '4. Check device network connection',
+            '3. Check if API key has credits remaining',
+            '4. Verify user is logged in (check auth status)',
+            '5. Test network connection',
+            '6. Look for specific error in console (shows exact failure point)',
           ];
+
+          // Add timestamp info
+          final now = DateTime.now();
+          final apiCallTime = _debugData['api_call_time'] != null
+              ? DateTime.parse(_debugData['api_call_time'] as String)
+              : now;
+          final duration = now.difference(apiCallTime);
+
+          _debugData['timing'] = {
+            'api_call_duration': '${duration.inSeconds} seconds',
+            'timed_out': duration.inSeconds > 60,
+          };
         });
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
