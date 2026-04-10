@@ -151,7 +151,7 @@ class _FeatureWalkthroughWidgetState extends State<FeatureWalkthroughWidget>
   void _navigateToSetup() {
     HapticFeedback.mediumImpact();
     context.pushNamed(
-      'Loginv2',
+      'SetupTransition',
       extra: <String, dynamic>{
         kTransitionInfoKey: const TransitionInfo(
           hasTransition: true,

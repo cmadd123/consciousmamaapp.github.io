@@ -440,9 +440,8 @@ class _SignUpv2WidgetState extends State<SignUpv2Widget> {
                                     displayName: _model.textController.text,
                                   ));
 
-                              context.pushNamedAuth(
-                                PreparationWidget.routeName,
-                                context.mounted,
+                              context.pushNamed(
+                                PaimentCopyWidget.routeName,
                               );
                             },
                             text: 'Create account',
@@ -531,9 +530,9 @@ class _SignUpv2WidgetState extends State<SignUpv2Widget> {
                                           context.goNamed(
                                               HomeHybridWidget.routeName);
                                         } else {
-                                          // New user - go to paywall
+                                          // New user - go to onboarding
                                           context.goNamed(
-                                              PaimentCopyWidget.routeName);
+                                              PreparationWidget.routeName);
                                         }
                                       } catch (e) {
                                         print('Google Sign-In (Signup) Error: $e');
@@ -625,9 +624,9 @@ class _SignUpv2WidgetState extends State<SignUpv2Widget> {
                                         context.goNamed(
                                             HomeHybridWidget.routeName);
                                       } else {
-                                        // New user - go to paywall
+                                        // New user - go to onboarding
                                         context.goNamed(
-                                            PaimentCopyWidget.routeName);
+                                            PreparationWidget.routeName);
                                       }
                                     },
                                     child: Container(
