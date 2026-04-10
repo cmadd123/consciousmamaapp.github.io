@@ -11,6 +11,7 @@ import '/v1/profile/profile_edit_pop_up/profile_edit_pop_up_widget.dart';
 import '/v1/profile/profile_edite_email_pop_up/profile_edite_email_pop_up_widget.dart';
 import 'dart:ui';
 import '/index.dart';
+import '/custom_code/actions/index.dart' as actions;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -19,7 +20,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '/components/page_animations.dart';
 import '/v2/profile/edit_parent_info_sheet.dart' show EditParentInfoPage;
-import '/custom_code/actions/index.dart' as actions;
 import 'profile_model.dart';
 export 'profile_model.dart';
 
@@ -952,6 +952,99 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                       ),
                     ),
                   )),
+                  // Cancel Subscription
+                  CascadeItem(index: 6, baseDelayMs: 400, staggerMs: 80, child: Padding(
+                    padding:
+                        EdgeInsetsDirectional.fromSTEB(24.0, 8.0, 24.0, 0.0),
+                    child: Container(
+                      width: double.infinity,
+                      height: 60.0,
+                      decoration: BoxDecoration(
+                        color: FlutterFlowTheme.of(context).secondaryBackground,
+                        borderRadius: BorderRadius.circular(14.0),
+                      ),
+                      child: InkWell(
+                        splashColor: Colors.transparent,
+                        focusColor: Colors.transparent,
+                        hoverColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                        onTap: () async {
+                          final confirm = await showDialog<bool>(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: Text('Cancel Subscription?'),
+                              content: Text(
+                                'Your subscription will remain active until the end of your current billing period. You won\'t be charged again.',
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context, false),
+                                  child: Text('Keep Subscription'),
+                                ),
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context, true),
+                                  child: Text(
+                                    'Cancel Subscription',
+                                    style: TextStyle(color: Colors.red),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                          if (confirm == true) {
+                            final result = await actions.cancelSubscription();
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text(result)),
+                              );
+                            }
+                          }
+                        },
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                      16.0, 0.0, 16.0, 0.0),
+                                  child: Icon(
+                                    Icons.cancel_outlined,
+                                    color: FlutterFlowTheme.of(context).secondaryText,
+                                    size: 24.0,
+                                  ),
+                                ),
+                                Text(
+                                  'Cancel Subscription',
+                                  style: FlutterFlowTheme.of(context)
+                                      .bodyMedium
+                                      .override(
+                                        fontFamily: 'Andika New Basic',
+                                        fontSize: 16.0,
+                                        letterSpacing: 0.0,
+                                        fontWeight: FontWeight.w500,
+                                        color: FlutterFlowTheme.of(context).secondaryText,
+                                      ),
+                                ),
+                              ],
+                            ),
+                            Padding(
+                              padding: EdgeInsetsDirectional.fromSTEB(
+                                  16.0, 0.0, 16.0, 0.0),
+                              child: Icon(
+                                Icons.arrow_forward_ios,
+                                color: FlutterFlowTheme.of(context).secondaryText,
+                                size: 18.0,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  )),
                   CascadeItem(index: 6, baseDelayMs: 400, staggerMs: 80, child: Padding(
                     padding:
                         EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),
@@ -1065,104 +1158,6 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                             Padding(
                               padding: EdgeInsetsDirectional.fromSTEB(
                                   16.0, 0.0, 16.0, 0.0),
-                              child: Icon(
-                                Icons.arrow_forward_ios,
-                                color: FlutterFlowTheme.of(context).primaryText,
-                                size: 18.0,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  )),
-                  // Clean Up Unlabeled Content Button
-                  CascadeItem(index: 7, baseDelayMs: 400, staggerMs: 80, child: Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),
-                    child: InkWell(
-                      splashColor: Colors.transparent,
-                      focusColor: Colors.transparent,
-                      hoverColor: Colors.transparent,
-                      highlightColor: Colors.transparent,
-                      onTap: () async {
-                        // Show loading indicator
-                        showDialog(
-                          context: context,
-                          barrierDismissible: false,
-                          builder: (context) => const Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        );
-
-                        try {
-                          // Call cleanup function
-                          final result = await actions.cleanupUnlabeledContent();
-
-                          // Close loading indicator
-                          if (mounted) Navigator.of(context).pop();
-
-                          // Show result message
-                          if (mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(result),
-                                duration: const Duration(seconds: 4),
-                                backgroundColor: FlutterFlowTheme.of(context).primary,
-                              ),
-                            );
-                          }
-                        } catch (e) {
-                          // Close loading indicator
-                          if (mounted) Navigator.of(context).pop();
-
-                          // Show error message
-                          if (mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('Error: ${e.toString()}'),
-                                duration: const Duration(seconds: 4),
-                                backgroundColor: FlutterFlowTheme.of(context).error,
-                              ),
-                            );
-                          }
-                        }
-                      },
-                      child: Container(
-                        width: double.infinity,
-                        height: 60.0,
-                        decoration: BoxDecoration(
-                          color: FlutterFlowTheme.of(context).secondaryBackground,
-                          borderRadius: BorderRadius.circular(14.0),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
-                                  child: Icon(
-                                    Icons.cleaning_services,
-                                    color: FlutterFlowTheme.of(context).primary,
-                                    size: 24.0,
-                                  ),
-                                ),
-                                Text(
-                                  'Delete All Recipes & Templates',
-                                  style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                    fontFamily: 'Andika New Basic',
-                                    fontSize: 16.0,
-                                    letterSpacing: 0.0,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
                               child: Icon(
                                 Icons.arrow_forward_ios,
                                 color: FlutterFlowTheme.of(context).primaryText,

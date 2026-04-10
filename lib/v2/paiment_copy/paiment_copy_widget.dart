@@ -6,7 +6,9 @@ import '/flutter_flow/flutter_flow_widgets.dart';
 import '/index.dart';
 import '/custom_code/actions/index.dart';
 import '/v2/auth/demo_data_notifier.dart';
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -48,10 +50,12 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
     super.initState();
     _model = createModel(context, () => PaimentCopyModel());
 
-    // Initialize Stripe on page load
-    SchedulerBinding.instance.addPostFrameCallback((_) async {
-      await initializeStripe();
-    });
+    // Initialize Stripe on page load (Android only — iOS uses web checkout)
+    if (!Platform.isIOS) {
+      SchedulerBinding.instance.addPostFrameCallback((_) async {
+        await initializeStripe();
+      });
+    }
 
     _headerController = AnimationController(
       vsync: this,
@@ -566,8 +570,8 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
 
                         const SizedBox(height: 28.0),
 
-                        // Pricing plans
-                        _staggeredEntry(
+                        // Pricing plans (Android only — iOS has no in-app purchase)
+                        if (!Platform.isIOS) _staggeredEntry(
                           controller: _plansController,
                           slideOffset: 30.0,
                           child: Row(
@@ -658,105 +662,14 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
                   ),
                 ),
 
-                // CTA button pinned to bottom
+                // CTA section pinned to bottom
                 _staggeredEntry(
                   controller: _ctaController,
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(24.0, 0.0, 24.0, 16.0),
-                    child: Column(
-                      children: [
-                        // Subscribe button with glow
-                        AnimatedBuilder(
-                          animation: _glowAnimation,
-                          builder: (context, child) {
-                            return Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(28.0),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: FlutterFlowTheme.of(context)
-                                        .primary
-                                        .withOpacity(_glowAnimation.value * 0.35),
-                                    blurRadius: 12.0 * _glowAnimation.value,
-                                    spreadRadius: 2.0 * _glowAnimation.value,
-                                  ),
-                                ],
-                              ),
-                              child: child,
-                            );
-                          },
-                          child: FFButtonWidget(
-                            onPressed: _model.isProcessing ? null : _handleSubscribe,
-                            text: _model.isProcessing ? 'Processing...' : 'Start Free Trial',
-                            options: FFButtonOptions(
-                              width: double.infinity,
-                              height: 56.0,
-                              padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                              iconPadding: const EdgeInsets.all(0.0),
-                              color: FlutterFlowTheme.of(context).primary,
-                              textStyle: FlutterFlowTheme.of(context).titleMedium.override(
-                                    fontFamily: 'Andika New Basic',
-                                    color: Colors.white,
-                                    fontSize: 18.0,
-                                    fontWeight: FontWeight.w600,
-                                    letterSpacing: 0.0,
-                                  ),
-                              elevation: 3.0,
-                              borderSide: const BorderSide(
-                                color: Colors.transparent,
-                                width: 1.0,
-                              ),
-                              borderRadius: BorderRadius.circular(28.0),
-                              disabledColor: FlutterFlowTheme.of(context).primary.withOpacity(0.6),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 8.0),
-                        // Trial note
-                        Text(
-                          '7-day free trial, cancel anytime',
-                          textAlign: TextAlign.center,
-                          style: FlutterFlowTheme.of(context).bodySmall.override(
-                                fontFamily: 'Andika New Basic',
-                                color: FlutterFlowTheme.of(context).secondaryText,
-                                fontSize: 12.0,
-                                letterSpacing: 0.0,
-                              ),
-                        ),
-                        const SizedBox(height: 4.0),
-                        // Restore purchases
-                        GestureDetector(
-                          onTap: () {
-                            HapticFeedback.lightImpact();
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: const Text('Restoring purchases...'),
-                                backgroundColor: FlutterFlowTheme.of(context).primary,
-                                behavior: SnackBarBehavior.floating,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10)),
-                                margin: const EdgeInsets.all(16),
-                                duration: const Duration(seconds: 2),
-                              ),
-                            );
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8.0),
-                            child: Text(
-                              'Restore purchases',
-                              style: FlutterFlowTheme.of(context).bodySmall.override(
-                                    fontFamily: 'Andika New Basic',
-                                    color: FlutterFlowTheme.of(context).secondaryText,
-                                    fontSize: 12.0,
-                                    letterSpacing: 0.0,
-                                    decoration: TextDecoration.underline,
-                                  ),
-                            ),
-                          ),
-                        ),
-
-                      ],
-                    ),
+                    child: Platform.isIOS
+                        ? _buildIOSCTA()
+                        : _buildAndroidCTA(),
                   ),
                 ),
               ],
@@ -764,6 +677,195 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
           ),
         ),
       ),
+    );
+  }
+
+  /// iOS CTA — no purchase UI, directs to website (App Store guideline 3.1.1)
+  Widget _buildIOSCTA() {
+    return Column(
+      children: [
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.7),
+            borderRadius: BorderRadius.circular(20.0),
+            border: Border.all(color: const Color(0xFFE0E0E0)),
+          ),
+          child: Column(
+            children: [
+              Text(
+                'Subscribe at momrise.app',
+                textAlign: TextAlign.center,
+                style: FlutterFlowTheme.of(context).bodyLarge.override(
+                  fontFamily: 'Andika New Basic',
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0.0,
+                ),
+              ),
+              const SizedBox(height: 8.0),
+              Text(
+                'Visit momrise.app/subscribe to start your free trial, then sign in here with the same email.',
+                textAlign: TextAlign.center,
+                style: FlutterFlowTheme.of(context).bodySmall.override(
+                  fontFamily: 'Andika New Basic',
+                  color: FlutterFlowTheme.of(context).secondaryText,
+                  fontSize: 13.0,
+                  letterSpacing: 0.0,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 12.0),
+        FFButtonWidget(
+          onPressed: () async {
+            final uri = Uri.parse('https://momrise.app/subscribe');
+            if (await canLaunchUrl(uri)) {
+              await launchUrl(uri, mode: LaunchMode.externalApplication);
+            }
+          },
+          text: 'Subscribe at momrise.app →',
+          options: FFButtonOptions(
+            width: double.infinity,
+            height: 56.0,
+            color: FlutterFlowTheme.of(context).primary,
+            textStyle: FlutterFlowTheme.of(context).titleMedium.override(
+              fontFamily: 'Andika New Basic',
+              color: Colors.white,
+              fontSize: 16.0,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.0,
+            ),
+            elevation: 0.0,
+            borderRadius: BorderRadius.circular(28.0),
+          ),
+        ),
+        const SizedBox(height: 8.0),
+        FFButtonWidget(
+          onPressed: _handleSkip,
+          text: 'I already subscribed — continue',
+          options: FFButtonOptions(
+            width: double.infinity,
+            height: 50.0,
+            color: Colors.transparent,
+            textStyle: FlutterFlowTheme.of(context).bodyMedium.override(
+              fontFamily: 'Andika New Basic',
+              color: FlutterFlowTheme.of(context).secondaryText,
+              fontSize: 14.0,
+              fontWeight: FontWeight.w500,
+              letterSpacing: 0.0,
+            ),
+            elevation: 0.0,
+            borderSide: BorderSide(
+              color: FlutterFlowTheme.of(context).alternate,
+              width: 1.0,
+            ),
+            borderRadius: BorderRadius.circular(28.0),
+          ),
+        ),
+        const SizedBox(height: 8.0),
+        Text(
+          '7-day free trial, cancel anytime',
+          textAlign: TextAlign.center,
+          style: FlutterFlowTheme.of(context).bodySmall.override(
+            fontFamily: 'Andika New Basic',
+            color: FlutterFlowTheme.of(context).secondaryText,
+            fontSize: 12.0,
+            letterSpacing: 0.0,
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// Android CTA — full Stripe payment sheet
+  Widget _buildAndroidCTA() {
+    return Column(
+      children: [
+        AnimatedBuilder(
+          animation: _glowAnimation,
+          builder: (context, child) {
+            return Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(28.0),
+                boxShadow: [
+                  BoxShadow(
+                    color: FlutterFlowTheme.of(context)
+                        .primary
+                        .withOpacity(_glowAnimation.value * 0.35),
+                    blurRadius: 12.0 * _glowAnimation.value,
+                    spreadRadius: 2.0 * _glowAnimation.value,
+                  ),
+                ],
+              ),
+              child: child,
+            );
+          },
+          child: FFButtonWidget(
+            onPressed: _model.isProcessing ? null : _handleSubscribe,
+            text: _model.isProcessing ? 'Processing...' : 'Start Free Trial',
+            options: FFButtonOptions(
+              width: double.infinity,
+              height: 56.0,
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              color: FlutterFlowTheme.of(context).primary,
+              textStyle: FlutterFlowTheme.of(context).titleMedium.override(
+                fontFamily: 'Andika New Basic',
+                color: Colors.white,
+                fontSize: 18.0,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 0.0,
+              ),
+              elevation: 3.0,
+              borderSide: const BorderSide(color: Colors.transparent, width: 1.0),
+              borderRadius: BorderRadius.circular(28.0),
+              disabledColor: FlutterFlowTheme.of(context).primary.withOpacity(0.6),
+            ),
+          ),
+        ),
+        const SizedBox(height: 8.0),
+        Text(
+          '7-day free trial, cancel anytime',
+          textAlign: TextAlign.center,
+          style: FlutterFlowTheme.of(context).bodySmall.override(
+            fontFamily: 'Andika New Basic',
+            color: FlutterFlowTheme.of(context).secondaryText,
+            fontSize: 12.0,
+            letterSpacing: 0.0,
+          ),
+        ),
+        const SizedBox(height: 4.0),
+        GestureDetector(
+          onTap: () {
+            HapticFeedback.lightImpact();
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: const Text('Restoring purchases...'),
+                backgroundColor: FlutterFlowTheme.of(context).primary,
+                behavior: SnackBarBehavior.floating,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                margin: const EdgeInsets.all(16),
+                duration: const Duration(seconds: 2),
+              ),
+            );
+          },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: Text(
+              'Restore purchases',
+              style: FlutterFlowTheme.of(context).bodySmall.override(
+                fontFamily: 'Andika New Basic',
+                color: FlutterFlowTheme.of(context).secondaryText,
+                fontSize: 12.0,
+                letterSpacing: 0.0,
+                decoration: TextDecoration.underline,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 

@@ -52,6 +52,13 @@ class AddcalenderModel extends FlutterFlowModel<AddcalenderWidget> {
   int deletingProgress = 0;
   int deletingTotal = 0;
 
+  // Update all recurring events checkbox (only visible when editing recurring event)
+  bool updateAllRecurring = false;
+
+  // Recurring duration mode: false = use count, true = use end date
+  bool useEndDate = false;
+  DateTime? recurringEndDate; // Only used when useEndDate = true
+
   ///  State fields for stateful widgets in this page.
 
   final formKey = GlobalKey<FormState>();

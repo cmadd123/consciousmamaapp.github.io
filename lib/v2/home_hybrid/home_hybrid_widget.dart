@@ -207,9 +207,9 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                         _animatedCard(7, _buildMilestonesCard(context, sortedChildren)),
                         const SizedBox(height: 16.0),
 
-                        // TEMPORARY: Skills & Hobbies Preview Button
-                        _animatedCard(8, _buildSkillsPreviewButton(context)),
-                        const SizedBox(height: 24.0),
+                        // HIDDEN FOR TESTERS: Skills & Hobbies Preview Button
+                        // _animatedCard(8, _buildSkillsPreviewButton(context)),
+                        // const SizedBox(height: 24.0),
                       ],
                     ),
                   ),
@@ -301,11 +301,11 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
             letterSpacing: 0.0,
           ),
         ),
-        // Encouraging quote (dismissable)
-        if (_showQuote) ...[
-          const SizedBox(height: 20.0),
-          _buildQuote(context),
-        ],
+        // HIDDEN FOR TESTERS: Encouraging quote (dismissable)
+        // if (_showQuote) ...[
+        //   const SizedBox(height: 20.0),
+        //   _buildQuote(context),
+        // ],
       ],
     );
   }
@@ -1302,7 +1302,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                     ),
                     const SizedBox(width: 8.0),
                     Text(
-                      "Today's To-Do List",
+                      "To-Do List",
                       style: FlutterFlowTheme.of(context).bodyLarge.override(
                         fontFamily: 'Andika New Basic',
                         color: const Color(0xFF5D4E60),

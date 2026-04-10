@@ -191,9 +191,8 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
     }
   }
 
-  // Date/time picker - Custom wheel picker
+  // Date-only picker
   Future<void> _showDateTimePicker() async {
-    // Dismiss keyboard before showing picker
     FocusScope.of(context).unfocus();
     FocusManager.instance.primaryFocus?.unfocus();
 
@@ -204,14 +203,100 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
       initialDateTime: initialDate.isBefore(DateTime.now()) ? DateTime.now() : initialDate,
       minimumDate: DateTime.now().subtract(const Duration(days: 1)),
       maximumDate: DateTime(2050),
-      showTime: true,
-      title: 'Start Date & Time',
+      showTime: false,
+      showDate: true,
+      title: 'Select Date',
       minuteInterval: 5,
     );
 
     if (selectedDate != null) {
       setState(() {
-        _model.selectedDate = selectedDate;
+        // Preserve the existing time, only change the date
+        final existingTime = _model.selectedDate;
+        _model.selectedDate = DateTime(
+          selectedDate.year,
+          selectedDate.month,
+          selectedDate.day,
+          existingTime?.hour ?? 9,
+          existingTime?.minute ?? 0,
+        );
+        _model.isDateSelected = true;
+      });
+    }
+  }
+
+  // Recurring end date picker (date only, no time)
+  Future<void> _showRecurringEndDatePicker() async {
+    FocusScope.of(context).unfocus();
+    FocusManager.instance.primaryFocus?.unfocus();
+
+    final startDate = _model.selectedDate ?? DateTime.now();
+    final initial = _model.recurringEndDate ?? startDate.add(const Duration(days: 7));
+
+    final picked = await showCustomDateTimePicker(
+      context: context,
+      initialDateTime: initial,
+      minimumDate: startDate.add(const Duration(days: 1)),
+      maximumDate: DateTime(2050),
+      showTime: false,
+      showDate: true,
+      title: 'Repeat Until',
+      minuteInterval: 5,
+    );
+
+    if (picked != null) {
+      setState(() {
+        _model.recurringEndDate = picked;
+        // Pre-calculate and update repeatCount so save logic can use either
+        _model.repeatCount = _calculateCountFromEndDate(picked);
+      });
+    }
+  }
+
+  /// Calculates how many repetitions fit between [startDate] and [endDate]
+  /// based on the current recurring pattern.
+  int _calculateCountFromEndDate(DateTime endDate) {
+    final start = _model.selectedDate ?? DateTime.now();
+    if (endDate.isBefore(start) || endDate.isAtSameMomentAs(start)) return 1;
+    final pattern = _model.recurringPattern ?? 'Weekly';
+    switch (pattern) {
+      case 'Daily':
+        return endDate.difference(start).inDays.clamp(1, 90);
+      case 'Monthly':
+        final months = (endDate.year - start.year) * 12 + (endDate.month - start.month);
+        return months.clamp(1, 24);
+      case 'Weekly':
+      case 'Custom Weekly':
+      default:
+        return (endDate.difference(start).inDays ~/ 7).clamp(1, 52);
+    }
+  }
+
+  // Time-only picker
+  Future<void> _showTimePicker() async {
+    FocusScope.of(context).unfocus();
+    FocusManager.instance.primaryFocus?.unfocus();
+
+    final initialDate = _model.selectedDate ?? DateTime.now();
+
+    final selectedDate = await showCustomTimeOnlyPicker(
+      context: context,
+      initialDateTime: initialDate,
+      title: 'Select Time',
+      minuteInterval: 5,
+    );
+
+    if (selectedDate != null) {
+      setState(() {
+        // Preserve the existing date, only change the time
+        final existingDate = _model.selectedDate ?? DateTime.now();
+        _model.selectedDate = DateTime(
+          existingDate.year,
+          existingDate.month,
+          existingDate.day,
+          selectedDate.hour,
+          selectedDate.minute,
+        );
         _model.isDateSelected = true;
       });
     }
@@ -279,105 +364,6 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                           ),
                         ),
 
-                        // WHAT section with type toggle and name
-                        Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(0.0, 20.0, 0.0, 0.0),
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.edit_note_rounded,
-                                size: 20,
-                                color: isComfort ? const Color(0xFFECF0F1) : const Color(0xFF5D4E60),
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                'What is it?',
-                                style: theme.bodyMedium.override(
-                                  fontFamily: 'Andika New Basic',
-                                  fontSize: 14.0,
-                                  fontWeight: FontWeight.w600,
-                                  color: isComfort ? const Color(0xFFECF0F1) : const Color(0xFF5D4E60),
-                                  letterSpacing: 0.0,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        // Event/Activity Toggle - smaller, inline
-                        Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(0.0, 12.0, 0.0, 0.0),
-                          child: Container(
-                            height: 42.0,
-                            decoration: BoxDecoration(
-                              color: isComfort
-                                  ? const Color(0xFF34495E)
-                                  : theme.prim30,
-                              borderRadius: BorderRadius.circular(21.0),
-                              border: Border.all(
-                                color: isComfort
-                                    ? const Color(0xFF7F8C8D)
-                                    : const Color(0xFFCBE3E0),
-                                width: 1.0,
-                              ),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                InkWell(
-                                  onTap: () => setState(() => _model.selectedType = 'Event'),
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                                    decoration: BoxDecoration(
-                                      color: _model.selectedType == 'Event'
-                                          ? (isComfort ? const Color(0xFF7F8C8D) : theme.primary)
-                                          : Colors.transparent,
-                                      borderRadius: BorderRadius.circular(21.0),
-                                    ),
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      'Event',
-                                      style: theme.bodyMedium.override(
-                                        fontFamily: 'Andika New Basic',
-                                        color: _model.selectedType == 'Event'
-                                            ? Colors.white
-                                            : (isComfort ? const Color(0xFFECF0F1) : theme.primaryText),
-                                        fontSize: 14.0,
-                                        fontWeight: FontWeight.w600,
-                                        letterSpacing: 0.0,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                // REMOVED: Activity type selector - feature being replaced
-                                // InkWell(
-                                //   onTap: () => setState(() => _model.selectedType = 'Activity'),
-                                //   child: Container(
-                                //     padding: const EdgeInsets.symmetric(horizontal: 20),
-                                //     decoration: BoxDecoration(
-                                //       color: _model.selectedType == 'Activity'
-                                //           ? (isComfort ? const Color(0xFF7F8C8D) : theme.primary)
-                                //           : Colors.transparent,
-                                //       borderRadius: BorderRadius.circular(21.0),
-                                //     ),
-                                //     alignment: Alignment.center,
-                                //     child: Text(
-                                //       'Activity',
-                                //       style: theme.bodyMedium.override(
-                                //         fontFamily: 'Andika New Basic',
-                                //         color: _model.selectedType == 'Activity'
-                                //             ? Colors.white
-                                //             : (isComfort ? const Color(0xFFECF0F1) : theme.primaryText),
-                                //         fontSize: 14.0,
-                                //         fontWeight: FontWeight.w600,
-                                //         letterSpacing: 0.0,
-                                //       ),
-                                //     ),
-                                //   ),
-                                // ),
-                              ],
-                            ),
-                          ),
-                        ),
                         // Name Field - read-only when editing an Activity
                         Padding(
                           padding: EdgeInsetsDirectional.fromSTEB(
@@ -523,7 +509,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                             maxLines: 3,
                           ),
                         ),
-                        // Date/Time Picker
+                        // Date Picker (date only)
                         Padding(
                           padding: EdgeInsetsDirectional.fromSTEB(
                               0.0, 20.0, 0.0, 0.0),
@@ -556,12 +542,12 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                     Text(
                                       _model.selectedDate != null
                                           ? dateTimeFormat(
-                                              "MMM d, y 'at' h:mm a",
+                                              "EEE, MMM d, y",
                                               _model.selectedDate!,
                                               locale: FFLocalizations.of(context)
                                                   .languageCode,
                                             )
-                                          : 'Select date and time',
+                                          : 'Select date',
                                       style: FlutterFlowTheme.of(context)
                                           .bodyMedium
                                           .override(
@@ -578,6 +564,72 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                     ),
                                     Icon(
                                       Icons.calendar_today,
+                                      color: FFAppState().isComfortMode
+                                          ? const Color(0xFF95A5A6)
+                                          : FlutterFlowTheme.of(context).secondaryText,
+                                      size: 20.0,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        // Time Picker (time only)
+                        Padding(
+                          padding: EdgeInsetsDirectional.fromSTEB(
+                              0.0, 12.0, 0.0, 0.0),
+                          child: InkWell(
+                            onTap: () async {
+                              await _showTimePicker();
+                            },
+                            child: Container(
+                              width: double.infinity,
+                              height: 52.0,
+                              decoration: BoxDecoration(
+                                color: FFAppState().isComfortMode
+                                    ? const Color(0xFF34495E)
+                                    : FlutterFlowTheme.of(context).prim30,
+                                borderRadius: BorderRadius.circular(14.0),
+                                border: Border.all(
+                                  color: FFAppState().isComfortMode
+                                      ? const Color(0xFF7F8C8D)
+                                      : const Color(0xFFCBE3E0),
+                                  width: 1.0,
+                                ),
+                              ),
+                              child: Padding(
+                                padding: EdgeInsetsDirectional.fromSTEB(
+                                    20.0, 0.0, 20.0, 0.0),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      _model.selectedDate != null
+                                          ? dateTimeFormat(
+                                              "h:mm a",
+                                              _model.selectedDate!,
+                                              locale: FFLocalizations.of(context)
+                                                  .languageCode,
+                                            )
+                                          : 'Select time',
+                                      style: FlutterFlowTheme.of(context)
+                                          .bodyMedium
+                                          .override(
+                                            fontFamily: 'Andika New Basic',
+                                            color: _model.selectedDate != null
+                                                ? (FFAppState().isComfortMode
+                                                    ? const Color(0xFFECF0F1)
+                                                    : FlutterFlowTheme.of(context).primaryText)
+                                                : (FFAppState().isComfortMode
+                                                    ? const Color(0xFF95A5A6)
+                                                    : FlutterFlowTheme.of(context).secondaryText),
+                                            letterSpacing: 0.0,
+                                          ),
+                                    ),
+                                    Icon(
+                                      Icons.access_time,
                                       color: FFAppState().isComfortMode
                                           ? const Color(0xFF95A5A6)
                                           : FlutterFlowTheme.of(context).secondaryText,
@@ -1064,23 +1116,31 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                     return GestureDetector(
                                       onTap: () {
                                         setState(() {
+                                          final prevPattern = _model.recurringPattern;
                                           _model.recurringPattern = option;
-                                          // Clear end date when recurring is selected
                                           if (option != 'None') {
+                                            // Clear multi-day end date when recurring is selected
                                             _model.endDate = null;
                                             _model.isEndDateSelected = false;
-                                            // Set default repeat count based on pattern
-                                            if (_model.repeatCount == null) {
-                                              _model.repeatCount = option == 'Daily' ? 30 : option == 'Custom Weekly' ? 12 : option == 'Weekly' ? 12 : 12;
+                                            // Always reset count to sensible default for the new pattern
+                                            // so switching Daily→Weekly doesn't keep "30" as weeks
+                                            if (prevPattern != option) {
+                                              _model.repeatCount = option == 'Daily' ? 30 : option == 'Monthly' ? 12 : 12;
+                                              // Also recalculate end date hint if in end-date mode
+                                              if (_model.useEndDate && _model.recurringEndDate != null) {
+                                                _model.repeatCount = _calculateCountFromEndDate(_model.recurringEndDate!);
+                                              }
                                             }
                                             // Clear custom weekly days when switching away from Custom Weekly
                                             if (option != 'Custom Weekly') {
                                               _model.customWeeklyDays.clear();
                                             }
                                           } else {
-                                            // Clear repeat count and custom days when None is selected
+                                            // Clearing pattern: reset everything
                                             _model.repeatCount = null;
                                             _model.customWeeklyDays.clear();
+                                            _model.useEndDate = false;
+                                            _model.recurringEndDate = null;
                                           }
                                         });
                                       },
@@ -1159,79 +1219,229 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                             ],
                           ),
                         ),
-                        // Repeat Count Field (only shown when recurring pattern is NOT 'None')
+                        // Repeat Duration (Count or Until Date) — only when recurring
                         if (_model.recurringPattern != null && _model.recurringPattern != 'None')
                           Padding(
                             padding: EdgeInsetsDirectional.fromSTEB(0.0, 16.0, 0.0, 0.0),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 8.0),
-                                  child: Text(
-                                    'Repeat ${_model.recurringPattern == 'Daily' ? 'for how many days?' : _model.recurringPattern == 'Weekly' ? 'for how many weeks?' : _model.recurringPattern == 'Custom Weekly' ? 'for how many weeks?' : 'for how many months?'}',
-                                    style: theme.bodyMedium.override(
-                                      fontFamily: 'Andika New Basic',
-                                      fontSize: 14.0,
-                                      fontWeight: FontWeight.w600,
-                                      color: isComfort ? const Color(0xFFECF0F1) : const Color(0xFF5D4E60),
-                                      letterSpacing: 0.0,
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  width: double.infinity,
-                                  padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                                  decoration: BoxDecoration(
-                                    color: FFAppState().isComfortMode ? const Color(0xFF34495E) : FlutterFlowTheme.of(context).prim30,
-                                    borderRadius: BorderRadius.circular(14.0),
-                                    border: Border.all(
-                                      color: FFAppState().isComfortMode ? const Color(0xFF7F8C8D) : const Color(0xFFCBE3E0),
-                                      width: 1.0,
-                                    ),
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        '${_model.repeatCount ?? (_model.recurringPattern == 'Daily' ? 30 : _model.recurringPattern == 'Weekly' ? 12 : 12)}',
-                                        style: theme.bodyMedium.override(
-                                          fontFamily: 'Andika New Basic',
-                                          fontSize: 16.0,
-                                          color: isComfort ? const Color(0xFFECF0F1) : FlutterFlowTheme.of(context).primaryText,
-                                          letterSpacing: 0.0,
-                                        ),
+                                // Section label + mode toggle
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      'How long?',
+                                      style: theme.bodyMedium.override(
+                                        fontFamily: 'Andika New Basic',
+                                        fontSize: 14.0,
+                                        fontWeight: FontWeight.w600,
+                                        color: isComfort ? const Color(0xFFECF0F1) : const Color(0xFF5D4E60),
+                                        letterSpacing: 0.0,
                                       ),
-                                      Row(
+                                    ),
+                                    // Toggle: Count | Until Date
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        color: isComfort ? const Color(0xFF2C3E50) : const Color(0xFFE8E8E8),
+                                        borderRadius: BorderRadius.circular(20.0),
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
                                         children: [
-                                          IconButton(
-                                            icon: Icon(Icons.remove_circle_outline, color: isComfort ? const Color(0xFF95A5A6) : FlutterFlowTheme.of(context).secondaryText),
-                                            onPressed: () {
-                                              setState(() {
-                                                final currentCount = _model.repeatCount ?? (_model.recurringPattern == 'Daily' ? 30 : 12);
-                                                if (currentCount > 1) {
-                                                  _model.repeatCount = currentCount - 1;
-                                                }
-                                              });
-                                            },
+                                          GestureDetector(
+                                            onTap: () => setState(() => _model.useEndDate = false),
+                                            child: AnimatedContainer(
+                                              duration: const Duration(milliseconds: 200),
+                                              padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 7.0),
+                                              decoration: BoxDecoration(
+                                                color: !_model.useEndDate
+                                                    ? (isComfort ? const Color(0xFF7F8C8D) : theme.primary)
+                                                    : Colors.transparent,
+                                                borderRadius: BorderRadius.circular(20.0),
+                                              ),
+                                              child: Text(
+                                                'Count',
+                                                style: theme.bodySmall.override(
+                                                  fontFamily: 'Andika New Basic',
+                                                  color: !_model.useEndDate
+                                                      ? Colors.white
+                                                      : (isComfort ? const Color(0xFF95A5A6) : const Color(0xFF9B8A9E)),
+                                                  fontWeight: !_model.useEndDate ? FontWeight.w600 : FontWeight.w400,
+                                                ),
+                                              ),
+                                            ),
                                           ),
-                                          IconButton(
-                                            icon: Icon(Icons.add_circle_outline, color: isComfort ? const Color(0xFF95A5A6) : FlutterFlowTheme.of(context).primary),
-                                            onPressed: () {
-                                              setState(() {
-                                                final currentCount = _model.repeatCount ?? (_model.recurringPattern == 'Daily' ? 30 : 12);
-                                                final max = _model.recurringPattern == 'Daily' ? 90 : _model.recurringPattern == 'Weekly' ? 52 : 24;
-                                                if (currentCount < max) {
-                                                  _model.repeatCount = currentCount + 1;
-                                                }
-                                              });
-                                            },
+                                          GestureDetector(
+                                            onTap: () => setState(() => _model.useEndDate = true),
+                                            child: AnimatedContainer(
+                                              duration: const Duration(milliseconds: 200),
+                                              padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 7.0),
+                                              decoration: BoxDecoration(
+                                                color: _model.useEndDate
+                                                    ? (isComfort ? const Color(0xFF7F8C8D) : theme.primary)
+                                                    : Colors.transparent,
+                                                borderRadius: BorderRadius.circular(20.0),
+                                              ),
+                                              child: Text(
+                                                'Until date',
+                                                style: theme.bodySmall.override(
+                                                  fontFamily: 'Andika New Basic',
+                                                  color: _model.useEndDate
+                                                      ? Colors.white
+                                                      : (isComfort ? const Color(0xFF95A5A6) : const Color(0xFF9B8A9E)),
+                                                  fontWeight: _model.useEndDate ? FontWeight.w600 : FontWeight.w400,
+                                                ),
+                                              ),
+                                            ),
                                           ),
                                         ],
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
+                                const SizedBox(height: 10.0),
+                                // Count mode: stepper
+                                if (!_model.useEndDate)
+                                  Container(
+                                    width: double.infinity,
+                                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                                    decoration: BoxDecoration(
+                                      color: isComfort ? const Color(0xFF34495E) : theme.prim30,
+                                      borderRadius: BorderRadius.circular(14.0),
+                                      border: Border.all(
+                                        color: isComfort ? const Color(0xFF7F8C8D) : const Color(0xFFCBE3E0),
+                                        width: 1.0,
+                                      ),
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          () {
+                                            final count = _model.repeatCount ?? (_model.recurringPattern == 'Daily' ? 30 : 12);
+                                            final unit = _model.recurringPattern == 'Daily' ? (count == 1 ? 'day' : 'days')
+                                                : _model.recurringPattern == 'Monthly' ? (count == 1 ? 'month' : 'months')
+                                                : (count == 1 ? 'week' : 'weeks');
+                                            return '$count $unit';
+                                          }(),
+                                          style: theme.bodyMedium.override(
+                                            fontFamily: 'Andika New Basic',
+                                            fontSize: 16.0,
+                                            color: isComfort ? const Color(0xFFECF0F1) : theme.primaryText,
+                                            letterSpacing: 0.0,
+                                          ),
+                                        ),
+                                        Row(
+                                          children: [
+                                            IconButton(
+                                              icon: Icon(Icons.remove_circle_outline,
+                                                  color: isComfort ? const Color(0xFF95A5A6) : theme.secondaryText),
+                                              onPressed: () {
+                                                setState(() {
+                                                  final cur = _model.repeatCount ?? (_model.recurringPattern == 'Daily' ? 30 : 12);
+                                                  if (cur > 1) _model.repeatCount = cur - 1;
+                                                });
+                                              },
+                                            ),
+                                            IconButton(
+                                              icon: Icon(Icons.add_circle_outline,
+                                                  color: isComfort ? const Color(0xFF95A5A6) : theme.primary),
+                                              onPressed: () {
+                                                setState(() {
+                                                  final cur = _model.repeatCount ?? (_model.recurringPattern == 'Daily' ? 30 : 12);
+                                                  final max = _model.recurringPattern == 'Daily' ? 90 : _model.recurringPattern == 'Weekly' ? 52 : 24;
+                                                  if (cur < max) _model.repeatCount = cur + 1;
+                                                });
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                // Until Date mode: date picker button
+                                if (_model.useEndDate)
+                                  InkWell(
+                                    onTap: () => _showRecurringEndDatePicker(),
+                                    child: Container(
+                                      width: double.infinity,
+                                      height: 52.0,
+                                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                                      decoration: BoxDecoration(
+                                        color: isComfort ? const Color(0xFF34495E) : theme.prim30,
+                                        borderRadius: BorderRadius.circular(14.0),
+                                        border: Border.all(
+                                          color: isComfort ? const Color(0xFF7F8C8D) : const Color(0xFFCBE3E0),
+                                          width: 1.0,
+                                        ),
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            _model.recurringEndDate != null
+                                                ? dateTimeFormat(
+                                                    "EEE, MMM d, y",
+                                                    _model.recurringEndDate!,
+                                                    locale: FFLocalizations.of(context).languageCode,
+                                                  )
+                                                : 'Select end date',
+                                            style: theme.bodyMedium.override(
+                                              fontFamily: 'Andika New Basic',
+                                              color: _model.recurringEndDate != null
+                                                  ? (isComfort ? const Color(0xFFECF0F1) : theme.primaryText)
+                                                  : (isComfort ? const Color(0xFF95A5A6) : theme.secondaryText),
+                                              letterSpacing: 0.0,
+                                            ),
+                                          ),
+                                          Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              if (_model.recurringEndDate != null) ...[
+                                                GestureDetector(
+                                                  onTap: () => setState(() {
+                                                    _model.recurringEndDate = null;
+                                                    _model.repeatCount = _model.recurringPattern == 'Daily' ? 30 : 12;
+                                                  }),
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.only(right: 8.0),
+                                                    child: Icon(Icons.close,
+                                                        color: isComfort ? const Color(0xFF95A5A6) : theme.secondaryText,
+                                                        size: 18.0),
+                                                  ),
+                                                ),
+                                              ],
+                                              Icon(Icons.event,
+                                                  color: isComfort ? const Color(0xFF95A5A6) : theme.secondaryText,
+                                                  size: 20.0),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                // Hint showing calculated count when using end date
+                                if (_model.useEndDate && _model.recurringEndDate != null)
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 6.0, left: 4.0),
+                                    child: Text(
+                                      () {
+                                        final count = _calculateCountFromEndDate(_model.recurringEndDate!);
+                                        final unit = _model.recurringPattern == 'Daily' ? (count == 1 ? 'day' : 'days')
+                                            : _model.recurringPattern == 'Monthly' ? (count == 1 ? 'month' : 'months')
+                                            : (count == 1 ? 'week' : 'weeks');
+                                        return '≈ $count $unit';
+                                      }(),
+                                      style: theme.bodySmall.override(
+                                        fontFamily: 'Andika New Basic',
+                                        color: isComfort ? const Color(0xFF95A5A6) : theme.secondaryText,
+                                        fontSize: 12.0,
+                                        fontStyle: FontStyle.italic,
+                                        letterSpacing: 0.0,
+                                      ),
+                                    ),
+                                  ),
                               ],
                             ),
                           ),
@@ -1445,103 +1655,172 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                               ],
                             ),
                           ),
-                        // Delete Recurring Events Button (only when editing a recurring event)
-                        if (widget.editTaskEvent != null)
-                          FutureBuilder<DocumentSnapshot>(
-                            future: widget.editTaskEvent!.get(),
-                            builder: (context, snapshot) {
-                              if (!snapshot.hasData) return const SizedBox.shrink();
-                              final taskEvent = EventAndTaskRecord.fromSnapshot(snapshot.data!);
-                              if (!taskEvent.isrecurring) return const SizedBox.shrink();
-
-                              return Padding(
-                                padding: const EdgeInsetsDirectional.fromSTEB(
-                                    0.0, 30.0, 0.0, 0.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                        // Update All Recurring Events Checkbox (only when editing a recurring event)
+                        if (widget.editTaskEvent != null && _model.recurringPattern != null && _model.recurringPattern != 'None')
+                          Padding(
+                            padding: const EdgeInsetsDirectional.fromSTEB(0.0, 20.0, 0.0, 0.0),
+                            child: InkWell(
+                              onTap: () {
+                                setState(() {
+                                  _model.updateAllRecurring = !_model.updateAllRecurring;
+                                });
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                                decoration: BoxDecoration(
+                                  color: isComfort
+                                      ? const Color(0xFF34495E)
+                                      : theme.prim30,
+                                  borderRadius: BorderRadius.circular(14.0),
+                                  border: Border.all(
+                                    color: isComfort
+                                        ? const Color(0xFF7F8C8D)
+                                        : const Color(0xFFCBE3E0),
+                                    width: 1.0,
+                                  ),
+                                ),
+                                child: Row(
                                   children: [
-                                    Padding(
-                                      padding: const EdgeInsetsDirectional.fromSTEB(
-                                          20.0, 0.0, 0.0, 12.0),
+                                    Container(
+                                      width: 22.0,
+                                      height: 22.0,
+                                      decoration: BoxDecoration(
+                                        color: _model.updateAllRecurring
+                                            ? (isComfort
+                                                ? const Color(0xFF7F8C8D)
+                                                : theme.primary)
+                                            : Colors.transparent,
+                                        borderRadius: BorderRadius.circular(4.0),
+                                        border: Border.all(
+                                          color: _model.updateAllRecurring
+                                              ? (isComfort
+                                                  ? const Color(0xFF95A5A6)
+                                                  : theme.primary)
+                                              : (isComfort
+                                                  ? const Color(0xFF7F8C8D)
+                                                  : const Color(0xFF9B8A9E)),
+                                          width: 2.0,
+                                        ),
+                                      ),
+                                      child: _model.updateAllRecurring
+                                          ? const Icon(
+                                              Icons.check,
+                                              size: 16.0,
+                                              color: Colors.white,
+                                            )
+                                          : null,
+                                    ),
+                                    const SizedBox(width: 12.0),
+                                    Expanded(
                                       child: Text(
-                                        'Recurring Event',
-                                        style: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .override(
-                                              fontFamily: 'Andika New Basic',
-                                              fontSize: 14.0,
-                                              fontWeight: FontWeight.w600,
-                                              color: FFAppState().isComfortMode
-                                                  ? const Color(0xFFECF0F1)
-                                                  : null,
-                                              letterSpacing: 0.0,
-                                            ),
+                                        'Update all recurring events',
+                                        style: theme.bodyMedium.override(
+                                          fontFamily: 'Andika New Basic',
+                                          color: isComfort
+                                              ? const Color(0xFFECF0F1)
+                                              : const Color(0xFF5D4E60),
+                                          fontSize: 14.0,
+                                          fontWeight: FontWeight.w500,
+                                          letterSpacing: 0.0,
+                                        ),
                                       ),
                                     ),
-                                    Center(
-                                      child: _model.isDeleting
-                                        ? BouncingDots(
-                                            color: FlutterFlowTheme.of(context).primary,
-                                            size: 12.0,
-                                          )
-                                        : InkWell(
-                                        onTap: () async {
-                                          // Show confirmation dialog
-                                          final confirmed = await showDialog<bool>(
-                                            context: context,
-                                            builder: (context) => AlertDialog(
-                                              title: Text(
-                                                'Delete All Recurring Events?',
-                                                style: FlutterFlowTheme.of(context).titleMedium.override(
-                                                  fontFamily: 'Andika New Basic',
-                                                ),
-                                              ),
-                                              content: Text(
-                                                'This will delete all instances of this recurring event. This action cannot be undone.',
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        // Delete Recurring Events Button (only when editing a recurring event)
+                        if (widget.editTaskEvent != null && _model.recurringPattern != null && _model.recurringPattern != 'None')
+                          Padding(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
+                                0.0, 30.0, 0.0, 0.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
+                                      20.0, 0.0, 0.0, 12.0),
+                                  child: Text(
+                                    'Recurring Event',
+                                    style: FlutterFlowTheme.of(context)
+                                        .bodyMedium
+                                        .override(
+                                          fontFamily: 'Andika New Basic',
+                                          fontSize: 14.0,
+                                          fontWeight: FontWeight.w600,
+                                          color: FFAppState().isComfortMode
+                                              ? const Color(0xFFECF0F1)
+                                              : null,
+                                          letterSpacing: 0.0,
+                                        ),
+                                  ),
+                                ),
+                                Center(
+                                  child: _model.isDeleting
+                                    ? BouncingDots(
+                                        color: FlutterFlowTheme.of(context).primary,
+                                        size: 12.0,
+                                      )
+                                    : InkWell(
+                                    onTap: () async {
+                                      // Show confirmation dialog
+                                      final confirmed = await showDialog<bool>(
+                                        context: context,
+                                        builder: (context) => AlertDialog(
+                                          title: Text(
+                                            'Delete All Recurring Events?',
+                                            style: FlutterFlowTheme.of(context).titleMedium.override(
+                                              fontFamily: 'Andika New Basic',
+                                            ),
+                                          ),
+                                          content: Text(
+                                            'This will delete all instances of this recurring event. This action cannot be undone.',
+                                            style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                              fontFamily: 'Andika New Basic',
+                                            ),
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () => Navigator.pop(context, false),
+                                              child: Text(
+                                                'Cancel',
                                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                   fontFamily: 'Andika New Basic',
                                                 ),
                                               ),
-                                              actions: [
-                                                TextButton(
-                                                  onPressed: () => Navigator.pop(context, false),
-                                                  child: Text(
-                                                    'Cancel',
-                                                    style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                      fontFamily: 'Andika New Basic',
-                                                    ),
-                                                  ),
-                                                ),
-                                                TextButton(
-                                                  onPressed: () => Navigator.pop(context, true),
-                                                  child: Text(
-                                                    'Delete All',
-                                                    style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                      fontFamily: 'Andika New Basic',
-                                                      color: Colors.red,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
                                             ),
+                                            TextButton(
+                                              onPressed: () => Navigator.pop(context, true),
+                                              child: Text(
+                                                'Delete All',
+                                                style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                  fontFamily: 'Andika New Basic',
+                                                  color: Colors.red,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+
+                                      if (confirmed == true) {
+                                        try {
+                                          // Start deleting (no progress tracking - just show loading)
+                                          if (mounted) {
+                                            setState(() {
+                                              _model.isDeleting = true;
+                                            });
+                                          }
+
+                                          // Find all recurring events with the same name and user
+                                          final eventName = _model.editingRecord?.name ?? _model.nameController.text;
+                                          final allRecurring = await queryEventAndTaskRecordOnce(
+                                            queryBuilder: (q) => q
+                                                .where('user_ref', isEqualTo: currentUserReference)
+                                                .where('name', isEqualTo: eventName)
+                                                .where('isrecurring', isEqualTo: true),
                                           );
-
-                                          if (confirmed == true) {
-                                            try {
-                                              // Start deleting (no progress tracking - just show loading)
-                                              if (mounted) {
-                                                setState(() {
-                                                  _model.isDeleting = true;
-                                                });
-                                              }
-
-                                              // Find all recurring events with the same name and user
-                                              final allRecurring = await queryEventAndTaskRecordOnce(
-                                                queryBuilder: (q) => q
-                                                    .where('user_ref', isEqualTo: currentUserReference)
-                                                    .where('name', isEqualTo: taskEvent.name)
-                                                    .where('isrecurring', isEqualTo: true),
-                                              );
 
                                               // Delete all of them (no progress updates to avoid errors)
                                               for (final event in allRecurring) {
@@ -1611,9 +1890,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                     ),
                                   ],
                                 ),
-                              );
-                            },
-                          ),
+                              ),
                       ].addToEnd(SizedBox(height: 100.0)),
                     ),
                   ),
@@ -1767,6 +2044,11 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                 }
                               }
 
+                            // If using end-date mode, calculate the final repeat count now
+                            if (_model.useEndDate && _model.recurringEndDate != null && _model.recurringPattern != null && _model.recurringPattern != 'None') {
+                              _model.repeatCount = _calculateCountFromEndDate(_model.recurringEndDate!);
+                            }
+
                             // Check if we're editing or creating
                             if (widget.editTaskEvent != null) {
                               // Get the current event to check if it was recurring
@@ -1846,6 +2128,32 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                   if (futureEvents.length > 5) {
                                     debugPrint('    ... and ${futureEvents.length - 5} more');
                                   }
+                                }
+
+                                // If "Update all recurring events" is checked, update all future instances
+                                if (_model.updateAllRecurring && wasRecurring && isNowRecurring) {
+                                  debugPrint('Updating all recurring events (checkbox checked)');
+                                  debugPrint('Updating ${futureEvents.length} future instances');
+                                  for (final event in futureEvents) {
+                                    await event.reference.update(createEventAndTaskRecordData(
+                                      description: _model.descriptionController.text,
+                                      name: _model.nameController.text,
+                                      selectedChild: _model.selectedChildren.isNotEmpty
+                                          ? _model.selectedChildren.first
+                                          : null,
+                                      selectedChildren: _model.selectedChildren.toList(),
+                                      assignedToMom: _model.assignToMom,
+                                      assignedToDad: _model.assignToDad,
+                                    ));
+
+                                    // Explicitly clear selected_child if no children assigned
+                                    if (_model.selectedChildren.isEmpty) {
+                                      await event.reference.update({
+                                        'selected_child': FieldValue.delete(),
+                                      });
+                                    }
+                                  }
+                                  debugPrint('Updated ${futureEvents.length} recurring instances');
                                 }
 
                                 if (wasRecurring && !isNowRecurring) {

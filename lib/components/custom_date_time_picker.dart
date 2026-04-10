@@ -9,6 +9,7 @@ class CustomDateTimePicker extends StatefulWidget {
   final DateTime? minimumDate;
   final DateTime? maximumDate;
   final bool showTime;
+  final bool showDate; // When false, shows only the time section
   final String title;
   final int minuteInterval; // e.g., 1 for every minute, 5 for 5-minute increments, 15 for 15-minute increments
   final void Function(DateTime) onDateTimeChanged;
@@ -19,6 +20,7 @@ class CustomDateTimePicker extends StatefulWidget {
     this.minimumDate,
     this.maximumDate,
     this.showTime = true,
+    this.showDate = true,
     this.title = 'Select Date & Time',
     this.minuteInterval = 1,
     required this.onDateTimeChanged,
@@ -182,8 +184,10 @@ class _CustomDateTimePickerState extends State<CustomDateTimePicker> {
     }
 
     final bottomPadding = MediaQuery.of(context).viewPadding.bottom;
+    // Height: date section ~200, time section ~200, header ~80
+    final double contentHeight = (widget.showDate ? 200.0 : 0.0) + (widget.showTime ? 200.0 : 0.0) + 80.0;
     return Container(
-      height: (widget.showTime ? 400 : 340) + bottomPadding,
+      height: contentHeight + bottomPadding,
       decoration: BoxDecoration(
         color: FlutterFlowTheme.of(context).secondaryBackground,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
@@ -242,80 +246,82 @@ class _CustomDateTimePickerState extends State<CustomDateTimePicker> {
             ),
           ),
           Divider(height: 1, color: Colors.grey[300]),
-          // Date section label
-          Padding(
-            padding: const EdgeInsets.only(top: 16, bottom: 8),
-            child: Text(
-              'Date',
-              style: FlutterFlowTheme.of(context).labelMedium.override(
-                fontFamily: 'Andika New Basic',
-                color: FlutterFlowTheme.of(context).secondaryText,
-                letterSpacing: 0.0,
+          // Date section
+          if (widget.showDate) ...[
+            Padding(
+              padding: const EdgeInsets.only(top: 16, bottom: 8),
+              child: Text(
+                'Date',
+                style: FlutterFlowTheme.of(context).labelMedium.override(
+                  fontFamily: 'Andika New Basic',
+                  color: FlutterFlowTheme.of(context).secondaryText,
+                  letterSpacing: 0.0,
+                ),
               ),
             ),
-          ),
-          // Date wheels
-          SizedBox(
-            height: 120,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Month wheel
-                _buildWheelPicker(
-                  controller: _monthController,
-                  itemCount: 12,
-                  width: 110,
-                  itemBuilder: (index) => _months[index],
-                  onSelectedItemChanged: (index) {
-                    setState(() {
-                      _selectedMonth = index + 1;
-                      // Adjust day if needed
-                      final maxDays = _daysInMonth(_selectedYear, _selectedMonth);
-                      if (_selectedDay > maxDays) {
-                        _selectedDay = maxDays;
-                        _dayController.jumpToItem(_selectedDay - 1);
-                      }
-                    });
-                  },
-                ),
-                // Day wheel (shows day-of-week abbreviation)
-                _buildWheelPicker(
-                  controller: _dayController,
-                  itemCount: daysInCurrentMonth,
-                  width: 80,
-                  itemBuilder: (index) {
-                    final date = DateTime(_selectedYear, _selectedMonth, index + 1);
-                    final dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-                    final dayName = dayNames[date.weekday - 1];
-                    return '$dayName ${index + 1}';
-                  },
-                  onSelectedItemChanged: (index) {
-                    setState(() {
-                      _selectedDay = index + 1;
-                    });
-                  },
-                ),
-                // Year wheel
-                _buildWheelPicker(
-                  controller: _yearController,
-                  itemCount: _endYear - _startYear + 1,
-                  width: 80,
-                  itemBuilder: (index) => '${_startYear + index}',
-                  onSelectedItemChanged: (index) {
-                    setState(() {
-                      _selectedYear = _startYear + index;
-                      // Adjust day if needed (for leap years)
-                      final maxDays = _daysInMonth(_selectedYear, _selectedMonth);
-                      if (_selectedDay > maxDays) {
-                        _selectedDay = maxDays;
-                        _dayController.jumpToItem(_selectedDay - 1);
-                      }
-                    });
-                  },
-                ),
-              ],
+            // Date wheels
+            SizedBox(
+              height: 120,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Month wheel
+                  _buildWheelPicker(
+                    controller: _monthController,
+                    itemCount: 12,
+                    width: 110,
+                    itemBuilder: (index) => _months[index],
+                    onSelectedItemChanged: (index) {
+                      setState(() {
+                        _selectedMonth = index + 1;
+                        // Adjust day if needed
+                        final maxDays = _daysInMonth(_selectedYear, _selectedMonth);
+                        if (_selectedDay > maxDays) {
+                          _selectedDay = maxDays;
+                          _dayController.jumpToItem(_selectedDay - 1);
+                        }
+                      });
+                    },
+                  ),
+                  // Day wheel (shows day-of-week abbreviation)
+                  _buildWheelPicker(
+                    controller: _dayController,
+                    itemCount: daysInCurrentMonth,
+                    width: 80,
+                    itemBuilder: (index) {
+                      final date = DateTime(_selectedYear, _selectedMonth, index + 1);
+                      final dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+                      final dayName = dayNames[date.weekday - 1];
+                      return '$dayName ${index + 1}';
+                    },
+                    onSelectedItemChanged: (index) {
+                      setState(() {
+                        _selectedDay = index + 1;
+                      });
+                    },
+                  ),
+                  // Year wheel
+                  _buildWheelPicker(
+                    controller: _yearController,
+                    itemCount: _endYear - _startYear + 1,
+                    width: 80,
+                    itemBuilder: (index) => '${_startYear + index}',
+                    onSelectedItemChanged: (index) {
+                      setState(() {
+                        _selectedYear = _startYear + index;
+                        // Adjust day if needed (for leap years)
+                        final maxDays = _daysInMonth(_selectedYear, _selectedMonth);
+                        if (_selectedDay > maxDays) {
+                          _selectedDay = maxDays;
+                          _dayController.jumpToItem(_selectedDay - 1);
+                        }
+                      });
+                    },
+                  ),
+                ],
+              ),
             ),
-          ),
+          ],
           // Time section
           if (widget.showTime) ...[
             Padding(
@@ -402,6 +408,7 @@ Future<DateTime?> showCustomDateTimePicker({
   DateTime? minimumDate,
   DateTime? maximumDate,
   bool showTime = true,
+  bool showDate = true,
   String title = 'Select Date & Time',
   int minuteInterval = 1,
 }) async {
@@ -420,6 +427,7 @@ Future<DateTime?> showCustomDateTimePicker({
           minimumDate: minimumDate,
           maximumDate: maximumDate,
           showTime: showTime,
+          showDate: showDate,
           title: title,
           minuteInterval: minuteInterval,
           onDateTimeChanged: (dateTime) {
@@ -431,4 +439,23 @@ Future<DateTime?> showCustomDateTimePicker({
   );
 
   return result == true ? selectedDateTime : null;
+}
+
+/// Shows a time-only picker bottom sheet.
+/// Preserves the date from [initialDateTime], only changes the time.
+/// Returns the selected DateTime (same date, new time), or null if cancelled.
+Future<DateTime?> showCustomTimeOnlyPicker({
+  required BuildContext context,
+  required DateTime initialDateTime,
+  String title = 'Select Time',
+  int minuteInterval = 5,
+}) async {
+  return showCustomDateTimePicker(
+    context: context,
+    initialDateTime: initialDateTime,
+    showDate: false,
+    showTime: true,
+    title: title,
+    minuteInterval: minuteInterval,
+  );
 }
