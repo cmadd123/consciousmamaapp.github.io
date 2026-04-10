@@ -440,8 +440,9 @@ class _SignUpv2WidgetState extends State<SignUpv2Widget> {
                                     displayName: _model.textController.text,
                                   ));
 
-                              context.pushNamed(
-                                PaimentCopyWidget.routeName,
+                              context.pushNamedAuth(
+                                PreparationWidget.routeName,
+                                context.mounted,
                               );
                             },
                             text: 'Create account',
