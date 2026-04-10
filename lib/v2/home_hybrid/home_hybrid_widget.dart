@@ -9,6 +9,7 @@ import '/flutter_flow/custom_functions.dart' as functions;
 import '/index.dart';
 import '/v2/skills_preview/skill_detail_preview_widget.dart';
 import 'dart:math';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
@@ -78,10 +79,13 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
       // Check if quote was dismissed today
       await _checkQuoteDismissed();
 
-      // Load parent info from user doc
+      // Load parent info from user doc and check free trial expiry
       if (currentUserReference != null) {
         final userDoc = await UsersRecord.getDocumentOnce(currentUserReference!);
         _parentInfo = ParentDisplayInfo.fromUser(userDoc);
+
+        // Usage gate: check if 7-day free trial has expired
+        await _checkFreeTrialExpiry();
       }
     });
   }
@@ -345,6 +349,43 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
       setState(() {
         _showQuote = false;
       });
+    }
+  }
+
+  /// Check if 7-day free trial has expired (usage gate)
+  /// If expired and no active subscription, redirect to paywall
+  Future<void> _checkFreeTrialExpiry() async {
+    try {
+      if (currentUserReference == null) return;
+
+      final userSnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUserUid)
+          .get();
+
+      if (!userSnapshot.exists) return;
+      final userData = userSnapshot.data() as Map<String, dynamic>?;
+      if (userData == null) return;
+
+      // Check if user has active subscription
+      final subscriptionStatus = userData['subscription_status'] as String?;
+      if (subscriptionStatus == 'trialing' || subscriptionStatus == 'active') {
+        return; // Subscribed, no gate needed
+      }
+
+      // Check free trial start date
+      final freeTrialStart = userData['free_trial_start'] as Timestamp?;
+      if (freeTrialStart == null) return; // No trial start = hasn't completed onboarding yet
+
+      final daysSinceStart = DateTime.now().difference(freeTrialStart.toDate()).inDays;
+      if (daysSinceStart >= 7) {
+        // Free trial expired — redirect to paywall
+        if (mounted) {
+          context.goNamed(PaimentCopyWidget.routeName);
+        }
+      }
+    } catch (e) {
+      debugPrint('Error checking free trial expiry: $e');
     }
   }
 

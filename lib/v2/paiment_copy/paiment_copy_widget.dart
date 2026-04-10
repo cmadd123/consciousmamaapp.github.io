@@ -7,6 +7,7 @@ import '/index.dart';
 import '/custom_code/actions/index.dart';
 import '/v2/auth/demo_data_notifier.dart';
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/scheduler.dart';
@@ -30,6 +31,9 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
   late PaimentCopyModel _model;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
+
+  // Whether the 7-day free trial has expired (hides "Maybe later")
+  bool _trialExpired = false;
 
   // Staggered entrance controllers
   late AnimationController _headerController;
@@ -56,6 +60,9 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
         await initializeStripe();
       });
     }
+
+    // Check if free trial has expired
+    _checkTrialExpired();
 
     _headerController = AnimationController(
       vsync: this,
@@ -145,11 +152,18 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
       // Continue anyway - don't block user from accessing app
     }
 
-    // Mark onboarding as completed in Firestore
+    // Mark onboarding as completed and set free trial start date
     if (currentUserReference != null) {
-      await currentUserReference!.update(createUsersRecordData(
+      final userDoc = await currentUserReference!.get();
+      final userData = userDoc.data() as Map<String, dynamic>?;
+      final updateData = createUsersRecordData(
         onboardingCompleted: true,
-      ));
+      );
+      // Only set free_trial_start if not already set (don't reset on re-onboarding)
+      if (userData == null || userData['free_trial_start'] == null) {
+        updateData['free_trial_start'] = FieldValue.serverTimestamp();
+      }
+      await currentUserReference!.update(updateData);
     }
 
     // Update local state so the GoRouter redirect knows
@@ -229,6 +243,29 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
           ),
         );
       }
+    }
+  }
+
+  Future<void> _checkTrialExpired() async {
+    try {
+      if (currentUserUid.isEmpty) return;
+      final userSnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUserUid)
+          .get();
+      if (!userSnapshot.exists) return;
+      final userData = userSnapshot.data() as Map<String, dynamic>?;
+      if (userData == null) return;
+
+      final freeTrialStart = userData['free_trial_start'] as Timestamp?;
+      if (freeTrialStart != null) {
+        final daysSinceStart = DateTime.now().difference(freeTrialStart.toDate()).inDays;
+        if (daysSinceStart >= 7 && mounted) {
+          setState(() => _trialExpired = true);
+        }
+      }
+    } catch (e) {
+      debugPrint('Error checking trial status: $e');
     }
   }
 
@@ -488,8 +525,8 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
                           ],
                         ),
                       ),
-                      // Skip button
-                      GestureDetector(
+                      // Skip button (hidden when trial expired)
+                      if (!_trialExpired) GestureDetector(
                         onTap: _handleSkip,
                         child: Text(
                           'Maybe later',
@@ -644,13 +681,8 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
                               _buildBenefitRow(
                                 emoji: '⭐',
                                 title: 'Milestone tracking',
-                                subtitle: 'Capture moments before they\'re gone.',
-                              ),
-                              _buildBenefitRow(
-                                emoji: '🎨',
-                                title: 'Activity ideas',
-                                subtitle: 'Never scramble for what to do today.',
                                 isLast: true,
+                                subtitle: 'Capture moments before they\'re gone.',
                               ),
                             ],
                           ),
@@ -744,7 +776,26 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
         ),
         const SizedBox(height: 8.0),
         FFButtonWidget(
-          onPressed: _handleSkip,
+          onPressed: () async {
+            // Verify subscription exists before letting them through
+            final hasSubscription = await hasActiveSubscription();
+            if (hasSubscription) {
+              _completeOnboardingAndGoHome();
+            } else {
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('No active subscription found. Subscribe at momrise.app first, then try again.'),
+                    backgroundColor: FlutterFlowTheme.of(context).error,
+                    behavior: SnackBarBehavior.floating,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    margin: const EdgeInsets.all(16),
+                    duration: const Duration(seconds: 4),
+                  ),
+                );
+              }
+            }
+          },
           text: 'I already subscribed — continue',
           options: FFButtonOptions(
             width: double.infinity,
