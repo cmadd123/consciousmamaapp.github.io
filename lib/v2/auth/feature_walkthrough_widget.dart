@@ -205,7 +205,10 @@ class _FeatureWalkthroughWidgetState extends State<FeatureWalkthroughWidget>
                       ),
                       if (!isLastPage)
                         TextButton(
-                          onPressed: _navigateToSetup,
+                          onPressed: () {
+                            HapticFeedback.lightImpact();
+                            context.pushNamed('Loginv2');
+                          },
                           child: Text(
                             'Skip',
                             style: FlutterFlowTheme.of(context)
