@@ -5,7 +5,10 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/index.dart';
+import '/v2/auth/demo_data_notifier.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'family_preview_model.dart';
 export 'family_preview_model.dart';
 
@@ -366,7 +369,34 @@ class _FamilyPreviewWidgetState extends State<FamilyPreviewWidget>
                                 height: 56.0,
                                 child: FFButtonWidget(
                                   onPressed: () async {
-                                    // Navigate to paywall (don't mark onboarding complete yet)
+                                    // Save children and mark onboarding complete before paywall
+                                    try {
+                                      final demoData = Provider.of<DemoDataNotifier>(context, listen: false);
+                                      await demoData.saveToFirestore();
+                                    } catch (e) {
+                                      debugPrint('Error saving demo data: $e');
+                                    }
+
+                                    if (currentUserReference != null) {
+                                      final userDoc = await currentUserReference!.get();
+                                      final userData = userDoc.data() as Map<String, dynamic>?;
+                                      final updateData = createUsersRecordData(
+                                        onboardingCompleted: true,
+                                      );
+                                      if (userData == null || userData['free_trial_start'] == null) {
+                                        updateData['free_trial_start'] = FieldValue.serverTimestamp();
+                                      }
+                                      await currentUserReference!.update(updateData);
+                                    }
+
+                                    // Update local state
+                                    try {
+                                      final appState = Provider.of<AppStateNotifier>(context, listen: false);
+                                      appState.onboardingCompleted = true;
+                                    } catch (e) {
+                                      debugPrint('Could not update AppStateNotifier: $e');
+                                    }
+
                                     if (mounted) {
                                       context.goNamed(PaimentCopyWidget.routeName);
                                     }
