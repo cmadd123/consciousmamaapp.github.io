@@ -351,39 +351,21 @@ class _Loginv2WidgetState extends State<Loginv2Widget> {
                                   return;
                                 }
 
-                                // Migration: Mark existing users as having completed onboarding
-                                // if they have children (meaning they went through the old flow)
-                                bool shouldGoToOnboarding = false;
+                                // Mark onboarding complete for existing users if needed
                                 if (currentUserReference != null) {
                                   final userDoc = await UsersRecord.getDocumentOnce(currentUserReference!);
                                   if (!userDoc.onboardingCompleted) {
-                                    // Check if user has children
-                                    final children = await queryChildernRecordOnce(
-                                      queryBuilder: (q) => q.where('userRef', isEqualTo: currentUserReference),
-                                    );
-                                    if (children.isNotEmpty) {
-                                      // User has children, mark onboarding as complete
-                                      await currentUserReference!.update(createUsersRecordData(
-                                        onboardingCompleted: true,
-                                      ));
-                                    } else {
-                                      // User has no children and hasn't completed onboarding
-                                      shouldGoToOnboarding = true;
-                                    }
+                                    await currentUserReference!.update(createUsersRecordData(
+                                      onboardingCompleted: true,
+                                    ));
                                   }
                                 }
 
-                                // Navigate to onboarding or home based on completion status
+                                // Login always goes to home
                                 if (!context.mounted) return;
-                                if (shouldGoToOnboarding) {
-                                  context.pushNamedAuth(
-                                      PreparationWidget.routeName,
-                                      context.mounted);
-                                } else {
-                                  context.pushNamedAuth(
-                                      HomeHybridWidget.routeName,
-                                      context.mounted);
-                                }
+                                context.pushNamedAuth(
+                                    HomeHybridWidget.routeName,
+                                    context.mounted);
                               },
                               text: 'Login',
                               options: FFButtonOptions(
@@ -460,38 +442,21 @@ class _Loginv2WidgetState extends State<Loginv2Widget> {
                                             return;
                                           }
 
-                                          // Check if user has completed onboarding
+                                          // Mark onboarding complete if needed
                                           final userDoc = await UsersRecord.getDocumentOnce(
                                             UsersRecord.collection.doc(user.uid),
                                           );
-
-                                          bool shouldGoHome = userDoc.onboardingCompleted;
-
-                                          // Migration: Mark existing users as having completed onboarding
                                           if (!userDoc.onboardingCompleted) {
-                                            final children = await queryChildernRecordOnce(
-                                              queryBuilder: (q) => q.where('userRef', isEqualTo: UsersRecord.collection.doc(user.uid)),
-                                            );
-                                            if (children.isNotEmpty) {
-                                              await UsersRecord.collection.doc(user.uid).update(createUsersRecordData(
-                                                onboardingCompleted: true,
-                                              ));
-                                              shouldGoHome = true;
-                                            }
+                                            await UsersRecord.collection.doc(user.uid).update(createUsersRecordData(
+                                              onboardingCompleted: true,
+                                            ));
                                           }
 
+                                          // Login always goes to home
                                           if (!context.mounted) return;
-
-                                          if (shouldGoHome) {
-                                            context.goNamedAuth(
-                                                HomeHybridWidget.routeName,
-                                                context.mounted);
-                                          } else {
-                                            // New user or incomplete onboarding
-                                            context.goNamedAuth(
-                                                PreparationWidget.routeName,
-                                                context.mounted);
-                                          }
+                                          context.goNamedAuth(
+                                              HomeHybridWidget.routeName,
+                                              context.mounted);
                                         } catch (e) {
                                           print('Google Sign-In Error: $e');
                                           if (!context.mounted) return;
@@ -585,38 +550,21 @@ class _Loginv2WidgetState extends State<Loginv2Widget> {
                                             return;
                                           }
 
-                                          // Check if user has completed onboarding
+                                          // Mark onboarding complete if needed
                                           final userDoc = await UsersRecord.getDocumentOnce(
                                             UsersRecord.collection.doc(user.uid),
                                           );
-
-                                          bool shouldGoHome = userDoc.onboardingCompleted;
-
-                                          // Migration: Mark existing users as having completed onboarding
                                           if (!userDoc.onboardingCompleted) {
-                                            final children = await queryChildernRecordOnce(
-                                              queryBuilder: (q) => q.where('userRef', isEqualTo: UsersRecord.collection.doc(user.uid)),
-                                            );
-                                            if (children.isNotEmpty) {
-                                              await UsersRecord.collection.doc(user.uid).update(createUsersRecordData(
-                                                onboardingCompleted: true,
-                                              ));
-                                              shouldGoHome = true;
-                                            }
+                                            await UsersRecord.collection.doc(user.uid).update(createUsersRecordData(
+                                              onboardingCompleted: true,
+                                            ));
                                           }
 
+                                          // Login always goes to home
                                           if (!context.mounted) return;
-
-                                          if (shouldGoHome) {
-                                            context.goNamedAuth(
-                                                HomeHybridWidget.routeName,
-                                                context.mounted);
-                                          } else {
-                                            // New user or incomplete onboarding
-                                            context.goNamedAuth(
-                                                PreparationWidget.routeName,
-                                                context.mounted);
-                                          }
+                                          context.goNamedAuth(
+                                              HomeHybridWidget.routeName,
+                                              context.mounted);
                                         } catch (e) {
                                           print('Apple Sign-In Error: $e');
                                           if (!context.mounted) return;
