@@ -713,10 +713,45 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
   }
 
   /// iOS CTA — compliant with App Store guideline 3.1.1
-  /// No external payment links. Users subscribe at website on their own.
   Widget _buildIOSCTA() {
     return Column(
       children: [
+        // Info card telling users where to subscribe
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.7),
+            borderRadius: BorderRadius.circular(20.0),
+            border: Border.all(color: const Color(0xFFE0E0E0)),
+          ),
+          child: Column(
+            children: [
+              Text(
+                'Subscribe at momrise.app',
+                textAlign: TextAlign.center,
+                style: FlutterFlowTheme.of(context).bodyLarge.override(
+                  fontFamily: 'Andika New Basic',
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0.0,
+                ),
+              ),
+              const SizedBox(height: 6.0),
+              Text(
+                'Visit momrise.app/subscribe in your browser to start your 7-day free trial. Then come back and tap the button below.',
+                textAlign: TextAlign.center,
+                style: FlutterFlowTheme.of(context).bodySmall.override(
+                  fontFamily: 'Andika New Basic',
+                  color: FlutterFlowTheme.of(context).secondaryText,
+                  fontSize: 13.0,
+                  letterSpacing: 0.0,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 12.0),
         // "I already subscribed" — verifies subscription in Firestore
         FFButtonWidget(
           onPressed: () async {
