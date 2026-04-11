@@ -712,53 +712,33 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
     );
   }
 
-  /// iOS CTA — no purchase UI, directs to website (App Store guideline 3.1.1)
+  /// iOS CTA — compliant with App Store guideline 3.1.1
+  /// No external payment links. Users subscribe at website on their own.
   Widget _buildIOSCTA() {
     return Column(
       children: [
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.7),
-            borderRadius: BorderRadius.circular(20.0),
-            border: Border.all(color: const Color(0xFFE0E0E0)),
-          ),
-          child: Column(
-            children: [
-              Text(
-                'Subscribe at momrise.app',
-                textAlign: TextAlign.center,
-                style: FlutterFlowTheme.of(context).bodyLarge.override(
-                  fontFamily: 'Andika New Basic',
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 0.0,
-                ),
-              ),
-              const SizedBox(height: 8.0),
-              Text(
-                'Visit momrise.app/subscribe to start your free trial, then sign in here with the same email.',
-                textAlign: TextAlign.center,
-                style: FlutterFlowTheme.of(context).bodySmall.override(
-                  fontFamily: 'Andika New Basic',
-                  color: FlutterFlowTheme.of(context).secondaryText,
-                  fontSize: 13.0,
-                  letterSpacing: 0.0,
-                ),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 12.0),
+        // "I already subscribed" — verifies subscription in Firestore
         FFButtonWidget(
           onPressed: () async {
-            final uri = Uri.parse('https://momrise.app/subscribe');
-            if (await canLaunchUrl(uri)) {
-              await launchUrl(uri, mode: LaunchMode.externalApplication);
+            final hasSubscription = await hasActiveSubscription();
+            if (hasSubscription) {
+              _completeOnboardingAndGoHome();
+            } else {
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: const Text('No active subscription found for this account.'),
+                    backgroundColor: FlutterFlowTheme.of(context).error,
+                    behavior: SnackBarBehavior.floating,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    margin: const EdgeInsets.all(16),
+                    duration: const Duration(seconds: 4),
+                  ),
+                );
+              }
             }
           },
-          text: 'Subscribe at momrise.app →',
+          text: 'I already subscribed — continue',
           options: FFButtonOptions(
             width: double.infinity,
             height: 56.0,
@@ -774,58 +754,101 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
             borderRadius: BorderRadius.circular(28.0),
           ),
         ),
-        const SizedBox(height: 8.0),
-        FFButtonWidget(
-          onPressed: () async {
-            // Verify subscription exists before letting them through
+        const SizedBox(height: 10.0),
+        // Restore purchases
+        GestureDetector(
+          onTap: () async {
             final hasSubscription = await hasActiveSubscription();
             if (hasSubscription) {
-              _completeOnboardingAndGoHome();
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: const Text('Subscription restored successfully!'),
+                    backgroundColor: FlutterFlowTheme.of(context).primary,
+                    behavior: SnackBarBehavior.floating,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    margin: const EdgeInsets.all(16),
+                  ),
+                );
+                _completeOnboardingAndGoHome();
+              }
             } else {
               if (mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text('No active subscription found. Subscribe at momrise.app first, then try again.'),
+                    content: const Text('No subscription found to restore.'),
                     backgroundColor: FlutterFlowTheme.of(context).error,
                     behavior: SnackBarBehavior.floating,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                     margin: const EdgeInsets.all(16),
-                    duration: const Duration(seconds: 4),
                   ),
                 );
               }
             }
           },
-          text: 'I already subscribed — continue',
-          options: FFButtonOptions(
-            width: double.infinity,
-            height: 50.0,
-            color: Colors.transparent,
-            textStyle: FlutterFlowTheme.of(context).bodyMedium.override(
+          child: Text(
+            'Restore purchases',
+            style: FlutterFlowTheme.of(context).bodySmall.override(
               fontFamily: 'Andika New Basic',
               color: FlutterFlowTheme.of(context).secondaryText,
-              fontSize: 14.0,
-              fontWeight: FontWeight.w500,
+              fontSize: 13.0,
               letterSpacing: 0.0,
+              decoration: TextDecoration.underline,
             ),
-            elevation: 0.0,
-            borderSide: BorderSide(
-              color: FlutterFlowTheme.of(context).alternate,
-              width: 1.0,
-            ),
-            borderRadius: BorderRadius.circular(28.0),
           ),
         ),
-        const SizedBox(height: 8.0),
-        Text(
-          '7-day free trial, cancel anytime',
-          textAlign: TextAlign.center,
-          style: FlutterFlowTheme.of(context).bodySmall.override(
-            fontFamily: 'Andika New Basic',
-            color: FlutterFlowTheme.of(context).secondaryText,
-            fontSize: 12.0,
-            letterSpacing: 0.0,
-          ),
+        const SizedBox(height: 16.0),
+        // Terms & Privacy links (required by Apple)
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            GestureDetector(
+              onTap: () async {
+                final uri = Uri.parse('https://momrise.app/terms');
+                if (await canLaunchUrl(uri)) {
+                  await launchUrl(uri, mode: LaunchMode.externalApplication);
+                }
+              },
+              child: Text(
+                'Terms of Service',
+                style: FlutterFlowTheme.of(context).bodySmall.override(
+                  fontFamily: 'Andika New Basic',
+                  color: FlutterFlowTheme.of(context).secondaryText,
+                  fontSize: 11.0,
+                  letterSpacing: 0.0,
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Text(
+                '·',
+                style: TextStyle(
+                  color: FlutterFlowTheme.of(context).secondaryText,
+                  fontSize: 11.0,
+                ),
+              ),
+            ),
+            GestureDetector(
+              onTap: () async {
+                final uri = Uri.parse('https://momrise.app/privacy');
+                if (await canLaunchUrl(uri)) {
+                  await launchUrl(uri, mode: LaunchMode.externalApplication);
+                }
+              },
+              child: Text(
+                'Privacy Policy',
+                style: FlutterFlowTheme.of(context).bodySmall.override(
+                  fontFamily: 'Andika New Basic',
+                  color: FlutterFlowTheme.of(context).secondaryText,
+                  fontSize: 11.0,
+                  letterSpacing: 0.0,
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+            ),
+          ],
         ),
       ],
     );
@@ -889,18 +912,35 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
         ),
         const SizedBox(height: 4.0),
         GestureDetector(
-          onTap: () {
+          onTap: () async {
             HapticFeedback.lightImpact();
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: const Text('Restoring purchases...'),
-                backgroundColor: FlutterFlowTheme.of(context).primary,
-                behavior: SnackBarBehavior.floating,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                margin: const EdgeInsets.all(16),
-                duration: const Duration(seconds: 2),
-              ),
-            );
+            final hasSubscription = await hasActiveSubscription();
+            if (hasSubscription) {
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: const Text('Subscription restored!'),
+                    backgroundColor: FlutterFlowTheme.of(context).primary,
+                    behavior: SnackBarBehavior.floating,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    margin: const EdgeInsets.all(16),
+                  ),
+                );
+                _completeOnboardingAndGoHome();
+              }
+            } else {
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: const Text('No subscription found to restore.'),
+                    backgroundColor: FlutterFlowTheme.of(context).error,
+                    behavior: SnackBarBehavior.floating,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    margin: const EdgeInsets.all(16),
+                  ),
+                );
+              }
+            }
           },
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -915,6 +955,59 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
               ),
             ),
           ),
+        ),
+        const SizedBox(height: 8.0),
+        // Terms & Privacy links
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            GestureDetector(
+              onTap: () async {
+                final uri = Uri.parse('https://momrise.app/terms');
+                if (await canLaunchUrl(uri)) {
+                  await launchUrl(uri, mode: LaunchMode.externalApplication);
+                }
+              },
+              child: Text(
+                'Terms of Service',
+                style: FlutterFlowTheme.of(context).bodySmall.override(
+                  fontFamily: 'Andika New Basic',
+                  color: FlutterFlowTheme.of(context).secondaryText,
+                  fontSize: 11.0,
+                  letterSpacing: 0.0,
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Text(
+                '·',
+                style: TextStyle(
+                  color: FlutterFlowTheme.of(context).secondaryText,
+                  fontSize: 11.0,
+                ),
+              ),
+            ),
+            GestureDetector(
+              onTap: () async {
+                final uri = Uri.parse('https://momrise.app/privacy');
+                if (await canLaunchUrl(uri)) {
+                  await launchUrl(uri, mode: LaunchMode.externalApplication);
+                }
+              },
+              child: Text(
+                'Privacy Policy',
+                style: FlutterFlowTheme.of(context).bodySmall.override(
+                  fontFamily: 'Andika New Basic',
+                  color: FlutterFlowTheme.of(context).secondaryText,
+                  fontSize: 11.0,
+                  letterSpacing: 0.0,
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+            ),
+          ],
         ),
       ],
     );
