@@ -364,32 +364,14 @@ class _TodosPageWidgetState extends State<TodosPageWidget> with TickerProviderSt
                     if (incompleteTodos.isEmpty && completedTodos.isEmpty) ...[
                       const SizedBox(height: 24.0),
                       Center(
-                        child: Column(
-                          children: [
-                            Icon(
-                              Icons.check_circle_outline_rounded,
-                              color: const Color(0xFFDADADA),
-                              size: 48.0,
-                            ),
-                            const SizedBox(height: 12.0),
-                            Text(
-                              'No todos yet',
-                              style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                fontFamily: 'Andika New Basic',
-                                color: const Color(0xFF9B8A9E),
-                                fontSize: 16.0,
-                              ),
-                            ),
-                            const SizedBox(height: 4.0),
-                            Text(
-                              'Tap the field above to add one',
-                              style: FlutterFlowTheme.of(context).bodySmall.override(
-                                fontFamily: 'Andika New Basic',
-                                color: const Color(0xFFBBBBBB),
-                                fontSize: 13.0,
-                              ),
-                            ),
-                          ],
+                        child: Text(
+                          'Add a To-Do',
+                          style: FlutterFlowTheme.of(context).bodyMedium.override(
+                            fontFamily: 'Andika New Basic',
+                            color: const Color(0xFF9B8A9E),
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
                       const SizedBox(height: 24.0),
