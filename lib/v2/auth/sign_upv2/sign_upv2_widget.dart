@@ -530,9 +530,9 @@ class _SignUpv2WidgetState extends State<SignUpv2Widget> {
                                           context.goNamed(
                                               HomeHybridWidget.routeName);
                                         } else {
-                                          // New user - go to onboarding
+                                          // New user - go to paywall
                                           context.goNamed(
-                                              PreparationWidget.routeName);
+                                              PaimentCopyWidget.routeName);
                                         }
                                       } catch (e) {
                                         print('Google Sign-In (Signup) Error: $e');
@@ -624,9 +624,9 @@ class _SignUpv2WidgetState extends State<SignUpv2Widget> {
                                         context.goNamed(
                                             HomeHybridWidget.routeName);
                                       } else {
-                                        // New user - go to onboarding
+                                        // New user - go to paywall
                                         context.goNamed(
-                                            PreparationWidget.routeName);
+                                            PaimentCopyWidget.routeName);
                                       }
                                     },
                                     child: Container(
