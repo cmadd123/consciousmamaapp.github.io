@@ -13,6 +13,7 @@ import '/v2/week_plan/create_grocery_list/grocery_list_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import '/v2/creator/creator_meal_plan_card.dart';
 import 'genrate_form_cook_model.dart';
 export 'genrate_form_cook_model.dart';
 
@@ -65,9 +66,14 @@ class _GenrateFormCookWidgetState extends State<GenrateFormCookWidget> {
                   child: Column(
                     mainAxisSize: MainAxisSize.max,
                     children: [
+                      // Creator meal plan card (only shows if user has active creator code)
+                      Padding(
+                        padding: EdgeInsetsDirectional.fromSTEB(0.0, 17.0, 0.0, 0.0),
+                        child: const CreatorMealPlanCard(),
+                      ),
                       Padding(
                         padding:
-                            EdgeInsetsDirectional.fromSTEB(0.0, 17.0, 0.0, 0.0),
+                            EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
                         child: Container(
                           width: double.infinity,
                           decoration: BoxDecoration(

@@ -15,6 +15,9 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:collection/collection.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
+import '/v2/creator/creator_theme_notifier.dart';
+import '/custom_code/actions/creator_service.dart';
 
 // App version for tracking updates
 const String _appVersion = 'v1.2.320';
@@ -130,12 +133,15 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
           body: Container(
           width: double.infinity,
           height: double.infinity,
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [Color(0xFFD7F2EB), Color(0xFFFFE9E1)],
-              stops: [0.0, 1.0],
-              begin: AlignmentDirectional(0.0, -1.0),
-              end: AlignmentDirectional(0, 1.0),
+              colors: [
+                Provider.of<CreatorThemeNotifier>(context).backgroundGradientStart ?? const Color(0xFFD7F2EB),
+                Provider.of<CreatorThemeNotifier>(context).backgroundGradientEnd ?? const Color(0xFFFFE9E1),
+              ],
+              stops: const [0.0, 1.0],
+              begin: const AlignmentDirectional(0.0, -1.0),
+              end: const AlignmentDirectional(0, 1.0),
             ),
           ),
           child: SafeArea(

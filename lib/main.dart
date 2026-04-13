@@ -23,79 +23,156 @@ import 'custom_code/actions/notification_service.dart';
 import 'custom_code/actions/analytics_service.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'v2/auth/demo_data_notifier.dart';
+import 'v2/creator/creator_theme_notifier.dart';
 import 'index.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  GoRouter.optionURLReflectsImperativeAPIs = true;
-  usePathUrlStrategy();
+  // Wrap everything in try-catch to show errors on screen
+  try {
+    WidgetsFlutterBinding.ensureInitialized();
+    GoRouter.optionURLReflectsImperativeAPIs = true;
+    usePathUrlStrategy();
 
-  // Ensure status bar is visible with dark icons on light background
-  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    statusBarColor: Colors.transparent,
-    statusBarIconBrightness: Brightness.dark, // Dark icons for Android
-    statusBarBrightness: Brightness.light, // Light background for iOS
-  ));
+    // Ensure status bar is visible with dark icons on light background
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.dark, // Dark icons for Android
+      statusBarBrightness: Brightness.light, // Light background for iOS
+    ));
 
-  // Make sure system overlays (status bar, navigation bar) are visible
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    // Make sure system overlays (status bar, navigation bar) are visible
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
-  final environmentValues = FFDevEnvironmentValues();
-  await environmentValues.initialize();
+    debugPrint('✓ Flutter initialized');
 
-  await initFirebase();
+    final environmentValues = FFDevEnvironmentValues();
+    await environmentValues.initialize();
+    debugPrint('✓ Environment initialized');
 
-  // Initialize Crashlytics for error reporting with friendly error screen
-  FlutterError.onError = (errorDetails) {
-    final errorMessage = errorDetails.exception.toString();
+    await initFirebase();
+    debugPrint('✓ Firebase initialized');
 
-    // Suppress harmless "deactivated widget's ancestor" errors during navigation
-    // This is a known Flutter issue when popping multiple routes quickly
-    if (errorMessage.contains("Looking up a deactivated widget's ancestor is unsafe")) {
-      debugPrint('⚠️ Suppressed harmless navigation error (deactivated widget ancestor)');
-      return; // Don't show red error screen for this
-    }
+    // Initialize Crashlytics for error reporting with friendly error screen
+    FlutterError.onError = (errorDetails) {
+      final errorMessage = errorDetails.exception.toString();
 
-    // Log to Crashlytics for monitoring
-    FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
+      // Suppress harmless "deactivated widget's ancestor" errors during navigation
+      // This is a known Flutter issue when popping multiple routes quickly
+      if (errorMessage.contains("Looking up a deactivated widget's ancestor is unsafe")) {
+        debugPrint('⚠️ Suppressed harmless navigation error (deactivated widget ancestor)');
+        return; // Don't show red error screen for this
+      }
 
-    // Show friendly error screen to user (instead of blank screen)
-    // Note: This only works for caught Flutter errors, not all crashes
-    debugPrint('❌ Fatal error caught: ${errorDetails.exception}');
-  };
+      // Log to Crashlytics for monitoring
+      FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
 
-  PlatformDispatcher.instance.onError = (error, stack) {
-    // Log uncaught errors to Crashlytics
-    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-    debugPrint('❌ Uncaught error: $error');
-    return true;
-  };
+      // Show friendly error screen to user (instead of blank screen)
+      // Note: This only works for caught Flutter errors, not all crashes
+      debugPrint('❌ Fatal error caught: ${errorDetails.exception}');
+    };
 
-  final appState = FFAppState(); // Initialize FFAppState
-  await appState.initializePersistedState();
+    PlatformDispatcher.instance.onError = (error, stack) {
+      // Log uncaught errors to Crashlytics
+      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+      debugPrint('❌ Uncaught error: $error');
+      return true;
+    };
 
-  // Initialize API keys from Firebase Remote Config (secure)
-  await appState.initializeOpenAiKey();
-  await appState.initializeInstacartApiKey();
-  await appState.initializeWalmartApiKey();
-  await appState.initializeStripeKey();
+    debugPrint('✓ Error handlers configured');
 
-  // Initialize share intent handler for receiving URLs from other apps
-  shareIntentHandler.initialize();
+    final appState = FFAppState(); // Initialize FFAppState
+    await appState.initializePersistedState();
+    debugPrint('✓ App state persisted');
 
-  // Initialize notification service
-  await notificationService.initialize();
+    // Initialize API keys from Firebase Remote Config (secure)
+    await appState.initializeOpenAiKey();
+    debugPrint('✓ OpenAI key initialized');
+    await appState.initializeInstacartApiKey();
+    debugPrint('✓ Instacart key initialized');
+    await appState.initializeWalmartApiKey();
+    debugPrint('✓ Walmart key initialized');
+    await appState.initializeStripeKey();
+    debugPrint('✓ Stripe key initialized');
 
-  // Track app open with analytics
-  await analyticsService.logAppOpen();
+    // Initialize share intent handler for receiving URLs from other apps
+    shareIntentHandler.initialize();
+    debugPrint('✓ Share intent handler initialized');
 
-  runApp(MultiProvider(
-    providers: [
-      ChangeNotifierProvider(create: (context) => appState),
-      ChangeNotifierProvider(create: (context) => DemoDataNotifier()),
-    ],
-    child: MyApp(),
-  ));
+    // Initialize notification service
+    await notificationService.initialize();
+    debugPrint('✓ Notification service initialized');
+
+    // Track app open with analytics
+    await analyticsService.logAppOpen();
+    debugPrint('✓ Analytics logged');
+
+    debugPrint('✓✓✓ ALL INITIALIZATION COMPLETE - LAUNCHING APP ✓✓✓');
+
+    runApp(MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => appState),
+        ChangeNotifierProvider(create: (context) => DemoDataNotifier()),
+        ChangeNotifierProvider(create: (context) => CreatorThemeNotifier()),
+      ],
+      child: MyApp(),
+    ));
+  } catch (e, stackTrace) {
+    // If any initialization fails, show error on screen
+    debugPrint('❌❌❌ INITIALIZATION FAILED ❌❌❌');
+    debugPrint('Error: $e');
+    debugPrint('Stack trace: $stackTrace');
+
+    runApp(MaterialApp(
+      home: Scaffold(
+        backgroundColor: const Color(0xFFD7F2EB),
+        body: SafeArea(
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(
+                    Icons.error_outline,
+                    color: Colors.red,
+                    size: 80,
+                  ),
+                  const SizedBox(height: 24),
+                  const Text(
+                    'App Failed to Start',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF5D4E60),
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Error: ${e.toString()}',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Color(0xFF5D4E60),
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 24),
+                  const Text(
+                    'Please take a screenshot and send to the developer.',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Color(0xFF9B8A9E),
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    ));
+  }
 }
 
 class MyApp extends StatefulWidget {

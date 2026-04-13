@@ -29,6 +29,8 @@ import 'schema/todo_record.dart';
 import 'schema/planned_activity_record.dart';
 import 'schema/user_activity_record.dart';
 import 'schema/skill_path_record.dart';
+import 'schema/creators_record.dart';
+import 'schema/creator_content_record.dart';
 
 export 'dart:async' show StreamSubscription;
 export 'package:cloud_firestore/cloud_firestore.dart' hide Order;
@@ -61,6 +63,82 @@ export 'schema/todo_record.dart';
 export 'schema/planned_activity_record.dart';
 export 'schema/user_activity_record.dart';
 export 'schema/skill_path_record.dart';
+export 'schema/creators_record.dart';
+export 'schema/creator_content_record.dart';
+
+/// Functions to query CreatorsRecords (as a Stream and as a Future).
+Future<int> queryCreatorsRecordCount({
+  Query Function(Query)? queryBuilder,
+  int limit = -1,
+}) =>
+    queryCollectionCount(
+      CreatorsRecord.collection,
+      queryBuilder: queryBuilder,
+      limit: limit,
+    );
+
+Stream<List<CreatorsRecord>> queryCreatorsRecord({
+  Query Function(Query)? queryBuilder,
+  int limit = -1,
+  bool singleRecord = false,
+}) =>
+    queryCollection(
+      CreatorsRecord.collection,
+      CreatorsRecord.fromSnapshot,
+      queryBuilder: queryBuilder,
+      limit: limit,
+      singleRecord: singleRecord,
+    );
+
+Future<List<CreatorsRecord>> queryCreatorsRecordOnce({
+  Query Function(Query)? queryBuilder,
+  int limit = -1,
+  bool singleRecord = false,
+}) =>
+    queryCollectionOnce(
+      CreatorsRecord.collection,
+      CreatorsRecord.fromSnapshot,
+      queryBuilder: queryBuilder,
+      limit: limit,
+      singleRecord: singleRecord,
+    );
+
+/// Functions to query CreatorContentRecords (as a Stream and as a Future).
+Future<int> queryCreatorContentRecordCount({
+  Query Function(Query)? queryBuilder,
+  int limit = -1,
+}) =>
+    queryCollectionCount(
+      CreatorContentRecord.collection,
+      queryBuilder: queryBuilder,
+      limit: limit,
+    );
+
+Stream<List<CreatorContentRecord>> queryCreatorContentRecord({
+  Query Function(Query)? queryBuilder,
+  int limit = -1,
+  bool singleRecord = false,
+}) =>
+    queryCollection(
+      CreatorContentRecord.collection,
+      CreatorContentRecord.fromSnapshot,
+      queryBuilder: queryBuilder,
+      limit: limit,
+      singleRecord: singleRecord,
+    );
+
+Future<List<CreatorContentRecord>> queryCreatorContentRecordOnce({
+  Query Function(Query)? queryBuilder,
+  int limit = -1,
+  bool singleRecord = false,
+}) =>
+    queryCollectionOnce(
+      CreatorContentRecord.collection,
+      CreatorContentRecord.fromSnapshot,
+      queryBuilder: queryBuilder,
+      limit: limit,
+      singleRecord: singleRecord,
+    );
 
 /// Functions to query UsersRecords (as a Stream and as a Future).
 Future<int> queryUsersRecordCount({

@@ -2,9 +2,21 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import '/v2/creator/creator_theme_notifier.dart';
+import '/custom_code/actions/creator_service.dart';
 
 abstract class FlutterFlowTheme {
   static FlutterFlowTheme of(BuildContext context) {
+    // Check if a creator theme is active and apply overrides
+    try {
+      final creatorTheme = Provider.of<CreatorThemeNotifier>(context, listen: false);
+      if (creatorTheme.isCreatorThemeActive) {
+        return CreatorOverrideTheme(creatorTheme);
+      }
+    } catch (_) {
+      // Provider not available yet (app startup) — use default
+    }
     return LightModeTheme();
   }
 
@@ -152,6 +164,41 @@ class LightModeTheme extends FlutterFlowTheme {
   late Color formTextFiledBackGround = const Color(0xFFF4F4F4);
   late Color bordercolors = const Color(0xFF999999);
   late Color prim30 = const Color(0x4C52A097);
+}
+
+/// Creator theme override — extends LightModeTheme and replaces
+/// primary/secondary/tertiary colors with the creator's colors.
+/// Used when a creator code is active and the user has the toggle ON.
+class CreatorOverrideTheme extends LightModeTheme {
+  CreatorOverrideTheme(CreatorThemeNotifier creatorTheme) {
+    final creatorPrimary = parseHexColor(creatorTheme.activeCreator?.themePrimary ?? '');
+    final creatorSecondary = parseHexColor(creatorTheme.activeCreator?.themeSecondary ?? '');
+    final creatorAccent = parseHexColor(creatorTheme.activeCreator?.themeAccent ?? '');
+    final creatorIcon = parseHexColor(creatorTheme.activeCreator?.themeIconColor ?? '');
+
+    if (creatorPrimary != null) {
+      primary = creatorPrimary;
+      bordarColor = creatorPrimary.withOpacity(0.16);
+      floatedBtnColor = _darken(creatorPrimary, 0.15);
+      prim30 = creatorPrimary.withOpacity(0.3);
+    }
+    if (creatorSecondary != null) {
+      secondary = creatorSecondary;
+    }
+    if (creatorAccent != null) {
+      tertiary = creatorAccent;
+    }
+    if (creatorIcon != null) {
+      // Icon color can tint accent areas
+      accent1 = creatorIcon.withOpacity(0.3);
+    }
+  }
+
+  /// Darken a color by a percentage (0.0 to 1.0).
+  static Color _darken(Color color, double amount) {
+    final hsl = HSLColor.fromColor(color);
+    return hsl.withLightness((hsl.lightness - amount).clamp(0.0, 1.0)).toColor();
+  }
 }
 
 abstract class Typography {
