@@ -14,6 +14,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '/v2/creator/creator_meal_plan_card.dart';
+import '/v2/creator/publish_meal_plan_sheet.dart';
+import '/custom_code/actions/creator_service.dart';
+import '/backend/backend.dart';
 import 'genrate_form_cook_model.dart';
 export 'genrate_form_cook_model.dart';
 
@@ -32,10 +35,21 @@ class _GenrateFormCookWidgetState extends State<GenrateFormCookWidget> {
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
+  // Creator profile (null if user is not a creator)
+  CreatorsRecord? _creatorProfile;
+
   @override
   void initState() {
     super.initState();
     _model = createModel(context, () => GenrateFormCookModel());
+    _loadCreatorProfile();
+  }
+
+  Future<void> _loadCreatorProfile() async {
+    final profile = await getCurrentUserCreatorProfile();
+    if (mounted && profile != null) {
+      setState(() => _creatorProfile = profile);
+    }
   }
 
   @override
@@ -169,6 +183,43 @@ class _GenrateFormCookWidgetState extends State<GenrateFormCookWidget> {
                                               ),
                                         ),
                                       ),
+                                      // Publish to followers button (only for creators)
+                                      if (_creatorProfile != null)
+                                        Padding(
+                                          padding: EdgeInsetsDirectional.fromSTEB(0.0, 20.0, 0.0, 5.0),
+                                          child: InkWell(
+                                            splashColor: Colors.transparent,
+                                            onTap: () => showPublishMealPlanSheet(context, _creatorProfile!),
+                                            child: Container(
+                                              padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+                                              decoration: BoxDecoration(
+                                                color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
+                                                borderRadius: BorderRadius.circular(20.0),
+                                              ),
+                                              child: Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Icon(
+                                                    Icons.publish_rounded,
+                                                    color: FlutterFlowTheme.of(context).primary,
+                                                    size: 16.0,
+                                                  ),
+                                                  const SizedBox(width: 4.0),
+                                                  Text(
+                                                    'Publish',
+                                                    style: FlutterFlowTheme.of(context).bodySmall.override(
+                                                      fontFamily: 'Andika New Basic',
+                                                      color: FlutterFlowTheme.of(context).primary,
+                                                      fontSize: 12.0,
+                                                      fontWeight: FontWeight.w600,
+                                                      letterSpacing: 0.0,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
                                       InkWell(
                                         splashColor: Colors.transparent,
                                         focusColor: Colors.transparent,

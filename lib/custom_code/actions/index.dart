@@ -13,4 +13,4 @@ export 'instacart_api_service.dart' show openInstacartShoppingList;
 export 'walmart_api_service.dart' show openWalmartShoppingList;
 export 'stripe_service.dart' show initializeStripe, createSubscription, hasActiveSubscription, cancelSubscription, restorePurchases;
 export 'cleanup_unlabeled_content.dart' show cleanupUnlabeledContent;
-export 'creator_service.dart' show validateCreatorCode, activateCreatorCode, deactivateCreatorCode, getActiveCreator, getCreatorWeeklyMealPlan, getCreatorContent, parseHexColor, hasActiveCreatorCode;
+export 'creator_service.dart' show validateCreatorCode, activateCreatorCode, deactivateCreatorCode, getActiveCreator, getCreatorWeeklyMealPlan, getCreatorContent, parseHexColor, hasActiveCreatorCode, getCurrentUserCreatorProfile, publishMealPlanToFollowers;

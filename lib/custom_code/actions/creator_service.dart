@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
+import '/backend/schema/enums/enums.dart';
 
 /// Service for managing creator codes and theming.
 ///
@@ -185,5 +186,180 @@ Future<bool> hasActiveCreatorCode() async {
     return userData?['active_creator_code'] != null;
   } catch (e) {
     return false;
+  }
+}
+
+/// Check if the current user is a creator (has a creator profile).
+Future<CreatorsRecord?> getCurrentUserCreatorProfile() async {
+  try {
+    if (currentUserReference == null) return null;
+
+    final results = await queryCreatorsRecordOnce(
+      queryBuilder: (q) => q.where('user_ref', isEqualTo: currentUserReference),
+      singleRecord: true,
+    );
+
+    return results.isNotEmpty ? results.first : null;
+  } catch (e) {
+    debugPrint('Error checking creator status: $e');
+    return null;
+  }
+}
+
+/// Publish the current user's meal plan for the current week to their followers.
+///
+/// Snapshots all MealPlanRecords for the current week, fetches linked
+/// MealRecords for recipe details, and creates a CreatorContent document.
+Future<String?> publishMealPlanToFollowers({
+  required CreatorsRecord creator,
+  required String title,
+  String? description,
+}) async {
+  try {
+    if (currentUserReference == null) return 'Not signed in';
+
+    // Get current week bounds (Monday to Sunday)
+    final now = DateTime.now();
+    final monday = DateTime(now.year, now.month, now.day)
+        .subtract(Duration(days: now.weekday - 1));
+    final sunday = monday.add(const Duration(days: 7));
+
+    // Fetch all meal plans for this week
+    final mealPlans = await queryMealPlanRecordOnce(
+      queryBuilder: (q) => q
+          .where('user_ref', isEqualTo: currentUserReference)
+          .where('date', isGreaterThanOrEqualTo: monday)
+          .where('date', isLessThan: sunday),
+    );
+
+    if (mealPlans.isEmpty) return 'No meals planned for this week';
+
+    // Build the data structure grouped by day and meal type
+    final dayNames = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+    final Map<String, dynamic> weekData = {};
+    int mealCount = 0;
+
+    for (final plan in mealPlans) {
+      if (plan.date == null || plan.typ == null) continue;
+
+      final localDate = plan.date!.toLocal();
+      final dayIndex = localDate.weekday - 1; // 0=Mon, 6=Sun
+      if (dayIndex < 0 || dayIndex > 6) continue;
+      final dayKey = dayNames[dayIndex];
+
+      // Determine meal type key
+      String mealTypeKey;
+      switch (plan.typ!) {
+        case MealTyp.Breakfast:
+          mealTypeKey = 'breakfast';
+          break;
+        case MealTyp.Lunch:
+          mealTypeKey = 'lunch';
+          break;
+        case MealTyp.Dinner:
+          mealTypeKey = 'dinner';
+          break;
+        case MealTyp.Snacks:
+          mealTypeKey = 'snack';
+          break;
+      }
+
+      // Get recipe details
+      String? recipeName;
+      List<String> ingredients = [];
+      List<String> instructions = [];
+      String? imageUrl;
+      String? sourceUrl;
+
+      // Custom meal
+      if (plan.hasCustomMeal()) {
+        recipeName = plan.customMeal;
+      }
+      // Single recipe
+      else if (plan.userFirebasemeal != null) {
+        try {
+          final mealDoc = await MealRecord.getDocumentOnce(plan.userFirebasemeal!);
+          recipeName = mealDoc.recipeName;
+          ingredients = mealDoc.ingredients;
+          instructions = mealDoc.cookingInstructions;
+          imageUrl = mealDoc.imageUrl;
+          sourceUrl = mealDoc.sourceUrl;
+        } catch (e) {
+          debugPrint('Could not fetch meal: $e');
+          recipeName = 'Planned';
+        }
+      }
+      // Meal combo — get the entree name
+      else if (plan.mealComboRef != null) {
+        try {
+          final comboDoc = await plan.mealComboRef!.get();
+          final comboData = comboDoc.data() as Map<String, dynamic>?;
+          if (comboData != null) {
+            final entreeRef = comboData['entree_ref'] as DocumentReference?;
+            if (entreeRef != null) {
+              final entreeDoc = await entreeRef.get();
+              final entreeData = entreeDoc.data() as Map<String, dynamic>?;
+              recipeName = entreeData?['recipe_name'] as String? ?? comboData['name'] as String?;
+            } else {
+              recipeName = comboData['name'] as String?;
+            }
+          }
+        } catch (e) {
+          debugPrint('Could not fetch combo: $e');
+          recipeName = 'Planned';
+        }
+      }
+
+      if (recipeName == null || recipeName.isEmpty) continue;
+
+      // Add to week data
+      weekData.putIfAbsent(dayKey, () => {});
+      (weekData[dayKey] as Map<String, dynamic>)[mealTypeKey] = {
+        'name': recipeName,
+        if (ingredients.isNotEmpty) 'ingredients': ingredients,
+        if (instructions.isNotEmpty) 'instructions': instructions,
+        if (imageUrl != null && imageUrl.isNotEmpty) 'image_url': imageUrl,
+        if (sourceUrl != null && sourceUrl.isNotEmpty) 'source_url': sourceUrl,
+      };
+      mealCount++;
+    }
+
+    if (mealCount == 0) return 'No recipes found in this week\'s plan';
+
+    // Deactivate previous active meal plans from this creator
+    final oldPlans = await queryCreatorContentRecordOnce(
+      queryBuilder: (q) => q
+          .where('creator_code', isEqualTo: creator.code)
+          .where('type', isEqualTo: 'meal_plan')
+          .where('is_active', isEqualTo: true),
+    );
+
+    for (final oldPlan in oldPlans) {
+      await oldPlan.reference.update({'is_active': false});
+    }
+
+    // Create new creator content document
+    await CreatorContentRecord.collection.add(createCreatorContentRecordData(
+      creatorRef: creator.reference,
+      creatorCode: creator.code,
+      creatorName: creator.name,
+      type: 'meal_plan',
+      title: title,
+      description: description,
+      data: weekData,
+      isActive: true,
+      isFree: true,
+      price: 0,
+      downloadCount: 0,
+      publishedAt: DateTime.now(),
+      createdAt: DateTime.now(),
+      weekOf: monday,
+    ));
+
+    debugPrint('✓ Published meal plan: $title ($mealCount meals)');
+    return null; // null = success
+  } catch (e) {
+    debugPrint('Error publishing meal plan: $e');
+    return 'Failed to publish: ${e.toString()}';
   }
 }
