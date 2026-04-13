@@ -17,6 +17,7 @@ const sendgridFromEmail = defineString('SENDGRID_FROM_EMAIL');
 // Secret values from Cloud Secret Manager
 const sendgridApiKey = defineSecret('SENDGRID_API_KEY');
 const openaiApiKey = defineSecret('OPENAI_API_KEY');
+const scrapingBeeApiKey = defineSecret('SCRAPINGBEE_API_KEY');
 
 // ── Waitlist Welcome Email ───────────────────────────
 // Triggered when new document created in 'waitlist' collection
@@ -244,7 +245,7 @@ To unsubscribe, email hello@momrise.app
 // ── Recipe Extraction Function ──────────────────────
 // HTTP request function to extract recipe from URL
 // This uses onRequest to bypass App Check (matching the Flutter code expectation)
-exports.extractRecipe = onRequest({ secrets: [openaiApiKey] }, async (request, response) => {
+exports.extractRecipe = onRequest({ secrets: [openaiApiKey, scrapingBeeApiKey] }, async (request, response) => {
   // Set CORS headers
   response.set('Access-Control-Allow-Origin', '*');
   response.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -287,9 +288,28 @@ exports.extractRecipe = onRequest({ secrets: [openaiApiKey] }, async (request, r
   console.log(`Extracting recipe from URL: ${url}`);
 
   try {
-    // Fetch the URL with redirect following
-    const html = await fetchUrl(url);
-    console.log(`Fetched HTML (length: ${html.length})`);
+    // Try direct fetch first (free), fall back to ScrapingBee on failure
+    let html;
+    let fetchMethod = 'direct';
+    try {
+      html = await fetchUrl(url);
+      // Check if we got a real page or a Cloudflare challenge/block
+      if (html.length < 500 || html.includes('Just a moment') || html.includes('cf-browser-verification') || html.includes('Enable JavaScript')) {
+        throw new Error('Blocked by Cloudflare or bot protection');
+      }
+      console.log(`Direct fetch succeeded (length: ${html.length})`);
+    } catch (directError) {
+      console.log(`Direct fetch failed: ${directError.message} — trying ScrapingBee...`);
+      try {
+        html = await fetchWithScrapingBee(url, scrapingBeeApiKey.value());
+        fetchMethod = 'scrapingbee';
+        console.log(`ScrapingBee fetch succeeded (length: ${html.length})`);
+      } catch (sbError) {
+        console.error(`ScrapingBee also failed: ${sbError.message}`);
+        throw new Error(`Could not access this website. ${directError.message}`);
+      }
+    }
+    console.log(`Fetched HTML via ${fetchMethod} (length: ${html.length})`);
 
     // Check if this is a Pinterest pin (not a recipe site)
     const finalUrl = url.includes('pin.it') || url.includes('pinterest.com')
@@ -297,25 +317,120 @@ exports.extractRecipe = onRequest({ secrets: [openaiApiKey] }, async (request, r
       : url;
 
     if (finalUrl.includes('pinterest.com') || html.includes('SocialMediaPosting')) {
+
+      // Check for Pinterest login wall
+      if (html.includes('LoginPage') || html.includes('unauthHomepage') || (html.includes('log in') && html.length < 5000)) {
+        console.log('Pinterest login wall detected');
+        response.status(403).json({
+          result: { error: 'PINTEREST_LOGIN_WALL', message: 'Pinterest is requiring a login to view this pin. Open it in the Pinterest app, tap the source link, and share that URL instead.' }
+        });
+        return;
+      }
+
+      // Check for video pin
+      if (html.includes('"video"') || html.includes('VideoObject') || html.includes('video_list')) {
+        console.log('Video pin detected');
+        // Still try source URL extraction — video pins can have recipe links
+      }
+
       // Try to extract the source URL from Pinterest pin
       const sourceUrl = extractPinterestSourceUrl(html);
       if (sourceUrl) {
         console.log(`Found Pinterest source URL: ${sourceUrl}`);
-        // Recursively fetch the actual recipe from source
-        const sourceHtml = await fetchUrl(sourceUrl);
+
+        // Check if source links to social media (not a recipe site)
+        const socialDomains = ['instagram.com', 'tiktok.com', 'facebook.com', 'twitter.com', 'x.com'];
+        if (socialDomains.some(d => sourceUrl.includes(d))) {
+          console.log(`Source URL is social media: ${sourceUrl}`);
+          response.status(404).json({
+            result: { error: 'PINTEREST_SOCIAL_SOURCE', message: 'This pin links to social media, not a recipe website. Try finding the recipe on the creator\'s blog instead.' }
+          });
+          return;
+        }
+
+        // Check if source links to a product page
+        const productDomains = ['amazon.com', 'etsy.com', 'walmart.com', 'target.com', 'ebay.com'];
+        if (productDomains.some(d => sourceUrl.includes(d))) {
+          console.log(`Source URL is product page: ${sourceUrl}`);
+          response.status(404).json({
+            result: { error: 'PINTEREST_PRODUCT_SOURCE', message: 'This pin links to a product page, not a recipe. Try a different pin.' }
+          });
+          return;
+        }
+
+        // Fetch the actual recipe from source (try direct, then ScrapingBee)
+        let sourceHtml;
+        try {
+          sourceHtml = await fetchUrl(sourceUrl);
+          if (sourceHtml.length < 500 || sourceHtml.includes('Just a moment')) {
+            throw new Error('Blocked');
+          }
+        } catch (fetchError) {
+          console.log(`Direct fetch of source failed: ${fetchError.message}, trying ScrapingBee...`);
+          try {
+            sourceHtml = await fetchWithScrapingBee(sourceUrl, scrapingBeeApiKey.value());
+          } catch (sbError) {
+            console.error(`ScrapingBee also failed for source: ${sbError.message}`);
+            // Source site is dead or unreachable
+            response.status(404).json({
+              result: { error: 'PINTEREST_SOURCE_DEAD', message: 'The recipe website linked from this pin is no longer available. Try pasting the recipe text instead.' }
+            });
+            return;
+          }
+        }
+
         const recipe = extractRecipeFromHtml(sourceHtml, sourceUrl);
         if (recipe) {
           console.log(`Successfully extracted recipe: ${recipe.name}`);
           response.status(200).json({ result: recipe });
           return;
         }
+
+        // Source HTML fetched but no structured recipe — try OpenAI on source HTML
+        console.log('No structured recipe in source, trying OpenAI on source HTML...');
+        try {
+          const aiRecipe = await extractRecipeWithAI(sourceHtml, sourceUrl, openaiApiKey.value());
+          if (aiRecipe && aiRecipe.name) {
+            console.log(`AI extracted from source: ${aiRecipe.name}`);
+            response.status(200).json({ result: aiRecipe });
+            return;
+          }
+        } catch (aiError) {
+          console.error(`AI extraction from source failed: ${aiError.message}`);
+        }
       }
 
-      // No source URL found or recipe extraction failed
-      response.status(404).json({
-        result: {
-          error: 'This pin was uploaded directly to Pinterest (no recipe link). To add this recipe:\n\n1. Open the pin in Pinterest\n2. Look for "Visit" or website link\n3. Share that recipe website instead\n\nOr you can manually enter the recipe details.'
+      // No source URL or source extraction failed
+      // Try to extract recipe from the pin's image using OpenAI Vision
+      console.log('No source recipe found, trying image-based extraction...');
+      const pinImageUrl = extractPinterestImageUrl(html);
+      if (pinImageUrl) {
+        console.log(`Found pin image: ${pinImageUrl}`);
+        try {
+          const recipe = await extractRecipeFromImageWithAI(pinImageUrl, openaiApiKey.value());
+          if (recipe && recipe.name) {
+            recipe.imageUrl = pinImageUrl;
+            recipe.sourceUrl = url;
+            console.log(`Vision extracted recipe: ${recipe.name}`);
+            response.status(200).json({ result: recipe });
+            return;
+          }
+        } catch (visionError) {
+          console.error(`Vision extraction failed: ${visionError.message}`);
         }
+      }
+
+      // Check if it was a video pin (give specific message)
+      if (html.includes('"video"') || html.includes('VideoObject') || html.includes('video_list')) {
+        response.status(404).json({
+          result: { error: 'PINTEREST_VIDEO', message: 'Video pins can\'t be imported yet. Try finding the recipe on the creator\'s website or blog.' }
+        });
+        return;
+      }
+
+      // All Pinterest methods failed — food photo only
+      response.status(404).json({
+        result: { error: 'PINTEREST_NO_RECIPE', message: 'This pin is just a food photo — no recipe text found. Try searching for the recipe by name, or tap "Paste Text" to add it manually.' }
       });
       return;
     }
@@ -430,7 +545,20 @@ function fetchUrl(url, redirectCount = 0) {
 
     const request = protocol.get(url, {
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.9',
+        'Accept-Encoding': 'identity',
+        'Cache-Control': 'no-cache',
+        'Pragma': 'no-cache',
+        'Sec-Ch-Ua': '"Google Chrome";v="131", "Chromium";v="131", "Not_A Brand";v="24"',
+        'Sec-Ch-Ua-Mobile': '?0',
+        'Sec-Ch-Ua-Platform': '"Windows"',
+        'Sec-Fetch-Dest': 'document',
+        'Sec-Fetch-Mode': 'navigate',
+        'Sec-Fetch-Site': 'none',
+        'Sec-Fetch-User': '?1',
+        'Upgrade-Insecure-Requests': '1',
       }
     }, (response) => {
       // Handle redirects
@@ -471,6 +599,58 @@ function fetchUrl(url, redirectCount = 0) {
     request.setTimeout(30000, () => {
       request.destroy();
       reject(new Error('Request timeout'));
+    });
+  });
+}
+
+// Helper: Fetch URL using ScrapingBee (handles Cloudflare, JS rendering, bot protection)
+function fetchWithScrapingBee(url, apiKey) {
+  return new Promise((resolve, reject) => {
+    if (!apiKey) {
+      reject(new Error('ScrapingBee API key not configured'));
+      return;
+    }
+
+    const params = new URLSearchParams({
+      api_key: apiKey,
+      url: url,
+      render_js: 'false',        // Don't need JS rendering for most recipe blogs
+      premium_proxy: 'true',     // Uses residential proxies to bypass Cloudflare
+      country_code: 'us',
+    });
+
+    const sbUrl = `https://app.scrapingbee.com/api/v1/?${params.toString()}`;
+
+    https.get(sbUrl, {
+      timeout: 45000,
+    }, (response) => {
+      if (response.statusCode !== 200) {
+        // Read error body for details
+        let errorBody = '';
+        response.on('data', (chunk) => { errorBody += chunk; });
+        response.on('end', () => {
+          console.error(`ScrapingBee HTTP ${response.statusCode}: ${errorBody.substring(0, 200)}`);
+          reject(new Error(`ScrapingBee HTTP ${response.statusCode}`));
+        });
+        return;
+      }
+
+      let data = '';
+      response.on('data', (chunk) => {
+        data += chunk;
+      });
+      response.on('end', () => {
+        if (data.length < 100) {
+          reject(new Error('ScrapingBee returned empty response'));
+          return;
+        }
+        resolve(data);
+      });
+    }).on('error', (err) => {
+      reject(new Error(`ScrapingBee request failed: ${err.message}`));
+    }).setTimeout(45000, function() {
+      this.destroy();
+      reject(new Error('ScrapingBee request timeout'));
     });
   });
 }
@@ -827,6 +1007,120 @@ CRITICAL:
 
 
 // Helper: Extract recipe from pasted text using AI
+// Helper: Extract the main image URL from a Pinterest pin HTML
+function extractPinterestImageUrl(html) {
+  // Try og:image meta tag first (most reliable)
+  const ogMatch = html.match(/<meta\s+property="og:image"\s+content="([^"]+)"/i) ||
+                  html.match(/<meta\s+content="([^"]+)"\s+property="og:image"/i);
+  if (ogMatch && ogMatch[1]) {
+    // Upgrade to full resolution
+    return ogMatch[1]
+      .replace('/236x/', '/originals/')
+      .replace('/474x/', '/originals/')
+      .replace('/564x/', '/originals/')
+      .replace('/736x/', '/originals/');
+  }
+
+  // Try finding pinimg URLs in the HTML
+  const pinimgMatch = html.match(/(https:\/\/i\.pinimg\.com\/[^"'\s]+)/);
+  if (pinimgMatch && pinimgMatch[1]) {
+    return pinimgMatch[1]
+      .replace('/236x/', '/originals/')
+      .replace('/474x/', '/originals/')
+      .replace('/564x/', '/originals/')
+      .replace('/736x/', '/originals/');
+  }
+
+  return null;
+}
+
+// Helper: Extract recipe from an image using OpenAI Vision (GPT-4o)
+// Used for Pinterest pins that are photos of recipe cards/text
+async function extractRecipeFromImageWithAI(imageUrl, apiKey) {
+  apiKey = apiKey.trim();
+  console.log(`Extracting recipe from image with AI Vision: ${imageUrl}`);
+
+  const requestBody = JSON.stringify({
+    model: 'gpt-4o',
+    messages: [
+      {
+        role: 'system',
+        content: 'You are a recipe extraction assistant. You read recipe text from images and return structured JSON. If the image does not contain a recipe, return {"error": "no recipe found"}.'
+      },
+      {
+        role: 'user',
+        content: [
+          {
+            type: 'text',
+            text: `Look at this image. If it contains a recipe (ingredients, instructions, or recipe text), extract it into this JSON format:
+{
+  "name": "Recipe Name",
+  "description": "Brief description",
+  "ingredients": ["ingredient 1", "ingredient 2"],
+  "instructions": ["step 1", "step 2"],
+  "servings": "number if visible"
+}
+
+If the image is just a food photo with no recipe text, return {"error": "no recipe found"}.
+Return ONLY valid JSON.`
+          },
+          {
+            type: 'image_url',
+            image_url: { url: imageUrl, detail: 'high' }
+          }
+        ]
+      }
+    ],
+    temperature: 0.1,
+    max_tokens: 2000
+  });
+
+  return new Promise((resolve, reject) => {
+    const req = https.request('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`
+      }
+    }, (res) => {
+      let data = '';
+      res.on('data', chunk => { data += chunk; });
+      res.on('end', () => {
+        try {
+          const response = JSON.parse(data);
+          if (response.error) {
+            reject(new Error(`OpenAI Vision error: ${response.error.message}`));
+            return;
+          }
+
+          const content = response.choices[0].message.content.trim();
+          // Strip markdown code fences if present
+          const cleanJson = content.replace(/^```json?\n?/i, '').replace(/\n?```$/i, '');
+          const recipe = JSON.parse(cleanJson);
+
+          if (recipe.error) {
+            reject(new Error(recipe.error));
+            return;
+          }
+
+          resolve(recipe);
+        } catch (parseError) {
+          reject(new Error(`Failed to parse Vision response: ${parseError.message}`));
+        }
+      });
+    });
+
+    req.on('error', reject);
+    req.setTimeout(45000, () => {
+      req.destroy();
+      reject(new Error('Vision request timeout'));
+    });
+
+    req.write(requestBody);
+    req.end();
+  });
+}
+
 async function extractRecipeFromTextWithAI(text, apiKey) {
   console.log(`Extracting recipe from text with AI (length: ${text.length})`);
 

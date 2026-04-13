@@ -117,6 +117,28 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
     super.dispose();
   }
 
+  /// Map error codes from cloud function to user-friendly messages
+  String _getErrorMessage(String errorCode) {
+    switch (errorCode) {
+      case 'PINTEREST_LOGIN_WALL':
+        return 'Pinterest is requiring a login to view this pin. Open it in the Pinterest app, tap the source link, and share that URL instead.';
+      case 'PINTEREST_VIDEO':
+        return 'Video pins can\'t be imported yet. Try finding the recipe on the creator\'s website or blog.';
+      case 'PINTEREST_SOCIAL_SOURCE':
+        return 'This pin links to social media, not a recipe website. Try finding the recipe on the creator\'s blog instead.';
+      case 'PINTEREST_PRODUCT_SOURCE':
+        return 'This pin links to a product page, not a recipe. Try a different pin.';
+      case 'PINTEREST_SOURCE_DEAD':
+        return 'The recipe website linked from this pin is no longer available. Try pasting the recipe text instead.';
+      case 'PINTEREST_NO_RECIPE':
+        return 'This pin is just a food photo — no recipe text found. Try searching for the recipe by name, or tap "Paste Text" to add it manually.';
+      default:
+        // Use the error code as the message if it's descriptive enough
+        if (errorCode.length > 20) return errorCode;
+        return 'Couldn\'t extract a recipe. Try pasting the recipe text instead.';
+    }
+  }
+
   /// Extract recipe from URL using cloud function
   Future<void> _extractRecipe() async {
     final url = _model.urlTextFieldTextController?.text.trim() ?? '';
@@ -157,19 +179,11 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
       // Check if cloud function returned an error
       if (result['error'] != null) {
         debugPrint('❌ Cloud function returned error: ${result['error']}');
-        final errorMsg = result['error'].toString();
+        final errorCode = result['error'].toString();
+        final errorMessage = result['message']?.toString();
         setState(() {
-          // Check if it's a Pinterest error or other specific error
-          if (errorMsg.contains('Pinterest')) {
-            _model.errorMessage = errorMsg;
-          } else {
-            final url = _model.urlTextFieldTextController?.text.toLowerCase() ?? '';
-            if (url.contains('pinterest.com') || url.contains('pin.it')) {
-              _model.errorMessage = 'Pinterest isn\'t sharing the recipe link for this pin. This happens when:\n\n• The pin is a saved photo (no website link)\n• The creator didn\'t add a source link\n\nOpen this pin in Pinterest, tap "Visit", then paste that website URL here instead.';
-            } else {
-              _model.errorMessage = errorMsg;
-            }
-          }
+          // Use the descriptive message from the cloud function if available
+          _model.errorMessage = errorMessage ?? _getErrorMessage(errorCode);
           _model.isLoading = false;
         });
         return;
@@ -213,36 +227,32 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
     } catch (e) {
       debugPrint('❌ Error calling extractRecipe: $e');
       setState(() {
-        // Try to extract the actual error message from the cloud function
         String errorMsg = e.toString();
         if (errorMsg.contains('Exception:')) {
           errorMsg = errorMsg.replaceFirst('Exception:', '').trim();
         }
 
-        // Detect common non-recipe sites and give helpful message
         final url = _model.urlTextFieldTextController?.text.toLowerCase() ?? '';
+
+        // Categorize by URL type for client-side fallback messages
         if (url.contains('pinterest.com') || url.contains('pin.it')) {
-          _model.errorMessage = 'Pinterest isn\'t sharing the recipe link for this pin. This happens when:\n\n• The pin is a saved photo (no website link)\n• The creator didn\'t add a source link\n\nOpen this pin in Pinterest, tap "Visit", then paste that website URL here instead.';
-        } else if (url.contains('etsy.com')) {
-          _model.errorMessage = 'This is a product page, not a recipe. Try sharing a link from a recipe blog instead.';
-        } else if (url.contains('amazon.com')) {
-          _model.errorMessage = 'This is a product page, not a recipe. Try sharing a link from a recipe blog instead.';
-        } else if (url.contains('instagram.com')) {
+          if (errorMsg.contains('429') || errorMsg.contains('rate')) {
+            _model.errorMessage = 'Too many recipe imports at once. Wait a moment and try again.';
+          } else {
+            _model.errorMessage = 'Couldn\'t extract a recipe from this pin. Pinterest pins with a website link work best.\n\nTap "Paste Text" to add the recipe manually.';
+          }
+        } else if (url.contains('instagram.com') || url.contains('tiktok.com') || url.contains('facebook.com')) {
           _model.errorMessage = 'Social media posts don\'t share recipe data. Try finding the recipe on the creator\'s blog.';
-        } else if (url.contains('tiktok.com')) {
-          _model.errorMessage = 'Social media posts don\'t share recipe data. Try finding the recipe on the creator\'s blog.';
-        } else if (url.contains('facebook.com')) {
-          _model.errorMessage = 'Social media posts don\'t share recipe data. Try finding the recipe on the original blog.';
         } else if (url.contains('youtube.com') || url.contains('youtu.be')) {
           _model.errorMessage = 'Video pages don\'t share recipe data. Check the video description for a link to the full recipe.';
-        } else if (errorMsg.contains("Pinterest pin doesn't link") ||
-            errorMsg.contains("recipe data") ||
-            errorMsg.contains("recipe page")) {
-          _model.errorMessage = errorMsg;
-        } else if (errorMsg.contains('403') || errorMsg.contains('forbidden')) {
-          _model.errorMessage = 'This website blocked access. Try a different recipe site like AllRecipes or Food Network.';
+        } else if (url.contains('etsy.com') || url.contains('amazon.com') || url.contains('walmart.com')) {
+          _model.errorMessage = 'This is a product page, not a recipe. Try sharing a link from a recipe blog instead.';
+        } else if (errorMsg.contains('403') || errorMsg.contains('forbidden') || errorMsg.contains('Blocked')) {
+          _model.errorMessage = 'This website blocked access. Try pasting the recipe text instead, or use a different recipe site.';
+        } else if (errorMsg.contains('timeout') || errorMsg.contains('Timeout')) {
+          _model.errorMessage = 'The request timed out. The website may be slow — try again or paste the recipe text instead.';
         } else {
-          _model.errorMessage = 'Couldn\'t find recipe data on this page. This works best with recipe blogs like AllRecipes, Food Network, or Tasty.';
+          _model.errorMessage = 'Couldn\'t find recipe data on this page. Recipe blogs like AllRecipes and Food Network work best.\n\nTap "Paste Text" to add it manually.';
         }
         _model.isLoading = false;
       });
@@ -964,6 +974,20 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                                 ),
                               ),
                             ],
+                          ),
+                        ),
+                      ),
+                    // Default tip (shown when no error and not loading and not extracted)
+                    if (_model.errorMessage == null && !_model.isLoading && !_model.hasExtracted && !_model.isPasteMode)
+                      Padding(
+                        padding: EdgeInsetsDirectional.fromSTEB(0.0, 8.0, 0.0, 0.0),
+                        child: Text(
+                          'Pinterest pins with a website link work best.',
+                          style: FlutterFlowTheme.of(context).bodySmall.override(
+                            fontFamily: 'Andika New Basic',
+                            color: FlutterFlowTheme.of(context).secondaryText,
+                            fontSize: 12.0,
+                            letterSpacing: 0.0,
                           ),
                         ),
                       ),

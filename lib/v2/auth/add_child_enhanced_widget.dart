@@ -252,16 +252,13 @@ class _AddChildEnhancedWidgetState extends State<AddChildEnhancedWidget>
     final userId = currentUserUid;
     if (userId.isEmpty) return;
 
-    await FirebaseFirestore.instance.collection('childern').add({
-      'name': _model.nameController.text.trim(),
-      'birth_day': _model.selectedBirthday!,
-      'gender': _model.selectedGender,
-      'selected_color': _model.selectedColor != null
-          ? '#${_model.selectedColor!.value.toRadixString(16).substring(2)}'
-          : null,
-      'user_ref': FirebaseFirestore.instance.doc('users/$userId'),
-      'created_time': FieldValue.serverTimestamp(),
-    });
+    await ChildernRecord.collection.doc().set(createChildernRecordData(
+      name: _model.nameController.text.trim(),
+      birthDay: _model.selectedBirthday!,
+      gender: _model.selectedGender,
+      selectedColor: _model.selectedColor,
+      userRef: currentUserReference,
+    ));
   }
 
   Future<void> _saveChild() async {
