@@ -1074,7 +1074,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                   // Cancel Subscription
                   CascadeItem(index: 6, baseDelayMs: 400, staggerMs: 80, child: Padding(
                     padding:
-                        EdgeInsetsDirectional.fromSTEB(24.0, 8.0, 24.0, 0.0),
+                        EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),
                     child: Container(
                       width: double.infinity,
                       height: 60.0,
@@ -1164,7 +1164,148 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                       ),
                     ),
                   )),
+                  // Enter Share Code
                   CascadeItem(index: 6, baseDelayMs: 400, staggerMs: 80, child: Padding(
+                    padding:
+                        EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),
+                    child: Container(
+                      width: double.infinity,
+                      height: 60.0,
+                      decoration: BoxDecoration(
+                        color: FlutterFlowTheme.of(context).secondaryBackground,
+                        borderRadius: BorderRadius.circular(14.0),
+                      ),
+                      child: InkWell(
+                        splashColor: Colors.transparent,
+                        focusColor: Colors.transparent,
+                        hoverColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                        onTap: () async {
+                          final codeController = TextEditingController();
+                          final result = await showDialog<String>(
+                            context: context,
+                            builder: (dialogContext) => AlertDialog(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              title: Text(
+                                'Enter Share Code',
+                                style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                  fontFamily: 'Andika New Basic',
+                                  fontSize: 20.0,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 0.0,
+                                ),
+                              ),
+                              content: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    'Enter the 8-character code to import shared content.',
+                                    style: FlutterFlowTheme.of(context).bodySmall.override(
+                                      fontFamily: 'Andika New Basic',
+                                      color: FlutterFlowTheme.of(context).secondaryText,
+                                      fontSize: 13.0,
+                                      letterSpacing: 0.0,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 16.0),
+                                  TextField(
+                                    controller: codeController,
+                                    textCapitalization: TextCapitalization.characters,
+                                    maxLength: 8,
+                                    style: FlutterFlowTheme.of(context).bodyLarge.override(
+                                      fontFamily: 'Andika New Basic',
+                                      fontSize: 20.0,
+                                      fontWeight: FontWeight.w600,
+                                      letterSpacing: 3.0,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                    decoration: InputDecoration(
+                                      hintText: 'CODE',
+                                      hintStyle: TextStyle(
+                                        color: FlutterFlowTheme.of(context).secondaryText.withOpacity(0.4),
+                                        letterSpacing: 3.0,
+                                      ),
+                                      filled: true,
+                                      fillColor: FlutterFlowTheme.of(context).primaryBackground,
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(14.0),
+                                        borderSide: BorderSide.none,
+                                      ),
+                                      counterText: '',
+                                    ),
+                                    autofocus: true,
+                                  ),
+                                ],
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.of(dialogContext).pop(null),
+                                  child: Text('Cancel', style: TextStyle(color: FlutterFlowTheme.of(context).secondaryText)),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    final code = codeController.text.trim().toLowerCase();
+                                    if (code.length == 8) {
+                                      Navigator.of(dialogContext).pop(code);
+                                    }
+                                  },
+                                  child: Text('Import', style: TextStyle(color: FlutterFlowTheme.of(context).primary, fontWeight: FontWeight.w600)),
+                                ),
+                              ],
+                            ),
+                          );
+                          codeController.dispose();
+                          if (result != null && result.isNotEmpty && mounted) {
+                            context.pushNamed(
+                              'ImportSharedContent',
+                              queryParameters: {'shareCode': result},
+                            );
+                          }
+                        },
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
+                                  child: Icon(
+                                    Icons.qr_code_2,
+                                    color: FlutterFlowTheme.of(context).primary,
+                                    size: 24.0,
+                                  ),
+                                ),
+                                Text(
+                                  'Enter Share Code',
+                                  style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                    fontFamily: 'Andika New Basic',
+                                    fontSize: 16.0,
+                                    letterSpacing: 0.0,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Padding(
+                              padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
+                              child: Icon(
+                                Icons.arrow_forward_ios,
+                                color: FlutterFlowTheme.of(context).primaryText,
+                                size: 18.0,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  )),
+                  // Logout
+                  CascadeItem(index: 7, baseDelayMs: 400, staggerMs: 80, child: Padding(
                     padding:
                         EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),
                     child: InkWell(

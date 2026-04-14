@@ -134,8 +134,14 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
           print('ImportSharedContent: cleanup_difficulty = ${content.contentData['cleanup_difficulty']}');
         }
         await SharingService.incrementViewCount(content);
-        // Only parse recipes for meal plan content
-        if (content.contentType == SharedContentType.mealPlan) {
+        // Parse recipes for meal-related content types
+        if (content.contentType == SharedContentType.mealPlan ||
+            content.contentType == SharedContentType.dayTemplate ||
+            content.contentType == null) {
+          _parseRecipes(content);
+        }
+        // Also try parsing if no content type but has recipe data
+        if (_recipes.isEmpty && content.contentData.containsKey('recipes')) {
           _parseRecipes(content);
         }
       }
@@ -545,7 +551,11 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
               children: [
                 // Group by meal type within each day
                 ..._mealTypeOrder.map((mealType) {
-                  final mealsOfType = recipes.where((r) => r.mealType == mealType).toList();
+                  final mealsOfType = recipes.where((r) {
+                    // Handle comma-separated meal types (e.g., "Lunch,Dinner")
+                    final types = r.mealType.split(',').map((t) => t.trim()).toList();
+                    return types.contains(mealType) || r.mealType == mealType;
+                  }).toList();
                   if (mealsOfType.isEmpty) return const SizedBox.shrink();
                   return _buildMealSlot(mealType, mealsOfType);
                 }),
@@ -2299,8 +2309,8 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                     text: _isImporting
                         ? 'Importing...'
                         : _importMode == 'cookbook'
-                            ? 'Save $_selectedCount Recipe${_selectedCount == 1 ? '' : 's'} to Cookbook'
-                            : 'Add $_selectedCount Recipe${_selectedCount == 1 ? '' : 's'} to Meal Plan',
+                            ? 'Save $_selectedCount Item${_selectedCount == 1 ? '' : 's'} to Cookbook'
+                            : 'Add $_selectedCount Item${_selectedCount == 1 ? '' : 's'} to Meal Plan',
                     options: FFButtonOptions(
                       width: double.infinity,
                       height: 56,
@@ -2823,7 +2833,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Saved $successCount recipe${successCount == 1 ? '' : 's'} to your cookbook!'),
+            content: Text('Saved $successCount item${successCount == 1 ? '' : 's'} to your cookbook!'),
             backgroundColor: Colors.green,
             duration: const Duration(seconds: 3),
           ),
