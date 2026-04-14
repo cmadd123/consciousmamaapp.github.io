@@ -53,6 +53,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
   // Creator profile (null if user is not a creator)
   CreatorsRecord? _creatorProfile;
   bool _showCreatorTip = false;
+  bool _showEditTip = false;
 
   Future<void> _loadCreatorProfile() async {
     final profile = await getCurrentUserCreatorProfile();
@@ -60,8 +61,12 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
       // Check if tip has been dismissed
       final prefs = await SharedPreferences.getInstance();
       final tipDismissed = prefs.getBool('creator_cookbook_tip_dismissed') ?? false;
+      final editTipDismissed = prefs.getBool('creator_edit_tip_dismissed') ?? false;
       if (!tipDismissed && mounted) {
         setState(() => _showCreatorTip = true);
+      }
+      if (!editTipDismissed && mounted) {
+        setState(() => _showEditTip = true);
       }
       setState(() => _creatorProfile = profile);
     }
@@ -71,6 +76,12 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('creator_cookbook_tip_dismissed', true);
     if (mounted) setState(() => _showCreatorTip = false);
+  }
+
+  Future<void> _dismissEditTip() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('creator_edit_tip_dismissed', true);
+    if (mounted) setState(() => _showEditTip = false);
   }
 
   /// Upgrade Pinterest image URL to higher resolution
@@ -180,7 +191,37 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
       debugPrint('FavMealPage: Calling safeSetState - userMeal=${_model.userMeal.length}');
       safeSetState(() {});
       debugPrint('FavMealPage: safeSetState completed');
+
+      // Load creator's shared recipes if follower has active creator code
+      await _loadCreatorSharedRecipes();
     });
+  }
+
+  /// Load shared recipes from the active creator (for followers)
+  Future<void> _loadCreatorSharedRecipes() async {
+    try {
+      final creator = await getActiveCreator();
+      if (creator == null || !creator.hasUserRef()) return;
+
+      // Don't load if this IS the creator (they see their own shared tab)
+      if (creator.userRef == currentUserReference) return;
+
+      final sharedRecipes = await queryMealRecordOnce(
+        queryBuilder: (q) => q
+            .where('user_ref', isEqualTo: creator.userRef)
+            .where('shared_with_followers', isEqualTo: true),
+      );
+
+      debugPrint('Loaded ${sharedRecipes.length} shared recipes from ${creator.name}');
+
+      if (mounted) {
+        _model.creatorSharedRecipes = sharedRecipes;
+        _model.activeCreatorName = creator.name;
+        safeSetState(() {});
+      }
+    } catch (e) {
+      debugPrint('Error loading creator shared recipes: $e');
+    }
   }
 
 
@@ -1399,6 +1440,50 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                       ),
                                     ),
                                   ),
+                                // Edit tip (one-time, shows in shared mode)
+                                if (_showEditTip && _creatorProfile != null && _model.cookbookMode == 'shared')
+                                  Padding(
+                                    padding: const EdgeInsets.fromLTRB(8.0, 4.0, 8.0, 4.0),
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 10.0),
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFFFFF3E0),
+                                        borderRadius: BorderRadius.circular(12.0),
+                                        border: Border.all(color: const Color(0xFFFFCC80)),
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          const Icon(Icons.edit_outlined, size: 20.0, color: Color(0xFFE65100)),
+                                          const SizedBox(width: 10.0),
+                                          Expanded(
+                                            child: Text(
+                                              'Edits here are live — your followers see changes instantly. No duplicates, one recipe.',
+                                              style: FlutterFlowTheme.of(context).bodySmall.override(
+                                                fontFamily: 'Andika New Basic',
+                                                color: const Color(0xFFE65100),
+                                                fontSize: 12.0,
+                                                letterSpacing: 0.0,
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 8.0),
+                                          GestureDetector(
+                                            onTap: _dismissEditTip,
+                                            child: Text(
+                                              'Got it',
+                                              style: FlutterFlowTheme.of(context).bodySmall.override(
+                                                fontFamily: 'Andika New Basic',
+                                                color: const Color(0xFFE65100),
+                                                fontSize: 12.0,
+                                                fontWeight: FontWeight.w700,
+                                                letterSpacing: 0.0,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
                                 // My Recipes / Templates / Saved Days tab toggle
                                 Padding(
                                   padding: EdgeInsetsDirectional.fromSTEB(
@@ -1611,6 +1696,8 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                             {'label': 'Lunch', 'emoji': '🌞'},
                                             {'label': 'Dinner', 'emoji': '🌙'},
                                             {'label': 'Snacks', 'emoji': '🍪'},
+                                            if (_model.creatorSharedRecipes.isNotEmpty && _model.activeCreatorName != null)
+                                              {'label': 'From Creator', 'emoji': '👤'},
                                           ].map((mealType) {
                                             final label = mealType['label']!;
                                             final emoji = mealType['emoji']!;
@@ -1825,9 +1912,20 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
 
                                     // Get the active recipe list based on selected tab and cookbook mode
                                     debugPrint('FavMealPage Builder: recipeSourceTab=${_model.recipeSourceTab}, cookbookMode=${_model.cookbookMode}, userMeal=${_model.userMeal.length}');
-                                    final activeRecipes = _model.cookbookMode == 'shared'
-                                        ? _model.userMeal.where((r) => r.sharedWithFollowers).toList()
-                                        : _model.userMeal;
+                                    List<MealRecord> activeRecipes;
+                                    if (_model.cookbookMode == 'shared') {
+                                      // Creator's shared view: only their shared recipes
+                                      activeRecipes = _model.userMeal.where((r) => r.sharedWithFollowers).toList();
+                                    } else if (_model.categoryFilter == 'From Creator' && _model.creatorSharedRecipes.isNotEmpty) {
+                                      // Follower filtering to creator recipes only
+                                      activeRecipes = _model.creatorSharedRecipes;
+                                    } else {
+                                      // Personal: user's own + creator's shared (merged)
+                                      activeRecipes = [
+                                        ..._model.userMeal,
+                                        ..._model.creatorSharedRecipes,
+                                      ];
+                                    }
                                     debugPrint('FavMealPage Builder: activeRecipes=${activeRecipes.length}');
 
                                     if (activeRecipes.isEmpty) {
@@ -2164,6 +2262,26 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                                               child: Column(
                                                                 mainAxisSize: MainAxisSize.min,
                                                                 children: [
+                                                                  // Creator badge (for recipes from creator's shared library)
+                                                                  if (_model.creatorSharedRecipes.any((r) => r.reference.path == containerVarItem.reference.path))
+                                                                    Padding(
+                                                                      padding: const EdgeInsets.only(bottom: 2.0),
+                                                                      child: Container(
+                                                                        padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 1.0),
+                                                                        decoration: BoxDecoration(
+                                                                          color: FlutterFlowTheme.of(context).primary.withOpacity(0.15),
+                                                                          borderRadius: BorderRadius.circular(4.0),
+                                                                        ),
+                                                                        child: Text(
+                                                                          'by ${_model.activeCreatorName ?? 'Creator'}',
+                                                                          style: TextStyle(
+                                                                            fontSize: 8.0,
+                                                                            fontWeight: FontWeight.w600,
+                                                                            color: FlutterFlowTheme.of(context).primary,
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ),
                                                                   Text(
                                                                     valueOrDefault<
                                                                         String>(

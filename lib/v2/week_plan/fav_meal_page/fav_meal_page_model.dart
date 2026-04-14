@@ -48,6 +48,10 @@ class FavMealPageModel extends FlutterFlowModel<FavMealPageWidget> {
 
   /// userMeal
   List<MealRecord> userMeal = [];
+
+  // Creator's shared recipes (loaded when follower has active creator code)
+  List<MealRecord> creatorSharedRecipes = [];
+  String? activeCreatorName;
   void addToUserMeal(MealRecord item) => userMeal.add(item);
   void removeFromUserMeal(MealRecord item) => userMeal.remove(item);
   void removeAtIndexFromUserMeal(int index) => userMeal.removeAt(index);
