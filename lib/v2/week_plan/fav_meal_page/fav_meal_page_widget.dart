@@ -996,7 +996,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                   _deleteAllMealTemplates();
                 },
                 icon: Icon(Icons.restaurant_menu),
-                label: Text('Delete ALL Meal Templates'),
+                label: Text('Delete ALL Saved Days'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.orange,
                   foregroundColor: Colors.white,
@@ -1257,7 +1257,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                       ],
                                     ),
                                   ),
-                                // My Recipes / Templates / Meal Templates tab toggle
+                                // My Recipes / Templates / Saved Days tab toggle
                                 Padding(
                                   padding: EdgeInsetsDirectional.fromSTEB(
                                       8.0, 12.0, 8.0, 12.0),
@@ -1351,7 +1351,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                                 borderRadius: BorderRadius.circular(8.0),
                                               ),
                                               child: Text(
-                                                'Meal Templates',
+                                                'Saved Days',
                                                 textAlign: TextAlign.center,
                                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                   fontFamily: 'Andika New Basic',
@@ -1422,7 +1422,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                     ),
                                   ),
                                 ),
-                                // Filter chips - grouped by category (show for My Recipes and Templates, not Meal Templates)
+                                // Filter chips - grouped by category (show for My Recipes and Templates, not Saved Days)
                                 if (_model.recipeSourceTab != 'savedDays')
                                 Padding(
                                   padding: EdgeInsetsDirectional.fromSTEB(
@@ -2735,7 +2735,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
     }
   }
 
-  /// Build the Meal Templates view — groups day templates by their shared group ID
+  /// Build the Saved Days view — groups day templates by their shared group ID
   Widget _buildSavedDaysView(BuildContext context) {
     // Filter templates that have a day_template_group
     final dayTemplates = _model.mealTemplates
@@ -2764,7 +2764,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
             ),
             const SizedBox(height: 16.0),
             Text(
-              'No Meal Templates Yet',
+              'No Saved Days Yet',
               style: FlutterFlowTheme.of(context).bodyMedium.override(
                     fontFamily: 'Andika New Basic',
                     fontSize: 18.0,
@@ -3223,9 +3223,9 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
     );
   }
 
-  /// Build the Meal Templates view
+  /// Build the Saved Days view
   Widget _buildTemplatesView(BuildContext context) {
-    // Exclude day templates — those show in the Meal Templates tab
+    // Exclude day templates — those show in the Saved Days tab
     final regularTemplates = _model.mealTemplates
         .where((t) => !t.hasDayTemplateGroup())
         .toList();
@@ -3282,7 +3282,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
             ),
             const SizedBox(height: 16.0),
             Text(
-              'No Meal Templates Yet',
+              'No Saved Days Yet',
               style: FlutterFlowTheme.of(context).bodyMedium.override(
                     fontFamily: 'Andika New Basic',
                     fontSize: 18.0,
