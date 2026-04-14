@@ -801,6 +801,7 @@ function normalizeRecipe(recipe, sourceUrl) {
 
 // Helper: Extract recipe using OpenAI when structured data fails
 async function extractRecipeWithAI(html, sourceUrl, apiKey) {
+  apiKey = apiKey.trim();
   // Strip HTML to just text content (remove scripts, styles, etc.)
   const cleanHtml = html
     .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
@@ -1122,6 +1123,7 @@ Return ONLY valid JSON.`
 }
 
 async function extractRecipeFromTextWithAI(text, apiKey) {
+  apiKey = apiKey.trim();
   console.log(`Extracting recipe from text with AI (length: ${text.length})`);
 
   const prompt = `Extract the recipe from this pasted text. Return ONLY valid JSON with this exact structure:
