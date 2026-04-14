@@ -161,8 +161,8 @@ class DeepLinkHandler {
         return;
       }
     }
-    // Handle custom scheme: momrise://shared/CODE or consciousmama://shared/CODE
-    else if (uri.scheme == 'momrise' || uri.scheme == 'consciousmama') {
+    // Handle custom scheme: momecoach://shared/CODE, momrise://shared/CODE, or consciousmama://shared/CODE
+    else if (uri.scheme == 'momecoach' || uri.scheme == 'momrise' || uri.scheme == 'consciousmama') {
       debugPrint('DeepLinkHandler: Custom scheme detected: ${uri.scheme}');
       // Format 1: scheme://shared/CODE -> host='shared', pathSegments=['CODE']
       if (uri.host == 'shared' && uri.pathSegments.isNotEmpty) {

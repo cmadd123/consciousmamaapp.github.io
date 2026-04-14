@@ -3282,7 +3282,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
             ),
             const SizedBox(height: 16.0),
             Text(
-              'No Saved Days Yet',
+              'No Templates Yet',
               style: FlutterFlowTheme.of(context).bodyMedium.override(
                     fontFamily: 'Andika New Basic',
                     fontSize: 18.0,
@@ -3292,7 +3292,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
             ),
             const SizedBox(height: 12.0),
             Text(
-              'Meal templates are reusable combinations of entrée, sides, and drinks that you can save and quickly add to your meal plan.',
+              'Templates are reusable combinations of entrée, sides, and drinks that you can save from the meal planner and quickly add to your meal plan.',
               textAlign: TextAlign.center,
               style: FlutterFlowTheme.of(context).bodySmall.override(
                     fontFamily: 'Andika New Basic',
