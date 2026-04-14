@@ -1696,8 +1696,6 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                             {'label': 'Lunch', 'emoji': '🌞'},
                                             {'label': 'Dinner', 'emoji': '🌙'},
                                             {'label': 'Snacks', 'emoji': '🍪'},
-                                            if (_model.creatorSharedRecipes.isNotEmpty && _model.activeCreatorName != null)
-                                              {'label': 'From ${_model.activeCreatorName}', 'emoji': '👤'},
                                           ].map((mealType) {
                                             final label = mealType['label']!;
                                             final emoji = mealType['emoji']!;
@@ -1759,49 +1757,110 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                         scrollDirection: Axis.horizontal,
                                         child: Row(
                                           children: [
-                                            {'label': 'Entree', 'emoji': '🍽️'},
-                                            {'label': 'Side', 'emoji': '🥗'},
-                                            {'label': 'Desserts', 'emoji': '🍰'},
-                                          ].map((recipeType) {
-                                            final label = recipeType['label']!;
-                                            final emoji = recipeType['emoji']!;
-                                            final isSelected = _model.categoryFilter == label;
-                                            return Padding(
-                                              padding: EdgeInsets.only(right: 8.0),
-                                              child: InkWell(
-                                                splashColor: Colors.transparent,
-                                                focusColor: Colors.transparent,
-                                                hoverColor: Colors.transparent,
-                                                highlightColor: Colors.transparent,
-                                                onTap: () {
-                                                  _model.categoryFilter = label;
-                                                  safeSetState(() {});
-                                                },
-                                                child: Container(
-                                                  padding: EdgeInsets.symmetric(horizontal: 14.0, vertical: 6.0),
-                                                  decoration: BoxDecoration(
-                                                    color: isSelected
-                                                        ? Color(0xFF9B8AA0)
-                                                        : Colors.transparent,
-                                                    borderRadius: BorderRadius.circular(16.0),
-                                                    border: Border.all(
-                                                      color: Color(0xFF9B8AA0),
-                                                    ),
-                                                  ),
-                                                  child: Text(
-                                                    '$emoji $label',
-                                                    style: FlutterFlowTheme.of(context).bodySmall.override(
-                                                      fontFamily: 'Andika New Basic',
+                                            ...[
+                                              {'label': 'Entree', 'emoji': '🍽️'},
+                                              {'label': 'Side', 'emoji': '🥗'},
+                                              {'label': 'Desserts', 'emoji': '🍰'},
+                                            ].map((recipeType) {
+                                              final label = recipeType['label']!;
+                                              final emoji = recipeType['emoji']!;
+                                              final isSelected = _model.categoryFilter == label;
+                                              return Padding(
+                                                padding: EdgeInsets.only(right: 8.0),
+                                                child: InkWell(
+                                                  splashColor: Colors.transparent,
+                                                  focusColor: Colors.transparent,
+                                                  hoverColor: Colors.transparent,
+                                                  highlightColor: Colors.transparent,
+                                                  onTap: () {
+                                                    _model.categoryFilter = label;
+                                                    safeSetState(() {});
+                                                  },
+                                                  child: Container(
+                                                    padding: EdgeInsets.symmetric(horizontal: 14.0, vertical: 6.0),
+                                                    decoration: BoxDecoration(
                                                       color: isSelected
-                                                          ? Colors.white
-                                                          : Color(0xFF9B8AA0),
-                                                      letterSpacing: 0.0,
+                                                          ? Color(0xFF9B8AA0)
+                                                          : Colors.transparent,
+                                                      borderRadius: BorderRadius.circular(16.0),
+                                                      border: Border.all(
+                                                        color: Color(0xFF9B8AA0),
+                                                      ),
+                                                    ),
+                                                    child: Text(
+                                                      '$emoji $label',
+                                                      style: FlutterFlowTheme.of(context).bodySmall.override(
+                                                        fontFamily: 'Andika New Basic',
+                                                        color: isSelected
+                                                            ? Colors.white
+                                                            : Color(0xFF9B8AA0),
+                                                        letterSpacing: 0.0,
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
+                                              );
+                                            }),
+                                            // Creator filter chip
+                                            if (_model.creatorSharedRecipes.isNotEmpty && _model.activeCreatorName != null)
+                                              InkWell(
+                                                splashColor: Colors.transparent,
+                                                onTap: () {
+                                                  _model.categoryFilter = 'From ${_model.activeCreatorName}';
+                                                  safeSetState(() {});
+                                                },
+                                                child: Container(
+                                                  padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+                                                  decoration: BoxDecoration(
+                                                    color: _model.categoryFilter.startsWith('From ')
+                                                        ? FlutterFlowTheme.of(context).primary
+                                                        : Colors.transparent,
+                                                    borderRadius: BorderRadius.circular(16.0),
+                                                    border: Border.all(
+                                                      color: FlutterFlowTheme.of(context).primary,
+                                                    ),
+                                                  ),
+                                                  child: Row(
+                                                    mainAxisSize: MainAxisSize.min,
+                                                    children: [
+                                                      Container(
+                                                        width: 18,
+                                                        height: 18,
+                                                        decoration: BoxDecoration(
+                                                          color: _model.categoryFilter.startsWith('From ')
+                                                              ? Colors.white
+                                                              : FlutterFlowTheme.of(context).primary,
+                                                          shape: BoxShape.circle,
+                                                        ),
+                                                        child: Center(
+                                                          child: Text(
+                                                            _model.activeCreatorName![0].toUpperCase(),
+                                                            style: TextStyle(
+                                                              fontSize: 10,
+                                                              fontWeight: FontWeight.w700,
+                                                              color: _model.categoryFilter.startsWith('From ')
+                                                                  ? FlutterFlowTheme.of(context).primary
+                                                                  : Colors.white,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      const SizedBox(width: 6),
+                                                      Text(
+                                                        'By ${_model.activeCreatorName}',
+                                                        style: FlutterFlowTheme.of(context).bodySmall.override(
+                                                          fontFamily: 'Andika New Basic',
+                                                          color: _model.categoryFilter.startsWith('From ')
+                                                              ? Colors.white
+                                                              : FlutterFlowTheme.of(context).primary,
+                                                          letterSpacing: 0.0,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
                                               ),
-                                            );
-                                          }).toList(),
+                                          ],
                                         ),
                                       ),
                                       ],
@@ -2267,18 +2326,38 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                                                     Padding(
                                                                       padding: const EdgeInsets.only(bottom: 2.0),
                                                                       child: Container(
-                                                                        padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 1.0),
+                                                                        padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 1.5),
                                                                         decoration: BoxDecoration(
                                                                           color: FlutterFlowTheme.of(context).primary.withOpacity(0.15),
-                                                                          borderRadius: BorderRadius.circular(4.0),
+                                                                          borderRadius: BorderRadius.circular(10.0),
                                                                         ),
-                                                                        child: Text(
-                                                                          'by ${_model.activeCreatorName ?? 'Creator'}',
-                                                                          style: TextStyle(
-                                                                            fontSize: 8.0,
-                                                                            fontWeight: FontWeight.w600,
-                                                                            color: FlutterFlowTheme.of(context).primary,
-                                                                          ),
+                                                                        child: Row(
+                                                                          mainAxisSize: MainAxisSize.min,
+                                                                          children: [
+                                                                            Container(
+                                                                              width: 12,
+                                                                              height: 12,
+                                                                              decoration: BoxDecoration(
+                                                                                color: FlutterFlowTheme.of(context).primary,
+                                                                                shape: BoxShape.circle,
+                                                                              ),
+                                                                              child: Center(
+                                                                                child: Text(
+                                                                                  (_model.activeCreatorName ?? 'C')[0].toUpperCase(),
+                                                                                  style: const TextStyle(fontSize: 7, fontWeight: FontWeight.w700, color: Colors.white),
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                            const SizedBox(width: 3),
+                                                                            Text(
+                                                                              'By ${_model.activeCreatorName ?? 'Creator'}',
+                                                                              style: TextStyle(
+                                                                                fontSize: 8.0,
+                                                                                fontWeight: FontWeight.w600,
+                                                                                color: FlutterFlowTheme.of(context).primary,
+                                                                              ),
+                                                                            ),
+                                                                          ],
                                                                         ),
                                                                       ),
                                                                     ),
