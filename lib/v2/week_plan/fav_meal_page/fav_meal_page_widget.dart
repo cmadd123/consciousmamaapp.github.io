@@ -2605,6 +2605,8 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                                                     newData['CookingInstructions'] = containerVarItem.cookingInstructions;
                                                                   }
                                                                   await MealRecord.collection.add(newData);
+                                                                  // Reload user recipes so it shows in My Cookbook
+                                                                  _reloadUserRecipes();
                                                                   if (mounted) {
                                                                     HapticFeedback.mediumImpact();
                                                                     ScaffoldMessenger.of(context).showSnackBar(
@@ -2617,6 +2619,8 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                                                         duration: const Duration(seconds: 2),
                                                                       ),
                                                                     );
+                                                                    // Briefly show filled bookmark
+                                                                    safeSetState(() {});
                                                                   }
                                                                 } catch (e) {
                                                                   debugPrint('Error saving recipe: $e');
@@ -2625,11 +2629,15 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                                               child: Container(
                                                                 padding: const EdgeInsets.all(5.0),
                                                                 decoration: BoxDecoration(
-                                                                  color: Colors.black.withOpacity(0.4),
+                                                                  color: _model.userMeal.any((r) => r.recipeName == containerVarItem.recipeName)
+                                                                      ? FlutterFlowTheme.of(context).primary
+                                                                      : Colors.black.withOpacity(0.4),
                                                                   shape: BoxShape.circle,
                                                                 ),
-                                                                child: const Icon(
-                                                                  Icons.bookmark_add_outlined,
+                                                                child: Icon(
+                                                                  _model.userMeal.any((r) => r.recipeName == containerVarItem.recipeName)
+                                                                      ? Icons.bookmark
+                                                                      : Icons.bookmark_add_outlined,
                                                                   color: Colors.white,
                                                                   size: 14.0,
                                                                 ),

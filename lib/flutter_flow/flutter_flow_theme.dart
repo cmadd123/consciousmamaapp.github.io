@@ -5,14 +5,18 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '/v2/creator/creator_theme_notifier.dart';
 import '/custom_code/actions/creator_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 abstract class FlutterFlowTheme {
   static FlutterFlowTheme of(BuildContext context) {
     // Check if a creator theme is active and apply overrides
+    // Only apply when user is logged in (don't affect login/signup screens)
     try {
-      final creatorTheme = Provider.of<CreatorThemeNotifier>(context, listen: false);
-      if (creatorTheme.isCreatorThemeActive) {
-        return CreatorOverrideTheme(creatorTheme);
+      if (FirebaseAuth.instance.currentUser != null) {
+        final creatorTheme = Provider.of<CreatorThemeNotifier>(context, listen: false);
+        if (creatorTheme.isCreatorThemeActive) {
+          return CreatorOverrideTheme(creatorTheme);
+        }
       }
     } catch (_) {
       // Provider not available yet (app startup) — use default
