@@ -111,7 +111,7 @@ class _EnterCreatorCodeSheetState extends State<EnterCreatorCodeSheet> {
           left: 24.0,
           right: 24.0,
           top: 16.0,
-          bottom: MediaQuery.of(context).viewInsets.bottom + 24.0,
+          bottom: MediaQuery.of(context).viewPadding.bottom + MediaQuery.of(context).viewInsets.bottom + 24.0,
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -245,149 +245,119 @@ class _EnterCreatorCodeSheetState extends State<EnterCreatorCodeSheet> {
     );
   }
 
-  /// Preview card showing the creator's name, bio, niche, and theme colors.
+  /// Preview — mini app mockup matching the website preview
   Widget _buildCreatorPreview() {
     final creator = _validatedCreator!;
-    final primary = parseHexColor(creator.themePrimary);
-    final secondary = parseHexColor(creator.themeSecondary);
-    final accent = parseHexColor(creator.themeAccent);
-    final gradStart = parseHexColor(creator.themeBackgroundGradientStart);
-    final gradEnd = parseHexColor(creator.themeBackgroundGradientEnd);
+    final primary = parseHexColor(creator.themePrimary) ?? FlutterFlowTheme.of(context).primary;
+    final accent = parseHexColor(creator.themeAccent) ?? FlutterFlowTheme.of(context).tertiary;
+    final gradStart = parseHexColor(creator.themeBackgroundGradientStart) ?? const Color(0xFFD7F2EB);
+    final gradEnd = parseHexColor(creator.themeBackgroundGradientEnd) ?? const Color(0xFFFFE9E1);
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(20.0),
       decoration: BoxDecoration(
-        gradient: (gradStart != null && gradEnd != null)
-            ? LinearGradient(
-                colors: [gradStart, gradEnd],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              )
-            : null,
-        color: (gradStart == null || gradEnd == null)
-            ? (secondary ?? FlutterFlowTheme.of(context).primaryBackground)
-            : null,
-        borderRadius: BorderRadius.circular(20.0),
-        border: Border.all(
-          color: primary?.withOpacity(0.3) ?? Colors.grey.shade200,
-          width: 2.0,
+        gradient: LinearGradient(
+          colors: [gradStart, gradEnd],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
         ),
+        borderRadius: BorderRadius.circular(20.0),
+        border: Border.all(color: primary.withOpacity(0.2), width: 2.0),
       ),
+      padding: const EdgeInsets.all(14.0),
       child: Column(
         children: [
-          // Creator avatar
-          CircleAvatar(
-            radius: 30,
-            backgroundColor: primary ?? FlutterFlowTheme.of(context).primary,
-            backgroundImage: creator.hasAvatarUrl()
-                ? NetworkImage(creator.avatarUrl)
-                : null,
-            child: !creator.hasAvatarUrl()
-                ? Text(
-                    creator.name.isNotEmpty ? creator.name[0].toUpperCase() : '?',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  )
-                : null,
-          ),
-          const SizedBox(height: 12.0),
-
-          // Creator name
-          Text(
-            creator.name,
-            style: TextStyle(
-              fontSize: 20.0,
-              fontWeight: FontWeight.w700,
-              color: primary ?? FlutterFlowTheme.of(context).primaryText,
-            ),
-          ),
-
-          // Niche badge
-          if (creator.hasNiche()) ...[
-            const SizedBox(height: 6.0),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
-              decoration: BoxDecoration(
-                color: (accent ?? primary)?.withOpacity(0.15) ?? Colors.grey.shade100,
-                borderRadius: BorderRadius.circular(50.0),
-              ),
-              child: Text(
-                creator.niche,
-                style: TextStyle(
-                  fontSize: 12.0,
-                  fontWeight: FontWeight.w600,
-                  color: accent ?? primary ?? FlutterFlowTheme.of(context).secondaryText,
+          // Creator info row
+          Row(
+            children: [
+              CircleAvatar(
+                radius: 18,
+                backgroundColor: primary,
+                child: Text(
+                  creator.name.isNotEmpty ? creator.name[0].toUpperCase() : '?',
+                  style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
                 ),
               ),
-            ),
-          ],
-
-          // Bio
-          if (creator.hasBio()) ...[
-            const SizedBox(height: 10.0),
-            Text(
-              creator.bio,
-              textAlign: TextAlign.center,
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                fontSize: 13.0,
-                color: FlutterFlowTheme.of(context).secondaryText,
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(creator.name, style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: const Color(0xFF5D4E60))),
+                    if (creator.hasNiche())
+                      Text(creator.niche, style: TextStyle(fontSize: 10, color: primary, fontWeight: FontWeight.w500)),
+                  ],
+                ),
               ),
-            ),
-          ],
-
-          // Theme color swatches
-          const SizedBox(height: 14.0),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              if (primary != null) _colorSwatch(primary, 'Primary'),
-              if (secondary != null) _colorSwatch(secondary, 'Background'),
-              if (accent != null) _colorSwatch(accent, 'Accent'),
             ],
           ),
-        ],
-      ),
-    );
-  }
+          const SizedBox(height: 12),
 
-  Widget _colorSwatch(Color color, String label) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 6.0),
-      child: Column(
-        children: [
+          // Mini meals card
           Container(
-            width: 28,
-            height: 28,
+            width: double.infinity,
+            padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: color,
-              shape: BoxShape.circle,
-              border: Border.all(color: Colors.white, width: 2.0),
-              boxShadow: [
-                BoxShadow(
-                  color: color.withOpacity(0.3),
-                  blurRadius: 4,
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(14),
+              boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 6)],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.restaurant_menu_rounded, color: primary, size: 16),
+                    const SizedBox(width: 6),
+                    Text("Today's Meals", style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: const Color(0xFF5D4E60))),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                // Meal rows
+                for (final meal in ['Breakfast · Overnight Oats', 'Lunch · Turkey Wraps', 'Dinner · Chicken Stir Fry'])
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 4),
+                    child: Row(
+                      children: [
+                        Container(width: 3, height: 16, decoration: BoxDecoration(color: primary, borderRadius: BorderRadius.circular(2))),
+                        const SizedBox(width: 8),
+                        Text(meal, style: const TextStyle(fontSize: 10, color: Color(0xFF5D4E60))),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 8),
+
+          // Mini event card
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(14),
+              boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 6)],
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.calendar_today_rounded, color: primary, size: 16),
+                const SizedBox(width: 6),
+                Text("Today's Events", style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: const Color(0xFF5D4E60))),
+                const Spacer(),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(color: accent, borderRadius: BorderRadius.circular(6)),
+                  child: const Text('Soccer 4pm', style: TextStyle(fontSize: 9, color: Colors.white, fontWeight: FontWeight.w500)),
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 4.0),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 10.0,
-              color: FlutterFlowTheme.of(context).secondaryText,
-            ),
-          ),
         ],
       ),
     );
   }
+
 }
 
 /// Show the enter creator code bottom sheet.

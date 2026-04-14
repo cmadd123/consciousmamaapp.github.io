@@ -2120,7 +2120,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                             // First apply category filter based on selected tab
                                             debugPrint('FavMealPage Filter: categoryFilter=${_model.categoryFilter}, activeRecipes=${activeRecipes.length}');
                                             List<MealRecord> filtered;
-                                            if (_model.categoryFilter == 'All') {
+                                            if (_model.categoryFilter == 'All' || _model.categoryFilter.startsWith('From ')) {
                                               filtered = activeRecipes;
                                             } else if (_model.categoryFilter == 'Entree') {
                                               // Recipe Type: Entree
