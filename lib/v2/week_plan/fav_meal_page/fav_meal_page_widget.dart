@@ -1440,8 +1440,8 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                       ),
                                     ),
                                   ),
-                                // Edit tip (one-time, shows in shared mode)
-                                if (_showEditTip && _creatorProfile != null && _model.cookbookMode == 'shared')
+                                // Edit tip (one-time, shows for creators in either mode)
+                                if (_showEditTip && _creatorProfile != null)
                                   Padding(
                                     padding: const EdgeInsets.fromLTRB(8.0, 4.0, 8.0, 4.0),
                                     child: Container(
@@ -1457,7 +1457,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                           const SizedBox(width: 10.0),
                                           Expanded(
                                             child: Text(
-                                              'Edits here are live — your followers see changes instantly. No duplicates, one recipe.',
+                                              'Edits to shared recipes are live — your followers see changes instantly.',
                                               style: FlutterFlowTheme.of(context).bodySmall.override(
                                                 fontFamily: 'Andika New Basic',
                                                 color: const Color(0xFFE65100),
