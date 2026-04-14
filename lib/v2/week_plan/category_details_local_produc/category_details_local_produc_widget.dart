@@ -45,6 +45,12 @@ class _CategoryDetailsLocalProducWidgetState
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
+  /// Whether this recipe belongs to someone else (creator's shared recipe)
+  bool get _isCreatorRecipe =>
+      widget.itemDetails != null &&
+      widget.itemDetails!.userRef != null &&
+      widget.itemDetails!.userRef != currentUserReference;
+
   @override
   void initState() {
     super.initState();
@@ -461,8 +467,8 @@ class _CategoryDetailsLocalProducWidgetState
                             ),
                           ),
                         ),
-                        // Delete button (hidden for curated recipes)
-                        if (!_isCuratedRecipe) ...[
+                        // Delete button (hidden for curated and creator recipes)
+                        if (!_isCuratedRecipe && !_isCreatorRecipe) ...[
                           SizedBox(width: 12.0),
                           InkWell(
                             onTap: () => _showDeleteConfirmation(context),
@@ -981,8 +987,8 @@ class _CategoryDetailsLocalProducWidgetState
               onTap: () => _copyToMyRecipes(),
             ),
 
-          // Edit Button (hidden for curated recipes)
-          if (!_isCuratedRecipe)
+          // Edit Button (hidden for curated and creator recipes)
+          if (!_isCuratedRecipe && !_isCreatorRecipe)
             _buildActionButton(
               icon: Icons.edit_outlined,
               label: 'Edit',
@@ -1033,6 +1039,62 @@ class _CategoryDetailsLocalProducWidgetState
               );
             },
           ),
+
+          // Add to My Recipes (for creator recipes only)
+          if (_isCreatorRecipe)
+            _buildActionButton(
+              icon: Icons.add_circle_outline,
+              label: 'Save',
+              color: FlutterFlowTheme.of(context).primary,
+              onTap: () async {
+                final recipe = widget.itemDetails!;
+                try {
+                  final newData = createMealRecordData(
+                    recipeName: recipe.recipeName,
+                    imageUrl: recipe.imageUrl,
+                    userRef: currentUserReference,
+                    mealTyp: recipe.mealTyp,
+                    mainOrSides: recipe.mainOrSides,
+                    sourceUrl: recipe.sourceUrl,
+                    prepareTime: recipe.prepareTime,
+                    cookingTime: recipe.cookingTime,
+                    recipeType: recipe.recipeType,
+                  );
+                  // Copy list fields
+                  if (recipe.ingredients.isNotEmpty) {
+                    newData['ingredients'] = recipe.ingredients;
+                  }
+                  if (recipe.cookingInstructions.isNotEmpty) {
+                    newData['CookingInstructions'] = recipe.cookingInstructions;
+                  }
+                  await MealRecord.collection.add(newData);
+
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('${recipe.recipeName} saved to your cookbook!'),
+                        backgroundColor: FlutterFlowTheme.of(context).primary,
+                        behavior: SnackBarBehavior.floating,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        margin: const EdgeInsets.all(16),
+                      ),
+                    );
+                  }
+                } catch (e) {
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: const Text('Failed to save recipe'),
+                        backgroundColor: FlutterFlowTheme.of(context).error,
+                        behavior: SnackBarBehavior.floating,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        margin: const EdgeInsets.all(16),
+                      ),
+                    );
+                  }
+                }
+              },
+            ),
         ],
       ),
     );
