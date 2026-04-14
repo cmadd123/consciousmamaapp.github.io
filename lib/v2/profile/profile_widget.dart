@@ -1,4 +1,5 @@
 import '/auth/firebase_auth/auth_util.dart';
+import '/backend/backend.dart';
 import '/backend/schema/enums/enums.dart';
 import '/backend/schema/structs/index.dart';
 import '/components/home_nav_bar_widget.dart';
@@ -14,6 +15,8 @@ import '/index.dart';
 import '/custom_code/actions/index.dart' as actions;
 import '/v2/creator/creator_theme_notifier.dart';
 import '/v2/creator/enter_creator_code_widget.dart';
+import '/v2/creator/creator_theme_editor.dart';
+import '/custom_code/actions/creator_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -40,11 +43,21 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
+  CreatorsRecord? _creatorProfile;
+
   @override
   void initState() {
     super.initState();
     _model = createModel(context, () => ProfileModel());
     initPageAnimations(itemCount: 5);
+    _loadCreatorProfile();
+  }
+
+  Future<void> _loadCreatorProfile() async {
+    final profile = await getCurrentUserCreatorProfile();
+    if (mounted && profile != null) {
+      setState(() => _creatorProfile = profile);
+    }
   }
 
   @override
@@ -1071,8 +1084,59 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                       ),
                     ),
                   )),
+                  // Customize Theme (creators only)
+                  if (_creatorProfile != null)
+                    CascadeItem(index: 6, baseDelayMs: 400, staggerMs: 80, child: Padding(
+                      padding: EdgeInsetsDirectional.fromSTEB(24.0, 8.0, 24.0, 0.0),
+                      child: Container(
+                        width: double.infinity,
+                        height: 60.0,
+                        decoration: BoxDecoration(
+                          color: FlutterFlowTheme.of(context).secondaryBackground,
+                          borderRadius: BorderRadius.circular(14.0),
+                        ),
+                        child: InkWell(
+                          splashColor: Colors.transparent,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => CreatorThemeEditorWidget(creator: _creatorProfile!),
+                              ),
+                            );
+                          },
+                          child: Row(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
+                                    child: Icon(Icons.color_lens_outlined, color: FlutterFlowTheme.of(context).primary, size: 24.0),
+                                  ),
+                                  Text(
+                                    'Customize Theme',
+                                    style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                      fontFamily: 'Andika New Basic',
+                                      fontSize: 16.0,
+                                      letterSpacing: 0.0,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Padding(
+                                padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
+                                child: Icon(Icons.arrow_forward_ios, color: FlutterFlowTheme.of(context).primaryText, size: 18.0),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    )),
                   // Cancel Subscription
-                  CascadeItem(index: 6, baseDelayMs: 400, staggerMs: 80, child: Padding(
+                  CascadeItem(index: 7, baseDelayMs: 400, staggerMs: 80, child: Padding(
                     padding:
                         EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),
                     child: Container(
