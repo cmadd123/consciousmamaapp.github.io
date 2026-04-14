@@ -1806,7 +1806,12 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                               InkWell(
                                                 splashColor: Colors.transparent,
                                                 onTap: () {
-                                                  _model.categoryFilter = 'From ${_model.activeCreatorName}';
+                                                  // Toggle: tap again to deselect
+                                                  if (_model.categoryFilter.startsWith('From ')) {
+                                                    _model.categoryFilter = 'All';
+                                                  } else {
+                                                    _model.categoryFilter = 'From ${_model.activeCreatorName}';
+                                                  }
                                                   safeSetState(() {});
                                                 },
                                                 child: Container(
