@@ -1010,7 +1010,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                   _deleteAllMealTemplates();
                 },
                 icon: Icon(Icons.restaurant_menu),
-                label: Text('Delete ALL Meal Templates'),
+                label: Text('Delete ALL Saved Days'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.orange,
                   foregroundColor: Colors.white,
@@ -1211,14 +1211,82 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                           ),
                                         ),
                                       ),
-                                      Container(
-                                        width: 0.0,
-                                        height: 0.0,
-                                        decoration: BoxDecoration(
-                                          color: FlutterFlowTheme.of(context)
-                                              .secondaryBackground,
+                                      // Personal / Shared toggle (creators only)
+                                      if (_creatorProfile != null)
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 3.0, vertical: 3.0),
+                                          decoration: BoxDecoration(
+                                            color: Colors.grey.shade200,
+                                            borderRadius: BorderRadius.circular(20.0),
+                                          ),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              GestureDetector(
+                                                onTap: () {
+                                                  _model.cookbookMode = 'personal';
+                                                  _model.recipeSourceTab = 'my';
+                                                  safeSetState(() {});
+                                                },
+                                                child: Container(
+                                                  padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 6.0),
+                                                  decoration: BoxDecoration(
+                                                    color: _model.cookbookMode == 'personal'
+                                                        ? Colors.white
+                                                        : Colors.transparent,
+                                                    borderRadius: BorderRadius.circular(18.0),
+                                                    boxShadow: _model.cookbookMode == 'personal'
+                                                        ? [BoxShadow(color: Colors.black.withOpacity(0.08), blurRadius: 4)]
+                                                        : null,
+                                                  ),
+                                                  child: Text(
+                                                    'Personal',
+                                                    style: FlutterFlowTheme.of(context).bodySmall.override(
+                                                      fontFamily: 'Andika New Basic',
+                                                      color: _model.cookbookMode == 'personal'
+                                                          ? FlutterFlowTheme.of(context).primaryText
+                                                          : const Color(0xFF999999),
+                                                      fontSize: 12.0,
+                                                      fontWeight: FontWeight.w600,
+                                                      letterSpacing: 0.0,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              GestureDetector(
+                                                onTap: () {
+                                                  _model.cookbookMode = 'shared';
+                                                  _model.recipeSourceTab = 'my';
+                                                  safeSetState(() {});
+                                                },
+                                                child: Container(
+                                                  padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 6.0),
+                                                  decoration: BoxDecoration(
+                                                    color: _model.cookbookMode == 'shared'
+                                                        ? Colors.white
+                                                        : Colors.transparent,
+                                                    borderRadius: BorderRadius.circular(18.0),
+                                                    boxShadow: _model.cookbookMode == 'shared'
+                                                        ? [BoxShadow(color: Colors.black.withOpacity(0.08), blurRadius: 4)]
+                                                        : null,
+                                                  ),
+                                                  child: Text(
+                                                    'Shared',
+                                                    style: FlutterFlowTheme.of(context).bodySmall.override(
+                                                      fontFamily: 'Andika New Basic',
+                                                      color: _model.cookbookMode == 'shared'
+                                                          ? FlutterFlowTheme.of(context).primary
+                                                          : const Color(0xFF999999),
+                                                      fontSize: 12.0,
+                                                      fontWeight: FontWeight.w600,
+                                                      letterSpacing: 0.0,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                      ),
                                     ],
                                   ),
                                 ),
@@ -1271,7 +1339,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                       ],
                                     ),
                                   ),
-                                // My Recipes / Templates / Meal Templates tab toggle
+                                // My Recipes / Templates / Saved Days tab toggle
                                 Padding(
                                   padding: EdgeInsetsDirectional.fromSTEB(
                                       8.0, 12.0, 8.0, 12.0),
@@ -1365,7 +1433,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                                 borderRadius: BorderRadius.circular(8.0),
                                               ),
                                               child: Text(
-                                                'Meal Templates',
+                                                'Saved Days',
                                                 textAlign: TextAlign.center,
                                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                   fontFamily: 'Andika New Basic',
@@ -1380,39 +1448,6 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                             ),
                                           ),
                                         ),
-                                        // Shared Library tab (only for creators)
-                                        if (_creatorProfile != null)
-                                          Expanded(
-                                            child: InkWell(
-                                              onTap: () {
-                                                _model.recipeSourceTab = 'shared';
-                                                _model.categoryFilter = 'All';
-                                                safeSetState(() {});
-                                              },
-                                              child: Container(
-                                                padding: EdgeInsets.symmetric(vertical: 10.0),
-                                                decoration: BoxDecoration(
-                                                  color: _model.recipeSourceTab == 'shared'
-                                                      ? FlutterFlowTheme.of(context).primary
-                                                      : Colors.transparent,
-                                                  borderRadius: BorderRadius.circular(8.0),
-                                                ),
-                                                child: Text(
-                                                  'Shared',
-                                                  textAlign: TextAlign.center,
-                                                  style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                    fontFamily: 'Andika New Basic',
-                                                    color: _model.recipeSourceTab == 'shared'
-                                                        ? Colors.white
-                                                        : Color(0xFF666666),
-                                                    fontSize: 13.0,
-                                                    fontWeight: FontWeight.w600,
-                                                    letterSpacing: 0.0,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
                                       ],
                                     ),
                                   ),
@@ -1469,7 +1504,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                     ),
                                   ),
                                 ),
-                                // Filter chips - grouped by category (show for My Recipes and Templates, not Meal Templates)
+                                // Filter chips - grouped by category (show for My Recipes and Templates, not Saved Days)
                                 if (_model.recipeSourceTab != 'savedDays')
                                 Padding(
                                   padding: EdgeInsetsDirectional.fromSTEB(
@@ -1727,15 +1762,12 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                       return _buildSavedDaysView(context);
                                     }
 
-                                    // Handle shared library tab (creator only)
-                                    if (_model.recipeSourceTab == 'shared') {
-                                      return _buildSharedLibraryView(context);
-                                    }
 
-                                    // Get the active recipe list based on selected tab
-                                    // Get active recipes based on selected tab
-                                    debugPrint('FavMealPage Builder: recipeSourceTab=${_model.recipeSourceTab}, userMeal=${_model.userMeal.length}');
-                                    final activeRecipes = _model.userMeal;
+                                    // Get the active recipe list based on selected tab and cookbook mode
+                                    debugPrint('FavMealPage Builder: recipeSourceTab=${_model.recipeSourceTab}, cookbookMode=${_model.cookbookMode}, userMeal=${_model.userMeal.length}');
+                                    final activeRecipes = _model.cookbookMode == 'shared'
+                                        ? _model.userMeal.where((r) => r.sharedWithFollowers).toList()
+                                        : _model.userMeal;
                                     debugPrint('FavMealPage Builder: activeRecipes=${activeRecipes.length}');
 
                                     if (activeRecipes.isEmpty) {
@@ -2831,7 +2863,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
     }
   }
 
-  /// Build the Meal Templates view — groups day templates by their shared group ID
+  /// Build the Saved Days view — groups day templates by their shared group ID
   /// Shared Library view — shows recipes the creator has marked as shared.
   /// Only visible to creators. Recipes with shared_with_followers=true.
   Widget _buildSharedLibraryView(BuildContext context) {
@@ -3009,7 +3041,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
             ),
             const SizedBox(height: 16.0),
             Text(
-              'No Meal Templates Yet',
+              'No Saved Days Yet',
               style: FlutterFlowTheme.of(context).bodyMedium.override(
                     fontFamily: 'Andika New Basic',
                     fontSize: 18.0,
@@ -3468,9 +3500,9 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
     );
   }
 
-  /// Build the Meal Templates view
+  /// Build the Saved Days view
   Widget _buildTemplatesView(BuildContext context) {
-    // Exclude day templates — those show in the Meal Templates tab
+    // Exclude day templates — those show in the Saved Days tab
     final regularTemplates = _model.mealTemplates
         .where((t) => !t.hasDayTemplateGroup())
         .toList();
@@ -3527,7 +3559,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
             ),
             const SizedBox(height: 16.0),
             Text(
-              'No Meal Templates Yet',
+              'No Saved Days Yet',
               style: FlutterFlowTheme.of(context).bodyMedium.override(
                     fontFamily: 'Andika New Basic',
                     fontSize: 18.0,

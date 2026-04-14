@@ -34,6 +34,9 @@ class FavMealPageModel extends FlutterFlowModel<FavMealPageWidget> {
   // Track if we've loaded all recipes (vs just favorites)
   bool loadedAllRecipes = false;
 
+  // Track which cookbook mode: 'personal' or 'shared' (creator only)
+  String cookbookMode = 'personal';
+
   // Track which recipe source tab is selected: 'my' or 'templates'
   String recipeSourceTab = 'my';
 
