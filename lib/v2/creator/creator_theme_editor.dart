@@ -249,21 +249,45 @@ class _CreatorThemeEditorWidgetState extends State<CreatorThemeEditorWidget> {
               children: [
                 Text('Background', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.grey[600])),
                 const Spacer(),
-                GestureDetector(
-                  onTap: () => setState(() {
-                    _useGradient = !_useGradient;
-                    if (!_useGradient) _gradEnd = _gradStart;
-                  }),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[200],
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      _useGradient ? 'Gradient' : 'Solid',
-                      style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Colors.grey[700]),
-                    ),
+                Container(
+                  padding: const EdgeInsets.all(3),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[200],
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      GestureDetector(
+                        onTap: () => setState(() {
+                          _useGradient = false;
+                          _gradEnd = _gradStart;
+                        }),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                          decoration: BoxDecoration(
+                            color: !_useGradient ? Colors.white : Colors.transparent,
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: !_useGradient ? [BoxShadow(color: Colors.black.withOpacity(0.08), blurRadius: 4)] : null,
+                          ),
+                          child: Text('Solid', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: !_useGradient ? Colors.grey[800] : Colors.grey[500])),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () => setState(() {
+                          _useGradient = true;
+                        }),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                          decoration: BoxDecoration(
+                            color: _useGradient ? Colors.white : Colors.transparent,
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: _useGradient ? [BoxShadow(color: Colors.black.withOpacity(0.08), blurRadius: 4)] : null,
+                          ),
+                          child: Text('Gradient', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: _useGradient ? Colors.grey[800] : Colors.grey[500])),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],

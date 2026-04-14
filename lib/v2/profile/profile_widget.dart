@@ -1087,7 +1087,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                   // Customize Theme (creators only)
                   if (_creatorProfile != null)
                     CascadeItem(index: 6, baseDelayMs: 400, staggerMs: 80, child: Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(24.0, 8.0, 24.0, 0.0),
+                      padding: EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),
                       child: Container(
                         width: double.infinity,
                         height: 60.0,

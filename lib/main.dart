@@ -175,6 +175,14 @@ void main() async {
   }
 }
 
+/// Removes the overscroll glow effect globally
+class _NoGlowScrollBehavior extends ScrollBehavior {
+  @override
+  Widget buildOverscrollIndicator(BuildContext context, Widget child, ScrollableDetails details) {
+    return child;
+  }
+}
+
 class MyApp extends StatefulWidget {
   // This widget is the root of your application.
   @override
@@ -350,6 +358,13 @@ class _MyAppState extends State<MyApp> {
           ),
         ),
       ),
+      builder: (context, child) {
+        // Remove overscroll glow globally (clashes with creator themes)
+        return ScrollConfiguration(
+          behavior: _NoGlowScrollBehavior(),
+          child: child!,
+        );
+      },
       themeMode: _themeMode,
       routerConfig: _router,
     );
