@@ -279,6 +279,116 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
   }
 
   // Build simplified view for single template
+  /// Simple view for a single shared recipe — no day/meal type header
+  Widget _buildSingleRecipeView(_SelectableRecipe recipe) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          // Checkbox
+          GestureDetector(
+            onTap: () => setState(() => recipe.isSelected = !recipe.isSelected),
+            child: Container(
+              width: 24,
+              height: 24,
+              decoration: BoxDecoration(
+                color: recipe.isSelected
+                    ? FlutterFlowTheme.of(context).primary
+                    : Colors.transparent,
+                borderRadius: BorderRadius.circular(6),
+                border: Border.all(
+                  color: recipe.isSelected
+                      ? FlutterFlowTheme.of(context).primary
+                      : Colors.grey.shade400,
+                  width: 2,
+                ),
+              ),
+              child: recipe.isSelected
+                  ? const Icon(Icons.check, size: 16, color: Colors.white)
+                  : null,
+            ),
+          ),
+          const SizedBox(width: 12),
+
+          // Image
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: recipe.imageUrl != null && recipe.imageUrl!.isNotEmpty
+                ? Image.network(
+                    recipe.imageUrl!,
+                    width: 56,
+                    height: 56,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => _buildPlaceholderImage(size: 56),
+                  )
+                : _buildPlaceholderImage(size: 56),
+          ),
+          const SizedBox(width: 12),
+
+          // Name + meal type
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  recipe.name,
+                  style: FlutterFlowTheme.of(context).bodyMedium.override(
+                    fontFamily: 'Andika New Basic',
+                    fontWeight: FontWeight.w600,
+                    fontSize: 15.0,
+                    letterSpacing: 0.0,
+                  ),
+                ),
+                if (recipe.mealType.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4),
+                    child: Text(
+                      recipe.mealType.split(',').map((t) => t.trim()).join(', '),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey[600],
+                        fontFamily: 'Andika New Basic',
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+
+          // View details
+          InkWell(
+            onTap: () => _showRecipeDetails(recipe),
+            borderRadius: BorderRadius.circular(8),
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: FlutterFlowTheme.of(context).secondary.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(
+                Icons.visibility,
+                color: FlutterFlowTheme.of(context).secondary,
+                size: 18,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildSingleTemplateView(_SelectableRecipe template) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8),
@@ -2201,9 +2311,12 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                   ),
                   const SizedBox(height: 8),
 
-                  // Simplified view for single template or grouped list for meal plans
+                  // Simplified view for single template, single recipe, or grouped list for meal plans
                   if (_isSingleTemplate())
                     _buildSingleTemplateView(_recipes.first)
+                  else if (_recipes.length == 1)
+                    // Single recipe — show directly without day/meal type header
+                    _buildSingleRecipeView(_recipes.first)
                   else
                     ..._groupedByDay.entries.map((entry) => _buildDayGroup(entry.key, entry.value)),
 
@@ -2772,8 +2885,8 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
           ),
         );
 
-        // Navigate to meal plan page
-        context.goNamed(CreateMealPlanWidget.routeName);
+        // Navigate to cookbook
+        context.goNamed(FavMealPageWidget.routeName);
       } else {
         // Add to meal plan for specific day
         for (final recipe in selectedRecipes) {
@@ -2806,8 +2919,8 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
           });
         }
 
-        // Navigate to meal plan page
-        context.goNamed(CreateMealPlanWidget.routeName);
+        // Navigate to cookbook
+        context.goNamed(FavMealPageWidget.routeName);
       }
     } catch (e) {
       if (!mounted) return;
