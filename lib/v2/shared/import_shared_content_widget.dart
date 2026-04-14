@@ -2299,8 +2299,8 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                     text: _isImporting
                         ? 'Importing...'
                         : _importMode == 'cookbook'
-                            ? 'Save $_selectedCount Recipe${_selectedCount == 1 ? '' : 's'} to Cookbook'
-                            : 'Add $_selectedCount Recipe${_selectedCount == 1 ? '' : 's'} to Meal Plan',
+                            ? 'Save $_selectedCount Item${_selectedCount == 1 ? '' : 's'} to Cookbook'
+                            : 'Add $_selectedCount Item${_selectedCount == 1 ? '' : 's'} to Meal Plan',
                     options: FFButtonOptions(
                       width: double.infinity,
                       height: 56,
@@ -2823,7 +2823,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Saved $successCount recipe${successCount == 1 ? '' : 's'} to your cookbook!'),
+            content: Text('Saved $successCount item${successCount == 1 ? '' : 's'} to your cookbook!'),
             backgroundColor: Colors.green,
             duration: const Duration(seconds: 3),
           ),
