@@ -955,7 +955,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                   // Cancel Subscription
                   CascadeItem(index: 6, baseDelayMs: 400, staggerMs: 80, child: Padding(
                     padding:
-                        EdgeInsetsDirectional.fromSTEB(24.0, 8.0, 24.0, 0.0),
+                        EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),
                     child: Container(
                       width: double.infinity,
                       height: 60.0,
@@ -1048,7 +1048,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                   // Enter Share Code
                   CascadeItem(index: 6, baseDelayMs: 400, staggerMs: 80, child: Padding(
                     padding:
-                        EdgeInsetsDirectional.fromSTEB(24.0, 8.0, 24.0, 0.0),
+                        EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),
                     child: Container(
                       width: double.infinity,
                       height: 60.0,
