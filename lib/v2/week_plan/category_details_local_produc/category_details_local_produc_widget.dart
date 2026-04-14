@@ -613,6 +613,57 @@ class _CategoryDetailsLocalProducWidgetState
                                 letterSpacing: 0.0,
                               ),
                         ),
+
+                        // Source attribution (for imported recipes)
+                        if (widget.itemDetails?.sourceUrl != null && widget.itemDetails!.sourceUrl.isNotEmpty) ...[
+                          const SizedBox(height: 6.0),
+                          GestureDetector(
+                            onTap: () async {
+                              final uri = Uri.tryParse(widget.itemDetails!.sourceUrl);
+                              if (uri != null) {
+                                await launchUrl(uri, mode: LaunchMode.externalApplication);
+                              }
+                            },
+                            child: Row(
+                              children: [
+                                Icon(Icons.open_in_new, size: 14, color: FlutterFlowTheme.of(context).secondaryText),
+                                const SizedBox(width: 4),
+                                Flexible(
+                                  child: Text(
+                                    'Originally from ${_extractDomain(widget.itemDetails!.sourceUrl)}',
+                                    style: FlutterFlowTheme.of(context).bodySmall.override(
+                                      fontFamily: 'Andika New Basic',
+                                      color: FlutterFlowTheme.of(context).secondaryText,
+                                      fontSize: 12.0,
+                                      decoration: TextDecoration.underline,
+                                      letterSpacing: 0.0,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+
+                        // Creator recommendation (for recipes in creator tab)
+                        if (_isCreatorRecipe) ...[
+                          const SizedBox(height: 4.0),
+                          Text(
+                            widget.itemDetails!.sourceUrl.isNotEmpty
+                                ? 'Recommended by creator'
+                                : 'By creator',
+                            style: FlutterFlowTheme.of(context).bodySmall.override(
+                              fontFamily: 'Andika New Basic',
+                              color: FlutterFlowTheme.of(context).primary,
+                              fontSize: 12.0,
+                              fontWeight: FontWeight.w500,
+                              letterSpacing: 0.0,
+                            ),
+                          ),
+                        ],
+
                         SizedBox(height: 8.0),
 
                         // Star Rating (user-initiated)

@@ -92,6 +92,16 @@ class MealRecord extends FirestoreRecord {
   bool get sharedWithFollowers => _sharedWithFollowers ?? false;
   bool hasSharedWithFollowers() => _sharedWithFollowers != null;
 
+  // "is_imported" field - Whether this recipe was imported from an external URL
+  bool? _isImported;
+  bool get isImported => _isImported ?? false;
+  bool hasIsImported() => _isImported != null;
+
+  // "source_domain" field - Display-friendly domain name (e.g., "allrecipes.com")
+  String? _sourceDomain;
+  String get sourceDomain => _sourceDomain ?? '';
+  bool hasSourceDomain() => _sourceDomain != null;
+
   void _initializeFields() {
     _imageUrl = snapshotData['image_url'] as String?;
     _recipeName = snapshotData['recipe_name'] as String?;
@@ -110,6 +120,8 @@ class MealRecord extends FirestoreRecord {
         ? snapshotData['recipe_type']
         : deserializeEnum<RecipeType>(snapshotData['recipe_type']);
     _sharedWithFollowers = snapshotData['shared_with_followers'] as bool?;
+    _isImported = snapshotData['is_imported'] as bool?;
+    _sourceDomain = snapshotData['source_domain'] as String?;
   }
 
   static CollectionReference get collection =>
@@ -159,6 +171,8 @@ Map<String, dynamic> createMealRecordData({
   int? rating,
   RecipeType? recipeType,
   bool? sharedWithFollowers,
+  bool? isImported,
+  String? sourceDomain,
 }) {
   final firestoreData = mapToFirestore(
     <String, dynamic>{
@@ -175,6 +189,8 @@ Map<String, dynamic> createMealRecordData({
       'rating': rating,
       'recipe_type': recipeType,
       'shared_with_followers': sharedWithFollowers,
+      'is_imported': isImported,
+      'source_domain': sourceDomain,
     }.withoutNulls,
   );
 
