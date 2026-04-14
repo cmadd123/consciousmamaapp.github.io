@@ -58,6 +58,8 @@ class _EnterCreatorCodeSheetState extends State<EnterCreatorCodeSheet> {
     if (!mounted) return;
 
     if (creator != null) {
+      // Dismiss keyboard so preview isn't cut off
+      FocusScope.of(context).unfocus();
       setState(() {
         _validatedCreator = creator;
         _isValidating = false;
@@ -97,19 +99,23 @@ class _EnterCreatorCodeSheetState extends State<EnterCreatorCodeSheet> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(
-        left: 24.0,
-        right: 24.0,
-        top: 16.0,
-        bottom: MediaQuery.of(context).viewInsets.bottom + 24.0,
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.85,
       ),
       decoration: BoxDecoration(
         color: FlutterFlowTheme.of(context).secondaryBackground,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24.0)),
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
+      child: SingleChildScrollView(
+        padding: EdgeInsets.only(
+          left: 24.0,
+          right: 24.0,
+          top: 16.0,
+          bottom: MediaQuery.of(context).viewInsets.bottom + 24.0,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
           // Handle bar
           Container(
             width: 40,
@@ -234,6 +240,7 @@ class _EnterCreatorCodeSheetState extends State<EnterCreatorCodeSheet> {
 
           const SizedBox(height: 8.0),
         ],
+      ),
       ),
     );
   }

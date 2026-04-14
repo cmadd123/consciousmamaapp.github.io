@@ -1457,7 +1457,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                           const SizedBox(width: 10.0),
                                           Expanded(
                                             child: Text(
-                                              'Edits to shared recipes are live — your followers see changes instantly.',
+                                              'Edits to anything shared are live — your followers see changes instantly.',
                                               style: FlutterFlowTheme.of(context).bodySmall.override(
                                                 fontFamily: 'Andika New Basic',
                                                 color: const Color(0xFFE65100),
