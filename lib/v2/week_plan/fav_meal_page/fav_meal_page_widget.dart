@@ -1697,7 +1697,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                             {'label': 'Dinner', 'emoji': '🌙'},
                                             {'label': 'Snacks', 'emoji': '🍪'},
                                             if (_model.creatorSharedRecipes.isNotEmpty && _model.activeCreatorName != null)
-                                              {'label': 'From Creator', 'emoji': '👤'},
+                                              {'label': 'From ${_model.activeCreatorName}', 'emoji': '👤'},
                                           ].map((mealType) {
                                             final label = mealType['label']!;
                                             final emoji = mealType['emoji']!;
@@ -1916,7 +1916,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                     if (_model.cookbookMode == 'shared') {
                                       // Creator's shared view: only their shared recipes
                                       activeRecipes = _model.userMeal.where((r) => r.sharedWithFollowers).toList();
-                                    } else if (_model.categoryFilter == 'From Creator' && _model.creatorSharedRecipes.isNotEmpty) {
+                                    } else if (_model.categoryFilter.startsWith('From ') && _model.creatorSharedRecipes.isNotEmpty) {
                                       // Follower filtering to creator recipes only
                                       activeRecipes = _model.creatorSharedRecipes;
                                     } else {
