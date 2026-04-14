@@ -18,6 +18,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '/custom_code/actions/creator_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'fav_meal_page_model.dart';
 export 'fav_meal_page_model.dart';
 
@@ -51,12 +52,25 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
 
   // Creator profile (null if user is not a creator)
   CreatorsRecord? _creatorProfile;
+  bool _showCreatorTip = false;
 
   Future<void> _loadCreatorProfile() async {
     final profile = await getCurrentUserCreatorProfile();
     if (mounted && profile != null) {
+      // Check if tip has been dismissed
+      final prefs = await SharedPreferences.getInstance();
+      final tipDismissed = prefs.getBool('creator_cookbook_tip_dismissed') ?? false;
+      if (!tipDismissed && mounted) {
+        setState(() => _showCreatorTip = true);
+      }
       setState(() => _creatorProfile = profile);
     }
+  }
+
+  Future<void> _dismissCreatorTip() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('creator_cookbook_tip_dismissed', true);
+    if (mounted) setState(() => _showCreatorTip = false);
   }
 
   /// Upgrade Pinterest image URL to higher resolution
@@ -1337,6 +1351,52 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                               ),
                                         ),
                                       ],
+                                    ),
+                                  ),
+                                // Creator tip (one-time, dismissable)
+                                if (_showCreatorTip && _creatorProfile != null)
+                                  Padding(
+                                    padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 4.0),
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 10.0),
+                                      decoration: BoxDecoration(
+                                        color: FlutterFlowTheme.of(context).primary.withOpacity(0.08),
+                                        borderRadius: BorderRadius.circular(12.0),
+                                        border: Border.all(
+                                          color: FlutterFlowTheme.of(context).primary.withOpacity(0.2),
+                                        ),
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Icon(Icons.people_outline, size: 20.0, color: FlutterFlowTheme.of(context).primary),
+                                          const SizedBox(width: 10.0),
+                                          Expanded(
+                                            child: Text(
+                                              'Tap the people icon on any recipe to share it with your followers.',
+                                              style: FlutterFlowTheme.of(context).bodySmall.override(
+                                                fontFamily: 'Andika New Basic',
+                                                color: FlutterFlowTheme.of(context).primary,
+                                                fontSize: 12.0,
+                                                letterSpacing: 0.0,
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 8.0),
+                                          GestureDetector(
+                                            onTap: _dismissCreatorTip,
+                                            child: Text(
+                                              'Got it',
+                                              style: FlutterFlowTheme.of(context).bodySmall.override(
+                                                fontFamily: 'Andika New Basic',
+                                                color: FlutterFlowTheme.of(context).primary,
+                                                fontSize: 12.0,
+                                                fontWeight: FontWeight.w700,
+                                                letterSpacing: 0.0,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 // My Recipes / Templates / Saved Days tab toggle
