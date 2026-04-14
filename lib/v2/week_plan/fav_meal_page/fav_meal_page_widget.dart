@@ -17,6 +17,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import '/custom_code/actions/creator_service.dart';
 import 'fav_meal_page_model.dart';
 export 'fav_meal_page_model.dart';
 
@@ -47,6 +48,16 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
   late FavMealPageModel _model;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
+
+  // Creator profile (null if user is not a creator)
+  CreatorsRecord? _creatorProfile;
+
+  Future<void> _loadCreatorProfile() async {
+    final profile = await getCurrentUserCreatorProfile();
+    if (mounted && profile != null) {
+      setState(() => _creatorProfile = profile);
+    }
+  }
 
   /// Upgrade Pinterest image URL to higher resolution
   /// Pinterest URLs follow pattern: i.pinimg.com/{size}/...
@@ -128,6 +139,9 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
   void initState() {
     super.initState();
     _model = createModel(context, () => FavMealPageModel());
+
+    // Check if user is a creator
+    _loadCreatorProfile();
 
     // On page load action.
     SchedulerBinding.instance.addPostFrameCallback((_) async {
@@ -1366,6 +1380,39 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                             ),
                                           ),
                                         ),
+                                        // Shared Library tab (only for creators)
+                                        if (_creatorProfile != null)
+                                          Expanded(
+                                            child: InkWell(
+                                              onTap: () {
+                                                _model.recipeSourceTab = 'shared';
+                                                _model.categoryFilter = 'All';
+                                                safeSetState(() {});
+                                              },
+                                              child: Container(
+                                                padding: EdgeInsets.symmetric(vertical: 10.0),
+                                                decoration: BoxDecoration(
+                                                  color: _model.recipeSourceTab == 'shared'
+                                                      ? FlutterFlowTheme.of(context).primary
+                                                      : Colors.transparent,
+                                                  borderRadius: BorderRadius.circular(8.0),
+                                                ),
+                                                child: Text(
+                                                  'Shared',
+                                                  textAlign: TextAlign.center,
+                                                  style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                    fontFamily: 'Andika New Basic',
+                                                    color: _model.recipeSourceTab == 'shared'
+                                                        ? Colors.white
+                                                        : Color(0xFF666666),
+                                                    fontSize: 13.0,
+                                                    fontWeight: FontWeight.w600,
+                                                    letterSpacing: 0.0,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
                                       ],
                                     ),
                                   ),
@@ -1678,6 +1725,11 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                     // Handle meal templates tab
                                     if (_model.recipeSourceTab == 'savedDays') {
                                       return _buildSavedDaysView(context);
+                                    }
+
+                                    // Handle shared library tab (creator only)
+                                    if (_model.recipeSourceTab == 'shared') {
+                                      return _buildSharedLibraryView(context);
                                     }
 
                                     // Get the active recipe list based on selected tab
@@ -2239,6 +2291,50 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                                             ),
                                                           ),
                                                         ),
+                                                        // Share with followers icon (top-left, creators only)
+                                                        if (_creatorProfile != null)
+                                                          Positioned(
+                                                            top: 8.0,
+                                                            left: 8.0,
+                                                            child: GestureDetector(
+                                                              onTap: () async {
+                                                                final isShared = containerVarItem.sharedWithFollowers;
+                                                                await containerVarItem.reference.update({
+                                                                  'shared_with_followers': !isShared,
+                                                                });
+                                                                if (mounted) {
+                                                                  _reloadUserRecipes();
+                                                                  ScaffoldMessenger.of(context).showSnackBar(
+                                                                    SnackBar(
+                                                                      content: Text(isShared
+                                                                          ? 'Removed from Shared Library'
+                                                                          : 'Added to Shared Library'),
+                                                                      behavior: SnackBarBehavior.floating,
+                                                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                                                      margin: const EdgeInsets.all(16),
+                                                                      duration: const Duration(seconds: 2),
+                                                                    ),
+                                                                  );
+                                                                }
+                                                              },
+                                                              child: Container(
+                                                                padding: const EdgeInsets.all(5.0),
+                                                                decoration: BoxDecoration(
+                                                                  color: containerVarItem.sharedWithFollowers
+                                                                      ? FlutterFlowTheme.of(context).primary
+                                                                      : Colors.black.withOpacity(0.4),
+                                                                  shape: BoxShape.circle,
+                                                                ),
+                                                                child: Icon(
+                                                                  containerVarItem.sharedWithFollowers
+                                                                      ? Icons.people
+                                                                      : Icons.people_outline,
+                                                                  color: Colors.white,
+                                                                  size: 14.0,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
                                                       ],
                                                     ),
                                                   ),
@@ -2736,6 +2832,155 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
   }
 
   /// Build the Meal Templates view — groups day templates by their shared group ID
+  /// Shared Library view — shows recipes the creator has marked as shared.
+  /// Only visible to creators. Recipes with shared_with_followers=true.
+  Widget _buildSharedLibraryView(BuildContext context) {
+    return StreamBuilder<List<MealRecord>>(
+      stream: queryMealRecord(
+        queryBuilder: (q) => q
+            .where('user_ref', isEqualTo: currentUserReference)
+            .where('shared_with_followers', isEqualTo: true),
+      ),
+      builder: (context, snapshot) {
+        final sharedRecipes = snapshot.data ?? [];
+
+        if (!snapshot.hasData) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(40.0),
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  FlutterFlowTheme.of(context).primary,
+                ),
+              ),
+            ),
+          );
+        }
+
+        if (sharedRecipes.isEmpty) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(40.0),
+              child: Column(
+                children: [
+                  Icon(
+                    Icons.share_outlined,
+                    size: 48.0,
+                    color: const Color(0xFFDADADA),
+                  ),
+                  const SizedBox(height: 12.0),
+                  Text(
+                    'No shared recipes yet',
+                    style: FlutterFlowTheme.of(context).bodyMedium.override(
+                      fontFamily: 'Andika New Basic',
+                      color: const Color(0xFF9B8A9E),
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.0,
+                    ),
+                  ),
+                  const SizedBox(height: 6.0),
+                  Text(
+                    'Go to the Recipes tab and tap the share icon on any recipe to add it here. Your followers will see these.',
+                    textAlign: TextAlign.center,
+                    style: FlutterFlowTheme.of(context).bodySmall.override(
+                      fontFamily: 'Andika New Basic',
+                      color: const Color(0xFFBBBBBB),
+                      fontSize: 13.0,
+                      letterSpacing: 0.0,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+
+        return ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: sharedRecipes.length,
+          itemBuilder: (context, index) {
+            final meal = sharedRecipes[index];
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 8.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(14.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.04),
+                      blurRadius: 6.0,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: ListTile(
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
+                  leading: ClipRRect(
+                    borderRadius: BorderRadius.circular(10.0),
+                    child: Container(
+                      width: 50,
+                      height: 50,
+                      color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
+                      child: meal.hasImageUrl()
+                          ? Image.network(meal.imageUrl, fit: BoxFit.cover)
+                          : Icon(Icons.restaurant, color: FlutterFlowTheme.of(context).primary),
+                    ),
+                  ),
+                  title: Text(
+                    meal.recipeName,
+                    style: FlutterFlowTheme.of(context).bodyMedium.override(
+                      fontFamily: 'Andika New Basic',
+                      fontSize: 14.0,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.0,
+                    ),
+                  ),
+                  subtitle: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
+                        decoration: BoxDecoration(
+                          color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(4.0),
+                        ),
+                        child: Text(
+                          'Shared with followers',
+                          style: TextStyle(
+                            fontSize: 10.0,
+                            color: FlutterFlowTheme.of(context).primary,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  trailing: IconButton(
+                    icon: Icon(Icons.remove_circle_outline, color: Colors.red.shade300, size: 22.0),
+                    onPressed: () async {
+                      // Remove from shared library
+                      await meal.reference.update({'shared_with_followers': false});
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('${meal.recipeName} removed from Shared Library'),
+                          behavior: SnackBarBehavior.floating,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                          margin: const EdgeInsets.all(16),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   Widget _buildSavedDaysView(BuildContext context) {
     // Filter templates that have a day_template_group
     final dayTemplates = _model.mealTemplates

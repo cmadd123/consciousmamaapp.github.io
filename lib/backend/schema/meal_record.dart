@@ -87,6 +87,11 @@ class MealRecord extends FirestoreRecord {
   RecipeType? get recipeType => _recipeType;
   bool hasRecipeType() => _recipeType != null;
 
+  // "shared_with_followers" field - Whether this recipe is in the creator's Shared Library
+  bool? _sharedWithFollowers;
+  bool get sharedWithFollowers => _sharedWithFollowers ?? false;
+  bool hasSharedWithFollowers() => _sharedWithFollowers != null;
+
   void _initializeFields() {
     _imageUrl = snapshotData['image_url'] as String?;
     _recipeName = snapshotData['recipe_name'] as String?;
@@ -104,6 +109,7 @@ class MealRecord extends FirestoreRecord {
     _recipeType = snapshotData['recipe_type'] is RecipeType
         ? snapshotData['recipe_type']
         : deserializeEnum<RecipeType>(snapshotData['recipe_type']);
+    _sharedWithFollowers = snapshotData['shared_with_followers'] as bool?;
   }
 
   static CollectionReference get collection =>
@@ -152,6 +158,7 @@ Map<String, dynamic> createMealRecordData({
   String? sourceUrl,
   int? rating,
   RecipeType? recipeType,
+  bool? sharedWithFollowers,
 }) {
   final firestoreData = mapToFirestore(
     <String, dynamic>{
@@ -167,6 +174,7 @@ Map<String, dynamic> createMealRecordData({
       'source_url': sourceUrl,
       'rating': rating,
       'recipe_type': recipeType,
+      'shared_with_followers': sharedWithFollowers,
     }.withoutNulls,
   );
 

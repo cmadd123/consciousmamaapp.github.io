@@ -192,14 +192,33 @@ Future<bool> hasActiveCreatorCode() async {
 /// Check if the current user is a creator (has a creator profile).
 Future<CreatorsRecord?> getCurrentUserCreatorProfile() async {
   try {
-    if (currentUserReference == null) return null;
+    if (currentUserReference == null) {
+      debugPrint('Creator check: currentUserReference is null');
+      return null;
+    }
+
+    debugPrint('Creator check: looking for user_ref = ${currentUserReference!.path}');
 
     final results = await queryCreatorsRecordOnce(
       queryBuilder: (q) => q.where('user_ref', isEqualTo: currentUserReference),
       singleRecord: true,
     );
 
-    return results.isNotEmpty ? results.first : null;
+    debugPrint('Creator check: found ${results.length} results');
+
+    if (results.isEmpty) {
+      // Fallback: try matching by UID string in case web stored it differently
+      final uid = currentUserUid;
+      debugPrint('Creator check: trying fallback with uid = $uid');
+      final fallbackResults = await queryCreatorsRecordOnce(
+        queryBuilder: (q) => q.where('user_ref', isEqualTo: FirebaseFirestore.instance.doc('users/$uid')),
+        singleRecord: true,
+      );
+      debugPrint('Creator check fallback: found ${fallbackResults.length} results');
+      return fallbackResults.isNotEmpty ? fallbackResults.first : null;
+    }
+
+    return results.first;
   } catch (e) {
     debugPrint('Error checking creator status: $e');
     return null;
