@@ -551,8 +551,17 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
               children: [
                 // Group by meal type within each day
                 ..._mealTypeOrder.map((mealType) {
+                  // Show each recipe under its FIRST matching meal type only (avoid duplicates)
+                  final alreadyShown = <String>{};
+                  for (final prevType in _mealTypeOrder) {
+                    if (prevType == mealType) break;
+                    for (final r in recipes) {
+                      final types = r.mealType.split(',').map((t) => t.trim()).toList();
+                      if (types.contains(prevType)) alreadyShown.add(r.id);
+                    }
+                  }
                   final mealsOfType = recipes.where((r) {
-                    // Handle comma-separated meal types (e.g., "Lunch,Dinner")
+                    if (alreadyShown.contains(r.id)) return false;
                     final types = r.mealType.split(',').map((t) => t.trim()).toList();
                     return types.contains(mealType) || r.mealType == mealType;
                   }).toList();
@@ -2200,103 +2209,29 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
 
                   const SizedBox(height: 24),
 
-                  // Import mode selection
+                  // Info message
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: FlutterFlowTheme.of(context).primary.withOpacity(0.06),
                       borderRadius: BorderRadius.circular(14),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
-                          blurRadius: 10,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    child: Row(
                       children: [
-                        Text(
-                          'What would you like to do?',
-                          style: FlutterFlowTheme.of(context).titleSmall.override(
-                                fontFamily: 'Andika New Basic',
-                                fontWeight: FontWeight.w600,
-                                letterSpacing: 0.0,
-                              ),
-                        ),
-                        const SizedBox(height: 12),
-
-                        // Option 1: Add to Cookbook
-                        _buildImportOption(
-                          value: 'cookbook',
-                          icon: Icons.menu_book,
-                          title: _isSingleTemplate() ? 'Save Template to Cookbook' : 'Save to My Cookbook',
-                          subtitle: _isSingleTemplate() ? 'Add to your meal templates' : 'Save recipes to use later',
-                        ),
-                        const SizedBox(height: 8),
-
-                        // Option 2: Add to Meal Plan
-                        _buildImportOption(
-                          value: 'mealplan',
-                          icon: Icons.calendar_today,
-                          title: 'Add to Meal Plan',
-                          subtitle: 'Schedule for a specific day',
-                        ),
-
-                        // If meal plan mode, show day/meal picker
-                        if (_importMode == 'mealplan') ...[
-                          const SizedBox(height: 16),
-                          const Divider(),
-                          const SizedBox(height: 12),
-
-                          // Date picker - next 7 days as chips
-                          Text(
-                            'Select day:',
-                            style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                  fontFamily: 'Andika New Basic',
-                                  fontWeight: FontWeight.w500,
-                                  letterSpacing: 0.0,
-                                ),
+                        Icon(Icons.menu_book, size: 20, color: FlutterFlowTheme.of(context).primary),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            'Selected items will be saved to your cookbook.',
+                            style: FlutterFlowTheme.of(context).bodySmall.override(
+                              fontFamily: 'Andika New Basic',
+                              color: FlutterFlowTheme.of(context).primary,
+                              fontSize: 13.0,
+                              letterSpacing: 0.0,
+                            ),
                           ),
-                          const SizedBox(height: 8),
-                          _buildDaySelector(),
-                          const SizedBox(height: 12),
-
-                          // Meal type picker
-                          Text(
-                            'Select meal:',
-                            style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                  fontFamily: 'Andika New Basic',
-                                  fontWeight: FontWeight.w500,
-                                  letterSpacing: 0.0,
-                                ),
-                          ),
-                          const SizedBox(height: 8),
-                          Wrap(
-                            spacing: 8,
-                            children: ['Breakfast', 'Lunch', 'Dinner', 'Snacks'].map((type) {
-                              final isSelected = _selectedMealType == type;
-                              return ChoiceChip(
-                                label: Text(type),
-                                selected: isSelected,
-                                onSelected: (selected) {
-                                  if (selected) {
-                                    setState(() => _selectedMealType = type);
-                                  }
-                                },
-                                selectedColor: FlutterFlowTheme.of(context).primary.withOpacity(0.2),
-                                labelStyle: TextStyle(
-                                  color: isSelected
-                                      ? FlutterFlowTheme.of(context).primary
-                                      : Colors.grey[700],
-                                  fontFamily: 'Andika New Basic',
-                                ),
-                              );
-                            }).toList(),
-                          ),
-                        ],
+                        ),
                       ],
                     ),
                   ),
@@ -2308,9 +2243,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                     onPressed: _selectedCount == 0 || _isImporting ? null : _handleImport,
                     text: _isImporting
                         ? 'Importing...'
-                        : _importMode == 'cookbook'
-                            ? 'Save $_selectedCount Item${_selectedCount == 1 ? '' : 's'} to Cookbook'
-                            : 'Add $_selectedCount Item${_selectedCount == 1 ? '' : 's'} to Meal Plan',
+                        : 'Save $_selectedCount Item${_selectedCount == 1 ? '' : 's'} to Cookbook',
                     options: FFButtonOptions(
                       width: double.infinity,
                       height: 56,
@@ -2549,7 +2482,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                                   size: 14, color: _getMealTypeColor(recipe.mealType)),
                               const SizedBox(width: 4),
                               Text(
-                                recipe.mealType,
+                                recipe.mealType.split(',').map((t) => t.trim()).join(', '),
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: _getMealTypeColor(recipe.mealType),
