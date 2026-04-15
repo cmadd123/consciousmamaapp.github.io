@@ -13,6 +13,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import '/v2/routines/routines_page_widget.dart';
+import '/v2/helpful_docs/helpful_docs_page.dart';
 import 'package:flutter/services.dart';
 import 'package:collection/collection.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -214,6 +215,10 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
 
                         // Milestones Card (animated)
                         _animatedCard(7, _buildMilestonesCard(context, sortedChildren)),
+                        const SizedBox(height: 16.0),
+
+                        // Helpful Docs Card (animated)
+                        _animatedCard(8, _buildHelpfulDocsCard(context)),
                         const SizedBox(height: 16.0),
 
                         // HIDDEN FOR TESTERS: Skills & Hobbies Preview Button
@@ -1298,6 +1303,47 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
             fontSize: 9.0,
             fontWeight: FontWeight.bold,
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHelpfulDocsCard(BuildContext context) {
+    return InkWell(
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const HelpfulDocsPage()),
+      ),
+      borderRadius: BorderRadius.circular(20.0),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(20.0),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20.0),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.menu_book_outlined, color: FlutterFlowTheme.of(context).primary, size: 22.0),
+            const SizedBox(width: 8.0),
+            Text(
+              'Helpful Docs',
+              style: FlutterFlowTheme.of(context).bodyLarge.override(
+                fontFamily: 'Andika New Basic',
+                color: const Color(0xFF5D4E60),
+                fontSize: 18.0,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 0.0,
+              ),
+            ),
+          ],
         ),
       ),
     );

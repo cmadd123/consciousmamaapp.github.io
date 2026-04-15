@@ -160,6 +160,14 @@ service cloud.firestore {
       allow update: if isAuthenticated();
     }
 
+    // App content (helpful docs) - read only for authenticated users
+    match /app_content/{contentId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update: if false;
+      allow delete: if false;
+    }
+
     // Routines - users can only access their own
     match /routines/{routineId} {
       allow read, write: if isAuthenticated() &&

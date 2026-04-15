@@ -484,6 +484,19 @@ exports.extractRecipe = onRequest({ secrets: [openaiApiKey, scrapingBeeApiKey] }
       }
     }
 
+    // Estimate cost from ingredients using OpenAI
+    if (recipe.ingredients && recipe.ingredients.length > 0) {
+      try {
+        const costEstimate = await estimateRecipeCost(recipe.ingredients, openaiApiKey.value());
+        if (costEstimate > 0) {
+          recipe.estimatedCost = costEstimate;
+          console.log(`Estimated cost: $${costEstimate.toFixed(2)}`);
+        }
+      } catch (costError) {
+        console.log(`Cost estimation failed (non-blocking): ${costError.message}`);
+      }
+    }
+
     console.log(`Returning recipe: ${recipe.name}`);
     console.log(`Instructions count: ${recipe.instructions.length}`);
     console.log(`Instructions: ${JSON.stringify(recipe.instructions).substring(0, 500)}...`);
@@ -1115,6 +1128,58 @@ Return ONLY valid JSON.`
     req.setTimeout(45000, () => {
       req.destroy();
       reject(new Error('Vision request timeout'));
+    });
+
+    req.write(requestBody);
+    req.end();
+  });
+}
+
+// Helper: Estimate recipe cost from ingredients using OpenAI
+async function estimateRecipeCost(ingredients, apiKey) {
+  apiKey = apiKey.trim();
+  const ingredientList = ingredients.slice(0, 20).join('\n');
+
+  const requestBody = JSON.stringify({
+    model: 'gpt-4o-mini',
+    messages: [
+      { role: 'system', content: 'You estimate grocery costs. Return ONLY a number (the total cost in USD). No text, no dollar sign, just the number. Be conservative - use average US grocery prices.' },
+      { role: 'user', content: `Estimate the total grocery cost in USD for these ingredients:\n${ingredientList}` }
+    ],
+    temperature: 0.1,
+    max_tokens: 20
+  });
+
+  return new Promise((resolve, reject) => {
+    const req = https.request('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`
+      }
+    }, (res) => {
+      let data = '';
+      res.on('data', chunk => { data += chunk; });
+      res.on('end', () => {
+        try {
+          const response = JSON.parse(data);
+          if (response.error) {
+            reject(new Error(response.error.message));
+            return;
+          }
+          const content = response.choices[0].message.content.trim();
+          const cost = parseFloat(content.replace(/[^0-9.]/g, ''));
+          resolve(isNaN(cost) ? 0 : cost);
+        } catch (e) {
+          reject(new Error(`Parse error: ${e.message}`));
+        }
+      });
+    });
+
+    req.on('error', reject);
+    req.setTimeout(10000, () => {
+      req.destroy();
+      reject(new Error('Cost estimation timeout'));
     });
 
     req.write(requestBody);
