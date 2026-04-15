@@ -1199,6 +1199,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
       },
       child: Scaffold(
         key: scaffoldKey,
+        resizeToAvoidBottomInset: false,
         backgroundColor: Color(0xFFE8F5F3), // Light teal to match Cookbook button
         bottomNavigationBar: const HomeNavBarWidget(currentPage: HomeNavPage.meals),
         body: SafeArea(
@@ -3632,6 +3633,40 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                             ],
                           ),
                         ),
+                        // Share toggle for creators (shares entire day group)
+                        if (_creatorProfile != null && _model.cookbookMode == 'personal')
+                          GestureDetector(
+                            onTap: () async {
+                              final isShared = templates.first.sharedWithFollowers;
+                              // Toggle all templates in this group
+                              for (final t in templates) {
+                                await t.reference.update({'shared_with_followers': !isShared});
+                              }
+                              _model.loadedMealTemplates = false;
+                              _loadMealTemplates();
+                              if (mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(isShared ? 'Removed from Shared' : 'Shared with followers'),
+                                    behavior: SnackBarBehavior.floating,
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                    margin: const EdgeInsets.all(16),
+                                    duration: const Duration(seconds: 2),
+                                  ),
+                                );
+                              }
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.only(right: 8),
+                              child: Icon(
+                                templates.first.sharedWithFollowers ? Icons.people : Icons.people_outline,
+                                size: 18,
+                                color: templates.first.sharedWithFollowers
+                                    ? FlutterFlowTheme.of(context).primary
+                                    : Colors.grey.shade400,
+                              ),
+                            ),
+                          ),
                         Text(
                           '${templates.length} meal${templates.length > 1 ? 's' : ''}',
                           style: FlutterFlowTheme.of(context).bodySmall.override(
