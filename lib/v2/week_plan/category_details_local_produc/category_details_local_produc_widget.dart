@@ -786,37 +786,7 @@ class _CategoryDetailsLocalProducWidgetState
                           }(),
                         ],
 
-                        // Source URL (clickable)
-                        if (widget.itemDetails?.sourceUrl != null &&
-                            widget.itemDetails!.sourceUrl.isNotEmpty) ...[
-                          SizedBox(height: 8.0),
-                          InkWell(
-                            onTap: () => _launchUrl(widget.itemDetails?.sourceUrl),
-                            child: Row(
-                              children: [
-                                Icon(
-                                  Icons.link,
-                                  size: 16.0,
-                                  color: FlutterFlowTheme.of(context).primary,
-                                ),
-                                SizedBox(width: 6.0),
-                                Flexible(
-                                  child: Text(
-                                    _extractDomain(widget.itemDetails?.sourceUrl),
-                                    style: FlutterFlowTheme.of(context).bodySmall.override(
-                                          fontFamily: 'Andika New Basic',
-                                          color: FlutterFlowTheme.of(context).primary,
-                                          fontSize: 13.0,
-                                          letterSpacing: 0.0,
-                                          decoration: TextDecoration.underline,
-                                        ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
+                        // Source URL removed — now shown above the tags via "Originally from" link
                         SizedBox(height: 20.0),
 
                         // Action Buttons with Labels

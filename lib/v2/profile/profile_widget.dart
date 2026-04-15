@@ -1021,8 +1021,59 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                       ),
                     ),
                   )),
+                  // Customize Theme (creators only) — above Subscription
+                  if (_creatorProfile != null)
+                    CascadeItem(index: 6, baseDelayMs: 400, staggerMs: 80, child: Padding(
+                      padding: EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),
+                      child: Container(
+                        width: double.infinity,
+                        height: 60.0,
+                        decoration: BoxDecoration(
+                          color: FlutterFlowTheme.of(context).secondaryBackground,
+                          borderRadius: BorderRadius.circular(14.0),
+                        ),
+                        child: InkWell(
+                          splashColor: Colors.transparent,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => CreatorThemeEditorWidget(creator: _creatorProfile!),
+                              ),
+                            );
+                          },
+                          child: Row(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
+                                    child: Icon(Icons.color_lens_outlined, color: FlutterFlowTheme.of(context).primary, size: 24.0),
+                                  ),
+                                  Text(
+                                    'Customize Theme',
+                                    style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                      fontFamily: 'Andika New Basic',
+                                      fontSize: 16.0,
+                                      letterSpacing: 0.0,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Padding(
+                                padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
+                                child: Icon(Icons.arrow_forward_ios, color: FlutterFlowTheme.of(context).primaryText, size: 18.0),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    )),
                   // Subscription
-                  CascadeItem(index: 6, baseDelayMs: 400, staggerMs: 80, child: Padding(
+                  CascadeItem(index: 7, baseDelayMs: 400, staggerMs: 80, child: Padding(
                     padding:
                         EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),
                     child: Container(
@@ -1084,57 +1135,6 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                       ),
                     ),
                   )),
-                  // Customize Theme (creators only)
-                  if (_creatorProfile != null)
-                    CascadeItem(index: 6, baseDelayMs: 400, staggerMs: 80, child: Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),
-                      child: Container(
-                        width: double.infinity,
-                        height: 60.0,
-                        decoration: BoxDecoration(
-                          color: FlutterFlowTheme.of(context).secondaryBackground,
-                          borderRadius: BorderRadius.circular(14.0),
-                        ),
-                        child: InkWell(
-                          splashColor: Colors.transparent,
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => CreatorThemeEditorWidget(creator: _creatorProfile!),
-                              ),
-                            );
-                          },
-                          child: Row(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
-                                    child: Icon(Icons.color_lens_outlined, color: FlutterFlowTheme.of(context).primary, size: 24.0),
-                                  ),
-                                  Text(
-                                    'Customize Theme',
-                                    style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                      fontFamily: 'Andika New Basic',
-                                      fontSize: 16.0,
-                                      letterSpacing: 0.0,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
-                                child: Icon(Icons.arrow_forward_ios, color: FlutterFlowTheme.of(context).primaryText, size: 18.0),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    )),
                   // Cancel Subscription
                   CascadeItem(index: 7, baseDelayMs: 400, staggerMs: 80, child: Padding(
                     padding:
