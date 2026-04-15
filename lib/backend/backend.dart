@@ -32,6 +32,7 @@ import 'schema/skill_path_record.dart';
 import 'schema/creators_record.dart';
 import 'schema/creator_content_record.dart';
 import 'schema/routines_record.dart';
+import 'schema/app_content_record.dart';
 
 export 'dart:async' show StreamSubscription;
 export 'package:cloud_firestore/cloud_firestore.dart' hide Order;
@@ -67,6 +68,44 @@ export 'schema/skill_path_record.dart';
 export 'schema/creators_record.dart';
 export 'schema/creator_content_record.dart';
 export 'schema/routines_record.dart';
+export 'schema/app_content_record.dart';
+
+/// Functions to query AppContentRecords (as a Stream and as a Future).
+Future<int> queryAppContentRecordCount({
+  Query Function(Query)? queryBuilder,
+  int limit = -1,
+}) =>
+    queryCollectionCount(
+      AppContentRecord.collection,
+      queryBuilder: queryBuilder,
+      limit: limit,
+    );
+
+Stream<List<AppContentRecord>> queryAppContentRecord({
+  Query Function(Query)? queryBuilder,
+  int limit = -1,
+  bool singleRecord = false,
+}) =>
+    queryCollection(
+      AppContentRecord.collection,
+      AppContentRecord.fromSnapshot,
+      queryBuilder: queryBuilder,
+      limit: limit,
+      singleRecord: singleRecord,
+    );
+
+Future<List<AppContentRecord>> queryAppContentRecordOnce({
+  Query Function(Query)? queryBuilder,
+  int limit = -1,
+  bool singleRecord = false,
+}) =>
+    queryCollectionOnce(
+      AppContentRecord.collection,
+      AppContentRecord.fromSnapshot,
+      queryBuilder: queryBuilder,
+      limit: limit,
+      singleRecord: singleRecord,
+    );
 
 /// Functions to query RoutinesRecords (as a Stream and as a Future).
 Future<int> queryRoutinesRecordCount({
