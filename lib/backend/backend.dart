@@ -29,6 +29,7 @@ import 'schema/todo_record.dart';
 import 'schema/planned_activity_record.dart';
 import 'schema/user_activity_record.dart';
 import 'schema/skill_path_record.dart';
+import 'schema/routines_record.dart';
 
 export 'dart:async' show StreamSubscription;
 export 'package:cloud_firestore/cloud_firestore.dart' hide Order;
@@ -61,6 +62,44 @@ export 'schema/todo_record.dart';
 export 'schema/planned_activity_record.dart';
 export 'schema/user_activity_record.dart';
 export 'schema/skill_path_record.dart';
+export 'schema/routines_record.dart';
+
+/// Functions to query RoutinesRecords (as a Stream and as a Future).
+Future<int> queryRoutinesRecordCount({
+  Query Function(Query)? queryBuilder,
+  int limit = -1,
+}) =>
+    queryCollectionCount(
+      RoutinesRecord.collection,
+      queryBuilder: queryBuilder,
+      limit: limit,
+    );
+
+Stream<List<RoutinesRecord>> queryRoutinesRecord({
+  Query Function(Query)? queryBuilder,
+  int limit = -1,
+  bool singleRecord = false,
+}) =>
+    queryCollection(
+      RoutinesRecord.collection,
+      RoutinesRecord.fromSnapshot,
+      queryBuilder: queryBuilder,
+      limit: limit,
+      singleRecord: singleRecord,
+    );
+
+Future<List<RoutinesRecord>> queryRoutinesRecordOnce({
+  Query Function(Query)? queryBuilder,
+  int limit = -1,
+  bool singleRecord = false,
+}) =>
+    queryCollectionOnce(
+      RoutinesRecord.collection,
+      RoutinesRecord.fromSnapshot,
+      queryBuilder: queryBuilder,
+      limit: limit,
+      singleRecord: singleRecord,
+    );
 
 /// Functions to query UsersRecords (as a Stream and as a Future).
 Future<int> queryUsersRecordCount({

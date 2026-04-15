@@ -160,6 +160,13 @@ service cloud.firestore {
       allow update: if isAuthenticated();
     }
 
+    // Routines - users can only access their own
+    match /routines/{routineId} {
+      allow read, write: if isAuthenticated() &&
+        (resource == null || resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid));
+      allow create: if isAuthenticated();
+    }
+
     // Waitlist collection - public write (landing page), admin read
     match /waitlist/{waitlistId} {
       // Anyone can create waitlist entries (from website landing page)

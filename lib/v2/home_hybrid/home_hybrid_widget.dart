@@ -12,6 +12,7 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import '/v2/routines/routines_page_widget.dart';
 import 'package:flutter/services.dart';
 import 'package:collection/collection.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -199,8 +200,12 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                         _animatedCard(5, _buildTodosCard(context)),
                         const SizedBox(height: 16.0),
 
+                        // Routines Card (animated)
+                        _animatedCard(6, _buildRoutinesCard(context)),
+                        const SizedBox(height: 16.0),
+
                         // Learning Path Card (animated)
-                        _animatedCard(6, _buildLearningPathCard(context)),
+                        _animatedCard(7, _buildLearningPathCard(context)),
                         const SizedBox(height: 16.0),
 
                         // Activities Card (animated) - REMOVED: Feature being replaced
@@ -1295,6 +1300,130 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildRoutinesCard(BuildContext context) {
+    return StreamBuilder<List<RoutinesRecord>>(
+      stream: queryRoutinesRecord(
+        queryBuilder: (q) => q
+            .where('user_ref', isEqualTo: currentUserReference),
+      ),
+      builder: (context, snapshot) {
+        final routines = snapshot.data ?? [];
+
+        return InkWell(
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const RoutinesPageWidget()),
+          ),
+          borderRadius: BorderRadius.circular(20.0),
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(20.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20.0),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.repeat_rounded, color: FlutterFlowTheme.of(context).primary, size: 22.0),
+                        const SizedBox(width: 8.0),
+                        Text(
+                          routines.isEmpty ? 'Create a Routine' : 'Routines',
+                          style: FlutterFlowTheme.of(context).bodyLarge.override(
+                            fontFamily: 'Andika New Basic',
+                            color: const Color(0xFF5D4E60),
+                            fontSize: 18.0,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 0.0,
+                          ),
+                        ),
+                      ],
+                    ),
+                    InkWell(
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const RoutinesPageWidget()),
+                      ),
+                      borderRadius: BorderRadius.circular(14.0),
+                      child: Container(
+                        padding: const EdgeInsets.all(6.0),
+                        decoration: BoxDecoration(
+                          color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(14.0),
+                        ),
+                        child: Icon(Icons.add_rounded, color: FlutterFlowTheme.of(context).primary, size: 18.0),
+                      ),
+                    ),
+                  ],
+                ),
+                if (routines.isNotEmpty) ...[
+                  const SizedBox(height: 12.0),
+                  ...routines.take(3).map((routine) => Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: Row(
+                      children: [
+                        Text(routine.emoji, style: const TextStyle(fontSize: 16)),
+                        const SizedBox(width: 8.0),
+                        Expanded(
+                          child: Text(
+                            routine.name,
+                            style: FlutterFlowTheme.of(context).bodyMedium.override(
+                              fontFamily: 'Andika New Basic',
+                              color: const Color(0xFF5D4E60),
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.w500,
+                              letterSpacing: 0.0,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        Text(
+                          '${routine.steps.length} steps',
+                          style: FlutterFlowTheme.of(context).bodySmall.override(
+                            fontFamily: 'Andika New Basic',
+                            color: const Color(0xFF9B8A9E),
+                            fontSize: 12.0,
+                            letterSpacing: 0.0,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )),
+                  if (routines.length > 3)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4.0),
+                      child: Text(
+                        '+${routines.length - 3} more',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: FlutterFlowTheme.of(context).primary,
+                          fontWeight: FontWeight.w500,
+                          fontFamily: 'Andika New Basic',
+                        ),
+                      ),
+                    ),
+                ],
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
