@@ -84,6 +84,11 @@ class MealComboRecord extends FirestoreRecord {
   DateTime? get createdTime => _createdTime;
   bool hasCreatedTime() => _createdTime != null;
 
+  // "shared_with_followers" field - Whether this template is in the creator's Shared Library
+  bool? _sharedWithFollowers;
+  bool get sharedWithFollowers => _sharedWithFollowers ?? false;
+  bool hasSharedWithFollowers() => _sharedWithFollowers != null;
+
   // "day_template_group" field - Groups templates saved together as a "day"
   String? _dayTemplateGroup;
   String get dayTemplateGroup => _dayTemplateGroup ?? '';
@@ -112,6 +117,7 @@ class MealComboRecord extends FirestoreRecord {
         : deserializeEnum<MealTyp>(snapshotData['meal_typ']);
     _userRef = snapshotData['user_ref'] as DocumentReference?;
     _createdTime = snapshotData['created_time'] as DateTime?;
+    _sharedWithFollowers = snapshotData['shared_with_followers'] as bool?;
     _dayTemplateGroup = snapshotData['day_template_group'] as String?;
     _dayTemplateName = snapshotData['day_template_name'] as String?;
   }
@@ -162,6 +168,7 @@ Map<String, dynamic> createMealComboRecordData({
   MealTyp? mealTyp,
   DocumentReference? userRef,
   DateTime? createdTime,
+  bool? sharedWithFollowers,
 }) {
   final firestoreData = mapToFirestore(
     <String, dynamic>{
@@ -176,6 +183,7 @@ Map<String, dynamic> createMealComboRecordData({
       'meal_typ': mealTyp,
       'user_ref': userRef,
       'created_time': createdTime,
+      'shared_with_followers': sharedWithFollowers,
     }.withoutNulls,
   );
 

@@ -221,10 +221,18 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
             .where('shared_with_followers', isEqualTo: true),
       );
 
-      debugPrint('Loaded ${sharedRecipes.length} shared recipes from ${creator.name}');
+      // Also load shared templates
+      final sharedTemplates = await queryMealComboRecordOnce(
+        queryBuilder: (q) => q
+            .where('user_ref', isEqualTo: creator.userRef)
+            .where('shared_with_followers', isEqualTo: true),
+      );
+
+      debugPrint('Loaded ${sharedRecipes.length} shared recipes, ${sharedTemplates.length} shared templates from ${creator.name}');
 
       if (mounted) {
         _model.creatorSharedRecipes = sharedRecipes;
+        _model.creatorSharedTemplates = sharedTemplates;
         _model.activeCreatorName = creator.name;
         safeSetState(() {});
       }
@@ -1915,11 +1923,19 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                   builder: (context) {
                                     // Handle templates tab separately
                                     if (_model.recipeSourceTab == 'templates') {
+                                      if (_model.cookbookMode == 'creator' && _creatorProfile == null) {
+                                        // Follower viewing creator's shared templates
+                                        return _buildCreatorTemplatesView(context);
+                                      }
                                       return _buildTemplatesView(context);
                                     }
 
-                                    // Handle meal templates tab
+                                    // Handle saved days tab
                                     if (_model.recipeSourceTab == 'savedDays') {
+                                      if (_model.cookbookMode == 'creator' && _creatorProfile == null) {
+                                        // Follower viewing creator's shared saved days
+                                        return _buildCreatorTemplatesView(context, savedDaysOnly: true);
+                                      }
                                       return _buildSavedDaysView(context);
                                     }
 
@@ -3290,6 +3306,172 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
     );
   }
 
+  /// Creator's shared templates/saved days view for followers
+  Widget _buildCreatorTemplatesView(BuildContext context, {bool savedDaysOnly = false}) {
+    final templates = _model.creatorSharedTemplates.where((t) {
+      if (savedDaysOnly) return t.hasDayTemplateGroup();
+      return !t.hasDayTemplateGroup();
+    }).toList();
+
+    if (templates.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(40),
+          child: Column(
+            children: [
+              Icon(
+                savedDaysOnly ? Icons.calendar_view_day : Icons.restaurant_menu,
+                size: 48,
+                color: const Color(0xFFDADADA),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                savedDaysOnly ? 'No shared saved days' : 'No shared templates',
+                style: FlutterFlowTheme.of(context).bodyMedium.override(
+                  fontFamily: 'Andika New Basic',
+                  color: const Color(0xFF9B8A9E),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: templates.length,
+      itemBuilder: (context, index) {
+        final template = templates[index];
+        final isAlreadySaved = _model.mealTemplates.any((t) => t.name == template.name);
+
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 10),
+          child: Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(14),
+              boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 6, offset: const Offset(0, 2))],
+            ),
+            child: Row(
+              children: [
+                // Meal type icon
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(
+                    savedDaysOnly ? Icons.calendar_view_day : Icons.restaurant_menu,
+                    color: FlutterFlowTheme.of(context).primary,
+                    size: 20,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                // Name + attribution
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        template.name.isNotEmpty ? template.name : 'Untitled',
+                        style: FlutterFlowTheme.of(context).bodyMedium.override(
+                          fontFamily: 'Andika New Basic',
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 0,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        '${_model.activeCreatorName ?? 'Creator'} recommends',
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: FlutterFlowTheme.of(context).primary,
+                          fontWeight: FontWeight.w500,
+                          fontFamily: 'Andika New Basic',
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // Bookmark to save
+                GestureDetector(
+                  onTap: isAlreadySaved ? null : () async {
+                    try {
+                      // Copy the template to user's own collection
+                      final newData = createMealComboRecordData(
+                        name: template.name,
+                        entreeRef: template.entreeRef,
+                        drinkType: template.drinkType,
+                        drinkCustom: template.drinkCustom,
+                        mealTyp: template.mealTyp,
+                        userRef: currentUserReference,
+                        createdTime: DateTime.now(),
+                      );
+                      if (template.sideRefs.isNotEmpty) {
+                        newData['side_refs'] = template.sideRefs;
+                      }
+                      if (template.dessertRefs.isNotEmpty) {
+                        newData['dessert_refs'] = template.dessertRefs;
+                      }
+                      if (template.hasDayTemplateGroup()) {
+                        newData['day_template_group'] = template.dayTemplateGroup;
+                        newData['day_template_name'] = template.dayTemplateName;
+                      }
+                      await MealComboRecord.collection.add(newData);
+
+                      _model.loadedMealTemplates = false;
+                      _loadMealTemplates();
+
+                      if (mounted) {
+                        HapticFeedback.mediumImpact();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('${template.name} saved to My Cookbook'),
+                            backgroundColor: FlutterFlowTheme.of(context).primary,
+                            behavior: SnackBarBehavior.floating,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                            margin: const EdgeInsets.all(16),
+                            duration: const Duration(seconds: 2),
+                          ),
+                        );
+                        safeSetState(() {});
+                      }
+                    } catch (e) {
+                      debugPrint('Error saving template: $e');
+                    }
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: isAlreadySaved
+                          ? FlutterFlowTheme.of(context).primary
+                          : Colors.black.withOpacity(0.08),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      isAlreadySaved ? Icons.bookmark : Icons.bookmark_add_outlined,
+                      color: isAlreadySaved ? Colors.white : Colors.grey.shade600,
+                      size: 18,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   Widget _buildSavedDaysView(BuildContext context) {
     // Filter templates that have a day_template_group
     final dayTemplates = _model.mealTemplates
@@ -4107,6 +4289,37 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                       ],
                     ),
                   ),
+                  // Share toggle for creators
+                  if (_creatorProfile != null && _model.cookbookMode == 'personal')
+                    GestureDetector(
+                      onTap: () async {
+                        final isShared = template.sharedWithFollowers;
+                        await template.reference.update({'shared_with_followers': !isShared});
+                        _model.loadedMealTemplates = false;
+                        _loadMealTemplates();
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(isShared ? 'Removed from Shared' : 'Shared with followers'),
+                              behavior: SnackBarBehavior.floating,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                              margin: const EdgeInsets.all(16),
+                              duration: const Duration(seconds: 2),
+                            ),
+                          );
+                        }
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 6),
+                        child: Icon(
+                          template.sharedWithFollowers ? Icons.people : Icons.people_outline,
+                          size: 18,
+                          color: template.sharedWithFollowers
+                              ? FlutterFlowTheme.of(context).primary
+                              : Colors.grey.shade400,
+                        ),
+                      ),
+                    ),
                   // Arrow icon
                   const Icon(
                     Icons.chevron_right,
