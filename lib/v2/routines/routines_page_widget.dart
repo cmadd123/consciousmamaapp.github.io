@@ -22,8 +22,21 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
-      body: SafeArea(
+      backgroundColor: Colors.transparent,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _showCreateRoutineSheet(context),
+        backgroundColor: FlutterFlowTheme.of(context).primary,
+        child: const Icon(Icons.add, color: Colors.white),
+      ),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFFD7F2EB), Color(0xFFFFE9E1)],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: SafeArea(
         child: Column(
           children: [
             // Header
@@ -92,6 +105,7 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
             ),
           ],
         ),
+      ),
       ),
     );
   }

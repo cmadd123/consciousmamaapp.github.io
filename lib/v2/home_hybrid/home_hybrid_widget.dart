@@ -1361,22 +1361,21 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                         ),
                       ],
                     ),
-                    if (routines.isNotEmpty)
-                      InkWell(
-                        onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const RoutinesPageWidget()),
-                        ),
-                        borderRadius: BorderRadius.circular(14.0),
-                        child: Container(
-                          padding: const EdgeInsets.all(6.0),
-                          decoration: BoxDecoration(
-                            color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(14.0),
-                          ),
-                          child: Icon(Icons.add_rounded, color: FlutterFlowTheme.of(context).primary, size: 18.0),
-                        ),
+                    InkWell(
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const RoutinesPageWidget()),
                       ),
+                      borderRadius: BorderRadius.circular(14.0),
+                      child: Container(
+                        padding: const EdgeInsets.all(6.0),
+                        decoration: BoxDecoration(
+                          color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(14.0),
+                        ),
+                        child: Icon(Icons.add_rounded, color: FlutterFlowTheme.of(context).primary, size: 18.0),
+                      ),
+                    ),
                   ],
                 ),
 

@@ -362,16 +362,35 @@ class _TodosPageWidgetState extends State<TodosPageWidget> with TickerProviderSt
                     ],
                     // Empty state
                     if (incompleteTodos.isEmpty && completedTodos.isEmpty) ...[
-                      const SizedBox(height: 24.0),
+                      const SizedBox(height: 40.0),
                       Center(
-                        child: Text(
-                          'Add a To-Do',
-                          style: FlutterFlowTheme.of(context).bodyMedium.override(
-                            fontFamily: 'Andika New Basic',
-                            color: const Color(0xFF9B8A9E),
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.w600,
-                          ),
+                        child: Column(
+                          children: [
+                            Icon(
+                              Icons.checklist_rounded,
+                              size: 48.0,
+                              color: const Color(0xFFDADADA),
+                            ),
+                            const SizedBox(height: 12.0),
+                            Text(
+                              'No to-dos yet',
+                              style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                fontFamily: 'Andika New Basic',
+                                color: const Color(0xFF9B8A9E),
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(height: 6.0),
+                            Text(
+                              'Type in the field above to add one',
+                              style: FlutterFlowTheme.of(context).bodySmall.override(
+                                fontFamily: 'Andika New Basic',
+                                color: const Color(0xFFBBBBBB),
+                                fontSize: 13.0,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                       const SizedBox(height: 24.0),
