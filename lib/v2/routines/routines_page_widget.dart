@@ -153,7 +153,6 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
       padding: const EdgeInsets.only(bottom: 12),
       child: InkWell(
         onTap: () => _showRunRoutineSheet(context, routine),
-        onLongPress: () => _showRoutineOptions(context, routine),
         borderRadius: BorderRadius.circular(16),
         child: Container(
           padding: const EdgeInsets.all(16),
@@ -162,27 +161,26 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
             borderRadius: BorderRadius.circular(16),
             boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 8, offset: const Offset(0, 2))],
           ),
-          child: Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Emoji
-              Container(
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(
-                  color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Center(
-                  child: Text(routine.emoji, style: const TextStyle(fontSize: 22)),
-                ),
-              ),
-              const SizedBox(width: 14),
-              // Name + step count
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
+              // Top row: emoji + name + play icon
+              Row(
+                children: [
+                  Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Center(
+                      child: Text(routine.emoji, style: const TextStyle(fontSize: 22)),
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Text(
                       routine.name,
                       style: FlutterFlowTheme.of(context).bodyMedium.override(
                         fontFamily: 'Andika New Basic',
@@ -191,7 +189,15 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
                         letterSpacing: 0,
                       ),
                     ),
-                    const SizedBox(height: 2),
+                  ),
+                  Icon(Icons.play_circle_outline, color: FlutterFlowTheme.of(context).primary, size: 28),
+                ],
+              ),
+              // Steps + edit/delete — aligned under the icon
+              Padding(
+                padding: const EdgeInsets.only(left: 58, top: 6),
+                child: Row(
+                  children: [
                     Text(
                       '${routine.steps.length} step${routine.steps.length == 1 ? '' : 's'}',
                       style: FlutterFlowTheme.of(context).bodySmall.override(
@@ -201,11 +207,42 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
                         letterSpacing: 0,
                       ),
                     ),
+                    const Spacer(),
+                    // Edit button
+                    GestureDetector(
+                      onTap: () => _showCreateRoutineSheet(context, editing: routine),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        child: Icon(Icons.edit_outlined, size: 16, color: Colors.grey.shade400),
+                      ),
+                    ),
+                    // Delete button
+                    GestureDetector(
+                      onTap: () async {
+                        final confirm = await showDialog<bool>(
+                          context: context,
+                          builder: (ctx) => AlertDialog(
+                            title: const Text('Delete Routine?'),
+                            content: Text('Are you sure you want to delete "${routine.name}"?'),
+                            actions: [
+                              TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+                              TextButton(
+                                onPressed: () => Navigator.pop(ctx, true),
+                                child: Text('Delete', style: TextStyle(color: Colors.red.shade400)),
+                              ),
+                            ],
+                          ),
+                        );
+                        if (confirm == true) await routine.reference.delete();
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        child: Icon(Icons.delete_outline, size: 16, color: Colors.grey.shade400),
+                      ),
+                    ),
                   ],
                 ),
               ),
-              // Play icon
-              Icon(Icons.play_circle_outline, color: FlutterFlowTheme.of(context).primary, size: 28),
             ],
           ),
         ),

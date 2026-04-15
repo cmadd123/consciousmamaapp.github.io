@@ -1350,7 +1350,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                         Icon(Icons.repeat_rounded, color: FlutterFlowTheme.of(context).primary, size: 22.0),
                         const SizedBox(width: 8.0),
                         Text(
-                          'Routines',
+                          routines.isEmpty ? 'Create a Routine' : 'Routines',
                           style: FlutterFlowTheme.of(context).bodyLarge.override(
                             fontFamily: 'Andika New Basic',
                             color: const Color(0xFF5D4E60),
@@ -1361,39 +1361,26 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                         ),
                       ],
                     ),
-                    InkWell(
-                      onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const RoutinesPageWidget()),
-                      ),
-                      borderRadius: BorderRadius.circular(14.0),
-                      child: Container(
-                        padding: const EdgeInsets.all(6.0),
-                        decoration: BoxDecoration(
-                          color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(14.0),
+                    if (routines.isNotEmpty)
+                      InkWell(
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const RoutinesPageWidget()),
                         ),
-                        child: Icon(Icons.add_rounded, color: FlutterFlowTheme.of(context).primary, size: 18.0),
+                        borderRadius: BorderRadius.circular(14.0),
+                        child: Container(
+                          padding: const EdgeInsets.all(6.0),
+                          decoration: BoxDecoration(
+                            color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(14.0),
+                          ),
+                          child: Icon(Icons.add_rounded, color: FlutterFlowTheme.of(context).primary, size: 18.0),
+                        ),
                       ),
-                    ),
                   ],
                 ),
 
-                if (routines.isEmpty) ...[
-                  const SizedBox(height: 16.0),
-                  Center(
-                    child: Text(
-                      'Create a Routine',
-                      style: FlutterFlowTheme.of(context).bodyMedium.override(
-                        fontFamily: 'Andika New Basic',
-                        color: const Color(0xFF9B8A9E),
-                        fontSize: 16.0,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 0.0,
-                      ),
-                    ),
-                  ),
-                ] else ...[
+                if (routines.isNotEmpty) ...[
                   const SizedBox(height: 12.0),
                   // Show first 3 routines
                   ...routines.take(3).map((routine) => Padding(
