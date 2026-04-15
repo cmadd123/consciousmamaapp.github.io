@@ -253,18 +253,22 @@ Future<String?> publishMealPlanToFollowers({
 
     if (mealPlans.isEmpty) return 'No meals planned for this week';
 
-    // Build the data structure grouped by day and meal type
-    final dayNames = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+    // Build the data structure using relative days (day_1, day_2, ...)
     final Map<String, dynamic> weekData = {};
+    // Also store day labels for display
+    final Map<String, String> dayLabels = {};
     int mealCount = 0;
 
     for (final plan in mealPlans) {
       if (plan.date == null || plan.typ == null) continue;
 
       final localDate = plan.date!.toLocal();
-      final dayIndex = localDate.weekday - 1; // 0=Mon, 6=Sun
-      if (dayIndex < 0 || dayIndex > 6) continue;
-      final dayKey = dayNames[dayIndex];
+      // Calculate relative day from start of week
+      final dayOffset = localDate.difference(monday).inDays;
+      if (dayOffset < 0 || dayOffset > 6) continue;
+      final dayKey = 'day_${dayOffset + 1}';
+      final dayNamesList = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+      dayLabels[dayKey] = dayNamesList[dayOffset];
 
       // Determine meal type key
       String mealTypeKey;
@@ -356,6 +360,11 @@ Future<String?> publishMealPlanToFollowers({
     for (final oldPlan in oldPlans) {
       await oldPlan.reference.update({'is_active': false});
     }
+
+    // Add day labels and metadata to the data
+    weekData['_day_labels'] = dayLabels;
+    weekData['_total_days'] = weekData.keys.where((k) => k.startsWith('day_')).length;
+    weekData['_total_meals'] = mealCount;
 
     // Create new creator content document
     await CreatorContentRecord.collection.add(createCreatorContentRecordData(

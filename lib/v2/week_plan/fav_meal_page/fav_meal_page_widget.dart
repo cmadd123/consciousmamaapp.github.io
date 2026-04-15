@@ -3352,7 +3352,10 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
 
         return Padding(
           padding: const EdgeInsets.only(bottom: 10),
-          child: Container(
+          child: InkWell(
+            onTap: () => _showTemplateDetails(template),
+            borderRadius: BorderRadius.circular(14),
+            child: Container(
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -3467,6 +3470,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                 ),
               ],
             ),
+          ),
           ),
         );
       },

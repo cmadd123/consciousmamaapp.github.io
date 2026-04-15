@@ -62,16 +62,19 @@ class _CreatorMealPlanCardState extends State<CreatorMealPlanCard> {
 
       // Get the start of the current week (Monday)
       final now = DateTime.now();
-      final monday = now.subtract(Duration(days: now.weekday - 1));
+      final monday = DateTime(now.year, now.month, now.day)
+          .subtract(Duration(days: now.weekday - 1));
 
-      // Days of the week mapping
+      // Support both old format (monday/tuesday) and new format (day_1/day_2)
       final dayNames = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
       int mealsCreated = 0;
 
       for (int dayIndex = 0; dayIndex < 7; dayIndex++) {
-        final dayKey = dayNames[dayIndex];
-        final dayData = planData[dayKey] as Map<String, dynamic>?;
+        // Try new format first, fall back to old
+        final newKey = 'day_${dayIndex + 1}';
+        final oldKey = dayNames[dayIndex];
+        final dayData = (planData[newKey] ?? planData[oldKey]) as Map<String, dynamic>?;
         if (dayData == null) continue;
 
         final date = DateTime(monday.year, monday.month, monday.day + dayIndex);
@@ -329,7 +332,7 @@ class _CreatorMealPlanCardState extends State<CreatorMealPlanCard> {
     final planData = _mealPlan!.data;
     final previewMeals = <String>[];
 
-    for (final day in ['monday', 'tuesday', 'wednesday']) {
+    for (final day in ['day_1', 'day_2', 'day_3', 'monday', 'tuesday', 'wednesday']) {
       final dayData = planData[day] as Map<String, dynamic>?;
       if (dayData == null) continue;
       final dinner = dayData['dinner'] as Map<String, dynamic>?;
