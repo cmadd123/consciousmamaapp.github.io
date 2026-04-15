@@ -65,8 +65,7 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
               child: StreamBuilder<List<RoutinesRecord>>(
                 stream: queryRoutinesRecord(
                   queryBuilder: (q) => q
-                      .where('user_ref', isEqualTo: currentUserReference)
-                      .orderBy('created_at', descending: true),
+                      .where('user_ref', isEqualTo: currentUserReference),
                 ),
                 builder: (context, snapshot) {
                   final routines = snapshot.data ?? [];

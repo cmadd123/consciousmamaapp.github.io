@@ -1313,8 +1313,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
     return StreamBuilder<List<RoutinesRecord>>(
       stream: queryRoutinesRecord(
         queryBuilder: (q) => q
-            .where('user_ref', isEqualTo: currentUserReference)
-            .orderBy('created_at', descending: true),
+            .where('user_ref', isEqualTo: currentUserReference),
       ),
       builder: (context, snapshot) {
         final routines = snapshot.data ?? [];
@@ -1381,15 +1380,15 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                 ),
 
                 if (routines.isEmpty) ...[
-                  const SizedBox(height: 12.0),
+                  const SizedBox(height: 16.0),
                   Center(
                     child: Text(
                       'Create a Routine',
                       style: FlutterFlowTheme.of(context).bodyMedium.override(
                         fontFamily: 'Andika New Basic',
                         color: const Color(0xFF9B8A9E),
-                        fontSize: 14.0,
-                        fontWeight: FontWeight.w500,
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.w600,
                         letterSpacing: 0.0,
                       ),
                     ),
