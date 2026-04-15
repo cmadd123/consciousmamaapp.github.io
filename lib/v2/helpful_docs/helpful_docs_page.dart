@@ -1,6 +1,9 @@
+import 'dart:io';  // For File picker
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '/auth/firebase_auth/auth_util.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
@@ -210,6 +213,10 @@ class _HelpfulDocsPageState extends State<HelpfulDocsPage> {
 
   /// Full doc detail view
   void _showDocDetail(BuildContext context, AppContentRecord doc) {
+    if (doc.hasPdfUrl()) {
+      _showPdfViewer(context, doc);
+      return;
+    }
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -346,10 +353,11 @@ class _HelpfulDocsPageState extends State<HelpfulDocsPage> {
   void _showUploadSheet(BuildContext context) {
     final titleController = TextEditingController();
     final authorController = TextEditingController();
-    final bodyController = TextEditingController();
     final categoryController = TextEditingController();
     String selectedEmoji = '📄';
     final emojis = ['📄', '🧠', '🍎', '💤', '🧒', '💪', '❤️', '🎯', '📋', '🌟', '🏠', '🧹'];
+    PlatformFile? selectedFile;
+    bool isUploading = false;
 
     showModalBottomSheet(
       context: context,
@@ -405,55 +413,118 @@ class _HelpfulDocsPageState extends State<HelpfulDocsPage> {
                 _buildField('Author', authorController, 'e.g., Haley'),
                 _buildField('Category', categoryController, 'e.g., Behavior, Nutrition, Sleep'),
 
-                // Body
-                Text('Content', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.grey[600])),
+                // File picker
+                Text('Document', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.grey[600])),
                 const SizedBox(height: 6),
-                TextField(
-                  controller: bodyController,
-                  maxLines: 8,
-                  style: const TextStyle(fontSize: 14, fontFamily: 'Andika New Basic'),
-                  decoration: InputDecoration(
-                    hintText: 'Write or paste the full article here...',
-                    filled: true, fillColor: Colors.grey.shade100,
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
-                    contentPadding: const EdgeInsets.all(14),
+                GestureDetector(
+                  onTap: () async {
+                    final result = await FilePicker.platform.pickFiles(
+                      type: FileType.custom,
+                      allowedExtensions: ['pdf'],
+                    );
+                    if (result != null && result.files.isNotEmpty) {
+                      setSheetState(() => selectedFile = result.files.first);
+                    }
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade100,
+                      borderRadius: BorderRadius.circular(12),
+                      border: selectedFile != null
+                          ? Border.all(color: FlutterFlowTheme.of(context).primary, width: 2)
+                          : Border.all(color: Colors.grey.shade300),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          selectedFile != null ? Icons.picture_as_pdf : Icons.upload_file,
+                          color: selectedFile != null ? Colors.red : Colors.grey.shade500,
+                          size: 28,
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                selectedFile != null ? selectedFile!.name : 'Tap to select a PDF',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  color: selectedFile != null ? Colors.black : Colors.grey.shade600,
+                                  fontFamily: 'Andika New Basic',
+                                ),
+                              ),
+                              if (selectedFile != null)
+                                Text(
+                                  '${(selectedFile!.size / 1024).toStringAsFixed(0)} KB',
+                                  style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
+                                ),
+                            ],
+                          ),
+                        ),
+                        if (selectedFile != null)
+                          GestureDetector(
+                            onTap: () => setSheetState(() => selectedFile = null),
+                            child: Icon(Icons.close, size: 18, color: Colors.grey.shade400),
+                          ),
+                      ],
+                    ),
                   ),
                 ),
                 const SizedBox(height: 20),
 
                 // Save
                 FFButtonWidget(
-                  onPressed: () async {
-                    if (titleController.text.trim().isEmpty || bodyController.text.trim().isEmpty) return;
+                  onPressed: isUploading ? null : () async {
+                    if (titleController.text.trim().isEmpty || selectedFile == null) return;
+                    setSheetState(() => isUploading = true);
                     HapticFeedback.mediumImpact();
 
-                    final readTime = (bodyController.text.trim().split(' ').length / 200).ceil();
+                    try {
+                      // Upload PDF to Firebase Storage
+                      final fileName = '${DateTime.now().millisecondsSinceEpoch}_${selectedFile!.name}';
+                      final storageRef = FirebaseStorage.instance.ref().child('helpful_docs/$fileName');
 
-                    await AppContentRecord.collection.add(createAppContentRecordData(
-                      title: titleController.text.trim(),
-                      author: authorController.text.trim().isNotEmpty ? authorController.text.trim() : 'MomRise',
-                      body: bodyController.text.trim(),
-                      category: categoryController.text.trim(),
-                      emoji: selectedEmoji,
-                      isPublished: true,
-                      createdAt: DateTime.now(),
-                      readTimeMinutes: readTime,
-                    ));
+                      final file = File(selectedFile!.path!);
+                      final uploadTask = await storageRef.putFile(file);
+                      final downloadUrl = await uploadTask.ref.getDownloadURL();
 
-                    if (context.mounted) {
-                      Navigator.pop(context);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: const Text('Doc uploaded!'),
-                          backgroundColor: FlutterFlowTheme.of(context).primary,
-                          behavior: SnackBarBehavior.floating,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                          margin: const EdgeInsets.all(16),
-                        ),
-                      );
+                      await AppContentRecord.collection.add(createAppContentRecordData(
+                        title: titleController.text.trim(),
+                        author: authorController.text.trim().isNotEmpty ? authorController.text.trim() : 'MomRise',
+                        category: categoryController.text.trim(),
+                        emoji: selectedEmoji,
+                        isPublished: true,
+                        createdAt: DateTime.now(),
+                        pdfUrl: downloadUrl,
+                        contentType: 'pdf',
+                      ));
+
+                      if (context.mounted) {
+                        Navigator.pop(context);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: const Text('Doc uploaded!'),
+                            backgroundColor: FlutterFlowTheme.of(context).primary,
+                            behavior: SnackBarBehavior.floating,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                            margin: const EdgeInsets.all(16),
+                          ),
+                        );
+                      }
+                    } catch (e) {
+                      setSheetState(() => isUploading = false);
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Upload failed: $e'), backgroundColor: Colors.red),
+                        );
+                      }
                     }
                   },
-                  text: 'Publish',
+                  text: isUploading ? 'Uploading...' : 'Publish',
                   options: FFButtonOptions(
                     width: double.infinity, height: 52,
                     color: FlutterFlowTheme.of(context).primary,
@@ -461,6 +532,7 @@ class _HelpfulDocsPageState extends State<HelpfulDocsPage> {
                       fontFamily: 'Andika New Basic', color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600, letterSpacing: 0,
                     ),
                     borderRadius: BorderRadius.circular(14),
+                    disabledColor: Colors.grey,
                   ),
                 ),
               ],
@@ -469,6 +541,20 @@ class _HelpfulDocsPageState extends State<HelpfulDocsPage> {
         ),
       ),
     );
+  }
+
+  /// Open PDF externally
+  void _showPdfViewer(BuildContext context, AppContentRecord doc) async {
+    final uri = Uri.parse(doc.pdfUrl);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Could not open PDF')),
+        );
+      }
+    }
   }
 
   Widget _buildField(String label, TextEditingController controller, String hint) {
@@ -492,3 +578,5 @@ class _HelpfulDocsPageState extends State<HelpfulDocsPage> {
     );
   }
 }
+// PDF viewer removed — opens externally via url_launcher
+// In-app PDF viewing can be added later with flutter_pdfview when disk space allows

@@ -53,6 +53,15 @@ class AppContentRecord extends FirestoreRecord {
   int get readTimeMinutes => _readTimeMinutes ?? 0;
   bool hasReadTimeMinutes() => _readTimeMinutes != null;
 
+  // "pdf_url" field — Firebase Storage URL for uploaded PDFs.
+  String? _pdfUrl;
+  String get pdfUrl => _pdfUrl ?? '';
+  bool hasPdfUrl() => _pdfUrl != null && _pdfUrl!.isNotEmpty;
+
+  // "content_type" field — "text" or "pdf"
+  String? _contentType;
+  String get contentType => _contentType ?? 'text';
+
   void _initializeFields() {
     _title = snapshotData['title'] as String?;
     _author = snapshotData['author'] as String?;
@@ -62,6 +71,8 @@ class AppContentRecord extends FirestoreRecord {
     _isPublished = snapshotData['is_published'] as bool?;
     _createdAt = snapshotData['created_at'] as DateTime?;
     _readTimeMinutes = castToType<int>(snapshotData['read_time_minutes']);
+    _pdfUrl = snapshotData['pdf_url'] as String?;
+    _contentType = snapshotData['content_type'] as String?;
   }
 
   static CollectionReference get collection =>
@@ -107,6 +118,8 @@ Map<String, dynamic> createAppContentRecordData({
   bool? isPublished,
   DateTime? createdAt,
   int? readTimeMinutes,
+  String? pdfUrl,
+  String? contentType,
 }) {
   final firestoreData = mapToFirestore(
     <String, dynamic>{
@@ -118,6 +131,8 @@ Map<String, dynamic> createAppContentRecordData({
       'is_published': isPublished,
       'created_at': createdAt,
       'read_time_minutes': readTimeMinutes,
+      'pdf_url': pdfUrl,
+      'content_type': contentType,
     }.withoutNulls,
   );
 

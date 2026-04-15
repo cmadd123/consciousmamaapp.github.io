@@ -92,6 +92,11 @@ class MealRecord extends FirestoreRecord {
   bool get sharedWithFollowers => _sharedWithFollowers ?? false;
   bool hasSharedWithFollowers() => _sharedWithFollowers != null;
 
+  // "estimated_cost" field - AI-estimated grocery cost in dollars
+  double? _estimatedCost;
+  double get estimatedCost => _estimatedCost ?? 0.0;
+  bool hasEstimatedCost() => _estimatedCost != null && _estimatedCost! > 0;
+
   // "is_imported" field - Whether this recipe was imported from an external URL
   bool? _isImported;
   bool get isImported => _isImported ?? false;
@@ -120,6 +125,7 @@ class MealRecord extends FirestoreRecord {
         ? snapshotData['recipe_type']
         : deserializeEnum<RecipeType>(snapshotData['recipe_type']);
     _sharedWithFollowers = snapshotData['shared_with_followers'] as bool?;
+    _estimatedCost = castToType<double>(snapshotData['estimated_cost']);
     _isImported = snapshotData['is_imported'] as bool?;
     _sourceDomain = snapshotData['source_domain'] as String?;
   }
@@ -171,6 +177,7 @@ Map<String, dynamic> createMealRecordData({
   int? rating,
   RecipeType? recipeType,
   bool? sharedWithFollowers,
+  double? estimatedCost,
   bool? isImported,
   String? sourceDomain,
 }) {
@@ -189,6 +196,7 @@ Map<String, dynamic> createMealRecordData({
       'rating': rating,
       'recipe_type': recipeType,
       'shared_with_followers': sharedWithFollowers,
+      'estimated_cost': estimatedCost,
       'is_imported': isImported,
       'source_domain': sourceDomain,
     }.withoutNulls,
