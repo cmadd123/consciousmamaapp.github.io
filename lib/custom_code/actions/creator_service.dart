@@ -316,12 +316,14 @@ Future<String?> publishMealPlanToFollowers({
       else if (plan.mealComboRef != null) {
         try {
           final comboDoc = await plan.mealComboRef!.get();
-          final comboData = comboDoc.data() as Map<String, dynamic>?;
+          final comboRaw = comboDoc.data();
+          final comboData = comboRaw is Map ? Map<String, dynamic>.from(comboRaw) : null;
           if (comboData != null) {
             final entreeRef = comboData['entree_ref'] as DocumentReference?;
             if (entreeRef != null) {
               final entreeDoc = await entreeRef.get();
-              final entreeData = entreeDoc.data() as Map<String, dynamic>?;
+              final entreeRaw = entreeDoc.data();
+              final entreeData = entreeRaw is Map ? Map<String, dynamic>.from(entreeRaw) : null;
               recipeName = entreeData?['recipe_name'] as String? ?? comboData['name'] as String?;
             } else {
               recipeName = comboData['name'] as String?;
@@ -335,8 +337,9 @@ Future<String?> publishMealPlanToFollowers({
 
       if (recipeName == null || recipeName.isEmpty) continue;
 
-      // Add to week data
-      weekData.putIfAbsent(dayKey, () => {});
+      // Add to week data (use typed maps so later casts don't fail on
+      // Firestore's Map<dynamic, dynamic> quirk)
+      weekData.putIfAbsent(dayKey, () => <String, dynamic>{});
       (weekData[dayKey] as Map<String, dynamic>)[mealTypeKey] = {
         'name': recipeName,
         if (ingredients.isNotEmpty) 'ingredients': ingredients,
@@ -487,7 +490,8 @@ Future<CreatorImportResult> importCreatorMealPlan({
 
     final newKey = 'day_${dayOffset + 1}';
     final oldKey = legacyDayNames[dayOffset];
-    final dayData = (planData[newKey] ?? planData[oldKey]) as Map<String, dynamic>?;
+    final dayRaw = planData[newKey] ?? planData[oldKey];
+    final dayData = dayRaw is Map ? Map<String, dynamic>.from(dayRaw) : null;
     if (dayData == null) continue;
 
     final date = DateTime(monday.year, monday.month, monday.day + dayOffset);
@@ -511,7 +515,10 @@ Future<CreatorImportResult> importCreatorMealPlan({
       if (mealRef != null) {
         try {
           final md = await mealRef.get();
-          if (md.exists) mealData = md.data() as Map<String, dynamic>?;
+          if (md.exists) {
+            final raw = md.data();
+            mealData = raw is Map ? Map<String, dynamic>.from(raw) : null;
+          }
         } catch (_) {}
       }
       replacedSnapshots.add(_MealPlanSnapshot(
@@ -529,7 +536,8 @@ Future<CreatorImportResult> importCreatorMealPlan({
 
     // Create new meals + plans from creator data
     for (final mealType in ['breakfast', 'lunch', 'dinner', 'snack']) {
-      final m = dayData[mealType] as Map<String, dynamic>?;
+      final mRaw = dayData[mealType];
+      final m = mRaw is Map ? Map<String, dynamic>.from(mRaw) : null;
       if (m == null) continue;
       final name = m['name'] as String?;
       if (name == null || name.isEmpty) continue;

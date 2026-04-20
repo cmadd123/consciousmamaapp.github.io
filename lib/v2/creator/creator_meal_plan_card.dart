@@ -75,14 +75,16 @@ class _CreatorMealPlanCardState extends State<CreatorMealPlanCard> {
         // Try new format first, fall back to old
         final newKey = 'day_${dayIndex + 1}';
         final oldKey = dayNames[dayIndex];
-        final dayData = (planData[newKey] ?? planData[oldKey]) as Map<String, dynamic>?;
+        final dayRaw = planData[newKey] ?? planData[oldKey];
+        final dayData = dayRaw is Map ? Map<String, dynamic>.from(dayRaw) : null;
         if (dayData == null) continue;
 
         final date = DateTime(monday.year, monday.month, monday.day + dayIndex);
 
         // Each day can have breakfast, lunch, dinner, snack
         for (final mealType in ['breakfast', 'lunch', 'dinner', 'snack']) {
-          final mealData = dayData[mealType] as Map<String, dynamic>?;
+          final mealRaw = dayData[mealType];
+          final mealData = mealRaw is Map ? Map<String, dynamic>.from(mealRaw) : null;
           if (mealData == null) continue;
 
           final recipeName = mealData['name'] as String?;
@@ -339,9 +341,11 @@ class _CreatorMealPlanCardState extends State<CreatorMealPlanCard> {
     final previewMeals = <String>[];
 
     for (final day in ['day_1', 'day_2', 'day_3', 'monday', 'tuesday', 'wednesday']) {
-      final dayData = planData[day] as Map<String, dynamic>?;
+      final dayRaw = planData[day];
+      final dayData = dayRaw is Map ? Map<String, dynamic>.from(dayRaw) : null;
       if (dayData == null) continue;
-      final dinner = dayData['dinner'] as Map<String, dynamic>?;
+      final dinnerRaw = dayData['dinner'];
+      final dinner = dinnerRaw is Map ? Map<String, dynamic>.from(dinnerRaw) : null;
       if (dinner != null && dinner['name'] != null) {
         previewMeals.add(dinner['name'] as String);
       }

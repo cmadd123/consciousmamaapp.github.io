@@ -57,19 +57,24 @@ class _CreatorMealPlanPreviewWidgetState extends State<CreatorMealPlanPreviewWid
     });
   }
 
-  bool _dayHasCreatorData(int offset) {
+  Map<String, dynamic>? _dayMap(int offset) {
     final data = widget.mealPlan.data;
-    final d = (data['day_${offset + 1}'] ?? data[_legacyKeys[offset]]) as Map<String, dynamic>?;
+    final raw = data['day_${offset + 1}'] ?? data[_legacyKeys[offset]];
+    return raw is Map ? Map<String, dynamic>.from(raw) : null;
+  }
+
+  bool _dayHasCreatorData(int offset) {
+    final d = _dayMap(offset);
     return d != null && d.values.any((v) => v is Map);
   }
 
   List<String> _dayMealNames(int offset) {
-    final data = widget.mealPlan.data;
-    final d = (data['day_${offset + 1}'] ?? data[_legacyKeys[offset]]) as Map<String, dynamic>?;
+    final d = _dayMap(offset);
     if (d == null) return const [];
     final names = <String>[];
     for (final slot in _slotOrder) {
-      final m = d[slot] as Map<String, dynamic>?;
+      final mRaw = d[slot];
+      final m = mRaw is Map ? Map<String, dynamic>.from(mRaw) : null;
       final name = m?['name'] as String?;
       if (name != null && name.isNotEmpty) names.add(name);
     }
