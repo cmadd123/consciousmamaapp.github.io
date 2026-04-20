@@ -318,23 +318,42 @@ Future<String?> publishMealPlanToFollowers({
           recipeName = 'Planned';
         }
       }
-      // Meal combo — get the entree name
+      // Meal combo (template) — name from entree, cost from sum of all
+      // component MealRecords (entree + sides + desserts).
       else if (plan.mealComboRef != null) {
         try {
-          final comboDoc = await plan.mealComboRef!.get();
-          final comboRaw = comboDoc.data();
-          final comboData = comboRaw is Map ? Map<String, dynamic>.from(comboRaw) : null;
-          if (comboData != null) {
-            final entreeRef = comboData['entree_ref'] as DocumentReference?;
-            if (entreeRef != null) {
-              final entreeDoc = await entreeRef.get();
-              final entreeRaw = entreeDoc.data();
-              final entreeData = entreeRaw is Map ? Map<String, dynamic>.from(entreeRaw) : null;
-              recipeName = entreeData?['recipe_name'] as String? ?? comboData['name'] as String?;
-            } else {
-              recipeName = comboData['name'] as String?;
+          final combo = await MealComboRecord.getDocumentOnce(plan.mealComboRef!);
+          final componentRefs = <DocumentReference>[];
+          if (combo.entreeRef != null) componentRefs.add(combo.entreeRef!);
+          componentRefs.addAll(combo.sideRefs);
+          componentRefs.addAll(combo.dessertRefs);
+
+          // Pull entree details for the recipe payload (other components
+          // collapse into the same import — keeps it simple for v1).
+          if (combo.entreeRef != null) {
+            try {
+              final entreeMeal = await MealRecord.getDocumentOnce(combo.entreeRef!);
+              recipeName = entreeMeal.recipeName;
+              ingredients = entreeMeal.ingredients;
+              instructions = entreeMeal.cookingInstructions;
+              imageUrl = entreeMeal.imageUrl;
+              sourceUrl = entreeMeal.sourceUrl;
+            } catch (_) {
+              recipeName = combo.name;
             }
+          } else {
+            recipeName = combo.name;
           }
+
+          // Sum costs across every component
+          double comboCost = 0;
+          for (final r in componentRefs) {
+            try {
+              final m = await MealRecord.getDocumentOnce(r);
+              if (m.hasEstimatedCost()) comboCost += m.estimatedCost;
+            } catch (_) {}
+          }
+          if (comboCost > 0) estimatedCost = comboCost;
         } catch (e) {
           debugPrint('Could not fetch combo: $e');
           recipeName = 'Planned';

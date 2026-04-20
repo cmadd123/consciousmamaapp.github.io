@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -333,15 +334,15 @@ class _CreatorMealPlanCardState extends State<CreatorMealPlanCard> {
 
                     setState(() => _imported = true);
 
-                    // Show "Added N · Undo" on the Meals screen's messenger
-                    // (not the preview's, which was just disposed). Clear
-                    // any previous snackbar so it doesn't stack.
+                    // Show "Added N · Undo" on the Meals screen's messenger.
+                    // Force-dismiss with a Timer too — Material's built-in
+                    // duration was being ignored after the preview popped.
                     final messenger = ScaffoldMessenger.of(context);
-                    messenger.hideCurrentSnackBar();
+                    messenger.removeCurrentSnackBar();
                     final replacedText = result.daysReplaced > 0
                         ? ' · Replaced ${result.daysReplaced} day${result.daysReplaced == 1 ? '' : 's'}'
                         : '';
-                    messenger.showSnackBar(SnackBar(
+                    final controller = messenger.showSnackBar(SnackBar(
                       content: Text('Added ${result.mealsCreated} meals$replacedText'),
                       backgroundColor: FlutterFlowTheme.of(context).primary,
                       behavior: SnackBarBehavior.floating,
@@ -355,7 +356,7 @@ class _CreatorMealPlanCardState extends State<CreatorMealPlanCard> {
                           await result.undo();
                           if (!context.mounted) return;
                           final m = ScaffoldMessenger.of(context);
-                          m.hideCurrentSnackBar();
+                          m.removeCurrentSnackBar();
                           m.showSnackBar(SnackBar(
                             content: const Text('Restored your original plan'),
                             behavior: SnackBarBehavior.floating,
@@ -367,6 +368,13 @@ class _CreatorMealPlanCardState extends State<CreatorMealPlanCard> {
                         },
                       ),
                     ));
+                    // Belt-and-suspenders: explicitly close after 5s in case
+                    // the snackbar's own dismiss timer doesn't fire.
+                    Timer(const Duration(seconds: 5), () {
+                      try {
+                        controller.close();
+                      } catch (_) {}
+                    });
                   },
                   text: _imported ? '✓ Added to Your Week' : 'View This Plan',
                   options: FFButtonOptions(

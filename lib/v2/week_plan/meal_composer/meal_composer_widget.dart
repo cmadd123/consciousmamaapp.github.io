@@ -2688,18 +2688,24 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
     final customSnackCostVal = double.tryParse(_customSnackCostController.text.trim());
 
     try {
-      // If custom meal is provided, save it directly (no recipes needed)
+      // Custom meal: update the existing plan if we're editing one,
+      // otherwise create a fresh doc. The previous code unconditionally
+      // created a new doc, causing duplicates that stacked the cost
+      // every time a user re-opened and saved a custom meal slot.
       if (customMeal.isNotEmpty) {
-        await MealPlanRecord.collection.doc().set(
-          createMealPlanRecordData(
-            date: widget.date,
-            typ: widget.mealType,
-            userRef: currentUserReference,
-            customMeal: customMeal,
-            customMealCost: customMealCostVal,
-            notes: notes.isNotEmpty ? notes : null,
-          ),
+        final data = createMealPlanRecordData(
+          date: widget.date,
+          typ: widget.mealType,
+          userRef: currentUserReference,
+          customMeal: customMeal,
+          customMealCost: customMealCostVal,
+          notes: notes.isNotEmpty ? notes : null,
         );
+        if (widget.existingMealPlan != null) {
+          await widget.existingMealPlan!.reference.update(data);
+        } else {
+          await MealPlanRecord.collection.add(data);
+        }
 
         FFAppState().MealCashtearm = true;
         if (mounted) {
@@ -2709,18 +2715,21 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
         return;
       }
 
-      // Custom snack (snack tab)
+      // Custom snack (snack tab) — same fix
       if (customSnack.isNotEmpty && widget.mealType == MealTyp.Snacks) {
-        await MealPlanRecord.collection.doc().set(
-          createMealPlanRecordData(
-            date: widget.date,
-            typ: MealTyp.Snacks,
-            userRef: currentUserReference,
-            customMeal: customSnack,
-            customMealCost: customSnackCostVal,
-            notes: notes.isNotEmpty ? notes : null,
-          ),
+        final data = createMealPlanRecordData(
+          date: widget.date,
+          typ: MealTyp.Snacks,
+          userRef: currentUserReference,
+          customMeal: customSnack,
+          customMealCost: customSnackCostVal,
+          notes: notes.isNotEmpty ? notes : null,
         );
+        if (widget.existingMealPlan != null) {
+          await widget.existingMealPlan!.reference.update(data);
+        } else {
+          await MealPlanRecord.collection.add(data);
+        }
 
         FFAppState().MealCashtearm = true;
         if (mounted) {
