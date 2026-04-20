@@ -464,8 +464,12 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
         if (didPop) return;
         if (!mounted) return; // Don't do anything if widget is already disposed
 
+        // _saveMealPlan pops the route itself on the custom-meal + custom-snack
+        // branches, so calling Navigator.pop a second time from here blows up
+        // with `_debugLocked`. Use a local flag + canPop guard.
+        bool saveHandlesPop = false;
+
         try {
-          // Auto-save changes before popping if there are any items
           if (_hasAnyItems && !_isSaving && mounted) {
             if (widget.editTemplateId != null && widget.editTemplateId != 'new') {
               // Editing an existing template — auto-update it
@@ -479,15 +483,20 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
               return; // Don't pop, dialog will handle it
             } else {
               await _saveMealPlan();
+              saveHandlesPop = true;
             }
           }
 
-          // Pop after save completes (or if no save needed)
-          if (mounted) Navigator.pop(context);
+          if (!saveHandlesPop && mounted && Navigator.canPop(context)) {
+            Navigator.pop(context);
+          }
         } catch (e) {
           debugPrint('Error during pop save: $e');
-          // Still allow navigation even if save fails
-          if (mounted) Navigator.pop(context);
+          if (!saveHandlesPop && mounted && Navigator.canPop(context)) {
+            try {
+              Navigator.pop(context);
+            } catch (_) {/* already popped during save */}
+          }
         }
       },
       child: Scaffold(

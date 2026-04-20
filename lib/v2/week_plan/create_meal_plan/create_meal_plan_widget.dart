@@ -4960,11 +4960,22 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                         ],
                       ),
                       SizedBox(height: 4.0),
-                    if (FFAppState().showMealCosts && meal.hasEstimatedCost())
-                      Padding(
+                    // Show the plan-level total (entree + sides + desserts)
+                    // from the cached rollup instead of the entree's own
+                    // estimatedCost. Falls back to entree cost only if the
+                    // rollup hasn't populated yet.
+                    Builder(builder: (_) {
+                      final planTotal = _costByPlanPath[mealPlan.reference.path];
+                      final displayCost = (planTotal != null && planTotal > 0)
+                          ? planTotal
+                          : (meal.hasEstimatedCost() ? meal.estimatedCost : 0.0);
+                      if (!FFAppState().showMealCosts || displayCost <= 0) {
+                        return const SizedBox.shrink();
+                      }
+                      return Padding(
                         padding: const EdgeInsets.only(bottom: 4.0),
                         child: Text(
-                          '\$${meal.estimatedCost.round()}',
+                          '\$${displayCost.round()}',
                           style: const TextStyle(
                             fontFamily: 'Andika New Basic',
                             fontSize: 12.0,
@@ -4972,7 +4983,8 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                      ),
+                      );
+                    }),
                     // Show recipe type indicator for sides/desserts with leaf/cake icon + count
                     if ((meal.recipeType == RecipeType.Side || meal.mainOrSides == 'Side') && !mealPlan.hasSideRefs() && !mealPlan.hasDessertRefs())
                       Row(
