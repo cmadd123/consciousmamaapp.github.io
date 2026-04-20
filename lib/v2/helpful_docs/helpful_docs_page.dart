@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter_pdfview/flutter_pdfview.dart';
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
@@ -133,11 +136,49 @@ class _HelpfulDocsPageState extends State<HelpfulDocsPage> {
     );
   }
 
+  Future<void> _confirmAndDelete(AppContentRecord doc) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Delete doc?'),
+        content: Text('Remove "${doc.title}"? This cannot be undone.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+    try {
+      if (doc.hasPdfUrl() && doc.pdfUrl.isNotEmpty) {
+        try {
+          await FirebaseStorage.instance.refFromURL(doc.pdfUrl).delete();
+        } catch (_) {}
+      }
+      await doc.reference.delete();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Doc deleted')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Delete failed: $e')),
+        );
+      }
+    }
+  }
+
   Widget _buildDocCard(AppContentRecord doc) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: InkWell(
         onTap: () => _showDocDetail(context, doc),
+        onLongPress: () => _confirmAndDelete(doc),
         borderRadius: BorderRadius.circular(16),
         child: Container(
           padding: const EdgeInsets.all(16),
@@ -204,6 +245,15 @@ class _HelpfulDocsPageState extends State<HelpfulDocsPage> {
                     style: TextStyle(fontSize: 10, color: Colors.grey.shade600, fontWeight: FontWeight.w500, fontFamily: 'Andika New Basic'),
                   ),
                 ),
+              const SizedBox(width: 6),
+              InkWell(
+                onTap: () => _confirmAndDelete(doc),
+                borderRadius: BorderRadius.circular(8),
+                child: Padding(
+                  padding: const EdgeInsets.all(6),
+                  child: Icon(Icons.delete_outline, size: 18, color: Colors.grey.shade500),
+                ),
+              ),
             ],
           ),
         ),
@@ -419,11 +469,19 @@ class _HelpfulDocsPageState extends State<HelpfulDocsPage> {
                 GestureDetector(
                   onTap: () async {
                     final result = await FilePicker.platform.pickFiles(
-                      type: FileType.custom,
-                      allowedExtensions: ['pdf'],
+                      type: FileType.any,
                     );
                     if (result != null && result.files.isNotEmpty) {
-                      setSheetState(() => selectedFile = result.files.first);
+                      final picked = result.files.first;
+                      if (!picked.name.toLowerCase().endsWith('.pdf')) {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Please select a PDF file')),
+                          );
+                        }
+                        return;
+                      }
+                      setSheetState(() => selectedFile = picked);
                     }
                   },
                   child: Container(
@@ -543,18 +601,14 @@ class _HelpfulDocsPageState extends State<HelpfulDocsPage> {
     );
   }
 
-  /// Open PDF externally
-  void _showPdfViewer(BuildContext context, AppContentRecord doc) async {
-    final uri = Uri.parse(doc.pdfUrl);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    } else {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Could not open PDF')),
-        );
-      }
-    }
+  /// Open PDF in-app
+  void _showPdfViewer(BuildContext context, AppContentRecord doc) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => _InAppPdfScreen(doc: doc),
+      ),
+    );
   }
 
   Widget _buildField(String label, TextEditingController controller, String hint) {
@@ -578,5 +632,95 @@ class _HelpfulDocsPageState extends State<HelpfulDocsPage> {
     );
   }
 }
-// PDF viewer removed — opens externally via url_launcher
+class _InAppPdfScreen extends StatefulWidget {
+  const _InAppPdfScreen({required this.doc});
+  final AppContentRecord doc;
+
+  @override
+  State<_InAppPdfScreen> createState() => _InAppPdfScreenState();
+}
+
+class _InAppPdfScreenState extends State<_InAppPdfScreen> {
+  String? _localPath;
+  String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    _download();
+  }
+
+  Future<void> _download() async {
+    try {
+      final res = await http.get(Uri.parse(widget.doc.pdfUrl));
+      if (res.statusCode != 200) {
+        throw Exception('HTTP ${res.statusCode}');
+      }
+      final dir = await getTemporaryDirectory();
+      final file = File('${dir.path}/doc_${widget.doc.reference.id}.pdf');
+      await file.writeAsBytes(res.bodyBytes, flush: true);
+      if (mounted) setState(() => _localPath = file.path);
+    } catch (e) {
+      if (mounted) setState(() => _error = e.toString());
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF5F5F5),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black87,
+        elevation: 0,
+        title: Text(
+          widget.doc.title,
+          style: const TextStyle(
+            fontFamily: 'Andika New Basic',
+            fontSize: 17,
+            fontWeight: FontWeight.w600,
+          ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+      ),
+      body: _error != null
+          ? Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Text('Could not load PDF: $_error', textAlign: TextAlign.center),
+              ),
+            )
+          : _localPath == null
+              ? const Center(child: CircularProgressIndicator())
+              : Padding(
+                  padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: Colors.black.withOpacity(0.08),
+                        width: 1,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.04),
+                          blurRadius: 6,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    clipBehavior: Clip.antiAlias,
+                    child: PDFView(
+                      filePath: _localPath!,
+                      enableSwipe: true,
+                      swipeHorizontal: false,
+                      autoSpacing: true,
+                      pageFling: true,
+                    ),
+                  ),
+                ),
+    );
+  }
+}
 // In-app PDF viewing can be added later with flutter_pdfview when disk space allows

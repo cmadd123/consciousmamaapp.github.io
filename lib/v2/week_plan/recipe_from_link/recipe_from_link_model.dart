@@ -21,6 +21,7 @@ class RecipeFromLinkModel extends FlutterFlowModel<RecipeFromLinkWidget> {
   int cookTime = 0;
   String servings = '';
   String? sourceUrl;
+  double? estimatedCost;
 
   List<String> ingredientsList = [];
   void addToIngredientsList(String item) => ingredientsList.add(item);
@@ -172,6 +173,8 @@ class RecipeFromLinkModel extends FlutterFlowModel<RecipeFromLinkWidget> {
     cookTime = (recipe['cookTime'] as num?)?.toInt() ?? 0;
     servings = recipe['servings']?.toString() ?? '';
     sourceUrl = recipe['sourceUrl'] as String?;
+    final cost = recipe['estimatedCost'] ?? recipe['estimated_cost'];
+    estimatedCost = (cost is num) ? cost.toDouble() : null;
 
     // Populate ingredients
     ingredientsList.clear();

@@ -1,9 +1,11 @@
 // MomRise Cloud Functions - v2 (Node 22)
 const { onDocumentCreated } = require('firebase-functions/v2/firestore');
-const { onCall, onRequest } = require('firebase-functions/v2/https');
+const { onCall, onRequest, HttpsError } = require('firebase-functions/v2/https');
+const { onSchedule } = require('firebase-functions/v2/scheduler');
 const { defineString, defineSecret } = require('firebase-functions/params');
 const { initializeApp } = require('firebase-admin/app');
-const { getFirestore, FieldValue } = require('firebase-admin/firestore');
+const { getFirestore, FieldValue, Timestamp } = require('firebase-admin/firestore');
+const { getMessaging } = require('firebase-admin/messaging');
 const sgMail = require('@sendgrid/mail');
 const https = require('https');
 const http = require('http');
@@ -18,6 +20,7 @@ const sendgridFromEmail = defineString('SENDGRID_FROM_EMAIL');
 const sendgridApiKey = defineSecret('SENDGRID_API_KEY');
 const openaiApiKey = defineSecret('OPENAI_API_KEY');
 const scrapingBeeApiKey = defineSecret('SCRAPINGBEE_API_KEY');
+const anthropicApiKey = defineSecret('ANTHROPIC_API_KEY');
 
 // ── Waitlist Welcome Email ───────────────────────────
 // Triggered when new document created in 'waitlist' collection
@@ -245,15 +248,71 @@ To unsubscribe, email hello@momrise.app
 // ── Recipe Extraction Function ──────────────────────
 // HTTP request function to extract recipe from URL
 // This uses onRequest to bypass App Check (matching the Flutter code expectation)
+async function addCostEstimate(recipe, apiKey) {
+  if (!recipe || !recipe.ingredients || recipe.ingredients.length === 0) return recipe;
+  if (typeof recipe.estimatedCost === 'number' && recipe.estimatedCost > 0) return recipe;
+  try {
+    const cost = await estimateRecipeCost(recipe.ingredients, apiKey);
+    if (cost > 0) {
+      recipe.estimatedCost = cost;
+      console.log(`Cost estimate: $${cost.toFixed(2)}`);
+    }
+  } catch (e) {
+    console.log(`Cost estimation failed (non-blocking): ${e.message}`);
+  }
+  return recipe;
+}
+
+// Rate limiting: max 30 extractions per user per hour
+const _rateLimitMap = new Map();
+const RATE_LIMIT_MAX = 30;
+const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000;
+
+function checkRateLimit(uid) {
+  const now = Date.now();
+  const entry = _rateLimitMap.get(uid);
+  if (!entry || now - entry.windowStart > RATE_LIMIT_WINDOW_MS) {
+    _rateLimitMap.set(uid, { windowStart: now, count: 1 });
+    return true;
+  }
+  if (entry.count >= RATE_LIMIT_MAX) return false;
+  entry.count++;
+  return true;
+}
+
 exports.extractRecipe = onRequest({ secrets: [openaiApiKey, scrapingBeeApiKey] }, async (request, response) => {
   // Set CORS headers
   response.set('Access-Control-Allow-Origin', '*');
   response.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  response.set('Access-Control-Allow-Headers', 'Content-Type');
+  response.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
   // Handle preflight OPTIONS request
   if (request.method === 'OPTIONS') {
     response.status(204).send('');
+    return;
+  }
+
+  // Verify Firebase Auth token
+  const authHeader = request.headers.authorization;
+  let uid = null;
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    try {
+      const { getAuth } = require('firebase-admin/auth');
+      const token = authHeader.split('Bearer ')[1];
+      const decoded = await getAuth().verifyIdToken(token);
+      uid = decoded.uid;
+    } catch (authError) {
+      console.error('Auth verification failed:', authError.message);
+    }
+  }
+
+  if (!uid) {
+    response.status(401).json({ result: { error: 'Authentication required' } });
+    return;
+  }
+
+  if (!checkRateLimit(uid)) {
+    response.status(429).json({ result: { error: 'Rate limit exceeded. Try again later.' } });
     return;
   }
 
@@ -274,6 +333,7 @@ exports.extractRecipe = onRequest({ secrets: [openaiApiKey, scrapingBeeApiKey] }
     try {
       const recipe = await extractRecipeFromTextWithAI(text, openaiApiKey.value());
       console.log(`AI extracted recipe: ${recipe.name}`);
+      await addCostEstimate(recipe, openaiApiKey.value());
       response.status(200).json({ result: { success: true, recipe } });
       return;
     } catch (error) {
@@ -382,6 +442,7 @@ exports.extractRecipe = onRequest({ secrets: [openaiApiKey, scrapingBeeApiKey] }
         const recipe = extractRecipeFromHtml(sourceHtml, sourceUrl);
         if (recipe) {
           console.log(`Successfully extracted recipe: ${recipe.name}`);
+          await addCostEstimate(recipe, openaiApiKey.value());
           response.status(200).json({ result: recipe });
           return;
         }
@@ -392,6 +453,7 @@ exports.extractRecipe = onRequest({ secrets: [openaiApiKey, scrapingBeeApiKey] }
           const aiRecipe = await extractRecipeWithAI(sourceHtml, sourceUrl, openaiApiKey.value());
           if (aiRecipe && aiRecipe.name) {
             console.log(`AI extracted from source: ${aiRecipe.name}`);
+            await addCostEstimate(aiRecipe, openaiApiKey.value());
             response.status(200).json({ result: aiRecipe });
             return;
           }
@@ -412,6 +474,7 @@ exports.extractRecipe = onRequest({ secrets: [openaiApiKey, scrapingBeeApiKey] }
             recipe.imageUrl = pinImageUrl;
             recipe.sourceUrl = url;
             console.log(`Vision extracted recipe: ${recipe.name}`);
+            await addCostEstimate(recipe, openaiApiKey.value());
             response.status(200).json({ result: recipe });
             return;
           }
@@ -455,6 +518,7 @@ exports.extractRecipe = onRequest({ secrets: [openaiApiKey, scrapingBeeApiKey] }
         // If we have a partial recipe from structured data, return it
         if (recipe) {
           console.log('Returning partial recipe from structured data');
+          await addCostEstimate(recipe, openaiApiKey.value());
           response.status(200).json({ result: recipe });
           return;
         }
@@ -616,19 +680,47 @@ function fetchUrl(url, redirectCount = 0) {
   });
 }
 
-// Helper: Fetch URL using ScrapingBee (handles Cloudflare, JS rendering, bot protection)
+// Helper: Fetch URL using ScrapingBee with tiered fallback to save credits.
+// Tier 1: JS only (5 credits) — handles most JS-rendered sites
+// Tier 2: JS + premium proxy (25 credits) — handles Cloudflare + aggressive bot detection
 function fetchWithScrapingBee(url, apiKey) {
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     if (!apiKey) {
       reject(new Error('ScrapingBee API key not configured'));
       return;
     }
 
+    // Tier 1: JS rendering only (5 credits)
+    try {
+      console.log('ScrapingBee Tier 1: JS only (5 credits)...');
+      const html = await _scrapingBeeRequest(url, apiKey, { render_js: 'true', premium_proxy: 'false' });
+      console.log(`ScrapingBee Tier 1 succeeded (length: ${html.length})`);
+      resolve(html);
+      return;
+    } catch (tier1Error) {
+      console.log(`ScrapingBee Tier 1 failed: ${tier1Error.message}`);
+    }
+
+    // Tier 2: JS + premium proxy (25 credits)
+    try {
+      console.log('ScrapingBee Tier 2: JS + premium proxy (25 credits)...');
+      const html = await _scrapingBeeRequest(url, apiKey, { render_js: 'true', premium_proxy: 'true' });
+      console.log(`ScrapingBee Tier 2 succeeded (length: ${html.length})`);
+      resolve(html);
+    } catch (tier2Error) {
+      console.log(`ScrapingBee Tier 2 failed: ${tier2Error.message}`);
+      reject(tier2Error);
+    }
+  });
+}
+
+function _scrapingBeeRequest(url, apiKey, options) {
+  return new Promise((resolve, reject) => {
     const params = new URLSearchParams({
       api_key: apiKey,
       url: url,
-      render_js: 'false',        // Don't need JS rendering for most recipe blogs
-      premium_proxy: 'true',     // Uses residential proxies to bypass Cloudflare
+      render_js: options.render_js || 'false',
+      premium_proxy: options.premium_proxy || 'false',
       country_code: 'us',
     });
 
@@ -638,7 +730,6 @@ function fetchWithScrapingBee(url, apiKey) {
       timeout: 45000,
     }, (response) => {
       if (response.statusCode !== 200) {
-        // Read error body for details
         let errorBody = '';
         response.on('data', (chunk) => { errorBody += chunk; });
         response.on('end', () => {
@@ -801,6 +892,25 @@ function normalizeRecipe(recipe, sourceUrl) {
     console.log(`Cleaned servings from "${recipe.recipeYield}" to "${servings}"`);
   }
 
+  // Parse ISO 8601 durations (e.g. "PT1H30M", "PT15M") to minutes
+  const parseDurationToMinutes = (val) => {
+    if (val == null) return 0;
+    if (typeof val === 'number') return Math.round(val);
+    const s = String(val).trim();
+    const iso = s.match(/^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?$/i);
+    if (iso) {
+      const h = parseInt(iso[1] || '0', 10);
+      const m = parseInt(iso[2] || '0', 10);
+      return h * 60 + m;
+    }
+    const numMatch = s.match(/(\d+)/);
+    return numMatch ? parseInt(numMatch[1], 10) : 0;
+  };
+
+  const prepTime = parseDurationToMinutes(recipe.prepTime);
+  const cookTime = parseDurationToMinutes(recipe.cookTime);
+  console.log(`Parsed times: prep=${prepTime}min (from "${recipe.prepTime}"), cook=${cookTime}min (from "${recipe.cookTime}")`);
+
   return {
     name: recipe.name || 'Untitled Recipe',
     description: recipe.description || '',
@@ -808,6 +918,8 @@ function normalizeRecipe(recipe, sourceUrl) {
     ingredients: ingredients.filter(i => i && i.trim()),
     instructions: instructions.filter(i => i && i.trim()),
     servings: servings,
+    prepTime: prepTime,
+    cookTime: cookTime,
     sourceUrl: sourceUrl
   };
 }
@@ -833,13 +945,16 @@ async function extractRecipeWithAI(html, sourceUrl, apiKey) {
   "imageUrl": "image URL if found, empty string if not",
   "ingredients": ["ingredient 1", "ingredient 2", ...],
   "instructions": ["step 1", "step 2", ...],
-  "servings": "number of servings"
+  "servings": "number of servings",
+  "prepTime": 15,
+  "cookTime": 30
 }
 
 Important:
 - Extract ALL ingredients as separate array items
 - Extract ALL instruction steps as separate array items
 - If servings shows "4,serves 4", just return "4"
+- prepTime and cookTime must be integers in MINUTES (not strings, not ISO durations). Use 0 if not found.
 - Do not include any text outside the JSON
 - Return empty strings/arrays if data not found
 
@@ -947,6 +1062,8 @@ Return ONLY valid JSON with the CORRECTED recipe in this exact structure:
   "ingredients": ["ingredient 1", "ingredient 2", ...],
   "instructions": ["step 1", "step 2", "step 3", ...],
   "servings": "4",
+  "prepTime": ${recipe.prepTime || 0},
+  "cookTime": ${recipe.cookTime || 0},
   "sourceUrl": "${recipe.sourceUrl}"
 }
 
@@ -1072,9 +1189,12 @@ async function extractRecipeFromImageWithAI(imageUrl, apiKey) {
   "description": "Brief description",
   "ingredients": ["ingredient 1", "ingredient 2"],
   "instructions": ["step 1", "step 2"],
-  "servings": "number if visible"
+  "servings": "number if visible",
+  "prepTime": 15,
+  "cookTime": 30
 }
 
+prepTime and cookTime must be integers in MINUTES (0 if not visible).
 If the image is just a food photo with no recipe text, return {"error": "no recipe found"}.
 Return ONLY valid JSON.`
           },
@@ -1198,7 +1318,9 @@ async function extractRecipeFromTextWithAI(text, apiKey) {
   "imageUrl": "",
   "ingredients": ["ingredient 1", "ingredient 2", ...],
   "instructions": ["step 1", "step 2", ...],
-  "servings": "number of servings if mentioned"
+  "servings": "number of servings if mentioned",
+  "prepTime": 15,
+  "cookTime": 30
 }
 
 PASTED TEXT:
@@ -1209,6 +1331,7 @@ CRITICAL:
 - Parse all ingredients into separate array items
 - Parse all instructions/steps into separate array items
 - Each instruction should be ONE step only
+- prepTime and cookTime must be integers in MINUTES. Use 0 if not mentioned.
 - Return only valid JSON, no markdown formatting`;
 
   const requestBody = JSON.stringify({
@@ -1261,3 +1384,538 @@ CRITICAL:
     req.end();
   });
 }
+
+// ── Stripe Subscription Functions ───────────────────
+const stripeFunctions = require('./stripe_functions');
+exports.createSubscription = stripeFunctions.createSubscription;
+exports.cancelSubscription = stripeFunctions.cancelSubscription;
+exports.restorePurchases = stripeFunctions.restorePurchases;
+exports.stripeWebhook = stripeFunctions.stripeWebhook;
+
+// ── Notification Scheduling ─────────────────────────
+// Writes a reminder doc; processReminders cron picks it up and sends
+// the FCM push when `time` arrives.
+exports.scahdulNotification = onCall(async (request) => {
+  const { token, time } = request.data || {};
+
+  if (!token || !time) {
+    throw new HttpsError('invalid-argument', 'token and time are required');
+  }
+
+  const scheduledTime = new Date(time);
+  if (isNaN(scheduledTime.getTime())) {
+    throw new HttpsError('invalid-argument', 'time must be a valid date');
+  }
+  if (scheduledTime <= new Date()) {
+    throw new HttpsError('invalid-argument', 'time must be in the future');
+  }
+
+  await getFirestore().collection('reminders').add({
+    token,
+    time: scheduledTime,
+    sent: false,
+  });
+
+  return '✅ Reminder scheduled';
+});
+
+// ── User-triggered cleanup ──────────────────────────
+// Deletes all of a user's recipes (meal), saved days (favourit_meal),
+// and meal templates (meal_combo). Scoped to the authenticated uid.
+exports.cleanupUnlabeledContent = onCall(async (request) => {
+  if (!request.auth) {
+    throw new HttpsError('unauthenticated', 'User must be authenticated to clean up content.');
+  }
+
+  const userId = request.auth.uid;
+  const db = getFirestore();
+  const userDocRef = db.doc(`users/${userId}`);
+  const results = { recipesDeleted: 0, savedDaysDeleted: 0, templatesDeleted: 0 };
+
+  try {
+    const [recipesSnap, savedDaysSnap, templatesSnap] = await Promise.all([
+      db.collection('meal').where('user_ref', '==', userDocRef).get(),
+      db.collection('favourit_meal').where('user_ref', '==', userDocRef).get(),
+      db.collection('meal_combo').where('user_ref', '==', userDocRef).get(),
+    ]);
+
+    const deletes = [];
+    recipesSnap.forEach((doc) => { deletes.push(doc.ref.delete()); results.recipesDeleted++; });
+    savedDaysSnap.forEach((doc) => { deletes.push(doc.ref.delete()); results.savedDaysDeleted++; });
+    templatesSnap.forEach((doc) => { deletes.push(doc.ref.delete()); results.templatesDeleted++; });
+
+    await Promise.all(deletes);
+
+    console.log(`Cleanup complete for user ${userId}:`, results);
+    return {
+      success: true,
+      ...results,
+      message: `Deleted ${results.recipesDeleted} recipes, ${results.savedDaysDeleted} saved days, and ${results.templatesDeleted} templates.`,
+    };
+  } catch (error) {
+    console.error('Error during cleanup:', error);
+    throw new HttpsError('internal', error.message);
+  }
+});
+
+// ── Reminder Dispatcher (every 1 min) ───────────────
+// Reads due reminders from Firestore and fires FCM pushes.
+exports.processReminders = onSchedule(
+  { schedule: 'every 1 minutes', timeZone: 'Africa/Cairo' },
+  async () => {
+    const now = new Date();
+    const db = getFirestore();
+    const snapshot = await db.collection('reminders')
+      .where('time', '<=', now)
+      .where('sent', '==', false)
+      .get();
+
+    if (snapshot.empty) {
+      console.log('No reminders to send');
+      return;
+    }
+
+    console.log('Reminders to send:', snapshot.docs.map((d) => d.id));
+
+    await Promise.all(snapshot.docs.map(async (doc) => {
+      const reminder = doc.data();
+      if (!reminder.token) {
+        console.warn(`Reminder ${doc.id} has no token`);
+        return;
+      }
+      const payload = {
+        notification: {
+          title: 'Meal Planner 🍴',
+          body: "Don't forget to plan your meals today!",
+        },
+        token: reminder.token,
+      };
+      try {
+        await getMessaging().send(payload);
+        await doc.ref.update({ sent: true });
+        console.log(`Reminder ${doc.id} sent ✅`);
+      } catch (error) {
+        console.error(`Error sending reminder ${doc.id}:`, error);
+      }
+    }));
+  }
+);
+
+// ── User cleanup on Firebase Auth delete ────────────
+// v1 API (Firebase Functions v2 has no auth onDelete trigger yet).
+// Still runs on Node 22 because engines.node in package.json controls
+// runtime for both v1 and v2 functions in this codebase.
+const functionsV1 = require('firebase-functions/v1');
+
+exports.onUserDeleted = functionsV1.auth.user().onDelete(async (user) => {
+  await getFirestore().collection('users').doc(user.uid).delete();
+  console.log(`Deleted user doc for uid ${user.uid}`);
+});
+
+// ── Meal tag verifier (Firestore onCreate) ──────────
+// Safety net: if a newly-created meal doc has no mealTyp, auto-detect
+// the category from the recipe name keywords.
+const MEAL_CATEGORY_KEYWORDS = {
+  Breakfast: ['breakfast','pancake','waffle','oatmeal','cereal','toast','eggs','bacon','sausage','brunch','muffin','bagel','croissant','french toast','scrambled','omelet','smoothie bowl'],
+  Lunch: ['lunch','sandwich','wrap','salad','soup','panini','burger','sub','hoagie'],
+  Dinner: ['dinner','roast','steak','chicken breast','pork chop','salmon','pasta','casserole','curry','stir fry','grilled','baked chicken','pot roast','lasagna','enchilada','risotto'],
+  Side: ['side','sides','side dish','fries','mashed potato','coleslaw','green beans','corn','rice','roasted vegetables'],
+  Snacks: ['snack','appetizer','dip','chip','cracker','finger food','bite','ball'],
+  Desserts: ['dessert','cake','cookie','brownie','pie','ice cream','chocolate','sweet','pudding','tart','cupcake','cheesecake','candy','fudge','truffle'],
+};
+
+exports.verifyMealTags = onDocumentCreated('meal/{mealId}', async (event) => {
+  const snap = event.data;
+  if (!snap) return;
+  const mealData = snap.data();
+  const mealTyp = mealData.mealTyp;
+  const mealId = event.params.mealId;
+
+  if (mealTyp && mealTyp.trim().length > 0) {
+    console.log(`Meal ${mealId} already has mealTyp: ${mealTyp}`);
+    return;
+  }
+
+  console.log(`Meal ${mealId} missing mealTyp, auto-detecting...`);
+
+  const recipeName = (mealData.recipeName || '').toLowerCase();
+  const detected = [];
+  for (const [category, keywords] of Object.entries(MEAL_CATEGORY_KEYWORDS)) {
+    if (keywords.some((kw) => recipeName.includes(kw))) detected.push(category);
+  }
+
+  if (detected.length === 0) {
+    detected.push('Dinner');
+    console.log(`No keywords matched for "${recipeName}", defaulting to Dinner`);
+  }
+
+  const newMealTyp = detected.join(',');
+  console.log(`Auto-detected categories for meal ${mealId}: ${newMealTyp}`);
+
+  try {
+    await snap.ref.update({ mealTyp: newMealTyp });
+    console.log(`Successfully updated meal ${mealId} with mealTyp: ${newMealTyp}`);
+  } catch (error) {
+    console.error(`Error updating meal ${mealId}:`, error);
+  }
+});
+
+// ── AI-generated child learning programs (OpenAI Assistants) ─
+// Takes a challenge description, drives an OpenAI Assistant, and
+// creates a program + spaced tasks in Firestore.
+const OpenAI = require('openai');
+const moment = require('moment-timezone');
+const CHILD_TASKS_ASSISTANT_ID = 'asst_Zrdo4Vh9j6BeaRALEXyqPZMZ';
+
+exports.generateChildTasks = onCall(
+  { secrets: [openaiApiKey], timeoutSeconds: 180, memory: '512MiB' },
+  async (request) => {
+    try {
+      const data = request.data || {};
+      console.log('Received request:', data);
+
+      const {
+        challengeDescription,
+        childBirthDate,
+        currentDate,
+        parentId,
+        childId,
+        frequency,
+        preferredTime,
+        timezone,
+      } = data;
+
+      if (!challengeDescription || !childBirthDate || !currentDate ||
+          !parentId || !childId || !frequency || !preferredTime || !timezone) {
+        console.warn('Missing required fields', data);
+        throw new HttpsError('invalid-argument', 'Missing required fields');
+      }
+
+      const openai = new OpenAI({ apiKey: openaiApiKey.value().trim() });
+      const db = getFirestore();
+
+      console.log('Creating a thread with OpenAI Assistant');
+      const thread = await openai.beta.threads.create();
+      console.log('Thread created:', thread.id);
+
+      await openai.beta.threads.messages.create(thread.id, {
+        role: 'user',
+        content: `Reply ONLY with valid JSON.
+Do not include explanations, markdown, or extra fields.
+
+Format:
+{
+  "programe_title": "string",
+  "programe_description": "string",
+  "tasks": [
+    {"title": "string", "description": "string", "duration": number}
+  ]
+}
+
+Challenge Description: ${challengeDescription}
+Child's Birthdate: ${childBirthDate}
+Current Date: ${currentDate}`,
+      });
+      console.log('Message sent to assistant');
+
+      const run = await openai.beta.threads.runs.create(thread.id, {
+        assistant_id: CHILD_TASKS_ASSISTANT_ID,
+      });
+      console.log('Assistant run started:', run.id);
+
+      let runStatus;
+      do {
+        runStatus = await openai.beta.threads.runs.retrieve(thread.id, run.id);
+        console.log('Run status:', runStatus.status);
+        await new Promise((r) => setTimeout(r, 2000));
+      } while (runStatus.status !== 'completed');
+
+      const messages = await openai.beta.threads.messages.list(thread.id);
+      const responseMessage = messages.data.find((m) => m.role === 'assistant');
+
+      let responseData = null;
+      if (responseMessage && responseMessage.content && responseMessage.content.length > 0) {
+        const textBlock = responseMessage.content.find((c) => c.type === 'text');
+        if (textBlock) {
+          let rawText = textBlock.text.value;
+          console.log('Assistant raw text:', rawText);
+          rawText = rawText.replace(/```json|```/g, '').trim();
+          try {
+            responseData = JSON.parse(rawText);
+          } catch (e) {
+            console.error('JSON parse error. Raw text was:', rawText);
+            throw new HttpsError('internal', 'Assistant did not return valid JSON');
+          }
+        }
+      }
+
+      if (!responseData) {
+        throw new HttpsError('internal', 'Invalid response from OpenAI');
+      }
+      if (!responseData.programe_title || !responseData.programe_description ||
+          !Array.isArray(responseData.tasks)) {
+        console.error('Assistant response missing required fields:', responseData);
+        throw new HttpsError('internal', 'Assistant response missing required fields');
+      }
+
+      let startDate = moment.tz(currentDate, 'YYYY-MM-DD HH:mm:ss.SSS', timezone);
+      const now = moment.tz(timezone);
+
+      const timeFormat = preferredTime.includes('AM') || preferredTime.includes('PM')
+        ? 'YYYY-MM-DD hh:mm A'
+        : 'YYYY-MM-DD HH:mm';
+      const preferredStartTime = moment.tz(
+        `${startDate.format('YYYY-MM-DD')} ${preferredTime}`,
+        timeFormat,
+        timezone
+      );
+      if (now.isAfter(preferredStartTime)) {
+        startDate.add(1, 'day');
+      }
+
+      const firestoreStartDate = Timestamp.fromDate(startDate.toDate());
+
+      const programRef = await db.collection('programs').add({
+        title: responseData.programe_title,
+        description: responseData.programe_description,
+        created_at: Timestamp.now(),
+        created_by: db.collection('users').doc(parentId),
+        start_date: firestoreStartDate,
+        end_date: null,
+        tasks: [],
+      });
+      console.log('Program created with ID:', programRef.id);
+
+      const taskRefs = [];
+      const taskDates = [];
+      let taskDate = startDate.clone();
+      let endDate = startDate.clone();
+
+      for (const task of responseData.tasks) {
+        const taskStartTime = moment
+          .tz(`${taskDate.format('DD-MM-YYYY')} ${preferredTime}`, 'DD-MM-YYYY HH:mm', timezone)
+          .toDate();
+        const taskDateString = taskDate.format('DD-MM-YYYY');
+
+        const taskRef = await db.collection('tasks').add({
+          title: task.title,
+          description: task.description,
+          duration: task.duration,
+          created_by: db.collection('users').doc(parentId),
+          selected_child: db.collection('children').doc(childId),
+          program_id: programRef,
+          task_date: taskDateString,
+          task_start_time: Timestamp.fromDate(taskStartTime),
+        });
+
+        taskRefs.push(taskRef);
+        taskDates.push(Timestamp.fromDate(taskStartTime));
+        taskDate.add(frequency, 'days');
+        endDate = taskDate.clone();
+      }
+
+      await programRef.update({
+        tasks: taskRefs,
+        end_date: Timestamp.fromDate(endDate.toDate()),
+        task_dates: taskDates,
+      });
+
+      return {
+        message: 'Program and tasks created successfully',
+        programId: programRef.id,
+      };
+    } catch (error) {
+      console.error('Error processing request:', error);
+      if (error instanceof HttpsError) throw error;
+      throw new HttpsError('internal', error.message || 'Internal server error');
+    }
+  }
+);
+
+// ── Cookbook Scanner (Claude Vision) ────────────────
+// HTTP endpoint: Flutter posts { imageBase64 } or { imageUrl }, gets
+// back a structured recipe extracted via Claude Sonnet.
+exports.scanCookbookWithClaude = onRequest(
+  { secrets: [anthropicApiKey], timeoutSeconds: 120, memory: '512MiB' },
+  async (req, res) => {
+    res.set('Access-Control-Allow-Origin', '*');
+    res.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.set('Access-Control-Allow-Headers', 'Content-Type');
+
+    if (req.method === 'OPTIONS') {
+      res.status(204).send('');
+      return;
+    }
+
+    try {
+      const data = req.body.data || req.body;
+      let imageBase64 = data.imageBase64;
+      const imageUrl = data.imageUrl;
+
+      if (imageUrl && !imageBase64) {
+        try {
+          imageBase64 = await new Promise((resolve, reject) => {
+            https.get(imageUrl, (response) => {
+              const chunks = [];
+              response.on('data', (c) => chunks.push(c));
+              response.on('end', () => resolve(Buffer.concat(chunks).toString('base64')));
+              response.on('error', reject);
+            }).on('error', reject);
+          });
+        } catch (err) {
+          console.error('Failed to fetch image from URL:', err.message);
+          res.status(400).json({ result: { success: false, error: 'Could not fetch image from URL' } });
+          return;
+        }
+      }
+
+      if (!imageBase64) {
+        res.status(400).json({ result: { success: false, error: 'No image provided' } });
+        return;
+      }
+
+      const prompt = `Analyze this cookbook/recipe page image and extract the recipe information.
+
+IMPORTANT: Return ONLY a valid JSON object. No markdown, no code blocks, no explanation - just the raw JSON.
+
+Extract these fields:
+{
+  "name": "Recipe name exactly as shown",
+  "prepTime": number in minutes (0 if not specified),
+  "cookTime": number in minutes (0 if not specified),
+  "ingredients": ["ingredient 1 with quantity", "ingredient 2 with quantity"],
+  "instructions": ["Step 1 complete instruction", "Step 2 complete instruction"],
+  "servings": number (4 if not specified)
+}
+
+If the image is unclear or doesn't contain a recipe, return:
+{"error": "description of the problem"}`;
+
+      const reqBody = JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 2048,
+        messages: [{
+          role: 'user',
+          content: [
+            { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: imageBase64 } },
+            { type: 'text', text: prompt },
+          ],
+        }],
+      });
+
+      const responseText = await new Promise((resolve, reject) => {
+        const r = https.request('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': anthropicApiKey.value().trim(),
+            'anthropic-version': '2023-06-01',
+            'Content-Length': Buffer.byteLength(reqBody),
+          },
+        }, (ar) => {
+          let buf = '';
+          ar.on('data', (c) => { buf += c; });
+          ar.on('end', () => {
+            if (ar.statusCode !== 200) {
+              reject(new Error(`Anthropic HTTP ${ar.statusCode}: ${buf.substring(0, 200)}`));
+              return;
+            }
+            try {
+              const parsed = JSON.parse(buf);
+              const text = parsed?.content?.[0]?.text ?? '';
+              resolve(text);
+            } catch (e) {
+              reject(new Error(`Parse Anthropic response: ${e.message}`));
+            }
+          });
+        });
+        r.on('error', reject);
+        r.setTimeout(110000, () => { r.destroy(); reject(new Error('Anthropic timeout')); });
+        r.write(reqBody);
+        r.end();
+      });
+
+      let cleaned = responseText.trim();
+      if (cleaned.startsWith('```json')) cleaned = cleaned.substring(7);
+      else if (cleaned.startsWith('```')) cleaned = cleaned.substring(3);
+      if (cleaned.endsWith('```')) cleaned = cleaned.substring(0, cleaned.length - 3);
+      cleaned = cleaned.trim();
+
+      const recipe = JSON.parse(cleaned);
+      if (recipe.error) {
+        res.status(200).json({ result: { success: false, error: recipe.error } });
+        return;
+      }
+      res.status(200).json({ result: { success: true, recipe } });
+    } catch (error) {
+      console.error('Error scanning cookbook:', error);
+      res.status(500).json({ result: { success: false, error: error.message || 'Failed to extract recipe' } });
+    }
+  }
+);
+
+// ── Daily Recurring Task Generator (5am Paris) ──────
+// For each recurring event_and_task, creates a fresh instance for today
+// preserving the original hour/minute.
+exports.generateDailyRecurringTasks = onSchedule(
+  { schedule: '0 5 * * *', timeZone: 'Europe/Paris' },
+  async () => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    console.log('🚀 Running recurring task generator for:', today.toISOString());
+    const db = getFirestore();
+
+    try {
+      const snapshot = await db.collection('event_and_task')
+        .where('isrecurring', '==', true)
+        .get();
+
+      if (snapshot.empty) {
+        console.log('⚠️ No recurring tasks found');
+        return;
+      }
+
+      for (const doc of snapshot.docs) {
+        const task = doc.data();
+
+        const lastGenerated = task.lastGenerated instanceof Timestamp
+          ? task.lastGenerated.toDate()
+          : task.lastGenerated ? new Date(task.lastGenerated) : null;
+
+        const originalDate = task.date instanceof Timestamp
+          ? task.date.toDate()
+          : task.date ? new Date(task.date) : null;
+
+        if (!originalDate) {
+          console.warn(`⚠️ Skipping ${doc.id}: invalid date`);
+          continue;
+        }
+
+        if (!lastGenerated || lastGenerated < today) {
+          const newDate = new Date();
+          newDate.setHours(originalDate.getHours(), originalDate.getMinutes(), 0, 0);
+
+          await db.collection('event_and_task').add({
+            name: task.name,
+            description: task.description,
+            date: newDate,
+            is_completed: false,
+            isrecurring: true,
+            selected_child: task.selected_child,
+            typ: task.typ,
+            user_ref: task.user_ref,
+            lastGenerated: today,
+          });
+
+          await doc.ref.update({ lastGenerated: today });
+          console.log(`✅ New recurring task created from: ${doc.id}`);
+        } else {
+          console.log(`⏩ Skipped ${doc.id}: already generated today`);
+        }
+      }
+    } catch (error) {
+      console.error('🔥 Error generating recurring tasks:', error);
+    }
+  }
+);

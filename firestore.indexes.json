@@ -17,6 +17,14 @@
         { "fieldPath": "user_ref", "order": "ASCENDING" },
         { "fieldPath": "last_updated", "order": "DESCENDING" }
       ]
+    },
+    {
+      "collectionGroup": "reminders",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "sent", "order": "ASCENDING" },
+        { "fieldPath": "time", "order": "ASCENDING" }
+      ]
     }
   ],
   "fieldOverrides": []

@@ -1,4 +1,4 @@
-appId: com.mycompany.momecoach
+appId: com.momrise.app
 ---
 # Test: Meal dropdown filtering by meal type AND recipe type
 # Navigate to meal composer and verify filtering works

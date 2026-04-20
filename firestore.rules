@@ -2,191 +2,207 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Helper function to check if user is authenticated
     function isAuthenticated() {
       return request.auth != null;
     }
 
-    // Helper function to check if user owns the document
     function isOwner(userId) {
       return isAuthenticated() && request.auth.uid == userId;
     }
 
-    // Children collection - users can only access their own children
-    // Note: field is userRef (camelCase) in Firestore, not user_ref
-    match /childern/{childId} {
-      allow read, write: if isAuthenticated() &&
-        (resource == null || resource.data.userRef == /databases/$(database)/documents/users/$(request.auth.uid));
-      allow create: if isAuthenticated();
+    function userRefPath() {
+      return /databases/$(database)/documents/users/$(request.auth.uid);
     }
 
-    // Learning paths - users can only access their own
+    // ─── User-owned collections (user_ref field) ──────────────────
+    // Read/update/delete require owner on existing doc; create requires
+    // the new doc's user_ref to match the caller's uid.
+
     match /learning_path/{pathId} {
-      allow read, write: if isAuthenticated() &&
-        (resource == null || resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid));
-      allow create: if isAuthenticated();
+      allow read, update, delete: if isAuthenticated() &&
+        resource.data.user_ref == userRefPath();
+      allow create: if isAuthenticated() &&
+        request.resource.data.user_ref == userRefPath();
     }
 
-    // Learning path tasks - users can only access their own
     match /learning_path_tasks/{taskId} {
-      allow read, write: if isAuthenticated() &&
-        (resource == null || resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid));
-      allow create: if isAuthenticated();
+      allow read, update, delete: if isAuthenticated() &&
+        resource.data.user_ref == userRefPath();
+      allow create: if isAuthenticated() &&
+        request.resource.data.user_ref == userRefPath();
     }
 
-    // Skill paths - users can only access their own
     match /skill_paths/{pathId} {
-      allow read, write: if isAuthenticated() &&
-        (resource == null || resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid));
-      allow create: if isAuthenticated();
+      allow read, update, delete: if isAuthenticated() &&
+        resource.data.user_ref == userRefPath();
+      allow create: if isAuthenticated() &&
+        request.resource.data.user_ref == userRefPath();
     }
 
-    // Accomplished milestones - users can read/write if authenticated
-    // TYPO WARNING: "accomlished" should be "accomplished" - verify your collection name!
-    match /children_accomlished_milestones/{id} {
-      allow read, write: if isAuthenticated();
+    match /meal_plan/{planId} {
+      allow read, update, delete: if isAuthenticated() &&
+        resource.data.user_ref == userRefPath();
+      allow create: if isAuthenticated() &&
+        request.resource.data.user_ref == userRefPath();
     }
 
-    // Static milestones - read only for authenticated users (TYPO: should be "static")
-    // This rule likely doesn't match any collection - see Static_Milestones below for correct rule
-    match /satic_milestones/{id} {
-      allow read: if isAuthenticated();
-      allow write: if false; // Admin only via Firebase Console
+    match /event_and_task/{eventId} {
+      allow read, update, delete: if isAuthenticated() &&
+        resource.data.user_ref == userRefPath();
+      allow create: if isAuthenticated() &&
+        request.resource.data.user_ref == userRefPath();
     }
 
-    // Static Milestones (correct collection name) - read only for authenticated users
-    match /Static_Milestones/{id} {
-      allow read: if isAuthenticated();
-      allow write: if false; // Admin only via Firebase Console
+    match /todos/{todoId} {
+      allow read, update, delete: if isAuthenticated() &&
+        resource.data.user_ref == userRefPath();
+      allow create: if isAuthenticated() &&
+        request.resource.data.user_ref == userRefPath();
     }
 
-    // Meals - users can read any meal (their own or curated), write only their own
+    match /planned_activities/{activityId} {
+      allow read, update, delete: if isAuthenticated() &&
+        resource.data.user_ref == userRefPath();
+      allow create: if isAuthenticated() &&
+        request.resource.data.user_ref == userRefPath();
+    }
+
+    match /user_activities/{activityId} {
+      allow read, update, delete: if isAuthenticated() &&
+        resource.data.user_ref == userRefPath();
+      allow create: if isAuthenticated() &&
+        request.resource.data.user_ref == userRefPath();
+    }
+
+    match /favourit_meal/{favId} {
+      allow read, update, delete: if isAuthenticated() &&
+        resource.data.user_ref == userRefPath();
+      allow create: if isAuthenticated() &&
+        request.resource.data.user_ref == userRefPath();
+    }
+
+    match /routines/{routineId} {
+      allow read, update, delete: if isAuthenticated() &&
+        resource.data.user_ref == userRefPath();
+      allow create: if isAuthenticated() &&
+        request.resource.data.user_ref == userRefPath();
+    }
+
+    match /fav_activity/{favId} {
+      allow read, update, delete: if isAuthenticated() &&
+        resource.data.user_ref == userRefPath();
+      allow create: if isAuthenticated() &&
+        request.resource.data.user_ref == userRefPath();
+    }
+
+    // ─── Children (uses userRef camelCase) ────────────────────────
+
+    match /childern/{childId} {
+      allow read, update, delete: if isAuthenticated() &&
+        resource.data.userRef == userRefPath();
+      allow create: if isAuthenticated() &&
+        request.resource.data.userRef == userRefPath();
+    }
+
+    // ─── Shared-library collections (global read, owner-only write) ─
+    // meal and meal_combo: any authenticated user can read (curated library),
+    // but only the owner can modify their own docs.
+
     match /meal/{mealId} {
       allow read: if isAuthenticated();
-      allow write: if isAuthenticated() &&
-        (resource == null || resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid));
-      allow create: if isAuthenticated();
+      allow update, delete: if isAuthenticated() &&
+        resource.data.user_ref == userRefPath();
+      allow create: if isAuthenticated() &&
+        request.resource.data.user_ref == userRefPath();
     }
 
-    // Meal plans - users can only access their own
-    match /meal_plan/{planId} {
-      allow read, write: if isAuthenticated() &&
-        (resource == null || resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid));
-      allow create: if isAuthenticated();
-    }
-
-    // Meal combos - read for all authenticated users (shared recipes)
     match /meal_combo/{comboId} {
       allow read: if isAuthenticated();
-      allow write: if isAuthenticated() &&
-        (resource == null || resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid));
-      allow create: if isAuthenticated();
+      allow update, delete: if isAuthenticated() &&
+        resource.data.user_ref == userRefPath();
+      allow create: if isAuthenticated() &&
+        request.resource.data.user_ref == userRefPath();
     }
 
-    // Events and tasks - users can only access their own
-    match /event_and_task/{eventId} {
-      allow read, write: if isAuthenticated() &&
-        (resource == null || resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid));
-      allow create: if isAuthenticated();
-    }
+    // ─── Users collection ─────────────────────────────────────────
 
-    // Todos - users can only access their own
-    match /todos/{todoId} {
-      allow read, write: if isAuthenticated() &&
-        (resource == null || resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid));
-      allow create: if isAuthenticated();
-    }
-
-    // Planned activities - users can only access their own
-    match /planned_activities/{activityId} {
-      allow read, write: if isAuthenticated() &&
-        (resource == null || resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid));
-      allow create: if isAuthenticated();
-    }
-
-    // Activities - read-only for authenticated users
-    match /activity/{activityId} {
-      allow read: if isAuthenticated();
-      allow write: if false;
-      allow delete: if false;
-    }
-
-    // User Activities - users can only access their own custom activities
-    match /user_activities/{activityId} {
-      allow read, write: if isAuthenticated() &&
-        (resource == null || resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid));
-      allow create: if isAuthenticated();
-    }
-
-    // Favourite meals - users can only access their own
-    // TYPO WARNING: "favourit" should be "favourite" - verify your collection name!
-    match /favourit_meal/{favId} {
-      allow read, write: if isAuthenticated() &&
-        (resource == null || resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid));
-      allow create: if isAuthenticated();
-    }
-
-    // Users collection
     match /users/{userId} {
       allow read, write: if isOwner(userId);
       allow create: if isAuthenticated() && request.auth.uid == userId;
     }
 
-    // Shared content - publicly readable by share_code, writable by owner
+    // ─── Milestones (ownership via child doc lookup) ──────────────
+    // Each milestone doc has a `child` DocumentReference. The linked
+    // child doc has a `userRef` field. A milestone is accessible only
+    // if the caller owns the referenced child.
+
+    match /children_accomlished_milestones/{id} {
+      allow read, update, delete: if isAuthenticated() &&
+        get(resource.data.child).data.userRef == userRefPath();
+      allow create: if isAuthenticated() &&
+        get(request.resource.data.child).data.userRef == userRefPath();
+    }
+
+    // ─── Shared content (public read, owner write + counter bumps) ──
+
     match /shared_content/{contentId} {
-      // Anyone authenticated can read shared content (for import)
       allow read: if isAuthenticated();
-      // Only the owner can write/update their shared content
-      allow write: if isAuthenticated() &&
-        (resource == null || resource.data.shared_by_user == /databases/$(database)/documents/users/$(request.auth.uid));
-      // Authenticated users can create shared content
-      allow create: if isAuthenticated();
-      // Allow incrementing view/import counts by anyone
-      allow update: if isAuthenticated() &&
-        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['view_count', 'import_count']);
+      allow create: if isAuthenticated() &&
+        request.resource.data.shared_by_user == userRefPath();
+      allow update: if isAuthenticated() && (
+        resource.data.shared_by_user == userRefPath() ||
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['view_count', 'import_count'])
+      );
+      allow delete: if isAuthenticated() &&
+        resource.data.shared_by_user == userRefPath();
     }
 
-    // Creators - anyone authenticated can read (to validate codes), authenticated can write
-    match /creators/{creatorId} {
+    // ─── Read-only reference collections ──────────────────────────
+
+    match /Static_Milestones/{id} {
       allow read: if isAuthenticated();
-      allow create: if isAuthenticated();
-      allow update: if isAuthenticated();
+      allow write: if false;
     }
 
-    // Creator content - anyone authenticated can read and write
-    match /creator_content/{contentId} {
+    match /activity/{activityId} {
       allow read: if isAuthenticated();
-      allow create: if isAuthenticated();
-      allow update: if isAuthenticated();
+      allow write: if false;
     }
 
-    // App content (helpful docs) - read only for authenticated users
+    match /resource_articles/{articleId} {
+      allow read: if isAuthenticated();
+      allow write: if false;
+    }
+
+    match /programs/{programId} {
+      allow read: if isAuthenticated();
+      allow write: if false;
+    }
+
+    match /Tasks/{taskId} {
+      allow read: if isAuthenticated();
+      allow write: if false;
+    }
+
+    match /avatars/{avatarId} {
+      allow read: if isAuthenticated();
+      allow write: if false;
+    }
+
     match /app_content/{contentId} {
       allow read: if isAuthenticated();
-      allow create: if isAuthenticated();
-      allow update: if false;
-      allow delete: if false;
+      allow write: if false;
     }
 
-    // Routines - users can only access their own
-    match /routines/{routineId} {
-      allow read, write: if isAuthenticated() &&
-        (resource == null || resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid));
-      allow create: if isAuthenticated();
-    }
+    // ─── Waitlist (public create, no reads) ───────────────────────
+    // Landing page POSTs here; Cloud Function updates email_sent.
 
-    // Waitlist collection - public write (landing page), admin read
     match /waitlist/{waitlistId} {
-      // Anyone can create waitlist entries (from website landing page)
       allow create: if true;
-      // No public read access (admin only via Firebase Console)
-      allow read: if false;
-      // No public updates (Cloud Function updates email_sent status)
-      allow update: if false;
-      allow delete: if false;
+      allow read, update, delete: if false;
     }
 
-    // Default deny for everything else
+    // ─── Default deny ─────────────────────────────────────────────
     match /{document=**} {
       allow read, write: if false;
     }

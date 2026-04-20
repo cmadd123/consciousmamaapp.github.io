@@ -38,12 +38,26 @@ class RoutinesRecord extends FirestoreRecord {
   DateTime? get createdAt => _createdAt;
   bool hasCreatedAt() => _createdAt != null;
 
+  // "step_completions" field — list of booleans matching steps indices.
+  List<bool>? _stepCompletions;
+  List<bool> get stepCompletions => _stepCompletions ?? const [];
+  bool hasStepCompletions() => _stepCompletions != null;
+
+  // "last_completed_date" field — YYYY-MM-DD string for midnight reset.
+  String? _lastCompletedDate;
+  String get lastCompletedDate => _lastCompletedDate ?? '';
+  bool hasLastCompletedDate() => _lastCompletedDate != null;
+
   void _initializeFields() {
     _name = snapshotData['name'] as String?;
     _emoji = snapshotData['emoji'] as String?;
     _steps = getDataList(snapshotData['steps']);
     _userRef = snapshotData['user_ref'] as DocumentReference?;
     _createdAt = snapshotData['created_at'] as DateTime?;
+    _stepCompletions = (snapshotData['step_completions'] as List?)
+        ?.map((e) => e as bool)
+        .toList();
+    _lastCompletedDate = snapshotData['last_completed_date'] as String?;
   }
 
   static CollectionReference get collection =>
@@ -86,6 +100,8 @@ Map<String, dynamic> createRoutinesRecordData({
   List<String>? steps,
   DocumentReference? userRef,
   DateTime? createdAt,
+  List<bool>? stepCompletions,
+  String? lastCompletedDate,
 }) {
   final firestoreData = mapToFirestore(
     <String, dynamic>{
@@ -94,6 +110,8 @@ Map<String, dynamic> createRoutinesRecordData({
       'steps': steps,
       'user_ref': userRef,
       'created_at': createdAt,
+      'step_completions': stepCompletions,
+      'last_completed_date': lastCompletedDate,
     }.withoutNulls,
   );
 

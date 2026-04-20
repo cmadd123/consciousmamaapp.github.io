@@ -61,6 +61,9 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
 
   // Custom meal field (e.g., "Eating Out", "Pizza Delivery")
   final TextEditingController _customMealController = TextEditingController();
+  final TextEditingController _customMealCostController = TextEditingController();
+  final TextEditingController _customSnackController = TextEditingController();
+  final TextEditingController _customSnackCostController = TextEditingController();
 
   // Notes for this meal plan
   final TextEditingController _notesController = TextEditingController();
@@ -68,6 +71,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
   // Loading states
   bool _isLoading = true;
   bool _isSaving = false;
+  double _otherPlannedCost = 0;
 
   // Available recipes (loaded once)
   List<MealRecord> _userRecipes = [];
@@ -94,12 +98,104 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
   Future<void> _loadDataSequentially() async {
     await _loadExistingMeal();
     await _loadRecipes();
+    await _loadOtherPlannedCost();
+  }
+
+  Future<void> _loadOtherPlannedCost() async {
+    if (FFAppState().mealPlanBudget <= 0) return;
+    try {
+      // Use the same date range as the planner
+      final customDates = FFAppState().mealPlanSelectedDates ?? [];
+      final Set<String> visibleDays = {};
+      if (customDates.isNotEmpty) {
+        for (final d in customDates) {
+          visibleDays.add('${d.year}-${d.month}-${d.day}');
+        }
+      } else {
+        final now = DateTime.now();
+        for (int i = 0; i < 7; i++) {
+          final d = DateTime(now.year, now.month, now.day).add(Duration(days: i));
+          visibleDays.add('${d.year}-${d.month}-${d.day}');
+        }
+      }
+
+      final snap = await MealPlanRecord.collection
+          .where('user_ref', isEqualTo: currentUserReference)
+          .get();
+      final plans = snap.docs.map((d) => MealPlanRecord.fromSnapshot(d)).toList();
+      double total = 0;
+      for (final plan in plans) {
+        if (widget.existingMealPlan != null &&
+            plan.reference.path == widget.existingMealPlan!.reference.path) continue;
+        if (plan.date == null) continue;
+        final dayKey = '${plan.date!.year}-${plan.date!.month}-${plan.date!.day}';
+        if (!visibleDays.contains(dayKey)) continue;
+
+        // Entree (via combo or direct ref)
+        if (plan.isMealCombo && plan.mealComboRef != null) {
+          try {
+            final combo = await MealComboRecord.getDocumentOnce(plan.mealComboRef!);
+            final refs = <DocumentReference>[];
+            if (combo.entreeRef != null) refs.add(combo.entreeRef!);
+            refs.addAll(combo.sideRefs);
+            refs.addAll(combo.dessertRefs);
+            for (final r in refs) {
+              try {
+                final doc = await r.get();
+                if (doc.exists) {
+                  final meal = MealRecord.fromSnapshot(doc);
+                  if (meal.hasEstimatedCost()) total += meal.estimatedCost;
+                }
+              } catch (_) {}
+            }
+          } catch (_) {}
+        } else if (plan.userFirebasemeal != null) {
+          try {
+            final doc = await plan.userFirebasemeal!.get();
+            if (doc.exists) {
+              final meal = MealRecord.fromSnapshot(doc);
+              if (meal.hasEstimatedCost()) total += meal.estimatedCost;
+            }
+          } catch (_) {}
+        }
+        // Side/dessert refs on the plan itself (from saved days)
+        if (plan.hasSideRefs()) {
+          for (final r in plan.sideRefs) {
+            try {
+              final doc = await r.get();
+              if (doc.exists) {
+                final meal = MealRecord.fromSnapshot(doc);
+                if (meal.hasEstimatedCost()) total += meal.estimatedCost;
+              }
+            } catch (_) {}
+          }
+        }
+        if (plan.hasDessertRefs()) {
+          for (final r in plan.dessertRefs) {
+            try {
+              final doc = await r.get();
+              if (doc.exists) {
+                final meal = MealRecord.fromSnapshot(doc);
+                if (meal.hasEstimatedCost()) total += meal.estimatedCost;
+              }
+            } catch (_) {}
+          }
+        }
+        if (plan.hasCustomMealCost()) total += plan.customMealCost;
+      }
+      if (mounted) setState(() => _otherPlannedCost = total);
+    } catch (e) {
+      debugPrint('Error loading planned cost: $e');
+    }
   }
 
   @override
   void dispose() {
     _notesController.dispose();
     _customMealController.dispose();
+    _customMealCostController.dispose();
+    _customSnackController.dispose();
+    _customSnackCostController.dispose();
     super.dispose();
   }
 
@@ -180,9 +276,21 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
     _isLeftoverDessert = widget.existingMealPlan!.isLeftoverDessert;
     _isLeftoverSnack = widget.existingMealPlan!.isLeftoverSnack;
 
-    // Load custom meal text
+    // Load custom meal text + cost
     if (widget.existingMealPlan!.hasCustomMeal()) {
-      _customMealController.text = widget.existingMealPlan!.customMeal;
+      if (widget.mealType == MealTyp.Snacks) {
+        _customSnackController.text = widget.existingMealPlan!.customMeal;
+        if (widget.existingMealPlan!.hasCustomMealCost()) {
+          final c = widget.existingMealPlan!.customMealCost;
+          _customSnackCostController.text = c == c.roundToDouble() ? c.round().toString() : c.toStringAsFixed(2);
+        }
+      } else {
+        _customMealController.text = widget.existingMealPlan!.customMeal;
+        if (widget.existingMealPlan!.hasCustomMealCost()) {
+          final c = widget.existingMealPlan!.customMealCost;
+          _customMealCostController.text = c == c.roundToDouble() ? c.round().toString() : c.toStringAsFixed(2);
+        }
+      }
     }
 
     try {
@@ -332,6 +440,9 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
     if (_customMealController.text.trim().isNotEmpty) {
       return true;
     }
+    if (_customSnackController.text.trim().isNotEmpty) {
+      return true;
+    }
 
     if (widget.mealType == MealTyp.Snacks) {
       return _selectedSnackItems.isNotEmpty;
@@ -394,6 +505,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
             child: Column(
               children: [
                 _buildAppBar(context, theme),
+                if (FFAppState().showMealCosts) _buildComposerBudgetBanner(context),
                 Expanded(
                   child: _isLoading
                       ? Center(child: BouncingDots(color: theme.primary, size: 12.0))
@@ -785,6 +897,9 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
         SizedBox(height: 20.0),
 
         _buildNotesSection(context),
+        SizedBox(height: 20.0),
+
+        _buildCustomSnackField(context),
         SizedBox(height: 16.0),
       ],
     );
@@ -822,6 +937,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
         SizedBox(height: 14.0),
         TextField(
           controller: _customMealController,
+          onChanged: (_) => setState(() {}),
           decoration: InputDecoration(
             hintText: 'E.g., "Eating Out", "Pizza Delivery", "Takeout"',
             hintStyle: TextStyle(
@@ -850,15 +966,99 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
             fontFamily: 'Andika New Basic',
           ),
         ),
+        if (FFAppState().showMealCosts) ...[
+        SizedBox(height: 10.0),
+        TextField(
+          controller: _customMealCostController,
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          decoration: InputDecoration(
+            prefixText: '\$ ',
+            hintText: 'Cost (optional)',
+            hintStyle: const TextStyle(fontSize: 14.0, color: Color(0xFF999999), fontFamily: 'Andika New Basic'),
+            filled: true,
+            fillColor: const Color(0xFFF9F9F9),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0), borderSide: const BorderSide(color: Color(0xFFE0E0E0))),
+            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0), borderSide: const BorderSide(color: Color(0xFFE0E0E0))),
+            focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0), borderSide: BorderSide(color: theme.primary, width: 2.0)),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
+          ),
+          style: const TextStyle(fontSize: 14.0, fontFamily: 'Andika New Basic'),
+        ),
+        ],
         SizedBox(height: 8.0),
         Text(
-          'Leave blank if using recipes above',
+          _customMealController.text.trim().isNotEmpty
+              ? 'Custom meal will be used instead of recipes above'
+              : 'Leave blank if using recipes above',
           style: TextStyle(
             fontSize: 12.0,
-            color: Color(0xFF999999),
+            color: _customMealController.text.trim().isNotEmpty
+                ? const Color(0xFFFF9800)
+                : Color(0xFF999999),
             fontFamily: 'Andika New Basic',
+            fontWeight: _customMealController.text.trim().isNotEmpty
+                ? FontWeight.w600
+                : FontWeight.normal,
           ),
         ),
+      ],
+    );
+  }
+
+  Widget _buildCustomSnackField(BuildContext context) {
+    final theme = FlutterFlowTheme.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8.0),
+              decoration: BoxDecoration(color: const Color(0xFFFF9800).withOpacity(0.1), borderRadius: BorderRadius.circular(10.0)),
+              child: const Icon(Icons.edit_note, size: 18.0, color: Color(0xFFFF9800)),
+            ),
+            const SizedBox(width: 12.0),
+            Text(
+              'Or, add custom snack',
+              style: theme.bodyLarge.override(fontFamily: 'Andika New Basic', fontWeight: FontWeight.w600, color: const Color(0xFF5D4E60), letterSpacing: 0.0),
+            ),
+          ],
+        ),
+        const SizedBox(height: 14.0),
+        TextField(
+          controller: _customSnackController,
+          onChanged: (_) => setState(() {}),
+          decoration: InputDecoration(
+            hintText: 'E.g., "Coffee Run", "Snack Bar"',
+            hintStyle: const TextStyle(fontSize: 14.0, color: Color(0xFF999999), fontFamily: 'Andika New Basic'),
+            filled: true,
+            fillColor: const Color(0xFFF9F9F9),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0), borderSide: const BorderSide(color: Color(0xFFE0E0E0))),
+            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0), borderSide: const BorderSide(color: Color(0xFFE0E0E0))),
+            focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0), borderSide: BorderSide(color: theme.primary, width: 2.0)),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
+          ),
+          style: const TextStyle(fontSize: 14.0, fontFamily: 'Andika New Basic'),
+        ),
+        if (FFAppState().showMealCosts) ...[
+        const SizedBox(height: 10.0),
+        TextField(
+          controller: _customSnackCostController,
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          decoration: InputDecoration(
+            prefixText: '\$ ',
+            hintText: 'Cost (optional)',
+            hintStyle: const TextStyle(fontSize: 14.0, color: Color(0xFF999999), fontFamily: 'Andika New Basic'),
+            filled: true,
+            fillColor: const Color(0xFFF9F9F9),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0), borderSide: const BorderSide(color: Color(0xFFE0E0E0))),
+            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0), borderSide: const BorderSide(color: Color(0xFFE0E0E0))),
+            focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0), borderSide: BorderSide(color: theme.primary, width: 2.0)),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
+          ),
+          style: const TextStyle(fontSize: 14.0, fontFamily: 'Andika New Basic'),
+        ),
+        ],
       ],
     );
   }
@@ -1093,20 +1293,42 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    if (item.prepareTime > 0 || item.cookingTime > 0)
+                    if (item.prepareTime > 0 || item.cookingTime > 0 || item.hasEstimatedCost())
                       Padding(
                         padding: EdgeInsets.only(top: 4.0),
                         child: Row(
                           children: [
-                            Icon(Icons.schedule, size: 14.0, color: theme.secondaryText),
-                            SizedBox(width: 4.0),
-                            Text(
-                              '${(item.prepareTime + item.cookingTime).toInt()} min',
-                              style: theme.bodySmall.override(
-                                fontFamily: 'Andika New Basic',
-                                color: theme.secondaryText,
+                            if (item.prepareTime > 0 || item.cookingTime > 0) ...[
+                              Icon(Icons.schedule, size: 14.0, color: theme.secondaryText),
+                              SizedBox(width: 4.0),
+                              Text(
+                                '${(item.prepareTime + item.cookingTime).toInt()} min',
+                                style: theme.bodySmall.override(
+                                  fontFamily: 'Andika New Basic',
+                                  color: theme.secondaryText,
+                                ),
                               ),
-                            ),
+                            ],
+                            if (FFAppState().showMealCosts) ...[
+                              SizedBox(width: 10.0),
+                              InkWell(
+                                onTap: () => _editMealCost(item),
+                                borderRadius: BorderRadius.circular(6),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 1),
+                                  child: Text(
+                                    item.hasEstimatedCost()
+                                        ? '\$${item.estimatedCost.round()}'
+                                        : '+ \$',
+                                    style: theme.bodySmall.override(
+                                      fontFamily: 'Andika New Basic',
+                                      color: Color(0xFF2E7D32),
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ],
                         ),
                       ),
@@ -1143,6 +1365,101 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
   }
 
   /// Navigate to view full recipe details
+  Widget _buildComposerBudgetBanner(BuildContext context) {
+    final budget = FFAppState().mealPlanBudget;
+    if (budget <= 0) return const SizedBox.shrink();
+
+    // Sum cost of all meals currently in this composer
+    double comboTotal = 0;
+    if (_selectedEntree != null && _selectedEntree!.hasEstimatedCost()) {
+      comboTotal += _selectedEntree!.estimatedCost;
+    }
+    for (final side in _selectedSides) {
+      if (side.hasEstimatedCost()) comboTotal += side.estimatedCost;
+    }
+    for (final dessert in _selectedDesserts) {
+      if (dessert.hasEstimatedCost()) comboTotal += dessert.estimatedCost;
+    }
+    for (final snack in _selectedSnackItems) {
+      if (snack.hasEstimatedCost()) comboTotal += snack.estimatedCost;
+    }
+    final customCost = double.tryParse(_customMealCostController.text.trim()) ?? 0;
+    final snackCost = double.tryParse(_customSnackCostController.text.trim()) ?? 0;
+    comboTotal += customCost + snackCost;
+
+    final remaining = budget - _otherPlannedCost - comboTotal;
+    final fmtCost = comboTotal == comboTotal.roundToDouble()
+        ? '\$${comboTotal.round()}'
+        : '\$${comboTotal.toStringAsFixed(2)}';
+    final fmtRemaining = remaining == remaining.roundToDouble()
+        ? '\$${remaining.round()}'
+        : '\$${remaining.toStringAsFixed(2)}';
+    final isOver = remaining < 0;
+
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 0, 16, 6),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: isOver ? const Color(0xFFFFEBEE) : const Color(0xFFE8F5E9),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.attach_money, size: 16,
+              color: isOver ? const Color(0xFFD32F2F) : const Color(0xFF2E7D32)),
+          const SizedBox(width: 4),
+          Text(
+            'This meal: $fmtCost  •  ${isOver ? 'Over by ${fmtRemaining.replaceFirst('-', '')}' : '$fmtRemaining remaining'}',
+            style: TextStyle(
+              fontFamily: 'Andika New Basic',
+              fontSize: 12,
+              color: isOver ? const Color(0xFFD32F2F) : const Color(0xFF2E7D32),
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _editMealCost(MealRecord meal) async {
+    final current = meal.hasEstimatedCost() ? meal.estimatedCost : null;
+    final controller = TextEditingController(
+      text: current != null
+          ? (current == current.roundToDouble() ? current.round().toString() : current.toStringAsFixed(2))
+          : '',
+    );
+    final newVal = await showDialog<double>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Edit estimated cost'),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          decoration: const InputDecoration(prefixText: '\$ ', hintText: '20 or 20.14'),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, double.tryParse(controller.text.trim())),
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+    if (newVal != null && newVal >= 0) {
+      try {
+        await meal.reference.update({'estimated_cost': newVal, 'cost': newVal});
+        if (mounted) setState(() {});
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Save failed: $e')));
+        }
+      }
+    }
+  }
+
   void _viewRecipeDetails(MealRecord recipe) {
     context.pushNamed(
       CategoryDetailsLocalProducWidget.routeName,
@@ -1219,15 +1536,38 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
             ),
             Padding(
               padding: EdgeInsets.all(8.0),
-              child: Text(
-                item.recipeName,
-                style: theme.bodySmall.override(
-                  fontFamily: 'Andika New Basic',
-                  fontWeight: FontWeight.w500,
-                ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.center,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    item.recipeName,
+                    style: theme.bodySmall.override(
+                      fontFamily: 'Andika New Basic',
+                      fontWeight: FontWeight.w500,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
+                  ),
+                  if (FFAppState().showMealCosts)
+                    InkWell(
+                      onTap: () => _editMealCost(item),
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 2.0),
+                        child: Text(
+                          item.hasEstimatedCost()
+                              ? '\$${item.estimatedCost.round()}'
+                              : '+ \$',
+                          style: const TextStyle(
+                            fontFamily: 'Andika New Basic',
+                            fontSize: 11.0,
+                            color: Color(0xFF2E7D32),
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
               ),
             ),
           ],
@@ -2001,6 +2341,19 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
                     ],
                   ),
                 ),
+                if (FFAppState().showMealCosts && snapshot.data != null && snapshot.data!.containsKey('totalCost') && (snapshot.data!['totalCost'] as double) > 0)
+                  Padding(
+                    padding: const EdgeInsets.only(right: 4.0),
+                    child: Text(
+                      '\$${(snapshot.data!['totalCost'] as double).round()}',
+                      style: const TextStyle(
+                        fontFamily: 'Andika New Basic',
+                        fontSize: 13.0,
+                        color: Color(0xFF2E7D32),
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
                 Icon(Icons.chevron_right, color: theme.secondaryText),
               ],
             ),
@@ -2013,6 +2366,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
   Future<Map<String, dynamic>> _loadMealComboDetails(MealComboRecord combo) async {
     String entreeName = '';
     List<String> sideNames = [];
+    double totalCost = 0;
 
     try {
       if (combo.entreeRef != null) {
@@ -2020,6 +2374,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
         if (entreeDoc.exists) {
           final entree = MealRecord.fromSnapshot(entreeDoc);
           entreeName = entree.recipeName;
+          if (entree.hasEstimatedCost()) totalCost += entree.estimatedCost;
         }
       }
 
@@ -2028,13 +2383,14 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
         if (sideDoc.exists) {
           final side = MealRecord.fromSnapshot(sideDoc);
           sideNames.add(side.recipeName);
+          if (side.hasEstimatedCost()) totalCost += side.estimatedCost;
         }
       }
     } catch (e) {
       debugPrint('Error loading combo details: $e');
     }
 
-    return {'entreeName': entreeName, 'sideNames': sideNames};
+    return {'entreeName': entreeName, 'sideNames': sideNames, 'totalCost': totalCost};
   }
 
   String _getDrinkDisplay(MealComboRecord combo) {
@@ -2327,6 +2683,9 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
 
     final notes = _notesController.text.trim();
     final customMeal = _customMealController.text.trim();
+    final customMealCostVal = double.tryParse(_customMealCostController.text.trim());
+    final customSnack = _customSnackController.text.trim();
+    final customSnackCostVal = double.tryParse(_customSnackCostController.text.trim());
 
     try {
       // If custom meal is provided, save it directly (no recipes needed)
@@ -2337,6 +2696,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
             typ: widget.mealType,
             userRef: currentUserReference,
             customMeal: customMeal,
+            customMealCost: customMealCostVal,
             notes: notes.isNotEmpty ? notes : null,
           ),
         );
@@ -2344,6 +2704,27 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
         FFAppState().MealCashtearm = true;
         if (mounted) {
           await MomRiseConfirmation.show(context, message: 'Meal Planned');
+          Navigator.pop(context);
+        }
+        return;
+      }
+
+      // Custom snack (snack tab)
+      if (customSnack.isNotEmpty && widget.mealType == MealTyp.Snacks) {
+        await MealPlanRecord.collection.doc().set(
+          createMealPlanRecordData(
+            date: widget.date,
+            typ: MealTyp.Snacks,
+            userRef: currentUserReference,
+            customMeal: customSnack,
+            customMealCost: customSnackCostVal,
+            notes: notes.isNotEmpty ? notes : null,
+          ),
+        );
+
+        FFAppState().MealCashtearm = true;
+        if (mounted) {
+          await MomRiseConfirmation.show(context, message: 'Snack Planned');
           Navigator.pop(context);
         }
         return;
@@ -2866,17 +3247,32 @@ class _RecipePickerSheetState extends State<_RecipePickerSheet> {
             Expanded(
               flex: 2,
               child: Padding(
-                padding: EdgeInsets.all(6.0),
-                child: Text(
-                  recipe.recipeName,
-                  style: theme.bodySmall.override(
-                    fontFamily: 'Andika New Basic',
-                    fontWeight: FontWeight.w500,
-                    fontSize: 11.0,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  textAlign: TextAlign.center,
+                padding: EdgeInsets.all(4.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      recipe.recipeName,
+                      style: theme.bodySmall.override(
+                        fontFamily: 'Andika New Basic',
+                        fontWeight: FontWeight.w500,
+                        fontSize: 10.0,
+                      ),
+                      maxLines: recipe.hasEstimatedCost() ? 1 : 2,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.center,
+                    ),
+                    if (FFAppState().showMealCosts && recipe.hasEstimatedCost())
+                      Text(
+                        '\$${recipe.estimatedCost.round()}',
+                        style: const TextStyle(
+                          fontFamily: 'Andika New Basic',
+                          fontSize: 10.0,
+                          color: Color(0xFF2E7D32),
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                  ],
                 ),
               ),
             ),

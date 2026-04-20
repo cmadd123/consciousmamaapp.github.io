@@ -53,6 +53,33 @@ class EditeAddMealWidget extends StatefulWidget {
 }
 
 class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
+  Future<void> _editCreateCost() async {
+    final currentText = _model.textController2.text;
+    final controller = TextEditingController(text: currentText);
+    final newText = await showDialog<String>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Edit estimated cost'),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          decoration: const InputDecoration(prefixText: '\$ ', hintText: '20 or 20.14'),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, controller.text.trim()),
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+    if (newText != null) {
+      setState(() => _model.textController2.text = newText);
+    }
+  }
+
   late EditeAddMealModel _model;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
@@ -130,8 +157,19 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
         TextEditingController(text: widget!.editCookingMeal?.recipeName);
     _model.textFieldFocusNode1 ??= FocusNode();
 
+    // Prefill cost with manual cost if set, otherwise AI-estimated cost from import
+    final manualCost = widget!.editCookingMeal?.cost;
+    final estCost = widget!.editCookingMeal?.hasEstimatedCost() == true
+        ? widget!.editCookingMeal!.estimatedCost
+        : null;
+    final initialCost = (manualCost != null && manualCost > 0) ? manualCost : estCost;
+    final initialCostText = initialCost == null
+        ? null
+        : (initialCost == initialCost.roundToDouble()
+            ? initialCost.round().toString()
+            : initialCost.toStringAsFixed(2));
     _model.textController2 ??=
-        TextEditingController(text: widget!.editCookingMeal?.cost?.toString());
+        TextEditingController(text: initialCostText);
     _model.textFieldFocusNode2 ??= FocusNode();
 
     // Initialize cook time hours and minutes from total minutes
@@ -335,6 +373,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
           imageUrl: _model.mealImage,
           recipeName: _model.textController1.text,
           cost: double.tryParse(_model.textController2.text),
+          estimatedCost: double.tryParse(_model.textController2.text),
           mainOrSides: mainOrSidesValue,
           recipeType: recipeTypeValue,
           mealTyp: mealTypValue,
@@ -1352,6 +1391,45 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                 ),
                               );
                             }).toList(),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
+                      child: Row(
+                        children: [
+                          InkWell(
+                            onTap: _editCreateCost,
+                            borderRadius: BorderRadius.circular(10.0),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFE8F5E9),
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(Icons.attach_money, size: 18, color: const Color(0xFF2E7D32)),
+                                  Text(
+                                    () {
+                                      final v = double.tryParse(_model.textController2.text);
+                                      if (v == null || v <= 0) return 'Add est. cost';
+                                      return 'Est. cost: \$${v == v.roundToDouble() ? v.round() : v.toStringAsFixed(2)}';
+                                    }(),
+                                    style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                          fontFamily: 'Andika New Basic',
+                                          color: const Color(0xFF2E7D32),
+                                          fontWeight: FontWeight.w600,
+                                          letterSpacing: 0.0,
+                                        ),
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Icon(Icons.edit, size: 13, color: const Color(0xFF2E7D32).withOpacity(0.6)),
+                                ],
+                              ),
+                            ),
                           ),
                         ],
                       ),
@@ -2406,6 +2484,8 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                                   _model.textController1.text,
                                               cost: double.tryParse(_model
                                                   .textController2.text),
+                                              estimatedCost: double.tryParse(_model
+                                                  .textController2.text),
                                               mainOrSides: mainOrSidesValue,
                                               recipeType: recipeTypeValue,
                                               mealTyp: mealTypValue,
@@ -2516,6 +2596,8 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                               mealTyp: newMealTyp,
                                               cost: double.tryParse(
                                                   _model.textController2.text),
+                                              estimatedCost: double.tryParse(
+                                                  _model.textController2.text),
                                               mainOrSides: newMainOrSides,
                                               recipeType: newRecipeType,
                                               userRef: currentUserReference,
@@ -2542,6 +2624,8 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                                   _model.textController1.text,
                                               mealTyp: newMealTyp,
                                               cost: double.tryParse(
+                                                  _model.textController2.text),
+                                              estimatedCost: double.tryParse(
                                                   _model.textController2.text),
                                               mainOrSides: newMainOrSides,
                                               recipeType: newRecipeType,

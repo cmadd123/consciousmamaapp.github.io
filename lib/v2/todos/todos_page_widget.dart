@@ -4,6 +4,7 @@ import '/components/home_nav_bar_widget.dart';
 import '/components/parent_circle_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
+import '/flutter_flow/flutter_flow_widgets.dart';
 import '/components/page_animations.dart';
 import 'package:flutter/material.dart';
 
@@ -361,7 +362,7 @@ class _TodosPageWidgetState extends State<TodosPageWidget> with TickerProviderSt
                       ...completedTodos.map((todo) => _buildTodoItem(context, todo)),
                     ],
                     // Empty state
-                    if (incompleteTodos.isEmpty && completedTodos.isEmpty) ...[
+                    if (incompleteTodos.isEmpty && completedTodos.isEmpty && !_isAdding) ...[
                       const SizedBox(height: 40.0),
                       Center(
                         child: Column(
@@ -371,23 +372,37 @@ class _TodosPageWidgetState extends State<TodosPageWidget> with TickerProviderSt
                               size: 48.0,
                               color: const Color(0xFFDADADA),
                             ),
-                            const SizedBox(height: 12.0),
-                            Text(
-                              'No to-dos yet',
-                              style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                fontFamily: 'Andika New Basic',
-                                color: const Color(0xFF9B8A9E),
-                                fontSize: 16.0,
-                                fontWeight: FontWeight.w600,
+                            const SizedBox(height: 20.0),
+                            FFButtonWidget(
+                              onPressed: () {
+                                setState(() {
+                                  _isAdding = true;
+                                });
+                              },
+                              text: 'Add a To-do',
+                              options: FFButtonOptions(
+                                height: 44,
+                                padding: const EdgeInsets.symmetric(horizontal: 24),
+                                color: FlutterFlowTheme.of(context).primary,
+                                textStyle: FlutterFlowTheme.of(context).titleSmall.override(
+                                  fontFamily: 'Andika New Basic',
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 0,
+                                ),
+                                borderRadius: BorderRadius.circular(22),
                               ),
                             ),
-                            const SizedBox(height: 6.0),
+                            const SizedBox(height: 14.0),
                             Text(
-                              'Type in the field above to add one',
+                              'Keep track of things you need to get done.\nAssign to-dos to family members too.',
+                              textAlign: TextAlign.center,
                               style: FlutterFlowTheme.of(context).bodySmall.override(
                                 fontFamily: 'Andika New Basic',
                                 color: const Color(0xFFBBBBBB),
                                 fontSize: 13.0,
+                                lineHeight: 1.5,
                               ),
                             ),
                           ],

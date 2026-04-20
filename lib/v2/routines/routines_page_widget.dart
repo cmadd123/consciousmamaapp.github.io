@@ -212,15 +212,24 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
                 padding: const EdgeInsets.only(left: 58, top: 6),
                 child: Row(
                   children: [
-                    Text(
-                      '${routine.steps.length} step${routine.steps.length == 1 ? '' : 's'}',
+                    Builder(builder: (_) {
+                      final today = _todayKey();
+                      final isToday = routine.lastCompletedDate == today;
+                      final done = isToday && routine.stepCompletions.length == routine.steps.length
+                          ? routine.stepCompletions.where((c) => c).length
+                          : 0;
+                      final label = done > 0
+                          ? '$done/${routine.steps.length} done today'
+                          : '${routine.steps.length} step${routine.steps.length == 1 ? '' : 's'}';
+                      return Text(label,
                       style: FlutterFlowTheme.of(context).bodySmall.override(
                         fontFamily: 'Andika New Basic',
-                        color: const Color(0xFF999999),
+                        color: done > 0 ? FlutterFlowTheme.of(context).primary : const Color(0xFF999999),
                         fontSize: 12,
                         letterSpacing: 0,
                       ),
-                    ),
+                    );
+                    }),
                     const Spacer(),
                     // Edit button
                     GestureDetector(
@@ -520,9 +529,29 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
     );
   }
 
-  /// Run routine — checklist view
+  String _todayKey() {
+    final now = DateTime.now();
+    return '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
+  }
+
+  /// Run routine — checklist view with daily persistence and midnight reset.
   void _showRunRoutineSheet(BuildContext context, RoutinesRecord routine) {
+    final today = _todayKey();
+    final isToday = routine.lastCompletedDate == today;
+
     final checked = List<bool>.filled(routine.steps.length, false);
+    if (isToday && routine.stepCompletions.length == routine.steps.length) {
+      for (int i = 0; i < routine.steps.length; i++) {
+        checked[i] = routine.stepCompletions[i];
+      }
+    }
+
+    if (!isToday && routine.hasLastCompletedDate()) {
+      routine.reference.update({
+        'step_completions': checked,
+        'last_completed_date': today,
+      });
+    }
 
     showModalBottomSheet(
       context: context,
@@ -611,6 +640,10 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
                           onTap: () {
                             HapticFeedback.selectionClick();
                             setSheetState(() => checked[i] = !checked[i]);
+                            routine.reference.update({
+                              'step_completions': checked,
+                              'last_completed_date': _todayKey(),
+                            });
                           },
                           borderRadius: BorderRadius.circular(12),
                           child: Container(

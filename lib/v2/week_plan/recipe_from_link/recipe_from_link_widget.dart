@@ -44,6 +44,39 @@ class RecipeFromLinkWidget extends StatefulWidget {
 }
 
 class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
+  String _formatImportCost(double v) =>
+      v == v.roundToDouble() ? v.round().toString() : v.toStringAsFixed(2);
+
+  Future<void> _editImportCost() async {
+    final controller = TextEditingController(
+      text: (_model.estimatedCost != null && _model.estimatedCost! > 0)
+          ? _formatImportCost(_model.estimatedCost!)
+          : '',
+    );
+    final newVal = await showDialog<double>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Edit estimated cost'),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          decoration: const InputDecoration(prefixText: '\$ ', hintText: '20 or 20.14'),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, double.tryParse(controller.text.trim())),
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+    if (newVal != null && newVal >= 0) {
+      setState(() => _model.estimatedCost = newVal);
+    }
+  }
+
   late RecipeFromLinkModel _model;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
@@ -456,6 +489,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
           cookingTime: _model.cookTime.toDouble(),
           sourceUrl: _model.sourceUrl,
           recipeType: recipeTypeEnum,
+          estimatedCost: _model.estimatedCost,
         ),
         ...mapToFirestore({
           'ingredients': _model.ingredientsList,
@@ -474,6 +508,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
           cookingTime: _model.cookTime.toDouble(),
           sourceUrl: _model.sourceUrl,
           recipeType: recipeTypeEnum,
+          estimatedCost: _model.estimatedCost,
         ),
         ...mapToFirestore({
           'ingredients': _model.ingredientsList,
@@ -1182,6 +1217,43 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                             ],
                           ),
                         ),
+                      Padding(
+                        padding: const EdgeInsetsDirectional.fromSTEB(0.0, 8.0, 0.0, 0.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            InkWell(
+                              onTap: () => _editImportCost(),
+                              borderRadius: BorderRadius.circular(10.0),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 4.0),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFE8F5E9),
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      _model.estimatedCost != null && _model.estimatedCost! > 0
+                                          ? 'Est. cost: \$${_formatImportCost(_model.estimatedCost!)}'
+                                          : 'Add est. cost',
+                                      style: FlutterFlowTheme.of(context).bodySmall.override(
+                                            fontFamily: 'Andika New Basic',
+                                            color: const Color(0xFF2E7D32),
+                                            fontWeight: FontWeight.w600,
+                                            letterSpacing: 0.0,
+                                          ),
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Icon(Icons.edit, size: 12, color: const Color(0xFF2E7D32).withOpacity(0.6)),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                       // Ingredients section
                       Padding(
                         padding: EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),

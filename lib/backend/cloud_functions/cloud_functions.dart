@@ -1,9 +1,10 @@
 import 'dart:convert';
 import 'package:cloud_functions/cloud_functions.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 
 /// HTTP-based cloud function call for functions that use onRequest
-/// This bypasses App Check requirements
+/// Includes Firebase Auth token for server-side verification
 Future<Map<String, dynamic>> makeHttpCloudCall(
   String functionName,
   Map<String, dynamic> input,
@@ -12,10 +13,17 @@ Future<Map<String, dynamic>> makeHttpCloudCall(
   const projectId = 'parenting-plus-7szrif';
   final url = 'https://$projectRegion-$projectId.cloudfunctions.net/$functionName';
 
+  final headers = <String, String>{'Content-Type': 'application/json'};
+  final user = FirebaseAuth.instance.currentUser;
+  if (user != null) {
+    final token = await user.getIdToken();
+    if (token != null) headers['Authorization'] = 'Bearer $token';
+  }
+
   try {
     final response = await http.post(
       Uri.parse(url),
-      headers: {'Content-Type': 'application/json'},
+      headers: headers,
       body: jsonEncode({'data': input}),
     );
 
