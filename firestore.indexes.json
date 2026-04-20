@@ -25,6 +25,23 @@
         { "fieldPath": "sent", "order": "ASCENDING" },
         { "fieldPath": "time", "order": "ASCENDING" }
       ]
+    },
+    {
+      "collectionGroup": "meal_plan",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "user_ref", "order": "ASCENDING" },
+        { "fieldPath": "date", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "creator_content",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "creator_code", "order": "ASCENDING" },
+        { "fieldPath": "type", "order": "ASCENDING" },
+        { "fieldPath": "is_active", "order": "ASCENDING" }
+      ]
     }
   ],
   "fieldOverrides": []
