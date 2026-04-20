@@ -295,6 +295,8 @@ Future<String?> publishMealPlanToFollowers({
       String? sourceUrl;
       double? estimatedCost;
       bool isCustom = false;
+      List<Map<String, dynamic>>? extraSides;
+      List<Map<String, dynamic>>? extraDesserts;
 
       // Custom meal (eat-out / delivery / typed name). Cost lives on
       // the MealPlanRecord itself, not a linked MealRecord.
@@ -318,18 +320,11 @@ Future<String?> publishMealPlanToFollowers({
           recipeName = 'Planned';
         }
       }
-      // Meal combo (template) — name from entree, cost from sum of all
-      // component MealRecords (entree + sides + desserts).
+      // Meal combo (template) — name from entree, plus sides/desserts.
       else if (plan.mealComboRef != null) {
         try {
           final combo = await MealComboRecord.getDocumentOnce(plan.mealComboRef!);
-          final componentRefs = <DocumentReference>[];
-          if (combo.entreeRef != null) componentRefs.add(combo.entreeRef!);
-          componentRefs.addAll(combo.sideRefs);
-          componentRefs.addAll(combo.dessertRefs);
 
-          // Pull entree details for the recipe payload (other components
-          // collapse into the same import — keeps it simple for v1).
           if (combo.entreeRef != null) {
             try {
               final entreeMeal = await MealRecord.getDocumentOnce(combo.entreeRef!);
@@ -338,6 +333,7 @@ Future<String?> publishMealPlanToFollowers({
               instructions = entreeMeal.cookingInstructions;
               imageUrl = entreeMeal.imageUrl;
               sourceUrl = entreeMeal.sourceUrl;
+              if (entreeMeal.hasEstimatedCost()) estimatedCost = entreeMeal.estimatedCost;
             } catch (_) {
               recipeName = combo.name;
             }
@@ -345,19 +341,18 @@ Future<String?> publishMealPlanToFollowers({
             recipeName = combo.name;
           }
 
-          // Sum costs across every component
-          double comboCost = 0;
-          for (final r in componentRefs) {
-            try {
-              final m = await MealRecord.getDocumentOnce(r);
-              if (m.hasEstimatedCost()) comboCost += m.estimatedCost;
-            } catch (_) {}
-          }
-          if (comboCost > 0) estimatedCost = comboCost;
+          extraSides = await _serializeMealRefs(combo.sideRefs);
+          extraDesserts = await _serializeMealRefs(combo.dessertRefs);
         } catch (e) {
           debugPrint('Could not fetch combo: $e');
           recipeName = 'Planned';
         }
+      }
+
+      // Plans with ad-hoc side/dessert refs directly on the plan (not a combo)
+      if (plan.hasSideRefs() || plan.hasDessertRefs()) {
+        extraSides ??= await _serializeMealRefs(plan.sideRefs);
+        extraDesserts ??= await _serializeMealRefs(plan.dessertRefs);
       }
 
       if (recipeName == null || recipeName.isEmpty) continue;
@@ -373,6 +368,8 @@ Future<String?> publishMealPlanToFollowers({
         if (sourceUrl != null && sourceUrl.isNotEmpty) 'source_url': sourceUrl,
         if (estimatedCost != null && estimatedCost > 0) 'estimated_cost': estimatedCost,
         if (isCustom) 'is_custom': true,
+        if (extraSides != null && extraSides.isNotEmpty) 'sides': extraSides,
+        if (extraDesserts != null && extraDesserts.isNotEmpty) 'desserts': extraDesserts,
       };
       mealCount++;
     }
@@ -420,6 +417,73 @@ Future<String?> publishMealPlanToFollowers({
     debugPrint('Error publishing meal plan: $e');
     return 'Failed to publish: ${e.toString()}';
   }
+}
+
+/// Inverse of _serializeMealRefs: read a list of side/dessert payload
+/// maps and materialize them as MealRecord docs the follower owns.
+/// Returns the new doc refs (suitable for side_refs / dessert_refs on
+/// a MealPlanRecord). Tracks created refs in [createdRefs] so undo
+/// can clean them up.
+Future<List<DocumentReference>> _materializeComponents(
+  Object? raw,
+  String creatorName,
+  String mealType,
+  DocumentReference mealPlanRef,
+  String recipeTypeLabel,
+  List<DocumentReference> createdRefs,
+) async {
+  if (raw is! List) return const [];
+  final out = <DocumentReference>[];
+  for (final item in raw) {
+    if (item is! Map) continue;
+    final c = Map<String, dynamic>.from(item);
+    final cName = c['name'] as String?;
+    if (cName == null || cName.isEmpty) continue;
+
+    final cRawCost = c['estimated_cost'];
+    final cCost = cRawCost is num ? cRawCost.toDouble() : null;
+
+    final cData = createMealRecordData(
+      recipeName: '$cName (by $creatorName)',
+      imageUrl: c['image_url'] as String?,
+      userRef: currentUserReference,
+      mealTyp: mealType,
+      mainOrSides: recipeTypeLabel,
+      sourceUrl: c['source_url'] as String?,
+      estimatedCost: cCost,
+    );
+    final cIngs = (c['ingredients'] as List<dynamic>?)?.map((e) => e.toString()).toList();
+    final cIns = (c['instructions'] as List<dynamic>?)?.map((e) => e.toString()).toList();
+    if (cIngs != null) cData['ingredients'] = cIngs;
+    if (cIns != null) cData['CookingInstructions'] = cIns;
+    cData['recipe_type'] = recipeTypeLabel;
+    cData['imported_from_creator_content'] = mealPlanRef;
+
+    final ref = await MealRecord.collection.add(cData);
+    createdRefs.add(ref);
+    out.add(ref);
+  }
+  return out;
+}
+
+/// Read each MealRecord ref and serialize the recipe data into a flat
+/// map suitable for embedding in a creator_content payload.
+Future<List<Map<String, dynamic>>> _serializeMealRefs(List<DocumentReference> refs) async {
+  final out = <Map<String, dynamic>>[];
+  for (final r in refs) {
+    try {
+      final m = await MealRecord.getDocumentOnce(r);
+      out.add({
+        'name': m.recipeName,
+        if (m.ingredients.isNotEmpty) 'ingredients': m.ingredients,
+        if (m.cookingInstructions.isNotEmpty) 'instructions': m.cookingInstructions,
+        if (m.imageUrl.isNotEmpty) 'image_url': m.imageUrl,
+        if (m.sourceUrl.isNotEmpty) 'source_url': m.sourceUrl,
+        if (m.hasEstimatedCost()) 'estimated_cost': m.estimatedCost,
+      });
+    } catch (_) {}
+  }
+  return out;
 }
 
 // ─── Import creator meal plan (follower side) ─────────────────────
@@ -592,7 +656,10 @@ Future<CreatorImportResult> importCreatorMealPlan({
       }
 
       // Structured recipe path: create a MealRecord the user owns + a
-      // MealPlanRecord that points to it.
+      // MealPlanRecord that points to it. Sides and desserts are
+      // materialized as separate MealRecords linked via side_refs and
+      // dessert_refs on the plan, so the budget rollup picks up their
+      // costs and they show as their own rows in the meal card.
       final mealRecordData = createMealRecordData(
         recipeName: '$name (by $creatorName)',
         imageUrl: m['image_url'] as String?,
@@ -611,12 +678,23 @@ Future<CreatorImportResult> importCreatorMealPlan({
       final mealRef = await MealRecord.collection.add(mealRecordData);
       createdMealRefs.add(mealRef);
 
-      final planRef = await MealPlanRecord.collection.add(createMealPlanRecordData(
+      final sideRefs = await _materializeComponents(
+        m['sides'], creatorName, mealType, mealPlan.reference, 'Side', createdMealRefs,
+      );
+      final dessertRefs = await _materializeComponents(
+        m['desserts'], creatorName, mealType, mealPlan.reference, 'Dessert', createdMealRefs,
+      );
+
+      final planData = createMealPlanRecordData(
         date: date,
         typ: mealTypEnum,
         userRef: currentUserReference,
         userFirebasemeal: mealRef,
-      ));
+      );
+      if (sideRefs.isNotEmpty) planData['side_refs'] = sideRefs;
+      if (dessertRefs.isNotEmpty) planData['dessert_refs'] = dessertRefs;
+
+      final planRef = await MealPlanRecord.collection.add(planData);
       createdPlanRefs.add(planRef);
       mealsCreated++;
     }
