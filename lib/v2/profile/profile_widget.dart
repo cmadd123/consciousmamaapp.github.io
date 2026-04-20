@@ -1,5 +1,10 @@
 import '/auth/firebase_auth/auth_util.dart';
+import '/backend/backend.dart';
 import '/backend/schema/enums/enums.dart';
+import '/v2/creator/creator_theme_notifier.dart';
+import '/v2/creator/enter_creator_code_widget.dart';
+import '/v2/creator/creator_theme_editor.dart';
+import '/custom_code/actions/creator_service.dart';
 import '/backend/schema/structs/index.dart';
 import '/components/home_nav_bar_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
@@ -38,11 +43,21 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
+  CreatorsRecord? _creatorProfile;
+
   @override
   void initState() {
     super.initState();
     _model = createModel(context, () => ProfileModel());
     initPageAnimations(itemCount: 5);
+    _loadCreatorProfile();
+  }
+
+  Future<void> _loadCreatorProfile() async {
+    final profile = await getCurrentUserCreatorProfile();
+    if (mounted && profile != null) {
+      setState(() => _creatorProfile = profile);
+    }
   }
 
   @override
@@ -889,6 +904,163 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                       ),
                     ),
                   )),
+                  // Creator Code — enter/change. Shows the active creator's
+                  // code as a pill once set, otherwise a chevron.
+                  CascadeItem(index: 5, baseDelayMs: 400, staggerMs: 80, child: Padding(
+                    padding: EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),
+                    child: Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: FlutterFlowTheme.of(context).secondaryBackground,
+                        borderRadius: BorderRadius.circular(14.0),
+                      ),
+                      child: Column(
+                        children: [
+                          InkWell(
+                            splashColor: Colors.transparent,
+                            focusColor: Colors.transparent,
+                            hoverColor: Colors.transparent,
+                            highlightColor: Colors.transparent,
+                            onTap: () async {
+                              final result = await showEnterCreatorCodeSheet(context);
+                              if (result == true && mounted) setState(() {});
+                            },
+                            child: Container(
+                              height: 60.0,
+                              child: Row(
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    children: [
+                                      Padding(
+                                        padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
+                                        child: Icon(Icons.palette_outlined, color: FlutterFlowTheme.of(context).primary, size: 24.0),
+                                      ),
+                                      Text(
+                                        'Creator Code',
+                                        style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                          fontFamily: 'Andika New Basic',
+                                          fontSize: 16.0,
+                                          letterSpacing: 0.0,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
+                                    child: Consumer<CreatorThemeNotifier>(
+                                      builder: (context, creatorTheme, _) {
+                                        if (creatorTheme.hasActiveCreator) {
+                                          return Text(
+                                            creatorTheme.activeCreator!.code,
+                                            style: FlutterFlowTheme.of(context).bodySmall.override(
+                                              fontFamily: 'Andika New Basic',
+                                              color: FlutterFlowTheme.of(context).primary,
+                                              fontSize: 13.0,
+                                              fontWeight: FontWeight.w600,
+                                              letterSpacing: 1.0,
+                                            ),
+                                          );
+                                        }
+                                        return Icon(Icons.arrow_forward_ios, color: FlutterFlowTheme.of(context).primaryText, size: 18.0);
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          // Theme toggle (only when a code is active)
+                          Consumer<CreatorThemeNotifier>(
+                            builder: (context, creatorTheme, _) {
+                              if (!creatorTheme.hasActiveCreator) return const SizedBox.shrink();
+                              return Column(
+                                children: [
+                                  Divider(height: 1, indent: 16, endIndent: 16, color: Colors.grey.shade200),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          'Use ${creatorTheme.activeCreator!.name}\'s style',
+                                          style: FlutterFlowTheme.of(context).bodySmall.override(
+                                            fontFamily: 'Andika New Basic',
+                                            color: FlutterFlowTheme.of(context).secondaryText,
+                                            fontSize: 14.0,
+                                            letterSpacing: 0.0,
+                                          ),
+                                        ),
+                                        Switch.adaptive(
+                                          value: creatorTheme.useCreatorTheme,
+                                          onChanged: (val) => creatorTheme.setUseCreatorTheme(val),
+                                          activeColor: creatorTheme.primaryColor ?? FlutterFlowTheme.of(context).primary,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  )),
+                  // Customize Theme — creators only, above Subscription
+                  if (_creatorProfile != null)
+                    CascadeItem(index: 5, baseDelayMs: 400, staggerMs: 80, child: Padding(
+                      padding: EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),
+                      child: Container(
+                        width: double.infinity,
+                        height: 60.0,
+                        decoration: BoxDecoration(
+                          color: FlutterFlowTheme.of(context).secondaryBackground,
+                          borderRadius: BorderRadius.circular(14.0),
+                        ),
+                        child: InkWell(
+                          splashColor: Colors.transparent,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => CreatorThemeEditorWidget(creator: _creatorProfile!),
+                              ),
+                            );
+                          },
+                          child: Row(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
+                                    child: Icon(Icons.color_lens_outlined, color: FlutterFlowTheme.of(context).primary, size: 24.0),
+                                  ),
+                                  Text(
+                                    'Customize Theme',
+                                    style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                      fontFamily: 'Andika New Basic',
+                                      fontSize: 16.0,
+                                      letterSpacing: 0.0,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Padding(
+                                padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
+                                child: Icon(Icons.arrow_forward_ios, color: FlutterFlowTheme.of(context).primaryText, size: 18.0),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    )),
                   // Subscription
                   CascadeItem(index: 5, baseDelayMs: 400, staggerMs: 80, child: Padding(
                     padding:
