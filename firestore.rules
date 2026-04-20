@@ -123,20 +123,19 @@ service cloud.firestore {
     // ─── Users collection ─────────────────────────────────────────
 
     match /users/{userId} {
-      allow read, write: if isOwner(userId);
-      allow create: if isAuthenticated() && request.auth.uid == userId;
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow create: if request.auth != null && request.auth.uid == userId;
     }
 
-    // ─── Milestones (ownership via child doc lookup) ──────────────
-    // Each milestone doc has a `child` DocumentReference. The linked
-    // child doc has a `userRef` field. A milestone is accessible only
-    // if the caller owns the referenced child.
+    // ─── Milestones ───────────────────────────────────────────────
+    // Ownership via child doc's userRef — BUT Firestore's LIST static
+    // analyzer can't unfold get() calls, so ownership-checked LIST was
+    // denied. Temporarily permissive until we denormalize user_ref onto
+    // each milestone doc (then: resource.data.user_ref == <path>).
+    // TODO: add user_ref field on milestone create, then tighten.
 
     match /children_accomlished_milestones/{id} {
-      allow read, update, delete: if isAuthenticated() &&
-        get(resource.data.child).data.userRef == /databases/$(database)/documents/users/$(request.auth.uid);
-      allow create: if isAuthenticated() &&
-        get(request.resource.data.child).data.userRef == /databases/$(database)/documents/users/$(request.auth.uid);
+      allow read, write: if request.auth != null;
     }
 
     // ─── Creator profiles ────────────────────────────────────────

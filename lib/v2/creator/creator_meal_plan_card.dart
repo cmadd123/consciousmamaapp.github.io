@@ -26,24 +26,61 @@ class _CreatorMealPlanCardState extends State<CreatorMealPlanCard> {
   bool _isImporting = false;
   bool _imported = false;
 
+  CreatorThemeNotifier? _themeNotifier;
+  String? _lastLoadedCode;
+
   @override
   void initState() {
     super.initState();
     _loadCreatorMealPlan();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Subscribe to creator theme changes so the card reloads when the
+    // user enters/clears a creator code without leaving the page.
+    final notifier = Provider.of<CreatorThemeNotifier>(context, listen: false);
+    if (_themeNotifier != notifier) {
+      _themeNotifier?.removeListener(_onCreatorChange);
+      notifier.addListener(_onCreatorChange);
+      _themeNotifier = notifier;
+    }
+  }
+
+  @override
+  void dispose() {
+    _themeNotifier?.removeListener(_onCreatorChange);
+    super.dispose();
+  }
+
+  void _onCreatorChange() {
+    final code = _themeNotifier?.activeCreator?.code;
+    if (code != _lastLoadedCode) {
+      _loadCreatorMealPlan();
+    }
+  }
+
   Future<void> _loadCreatorMealPlan() async {
     final creatorTheme = Provider.of<CreatorThemeNotifier>(context, listen: false);
     if (!creatorTheme.hasActiveCreator) {
-      setState(() => _isLoading = false);
+      if (mounted) {
+        setState(() {
+          _mealPlan = null;
+          _isLoading = false;
+          _lastLoadedCode = null;
+        });
+      }
       return;
     }
 
-    final plan = await getCreatorWeeklyMealPlan(creatorTheme.activeCreator!.code);
+    final code = creatorTheme.activeCreator!.code;
+    final plan = await getCreatorWeeklyMealPlan(code);
     if (mounted) {
       setState(() {
         _mealPlan = plan;
         _isLoading = false;
+        _lastLoadedCode = code;
       });
     }
   }
