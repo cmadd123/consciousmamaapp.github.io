@@ -3517,7 +3517,17 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                             // The widget self-hides when there's no active creator or no plan.
                                             Padding(
                                               padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
-                                              child: const CreatorMealPlanCard(),
+                                              child: CreatorMealPlanCard(
+                                                // Drop the cached meal plans + cost rollups after the
+                                                // follower imports (or undoes), so the budget bar and
+                                                // meal cards refresh without a manual nav-out-and-back.
+                                                onPlansChanged: () {
+                                                  _model.invalidateCache();
+                                                  _costByPlanPath.clear();
+                                                  _lastCostLoadKey = null;
+                                                  if (mounted) setState(() {});
+                                                },
+                                              ),
                                             ),
                                             // Creator-side: publish the current week to followers.
                                             if (_creatorProfile != null)

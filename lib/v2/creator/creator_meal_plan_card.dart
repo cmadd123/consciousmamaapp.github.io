@@ -13,9 +13,14 @@ import 'creator_theme_notifier.dart';
 import 'creator_meal_plan_preview_widget.dart';
 
 /// A card shown on the meal planning page when a user has an active creator code.
-/// Shows the creator's latest published meal plan with a "Load This Plan" button.
+/// Shows the creator's latest published meal plan with a "View This Plan" button.
 class CreatorMealPlanCard extends StatefulWidget {
-  const CreatorMealPlanCard({super.key});
+  /// Fired after the user successfully imports (or undoes) a meal plan.
+  /// Lets the parent invalidate its cached meal plans so the budget bar
+  /// and meal cards refresh without a manual nav-out-and-back.
+  final VoidCallback? onPlansChanged;
+
+  const CreatorMealPlanCard({super.key, this.onPlansChanged});
 
   @override
   State<CreatorMealPlanCard> createState() => _CreatorMealPlanCardState();
@@ -333,6 +338,7 @@ class _CreatorMealPlanCardState extends State<CreatorMealPlanCard> {
                     if (!mounted || result == null) return;
 
                     setState(() => _imported = true);
+                    widget.onPlansChanged?.call();
 
                     // Show "Added N · Undo" on the Meals screen's messenger.
                     // Force-dismiss with a Timer too — Material's built-in
@@ -365,6 +371,7 @@ class _CreatorMealPlanCardState extends State<CreatorMealPlanCard> {
                             duration: const Duration(seconds: 3),
                           ));
                           if (mounted) setState(() => _imported = false);
+                          widget.onPlansChanged?.call();
                         },
                       ),
                     ));
