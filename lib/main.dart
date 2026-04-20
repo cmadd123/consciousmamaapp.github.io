@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:ui';
 import 'package:provider/provider.dart';
+import '/v2/creator/creator_theme_notifier.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -93,6 +94,7 @@ void main() async {
     providers: [
       ChangeNotifierProvider(create: (context) => appState),
       ChangeNotifierProvider(create: (context) => DemoDataNotifier()),
+      ChangeNotifierProvider(create: (context) => CreatorThemeNotifier()),
     ],
     child: MyApp(),
   ));

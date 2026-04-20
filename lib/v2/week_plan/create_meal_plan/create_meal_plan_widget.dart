@@ -25,6 +25,9 @@ import 'package:provider/provider.dart';
 // import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '/components/page_animations.dart';
+import '/custom_code/actions/creator_service.dart';
+import '/v2/creator/creator_meal_plan_card.dart';
+import '/v2/creator/publish_meal_plan_sheet.dart';
 import 'create_meal_plan_model.dart';
 export 'create_meal_plan_model.dart';
 
@@ -48,6 +51,10 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
   bool _welcomeDismissed = false;
+
+  // Creator profile for the current user (null = not a creator).
+  // Used to show the "Publish This Week" button.
+  CreatorsRecord? _creatorProfile;
 
   // Cost cache: meal plan reference path -> estimated cost (sum of combo meals if combo)
   final Map<String, double> _costByPlanPath = {};
@@ -595,6 +602,16 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
     if (FFAppState().MealCashtearm) {
       FFAppState().MealCashtearm = false; // Clear the flag
     }
+
+    // Load creator profile (null if user is not a creator) so we know whether
+    // to surface the "Publish This Week" button.
+    _loadCreatorProfile();
+  }
+
+  Future<void> _loadCreatorProfile() async {
+    final profile = await getCurrentUserCreatorProfile();
+    if (!mounted) return;
+    setState(() => _creatorProfile = profile);
   }
 
   /// Find today's index in the days list (or next future day) and expand it
@@ -3496,6 +3513,36 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                         child: Column(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
+                                            // Follower-side: creator's published week, if they have one.
+                                            // The widget self-hides when there's no active creator or no plan.
+                                            Padding(
+                                              padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
+                                              child: const CreatorMealPlanCard(),
+                                            ),
+                                            // Creator-side: publish the current week to followers.
+                                            if (_creatorProfile != null)
+                                              Padding(
+                                                padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 12),
+                                                child: FFButtonWidget(
+                                                  onPressed: () async {
+                                                    await showPublishMealPlanSheet(context, _creatorProfile!);
+                                                  },
+                                                  text: 'Publish This Week to Followers',
+                                                  icon: const Icon(Icons.ios_share, size: 18, color: Colors.white),
+                                                  options: FFButtonOptions(
+                                                    width: double.infinity,
+                                                    height: 44,
+                                                    color: FlutterFlowTheme.of(context).primary,
+                                                    textStyle: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                      fontFamily: 'Andika New Basic',
+                                                      color: Colors.white,
+                                                      fontWeight: FontWeight.w600,
+                                                    ),
+                                                    elevation: 0,
+                                                    borderRadius: BorderRadius.circular(12),
+                                                  ),
+                                                ),
+                                              ),
                                             if (FFAppState().showMealCosts && visiblePlans.isNotEmpty && (totalCost > 0 || FFAppState().mealPlanBudget > 0))
                                               _buildBudgetBar(context, totalCost),
                                             // First-time directions - dismissible, never shows again once closed
