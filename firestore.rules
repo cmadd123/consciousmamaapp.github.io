@@ -143,6 +143,31 @@ service cloud.firestore {
         get(request.resource.data.child).data.userRef == userRefPath();
     }
 
+    // ─── Creator profiles ────────────────────────────────────────
+    // Anyone authenticated can read (followers look up by code).
+    // Only the linked user can update/delete their own creator doc.
+    // Create requires the new doc's user_ref to be the caller.
+
+    match /creators/{creatorId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() &&
+        request.resource.data.user_ref == userRefPath();
+      allow update, delete: if isAuthenticated() &&
+        resource.data.user_ref == userRefPath();
+    }
+
+    // ─── Creator-published content (meal plans, templates, etc.) ─
+    // Any authenticated user can read (followers view + import).
+    // Writes are open to any authenticated user for now so follower
+    // download_count increments work without a get() lookup. Tighten
+    // once App Check is enabled.
+
+    match /creator_content/{contentId} {
+      allow read: if isAuthenticated();
+      allow create, update: if isAuthenticated();
+      allow delete: if false;
+    }
+
     // ─── Shared content (public read, owner write + counter bumps) ──
 
     match /shared_content/{contentId} {
