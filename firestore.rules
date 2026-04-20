@@ -10,98 +10,94 @@ service cloud.firestore {
       return isAuthenticated() && request.auth.uid == userId;
     }
 
-    function userRefPath() {
-      return /databases/$(database)/documents/users/$(request.auth.uid);
-    }
-
     // ─── User-owned collections (user_ref field) ──────────────────
     // Read/update/delete require owner on existing doc; create requires
     // the new doc's user_ref to match the caller's uid.
 
     match /learning_path/{pathId} {
       allow read, update, delete: if isAuthenticated() &&
-        resource.data.user_ref == userRefPath();
+        resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
       allow create: if isAuthenticated() &&
-        request.resource.data.user_ref == userRefPath();
+        request.resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
     }
 
     match /learning_path_tasks/{taskId} {
       allow read, update, delete: if isAuthenticated() &&
-        resource.data.user_ref == userRefPath();
+        resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
       allow create: if isAuthenticated() &&
-        request.resource.data.user_ref == userRefPath();
+        request.resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
     }
 
     match /skill_paths/{pathId} {
       allow read, update, delete: if isAuthenticated() &&
-        resource.data.user_ref == userRefPath();
+        resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
       allow create: if isAuthenticated() &&
-        request.resource.data.user_ref == userRefPath();
+        request.resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
     }
 
     match /meal_plan/{planId} {
       allow read, update, delete: if isAuthenticated() &&
-        resource.data.user_ref == userRefPath();
+        resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
       allow create: if isAuthenticated() &&
-        request.resource.data.user_ref == userRefPath();
+        request.resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
     }
 
     match /event_and_task/{eventId} {
       allow read, update, delete: if isAuthenticated() &&
-        resource.data.user_ref == userRefPath();
+        resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
       allow create: if isAuthenticated() &&
-        request.resource.data.user_ref == userRefPath();
+        request.resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
     }
 
     match /todos/{todoId} {
       allow read, update, delete: if isAuthenticated() &&
-        resource.data.user_ref == userRefPath();
+        resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
       allow create: if isAuthenticated() &&
-        request.resource.data.user_ref == userRefPath();
+        request.resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
     }
 
     match /planned_activities/{activityId} {
       allow read, update, delete: if isAuthenticated() &&
-        resource.data.user_ref == userRefPath();
+        resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
       allow create: if isAuthenticated() &&
-        request.resource.data.user_ref == userRefPath();
+        request.resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
     }
 
     match /user_activities/{activityId} {
       allow read, update, delete: if isAuthenticated() &&
-        resource.data.user_ref == userRefPath();
+        resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
       allow create: if isAuthenticated() &&
-        request.resource.data.user_ref == userRefPath();
+        request.resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
     }
 
     match /favourit_meal/{favId} {
       allow read, update, delete: if isAuthenticated() &&
-        resource.data.user_ref == userRefPath();
+        resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
       allow create: if isAuthenticated() &&
-        request.resource.data.user_ref == userRefPath();
+        request.resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
     }
 
     match /routines/{routineId} {
       allow read, update, delete: if isAuthenticated() &&
-        resource.data.user_ref == userRefPath();
+        resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
       allow create: if isAuthenticated() &&
-        request.resource.data.user_ref == userRefPath();
+        request.resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
     }
 
     match /fav_activity/{favId} {
       allow read, update, delete: if isAuthenticated() &&
-        resource.data.user_ref == userRefPath();
+        resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
       allow create: if isAuthenticated() &&
-        request.resource.data.user_ref == userRefPath();
+        request.resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
     }
 
     // ─── Children (uses userRef camelCase) ────────────────────────
 
     match /childern/{childId} {
       allow read, update, delete: if isAuthenticated() &&
-        resource.data.userRef == userRefPath();
+        resource.data.userRef == /databases/$(database)/documents/users/$(request.auth.uid);
       allow create: if isAuthenticated() &&
-        request.resource.data.userRef == userRefPath();
+        request.resource.data.userRef == /databases/$(database)/documents/users/$(request.auth.uid);
     }
 
     // ─── Shared-library collections (global read, owner-only write) ─
@@ -111,17 +107,17 @@ service cloud.firestore {
     match /meal/{mealId} {
       allow read: if isAuthenticated();
       allow update, delete: if isAuthenticated() &&
-        resource.data.user_ref == userRefPath();
+        resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
       allow create: if isAuthenticated() &&
-        request.resource.data.user_ref == userRefPath();
+        request.resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
     }
 
     match /meal_combo/{comboId} {
       allow read: if isAuthenticated();
       allow update, delete: if isAuthenticated() &&
-        resource.data.user_ref == userRefPath();
+        resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
       allow create: if isAuthenticated() &&
-        request.resource.data.user_ref == userRefPath();
+        request.resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
     }
 
     // ─── Users collection ─────────────────────────────────────────
@@ -138,9 +134,9 @@ service cloud.firestore {
 
     match /children_accomlished_milestones/{id} {
       allow read, update, delete: if isAuthenticated() &&
-        get(resource.data.child).data.userRef == userRefPath();
+        get(resource.data.child).data.userRef == /databases/$(database)/documents/users/$(request.auth.uid);
       allow create: if isAuthenticated() &&
-        get(request.resource.data.child).data.userRef == userRefPath();
+        get(request.resource.data.child).data.userRef == /databases/$(database)/documents/users/$(request.auth.uid);
     }
 
     // ─── Creator profiles ────────────────────────────────────────
@@ -151,9 +147,9 @@ service cloud.firestore {
     match /creators/{creatorId} {
       allow read: if isAuthenticated();
       allow create: if isAuthenticated() &&
-        request.resource.data.user_ref == userRefPath();
+        request.resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
       allow update, delete: if isAuthenticated() &&
-        resource.data.user_ref == userRefPath();
+        resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
     }
 
     // ─── Creator-published content (meal plans, templates, etc.) ─
@@ -173,13 +169,13 @@ service cloud.firestore {
     match /shared_content/{contentId} {
       allow read: if isAuthenticated();
       allow create: if isAuthenticated() &&
-        request.resource.data.shared_by_user == userRefPath();
+        request.resource.data.shared_by_user == /databases/$(database)/documents/users/$(request.auth.uid);
       allow update: if isAuthenticated() && (
-        resource.data.shared_by_user == userRefPath() ||
+        resource.data.shared_by_user == /databases/$(database)/documents/users/$(request.auth.uid) ||
         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['view_count', 'import_count'])
       );
       allow delete: if isAuthenticated() &&
-        resource.data.shared_by_user == userRefPath();
+        resource.data.shared_by_user == /databases/$(database)/documents/users/$(request.auth.uid);
     }
 
     // ─── Read-only reference collections ──────────────────────────

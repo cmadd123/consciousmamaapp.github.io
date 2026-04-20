@@ -42,6 +42,16 @@
         { "fieldPath": "type", "order": "ASCENDING" },
         { "fieldPath": "is_active", "order": "ASCENDING" }
       ]
+    },
+    {
+      "collectionGroup": "creator_content",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "creator_code", "order": "ASCENDING" },
+        { "fieldPath": "type", "order": "ASCENDING" },
+        { "fieldPath": "is_active", "order": "ASCENDING" },
+        { "fieldPath": "published_at", "order": "DESCENDING" }
+      ]
     }
   ],
   "fieldOverrides": []
