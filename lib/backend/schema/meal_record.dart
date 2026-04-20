@@ -87,6 +87,20 @@ class MealRecord extends FirestoreRecord {
   RecipeType? get recipeType => _recipeType;
   bool hasRecipeType() => _recipeType != null;
 
+  // "estimated_cost" field - AI-estimated grocery cost in dollars
+  double? _estimatedCost;
+  double get estimatedCost => _estimatedCost ?? 0.0;
+  bool hasEstimatedCost() => _estimatedCost != null && _estimatedCost! > 0;
+
+  // "is_imported" field - Whether this recipe was imported from an external URL
+  bool? _isImported;
+  bool get isImported => _isImported ?? false;
+  bool hasIsImported() => _isImported != null;
+
+  // "source_domain" field - Display-friendly domain name (e.g., "allrecipes.com")
+  String? _sourceDomain;
+  String get sourceDomain => _sourceDomain ?? '';
+  bool hasSourceDomain() => _sourceDomain != null;
   void _initializeFields() {
     _imageUrl = snapshotData['image_url'] as String?;
     _recipeName = snapshotData['recipe_name'] as String?;
@@ -104,6 +118,9 @@ class MealRecord extends FirestoreRecord {
     _recipeType = snapshotData['recipe_type'] is RecipeType
         ? snapshotData['recipe_type']
         : deserializeEnum<RecipeType>(snapshotData['recipe_type']);
+    _estimatedCost = castToType<double>(snapshotData['estimated_cost']);
+    _isImported = snapshotData['is_imported'] as bool?;
+    _sourceDomain = snapshotData['source_domain'] as String?;
   }
 
   static CollectionReference get collection =>
@@ -152,6 +169,9 @@ Map<String, dynamic> createMealRecordData({
   String? sourceUrl,
   int? rating,
   RecipeType? recipeType,
+  double? estimatedCost,
+  bool? isImported,
+  String? sourceDomain,
 }) {
   final firestoreData = mapToFirestore(
     <String, dynamic>{
@@ -167,6 +187,9 @@ Map<String, dynamic> createMealRecordData({
       'source_url': sourceUrl,
       'rating': rating,
       'recipe_type': recipeType,
+      'estimated_cost': estimatedCost,
+      'is_imported': isImported,
+      'source_domain': sourceDomain,
     }.withoutNulls,
   );
 

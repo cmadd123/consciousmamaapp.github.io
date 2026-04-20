@@ -1,23 +1,17 @@
 // Stripe Subscription Functions - MomRise
-const { onCall, HttpsError } = require('firebase-functions/v2/https');
+const { onCall, onRequest, HttpsError } = require('firebase-functions/v2/https');
 const { defineString, defineSecret } = require('firebase-functions/params');
-const { initializeApp } = require('firebase-admin/app');
 const { getFirestore, FieldValue } = require('firebase-admin/firestore');
 const stripe = require('stripe');
 
-// Initialize Firebase Admin if not already initialized
-try {
-  initializeApp();
-} catch (e) {
-  // Already initialized
-}
-
+// Firebase Admin is initialized in index.js — just get Firestore
 const db = getFirestore();
 
 // Configuration parameters
 const stripeSecretKey = defineSecret('STRIPE_SECRET_KEY');
 const stripePriceMonthly = defineString('STRIPE_PRICE_MONTHLY');
 const stripePriceYearly = defineString('STRIPE_PRICE_YEARLY');
+const stripeWebhookSecret = defineSecret('STRIPE_WEBHOOK_SECRET');
 
 /**
  * Create Stripe subscription with 7-day free trial
@@ -95,6 +89,47 @@ exports.createSubscription = onCall(
           stripe_customer_id: customerId,
         });
         console.log('✅ Saved customer ID to Firestore');
+      }
+
+      // Dedup: if user already has a live subscription, reuse it instead of
+      // creating a new one. Prevents duplicate charges when user taps
+      // "Start Free Trial" multiple times.
+      if (userData.subscription_id) {
+        console.log('🔍 Checking existing subscription:', userData.subscription_id);
+        try {
+          const existing = await stripeClient.subscriptions.retrieve(userData.subscription_id);
+          console.log('📊 Existing subscription status:', existing.status);
+
+          if (['trialing', 'active', 'incomplete'].includes(existing.status)) {
+            console.log('♻️  Reusing existing subscription — skipping creation');
+
+            const reuseSetupIntent = await stripeClient.setupIntents.create({
+              customer: customerId,
+              payment_method_types: ['card'],
+            });
+
+            const reuseEphemeralKey = await stripeClient.ephemeralKeys.create(
+              { customer: customerId },
+              { apiVersion: '2024-12-18.acacia' }
+            );
+
+            await userDoc.ref.update({
+              subscription_status: existing.status,
+              current_period_end: new Date(existing.current_period_end * 1000),
+            });
+
+            return {
+              clientSecret: reuseSetupIntent.client_secret,
+              ephemeralKey: reuseEphemeralKey.secret,
+              customerId,
+              subscriptionId: existing.id,
+            };
+          }
+
+          console.log('⚠️  Existing subscription is terminal (', existing.status, '), creating new one');
+        } catch (err) {
+          console.log('⚠️  Could not retrieve existing subscription, creating fresh:', err.message);
+        }
       }
 
       // Determine price ID based on plan type
@@ -299,22 +334,71 @@ exports.restorePurchases = onCall(
 );
 
 /**
- * Stripe webhook handler
- * Handles subscription events: trial_will_end, updated, deleted, invoice events
+ * Stripe webhook handler (HTTP endpoint, not callable)
+ * Stripe sends POST requests here with event data
+ * Verifies signature if STRIPE_WEBHOOK_SECRET is set
  */
-exports.stripeWebhook = onCall(
-  { secrets: [stripeSecretKey] },
-  async (request) => {
-    const event = request.data;
+exports.stripeWebhook = onRequest(
+  { secrets: [stripeSecretKey, stripeWebhookSecret] },
+  async (req, res) => {
+    if (req.method !== 'POST') {
+      res.status(405).send('Method not allowed');
+      return;
+    }
+
+    let event;
+    const stripeClient = stripe(stripeSecretKey.value().replace(/[\s\r\n]+/g, ''));
+
+    const webhookSecret = stripeWebhookSecret.value()?.replace(/[\s\r\n]+/g, '');
+    if (webhookSecret) {
+      try {
+        const sig = req.headers['stripe-signature'];
+        event = stripeClient.webhooks.constructEvent(req.rawBody, sig, webhookSecret);
+      } catch (err) {
+        console.error('Webhook signature verification failed:', err.message);
+        res.status(400).send(`Webhook Error: ${err.message}`);
+        return;
+      }
+    } else {
+      event = req.body;
+    }
 
     try {
-      const stripeClient = stripe(stripeSecretKey.value().replace(/[\s\r\n]+/g, ''));
-
       switch (event.type) {
         case 'customer.subscription.trial_will_end': {
           const subscription = event.data.object;
           console.log(`Trial ending soon for subscription: ${subscription.id}`);
-          // TODO: Send reminder email via SendGrid
+          break;
+        }
+
+        case 'customer.subscription.created': {
+          // Fallback: if createSubscription's Firestore write failed
+          // (network blip, transient error), this event ensures the user's
+          // subscription state lands in Firestore within seconds.
+          const subscription = event.data.object;
+          const customerId = subscription.customer;
+
+          const usersSnapshot = await db.collection('users')
+            .where('stripe_customer_id', '==', customerId)
+            .limit(1)
+            .get();
+
+          if (!usersSnapshot.empty) {
+            const userDoc = usersSnapshot.docs[0];
+            const userData = userDoc.data();
+            const update = {
+              subscription_id: subscription.id,
+              subscription_status: subscription.status,
+              current_period_end: new Date(subscription.current_period_end * 1000),
+            };
+            if (subscription.trial_end) {
+              update.trial_end = new Date(subscription.trial_end * 1000);
+            }
+            await userDoc.ref.update(update);
+            console.log(`Synced subscription ${subscription.id} for user ${userDoc.id} (status: ${subscription.status})`);
+          } else {
+            console.log(`No user found for customer ${customerId} — subscription ${subscription.id} orphaned`);
+          }
           break;
         }
 
@@ -322,7 +406,6 @@ exports.stripeWebhook = onCall(
           const subscription = event.data.object;
           const customerId = subscription.customer;
 
-          // Find user by customer ID
           const usersSnapshot = await db.collection('users')
             .where('stripe_customer_id', '==', customerId)
             .limit(1)
@@ -342,7 +425,6 @@ exports.stripeWebhook = onCall(
           const subscription = event.data.object;
           const customerId = subscription.customer;
 
-          // Find user by customer ID
           const usersSnapshot = await db.collection('users')
             .where('stripe_customer_id', '==', customerId)
             .limit(1)
@@ -359,15 +441,12 @@ exports.stripeWebhook = onCall(
         }
 
         case 'invoice.payment_succeeded': {
-          const invoice = event.data.object;
-          console.log(`Payment succeeded for invoice: ${invoice.id}`);
+          console.log(`Payment succeeded for invoice: ${event.data.object.id}`);
           break;
         }
 
         case 'invoice.payment_failed': {
-          const invoice = event.data.object;
-          console.log(`Payment failed for invoice: ${invoice.id}`);
-          // TODO: Send payment failed email
+          console.log(`Payment failed for invoice: ${event.data.object.id}`);
           break;
         }
 
@@ -375,10 +454,10 @@ exports.stripeWebhook = onCall(
           console.log(`Unhandled event type: ${event.type}`);
       }
 
-      return { received: true };
+      res.status(200).json({ received: true });
     } catch (error) {
-      console.error('Webhook error:', error);
-      throw new HttpsError('internal', error.message);
+      console.error('Webhook processing error:', error);
+      res.status(500).json({ error: error.message });
     }
   }
 );

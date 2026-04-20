@@ -1,4 +1,4 @@
-package com.mycompany.momecoach
+package com.momrise.app
 
 import android.content.Intent
 import android.os.Bundle

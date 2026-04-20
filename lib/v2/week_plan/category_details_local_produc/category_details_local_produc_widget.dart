@@ -45,6 +45,17 @@ class _CategoryDetailsLocalProducWidgetState
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
+  // Local override for estimated cost after user edits it (widget param is immutable)
+  double? _estimatedCostOverride;
+
+  double? _displayedEstimatedCost() {
+    if (_estimatedCostOverride != null) return _estimatedCostOverride;
+    if (widget.itemDetails?.hasEstimatedCost() == true) {
+      return widget.itemDetails!.estimatedCost;
+    }
+    return null;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -566,11 +577,12 @@ class _CategoryDetailsLocalProducWidgetState
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         // Recipe Image
-                        ClipRRect(
+                        Center(
+                        child: ClipRRect(
                           borderRadius: BorderRadius.circular(14.0),
                           child: Container(
-                            width: double.infinity,
-                            height: 220.0,
+                            width: MediaQuery.of(context).size.width >= 600 ? 560.0 : double.infinity,
+                            height: MediaQuery.of(context).size.width >= 600 ? 320.0 : 220.0,
                             child: _isValidImageUrl(widget.itemDetails?.imageUrl)
                                 ? Image.network(
                                     widget.itemDetails!.imageUrl,
@@ -594,6 +606,7 @@ class _CategoryDetailsLocalProducWidgetState
                                   )
                                 : _buildColoredPlaceholder(),
                           ),
+                        ),
                         ),
                         SizedBox(height: 16.0),
 
@@ -631,6 +644,44 @@ class _CategoryDetailsLocalProducWidgetState
                                     letterSpacing: 0.0,
                                   ),
                             ),
+                            if (FFAppState().showMealCosts) ...[
+                              SizedBox(width: 12.0),
+                              InkWell(
+                                onTap: () => _editEstimatedCost(context),
+                                borderRadius: BorderRadius.circular(8),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        Icons.attach_money,
+                                        size: 18.0,
+                                        color: Color(0xFF2E7D32),
+                                      ),
+                                      Text(
+                                        _displayedEstimatedCost() != null
+                                            ? _formatCost(_displayedEstimatedCost()!)
+                                            : 'Add',
+                                        style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                              fontFamily: 'Andika New Basic',
+                                              color: Color(0xFF2E7D32),
+                                              fontSize: 14.0,
+                                              fontWeight: FontWeight.w600,
+                                              letterSpacing: 0.0,
+                                            ),
+                                      ),
+                                      SizedBox(width: 3.0),
+                                      Icon(
+                                        Icons.edit,
+                                        size: 12.0,
+                                        color: Color(0xFF2E7D32).withOpacity(0.6),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
                           ],
                         ),
 
@@ -766,16 +817,51 @@ class _CategoryDetailsLocalProducWidgetState
                         _buildActionButtons(context),
                         SizedBox(height: 24.0),
 
-                        // Ingredients Section
-                        _buildSectionHeader('Ingredients', Icons.kitchen),
-                        SizedBox(height: 12.0),
-                        _buildIngredientsCard(context),
-                        SizedBox(height: 24.0),
-
-                        // Instructions Section
-                        _buildSectionHeader('Instructions', Icons.format_list_numbered),
-                        SizedBox(height: 12.0),
-                        _buildInstructionsCard(context),
+                        // Ingredients & Instructions — side-by-side on tablet
+                        LayoutBuilder(
+                          builder: (context, constraints) {
+                            if (constraints.maxWidth >= 600) {
+                              return Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        _buildSectionHeader('Ingredients', Icons.kitchen),
+                                        SizedBox(height: 12.0),
+                                        _buildIngredientsCard(context),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(width: 16.0),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        _buildSectionHeader('Instructions', Icons.format_list_numbered),
+                                        SizedBox(height: 12.0),
+                                        _buildInstructionsCard(context),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              );
+                            }
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                _buildSectionHeader('Ingredients', Icons.kitchen),
+                                SizedBox(height: 12.0),
+                                _buildIngredientsCard(context),
+                                SizedBox(height: 24.0),
+                                _buildSectionHeader('Instructions', Icons.format_list_numbered),
+                                SizedBox(height: 12.0),
+                                _buildInstructionsCard(context),
+                              ],
+                            );
+                          },
+                        ),
                         SizedBox(height: 32.0),
                       ],
                     ),
@@ -852,6 +938,63 @@ class _CategoryDetailsLocalProducWidgetState
         ),
       ],
     );
+  }
+
+  String _formatCost(double v) {
+    if (v == v.roundToDouble()) return v.round().toString();
+    return v.toStringAsFixed(2);
+  }
+
+  Future<void> _editEstimatedCost(BuildContext context) async {
+    final meal = widget.itemDetails;
+    if (meal == null) return;
+    final current = _displayedEstimatedCost();
+    final controller = TextEditingController(
+      text: current != null ? _formatCost(current) : '',
+    );
+    final newVal = await showDialog<double>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Edit estimated cost'),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          decoration: const InputDecoration(
+            prefixText: '\$ ',
+            hintText: '20 or 20.14',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              final parsed = double.tryParse(controller.text.trim());
+              Navigator.pop(ctx, parsed);
+            },
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+    if (newVal != null && newVal >= 0) {
+      try {
+        await meal.reference.update({
+          'estimated_cost': newVal,
+          'cost': newVal,
+        });
+        if (mounted) setState(() => _estimatedCostOverride = newVal);
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Save failed: $e')),
+          );
+        }
+      }
+    }
   }
 
   String _buildTimeString() {

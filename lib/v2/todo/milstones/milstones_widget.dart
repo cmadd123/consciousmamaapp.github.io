@@ -426,32 +426,51 @@ class _MilstonesWidgetState extends State<MilstonesWidget> {
     final completedMilestones = _accomplished.length;
     final progress = totalMilestones > 0 ? completedMilestones / totalMilestones : 0.0;
 
-    return Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
-          child: Text(
-            "Track ${_selectedChild?.name ?? 'your child'}'s developmental milestones.",
-            style: FlutterFlowTheme.of(context).bodyMedium.override(
-              fontFamily: 'Andika New Basic',
-              color: const Color(0xC2000000),
+        Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Track ${_selectedChild?.name ?? 'your child'}'s developmental milestones.",
+                    style: FlutterFlowTheme.of(context).bodyMedium.override(
+                      fontFamily: 'Andika New Basic',
+                      color: const Color(0xC2000000),
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    'Tap a milestone to turn it into a learning path.',
+                    style: FlutterFlowTheme.of(context).bodySmall.override(
+                      fontFamily: 'Andika New Basic',
+                      color: FlutterFlowTheme.of(context).secondaryText,
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ),
-        CircularPercentIndicator(
-          radius: 40,
-          lineWidth: 10,
-          percent: progress.clamp(0.0, 1.0),
-          animation: true,
-          progressColor: FlutterFlowTheme.of(context).primary,
-          backgroundColor: const Color(0x6552A097),
-          center: Text(
-            '${(progress * 100).toInt()}%',
-            style: FlutterFlowTheme.of(context).headlineSmall.override(
-              fontFamily: 'Andika New Basic',
-              color: FlutterFlowTheme.of(context).primary,
-              fontSize: 18,
+            CircularPercentIndicator(
+              radius: 40,
+              lineWidth: 10,
+              percent: progress.clamp(0.0, 1.0),
+              animation: true,
+              progressColor: FlutterFlowTheme.of(context).primary,
+              backgroundColor: const Color(0x6552A097),
+              center: Text(
+                '${(progress * 100).toInt()}%',
+                style: FlutterFlowTheme.of(context).headlineSmall.override(
+                  fontFamily: 'Andika New Basic',
+                  color: FlutterFlowTheme.of(context).primary,
+                  fontSize: 18,
+                ),
+              ),
             ),
-          ),
+          ],
         ),
       ],
     );

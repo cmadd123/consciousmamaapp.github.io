@@ -84,6 +84,26 @@ class FFAppState extends ChangeNotifier {
             .toList();
       }
     });
+    _safeInit(() {
+      _mealPlanBudget = prefs.getDouble('ff_mealPlanBudget') ?? 0.0;
+    });
+    _safeInit(() {
+      _showMealCosts = prefs.getBool('ff_showMealCosts') ?? true;
+    });
+  }
+
+  double _mealPlanBudget = 0.0;
+  double get mealPlanBudget => _mealPlanBudget;
+  set mealPlanBudget(double value) {
+    _mealPlanBudget = value;
+    prefs.setDouble('ff_mealPlanBudget', value);
+  }
+
+  bool _showMealCosts = true;
+  bool get showMealCosts => _showMealCosts;
+  set showMealCosts(bool value) {
+    _showMealCosts = value;
+    prefs.setBool('ff_showMealCosts', value);
   }
 
   void update(VoidCallback callback) {

@@ -97,6 +97,11 @@ class MealPlanRecord extends FirestoreRecord {
   String get customMeal => _customMeal ?? '';
   bool hasCustomMeal() => _customMeal != null && _customMeal!.isNotEmpty;
 
+  // "custom_meal_cost" field - Cost for custom meals (eating out, delivery, etc.)
+  double? _customMealCost;
+  double get customMealCost => _customMealCost ?? 0.0;
+  bool hasCustomMealCost() => _customMealCost != null && _customMealCost! > 0;
+
   // Helper to check if this is a meal combo vs single recipe
   bool get isMealCombo => _mealComboRef != null;
 
@@ -121,6 +126,7 @@ class MealPlanRecord extends FirestoreRecord {
     _isLeftoverDessert = snapshotData['is_leftover_dessert'] as bool?;
     _isLeftoverSnack = snapshotData['is_leftover_snack'] as bool?;
     _customMeal = snapshotData['custom_meal'] as String?;
+    _customMealCost = castToType<double>(snapshotData['custom_meal_cost']);
   }
 
   static CollectionReference get collection =>
@@ -172,6 +178,7 @@ Map<String, dynamic> createMealPlanRecordData({
   bool? isLeftoverDessert,
   bool? isLeftoverSnack,
   String? customMeal,
+  double? customMealCost,
 }) {
   final firestoreData = mapToFirestore(
     <String, dynamic>{
@@ -189,6 +196,7 @@ Map<String, dynamic> createMealPlanRecordData({
       'is_leftover_dessert': isLeftoverDessert,
       'is_leftover_snack': isLeftoverSnack,
       'custom_meal': customMeal,
+      'custom_meal_cost': customMealCost,
     }.withoutNulls,
   );
 

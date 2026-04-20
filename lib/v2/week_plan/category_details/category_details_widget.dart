@@ -596,27 +596,32 @@ class _CategoryDetailsWidgetState extends State<CategoryDetailsWidget> {
                                                                   color: Color(
                                                                       0x80D9D9D9),
                                                                 ),
-                                                                child: Text(
-                                                                  valueOrDefault<
-                                                                      String>(
-                                                                    containerVarItem
-                                                                        .recipeName,
-                                                                    'Meal Name',
-                                                                  ),
-                                                                  textAlign:
-                                                                      TextAlign
-                                                                          .center,
-                                                                  style: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .bodyMedium
-                                                                      .override(
-                                                                        fontFamily:
-                                                                            'Andika New Basic',
-                                                                        fontSize:
-                                                                            12.0,
-                                                                        letterSpacing:
-                                                                            0.0,
+                                                                child: Column(
+                                                                  mainAxisSize: MainAxisSize.min,
+                                                                  children: [
+                                                                    Text(
+                                                                      valueOrDefault<String>(
+                                                                        containerVarItem.recipeName,
+                                                                        'Meal Name',
                                                                       ),
+                                                                      textAlign: TextAlign.center,
+                                                                      style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                        fontFamily: 'Andika New Basic',
+                                                                        fontSize: 12.0,
+                                                                        letterSpacing: 0.0,
+                                                                      ),
+                                                                    ),
+                                                                    if (FFAppState().showMealCosts && containerVarItem.hasEstimatedCost())
+                                                                      Text(
+                                                                        '\$${containerVarItem.estimatedCost.round()}',
+                                                                        style: const TextStyle(
+                                                                          fontFamily: 'Andika New Basic',
+                                                                          fontSize: 11.0,
+                                                                          color: Color(0xFF2E7D32),
+                                                                          fontWeight: FontWeight.w600,
+                                                                        ),
+                                                                      ),
+                                                                  ],
                                                                 ),
                                                               ),
                                                             ),

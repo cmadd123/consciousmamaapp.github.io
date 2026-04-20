@@ -13,6 +13,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import '/v2/routines/routines_page_widget.dart';
+import '/v2/helpful_docs/helpful_docs_page.dart';
 import 'package:flutter/services.dart';
 import 'package:collection/collection.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -188,33 +189,65 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                         if (sortedChildren != null && sortedChildren.isNotEmpty)
                           const SizedBox(height: 24.0),
 
-                        // Today's Meals Card (animated)
-                        _animatedCard(3, _buildMealsCard(context)),
-                        const SizedBox(height: 16.0),
+                        // Cards layout — 2-column grid on tablet, stacked on phone
+                        LayoutBuilder(
+                          builder: (context, constraints) {
+                            final isTablet = constraints.maxWidth >= 600;
 
-                        // Today's Events Card (animated)
-                        _animatedCard(4, _buildScheduleCard(context)),
-                        const SizedBox(height: 16.0),
+                            if (isTablet) {
+                              return Column(
+                                children: [
+                                  // Meals — full width
+                                  _animatedCard(3, _buildMealsCard(context)),
+                                  const SizedBox(height: 16.0),
+                                  // 2-column grid for smaller cards
+                                  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Expanded(child: Column(children: [
+                                        _animatedCard(4, _buildScheduleCard(context)),
+                                        const SizedBox(height: 16.0),
+                                        _animatedCard(6, _buildRoutinesCard(context)),
+                                        const SizedBox(height: 16.0),
+                                        _animatedCard(8, _buildHelpfulDocsCard(context)),
+                                      ])),
+                                      const SizedBox(width: 16.0),
+                                      Expanded(child: Column(children: [
+                                        _animatedCard(5, _buildTodosCard(context)),
+                                        const SizedBox(height: 16.0),
+                                        _animatedCard(7, _buildLearningPathCard(context)),
+                                      ])),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 16.0),
+                                  // Milestones — full width
+                                  _animatedCard(7, _buildMilestonesCard(context, sortedChildren)),
+                                  const SizedBox(height: 16.0),
+                                ],
+                              );
+                            }
 
-                        // Todos Card (animated)
-                        _animatedCard(5, _buildTodosCard(context)),
-                        const SizedBox(height: 16.0),
-
-                        // Routines Card (animated)
-                        _animatedCard(6, _buildRoutinesCard(context)),
-                        const SizedBox(height: 16.0),
-
-                        // Learning Path Card (animated)
-                        _animatedCard(7, _buildLearningPathCard(context)),
-                        const SizedBox(height: 16.0),
-
-                        // Activities Card (animated) - REMOVED: Feature being replaced
-                        // _animatedCard(7, _buildActivitiesCard(context)),
-                        // const SizedBox(height: 16.0),
-
-                        // Milestones Card (animated)
-                        _animatedCard(7, _buildMilestonesCard(context, sortedChildren)),
-                        const SizedBox(height: 16.0),
+                            // Phone layout — stacked
+                            return Column(
+                              children: [
+                                _animatedCard(3, _buildMealsCard(context)),
+                                const SizedBox(height: 16.0),
+                                _animatedCard(4, _buildScheduleCard(context)),
+                                const SizedBox(height: 16.0),
+                                _animatedCard(5, _buildTodosCard(context)),
+                                const SizedBox(height: 16.0),
+                                _animatedCard(6, _buildRoutinesCard(context)),
+                                const SizedBox(height: 16.0),
+                                _animatedCard(7, _buildLearningPathCard(context)),
+                                const SizedBox(height: 16.0),
+                                _animatedCard(7, _buildMilestonesCard(context, sortedChildren)),
+                                const SizedBox(height: 16.0),
+                                _animatedCard(8, _buildHelpfulDocsCard(context)),
+                                const SizedBox(height: 16.0),
+                              ],
+                            );
+                          },
+                        ),
 
                         // HIDDEN FOR TESTERS: Skills & Hobbies Preview Button
                         // _animatedCard(8, _buildSkillsPreviewButton(context)),
@@ -1303,6 +1336,47 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
     );
   }
 
+  Widget _buildHelpfulDocsCard(BuildContext context) {
+    return InkWell(
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const HelpfulDocsPage()),
+      ),
+      borderRadius: BorderRadius.circular(20.0),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(20.0),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20.0),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.menu_book_outlined, color: FlutterFlowTheme.of(context).primary, size: 22.0),
+            const SizedBox(width: 8.0),
+            Text(
+              'Helpful Docs',
+              style: FlutterFlowTheme.of(context).bodyLarge.override(
+                fontFamily: 'Andika New Basic',
+                color: const Color(0xFF5D4E60),
+                fontSize: 18.0,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 0.0,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildRoutinesCard(BuildContext context) {
     return StreamBuilder<List<RoutinesRecord>>(
       stream: queryRoutinesRecord(
@@ -1472,7 +1546,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                     ),
                     const SizedBox(width: 8.0),
                     Text(
-                      "To-Do List",
+                      incompleteTodos.isEmpty ? "Add a To-do" : "To-Do List",
                       style: FlutterFlowTheme.of(context).bodyLarge.override(
                         fontFamily: 'Andika New Basic',
                         color: const Color(0xFF5D4E60),
@@ -1536,27 +1610,6 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                         ),
                       ),
                     ),
-                ] else ...[
-                  const SizedBox(height: 12.0),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.add_circle_outline,
-                        color: const Color(0xFF9B8A9E),
-                        size: 20.0,
-                      ),
-                      const SizedBox(width: 8.0),
-                      Text(
-                        'Add a to-do',
-                        style: FlutterFlowTheme.of(context).bodyMedium.override(
-                          fontFamily: 'Andika New Basic',
-                          color: const Color(0xFF9B8A9E),
-                          fontSize: 14.0,
-                          fontStyle: FontStyle.italic,
-                        ),
-                      ),
-                    ],
-                  ),
                 ],
               ],
             ),

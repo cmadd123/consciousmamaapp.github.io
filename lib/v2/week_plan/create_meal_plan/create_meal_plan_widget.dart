@@ -49,6 +49,533 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   bool _welcomeDismissed = false;
 
+  // Cost cache: meal plan reference path -> estimated cost (sum of combo meals if combo)
+  final Map<String, double> _costByPlanPath = {};
+  bool _costsLoading = false;
+  String? _lastCostLoadKey;
+
+  // Fetch estimated costs for all meal plans in the current view
+  Future<void> _loadCostsForPlans(List<MealPlanRecord> plans) async {
+    if (plans.isEmpty) return;
+    if (_costsLoading) return;
+    final key = plans.map((p) => p.reference.path).join(',');
+    // Already loaded this exact set of plans
+    final allCached = plans.every((p) => _costByPlanPath.containsKey(p.reference.path));
+    if (key == _lastCostLoadKey && allCached) return;
+    _costsLoading = true;
+    try {
+      // Clear stale entries when plans change
+      if (key != _lastCostLoadKey) {
+        _costByPlanPath.clear();
+      }
+      bool changed = false;
+      for (final plan in plans) {
+        final planKey = plan.reference.path;
+        if (_costByPlanPath.containsKey(planKey)) continue;
+        double sum = 0;
+        try {
+          // Entree / main meal
+          if (plan.isMealCombo && plan.mealComboRef != null) {
+            final combo = await MealComboRecord.getDocumentOnce(plan.mealComboRef!);
+            final refs = <DocumentReference>[];
+            if (combo.entreeRef != null) refs.add(combo.entreeRef!);
+            refs.addAll(combo.sideRefs);
+            refs.addAll(combo.dessertRefs);
+            for (final r in refs) {
+              final m = await _fetchMealSafe(r);
+              if (m != null && m.hasEstimatedCost()) sum += m.estimatedCost;
+            }
+          } else if (plan.userFirebasemeal != null) {
+            final m = await _fetchMealSafe(plan.userFirebasemeal!);
+            if (m != null && m.hasEstimatedCost()) sum += m.estimatedCost;
+          }
+          // Side refs stored directly on the plan (from saved days)
+          if (plan.hasSideRefs()) {
+            for (final r in plan.sideRefs) {
+              final m = await _fetchMealSafe(r);
+              if (m != null && m.hasEstimatedCost()) sum += m.estimatedCost;
+            }
+          }
+          // Dessert refs stored directly on the plan
+          if (plan.hasDessertRefs()) {
+            for (final r in plan.dessertRefs) {
+              final m = await _fetchMealSafe(r);
+              if (m != null && m.hasEstimatedCost()) sum += m.estimatedCost;
+            }
+          }
+          // Include custom meal cost (eating out, delivery, etc.)
+          if (plan.hasCustomMealCost()) {
+            sum += plan.customMealCost;
+          }
+        } catch (_) {}
+        _costByPlanPath[planKey] = sum;
+        changed = true;
+        debugPrint('💰 plan ${plan.typ?.name} ${plan.date} combo=${plan.isMealCombo} -> \$$sum');
+      }
+      _lastCostLoadKey = key;
+      if (changed && mounted) setState(() {});
+    } finally {
+      _costsLoading = false;
+    }
+  }
+
+  double _sumDayCost(List<MealPlanRecord> plans, DateTime day) {
+    final dayStr = dateTimeFormat("d/M/y", day, locale: 'en');
+    double sum = 0;
+    for (final p in plans) {
+      if (p.date == null) continue;
+      if (dateTimeFormat("d/M/y", p.date!, locale: 'en') != dayStr) continue;
+      sum += _costByPlanPath[p.reference.path] ?? 0;
+    }
+    return sum;
+  }
+
+  double _sumAllCost(List<MealPlanRecord> plans, List<DateTime> days) {
+    if (days.isEmpty) return 0;
+    final daySet = days
+        .map((d) => dateTimeFormat("d/M/y", d, locale: 'en'))
+        .toSet();
+    double sum = 0;
+    for (final p in plans) {
+      if (p.date == null) continue;
+      if (!daySet.contains(dateTimeFormat("d/M/y", p.date!, locale: 'en'))) continue;
+      sum += _costByPlanPath[p.reference.path] ?? 0;
+    }
+    return sum;
+  }
+
+  List<MealPlanRecord> _filterPlansToDays(List<MealPlanRecord> plans, List<DateTime> days) {
+    final daySet = days
+        .map((d) => dateTimeFormat("d/M/y", d, locale: 'en'))
+        .toSet();
+    return plans.where((p) =>
+        p.date != null &&
+        daySet.contains(dateTimeFormat("d/M/y", p.date!, locale: 'en'))).toList();
+  }
+
+  Future<double> _sumSavedDayCost(List<MealComboRecord> templates) async {
+    double total = 0;
+    for (final t in templates) {
+      final refs = <DocumentReference>[];
+      if (t.entreeRef != null) refs.add(t.entreeRef!);
+      refs.addAll(t.sideRefs);
+      final snackRefs = t.snapshotData['snack_refs'] as List<dynamic>?;
+      if (snackRefs != null) {
+        for (final r in snackRefs) {
+          if (r is DocumentReference) refs.add(r);
+        }
+      }
+      for (final ref in refs) {
+        try {
+          final m = await _fetchMealSafe(ref);
+          if (m != null && m.hasEstimatedCost()) total += m.estimatedCost;
+        } catch (_) {}
+      }
+    }
+    return total;
+  }
+
+  String _fmtDollars(double v) =>
+      v == v.roundToDouble() ? '\$${v.round()}' : '\$${v.toStringAsFixed(2)}';
+
+  Widget _buildCostDebugCard(BuildContext context, List<MealPlanRecord> plans, double totalCost) {
+    // Group by day for readability
+    final lines = <String>[];
+    double sum = 0;
+    final sortedPlans = [...plans]..sort((a, b) {
+      final d = (a.date ?? DateTime(0)).compareTo(b.date ?? DateTime(0));
+      if (d != 0) return d;
+      return (a.typ?.index ?? 0).compareTo(b.typ?.index ?? 0);
+    });
+    for (final p in sortedPlans) {
+      final dayStr = p.date != null
+          ? dateTimeFormat('EEE MMM d', p.date!, locale: 'en')
+          : '?';
+      final typ = p.typ?.name ?? '?';
+      final combo = p.isMealCombo ? 'combo' : 'meal';
+      final cost = _costByPlanPath[p.reference.path];
+      final costStr = cost == null ? '(loading)' : '\$${cost.toStringAsFixed(2)}';
+      if (cost != null) sum += cost;
+      lines.add('$dayStr • $typ • $combo • $costStr');
+    }
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFFDE7),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: const Color(0xFFFFD54F), width: 1),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.bug_report, size: 16, color: Color(0xFF8D6E00)),
+              const SizedBox(width: 6),
+              Text(
+                'DEBUG: ${plans.length} plans, sum=\$${sum.toStringAsFixed(2)}, displayed total=${_fmtDollars(totalCost)}',
+                style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: Color(0xFF8D6E00), fontFamily: 'Andika New Basic'),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          ...lines.map((l) => Text(
+                l,
+                style: const TextStyle(fontSize: 10, color: Color(0xFF8D6E00), fontFamily: 'Andika New Basic'),
+              )),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBudgetBar(BuildContext context, double totalCost) {
+    final budget = FFAppState().mealPlanBudget;
+    final hasBudget = budget > 0;
+    final pct = hasBudget ? (totalCost / budget).clamp(0.0, 1.0).toDouble() : 0.0;
+    final over = hasBudget && totalCost > budget;
+    final barColor = over ? const Color(0xFFD32F2F) : const Color(0xFF2E7D32);
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      decoration: BoxDecoration(
+        color: (over ? const Color(0xFFFFEBEE) : const Color(0xFFE8F5E9)),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  hasBudget
+                      ? 'Planned: ${_fmtDollars(totalCost)} of ${_fmtDollars(budget)}'
+                      : 'Planned total: ${_fmtDollars(totalCost)}',
+                  style: FlutterFlowTheme.of(context).bodyMedium.override(
+                        fontFamily: 'Andika New Basic',
+                        color: barColor,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0,
+                      ),
+                ),
+              ),
+              InkWell(
+                onTap: () => _showBudgetSheet(context),
+                child: Text(
+                  hasBudget ? 'Edit' : 'Set budget',
+                  style: FlutterFlowTheme.of(context).bodySmall.override(
+                        fontFamily: 'Andika New Basic',
+                        color: barColor,
+                        fontWeight: FontWeight.w600,
+                        decoration: TextDecoration.underline,
+                      ),
+                ),
+              ),
+            ],
+          ),
+          if (hasBudget) ...[
+            const SizedBox(height: 6),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: LinearProgressIndicator(
+                value: pct,
+                minHeight: 6,
+                backgroundColor: Colors.white.withOpacity(0.6),
+                valueColor: AlwaysStoppedAnimation<Color>(barColor),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Future<void> _showBudgetSheet(BuildContext context) async {
+    final currentBudget = FFAppState().mealPlanBudget;
+    final controller = TextEditingController(
+      text: currentBudget > 0
+          ? (currentBudget == currentBudget.roundToDouble()
+              ? currentBudget.round().toString()
+              : currentBudget.toStringAsFixed(2))
+          : '',
+    );
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (sheetCtx) => Padding(
+        padding: EdgeInsets.only(
+          left: 20, right: 20, top: 20,
+          bottom: MediaQuery.of(sheetCtx).viewInsets.bottom + 20,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Meal plan budget',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, fontFamily: 'Andika New Basic')),
+            const SizedBox(height: 4),
+            Text(
+              'Set a target for your planned days. Tap Generate to auto-fill from your cookbook within the budget.',
+              style: TextStyle(fontSize: 13, color: Colors.grey.shade600, fontFamily: 'Andika New Basic'),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: controller,
+              autofocus: true,
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              decoration: InputDecoration(
+                prefixText: '\$ ',
+                labelText: 'Budget',
+                hintText: '150',
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      side: BorderSide(color: const Color(0xFF2E7D32)),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                    onPressed: () {
+                      final v = double.tryParse(controller.text.trim()) ?? 0.0;
+                      FFAppState().mealPlanBudget = v;
+                      Navigator.pop(sheetCtx);
+                      if (mounted) setState(() {});
+                    },
+                    child: const Text('Save', style: TextStyle(color: Color(0xFF2E7D32), fontWeight: FontWeight.w600)),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      backgroundColor: const Color(0xFF2E7D32),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                    onPressed: () async {
+                      final v = double.tryParse(controller.text.trim()) ?? 0.0;
+                      if (v <= 0) {
+                        ScaffoldMessenger.of(sheetCtx).showSnackBar(
+                          const SnackBar(content: Text('Enter a budget greater than 0')),
+                        );
+                        return;
+                      }
+                      FFAppState().mealPlanBudget = v;
+                      Navigator.pop(sheetCtx);
+                      await _generatePlanFromBudget(v);
+                    },
+                    child: const Text('Generate', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: Text('Show costs everywhere',
+                      style: TextStyle(fontFamily: 'Andika New Basic', fontSize: 14, color: Colors.grey.shade700)),
+                ),
+                StatefulBuilder(
+                  builder: (ctx, setLocal) => Switch(
+                    value: FFAppState().showMealCosts,
+                    activeColor: const Color(0xFF2E7D32),
+                    onChanged: (v) {
+                      setLocal(() => FFAppState().showMealCosts = v);
+                    },
+                  ),
+                ),
+              ],
+            ),
+            if (currentBudget > 0) ...[
+              const SizedBox(height: 4),
+              TextButton(
+                onPressed: () {
+                  FFAppState().mealPlanBudget = 0.0;
+                  Navigator.pop(sheetCtx);
+                  if (mounted) setState(() {});
+                },
+                child: Text('Clear budget', style: TextStyle(color: Colors.grey.shade600)),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _generatePlanFromBudget(double budget) async {
+    final days = _customSelectedDates ?? functions.getSevenDays()?.toList() ?? [];
+    if (days.isEmpty) return;
+
+    // Load existing plans to find occupied slots
+    final currentPlans = _model.cachedMealPlans ?? [];
+
+    // Build set of occupied slots: "d/M/y|MealTyp"
+    final occupiedSlots = <String>{};
+    for (final p in currentPlans) {
+      if (p.date == null || p.typ == null) continue;
+      occupiedSlots.add('${dateTimeFormat("d/M/y", p.date!, locale: 'en')}|${p.typ!.name}');
+    }
+
+    // Build empty slots in priority order: Dinner, Lunch, Breakfast, Snacks
+    final slotOrder = [MealTyp.Dinner, MealTyp.Lunch, MealTyp.Breakfast, MealTyp.Snacks];
+    final emptySlots = <MapEntry<DateTime, MealTyp>>[];
+    for (final slot in slotOrder) {
+      for (final day in days) {
+        final key = '${dateTimeFormat("d/M/y", day, locale: 'en')}|${slot.name}';
+        if (!occupiedSlots.contains(key)) {
+          emptySlots.add(MapEntry(day, slot));
+        }
+      }
+    }
+
+    if (emptySlots.isEmpty) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('All meal slots are already filled.')),
+        );
+      }
+      return;
+    }
+
+    // Load user's cookbook
+    List<MealRecord> cookbook;
+    try {
+      final snap = await MealRecord.collection
+          .where('user_ref', isEqualTo: currentUserReference)
+          .get();
+      cookbook = snap.docs
+          .map((d) => MealRecord.fromSnapshot(d))
+          .where((m) => m.hasEstimatedCost())
+          .toList();
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Could not load cookbook: $e')),
+        );
+      }
+      return;
+    }
+
+    if (cookbook.isEmpty) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No recipes with estimated cost in your cookbook. Import or set costs first.')),
+        );
+      }
+      return;
+    }
+
+    // Build category lookup: meal type tag → list of recipes
+    final categoryMap = <String, List<MealRecord>>{};
+    for (final meal in cookbook) {
+      final tags = meal.mealTyp.split(',').map((s) => s.trim()).where((s) => s.isNotEmpty);
+      for (final tag in tags) {
+        categoryMap.putIfAbsent(tag, () => []).add(meal);
+      }
+      if (tags.isEmpty) {
+        categoryMap.putIfAbsent('Any', () => []).add(meal);
+      }
+    }
+    // Shuffle each bucket for variety
+    for (final list in categoryMap.values) {
+      list.shuffle();
+    }
+
+    // Assign meals greedily: for each empty slot, find a matching recipe within budget
+    double running = 0;
+    int added = 0;
+    int skippedBudget = 0;
+    int skippedNoMatch = 0;
+    final usedRecipeIds = <String>{};
+
+    for (final slot in emptySlots) {
+      final slotName = slot.value.name;
+
+      // Try to find a matching recipe: prefer category match, then any
+      MealRecord? pick;
+      final candidates = categoryMap[slotName] ?? categoryMap['Any'] ?? cookbook;
+      for (final meal in candidates) {
+        if (usedRecipeIds.contains(meal.reference.id)) continue;
+        if (running + meal.estimatedCost > budget) {
+          skippedBudget++;
+          continue;
+        }
+        pick = meal;
+        break;
+      }
+      // Fallback: try any cookbook recipe not yet used
+      if (pick == null) {
+        for (final meal in cookbook) {
+          if (usedRecipeIds.contains(meal.reference.id)) continue;
+          if (running + meal.estimatedCost > budget) {
+            skippedBudget++;
+            continue;
+          }
+          pick = meal;
+          break;
+        }
+      }
+
+      if (pick == null) {
+        skippedNoMatch++;
+        continue;
+      }
+
+      usedRecipeIds.add(pick.reference.id);
+      running += pick.estimatedCost;
+      added++;
+
+      try {
+        await MealPlanRecord.collection.doc().set(
+              createMealPlanRecordData(
+                date: slot.key,
+                typ: slot.value,
+                userRef: currentUserReference,
+                userFirebasemeal: pick.reference,
+                mealId: pick.reference.id,
+              ),
+            );
+      } catch (e) {
+        debugPrint('Failed to add generated plan: $e');
+      }
+    }
+
+    FFAppState().MealCashtearm = true;
+    await _refreshMealPlans();
+
+    if (!mounted) return;
+
+    // Build result message
+    final remaining = emptySlots.length - added;
+    String msg = 'Added $added meals (${_fmtDollars(running)} of ${_fmtDollars(budget)}).';
+    if (remaining > 0 && skippedBudget > 0) {
+      msg += '\n$remaining slots left empty — remaining recipes exceed budget.';
+    } else if (remaining > 0 && skippedNoMatch > 0) {
+      msg += '\n$remaining slots left empty — not enough unique recipes in your cookbook.';
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(msg),
+        backgroundColor: remaining > 0 ? Colors.orange.shade700 : const Color(0xFF2E7D32),
+        duration: const Duration(seconds: 4),
+      ),
+    );
+  }
+
+
   // Custom dates selected via calendar picker - stored in FFAppState for persistence
   List<DateTime>? get _customSelectedDates => FFAppState().mealPlanSelectedDates;
   set _customSelectedDates(List<DateTime>? value) {
@@ -120,6 +647,8 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
   // Refresh method - clears cache and forces reload
   Future<void> _refreshMealPlans() async {
     _model.invalidateCache();
+    _costByPlanPath.clear();
+    _lastCostLoadKey = null;
     // Pre-fetch to ensure data is ready, then rebuild ONCE
     await _model.refreshMealPlans();
     if (mounted) {
@@ -795,6 +1324,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
         combos.add(combo);
         if (combo.entreeRef != null) mealRefsToFetch.add(combo.entreeRef!);
         for (final sideRef in combo.sideRefs) mealRefsToFetch.add(sideRef);
+        for (final dessertRef in combo.dessertRefs) mealRefsToFetch.add(dessertRef);
       } catch (e) { debugPrint('Error fetching combo: $e'); }
     }
     final List<MealRecord> meals = [];
@@ -840,6 +1370,9 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
         for (final sideRef in combo.sideRefs) {
           try { comboMeals.add(await MealRecord.getDocumentOnce(sideRef)); } catch (_) {}
         }
+        for (final dessertRef in combo.dessertRefs) {
+          try { comboMeals.add(await MealRecord.getDocumentOnce(dessertRef)); } catch (_) {}
+        }
       } else if (mealPlan.userFirebasemeal != null) {
         meal = await MealRecord.getDocumentOnce(mealPlan.userFirebasemeal!);
       }
@@ -882,6 +1415,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
           combos.add(combo);
           if (combo.entreeRef != null) mealRefsToFetch.add(combo.entreeRef!);
           for (final sideRef in combo.sideRefs) mealRefsToFetch.add(sideRef);
+          for (final dessertRef in combo.dessertRefs) mealRefsToFetch.add(dessertRef);
         } catch (_) {}
       }
       final List<MealRecord> meals = [];
@@ -967,6 +1501,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
           combos.add(combo);
           if (combo.entreeRef != null) mealRefsToFetch.add(combo.entreeRef!);
           for (final sideRef in combo.sideRefs) mealRefsToFetch.add(sideRef);
+          for (final dessertRef in combo.dessertRefs) mealRefsToFetch.add(dessertRef);
         } catch (_) {}
       }
       final List<MealRecord> meals = [];
@@ -1003,6 +1538,9 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
         }
         for (final sideRef in combo.sideRefs) {
           try { comboMeals.add(await MealRecord.getDocumentOnce(sideRef)); } catch (_) {}
+        }
+        for (final dessertRef in combo.dessertRefs) {
+          try { comboMeals.add(await MealRecord.getDocumentOnce(dessertRef)); } catch (_) {}
         }
       } else if (mealPlan.userFirebasemeal != null) {
         meal = await MealRecord.getDocumentOnce(mealPlan.userFirebasemeal!);
@@ -2803,6 +3341,27 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                                 ),
                                               ),
                                             )),
+                                            // Budget button
+                                            CascadeItem(index: 6, baseDelayMs: 350, staggerMs: 70, bounce: true, child: InkWell(
+                                              splashColor: Colors.transparent,
+                                              focusColor: Colors.transparent,
+                                              hoverColor: Colors.transparent,
+                                              highlightColor: Colors.transparent,
+                                              onTap: () => _showBudgetSheet(context),
+                                              borderRadius: BorderRadius.circular(14.0),
+                                              child: Container(
+                                                padding: const EdgeInsets.all(8.0),
+                                                decoration: BoxDecoration(
+                                                  color: const Color(0xFF2E7D32).withOpacity(0.12),
+                                                  borderRadius: BorderRadius.circular(14.0),
+                                                ),
+                                                child: const Icon(
+                                                  Icons.attach_money,
+                                                  color: Color(0xFF2E7D32),
+                                                  size: 20.0,
+                                                ),
+                                              ),
+                                            )),
                                           ],
                                         ),
                                       ],
@@ -2925,11 +3484,20 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                       final mealPlanRecords = _model.cachedMealPlans ?? snapshot.data ?? [];
                                       final days = _customSelectedDates ?? functions.getSevenDays()?.toList() ?? [];
 
+                                      final visiblePlans = _filterPlansToDays(mealPlanRecords, days);
+                                      // Kick off cost prefetch when plans change
+                                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                                        _loadCostsForPlans(visiblePlans);
+                                      });
+                                      final totalCost = _sumAllCost(mealPlanRecords, days);
+
                                       return Padding(
                                         padding: EdgeInsetsDirectional.fromSTEB(0.0, 16.0, 0.0, 100.0),
                                         child: Column(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
+                                            if (FFAppState().showMealCosts && visiblePlans.isNotEmpty && (totalCost > 0 || FFAppState().mealPlanBudget > 0))
+                                              _buildBudgetBar(context, totalCost),
                                             // First-time directions - dismissible, never shows again once closed
                                             if (!_welcomeDismissed && mealPlanRecords.isEmpty)
                                               Container(
@@ -3013,6 +3581,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                             final day = days[dayIndex];
                                             final isExpanded = _model.isDayExpanded(dayIndex);
                                             final plannedCount = _countPlannedMeals(mealPlanRecords, day);
+                                            final dayCost = _sumDayCost(mealPlanRecords, day);
                                             final _now = DateTime.now();
                                             final _isToday = day.year == _now.year && day.month == _now.month && day.day == _now.day;
 
@@ -3065,6 +3634,21 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                                                 ),
                                                           ),
                                                         ),
+                                                        if (FFAppState().showMealCosts && dayCost > 0) ...[
+                                                          Padding(
+                                                            padding: const EdgeInsets.only(right: 6.0),
+                                                            child: Text(
+                                                              _fmtDollars(dayCost),
+                                                              style: FlutterFlowTheme.of(context).bodySmall.override(
+                                                                    fontFamily: 'Andika New Basic',
+                                                                    color: const Color(0xFF2E7D32),
+                                                                    fontSize: 12.0,
+                                                                    fontWeight: FontWeight.w600,
+                                                                    letterSpacing: 0,
+                                                                  ),
+                                                            ),
+                                                          ),
+                                                        ],
                                                         // Saved Days button - only show when expanded
                                                         if (isExpanded) InkWell(
                                                           onTap: () => _showSavedDaysPickerForDate(context, day),
@@ -3631,14 +4215,34 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                   letterSpacing: 0.0,
                                 ),
                               ),
-                              Text(
-                                '$mealCount meal${mealCount > 1 ? 's' : ''}',
-                                style: FlutterFlowTheme.of(sheetContext).bodySmall.override(
-                                  fontFamily: 'Andika New Basic',
-                                  color: Color(0xFF999999),
-                                  fontSize: 12.0,
-                                  letterSpacing: 0.0,
-                                ),
+                              Row(
+                                children: [
+                                  Text(
+                                    '$mealCount meal${mealCount > 1 ? 's' : ''}',
+                                    style: FlutterFlowTheme.of(sheetContext).bodySmall.override(
+                                      fontFamily: 'Andika New Basic',
+                                      color: Color(0xFF999999),
+                                      fontSize: 12.0,
+                                      letterSpacing: 0.0,
+                                    ),
+                                  ),
+                                  FutureBuilder<double>(
+                                    future: FFAppState().showMealCosts ? _sumSavedDayCost(entry.value) : Future.value(0.0),
+                                    builder: (ctx, snap) {
+                                      final cost = snap.data ?? 0;
+                                      if (cost <= 0) return const SizedBox.shrink();
+                                      return Text(
+                                        '  •  \$${cost.round()}',
+                                        style: const TextStyle(
+                                          fontFamily: 'Andika New Basic',
+                                          fontSize: 12.0,
+                                          color: Color(0xFF2E7D32),
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ],
                               ),
                             ],
                           ),
@@ -3666,6 +4270,17 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
     try {
       final normalized = DateTime(day.year, day.month, day.day);
 
+      // Clear existing meals for this day first (in-memory filter to avoid index requirement)
+      final dayStr = dateTimeFormat("d/M/y", normalized, locale: 'en');
+      final currentPlans = _model.cachedMealPlans ?? [];
+      final dayPlans = currentPlans.where((p) =>
+          p.date != null &&
+          dateTimeFormat("d/M/y", p.date!, locale: 'en') == dayStr).toList();
+      for (final plan in dayPlans) {
+        await plan.reference.delete();
+        _costByPlanPath.remove(plan.reference.path);
+      }
+
       for (final template in templates) {
         // Skip templates without a meal type
         if (template.mealTyp == null) {
@@ -3691,9 +4306,9 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
         await MealPlanRecord.collection.doc().set(fullData);
       }
 
+      _lastCostLoadKey = null;
       if (mounted) {
-        // Refresh the meal plans to show new meals
-        await _model.refreshMealPlans();
+        await _refreshMealPlans();
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -3702,8 +4317,6 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
             backgroundColor: FlutterFlowTheme.of(context).primary,
           ),
         );
-        // Trigger rebuild to show new meals
-        setState(() {});
       }
 
     } catch (e) {
@@ -4143,14 +4756,30 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                   overflow: TextOverflow.ellipsis,
                 ),
                 SizedBox(height: 4.0),
-                Text(
-                  'Custom meal',
-                  style: FlutterFlowTheme.of(context).bodySmall.override(
-                        fontFamily: 'Andika New Basic',
-                        color: Color(0xFF999999),
-                        fontSize: 11.0,
-                        letterSpacing: 0.0,
+                Row(
+                  children: [
+                    Text(
+                      'Custom meal',
+                      style: FlutterFlowTheme.of(context).bodySmall.override(
+                            fontFamily: 'Andika New Basic',
+                            color: Color(0xFF999999),
+                            fontSize: 11.0,
+                            letterSpacing: 0.0,
+                          ),
+                    ),
+                    if (FFAppState().showMealCosts && mealPlan.hasCustomMealCost()) ...[
+                      const SizedBox(width: 8),
+                      Text(
+                        '\$${mealPlan.customMealCost.round()}',
+                        style: const TextStyle(
+                          fontFamily: 'Andika New Basic',
+                          fontSize: 12.0,
+                          color: Color(0xFF2E7D32),
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
+                    ],
+                  ],
                 ),
               ],
             ),
@@ -4274,6 +4903,19 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                         ],
                       ),
                       SizedBox(height: 4.0),
+                    if (FFAppState().showMealCosts && meal.hasEstimatedCost())
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 4.0),
+                        child: Text(
+                          '\$${meal.estimatedCost.round()}',
+                          style: const TextStyle(
+                            fontFamily: 'Andika New Basic',
+                            fontSize: 12.0,
+                            color: Color(0xFF2E7D32),
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
                     // Show recipe type indicator for sides/desserts with leaf/cake icon + count
                     if ((meal.recipeType == RecipeType.Side || meal.mainOrSides == 'Side') && !mealPlan.hasSideRefs() && !mealPlan.hasDessertRefs())
                       Row(

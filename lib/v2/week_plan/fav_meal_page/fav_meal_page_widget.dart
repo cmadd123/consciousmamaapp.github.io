@@ -1953,10 +1953,15 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                                     if (mounted) _reloadUserRecipes();
                                                   });
                                                 },
-                                                child: Container(
-                                                  width: _model.recipeSourceTab == 'my'
-                                                      ? (MediaQuery.of(context).size.width - 40) / 2 - 5
-                                                      : 160.0,
+                                                child: Builder(
+                                                  builder: (context) {
+                                                    final screenWidth = MediaQuery.of(context).size.width;
+                                                    final cols = screenWidth >= 900 ? 4 : screenWidth >= 600 ? 3 : 2;
+                                                    final cardWidth = _model.recipeSourceTab == 'my'
+                                                        ? (screenWidth - 40) / cols - 5
+                                                        : screenWidth >= 600 ? 180.0 : 160.0;
+                                                    return Container(
+                                                  width: cardWidth,
                                                   height: 210.0,
                                                   decoration: BoxDecoration(),
                                                   child: Align(
@@ -2045,6 +2050,16 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                                                               0.0,
                                                                         ),
                                                                   ),
+                                                                  if (FFAppState().showMealCosts && containerVarItem.hasEstimatedCost())
+                                                                    Text(
+                                                                      '\$${containerVarItem.estimatedCost.round()}',
+                                                                      style: const TextStyle(
+                                                                        fontFamily: 'Andika New Basic',
+                                                                        fontSize: 11.0,
+                                                                        color: Color(0xFF2E7D32),
+                                                                        fontWeight: FontWeight.w600,
+                                                                      ),
+                                                                    ),
                                                                   SizedBox(height: 3.0),
                                                                   Builder(
                                                                     builder: (context) {
@@ -2242,7 +2257,8 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                                       ],
                                                     ),
                                                   ),
-                                                ),
+                                                );
+                                                  }),
                                               );
                                             }),
                                           );
@@ -2736,6 +2752,31 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
   }
 
   /// Build the Saved Days view — groups day templates by their shared group ID
+  Future<double> _sumTemplateCost(List<MealComboRecord> templates) async {
+    double total = 0;
+    for (final t in templates) {
+      final refs = <DocumentReference>[];
+      if (t.entreeRef != null) refs.add(t.entreeRef!);
+      refs.addAll(t.sideRefs);
+      final snackRefs = t.snapshotData['snack_refs'] as List<dynamic>?;
+      if (snackRefs != null) {
+        for (final r in snackRefs) {
+          if (r is DocumentReference) refs.add(r);
+        }
+      }
+      for (final ref in refs) {
+        try {
+          final doc = await ref.get();
+          if (doc.exists) {
+            final meal = MealRecord.fromSnapshot(doc);
+            if (meal.hasEstimatedCost()) total += meal.estimatedCost;
+          }
+        } catch (_) {}
+      }
+    }
+    return total;
+  }
+
   Widget _buildSavedDaysView(BuildContext context) {
     // Filter templates that have a day_template_group
     final dayTemplates = _model.mealTemplates
@@ -2896,14 +2937,38 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                             ],
                           ),
                         ),
-                        Text(
-                          '${templates.length} meal${templates.length > 1 ? 's' : ''}',
-                          style: FlutterFlowTheme.of(context).bodySmall.override(
-                                fontFamily: 'Andika New Basic',
-                                color: FlutterFlowTheme.of(context).primary,
-                                fontWeight: FontWeight.w600,
-                                letterSpacing: 0.0,
-                              ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              '${templates.length} meal${templates.length > 1 ? 's' : ''}',
+                              style: FlutterFlowTheme.of(context).bodySmall.override(
+                                    fontFamily: 'Andika New Basic',
+                                    color: FlutterFlowTheme.of(context).primary,
+                                    fontWeight: FontWeight.w600,
+                                    letterSpacing: 0.0,
+                                  ),
+                            ),
+                            FutureBuilder<double>(
+                              future: FFAppState().showMealCosts ? _sumTemplateCost(templates) : Future.value(0.0),
+                              builder: (ctx, snap) {
+                                final total = snap.data ?? 0;
+                                if (total <= 0) return const SizedBox.shrink();
+                                return Padding(
+                                  padding: const EdgeInsets.only(top: 2.0),
+                                  child: Text(
+                                    '\$${total.round()}',
+                                    style: const TextStyle(
+                                      fontFamily: 'Andika New Basic',
+                                      fontSize: 12.0,
+                                      color: Color(0xFF2E7D32),
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -3060,6 +3125,18 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                                     color: Color(0xFF999999),
                                                     letterSpacing: 0.0,
                                                   ),
+                                            ),
+                                          ],
+                                          if (FFAppState().showMealCosts && entree != null && entree.hasEstimatedCost()) ...[
+                                            const Spacer(),
+                                            Text(
+                                              '\$${entree.estimatedCost.round()}',
+                                              style: const TextStyle(
+                                                fontFamily: 'Andika New Basic',
+                                                fontSize: 11.0,
+                                                color: Color(0xFF2E7D32),
+                                                fontWeight: FontWeight.w600,
+                                              ),
                                             ),
                                           ],
                                         ],
@@ -3400,7 +3477,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
             },
             child: Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(12.0),
+              padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 14.0),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(14.0),
@@ -3418,18 +3495,18 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                   Stack(
                     children: [
                       ClipRRect(
-                        borderRadius: BorderRadius.circular(8.0),
+                        borderRadius: BorderRadius.circular(10.0),
                         child: Container(
-                          width: 60.0,
-                          height: 60.0,
+                          width: 72.0,
+                          height: 72.0,
                           decoration: BoxDecoration(
                             color: Color(0xFFE0E0E0),
                           ),
                           child: entree != null && _isValidImageUrl(entree.imageUrl)
                               ? Image.network(
                                   _upgradePinterestImageUrl(entree.imageUrl),
-                                  width: 60.0,
-                                  height: 60.0,
+                                  width: 72.0,
+                                  height: 72.0,
                                   fit: BoxFit.cover,
                                   errorBuilder: (context, error, stackTrace) =>
                                       _buildColoredPlaceholder(template.name),
@@ -3439,7 +3516,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                       ),
                     ],
                   ),
-                  const SizedBox(width: 12.0),
+                  const SizedBox(width: 14.0),
                   // Template info
                   Expanded(
                     child: Column(
@@ -3504,7 +3581,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                             ],
                           ],
                         ),
-                        const SizedBox(height: 4.0),
+                        const SizedBox(height: 6.0),
                         // Components
                         Row(
                           children: [
@@ -3552,6 +3629,26 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                         ),
                       ],
                     ),
+                  ),
+                  // Cost
+                  FutureBuilder<double>(
+                    future: FFAppState().showMealCosts ? _sumTemplateCost([template]) : Future.value(0.0),
+                    builder: (ctx, snap) {
+                      final cost = snap.data ?? 0;
+                      if (cost <= 0) return const SizedBox.shrink();
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 4.0),
+                        child: Text(
+                          '\$${cost.round()}',
+                          style: const TextStyle(
+                            fontFamily: 'Andika New Basic',
+                            fontSize: 12.0,
+                            color: Color(0xFF2E7D32),
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      );
+                    },
                   ),
                   // Arrow icon
                   const Icon(

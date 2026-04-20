@@ -44,6 +44,7 @@ dependencies:
   fetch_api: 2.2.0
   fetch_client: 1.1.2
   file_picker: 10.1.9
+  flutter_pdfview: ^1.4.0
   firebase_auth: 5.6.0
   firebase_auth_platform_interface: 7.7.0
   firebase_auth_web: 5.15.0
