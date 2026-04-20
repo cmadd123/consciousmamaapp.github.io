@@ -294,10 +294,14 @@ Future<String?> publishMealPlanToFollowers({
       String? imageUrl;
       String? sourceUrl;
       double? estimatedCost;
+      bool isCustom = false;
 
-      // Custom meal
+      // Custom meal (eat-out / delivery / typed name). Cost lives on
+      // the MealPlanRecord itself, not a linked MealRecord.
       if (plan.hasCustomMeal()) {
         recipeName = plan.customMeal;
+        isCustom = true;
+        if (plan.hasCustomMealCost()) estimatedCost = plan.customMealCost;
       }
       // Single recipe
       else if (plan.userFirebasemeal != null) {
@@ -349,6 +353,7 @@ Future<String?> publishMealPlanToFollowers({
         if (imageUrl != null && imageUrl.isNotEmpty) 'image_url': imageUrl,
         if (sourceUrl != null && sourceUrl.isNotEmpty) 'source_url': sourceUrl,
         if (estimatedCost != null && estimatedCost > 0) 'estimated_cost': estimatedCost,
+        if (isCustom) 'is_custom': true,
       };
       mealCount++;
     }
@@ -547,6 +552,28 @@ Future<CreatorImportResult> importCreatorMealPlan({
 
       final rawCost = m['estimated_cost'];
       final estimatedCost = rawCost is num ? rawCost.toDouble() : null;
+      final isCustom = m['is_custom'] == true;
+
+      final mealTypEnum = _parseMealTypeString(mealType);
+      if (mealTypEnum == null) continue;
+
+      if (isCustom) {
+        // Custom meals (eat-out / delivery / typed) don't live in
+        // MealRecord — cost and name go directly on the MealPlanRecord.
+        final planRef = await MealPlanRecord.collection.add(createMealPlanRecordData(
+          date: date,
+          typ: mealTypEnum,
+          userRef: currentUserReference,
+          customMeal: '$name (by $creatorName)',
+          customMealCost: estimatedCost,
+        ));
+        createdPlanRefs.add(planRef);
+        mealsCreated++;
+        continue;
+      }
+
+      // Structured recipe path: create a MealRecord the user owns + a
+      // MealPlanRecord that points to it.
       final mealRecordData = createMealRecordData(
         recipeName: '$name (by $creatorName)',
         imageUrl: m['image_url'] as String?,
@@ -564,9 +591,6 @@ Future<CreatorImportResult> importCreatorMealPlan({
 
       final mealRef = await MealRecord.collection.add(mealRecordData);
       createdMealRefs.add(mealRef);
-
-      final mealTypEnum = _parseMealTypeString(mealType);
-      if (mealTypEnum == null) continue;
 
       final planRef = await MealPlanRecord.collection.add(createMealPlanRecordData(
         date: date,
