@@ -95,37 +95,10 @@ class _CreatorMealPlanPreviewWidgetState extends State<CreatorMealPlanPreviewWid
       if (!mounted) return;
 
       HapticFeedback.heavyImpact();
-      final messenger = ScaffoldMessenger.of(context);
-      final replacedText = result.daysReplaced > 0
-          ? ' · Replaced ${result.daysReplaced} day${result.daysReplaced == 1 ? '' : 's'}'
-          : '';
-
-      messenger.showSnackBar(SnackBar(
-        content: Text('Added ${result.mealsCreated} meals$replacedText'),
-        backgroundColor: FlutterFlowTheme.of(context).primary,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        margin: const EdgeInsets.all(16),
-        duration: const Duration(seconds: 8),
-        action: SnackBarAction(
-          label: 'Undo',
-          textColor: Colors.white,
-          onPressed: () async {
-            await result.undo();
-            if (context.mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: const Text('Restored your original plan'),
-                behavior: SnackBarBehavior.floating,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                margin: const EdgeInsets.all(16),
-                duration: const Duration(seconds: 3),
-              ));
-            }
-          },
-        ),
-      ));
-
-      Navigator.of(context).pop(true);
+      // Hand the result back to the caller — it will show the "Added X
+      // meals · Undo" snackbar on its own scaffold so it survives pop and
+      // auto-dismisses reliably.
+      Navigator.of(context).pop(result);
     } catch (e) {
       if (!mounted) return;
       setState(() => _isImporting = false);
@@ -425,13 +398,14 @@ class _CreatorMealPlanPreviewWidgetState extends State<CreatorMealPlanPreviewWid
   }
 }
 
-/// Helper to push the preview onto the nav stack.
-Future<bool?> showCreatorMealPlanPreview(
+/// Helper to push the preview onto the nav stack. Returns the import
+/// result if the user tapped Add and it succeeded, otherwise null.
+Future<CreatorImportResult?> showCreatorMealPlanPreview(
   BuildContext context, {
   required CreatorContentRecord mealPlan,
   required CreatorsRecord creator,
 }) {
-  return Navigator.of(context).push<bool>(MaterialPageRoute(
+  return Navigator.of(context).push<CreatorImportResult>(MaterialPageRoute(
     builder: (_) => CreatorMealPlanPreviewWidget(mealPlan: mealPlan, creator: creator),
   ));
 }

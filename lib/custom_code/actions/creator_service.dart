@@ -293,6 +293,7 @@ Future<String?> publishMealPlanToFollowers({
       List<String> instructions = [];
       String? imageUrl;
       String? sourceUrl;
+      double? estimatedCost;
 
       // Custom meal
       if (plan.hasCustomMeal()) {
@@ -307,6 +308,7 @@ Future<String?> publishMealPlanToFollowers({
           instructions = mealDoc.cookingInstructions;
           imageUrl = mealDoc.imageUrl;
           sourceUrl = mealDoc.sourceUrl;
+          if (mealDoc.hasEstimatedCost()) estimatedCost = mealDoc.estimatedCost;
         } catch (e) {
           debugPrint('Could not fetch meal: $e');
           recipeName = 'Planned';
@@ -346,6 +348,7 @@ Future<String?> publishMealPlanToFollowers({
         if (instructions.isNotEmpty) 'instructions': instructions,
         if (imageUrl != null && imageUrl.isNotEmpty) 'image_url': imageUrl,
         if (sourceUrl != null && sourceUrl.isNotEmpty) 'source_url': sourceUrl,
+        if (estimatedCost != null && estimatedCost > 0) 'estimated_cost': estimatedCost,
       };
       mealCount++;
     }
@@ -542,6 +545,8 @@ Future<CreatorImportResult> importCreatorMealPlan({
       final name = m['name'] as String?;
       if (name == null || name.isEmpty) continue;
 
+      final rawCost = m['estimated_cost'];
+      final estimatedCost = rawCost is num ? rawCost.toDouble() : null;
       final mealRecordData = createMealRecordData(
         recipeName: '$name (by $creatorName)',
         imageUrl: m['image_url'] as String?,
@@ -549,6 +554,7 @@ Future<CreatorImportResult> importCreatorMealPlan({
         mealTyp: mealType,
         mainOrSides: 'main',
         sourceUrl: m['source_url'] as String?,
+        estimatedCost: estimatedCost,
       );
       final ingredients = (m['ingredients'] as List<dynamic>?)?.map((e) => e.toString()).toList();
       final instructions = (m['instructions'] as List<dynamic>?)?.map((e) => e.toString()).toList();

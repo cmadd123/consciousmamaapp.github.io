@@ -329,9 +329,44 @@ class _CreatorMealPlanCardState extends State<CreatorMealPlanCard> {
                       mealPlan: _mealPlan!,
                       creator: creator,
                     );
-                    if (result == true && mounted) {
-                      setState(() => _imported = true);
-                    }
+                    if (!mounted || result == null) return;
+
+                    setState(() => _imported = true);
+
+                    // Show "Added N · Undo" on the Meals screen's messenger
+                    // (not the preview's, which was just disposed). Clear
+                    // any previous snackbar so it doesn't stack.
+                    final messenger = ScaffoldMessenger.of(context);
+                    messenger.hideCurrentSnackBar();
+                    final replacedText = result.daysReplaced > 0
+                        ? ' · Replaced ${result.daysReplaced} day${result.daysReplaced == 1 ? '' : 's'}'
+                        : '';
+                    messenger.showSnackBar(SnackBar(
+                      content: Text('Added ${result.mealsCreated} meals$replacedText'),
+                      backgroundColor: FlutterFlowTheme.of(context).primary,
+                      behavior: SnackBarBehavior.floating,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      margin: const EdgeInsets.all(16),
+                      duration: const Duration(seconds: 5),
+                      action: SnackBarAction(
+                        label: 'Undo',
+                        textColor: Colors.white,
+                        onPressed: () async {
+                          await result.undo();
+                          if (!context.mounted) return;
+                          final m = ScaffoldMessenger.of(context);
+                          m.hideCurrentSnackBar();
+                          m.showSnackBar(SnackBar(
+                            content: const Text('Restored your original plan'),
+                            behavior: SnackBarBehavior.floating,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                            margin: const EdgeInsets.all(16),
+                            duration: const Duration(seconds: 3),
+                          ));
+                          if (mounted) setState(() => _imported = false);
+                        },
+                      ),
+                    ));
                   },
                   text: _imported ? '✓ Added to Your Week' : 'View This Plan',
                   options: FFButtonOptions(
