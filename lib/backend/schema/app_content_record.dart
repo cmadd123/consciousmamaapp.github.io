@@ -62,6 +62,16 @@ class AppContentRecord extends FirestoreRecord {
   String? _contentType;
   String get contentType => _contentType ?? 'text';
 
+  // "creator_ref" field — links to the creators doc that owns this content.
+  // When set, only followers of that creator see it in the app.
+  DocumentReference? _creatorRef;
+  DocumentReference? get creatorRef => _creatorRef;
+  bool hasCreatorRef() => _creatorRef != null;
+
+  // "view_count" field — incremented by follower-side reads.
+  int? _viewCount;
+  int get viewCount => _viewCount ?? 0;
+
   void _initializeFields() {
     _title = snapshotData['title'] as String?;
     _author = snapshotData['author'] as String?;
@@ -73,6 +83,8 @@ class AppContentRecord extends FirestoreRecord {
     _readTimeMinutes = castToType<int>(snapshotData['read_time_minutes']);
     _pdfUrl = snapshotData['pdf_url'] as String?;
     _contentType = snapshotData['content_type'] as String?;
+    _creatorRef = snapshotData['creator_ref'] as DocumentReference?;
+    _viewCount = castToType<int>(snapshotData['view_count']);
   }
 
   static CollectionReference get collection =>

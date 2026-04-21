@@ -10,6 +10,8 @@ import 'package:path_provider/path_provider.dart';
 import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
+import 'package:provider/provider.dart';
+import '/v2/creator/creator_theme_notifier.dart';
 import '/v2/creator/creator_theme_wrapper.dart';
 
 class HelpfulDocsPage extends StatefulWidget {
@@ -22,6 +24,11 @@ class HelpfulDocsPage extends StatefulWidget {
 class _HelpfulDocsPageState extends State<HelpfulDocsPage> {
   @override
   Widget build(BuildContext context) {
+    // Only show docs uploaded by the follower's active creator. If no
+    // active creator, the list is empty — helpful docs are a creator-
+    // curated feature, not a global MomRise library.
+    final notifier = Provider.of<CreatorThemeNotifier>(context);
+    final creator = notifier.activeCreator;
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: CreatorThemedBackground(
@@ -41,7 +48,7 @@ class _HelpfulDocsPageState extends State<HelpfulDocsPage> {
                       child: Icon(Icons.arrow_back, color: FlutterFlowTheme.of(context).primaryText),
                     ),
                     Text(
-                      'Helpful Docs',
+                      creator != null ? 'From ${creator.name}' : 'Helpful Docs',
                       style: FlutterFlowTheme.of(context).titleLarge.override(
                         fontFamily: FFAppState().currentFontFamily,
                         fontSize: 22,
@@ -49,28 +56,22 @@ class _HelpfulDocsPageState extends State<HelpfulDocsPage> {
                         letterSpacing: 0,
                       ),
                     ),
-                    // Upload button (admin only — remove later)
-                    InkWell(
-                      onTap: () => _showUploadSheet(context),
-                      child: Container(
-                        padding: const EdgeInsets.all(6),
-                        decoration: BoxDecoration(
-                          color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Icon(Icons.upload_rounded, color: FlutterFlowTheme.of(context).primary, size: 22),
-                      ),
-                    ),
+                    // Keep layout balanced; uploads now live on the web dashboard.
+                    const SizedBox(width: 34),
                   ],
                 ),
               ),
 
-              // Docs list
+              // Docs list — scoped to the active creator
               Expanded(
                 child: StreamBuilder<List<AppContentRecord>>(
-                  stream: queryAppContentRecord(
-                    queryBuilder: (q) => q.where('is_published', isEqualTo: true),
-                  ),
+                  stream: creator == null
+                      ? Stream.value(const <AppContentRecord>[])
+                      : queryAppContentRecord(
+                          queryBuilder: (q) => q
+                              .where('creator_ref', isEqualTo: creator.reference)
+                              .where('is_published', isEqualTo: true),
+                        ),
                   builder: (context, snapshot) {
                     final docs = snapshot.data ?? [];
 

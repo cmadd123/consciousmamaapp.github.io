@@ -216,9 +216,25 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // App content / helpful docs. Anyone auth'd can read. Writes
+    // require the doc's creator_ref to point at a creators doc owned
+    // by the caller (user_ref matches auth uid). Updating view_count
+    // is allowed without ownership so follower reads can increment.
     match /app_content/{contentId} {
       allow read: if isAuthenticated();
-      allow write: if false;
+      allow create: if isAuthenticated() &&
+        get(request.resource.data.creator_ref).data.user_ref ==
+          /databases/$(database)/documents/users/$(request.auth.uid);
+      allow delete: if isAuthenticated() &&
+        get(resource.data.creator_ref).data.user_ref ==
+          /databases/$(database)/documents/users/$(request.auth.uid);
+      allow update: if isAuthenticated() && (
+        // Owner: full update
+        get(resource.data.creator_ref).data.user_ref ==
+          /databases/$(database)/documents/users/$(request.auth.uid) ||
+        // Anyone else: only allowed to bump view_count
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['view_count'])
+      );
     }
 
     // ─── Waitlist (public create, no reads) ───────────────────────
