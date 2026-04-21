@@ -288,8 +288,7 @@ class _LearnPathSteponStep3WidgetState
                                                             context)
                                                         .bodyMedium
                                                         .override(
-                                                          fontFamily:
-                                                              'Andika New Basic',
+                                                          fontFamily: FFAppState().currentFontFamily,
                                                           color:
                                                               const Color(0xC0000000),
                                                           letterSpacing: 0.0,
@@ -361,8 +360,7 @@ class _LearnPathSteponStep3WidgetState
                                                             context)
                                                         .bodyMedium
                                                         .override(
-                                                          fontFamily:
-                                                              'Andika New Basic',
+                                                          fontFamily: FFAppState().currentFontFamily,
                                                           color:
                                                               const Color(0xC0000000),
                                                           letterSpacing: 0.0,
@@ -434,8 +432,7 @@ class _LearnPathSteponStep3WidgetState
                                                             context)
                                                         .bodyMedium
                                                         .override(
-                                                          fontFamily:
-                                                              'Andika New Basic',
+                                                          fontFamily: FFAppState().currentFontFamily,
                                                           color:
                                                               const Color(0xC0000000),
                                                           letterSpacing: 0.0,
@@ -507,8 +504,7 @@ class _LearnPathSteponStep3WidgetState
                                                             context)
                                                         .bodyMedium
                                                         .override(
-                                                          fontFamily:
-                                                              'Andika New Basic',
+                                                          fontFamily: FFAppState().currentFontFamily,
                                                           color:
                                                               const Color(0xC0000000),
                                                           letterSpacing: 0.0,
@@ -580,8 +576,7 @@ class _LearnPathSteponStep3WidgetState
                                                             context)
                                                         .bodyMedium
                                                         .override(
-                                                          fontFamily:
-                                                              'Andika New Basic',
+                                                          fontFamily: FFAppState().currentFontFamily,
                                                           color:
                                                               const Color(0xC0000000),
                                                           letterSpacing: 0.0,
@@ -653,8 +648,7 @@ class _LearnPathSteponStep3WidgetState
                                                             context)
                                                         .bodyMedium
                                                         .override(
-                                                          fontFamily:
-                                                              'Andika New Basic',
+                                                          fontFamily: FFAppState().currentFontFamily,
                                                           color:
                                                               const Color(0xC0000000),
                                                           letterSpacing: 0.0,
@@ -726,8 +720,7 @@ class _LearnPathSteponStep3WidgetState
                                                             context)
                                                         .bodyMedium
                                                         .override(
-                                                          fontFamily:
-                                                              'Andika New Basic',
+                                                          fontFamily: FFAppState().currentFontFamily,
                                                           color:
                                                               const Color(0xC0000000),
                                                           letterSpacing: 0.0,
@@ -799,8 +792,7 @@ class _LearnPathSteponStep3WidgetState
                                                             context)
                                                         .bodyMedium
                                                         .override(
-                                                          fontFamily:
-                                                              'Andika New Basic',
+                                                          fontFamily: FFAppState().currentFontFamily,
                                                           color:
                                                               const Color(0xC0000000),
                                                           letterSpacing: 0.0,

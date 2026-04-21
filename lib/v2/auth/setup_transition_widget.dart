@@ -175,7 +175,7 @@ class _SetupTransitionWidgetState extends State<SetupTransitionWidget>
                       textAlign: TextAlign.center,
                       style:
                           FlutterFlowTheme.of(context).headlineLarge.override(
-                                fontFamily: FFAppState().currentFontFamily,
+                                fontFamily: 'Andika New Basic',
                                 fontSize: 28.0,
                                 fontWeight: FontWeight.bold,
                                 letterSpacing: 0.0,
@@ -195,7 +195,7 @@ class _SetupTransitionWidgetState extends State<SetupTransitionWidget>
                       "Set up your family and\nyou're good to go.",
                       textAlign: TextAlign.center,
                       style: FlutterFlowTheme.of(context).bodyLarge.override(
-                            fontFamily: FFAppState().currentFontFamily,
+                            fontFamily: 'Andika New Basic',
                             color: FlutterFlowTheme.of(context).secondaryText,
                             fontSize: 17.0,
                             letterSpacing: 0.0,
@@ -239,7 +239,7 @@ class _SetupTransitionWidgetState extends State<SetupTransitionWidget>
                           textStyle: FlutterFlowTheme.of(context)
                               .titleMedium
                               .override(
-                                fontFamily: FFAppState().currentFontFamily,
+                                fontFamily: 'Andika New Basic',
                                 color: Colors.white,
                                 fontSize: 18.0,
                                 letterSpacing: 0.0,

@@ -250,8 +250,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                               .of(context)
                                                           .bodyMedium
                                                           .override(
-                                                            fontFamily:
-                                                                'Andika New Basic',
+                                                            fontFamily: FFAppState().currentFontFamily,
                                                             fontSize: 24.0,
                                                             letterSpacing: 0.0,
                                                             fontWeight:
@@ -322,8 +321,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                                               context)
                                                                           .bodyMedium
                                                                           .override(
-                                                                            fontFamily:
-                                                                                'Andika New Basic',
+                                                                            fontFamily: FFAppState().currentFontFamily,
                                                                             color:
                                                                                 const Color(0x66000000),
                                                                             fontSize:
@@ -394,8 +392,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                                               context)
                                                                           .bodyMedium
                                                                           .override(
-                                                                            fontFamily:
-                                                                                'Andika New Basic',
+                                                                            fontFamily: FFAppState().currentFontFamily,
                                                                             color:
                                                                                 const Color(0x66000000),
                                                                             fontSize:
@@ -479,8 +476,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                                               context)
                                                                           .bodyMedium
                                                                           .override(
-                                                                            fontFamily:
-                                                                                'Andika New Basic',
+                                                                            fontFamily: FFAppState().currentFontFamily,
                                                                             color:
                                                                                 const Color(0x66000000),
                                                                             fontSize:
@@ -551,8 +547,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                                               context)
                                                                           .bodyMedium
                                                                           .override(
-                                                                            fontFamily:
-                                                                                'Andika New Basic',
+                                                                            fontFamily: FFAppState().currentFontFamily,
                                                                             color:
                                                                                 const Color(0x66000000),
                                                                             fontSize:
@@ -614,8 +609,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                                         context)
                                                                     .bodyMedium
                                                                     .override(
-                                                                      fontFamily:
-                                                                          'Andika New Basic',
+                                                                      fontFamily: FFAppState().currentFontFamily,
                                                                       letterSpacing:
                                                                           0.0,
                                                                     ),
@@ -1028,8 +1022,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                                         context)
                                                                     .bodyMedium
                                                                     .override(
-                                                                      fontFamily:
-                                                                          'Andika New Basic',
+                                                                      fontFamily: FFAppState().currentFontFamily,
                                                                       color: FlutterFlowTheme.of(
                                                                               context)
                                                                           .secondaryText,
@@ -1400,8 +1393,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                                             context)
                                                                         .bodyMedium
                                                                         .override(
-                                                                          fontFamily:
-                                                                              'Andika New Basic',
+                                                                          fontFamily: FFAppState().currentFontFamily,
                                                                           color:
                                                                               Colors.black,
                                                                           fontSize:
@@ -1427,8 +1419,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                                             context)
                                                                         .bodyMedium
                                                                         .override(
-                                                                          fontFamily:
-                                                                              'Andika New Basic',
+                                                                          fontFamily: FFAppState().currentFontFamily,
                                                                           color:
                                                                               FlutterFlowTheme.of(context).secondaryText,
                                                                           fontSize:
@@ -1489,8 +1480,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                                             context)
                                                                         .bodyMedium
                                                                         .override(
-                                                                          fontFamily:
-                                                                              'Andika New Basic',
+                                                                          fontFamily: FFAppState().currentFontFamily,
                                                                           color:
                                                                               const Color(0xFF595959),
                                                                           letterSpacing:
@@ -1543,8 +1533,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                                             context)
                                                                         .bodyMedium
                                                                         .override(
-                                                                          fontFamily:
-                                                                              'Andika New Basic',
+                                                                          fontFamily: FFAppState().currentFontFamily,
                                                                           color:
                                                                               const Color(0xFF595959),
                                                                           letterSpacing:
@@ -1597,8 +1586,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                                           context)
                                                                       .bodyMedium
                                                                       .override(
-                                                                        fontFamily:
-                                                                            'Andika New Basic',
+                                                                        fontFamily: FFAppState().currentFontFamily,
                                                                         color: FlutterFlowTheme.of(context)
                                                                             .secondaryText,
                                                                         fontSize:
@@ -1809,8 +1797,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                                         context)
                                                                     .bodyMedium
                                                                     .override(
-                                                                      fontFamily:
-                                                                          'Andika New Basic',
+                                                                      fontFamily: FFAppState().currentFontFamily,
                                                                       color: Colors
                                                                           .black,
                                                                       fontSize:
@@ -1855,8 +1842,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                                     .of(context)
                                                                 .bodyMedium
                                                                 .override(
-                                                                  fontFamily:
-                                                                      'Andika New Basic',
+                                                                  fontFamily: FFAppState().currentFontFamily,
                                                                   color: FlutterFlowTheme.of(
                                                                           context)
                                                                       .secondaryText,
@@ -1931,8 +1917,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                                   .of(context)
                                                               .headlineSmall
                                                               .override(
-                                                                fontFamily:
-                                                                    'Andika New Basic',
+                                                                fontFamily: FFAppState().currentFontFamily,
                                                                 color: FlutterFlowTheme.of(
                                                                         context)
                                                                     .primary,
@@ -2025,8 +2010,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                             style: FlutterFlowTheme.of(context)
                                                 .bodyMedium
                                                 .override(
-                                                  fontFamily:
-                                                      'Andika New Basic',
+                                                  fontFamily: FFAppState().currentFontFamily,
                                                   color: const Color(0xFFF0E4E4),
                                                   fontSize: 24.0,
                                                   letterSpacing: 0.0,
@@ -2043,8 +2027,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMedium
                                                       .override(
-                                                        fontFamily:
-                                                            'Andika New Basic',
+                                                        fontFamily: FFAppState().currentFontFamily,
                                                         color:
                                                             const Color(0xCCFFFFFF),
                                                         fontSize: 12.0,

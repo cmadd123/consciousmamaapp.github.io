@@ -101,7 +101,7 @@ class _GetStartedWidgetState extends State<GetStartedWidget> {
                               style: FlutterFlowTheme.of(context)
                                   .bodyMedium
                                   .override(
-                                    fontFamily: FFAppState().currentFontFamily,
+                                    fontFamily: 'Andika New Basic',
                                     fontSize: 30.0,
                                     letterSpacing: 0.0,
                                     fontWeight: FontWeight.w600,
@@ -115,7 +115,7 @@ class _GetStartedWidgetState extends State<GetStartedWidget> {
                                 style: FlutterFlowTheme.of(context)
                                     .bodyMedium
                                     .override(
-                                      fontFamily: FFAppState().currentFontFamily,
+                                      fontFamily: 'Andika New Basic',
                                       color: FlutterFlowTheme.of(context)
                                           .secondaryText,
                                       fontSize: 16.0,
@@ -148,7 +148,7 @@ class _GetStartedWidgetState extends State<GetStartedWidget> {
                                         textStyle: FlutterFlowTheme.of(context)
                                             .titleSmall
                                             .override(
-                                              fontFamily: FFAppState().currentFontFamily,
+                                              fontFamily: 'Andika New Basic',
                                               color: Colors.white,
                                               letterSpacing: 0.0,
                                             ),
@@ -180,7 +180,7 @@ class _GetStartedWidgetState extends State<GetStartedWidget> {
                       TextSpan(
                         text: 'By Continuing, you are agree to our ',
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                              fontFamily: FFAppState().currentFontFamily,
+                              fontFamily: 'Andika New Basic',
                               color: FlutterFlowTheme.of(context).secondaryText,
                               fontSize: 12.0,
                               letterSpacing: 0.0,
@@ -195,7 +195,7 @@ class _GetStartedWidgetState extends State<GetStartedWidget> {
                       )
                     ],
                     style: FlutterFlowTheme.of(context).bodyMedium.override(
-                          fontFamily: FFAppState().currentFontFamily,
+                          fontFamily: 'Andika New Basic',
                           color: const Color(0x8F000000),
                           fontSize: 12.0,
                           letterSpacing: 0.0,

@@ -303,8 +303,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                                                                     context)
                                                                 .bodyMedium
                                                                 .override(
-                                                                  fontFamily:
-                                                                      'Andika New Basic',
+                                                                  fontFamily: FFAppState().currentFontFamily,
                                                                   letterSpacing:
                                                                       0.0,
                                                                   fontWeight:
@@ -321,8 +320,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                                                             context)
                                                         .bodyMedium
                                                         .override(
-                                                          fontFamily:
-                                                              'Andika New Basic',
+                                                          fontFamily: FFAppState().currentFontFamily,
                                                           color:
                                                               const Color(0xFF595959),
                                                           letterSpacing: 0.0,
@@ -668,8 +666,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                                                                     context)
                                                                 .bodyMedium
                                                                 .override(
-                                                                  fontFamily:
-                                                                      'Andika New Basic',
+                                                                  fontFamily: FFAppState().currentFontFamily,
                                                                   letterSpacing:
                                                                       0.0,
                                                                   fontWeight:
@@ -686,8 +683,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                                                             context)
                                                         .bodyMedium
                                                         .override(
-                                                          fontFamily:
-                                                              'Andika New Basic',
+                                                          fontFamily: FFAppState().currentFontFamily,
                                                           color:
                                                               const Color(0xFF595959),
                                                           letterSpacing: 0.0,

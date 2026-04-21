@@ -187,8 +187,7 @@ class _CategoryDetailsCopy2WidgetState
                                                     FlutterFlowTheme.of(context)
                                                         .labelMedium
                                                         .override(
-                                                          fontFamily:
-                                                              'Andika New Basic',
+                                                          fontFamily: FFAppState().currentFontFamily,
                                                           letterSpacing: 0.0,
                                                         ),
                                                 hintText: 'Search',
@@ -196,8 +195,7 @@ class _CategoryDetailsCopy2WidgetState
                                                     FlutterFlowTheme.of(context)
                                                         .labelMedium
                                                         .override(
-                                                          fontFamily:
-                                                              'Andika New Basic',
+                                                          fontFamily: FFAppState().currentFontFamily,
                                                           color: FlutterFlowTheme
                                                                   .of(context)
                                                               .primaryText,
@@ -258,8 +256,7 @@ class _CategoryDetailsCopy2WidgetState
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMedium
                                                       .override(
-                                                        fontFamily:
-                                                            'Andika New Basic',
+                                                        fontFamily: FFAppState().currentFontFamily,
                                                         letterSpacing: 0.0,
                                                       ),
                                               cursorColor:
@@ -457,8 +454,7 @@ class _CategoryDetailsCopy2WidgetState
                                                                               context)
                                                                           .bodyMedium
                                                                           .override(
-                                                                            fontFamily:
-                                                                                'Andika New Basic',
+                                                                            fontFamily: FFAppState().currentFontFamily,
                                                                             fontSize:
                                                                                 12.0,
                                                                             letterSpacing:

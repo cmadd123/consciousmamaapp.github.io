@@ -156,7 +156,7 @@ class _MealComposerDemoWidgetState extends State<MealComposerDemoWidget> {
                 Text(
                   widget.mealName.toUpperCase(),
                   style: theme.titleMedium.override(
-                    fontFamily: FFAppState().currentFontFamily,
+                    fontFamily: 'Andika New Basic',
                     fontWeight: FontWeight.w600,
                     letterSpacing: 1.0,
                   ),
@@ -164,7 +164,7 @@ class _MealComposerDemoWidgetState extends State<MealComposerDemoWidget> {
                 Text(
                   dateTimeFormat('EEEE, MMMM d', DateTime.now().add(Duration(days: widget.dayIndex))),
                   style: theme.bodySmall.override(
-                    fontFamily: FFAppState().currentFontFamily,
+                    fontFamily: 'Andika New Basic',
                     color: theme.secondaryText,
                   ),
                 ),
@@ -321,7 +321,7 @@ class _MealComposerDemoWidgetState extends State<MealComposerDemoWidget> {
               child: Text(
                 friendlyTitle,
                 style: theme.bodyLarge.override(
-                  fontFamily: FFAppState().currentFontFamily,
+                  fontFamily: 'Andika New Basic',
                   fontWeight: FontWeight.w600,
                   color: const Color(0xFF5D4E60),
                   letterSpacing: 0.0,
@@ -355,7 +355,7 @@ class _MealComposerDemoWidgetState extends State<MealComposerDemoWidget> {
                         'Leftover',
                         style: TextStyle(
                           fontSize: 13.0,
-                          fontFamily: FFAppState().currentFontFamily,
+                          fontFamily: 'Andika New Basic',
                           fontWeight: FontWeight.w600,
                           color: isLeftover ? const Color(0xFFFF9800) : const Color(0xFF666666),
                         ),
@@ -409,7 +409,7 @@ class _MealComposerDemoWidgetState extends State<MealComposerDemoWidget> {
               Text(
                 placeholder,
                 style: theme.bodyMedium.override(
-                  fontFamily: FFAppState().currentFontFamily,
+                  fontFamily: 'Andika New Basic',
                   color: const Color(0xFF5D4E60),
                   fontWeight: FontWeight.w500,
                 ),
@@ -454,7 +454,7 @@ class _MealComposerDemoWidgetState extends State<MealComposerDemoWidget> {
                     Text(
                       item.name,
                       style: theme.bodyLarge.override(
-                        fontFamily: FFAppState().currentFontFamily,
+                        fontFamily: 'Andika New Basic',
                         fontWeight: FontWeight.w600,
                       ),
                       maxLines: 2,
@@ -470,7 +470,7 @@ class _MealComposerDemoWidgetState extends State<MealComposerDemoWidget> {
                             Text(
                               '${item.prepTime + item.cookTime} min',
                               style: theme.bodySmall.override(
-                                fontFamily: FFAppState().currentFontFamily,
+                                fontFamily: 'Andika New Basic',
                                 color: theme.secondaryText,
                               ),
                             ),
@@ -482,7 +482,7 @@ class _MealComposerDemoWidgetState extends State<MealComposerDemoWidget> {
                       child: Text(
                         'Tap to change',
                         style: theme.bodySmall.override(
-                          fontFamily: FFAppState().currentFontFamily,
+                          fontFamily: 'Andika New Basic',
                           color: theme.primary.withOpacity(0.7),
                           fontSize: 11.0,
                         ),
@@ -553,7 +553,7 @@ class _MealComposerDemoWidgetState extends State<MealComposerDemoWidget> {
             child: Text(
               item.name,
               style: theme.bodySmall.override(
-                fontFamily: FFAppState().currentFontFamily,
+                fontFamily: 'Andika New Basic',
                 fontSize: 11.0,
                 fontWeight: FontWeight.w600,
               ),
@@ -599,7 +599,7 @@ class _MealComposerDemoWidgetState extends State<MealComposerDemoWidget> {
             Text(
               label,
               style: theme.bodySmall.override(
-                fontFamily: FFAppState().currentFontFamily,
+                fontFamily: 'Andika New Basic',
                 color: const Color(0xFF5D4E60),
                 fontSize: 11.0,
                 fontWeight: FontWeight.w500,
@@ -635,7 +635,7 @@ class _MealComposerDemoWidgetState extends State<MealComposerDemoWidget> {
             child: Text(
               drink,
               style: theme.bodySmall.override(
-                fontFamily: FFAppState().currentFontFamily,
+                fontFamily: 'Andika New Basic',
                 fontSize: 13.0,
                 fontWeight: FontWeight.w600,
                 color: isSelected ? Colors.white : const Color(0xFF5D4E60),
@@ -666,7 +666,7 @@ class _MealComposerDemoWidgetState extends State<MealComposerDemoWidget> {
             Text(
               'Notes',
               style: theme.bodyLarge.override(
-                fontFamily: FFAppState().currentFontFamily,
+                fontFamily: 'Andika New Basic',
                 fontWeight: FontWeight.w600,
                 color: const Color(0xFF5D4E60),
                 letterSpacing: 0.0,
@@ -676,7 +676,7 @@ class _MealComposerDemoWidgetState extends State<MealComposerDemoWidget> {
             Text(
               '(optional)',
               style: theme.bodySmall.override(
-                fontFamily: FFAppState().currentFontFamily,
+                fontFamily: 'Andika New Basic',
                 color: const Color(0xFF9B8A9E),
                 fontSize: 12.0,
               ),
@@ -696,14 +696,14 @@ class _MealComposerDemoWidgetState extends State<MealComposerDemoWidget> {
             decoration: InputDecoration(
               hintText: 'Any thoughts? e.g., Make extra for tomorrow...',
               hintStyle: theme.bodySmall.override(
-                fontFamily: FFAppState().currentFontFamily,
+                fontFamily: 'Andika New Basic',
                 color: const Color(0xFF9B8A9E).withOpacity(0.7),
               ),
               border: InputBorder.none,
               contentPadding: const EdgeInsets.all(14.0),
             ),
             style: theme.bodyMedium.override(
-              fontFamily: FFAppState().currentFontFamily,
+              fontFamily: 'Andika New Basic',
               color: const Color(0xFF5D4E60),
             ),
           ),
@@ -731,7 +731,7 @@ class _MealComposerDemoWidgetState extends State<MealComposerDemoWidget> {
             Text(
               'Or, add custom meal',
               style: theme.bodyLarge.override(
-                fontFamily: FFAppState().currentFontFamily,
+                fontFamily: 'Andika New Basic',
                 fontWeight: FontWeight.w600,
                 color: const Color(0xFF5D4E60),
                 letterSpacing: 0.0,
@@ -747,7 +747,7 @@ class _MealComposerDemoWidgetState extends State<MealComposerDemoWidget> {
             hintStyle: TextStyle(
               fontSize: 14.0,
               color: Color(0xFF999999),
-              fontFamily: FFAppState().currentFontFamily,
+              fontFamily: 'Andika New Basic',
             ),
             filled: true,
             fillColor: const Color(0xFFF9F9F9),
@@ -767,7 +767,7 @@ class _MealComposerDemoWidgetState extends State<MealComposerDemoWidget> {
           ),
           style: TextStyle(
             fontSize: 14.0,
-            fontFamily: FFAppState().currentFontFamily,
+            fontFamily: 'Andika New Basic',
           ),
         ),
         const SizedBox(height: 8.0),
@@ -776,7 +776,7 @@ class _MealComposerDemoWidgetState extends State<MealComposerDemoWidget> {
           style: TextStyle(
             fontSize: 12.0,
             color: Color(0xFF999999),
-            fontFamily: FFAppState().currentFontFamily,
+            fontFamily: 'Andika New Basic',
           ),
         ),
       ],
@@ -843,7 +843,7 @@ class _MealComposerDemoWidgetState extends State<MealComposerDemoWidget> {
                                 Text(
                                   'You did it!',
                                   style: FlutterFlowTheme.of(context).headlineMedium.override(
-                                    fontFamily: FFAppState().currentFontFamily,
+                                    fontFamily: 'Andika New Basic',
                                     fontSize: 28.0,
                                     fontWeight: FontWeight.bold,
                                     letterSpacing: 0.0,
@@ -854,7 +854,7 @@ class _MealComposerDemoWidgetState extends State<MealComposerDemoWidget> {
                                   'Your meals are planned. No more "what\'s for dinner?" stress.',
                                   textAlign: TextAlign.center,
                                   style: FlutterFlowTheme.of(context).bodyLarge.override(
-                                    fontFamily: FFAppState().currentFontFamily,
+                                    fontFamily: 'Andika New Basic',
                                     fontSize: 16.0,
                                     letterSpacing: 0.0,
                                     color: FlutterFlowTheme.of(context).secondaryText,
@@ -874,7 +874,7 @@ class _MealComposerDemoWidgetState extends State<MealComposerDemoWidget> {
                                     iconPadding: const EdgeInsets.all(0.0),
                                     color: FlutterFlowTheme.of(context).primary,
                                     textStyle: FlutterFlowTheme.of(context).titleMedium.override(
-                                      fontFamily: FFAppState().currentFontFamily,
+                                      fontFamily: 'Andika New Basic',
                                       color: Colors.white,
                                       fontSize: 16.0,
                                       fontWeight: FontWeight.w600,
@@ -915,7 +915,7 @@ class _MealComposerDemoWidgetState extends State<MealComposerDemoWidget> {
             iconPadding: const EdgeInsets.all(0.0),
             color: hasAnyItems ? theme.primary : theme.secondaryText,
             textStyle: theme.titleMedium.override(
-              fontFamily: FFAppState().currentFontFamily,
+              fontFamily: 'Andika New Basic',
               color: Colors.white,
               fontSize: 18.0,
               fontWeight: FontWeight.w600,
@@ -964,7 +964,7 @@ class _MealComposerDemoWidgetState extends State<MealComposerDemoWidget> {
               Text(
                 'Select ${type[0].toUpperCase()}${type.substring(1)}',
                 style: theme.titleMedium.override(
-                  fontFamily: FFAppState().currentFontFamily,
+                  fontFamily: 'Andika New Basic',
                   fontWeight: FontWeight.w600,
                 ),
               ),

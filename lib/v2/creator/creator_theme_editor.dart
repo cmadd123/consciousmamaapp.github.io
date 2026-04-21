@@ -119,6 +119,8 @@ class _CreatorThemeEditorWidgetState extends State<CreatorThemeEditorWidget> {
   /// CreatorFontLoader, so a plain fontFamily: resolves them.
   TextStyle _withFont(TextStyle base) {
     if (_fontFamily == 'Andika New Basic') {
+      // Show the app's actual default, not whatever a currently-active
+      // creator theme might have already pushed into FFAppState.
       return base.copyWith(fontFamily: 'Andika New Basic');
     }
     if (_fontUrl != null) {
@@ -505,7 +507,7 @@ class _CreatorThemeEditorWidgetState extends State<CreatorThemeEditorWidget> {
                         children: [
                           Icon(Icons.calendar_today_rounded, color: _iconColor, size: 18),
                           const SizedBox(width: 6),
-                          const Text("Today's Events", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Color(0xFF5D4E60))),
+                          Text("Today's Events", style: _withFont(const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Color(0xFF5D4E60)))),
                           const Spacer(),
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
@@ -525,7 +527,7 @@ class _CreatorThemeEditorWidgetState extends State<CreatorThemeEditorWidget> {
                           children: [
                             Container(width: 5, height: 5, decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle)),
                             const SizedBox(width: 8),
-                            const Text('Soccer Practice · 4:00 PM', style: TextStyle(fontSize: 11, color: Colors.white, fontWeight: FontWeight.w500)),
+                            Text('Soccer Practice · 4:00 PM', style: _withFont(const TextStyle(fontSize: 11, color: Colors.white, fontWeight: FontWeight.w500))),
                           ],
                         ),
                       ),

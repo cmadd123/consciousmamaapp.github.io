@@ -435,8 +435,7 @@ class _ActivitiesWidgetState extends State<ActivitiesWidget> {
                                                                       .of(context)
                                                                   .bodyMedium
                                                                   .override(
-                                                                    fontFamily:
-                                                                        'Andika New Basic',
+                                                                    fontFamily: FFAppState().currentFontFamily,
                                                                     color: Colors
                                                                         .black,
                                                                     fontSize:
@@ -468,8 +467,7 @@ class _ActivitiesWidgetState extends State<ActivitiesWidget> {
                                                                       .of(context)
                                                                   .bodyMedium
                                                                   .override(
-                                                                    fontFamily:
-                                                                        'Andika New Basic',
+                                                                    fontFamily: FFAppState().currentFontFamily,
                                                                     color: FlutterFlowTheme.of(
                                                                             context)
                                                                         .secondaryText,
@@ -532,8 +530,7 @@ class _ActivitiesWidgetState extends State<ActivitiesWidget> {
                                                                         context)
                                                                     .bodyMedium
                                                                     .override(
-                                                                      fontFamily:
-                                                                          'Andika New Basic',
+                                                                      fontFamily: FFAppState().currentFontFamily,
                                                                       color: const Color(
                                                                           0xFF595959),
                                                                       letterSpacing:
@@ -577,8 +574,7 @@ class _ActivitiesWidgetState extends State<ActivitiesWidget> {
                                                                         context)
                                                                     .bodyMedium
                                                                     .override(
-                                                                      fontFamily:
-                                                                          'Andika New Basic',
+                                                                      fontFamily: FFAppState().currentFontFamily,
                                                                       color: const Color(
                                                                           0xFF595959),
                                                                       letterSpacing:
@@ -606,8 +602,7 @@ class _ActivitiesWidgetState extends State<ActivitiesWidget> {
                                                           context)
                                                       .bodyMedium
                                                       .override(
-                                                        fontFamily:
-                                                            'Andika New Basic',
+                                                        fontFamily: FFAppState().currentFontFamily,
                                                         color:
                                                             FlutterFlowTheme.of(
                                                                     context)
@@ -671,8 +666,7 @@ class _ActivitiesWidgetState extends State<ActivitiesWidget> {
                                                                           context)
                                                                       .bodyMedium
                                                                       .override(
-                                                                        fontFamily:
-                                                                            'Andika New Basic',
+                                                                        fontFamily: FFAppState().currentFontFamily,
                                                                         color: const Color(
                                                                             0xFF595959),
                                                                         letterSpacing:
@@ -714,8 +708,7 @@ class _ActivitiesWidgetState extends State<ActivitiesWidget> {
                                                                           context)
                                                                       .bodyMedium
                                                                       .override(
-                                                                        fontFamily:
-                                                                            'Andika New Basic',
+                                                                        fontFamily: FFAppState().currentFontFamily,
                                                                         color: const Color(
                                                                             0xFF595959),
                                                                         letterSpacing:

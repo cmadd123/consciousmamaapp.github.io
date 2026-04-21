@@ -151,7 +151,7 @@ class _DaySelectorDemoWidgetState extends State<DaySelectorDemoWidget> with Tick
                       child: Text(
                         'Select Days to Plan',
                         style: FlutterFlowTheme.of(context).displaySmall.override(
-                          fontFamily: FFAppState().currentFontFamily,
+                          fontFamily: 'Andika New Basic',
                           fontSize: 32.0,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 0.0,
@@ -164,7 +164,7 @@ class _DaySelectorDemoWidgetState extends State<DaySelectorDemoWidget> with Tick
                       child: Text(
                         'Pick any days from the next 30 days',
                         style: FlutterFlowTheme.of(context).bodyLarge.override(
-                          fontFamily: FFAppState().currentFontFamily,
+                          fontFamily: 'Andika New Basic',
                           fontSize: 16.0,
                           letterSpacing: 0.0,
                           color: FlutterFlowTheme.of(context).secondaryText,
@@ -209,7 +209,7 @@ class _DaySelectorDemoWidgetState extends State<DaySelectorDemoWidget> with Tick
                                           day,
                                           textAlign: TextAlign.center,
                                           style: FlutterFlowTheme.of(context).bodySmall.override(
-                                            fontFamily: FFAppState().currentFontFamily,
+                                            fontFamily: 'Andika New Basic',
                                             fontSize: 14.0,
                                             fontWeight: FontWeight.w600,
                                             letterSpacing: 0.0,
@@ -252,7 +252,7 @@ class _DaySelectorDemoWidgetState extends State<DaySelectorDemoWidget> with Tick
                               Text(
                                 '${selectedDays.length} ${selectedDays.length == 1 ? 'day' : 'days'} selected',
                                 style: FlutterFlowTheme.of(context).bodyLarge.override(
-                                  fontFamily: FFAppState().currentFontFamily,
+                                  fontFamily: 'Andika New Basic',
                                   fontSize: 16.0,
                                   fontWeight: FontWeight.w500,
                                   letterSpacing: 0.0,
@@ -287,7 +287,7 @@ class _DaySelectorDemoWidgetState extends State<DaySelectorDemoWidget> with Tick
                                   ? FlutterFlowTheme.of(context).secondaryText
                                   : FlutterFlowTheme.of(context).primary,
                               textStyle: FlutterFlowTheme.of(context).titleMedium.override(
-                                fontFamily: FFAppState().currentFontFamily,
+                                fontFamily: 'Andika New Basic',
                                 color: Colors.white,
                                 fontSize: 18.0,
                                 fontWeight: FontWeight.w600,
@@ -386,7 +386,7 @@ class _DaySelectorDemoWidgetState extends State<DaySelectorDemoWidget> with Tick
               child: Text(
                 '${day.day}',
                 style: FlutterFlowTheme.of(context).bodyLarge.override(
-                  fontFamily: FFAppState().currentFontFamily,
+                  fontFamily: 'Andika New Basic',
                   fontSize: 18.0,
                   fontWeight: isSelected || isToday ? FontWeight.w600 : FontWeight.normal,
                   letterSpacing: 0.0,

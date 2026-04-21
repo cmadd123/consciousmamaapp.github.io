@@ -122,7 +122,7 @@ class _OBoardingStep3WidgetState extends State<OBoardingStep3Widget> {
                           'What is difficult about planning your kids\' day?',
                           style:
                               FlutterFlowTheme.of(context).bodyMedium.override(
-                                    fontFamily: FFAppState().currentFontFamily,
+                                    fontFamily: 'Andika New Basic',
                                     fontSize: 26.0,
                                     letterSpacing: 0.0,
                                     fontWeight: FontWeight.w600,
@@ -136,7 +136,7 @@ class _OBoardingStep3WidgetState extends State<OBoardingStep3Widget> {
                             style: FlutterFlowTheme.of(context)
                                 .bodyMedium
                                 .override(
-                                  fontFamily: FFAppState().currentFontFamily,
+                                  fontFamily: 'Andika New Basic',
                                   color: FlutterFlowTheme.of(context)
                                       .secondaryText,
                                   letterSpacing: 0.0,
@@ -230,8 +230,7 @@ class _OBoardingStep3WidgetState extends State<OBoardingStep3Widget> {
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMedium
                                                       .override(
-                                                        fontFamily:
-                                                            'Andika New Basic',
+                                                        fontFamily: 'Andika New Basic',
                                                         color:
                                                             FlutterFlowTheme.of(
                                                                     context)
@@ -316,8 +315,7 @@ class _OBoardingStep3WidgetState extends State<OBoardingStep3Widget> {
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMedium
                                                       .override(
-                                                        fontFamily:
-                                                            'Andika New Basic',
+                                                        fontFamily: 'Andika New Basic',
                                                         color:
                                                             FlutterFlowTheme.of(
                                                                     context)
@@ -400,8 +398,7 @@ class _OBoardingStep3WidgetState extends State<OBoardingStep3Widget> {
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMedium
                                                       .override(
-                                                        fontFamily:
-                                                            'Andika New Basic',
+                                                        fontFamily: 'Andika New Basic',
                                                         color:
                                                             FlutterFlowTheme.of(
                                                                     context)
@@ -447,7 +444,7 @@ class _OBoardingStep3WidgetState extends State<OBoardingStep3Widget> {
                               textStyle: FlutterFlowTheme.of(context)
                                   .titleSmall
                                   .override(
-                                    fontFamily: FFAppState().currentFontFamily,
+                                    fontFamily: 'Andika New Basic',
                                     color: Colors.white,
                                     letterSpacing: 0.0,
                                   ),

@@ -222,8 +222,7 @@ class _EditetASKWidgetState extends State<EditetASKWidget> {
                                             style: FlutterFlowTheme.of(context)
                                                 .bodyMedium
                                                 .override(
-                                                  fontFamily:
-                                                      'Andika New Basic',
+                                                  fontFamily: FFAppState().currentFontFamily,
                                                   fontSize: 16.0,
                                                   letterSpacing: 0.0,
                                                 ),

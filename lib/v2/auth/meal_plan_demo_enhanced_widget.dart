@@ -316,7 +316,7 @@ class _MealPlanDemoEnhancedWidgetState
                                 style: FlutterFlowTheme.of(context)
                                     .displaySmall
                                     .override(
-                                      fontFamily: FFAppState().currentFontFamily,
+                                      fontFamily: 'Andika New Basic',
                                       fontSize: 32.0,
                                       fontWeight: FontWeight.bold,
                                       letterSpacing: 0.0,
@@ -356,7 +356,7 @@ class _MealPlanDemoEnhancedWidgetState
                                           style: FlutterFlowTheme.of(context)
                                               .bodyMedium
                                               .override(
-                                                fontFamily: FFAppState().currentFontFamily,
+                                                fontFamily: 'Andika New Basic',
                                                 fontSize: 14.0,
                                                 fontWeight: FontWeight.w600,
                                                 letterSpacing: 0.0,
@@ -429,7 +429,7 @@ class _MealPlanDemoEnhancedWidgetState
                           textStyle: FlutterFlowTheme.of(context)
                               .titleMedium
                               .override(
-                                fontFamily: FFAppState().currentFontFamily,
+                                fontFamily: 'Andika New Basic',
                                 color: Colors.white,
                                 fontSize: 18.0,
                                 fontWeight: FontWeight.w600,
@@ -492,7 +492,7 @@ class _MealPlanDemoEnhancedWidgetState
                 child: Text(
                   '$dayName, $date',
                   style: FlutterFlowTheme.of(context).bodyLarge.override(
-                        fontFamily: FFAppState().currentFontFamily,
+                        fontFamily: 'Andika New Basic',
                         fontSize: 20.0,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 0.0,
@@ -569,7 +569,7 @@ class _MealPlanDemoEnhancedWidgetState
                     Text(
                       mealType,
                       style: FlutterFlowTheme.of(context).bodySmall.override(
-                            fontFamily: FFAppState().currentFontFamily,
+                            fontFamily: 'Andika New Basic',
                             fontSize: 12.0,
                             letterSpacing: 0.0,
                             color: FlutterFlowTheme.of(context).secondaryText,
@@ -579,7 +579,7 @@ class _MealPlanDemoEnhancedWidgetState
                     Text(
                       mealName,
                       style: FlutterFlowTheme.of(context).bodyMedium.override(
-                            fontFamily: FFAppState().currentFontFamily,
+                            fontFamily: 'Andika New Basic',
                             fontSize: 16.0,
                             fontWeight: FontWeight.w600,
                             letterSpacing: 0.0,

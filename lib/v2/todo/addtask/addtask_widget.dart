@@ -261,8 +261,7 @@ class _AddtaskWidgetState extends State<AddtaskWidget> {
                                                           context)
                                                       .bodyMedium
                                                       .override(
-                                                        fontFamily:
-                                                            'Andika New Basic',
+                                                        fontFamily: FFAppState().currentFontFamily,
                                                         letterSpacing: 0.0,
                                                       ),
                                                 ),

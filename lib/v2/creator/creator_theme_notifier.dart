@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '/app_state.dart';
 import '/backend/backend.dart';
@@ -15,6 +17,26 @@ class CreatorThemeNotifier extends ChangeNotifier {
   CreatorsRecord? _activeCreator;
   bool _useCreatorTheme = true; // Global/Creator toggle — default ON
   bool _isLoading = false;
+  StreamSubscription<User?>? _authSub;
+
+  CreatorThemeNotifier() {
+    // Ensure the theme resets to default whenever the user signs out —
+    // prevents the login/signup screens from rendering with a leftover
+    // creator's colors + font from the previous session.
+    _authSub = FirebaseAuth.instance.authStateChanges().listen((user) {
+      if (user == null) {
+        if (_activeCreator != null || _useCreatorTheme) {
+          clearActiveCreator();
+        }
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _authSub?.cancel();
+    super.dispose();
+  }
 
   CreatorsRecord? get activeCreator => _activeCreator;
   bool get useCreatorTheme => _useCreatorTheme;

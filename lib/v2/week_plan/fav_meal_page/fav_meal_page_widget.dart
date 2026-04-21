@@ -2036,8 +2036,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                                                             context)
                                                                         .bodyMedium
                                                                         .override(
-                                                                          fontFamily:
-                                                                              'Andika New Basic',
+                                                                          fontFamily: FFAppState().currentFontFamily,
                                                                           fontSize:
                                                                               11.0,
                                                                           fontWeight: FontWeight.w600,

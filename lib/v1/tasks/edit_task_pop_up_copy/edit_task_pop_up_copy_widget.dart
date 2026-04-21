@@ -626,8 +626,7 @@ class _EditTaskPopUpCopyWidgetState extends State<EditTaskPopUpCopyWidget> {
                                                           context)
                                                       .bodyMedium
                                                       .override(
-                                                        fontFamily:
-                                                            'Andika New Basic',
+                                                        fontFamily: FFAppState().currentFontFamily,
                                                         color:
                                                             FlutterFlowTheme.of(
                                                                     context)

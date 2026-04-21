@@ -177,8 +177,7 @@ class _LearnPathSteponStep4WidgetState
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMedium
                                                         .override(
-                                                          fontFamily:
-                                                              'Andika New Basic',
+                                                          fontFamily: FFAppState().currentFontFamily,
                                                           color: FlutterFlowTheme
                                                                   .of(context)
                                                               .primary,
@@ -217,8 +216,7 @@ class _LearnPathSteponStep4WidgetState
                                             style: FlutterFlowTheme.of(context)
                                                 .bodyMedium
                                                 .override(
-                                                  fontFamily:
-                                                      'Andika New Basic',
+                                                  fontFamily: FFAppState().currentFontFamily,
                                                   fontSize: 24.0,
                                                   letterSpacing: 0.0,
                                                 ),
@@ -318,8 +316,7 @@ class _LearnPathSteponStep4WidgetState
                                                             .of(context)
                                                         .titleSmall
                                                         .override(
-                                                          fontFamily:
-                                                              'Andika New Basic',
+                                                          fontFamily: FFAppState().currentFontFamily,
                                                           color: Colors.white,
                                                           letterSpacing: 0.0,
                                                         ),
@@ -399,8 +396,7 @@ class _LearnPathSteponStep4WidgetState
                                                             .of(context)
                                                         .titleSmall
                                                         .override(
-                                                          fontFamily:
-                                                              'Andika New Basic',
+                                                          fontFamily: FFAppState().currentFontFamily,
                                                           color: Colors.white,
                                                           letterSpacing: 0.0,
                                                         ),

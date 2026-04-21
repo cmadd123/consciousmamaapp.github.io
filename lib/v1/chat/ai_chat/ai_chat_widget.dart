@@ -246,8 +246,7 @@ class _AiChatWidgetState extends State<AiChatWidget> {
                                                                   context)
                                                               .bodyMedium
                                                               .override(
-                                                                fontFamily:
-                                                                    'Andika New Basic',
+                                                                fontFamily: FFAppState().currentFontFamily,
                                                                 color: FlutterFlowTheme.of(
                                                                         context)
                                                                     .secondaryText,
@@ -306,8 +305,7 @@ class _AiChatWidgetState extends State<AiChatWidget> {
                                                                   context)
                                                               .bodyMedium
                                                               .override(
-                                                                fontFamily:
-                                                                    'Andika New Basic',
+                                                                fontFamily: FFAppState().currentFontFamily,
                                                                 color: FlutterFlowTheme.of(
                                                                         context)
                                                                     .secondaryText,
@@ -369,8 +367,7 @@ class _AiChatWidgetState extends State<AiChatWidget> {
                                                             context)
                                                         .bodyMedium
                                                         .override(
-                                                          fontFamily:
-                                                              'Andika New Basic',
+                                                          fontFamily: FFAppState().currentFontFamily,
                                                           color: FlutterFlowTheme
                                                                   .of(context)
                                                               .secondaryText,
@@ -425,8 +422,7 @@ class _AiChatWidgetState extends State<AiChatWidget> {
                                                             context)
                                                         .bodyMedium
                                                         .override(
-                                                          fontFamily:
-                                                              'Andika New Basic',
+                                                          fontFamily: FFAppState().currentFontFamily,
                                                           color: FlutterFlowTheme
                                                                   .of(context)
                                                               .secondaryText,

@@ -303,8 +303,7 @@ class _EditeLearningPathtaskWidgetState
                                             style: FlutterFlowTheme.of(context)
                                                 .bodyMedium
                                                 .override(
-                                                  fontFamily:
-                                                      'Andika New Basic',
+                                                  fontFamily: FFAppState().currentFontFamily,
                                                   fontSize: 16.0,
                                                   letterSpacing: 0.0,
                                                 ),
@@ -703,8 +702,7 @@ class _EditeLearningPathtaskWidgetState
                                                           context)
                                                       .bodyMedium
                                                       .override(
-                                                        fontFamily:
-                                                            'Andika New Basic',
+                                                        fontFamily: FFAppState().currentFontFamily,
                                                         fontSize: 14.0,
                                                         letterSpacing: 0.0,
                                                       ),

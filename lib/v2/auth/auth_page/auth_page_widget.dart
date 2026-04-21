@@ -95,7 +95,7 @@ class _AuthPageWidgetState extends State<AuthPageWidget> {
                               style: FlutterFlowTheme.of(context)
                                   .bodyMedium
                                   .override(
-                                    fontFamily: FFAppState().currentFontFamily,
+                                    fontFamily: 'Andika New Basic',
                                     fontSize: 32.0,
                                     letterSpacing: 0.0,
                                     fontWeight: FontWeight.w600,
@@ -109,7 +109,7 @@ class _AuthPageWidgetState extends State<AuthPageWidget> {
                                 style: FlutterFlowTheme.of(context)
                                     .bodyMedium
                                     .override(
-                                      fontFamily: FFAppState().currentFontFamily,
+                                      fontFamily: 'Andika New Basic',
                                       color: FlutterFlowTheme.of(context)
                                           .secondaryText,
                                       letterSpacing: 0.0,
@@ -143,7 +143,7 @@ class _AuthPageWidgetState extends State<AuthPageWidget> {
                                     textStyle: FlutterFlowTheme.of(context)
                                         .titleSmall
                                         .override(
-                                          fontFamily: FFAppState().currentFontFamily,
+                                          fontFamily: 'Andika New Basic',
                                           color: Colors.white,
                                           letterSpacing: 0.0,
                                           fontWeight: FontWeight.normal,
@@ -174,7 +174,7 @@ class _AuthPageWidgetState extends State<AuthPageWidget> {
                                   textStyle: FlutterFlowTheme.of(context)
                                       .titleSmall
                                       .override(
-                                        fontFamily: FFAppState().currentFontFamily,
+                                        fontFamily: 'Andika New Basic',
                                         color: FlutterFlowTheme.of(context)
                                             .primary,
                                         letterSpacing: 0.0,
@@ -208,7 +208,7 @@ class _AuthPageWidgetState extends State<AuthPageWidget> {
                       TextSpan(
                         text: 'By Continuing, you are agree to our ',
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                              fontFamily: FFAppState().currentFontFamily,
+                              fontFamily: 'Andika New Basic',
                               color: FlutterFlowTheme.of(context).secondaryText,
                               fontSize: 12.0,
                               letterSpacing: 0.0,
@@ -223,7 +223,7 @@ class _AuthPageWidgetState extends State<AuthPageWidget> {
                       )
                     ],
                     style: FlutterFlowTheme.of(context).bodyMedium.override(
-                          fontFamily: FFAppState().currentFontFamily,
+                          fontFamily: 'Andika New Basic',
                           color: const Color(0x8F000000),
                           fontSize: 12.0,
                           letterSpacing: 0.0,

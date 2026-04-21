@@ -201,7 +201,7 @@ class _FeaturesEnhancedWidgetState extends State<FeaturesEnhancedWidget>
                             style: FlutterFlowTheme.of(context)
                                 .headlineSmall
                                 .override(
-                                  fontFamily: FFAppState().currentFontFamily,
+                                  fontFamily: 'Andika New Basic',
                                   fontSize: 20.0,
                                   fontWeight: FontWeight.bold,
                                   letterSpacing: 0.0,
@@ -213,7 +213,7 @@ class _FeaturesEnhancedWidgetState extends State<FeaturesEnhancedWidget>
                             style: FlutterFlowTheme.of(context)
                                 .bodyMedium
                                 .override(
-                                  fontFamily: FFAppState().currentFontFamily,
+                                  fontFamily: 'Andika New Basic',
                                   fontSize: 15.0,
                                   fontWeight: FontWeight.normal,
                                   letterSpacing: 0.0,
@@ -313,7 +313,7 @@ class _FeaturesEnhancedWidgetState extends State<FeaturesEnhancedWidget>
                             style: FlutterFlowTheme.of(context)
                                 .headlineLarge
                                 .override(
-                                  fontFamily: FFAppState().currentFontFamily,
+                                  fontFamily: 'Andika New Basic',
                                   fontSize: 32.0,
                                   fontWeight: FontWeight.bold,
                                   letterSpacing: 0.0,
@@ -329,7 +329,7 @@ class _FeaturesEnhancedWidgetState extends State<FeaturesEnhancedWidget>
                             style: FlutterFlowTheme.of(context)
                                 .bodyLarge
                                 .override(
-                                  fontFamily: FFAppState().currentFontFamily,
+                                  fontFamily: 'Andika New Basic',
                                   fontSize: 18.0,
                                   fontWeight: FontWeight.w500,
                                   letterSpacing: 0.0,
@@ -421,7 +421,7 @@ class _FeaturesEnhancedWidgetState extends State<FeaturesEnhancedWidget>
                       textStyle: FlutterFlowTheme.of(context)
                           .titleMedium
                           .override(
-                            fontFamily: FFAppState().currentFontFamily,
+                            fontFamily: 'Andika New Basic',
                             color: Colors.white,
                             fontSize: 18.0,
                             fontWeight: FontWeight.w600,

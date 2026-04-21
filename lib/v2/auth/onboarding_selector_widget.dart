@@ -71,7 +71,7 @@ class _OnboardingSelectorWidgetState extends State<OnboardingSelectorWidget> {
                             style: FlutterFlowTheme.of(context)
                                 .bodySmall
                                 .override(
-                                  fontFamily: FFAppState().currentFontFamily,
+                                  fontFamily: 'Andika New Basic',
                                   color: const Color(0xFFFF8C00),
                                   fontSize: 12.0,
                                   fontWeight: FontWeight.w600,
@@ -88,7 +88,7 @@ class _OnboardingSelectorWidgetState extends State<OnboardingSelectorWidget> {
                     Text(
                       'Select Onboarding Flow',
                       style: FlutterFlowTheme.of(context).headlineLarge.override(
-                            fontFamily: FFAppState().currentFontFamily,
+                            fontFamily: 'Andika New Basic',
                             color: const Color(0xFF52A097),
                             fontSize: 28.0,
                             fontWeight: FontWeight.bold,
@@ -102,7 +102,7 @@ class _OnboardingSelectorWidgetState extends State<OnboardingSelectorWidget> {
                       'Choose which onboarding experience to test',
                       textAlign: TextAlign.center,
                       style: FlutterFlowTheme.of(context).bodyMedium.override(
-                            fontFamily: FFAppState().currentFontFamily,
+                            fontFamily: 'Andika New Basic',
                             color: const Color(0xFF5D4E60),
                             fontSize: 14.0,
                             letterSpacing: 0.0,
@@ -131,7 +131,7 @@ class _OnboardingSelectorWidgetState extends State<OnboardingSelectorWidget> {
                         color: FlutterFlowTheme.of(context).primary,
                         textStyle:
                             FlutterFlowTheme.of(context).titleMedium.override(
-                                  fontFamily: FFAppState().currentFontFamily,
+                                  fontFamily: 'Andika New Basic',
                                   color: Colors.white,
                                   fontSize: 18.0,
                                   fontWeight: FontWeight.w600,
@@ -149,7 +149,7 @@ class _OnboardingSelectorWidgetState extends State<OnboardingSelectorWidget> {
                       'Current MVP flow with feature list',
                       textAlign: TextAlign.center,
                       style: FlutterFlowTheme.of(context).bodySmall.override(
-                            fontFamily: FFAppState().currentFontFamily,
+                            fontFamily: 'Andika New Basic',
                             color: const Color(0xFF9B8A9E),
                             fontSize: 12.0,
                             letterSpacing: 0.0,
@@ -179,7 +179,7 @@ class _OnboardingSelectorWidgetState extends State<OnboardingSelectorWidget> {
                         color: const Color(0xFFEC407A),
                         textStyle:
                             FlutterFlowTheme.of(context).titleMedium.override(
-                                  fontFamily: FFAppState().currentFontFamily,
+                                  fontFamily: 'Andika New Basic',
                                   color: Colors.white,
                                   fontSize: 18.0,
                                   fontWeight: FontWeight.w600,
@@ -197,7 +197,7 @@ class _OnboardingSelectorWidgetState extends State<OnboardingSelectorWidget> {
                       'Enhanced flow with meal planning demo',
                       textAlign: TextAlign.center,
                       style: FlutterFlowTheme.of(context).bodySmall.override(
-                            fontFamily: FFAppState().currentFontFamily,
+                            fontFamily: 'Andika New Basic',
                             color: const Color(0xFF9B8A9E),
                             fontSize: 12.0,
                             letterSpacing: 0.0,
@@ -227,7 +227,7 @@ class _OnboardingSelectorWidgetState extends State<OnboardingSelectorWidget> {
                               style: FlutterFlowTheme.of(context)
                                   .bodySmall
                                   .override(
-                                    fontFamily: FFAppState().currentFontFamily,
+                                    fontFamily: 'Andika New Basic',
                                     color: const Color(0xFF5D4E60),
                                     fontSize: 11.0,
                                     letterSpacing: 0.0,

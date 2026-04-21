@@ -147,7 +147,7 @@ class _PreparationWidgetState extends State<PreparationWidget>
                     Text(
                       'Welcome!',
                       style: FlutterFlowTheme.of(context).headlineMedium.override(
-                            fontFamily: FFAppState().currentFontFamily,
+                            fontFamily: 'Andika New Basic',
                             color: const Color(0xFF2A6F67),
                             fontWeight: FontWeight.bold,
                             letterSpacing: 0.0,
@@ -160,7 +160,7 @@ class _PreparationWidgetState extends State<PreparationWidget>
                       'Your account is ready. Here\'s what\'s next:',
                       textAlign: TextAlign.center,
                       style: FlutterFlowTheme.of(context).bodyLarge.override(
-                            fontFamily: FFAppState().currentFontFamily,
+                            fontFamily: 'Andika New Basic',
                             color: const Color(0xFF5D4E60),
                             letterSpacing: 0.0,
                           ),
@@ -211,7 +211,7 @@ class _PreparationWidgetState extends State<PreparationWidget>
                                         style: FlutterFlowTheme.of(context)
                                             .bodyLarge
                                             .override(
-                                              fontFamily: FFAppState().currentFontFamily,
+                                              fontFamily: 'Andika New Basic',
                                               color: step.color,
                                               fontWeight: FontWeight.bold,
                                               letterSpacing: 0.0,
@@ -244,7 +244,7 @@ class _PreparationWidgetState extends State<PreparationWidget>
                                           style: FlutterFlowTheme.of(context)
                                               .bodyMedium
                                               .override(
-                                                fontFamily: FFAppState().currentFontFamily,
+                                                fontFamily: 'Andika New Basic',
                                                 color: const Color(0xFF2A6F67),
                                                 fontSize: 15,
                                                 fontWeight: FontWeight.w600,
@@ -256,7 +256,7 @@ class _PreparationWidgetState extends State<PreparationWidget>
                                           style: FlutterFlowTheme.of(context)
                                               .bodySmall
                                               .override(
-                                                fontFamily: FFAppState().currentFontFamily,
+                                                fontFamily: 'Andika New Basic',
                                                 color: const Color(0xFF5D4E60),
                                                 letterSpacing: 0.0,
                                               ),
@@ -287,7 +287,7 @@ class _PreparationWidgetState extends State<PreparationWidget>
                           Text(
                             'Takes about 2 minutes',
                             style: FlutterFlowTheme.of(context).bodySmall.override(
-                                  fontFamily: FFAppState().currentFontFamily,
+                                  fontFamily: 'Andika New Basic',
                                   color: const Color(0xFF5D4E60),
                                   letterSpacing: 0.0,
                                 ),
@@ -309,7 +309,7 @@ class _PreparationWidgetState extends State<PreparationWidget>
                         iconPadding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
                         color: FlutterFlowTheme.of(context).primary,
                         textStyle: FlutterFlowTheme.of(context).titleMedium.override(
-                              fontFamily: FFAppState().currentFontFamily,
+                              fontFamily: 'Andika New Basic',
                               color: Colors.white,
                               fontSize: 18.0,
                               fontWeight: FontWeight.w600,
@@ -325,7 +325,7 @@ class _PreparationWidgetState extends State<PreparationWidget>
                     Text(
                       'v1.2.201',
                       style: FlutterFlowTheme.of(context).bodySmall.override(
-                            fontFamily: FFAppState().currentFontFamily,
+                            fontFamily: 'Andika New Basic',
                             color: const Color(0xFF5D4E60).withOpacity(0.5),
                             fontSize: 12,
                             letterSpacing: 0.0,

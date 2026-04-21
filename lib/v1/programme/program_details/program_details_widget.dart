@@ -281,8 +281,7 @@ class _ProgramDetailsWidgetState extends State<ProgramDetailsWidget> {
                                                               .of(context)
                                                           .bodyMedium
                                                           .override(
-                                                            fontFamily:
-                                                                'Andika New Basic',
+                                                            fontFamily: FFAppState().currentFontFamily,
                                                             letterSpacing: 0.0,
                                                             fontWeight:
                                                                 FontWeight.w600,
@@ -297,8 +296,7 @@ class _ProgramDetailsWidgetState extends State<ProgramDetailsWidget> {
                                                           context)
                                                       .bodyMedium
                                                       .override(
-                                                        fontFamily:
-                                                            'Andika New Basic',
+                                                        fontFamily: FFAppState().currentFontFamily,
                                                         color:
                                                             const Color(0xFF595959),
                                                         letterSpacing: 0.0,
@@ -331,8 +329,7 @@ class _ProgramDetailsWidgetState extends State<ProgramDetailsWidget> {
                                                             context)
                                                         .bodyMedium
                                                         .override(
-                                                          fontFamily:
-                                                              'Andika New Basic',
+                                                          fontFamily: FFAppState().currentFontFamily,
                                                           letterSpacing: 0.0,
                                                           fontWeight:
                                                               FontWeight.w600,
@@ -347,8 +344,7 @@ class _ProgramDetailsWidgetState extends State<ProgramDetailsWidget> {
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMedium
                                                         .override(
-                                                          fontFamily:
-                                                              'Andika New Basic',
+                                                          fontFamily: FFAppState().currentFontFamily,
                                                           color:
                                                               const Color(0xFF595959),
                                                           letterSpacing: 0.0,
@@ -459,8 +455,7 @@ class _ProgramDetailsWidgetState extends State<ProgramDetailsWidget> {
                                                                       .of(context)
                                                                   .bodyMedium
                                                                   .override(
-                                                                    fontFamily:
-                                                                        'Andika New Basic',
+                                                                    fontFamily: FFAppState().currentFontFamily,
                                                                     letterSpacing:
                                                                         0.0,
                                                                   ),
@@ -472,8 +467,7 @@ class _ProgramDetailsWidgetState extends State<ProgramDetailsWidget> {
                                                                     .of(context)
                                                                 .bodyMedium
                                                                 .override(
-                                                                  fontFamily:
-                                                                      'Andika New Basic',
+                                                                  fontFamily: FFAppState().currentFontFamily,
                                                                   color: FlutterFlowTheme.of(
                                                                           context)
                                                                       .secondaryText,

@@ -668,8 +668,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                                 .of(context)
                                                             .bodyMedium
                                                             .override(
-                                                              fontFamily:
-                                                                  'Andika New Basic',
+                                                              fontFamily: FFAppState().currentFontFamily,
                                                               fontSize: 15.0,
                                                               letterSpacing:
                                                                   0.0,
@@ -693,8 +692,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                                 .of(context)
                                                             .bodyMedium
                                                             .override(
-                                                              fontFamily:
-                                                                  'Andika New Basic',
+                                                              fontFamily: FFAppState().currentFontFamily,
                                                               fontSize: 10.0,
                                                               letterSpacing:
                                                                   0.0,
@@ -985,8 +983,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                                 .of(context)
                                                             .bodyMedium
                                                             .override(
-                                                              fontFamily:
-                                                                  'Andika New Basic',
+                                                              fontFamily: FFAppState().currentFontFamily,
                                                               fontSize: 15.0,
                                                               letterSpacing:
                                                                   0.0,
@@ -1019,8 +1016,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                                 .of(context)
                                                             .bodyMedium
                                                             .override(
-                                                              fontFamily:
-                                                                  'Andika New Basic',
+                                                              fontFamily: FFAppState().currentFontFamily,
                                                               fontSize: 10.0,
                                                               letterSpacing:
                                                                   0.0,
@@ -1311,8 +1307,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                                 .of(context)
                                                             .bodyMedium
                                                             .override(
-                                                              fontFamily:
-                                                                  'Andika New Basic',
+                                                              fontFamily: FFAppState().currentFontFamily,
                                                               fontSize: 15.0,
                                                               letterSpacing:
                                                                   0.0,
@@ -1345,8 +1340,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                                 .of(context)
                                                             .bodyMedium
                                                             .override(
-                                                              fontFamily:
-                                                                  'Andika New Basic',
+                                                              fontFamily: FFAppState().currentFontFamily,
                                                               fontSize: 10.0,
                                                               letterSpacing:
                                                                   0.0,
@@ -1637,8 +1631,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                                 .of(context)
                                                             .bodyMedium
                                                             .override(
-                                                              fontFamily:
-                                                                  'Andika New Basic',
+                                                              fontFamily: FFAppState().currentFontFamily,
                                                               fontSize: 15.0,
                                                               letterSpacing:
                                                                   0.0,
@@ -1671,8 +1664,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                                 .of(context)
                                                             .bodyMedium
                                                             .override(
-                                                              fontFamily:
-                                                                  'Andika New Basic',
+                                                              fontFamily: FFAppState().currentFontFamily,
                                                               fontSize: 10.0,
                                                               letterSpacing:
                                                                   0.0,
@@ -1963,8 +1955,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                                 .of(context)
                                                             .bodyMedium
                                                             .override(
-                                                              fontFamily:
-                                                                  'Andika New Basic',
+                                                              fontFamily: FFAppState().currentFontFamily,
                                                               fontSize: 15.0,
                                                               letterSpacing:
                                                                   0.0,
@@ -1997,8 +1988,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                                 .of(context)
                                                             .bodyMedium
                                                             .override(
-                                                              fontFamily:
-                                                                  'Andika New Basic',
+                                                              fontFamily: FFAppState().currentFontFamily,
                                                               fontSize: 10.0,
                                                               letterSpacing:
                                                                   0.0,
@@ -2289,8 +2279,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                                 .of(context)
                                                             .bodyMedium
                                                             .override(
-                                                              fontFamily:
-                                                                  'Andika New Basic',
+                                                              fontFamily: FFAppState().currentFontFamily,
                                                               fontSize: 15.0,
                                                               letterSpacing:
                                                                   0.0,
@@ -2323,8 +2312,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                                 .of(context)
                                                             .bodyMedium
                                                             .override(
-                                                              fontFamily:
-                                                                  'Andika New Basic',
+                                                              fontFamily: FFAppState().currentFontFamily,
                                                               fontSize: 10.0,
                                                               letterSpacing:
                                                                   0.0,
@@ -2615,8 +2603,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                                 .of(context)
                                                             .bodyMedium
                                                             .override(
-                                                              fontFamily:
-                                                                  'Andika New Basic',
+                                                              fontFamily: FFAppState().currentFontFamily,
                                                               fontSize: 15.0,
                                                               letterSpacing:
                                                                   0.0,
@@ -2649,8 +2636,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                                 .of(context)
                                                             .bodyMedium
                                                             .override(
-                                                              fontFamily:
-                                                                  'Andika New Basic',
+                                                              fontFamily: FFAppState().currentFontFamily,
                                                               fontSize: 10.0,
                                                               letterSpacing:
                                                                   0.0,
@@ -2941,8 +2927,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                                 .of(context)
                                                             .bodyMedium
                                                             .override(
-                                                              fontFamily:
-                                                                  'Andika New Basic',
+                                                              fontFamily: FFAppState().currentFontFamily,
                                                               fontSize: 15.0,
                                                               letterSpacing:
                                                                   0.0,
@@ -2975,8 +2960,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                                 .of(context)
                                                             .bodyMedium
                                                             .override(
-                                                              fontFamily:
-                                                                  'Andika New Basic',
+                                                              fontFamily: FFAppState().currentFontFamily,
                                                               fontSize: 10.0,
                                                               letterSpacing:
                                                                   0.0,

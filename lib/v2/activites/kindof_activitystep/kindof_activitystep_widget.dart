@@ -250,8 +250,7 @@ class _KindofActivitystepWidgetState extends State<KindofActivitystepWidget> {
                                                               .of(context)
                                                           .bodyMedium
                                                           .override(
-                                                            fontFamily:
-                                                                'Andika New Basic',
+                                                            fontFamily: FFAppState().currentFontFamily,
                                                             color: FFAppState().isComfortMode
                                                                 ? const Color(0xFFECF0F1)
                                                                 : null,

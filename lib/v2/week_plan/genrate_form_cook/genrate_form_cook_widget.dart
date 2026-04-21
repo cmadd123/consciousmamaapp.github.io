@@ -239,8 +239,7 @@ class _GenrateFormCookWidgetState extends State<GenrateFormCookWidget> {
                                             style: FlutterFlowTheme.of(context)
                                                 .bodyMedium
                                                 .override(
-                                                  fontFamily:
-                                                      'Andika New Basic',
+                                                  fontFamily: FFAppState().currentFontFamily,
                                                   letterSpacing: 0.0,
                                                 ),
                                           ),
@@ -330,8 +329,7 @@ class _GenrateFormCookWidgetState extends State<GenrateFormCookWidget> {
                                                             context)
                                                         .bodyMedium
                                                         .override(
-                                                          fontFamily:
-                                                              'Andika New Basic',
+                                                          fontFamily: FFAppState().currentFontFamily,
                                                           fontSize: 20.0,
                                                           letterSpacing: 0.0,
                                                         ),
@@ -342,8 +340,7 @@ class _GenrateFormCookWidgetState extends State<GenrateFormCookWidget> {
                                                             context)
                                                         .bodyMedium
                                                         .override(
-                                                          fontFamily:
-                                                              'Andika New Basic',
+                                                          fontFamily: FFAppState().currentFontFamily,
                                                           letterSpacing: 0.0,
                                                         ),
                                                   ),
@@ -385,8 +382,7 @@ class _GenrateFormCookWidgetState extends State<GenrateFormCookWidget> {
                                                                     .of(context)
                                                                 .bodyMedium
                                                                 .override(
-                                                                  fontFamily:
-                                                                      'Andika New Basic',
+                                                                  fontFamily: FFAppState().currentFontFamily,
                                                                   color: FlutterFlowTheme.of(
                                                                           context)
                                                                       .primary,
@@ -668,8 +664,7 @@ class _GenrateFormCookWidgetState extends State<GenrateFormCookWidget> {
                                                                     .of(context)
                                                                 .bodyMedium
                                                                 .override(
-                                                                  fontFamily:
-                                                                      'Andika New Basic',
+                                                                  fontFamily: FFAppState().currentFontFamily,
                                                                   color: const Color(
                                                                       0xFFF27676),
                                                                   letterSpacing:
@@ -944,8 +939,7 @@ class _GenrateFormCookWidgetState extends State<GenrateFormCookWidget> {
                                                                     .of(context)
                                                                 .bodyMedium
                                                                 .override(
-                                                                  fontFamily:
-                                                                      'Andika New Basic',
+                                                                  fontFamily: FFAppState().currentFontFamily,
                                                                   color: const Color(
                                                                       0xFF506FBC),
                                                                   letterSpacing:
@@ -1220,8 +1214,7 @@ class _GenrateFormCookWidgetState extends State<GenrateFormCookWidget> {
                                                                     .of(context)
                                                                 .bodyMedium
                                                                 .override(
-                                                                  fontFamily:
-                                                                      'Andika New Basic',
+                                                                  fontFamily: FFAppState().currentFontFamily,
                                                                   color: const Color(
                                                                       0xFFE39072),
                                                                   letterSpacing:

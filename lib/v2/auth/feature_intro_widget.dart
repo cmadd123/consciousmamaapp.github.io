@@ -175,7 +175,7 @@ class _FeatureIntroWidgetState extends State<FeatureIntroWidget>
                       textAlign: TextAlign.center,
                       style:
                           FlutterFlowTheme.of(context).headlineLarge.override(
-                                fontFamily: FFAppState().currentFontFamily,
+                                fontFamily: 'Andika New Basic',
                                 fontSize: 28.0,
                                 fontWeight: FontWeight.bold,
                                 letterSpacing: 0.0,
@@ -195,7 +195,7 @@ class _FeatureIntroWidgetState extends State<FeatureIntroWidget>
                       'Take a peek at how MomRise\nfits into your day.',
                       textAlign: TextAlign.center,
                       style: FlutterFlowTheme.of(context).bodyLarge.override(
-                            fontFamily: FFAppState().currentFontFamily,
+                            fontFamily: 'Andika New Basic',
                             color: FlutterFlowTheme.of(context).secondaryText,
                             fontSize: 17.0,
                             letterSpacing: 0.0,
@@ -239,7 +239,7 @@ class _FeatureIntroWidgetState extends State<FeatureIntroWidget>
                           textStyle: FlutterFlowTheme.of(context)
                               .titleMedium
                               .override(
-                                fontFamily: FFAppState().currentFontFamily,
+                                fontFamily: 'Andika New Basic',
                                 color: Colors.white,
                                 fontSize: 18.0,
                                 letterSpacing: 0.0,

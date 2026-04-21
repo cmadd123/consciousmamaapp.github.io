@@ -251,8 +251,7 @@ class _CategoryDetailsWidgetState extends State<CategoryDetailsWidget> {
                                                         context)
                                                     .bodyMedium
                                                     .override(
-                                                      fontFamily:
-                                                          'Andika New Basic',
+                                                      fontFamily: FFAppState().currentFontFamily,
                                                       color: _model
                                                                   .mainSide ==
                                                               'All'
@@ -309,8 +308,7 @@ class _CategoryDetailsWidgetState extends State<CategoryDetailsWidget> {
                                                         context)
                                                     .bodyMedium
                                                     .override(
-                                                      fontFamily:
-                                                          'Andika New Basic',
+                                                      fontFamily: FFAppState().currentFontFamily,
                                                       color: _model.mainSide ==
                                                               'Main'
                                                           ? FlutterFlowTheme.of(
@@ -366,8 +364,7 @@ class _CategoryDetailsWidgetState extends State<CategoryDetailsWidget> {
                                                         context)
                                                     .bodyMedium
                                                     .override(
-                                                      fontFamily:
-                                                          'Andika New Basic',
+                                                      fontFamily: FFAppState().currentFontFamily,
                                                       color: _model.mainSide ==
                                                               'Side'
                                                           ? FlutterFlowTheme.of(

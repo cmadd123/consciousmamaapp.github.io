@@ -341,8 +341,7 @@ class _LearnPathSteponStep2WidgetState
                                                                     context)
                                                                 .bodyMedium
                                                                 .override(
-                                                                  fontFamily:
-                                                                      'Andika New Basic',
+                                                                  fontFamily: FFAppState().currentFontFamily,
                                                                   letterSpacing:
                                                                       0.0,
                                                                 ),

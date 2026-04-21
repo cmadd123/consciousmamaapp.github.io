@@ -114,7 +114,7 @@ class _MealDemoGuidedWidgetState extends State<MealDemoGuidedWidget>
                           style: FlutterFlowTheme.of(context)
                               .headlineLarge
                               .override(
-                                fontFamily: FFAppState().currentFontFamily,
+                                fontFamily: 'Andika New Basic',
                                 fontSize: 28.0,
                                 fontWeight: FontWeight.bold,
                                 letterSpacing: 0.0,
@@ -127,7 +127,7 @@ class _MealDemoGuidedWidgetState extends State<MealDemoGuidedWidget>
                           style: FlutterFlowTheme.of(context)
                               .bodyLarge
                               .override(
-                                fontFamily: FFAppState().currentFontFamily,
+                                fontFamily: 'Andika New Basic',
                                 fontSize: 16.0,
                                 fontWeight: FontWeight.w500,
                                 letterSpacing: 0.0,
@@ -195,7 +195,7 @@ class _MealDemoGuidedWidgetState extends State<MealDemoGuidedWidget>
                                             style: FlutterFlowTheme.of(context)
                                                 .headlineSmall
                                                 .override(
-                                                  fontFamily: FFAppState().currentFontFamily,
+                                                  fontFamily: 'Andika New Basic',
                                                   fontSize: 18.0,
                                                   fontWeight: FontWeight.bold,
                                                   letterSpacing: 0.0,
@@ -216,7 +216,7 @@ class _MealDemoGuidedWidgetState extends State<MealDemoGuidedWidget>
                                                 style: FlutterFlowTheme.of(context)
                                                     .bodySmall
                                                     .override(
-                                                      fontFamily: FFAppState().currentFontFamily,
+                                                      fontFamily: 'Andika New Basic',
                                                       fontSize: 14.0,
                                                       letterSpacing: 0.0,
                                                       color: FlutterFlowTheme.of(context)
@@ -259,7 +259,7 @@ class _MealDemoGuidedWidgetState extends State<MealDemoGuidedWidget>
                           style: FlutterFlowTheme.of(context)
                               .bodyMedium
                               .override(
-                                fontFamily: FFAppState().currentFontFamily,
+                                fontFamily: 'Andika New Basic',
                                 fontSize: 16.0,
                                 fontWeight: FontWeight.w500,
                                 letterSpacing: 0.0,

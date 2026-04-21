@@ -264,7 +264,7 @@ class _MealPlannerSpotlightWidgetState extends State<MealPlannerSpotlightWidget>
                       Text(
                         'Meal Plan',
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                          fontFamily: FFAppState().currentFontFamily,
+                          fontFamily: 'Andika New Basic',
                           fontSize: 20.0,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 0.0,
@@ -332,7 +332,7 @@ class _MealPlannerSpotlightWidgetState extends State<MealPlannerSpotlightWidget>
           Text(
             day,
             style: FlutterFlowTheme.of(context).bodyMedium.override(
-              fontFamily: FFAppState().currentFontFamily,
+              fontFamily: 'Andika New Basic',
               fontSize: 16.0,
               fontWeight: FontWeight.w600,
               letterSpacing: 0.0,
@@ -439,7 +439,7 @@ class _MealPlannerSpotlightWidgetState extends State<MealPlannerSpotlightWidget>
             Text(
               'Tap to choose your days',
               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                fontFamily: FFAppState().currentFontFamily,
+                fontFamily: 'Andika New Basic',
                 fontSize: 16.0,
                 fontWeight: FontWeight.w600,
                 letterSpacing: 0.0,
@@ -449,7 +449,7 @@ class _MealPlannerSpotlightWidgetState extends State<MealPlannerSpotlightWidget>
             Text(
               'Pick which days you want to plan',
               style: FlutterFlowTheme.of(context).bodySmall.override(
-                fontFamily: FFAppState().currentFontFamily,
+                fontFamily: 'Andika New Basic',
                 fontSize: 12.0,
                 color: FlutterFlowTheme.of(context).secondaryText,
                 letterSpacing: 0.0,

@@ -151,7 +151,7 @@ class _FamilySetupIntroWidgetState extends State<FamilySetupIntroWidget>
                               'Let\'s Set Up Your Family!',
                               textAlign: TextAlign.center,
                               style: FlutterFlowTheme.of(context).headlineMedium.override(
-                                fontFamily: FFAppState().currentFontFamily,
+                                fontFamily: 'Andika New Basic',
                                 fontSize: 32.0,
                                 letterSpacing: 0.0,
                                 fontWeight: FontWeight.w600,
@@ -168,7 +168,7 @@ class _FamilySetupIntroWidgetState extends State<FamilySetupIntroWidget>
                           'We\'ll start by adding your child\'s information, then set up parent details.\n\nThis helps us personalize MomRise just for your family.',
                           textAlign: TextAlign.center,
                           style: FlutterFlowTheme.of(context).bodyLarge.override(
-                            fontFamily: FFAppState().currentFontFamily,
+                            fontFamily: 'Andika New Basic',
                             fontSize: 18.0,
                             letterSpacing: 0.0,
                             color: FlutterFlowTheme.of(context).secondaryText,
@@ -190,7 +190,7 @@ class _FamilySetupIntroWidgetState extends State<FamilySetupIntroWidget>
                               Text(
                                 'You\'ll add:',
                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                  fontFamily: FFAppState().currentFontFamily,
+                                  fontFamily: 'Andika New Basic',
                                   fontSize: 16.0,
                                   fontWeight: FontWeight.w600,
                                   letterSpacing: 0.0,
@@ -225,7 +225,7 @@ class _FamilySetupIntroWidgetState extends State<FamilySetupIntroWidget>
                             iconPadding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
                             color: FlutterFlowTheme.of(context).primary,
                             textStyle: FlutterFlowTheme.of(context).titleSmall.override(
-                              fontFamily: FFAppState().currentFontFamily,
+                              fontFamily: 'Andika New Basic',
                               color: Colors.white,
                               fontSize: 18.0,
                               letterSpacing: 0.0,
@@ -243,7 +243,7 @@ class _FamilySetupIntroWidgetState extends State<FamilySetupIntroWidget>
                       Text(
                         'Takes about 2 minutes',
                         style: FlutterFlowTheme.of(context).bodySmall.override(
-                          fontFamily: FFAppState().currentFontFamily,
+                          fontFamily: 'Andika New Basic',
                           fontSize: 14.0,
                           color: FlutterFlowTheme.of(context).secondaryText,
                           letterSpacing: 0.0,
@@ -281,7 +281,7 @@ class _FamilySetupIntroWidgetState extends State<FamilySetupIntroWidget>
           child: Text(
             text,
             style: FlutterFlowTheme.of(context).bodyMedium.override(
-              fontFamily: FFAppState().currentFontFamily,
+              fontFamily: 'Andika New Basic',
               fontSize: 15.0,
               letterSpacing: 0.0,
               color: FlutterFlowTheme.of(context).primaryText,

@@ -672,8 +672,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                             style: FlutterFlowTheme.of(context)
                                                 .bodyMedium
                                                 .override(
-                                                  fontFamily:
-                                                      'Andika New Basic',
+                                                  fontFamily: FFAppState().currentFontFamily,
                                                   fontSize: 16.0,
                                                   letterSpacing: 0.0,
                                                 ),
@@ -765,8 +764,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                   .of(context)
                                                               .bodyMedium
                                                               .override(
-                                                                fontFamily:
-                                                                    'Andika New Basic',
+                                                                fontFamily: FFAppState().currentFontFamily,
                                                                 color: FlutterFlowTheme.of(
                                                                         context)
                                                                     .primary,
@@ -1096,8 +1094,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                   .of(context)
                                                               .bodyMedium
                                                               .override(
-                                                                fontFamily:
-                                                                    'Andika New Basic',
+                                                                fontFamily: FFAppState().currentFontFamily,
                                                                 color: const Color(
                                                                     0xFFF27676),
                                                                 letterSpacing:
@@ -1424,8 +1421,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                   .of(context)
                                                               .bodyMedium
                                                               .override(
-                                                                fontFamily:
-                                                                    'Andika New Basic',
+                                                                fontFamily: FFAppState().currentFontFamily,
                                                                 color: const Color(
                                                                     0xFF506FBC),
                                                                 letterSpacing:
@@ -1752,8 +1748,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                   .of(context)
                                                               .bodyMedium
                                                               .override(
-                                                                fontFamily:
-                                                                    'Andika New Basic',
+                                                                fontFamily: FFAppState().currentFontFamily,
                                                                 color: const Color(
                                                                     0xFFE39072),
                                                                 letterSpacing:
@@ -2048,8 +2043,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMedium
                                                       .override(
-                                                        fontFamily:
-                                                            'Andika New Basic',
+                                                        fontFamily: FFAppState().currentFontFamily,
                                                         color: FlutterFlowTheme
                                                                 .of(context)
                                                             .secondaryBackground,
@@ -2122,8 +2116,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMedium
                                                       .override(
-                                                        fontFamily:
-                                                            'Andika New Basic',
+                                                        fontFamily: FFAppState().currentFontFamily,
                                                         fontSize: 16.0,
                                                         letterSpacing: 0.0,
                                                       ),
@@ -2418,8 +2411,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMedium
                                                       .override(
-                                                        fontFamily:
-                                                            'Andika New Basic',
+                                                        fontFamily: FFAppState().currentFontFamily,
                                                         color: FlutterFlowTheme
                                                                 .of(context)
                                                             .secondaryBackground,
@@ -2527,8 +2519,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                           context)
                                                       .bodyMedium
                                                       .override(
-                                                        fontFamily:
-                                                            'Andika New Basic',
+                                                        fontFamily: FFAppState().currentFontFamily,
                                                         fontSize: 16.0,
                                                         letterSpacing: 0.0,
                                                       ),
@@ -2745,8 +2736,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMedium
                                                       .override(
-                                                        fontFamily:
-                                                            'Andika New Basic',
+                                                        fontFamily: FFAppState().currentFontFamily,
                                                         color: FlutterFlowTheme
                                                                 .of(context)
                                                             .secondaryBackground,
@@ -2869,8 +2859,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                           context)
                                                       .bodyMedium
                                                       .override(
-                                                        fontFamily:
-                                                            'Andika New Basic',
+                                                        fontFamily: FFAppState().currentFontFamily,
                                                         fontSize: 16.0,
                                                         letterSpacing: 0.0,
                                                       ),
@@ -3186,8 +3175,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMedium
                                                       .override(
-                                                        fontFamily:
-                                                            'Andika New Basic',
+                                                        fontFamily: FFAppState().currentFontFamily,
                                                         color: FlutterFlowTheme
                                                                 .of(context)
                                                             .secondaryBackground,

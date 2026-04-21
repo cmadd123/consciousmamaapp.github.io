@@ -203,8 +203,7 @@ class _KindofActivityCopyCopyWidgetState
                                                                     .of(context)
                                                                 .bodyMedium
                                                                 .override(
-                                                                  fontFamily:
-                                                                      'Andika New Basic',
+                                                                  fontFamily: FFAppState().currentFontFamily,
                                                                   letterSpacing:
                                                                       0.0,
                                                                 ),
@@ -251,8 +250,7 @@ class _KindofActivityCopyCopyWidgetState
                                                                       .of(context)
                                                                   .bodyMedium
                                                                   .override(
-                                                                    fontFamily:
-                                                                        'Andika New Basic',
+                                                                    fontFamily: FFAppState().currentFontFamily,
                                                                     color: FlutterFlowTheme.of(
                                                                             context)
                                                                         .secondaryText,
@@ -299,8 +297,7 @@ class _KindofActivityCopyCopyWidgetState
                                                                       .of(context)
                                                                   .bodyMedium
                                                                   .override(
-                                                                    fontFamily:
-                                                                        'Andika New Basic',
+                                                                    fontFamily: FFAppState().currentFontFamily,
                                                                     color: FlutterFlowTheme.of(
                                                                             context)
                                                                         .secondaryText,
@@ -332,8 +329,7 @@ class _KindofActivityCopyCopyWidgetState
                                                                   .of(context)
                                                               .bodyMedium
                                                               .override(
-                                                                fontFamily:
-                                                                    'Andika New Basic',
+                                                                fontFamily: FFAppState().currentFontFamily,
                                                                 fontSize: 10.0,
                                                                 letterSpacing:
                                                                     0.0,
@@ -364,8 +360,7 @@ class _KindofActivityCopyCopyWidgetState
                                                                   .of(context)
                                                               .bodyMedium
                                                               .override(
-                                                                fontFamily:
-                                                                    'Andika New Basic',
+                                                                fontFamily: FFAppState().currentFontFamily,
                                                                 color: const Color(
                                                                     0xC4000000),
                                                                 fontSize: 10.0,
@@ -393,8 +388,7 @@ class _KindofActivityCopyCopyWidgetState
                                                                   .of(context)
                                                               .bodyMedium
                                                               .override(
-                                                                fontFamily:
-                                                                    'Andika New Basic',
+                                                                fontFamily: FFAppState().currentFontFamily,
                                                                 fontSize: 10.0,
                                                                 letterSpacing:
                                                                     0.0,
@@ -447,8 +441,7 @@ class _KindofActivityCopyCopyWidgetState
                                                                           context)
                                                                       .bodyMedium
                                                                       .override(
-                                                                        fontFamily:
-                                                                            'Andika New Basic',
+                                                                        fontFamily: FFAppState().currentFontFamily,
                                                                         color: const Color(
                                                                             0xC4000000),
                                                                         fontSize:
@@ -481,8 +474,7 @@ class _KindofActivityCopyCopyWidgetState
                                                                   .of(context)
                                                               .bodyMedium
                                                               .override(
-                                                                fontFamily:
-                                                                    'Andika New Basic',
+                                                                fontFamily: FFAppState().currentFontFamily,
                                                                 fontSize: 10.0,
                                                                 letterSpacing:
                                                                     0.0,
@@ -513,8 +505,7 @@ class _KindofActivityCopyCopyWidgetState
                                                                   .of(context)
                                                               .bodyMedium
                                                               .override(
-                                                                fontFamily:
-                                                                    'Andika New Basic',
+                                                                fontFamily: FFAppState().currentFontFamily,
                                                                 color: const Color(
                                                                     0xC4000000),
                                                                 fontSize: 10.0,

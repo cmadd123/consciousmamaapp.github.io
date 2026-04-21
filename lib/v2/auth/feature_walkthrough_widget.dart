@@ -196,7 +196,7 @@ class _FeatureWalkthroughWidgetState extends State<FeatureWalkthroughWidget>
                         style: FlutterFlowTheme.of(context)
                             .bodyMedium
                             .override(
-                              fontFamily: FFAppState().currentFontFamily,
+                              fontFamily: 'Andika New Basic',
                               color: FlutterFlowTheme.of(context)
                                   .secondaryText,
                               fontSize: 14.0,
@@ -214,7 +214,7 @@ class _FeatureWalkthroughWidgetState extends State<FeatureWalkthroughWidget>
                             style: FlutterFlowTheme.of(context)
                                 .bodyMedium
                                 .override(
-                                  fontFamily: FFAppState().currentFontFamily,
+                                  fontFamily: 'Andika New Basic',
                                   color: FlutterFlowTheme.of(context)
                                       .secondaryText,
                                   fontSize: 15.0,
@@ -266,7 +266,7 @@ class _FeatureWalkthroughWidgetState extends State<FeatureWalkthroughWidget>
                               style: FlutterFlowTheme.of(context)
                                   .headlineMedium
                                   .override(
-                                    fontFamily: FFAppState().currentFontFamily,
+                                    fontFamily: 'Andika New Basic',
                                     fontSize: 26.0,
                                     fontWeight: FontWeight.bold,
                                     letterSpacing: 0.0,
@@ -285,7 +285,7 @@ class _FeatureWalkthroughWidgetState extends State<FeatureWalkthroughWidget>
                                 style: FlutterFlowTheme.of(context)
                                     .bodyLarge
                                     .override(
-                                      fontFamily: FFAppState().currentFontFamily,
+                                      fontFamily: 'Andika New Basic',
                                       fontSize: 16.0,
                                       letterSpacing: 0.0,
                                       color: FlutterFlowTheme.of(context)
@@ -371,7 +371,7 @@ class _FeatureWalkthroughWidgetState extends State<FeatureWalkthroughWidget>
                       textStyle: FlutterFlowTheme.of(context)
                           .titleMedium
                           .override(
-                            fontFamily: FFAppState().currentFontFamily,
+                            fontFamily: 'Andika New Basic',
                             color: Colors.white,
                             fontSize: 18.0,
                             fontWeight: FontWeight.w600,

@@ -245,8 +245,7 @@ class _CreateProgrammStep4DayTimeWidgetState
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMedium
                                                         .override(
-                                                          fontFamily:
-                                                              'Andika New Basic',
+                                                          fontFamily: FFAppState().currentFontFamily,
                                                           color: FlutterFlowTheme
                                                                   .of(context)
                                                               .black60,
@@ -260,8 +259,7 @@ class _CreateProgrammStep4DayTimeWidgetState
                                             style: FlutterFlowTheme.of(context)
                                                 .bodyMedium
                                                 .override(
-                                                  fontFamily:
-                                                      'Andika New Basic',
+                                                  fontFamily: FFAppState().currentFontFamily,
                                                   color: FlutterFlowTheme.of(
                                                           context)
                                                       .black60,

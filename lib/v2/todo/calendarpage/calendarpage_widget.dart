@@ -1478,8 +1478,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                                                       context)
                                                                   .bodyMedium
                                                                   .override(
-                                                                    fontFamily:
-                                                                        'Andika New Basic',
+                                                                    fontFamily: FFAppState().currentFontFamily,
                                                                     fontSize:
                                                                         13.0,
                                                                     letterSpacing:

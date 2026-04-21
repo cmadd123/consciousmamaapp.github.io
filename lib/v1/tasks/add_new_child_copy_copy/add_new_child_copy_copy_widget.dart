@@ -750,8 +750,7 @@ class _AddNewChildCopyCopyWidgetState extends State<AddNewChildCopyCopyWidget> {
                                                                     context)
                                                                 .bodyMedium
                                                                 .override(
-                                                                  fontFamily:
-                                                                      'Andika New Basic',
+                                                                  fontFamily: FFAppState().currentFontFamily,
                                                                   color: FlutterFlowTheme.of(
                                                                           context)
                                                                       .black40,

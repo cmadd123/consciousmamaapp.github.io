@@ -367,8 +367,7 @@ class _MealsWidgetState extends State<MealsWidget> {
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMedium
                                                         .override(
-                                                          fontFamily:
-                                                              'Andika New Basic',
+                                                          fontFamily: FFAppState().currentFontFamily,
                                                           fontSize: 18.0,
                                                           letterSpacing: 0.0,
                                                           fontWeight:
@@ -397,8 +396,7 @@ class _MealsWidgetState extends State<MealsWidget> {
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMedium
                                                         .override(
-                                                          fontFamily:
-                                                              'Andika New Basic',
+                                                          fontFamily: FFAppState().currentFontFamily,
                                                           color: FlutterFlowTheme
                                                                   .of(context)
                                                               .black40,
@@ -471,8 +469,7 @@ class _MealsWidgetState extends State<MealsWidget> {
                                                                   .of(context)
                                                               .bodyMedium
                                                               .override(
-                                                                fontFamily:
-                                                                    'Andika New Basic',
+                                                                fontFamily: FFAppState().currentFontFamily,
                                                                 letterSpacing:
                                                                     0.0,
                                                               ),
@@ -549,8 +546,7 @@ class _MealsWidgetState extends State<MealsWidget> {
                                                                         context)
                                                                     .bodyMedium
                                                                     .override(
-                                                                      fontFamily:
-                                                                          'Andika New Basic',
+                                                                      fontFamily: FFAppState().currentFontFamily,
                                                                       letterSpacing:
                                                                           0.0,
                                                                     ),
@@ -570,8 +566,7 @@ class _MealsWidgetState extends State<MealsWidget> {
                                                                     .of(context)
                                                                 .bodyMedium
                                                                 .override(
-                                                                  fontFamily:
-                                                                      'Andika New Basic',
+                                                                  fontFamily: FFAppState().currentFontFamily,
                                                                   letterSpacing:
                                                                       0.0,
                                                                 ),
@@ -644,8 +639,7 @@ class _MealsWidgetState extends State<MealsWidget> {
                                                                         context)
                                                                     .bodyMedium
                                                                     .override(
-                                                                      fontFamily:
-                                                                          'Andika New Basic',
+                                                                      fontFamily: FFAppState().currentFontFamily,
                                                                       letterSpacing:
                                                                           0.0,
                                                                     ),
@@ -660,8 +654,7 @@ class _MealsWidgetState extends State<MealsWidget> {
                                                                     .of(context)
                                                                 .bodyMedium
                                                                 .override(
-                                                                  fontFamily:
-                                                                      'Andika New Basic',
+                                                                  fontFamily: FFAppState().currentFontFamily,
                                                                   letterSpacing:
                                                                       0.0,
                                                                 ),

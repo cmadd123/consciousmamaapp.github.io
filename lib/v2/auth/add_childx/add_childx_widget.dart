@@ -157,7 +157,7 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
                   Text(
                     'Please add your child’s details.',
                     style: FlutterFlowTheme.of(context).bodyMedium.override(
-                          fontFamily: FFAppState().currentFontFamily,
+                          fontFamily: 'Andika New Basic',
                           fontSize: 32.0,
                           letterSpacing: 0.0,
                           fontWeight: FontWeight.w600,
@@ -171,7 +171,7 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
                       child: Text(
                         'Have more than one child? Don’t worry! \nYou can add them in a moment. ',
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                              fontFamily: FFAppState().currentFontFamily,
+                              fontFamily: 'Andika New Basic',
                               color: FlutterFlowTheme.of(context).secondaryText,
                               letterSpacing: 0.0,
                             ),
@@ -197,14 +197,14 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
                               labelStyle: FlutterFlowTheme.of(context)
                                   .labelMedium
                                   .override(
-                                    fontFamily: FFAppState().currentFontFamily,
+                                    fontFamily: 'Andika New Basic',
                                     letterSpacing: 0.0,
                                   ),
                               hintText: 'Name or nickname',
                               hintStyle: FlutterFlowTheme.of(context)
                                   .labelMedium
                                   .override(
-                                    fontFamily: FFAppState().currentFontFamily,
+                                    fontFamily: 'Andika New Basic',
                                     letterSpacing: 0.0,
                                   ),
                               enabledBorder: OutlineInputBorder(
@@ -244,7 +244,7 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
                             style: FlutterFlowTheme.of(context)
                                 .bodyMedium
                                 .override(
-                                  fontFamily: FFAppState().currentFontFamily,
+                                  fontFamily: 'Andika New Basic',
                                   letterSpacing: 0.0,
                                 ),
                             cursorColor:
@@ -291,7 +291,7 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
                                             child: Text(
                                               'Male',
                                               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                fontFamily: FFAppState().currentFontFamily,
+                                                fontFamily: 'Andika New Basic',
                                                 color: FlutterFlowTheme.of(context).secondaryText,
                                                 letterSpacing: 0.0,
                                                 fontWeight: _model.gender == 'Male'
@@ -332,7 +332,7 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
                                             child: Text(
                                               'Female',
                                               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                fontFamily: FFAppState().currentFontFamily,
+                                                fontFamily: 'Andika New Basic',
                                                 color: FlutterFlowTheme.of(context).secondaryText,
                                                 letterSpacing: 0.0,
                                                 fontWeight: _model.gender == 'Female'
@@ -395,8 +395,7 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
                                                 FlutterFlowTheme.of(context)
                                                     .bodyMedium
                                                     .override(
-                                                      fontFamily:
-                                                          'Andika New Basic',
+                                                      fontFamily: 'Andika New Basic',
                                                       color: FlutterFlowTheme
                                                               .of(context)
                                                           .black60,
@@ -427,7 +426,7 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
                               style: FlutterFlowTheme.of(context)
                                   .bodyMedium
                                   .override(
-                                    fontFamily: FFAppState().currentFontFamily,
+                                    fontFamily: 'Andika New Basic',
                                     color: FlutterFlowTheme.of(context).error,
                                     letterSpacing: 0.0,
                                   ),
@@ -453,7 +452,7 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
                                   style: FlutterFlowTheme.of(context)
                                       .bodyMedium
                                       .override(
-                                        fontFamily: FFAppState().currentFontFamily,
+                                        fontFamily: 'Andika New Basic',
                                         letterSpacing: 0.0,
                                       ),
                                 ),
@@ -910,7 +909,7 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
                             textStyle: FlutterFlowTheme.of(context)
                                 .titleSmall
                                 .override(
-                                  fontFamily: FFAppState().currentFontFamily,
+                                  fontFamily: 'Andika New Basic',
                                   color: Colors.white,
                                   letterSpacing: 0.0,
                                   fontWeight: FontWeight.normal,
@@ -992,7 +991,7 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
                               textStyle: FlutterFlowTheme.of(context)
                                   .titleSmall
                                   .override(
-                                    fontFamily: FFAppState().currentFontFamily,
+                                    fontFamily: 'Andika New Basic',
                                     color: Colors.white,
                                     letterSpacing: 0.0,
                                     fontWeight: FontWeight.normal,

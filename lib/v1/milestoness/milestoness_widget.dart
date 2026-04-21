@@ -233,8 +233,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                             context)
                                                         .bodyMedium
                                                         .override(
-                                                          fontFamily:
-                                                              'Andika New Basic',
+                                                          fontFamily: FFAppState().currentFontFamily,
                                                           color: FlutterFlowTheme
                                                                   .of(context)
                                                               .black60,
@@ -377,8 +376,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                                         context)
                                                                     .bodyMedium
                                                                     .override(
-                                                                      fontFamily:
-                                                                          'Andika New Basic',
+                                                                      fontFamily: FFAppState().currentFontFamily,
                                                                       color: FlutterFlowTheme.of(
                                                                               context)
                                                                           .black60,
@@ -411,8 +409,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                                   .of(context)
                                                               .bodyMedium
                                                               .override(
-                                                                fontFamily:
-                                                                    'Andika New Basic',
+                                                                fontFamily: FFAppState().currentFontFamily,
                                                                 color: FlutterFlowTheme.of(
                                                                         context)
                                                                     .secondaryText,
@@ -472,8 +469,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                                   .of(context)
                                                               .headlineSmall
                                                               .override(
-                                                                fontFamily:
-                                                                    'Andika New Basic',
+                                                                fontFamily: FFAppState().currentFontFamily,
                                                                 color: FlutterFlowTheme.of(
                                                                         context)
                                                                     .primary,

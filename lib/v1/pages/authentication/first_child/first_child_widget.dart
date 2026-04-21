@@ -416,8 +416,7 @@ class _FirstChildWidgetState extends State<FirstChildWidget> {
                                               FlutterFlowTheme.of(context)
                                                   .headlineLarge
                                                   .override(
-                                                    fontFamily:
-                                                        'Andika New Basic',
+                                                    fontFamily: FFAppState().currentFontFamily,
                                                     fontSize: 32.0,
                                                     letterSpacing: 0.0,
                                                     fontWeight: FontWeight.w600,
@@ -491,8 +490,7 @@ class _FirstChildWidgetState extends State<FirstChildWidget> {
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMedium
                                                         .override(
-                                                          fontFamily:
-                                                              'Andika New Basic',
+                                                          fontFamily: FFAppState().currentFontFamily,
                                                           color: FlutterFlowTheme
                                                                   .of(context)
                                                               .black60,

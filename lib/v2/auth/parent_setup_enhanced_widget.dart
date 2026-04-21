@@ -257,7 +257,7 @@ class _ParentSetupEnhancedWidgetState extends State<ParentSetupEnhancedWidget>
                               Text(
                                 'About you',
                                 style: FlutterFlowTheme.of(context).headlineMedium.override(
-                                  fontFamily: FFAppState().currentFontFamily,
+                                  fontFamily: 'Andika New Basic',
                                   fontSize: 28.0,
                                   fontWeight: FontWeight.w600,
                                   letterSpacing: 0.0,
@@ -267,7 +267,7 @@ class _ParentSetupEnhancedWidgetState extends State<ParentSetupEnhancedWidget>
                               Text(
                                 'Choose names and colors for you and your husband. These will appear throughout the app.',
                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                  fontFamily: FFAppState().currentFontFamily,
+                                  fontFamily: 'Andika New Basic',
                                   color: FlutterFlowTheme.of(context).secondaryText,
                                   letterSpacing: 0.0,
                                 ),
@@ -393,7 +393,7 @@ class _ParentSetupEnhancedWidgetState extends State<ParentSetupEnhancedWidget>
                                   height: 56.0,
                                   color: FlutterFlowTheme.of(context).primary,
                                   textStyle: FlutterFlowTheme.of(context).titleSmall.override(
-                                    fontFamily: FFAppState().currentFontFamily,
+                                    fontFamily: 'Andika New Basic',
                                     color: Colors.white,
                                     fontSize: 18.0,
                                     letterSpacing: 0.0,
@@ -474,7 +474,7 @@ class _ParentSetupEnhancedWidgetState extends State<ParentSetupEnhancedWidget>
                         color: Colors.white,
                         fontSize: 20.0,
                         fontWeight: FontWeight.bold,
-                        fontFamily: FFAppState().currentFontFamily,
+                        fontFamily: 'Andika New Basic',
                       ),
                     ),
                   ),
@@ -488,7 +488,7 @@ class _ParentSetupEnhancedWidgetState extends State<ParentSetupEnhancedWidget>
                     Text(
                       title,
                       style: FlutterFlowTheme.of(context).titleMedium.override(
-                        fontFamily: FFAppState().currentFontFamily,
+                        fontFamily: 'Andika New Basic',
                         fontWeight: FontWeight.w600,
                         letterSpacing: 0.0,
                       ),
@@ -496,7 +496,7 @@ class _ParentSetupEnhancedWidgetState extends State<ParentSetupEnhancedWidget>
                     Text(
                       subtitle,
                       style: FlutterFlowTheme.of(context).bodySmall.override(
-                        fontFamily: FFAppState().currentFontFamily,
+                        fontFamily: 'Andika New Basic',
                         color: FlutterFlowTheme.of(context).secondaryText,
                         letterSpacing: 0.0,
                       ),
@@ -520,7 +520,7 @@ class _ParentSetupEnhancedWidgetState extends State<ParentSetupEnhancedWidget>
             decoration: InputDecoration(
               hintText: nameHint,
               hintStyle: FlutterFlowTheme.of(context).bodyMedium.override(
-                fontFamily: FFAppState().currentFontFamily,
+                fontFamily: 'Andika New Basic',
                 color: FlutterFlowTheme.of(context).secondaryText,
                 letterSpacing: 0.0,
               ),
@@ -536,7 +536,7 @@ class _ParentSetupEnhancedWidgetState extends State<ParentSetupEnhancedWidget>
               ),
             ),
             style: FlutterFlowTheme.of(context).bodyLarge.override(
-              fontFamily: FFAppState().currentFontFamily,
+              fontFamily: 'Andika New Basic',
               fontSize: 16.0,
               letterSpacing: 0.0,
             ),
@@ -548,7 +548,7 @@ class _ParentSetupEnhancedWidgetState extends State<ParentSetupEnhancedWidget>
           Text(
             'Pick a color',
             style: FlutterFlowTheme.of(context).bodyMedium.override(
-              fontFamily: FFAppState().currentFontFamily,
+              fontFamily: 'Andika New Basic',
               letterSpacing: 0.0,
             ),
           ),

@@ -565,8 +565,7 @@ class _ProgramesWidgetState extends State<ProgramesWidget>
                                                                           context)
                                                                       .bodyMedium
                                                                       .override(
-                                                                        fontFamily:
-                                                                            'Andika New Basic',
+                                                                        fontFamily: FFAppState().currentFontFamily,
                                                                         color: FlutterFlowTheme.of(context)
                                                                             .secondaryText,
                                                                         letterSpacing:
@@ -642,8 +641,7 @@ class _ProgramesWidgetState extends State<ProgramesWidget>
                                                                           context)
                                                                       .headlineSmall
                                                                       .override(
-                                                                        fontFamily:
-                                                                            'Andika New Basic',
+                                                                        fontFamily: FFAppState().currentFontFamily,
                                                                         color: FlutterFlowTheme.of(context)
                                                                             .primary,
                                                                         fontSize:
@@ -1015,8 +1013,7 @@ class _ProgramesWidgetState extends State<ProgramesWidget>
                                                                         context)
                                                                     .bodyMedium
                                                                     .override(
-                                                                      fontFamily:
-                                                                          'Andika New Basic',
+                                                                      fontFamily: FFAppState().currentFontFamily,
                                                                       color: FlutterFlowTheme.of(
                                                                               context)
                                                                           .secondaryText,
@@ -1093,8 +1090,7 @@ class _ProgramesWidgetState extends State<ProgramesWidget>
                                                                         context)
                                                                     .headlineSmall
                                                                     .override(
-                                                                      fontFamily:
-                                                                          'Andika New Basic',
+                                                                      fontFamily: FFAppState().currentFontFamily,
                                                                       color: FlutterFlowTheme.of(
                                                                               context)
                                                                           .primary,

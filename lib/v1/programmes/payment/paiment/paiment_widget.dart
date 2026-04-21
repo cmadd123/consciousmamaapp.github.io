@@ -185,8 +185,7 @@ class _PaimentWidgetState extends State<PaimentWidget> {
                                                             context)
                                                         .bodyMedium
                                                         .override(
-                                                          fontFamily:
-                                                              'Andika New Basic',
+                                                          fontFamily: FFAppState().currentFontFamily,
                                                           fontSize: 20.0,
                                                           letterSpacing: 0.0,
                                                           fontWeight:
@@ -205,8 +204,7 @@ class _PaimentWidgetState extends State<PaimentWidget> {
                                                                   context)
                                                               .bodyMedium
                                                               .override(
-                                                                fontFamily:
-                                                                    'Andika New Basic',
+                                                                fontFamily: FFAppState().currentFontFamily,
                                                                 color: FlutterFlowTheme.of(
                                                                         context)
                                                                     .black60,
@@ -280,8 +278,7 @@ class _PaimentWidgetState extends State<PaimentWidget> {
                                                           context)
                                                       .bodyMedium
                                                       .override(
-                                                        fontFamily:
-                                                            'Andika New Basic',
+                                                        fontFamily: FFAppState().currentFontFamily,
                                                         fontSize: 20.0,
                                                         letterSpacing: 0.0,
                                                         fontWeight:
@@ -298,8 +295,7 @@ class _PaimentWidgetState extends State<PaimentWidget> {
                                                             context)
                                                         .bodyMedium
                                                         .override(
-                                                          fontFamily:
-                                                              'Andika New Basic',
+                                                          fontFamily: FFAppState().currentFontFamily,
                                                           color: FlutterFlowTheme
                                                                   .of(context)
                                                               .black60,
@@ -423,8 +419,7 @@ class _PaimentWidgetState extends State<PaimentWidget> {
                                                               .of(context)
                                                           .bodyMedium
                                                           .override(
-                                                            fontFamily:
-                                                                'Andika New Basic',
+                                                            fontFamily: FFAppState().currentFontFamily,
                                                             color: Colors.black,
                                                             fontSize: 16.0,
                                                             letterSpacing: 0.0,
@@ -445,8 +440,7 @@ class _PaimentWidgetState extends State<PaimentWidget> {
                                                                   context)
                                                               .bodyMedium
                                                               .override(
-                                                                fontFamily:
-                                                                    'Andika New Basic',
+                                                                fontFamily: FFAppState().currentFontFamily,
                                                                 color: FlutterFlowTheme.of(
                                                                         context)
                                                                     .secondaryText,
@@ -537,8 +531,7 @@ class _PaimentWidgetState extends State<PaimentWidget> {
                                                               .of(context)
                                                           .bodyMedium
                                                           .override(
-                                                            fontFamily:
-                                                                'Andika New Basic',
+                                                            fontFamily: FFAppState().currentFontFamily,
                                                             color: Colors.black,
                                                             fontSize: 16.0,
                                                             letterSpacing: 0.0,
@@ -559,8 +552,7 @@ class _PaimentWidgetState extends State<PaimentWidget> {
                                                                   context)
                                                               .bodyMedium
                                                               .override(
-                                                                fontFamily:
-                                                                    'Andika New Basic',
+                                                                fontFamily: FFAppState().currentFontFamily,
                                                                 color: FlutterFlowTheme.of(
                                                                         context)
                                                                     .secondaryText,
@@ -651,8 +643,7 @@ class _PaimentWidgetState extends State<PaimentWidget> {
                                                               .of(context)
                                                           .bodyMedium
                                                           .override(
-                                                            fontFamily:
-                                                                'Andika New Basic',
+                                                            fontFamily: FFAppState().currentFontFamily,
                                                             color: Colors.black,
                                                             fontSize: 16.0,
                                                             letterSpacing: 0.0,
@@ -673,8 +664,7 @@ class _PaimentWidgetState extends State<PaimentWidget> {
                                                                   context)
                                                               .bodyMedium
                                                               .override(
-                                                                fontFamily:
-                                                                    'Andika New Basic',
+                                                                fontFamily: FFAppState().currentFontFamily,
                                                                 color: FlutterFlowTheme.of(
                                                                         context)
                                                                     .secondaryText,

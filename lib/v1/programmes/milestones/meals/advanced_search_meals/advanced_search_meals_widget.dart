@@ -272,8 +272,7 @@ class _AdvancedSearchMealsWidgetState extends State<AdvancedSearchMealsWidget> {
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMedium
                                                         .override(
-                                                          fontFamily:
-                                                              'Andika New Basic',
+                                                          fontFamily: FFAppState().currentFontFamily,
                                                           color: valueOrDefault<
                                                               Color>(
                                                             cookingListTypeItem ==
@@ -472,8 +471,7 @@ class _AdvancedSearchMealsWidgetState extends State<AdvancedSearchMealsWidget> {
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMedium
                                                         .override(
-                                                          fontFamily:
-                                                              'Andika New Basic',
+                                                          fontFamily: FFAppState().currentFontFamily,
                                                           color: valueOrDefault<
                                                               Color>(
                                                             cookingListTypeItem ==
@@ -589,8 +587,7 @@ class _AdvancedSearchMealsWidgetState extends State<AdvancedSearchMealsWidget> {
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMedium
                                                         .override(
-                                                          fontFamily:
-                                                              'Andika New Basic',
+                                                          fontFamily: FFAppState().currentFontFamily,
                                                           color: valueOrDefault<
                                                               Color>(
                                                             cookingListTypeItem ==

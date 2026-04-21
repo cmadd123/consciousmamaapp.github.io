@@ -184,8 +184,7 @@ class _TasksWidgetState extends State<TasksWidget>
                                                             context)
                                                         .bodyMedium
                                                         .override(
-                                                          fontFamily:
-                                                              'Andika New Basic',
+                                                          fontFamily: FFAppState().currentFontFamily,
                                                           fontSize: 24.0,
                                                           letterSpacing: 0.0,
                                                         ),
@@ -600,8 +599,7 @@ class _TasksWidgetState extends State<TasksWidget>
                                                             context)
                                                         .bodyMedium
                                                         .override(
-                                                          fontFamily:
-                                                              'Andika New Basic',
+                                                          fontFamily: FFAppState().currentFontFamily,
                                                           fontSize: 24.0,
                                                           letterSpacing: 0.0,
                                                         ),
@@ -968,8 +966,7 @@ class _TasksWidgetState extends State<TasksWidget>
                                                             context)
                                                         .bodyMedium
                                                         .override(
-                                                          fontFamily:
-                                                              'Andika New Basic',
+                                                          fontFamily: FFAppState().currentFontFamily,
                                                           fontSize: 24.0,
                                                           letterSpacing: 0.0,
                                                         ),

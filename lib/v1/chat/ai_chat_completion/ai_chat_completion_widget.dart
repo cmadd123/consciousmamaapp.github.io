@@ -287,8 +287,7 @@ class _AiChatCompletionWidgetState extends State<AiChatCompletionWidget> {
                                                                     .of(context)
                                                                 .bodyMedium
                                                                 .override(
-                                                                  fontFamily:
-                                                                      'Andika New Basic',
+                                                                  fontFamily: FFAppState().currentFontFamily,
                                                                   color: FlutterFlowTheme.of(
                                                                           context)
                                                                       .secondaryText,
@@ -356,8 +355,7 @@ class _AiChatCompletionWidgetState extends State<AiChatCompletionWidget> {
                                                                     .of(context)
                                                                 .bodyMedium
                                                                 .override(
-                                                                  fontFamily:
-                                                                      'Andika New Basic',
+                                                                  fontFamily: FFAppState().currentFontFamily,
                                                                   color: FlutterFlowTheme.of(
                                                                           context)
                                                                       .secondaryText,
@@ -431,8 +429,7 @@ class _AiChatCompletionWidgetState extends State<AiChatCompletionWidget> {
                                                                   .of(context)
                                                               .bodyMedium
                                                               .override(
-                                                                fontFamily:
-                                                                    'Andika New Basic',
+                                                                fontFamily: FFAppState().currentFontFamily,
                                                                 color: FlutterFlowTheme.of(
                                                                         context)
                                                                     .secondaryText,
@@ -500,8 +497,7 @@ class _AiChatCompletionWidgetState extends State<AiChatCompletionWidget> {
                                                                   .of(context)
                                                               .bodyMedium
                                                               .override(
-                                                                fontFamily:
-                                                                    'Andika New Basic',
+                                                                fontFamily: FFAppState().currentFontFamily,
                                                                 color: FlutterFlowTheme.of(
                                                                         context)
                                                                     .secondaryText,
@@ -599,8 +595,7 @@ class _AiChatCompletionWidgetState extends State<AiChatCompletionWidget> {
                                                               context)
                                                           .labelMedium
                                                           .override(
-                                                            fontFamily:
-                                                                'Andika New Basic',
+                                                            fontFamily: FFAppState().currentFontFamily,
                                                             letterSpacing: 0.0,
                                                           ),
                                                   hintText:
@@ -610,8 +605,7 @@ class _AiChatCompletionWidgetState extends State<AiChatCompletionWidget> {
                                                               context)
                                                           .labelMedium
                                                           .override(
-                                                            fontFamily:
-                                                                'Andika New Basic',
+                                                            fontFamily: FFAppState().currentFontFamily,
                                                             letterSpacing: 0.0,
                                                           ),
                                                   enabledBorder:
@@ -670,8 +664,7 @@ class _AiChatCompletionWidgetState extends State<AiChatCompletionWidget> {
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMedium
                                                         .override(
-                                                          fontFamily:
-                                                              'Andika New Basic',
+                                                          fontFamily: FFAppState().currentFontFamily,
                                                           letterSpacing: 0.0,
                                                         ),
                                                 maxLines: null,
@@ -692,8 +685,7 @@ class _AiChatCompletionWidgetState extends State<AiChatCompletionWidget> {
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMedium
                                                       .override(
-                                                        fontFamily:
-                                                            'Andika New Basic',
+                                                        fontFamily: FFAppState().currentFontFamily,
                                                         letterSpacing: 0.0,
                                                       ),
                                             );

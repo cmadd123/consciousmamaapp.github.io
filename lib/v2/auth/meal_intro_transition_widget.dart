@@ -113,7 +113,7 @@ class _MealIntroTransitionWidgetState extends State<MealIntroTransitionWidget>
                             style: FlutterFlowTheme.of(context)
                                 .headlineMedium
                                 .override(
-                                  fontFamily: FFAppState().currentFontFamily,
+                                  fontFamily: 'Andika New Basic',
                                   fontSize: 28.0,
                                   fontWeight: FontWeight.bold,
                                   letterSpacing: 0.0,
@@ -131,7 +131,7 @@ class _MealIntroTransitionWidgetState extends State<MealIntroTransitionWidget>
                               style: FlutterFlowTheme.of(context)
                                   .bodyLarge
                                   .override(
-                                    fontFamily: FFAppState().currentFontFamily,
+                                    fontFamily: 'Andika New Basic',
                                     fontSize: 18.0,
                                     fontWeight: FontWeight.w500,
                                     letterSpacing: 0.0,
@@ -168,7 +168,7 @@ class _MealIntroTransitionWidgetState extends State<MealIntroTransitionWidget>
                             textStyle: FlutterFlowTheme.of(context)
                                 .titleMedium
                                 .override(
-                                  fontFamily: FFAppState().currentFontFamily,
+                                  fontFamily: 'Andika New Basic',
                                   color: Colors.white,
                                   fontSize: 18.0,
                                   fontWeight: FontWeight.w600,

@@ -122,7 +122,7 @@ class _OBoardingStep2WidgetState extends State<OBoardingStep2Widget> {
                           'What is preventing meal times in your home from being peaceful?',
                           style:
                               FlutterFlowTheme.of(context).bodyMedium.override(
-                                    fontFamily: FFAppState().currentFontFamily,
+                                    fontFamily: 'Andika New Basic',
                                     fontSize: 26.0,
                                     letterSpacing: 0.0,
                                     fontWeight: FontWeight.w600,
@@ -136,7 +136,7 @@ class _OBoardingStep2WidgetState extends State<OBoardingStep2Widget> {
                             style: FlutterFlowTheme.of(context)
                                 .bodyMedium
                                 .override(
-                                  fontFamily: FFAppState().currentFontFamily,
+                                  fontFamily: 'Andika New Basic',
                                   color: FlutterFlowTheme.of(context)
                                       .secondaryText,
                                   letterSpacing: 0.0,
@@ -235,8 +235,7 @@ class _OBoardingStep2WidgetState extends State<OBoardingStep2Widget> {
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMedium
                                                         .override(
-                                                          fontFamily:
-                                                              'Andika New Basic',
+                                                          fontFamily: 'Andika New Basic',
                                                           color: FlutterFlowTheme
                                                                   .of(context)
                                                               .black60,
@@ -320,8 +319,7 @@ class _OBoardingStep2WidgetState extends State<OBoardingStep2Widget> {
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMedium
                                                         .override(
-                                                          fontFamily:
-                                                              'Andika New Basic',
+                                                          fontFamily: 'Andika New Basic',
                                                           color: FlutterFlowTheme
                                                                   .of(context)
                                                               .black60,
@@ -405,8 +403,7 @@ class _OBoardingStep2WidgetState extends State<OBoardingStep2Widget> {
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMedium
                                                         .override(
-                                                          fontFamily:
-                                                              'Andika New Basic',
+                                                          fontFamily: 'Andika New Basic',
                                                           color: FlutterFlowTheme
                                                                   .of(context)
                                                               .black60,
@@ -489,8 +486,7 @@ class _OBoardingStep2WidgetState extends State<OBoardingStep2Widget> {
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMedium
                                                         .override(
-                                                          fontFamily:
-                                                              'Andika New Basic',
+                                                          fontFamily: 'Andika New Basic',
                                                           color: FlutterFlowTheme
                                                                   .of(context)
                                                               .black60,
@@ -537,7 +533,7 @@ class _OBoardingStep2WidgetState extends State<OBoardingStep2Widget> {
                               textStyle: FlutterFlowTheme.of(context)
                                   .titleSmall
                                   .override(
-                                    fontFamily: FFAppState().currentFontFamily,
+                                    fontFamily: 'Andika New Basic',
                                     color: Colors.white,
                                     letterSpacing: 0.0,
                                   ),

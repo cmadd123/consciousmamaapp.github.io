@@ -131,7 +131,7 @@ class _OnBoadrdingLastV2WidgetState extends State<OnBoadrdingLastV2Widget>
                           'Your journey begins...',
                           style:
                               FlutterFlowTheme.of(context).bodyMedium.override(
-                                    fontFamily: FFAppState().currentFontFamily,
+                                    fontFamily: 'Andika New Basic',
                                     fontSize: 30.0,
                                     letterSpacing: 0.0,
                                     fontWeight: FontWeight.w600,
@@ -145,7 +145,7 @@ class _OnBoadrdingLastV2WidgetState extends State<OnBoadrdingLastV2Widget>
                             style: FlutterFlowTheme.of(context)
                                 .bodyMedium
                                 .override(
-                                  fontFamily: FFAppState().currentFontFamily,
+                                  fontFamily: 'Andika New Basic',
                                   color: FlutterFlowTheme.of(context)
                                       .secondaryText,
                                   fontSize: 16.0,
@@ -206,7 +206,7 @@ class _OnBoadrdingLastV2WidgetState extends State<OnBoadrdingLastV2Widget>
                             textStyle: FlutterFlowTheme.of(context)
                                 .titleSmall
                                 .override(
-                                  fontFamily: FFAppState().currentFontFamily,
+                                  fontFamily: 'Andika New Basic',
                                   color: Colors.white,
                                   fontSize: 18.0,
                                   letterSpacing: 0.0,

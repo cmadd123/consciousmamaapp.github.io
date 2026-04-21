@@ -149,7 +149,7 @@ class _OnboardingProgressTrackerState extends State<OnboardingProgressTracker>
         Text(
           label,
           style: FlutterFlowTheme.of(context).bodySmall.override(
-                fontFamily: FFAppState().currentFontFamily,
+                fontFamily: 'Andika New Basic',
                 fontSize: 12.0,
                 fontWeight: isComplete || isCurrent ? FontWeight.w600 : FontWeight.normal,
                 letterSpacing: 0.0,

@@ -164,7 +164,7 @@ class _WelcomeWidgetState extends State<WelcomeWidget>
                               style: FlutterFlowTheme.of(context)
                                   .headlineLarge
                                   .override(
-                                    fontFamily: FFAppState().currentFontFamily,
+                                    fontFamily: 'Andika New Basic',
                                     color: const Color(0xFF3D3D3D),
                                     fontSize: 28.0,
                                     fontWeight: FontWeight.bold,
@@ -178,7 +178,7 @@ class _WelcomeWidgetState extends State<WelcomeWidget>
                               style: FlutterFlowTheme.of(context)
                                   .titleMedium
                                   .override(
-                                    fontFamily: FFAppState().currentFontFamily,
+                                    fontFamily: 'Andika New Basic',
                                     color: const Color(0xFF5D4E60),
                                     fontSize: 16.0,
                                     letterSpacing: 0.0,
@@ -243,7 +243,7 @@ class _WelcomeWidgetState extends State<WelcomeWidget>
                                 textStyle: FlutterFlowTheme.of(context)
                                     .titleMedium
                                     .override(
-                                      fontFamily: FFAppState().currentFontFamily,
+                                      fontFamily: 'Andika New Basic',
                                       color: Colors.white,
                                       fontSize: 18.0,
                                       fontWeight: FontWeight.w600,
@@ -267,7 +267,7 @@ class _WelcomeWidgetState extends State<WelcomeWidget>
                                   style: FlutterFlowTheme.of(context)
                                       .bodyMedium
                                       .override(
-                                        fontFamily: FFAppState().currentFontFamily,
+                                        fontFamily: 'Andika New Basic',
                                         color: FlutterFlowTheme.of(context).primary,
                                         fontSize: 16.0,
                                         fontWeight: FontWeight.w600,
@@ -295,7 +295,7 @@ class _WelcomeWidgetState extends State<WelcomeWidget>
                                       style: FlutterFlowTheme.of(context)
                                           .bodyMedium
                                           .override(
-                                            fontFamily: FFAppState().currentFontFamily,
+                                            fontFamily: 'Andika New Basic',
                                             color: const Color(0xFF5D4E60),
                                             letterSpacing: 0.0,
                                           ),
@@ -305,7 +305,7 @@ class _WelcomeWidgetState extends State<WelcomeWidget>
                                       style: FlutterFlowTheme.of(context)
                                           .bodyMedium
                                           .override(
-                                            fontFamily: FFAppState().currentFontFamily,
+                                            fontFamily: 'Andika New Basic',
                                             color: FlutterFlowTheme.of(context)
                                                 .primary,
                                             fontWeight: FontWeight.w600,
@@ -382,7 +382,7 @@ class _WelcomeWidgetState extends State<WelcomeWidget>
                 Text(
                   title,
                   style: FlutterFlowTheme.of(context).bodyLarge.override(
-                        fontFamily: FFAppState().currentFontFamily,
+                        fontFamily: 'Andika New Basic',
                         color: iconColor.withOpacity(0.9),
                         fontWeight: FontWeight.w600,
                         fontSize: 15.0,
@@ -392,7 +392,7 @@ class _WelcomeWidgetState extends State<WelcomeWidget>
                 Text(
                   subtitle,
                   style: FlutterFlowTheme.of(context).bodySmall.override(
-                        fontFamily: FFAppState().currentFontFamily,
+                        fontFamily: 'Andika New Basic',
                         color: const Color(0xFF6B6B6B),
                         fontSize: 12.0,
                         letterSpacing: 0.0,

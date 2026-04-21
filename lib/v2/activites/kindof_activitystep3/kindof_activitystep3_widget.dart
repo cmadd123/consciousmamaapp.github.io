@@ -168,8 +168,7 @@ class _KindofActivitystep3WidgetState extends State<KindofActivitystep3Widget> {
                                                           context)
                                                       .bodyMedium
                                                       .override(
-                                                        fontFamily:
-                                                            'Andika New Basic',
+                                                        fontFamily: FFAppState().currentFontFamily,
                                                         fontSize: 24.0,
                                                         letterSpacing: 0.0,
                                                       ),
@@ -241,8 +240,7 @@ class _KindofActivitystep3WidgetState extends State<KindofActivitystep3Widget> {
                                                           context)
                                                       .bodyMedium
                                                       .override(
-                                                        fontFamily:
-                                                            'Andika New Basic',
+                                                        fontFamily: FFAppState().currentFontFamily,
                                                         fontSize: 24.0,
                                                         letterSpacing: 0.0,
                                                       ),
@@ -282,8 +280,7 @@ class _KindofActivitystep3WidgetState extends State<KindofActivitystep3Widget> {
                                                 FlutterFlowTheme.of(context)
                                                     .titleSmall
                                                     .override(
-                                                      fontFamily:
-                                                          'Andika New Basic',
+                                                      fontFamily: FFAppState().currentFontFamily,
                                                       color: Colors.white,
                                                       letterSpacing: 0.0,
                                                     ),
@@ -394,8 +391,7 @@ class _KindofActivitystep3WidgetState extends State<KindofActivitystep3Widget> {
                                                 FlutterFlowTheme.of(context)
                                                     .titleSmall
                                                     .override(
-                                                      fontFamily:
-                                                          'Andika New Basic',
+                                                      fontFamily: FFAppState().currentFontFamily,
                                                       color: Colors.white,
                                                       letterSpacing: 0.0,
                                                     ),

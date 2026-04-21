@@ -1996,8 +1996,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                                             context)
                                                         .bodyMedium
                                                         .override(
-                                                          fontFamily:
-                                                              'Andika New Basic',
+                                                          fontFamily: FFAppState().currentFontFamily,
                                                           letterSpacing: 0.0,
                                                         ),
                                                     overflow: TextOverflow.ellipsis,
@@ -2249,8 +2248,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                                           context)
                                                       .bodyMedium
                                                       .override(
-                                                        fontFamily:
-                                                            'Andika New Basic',
+                                                        fontFamily: FFAppState().currentFontFamily,
                                                         letterSpacing: 0.0,
                                                       ),
                                                 ),

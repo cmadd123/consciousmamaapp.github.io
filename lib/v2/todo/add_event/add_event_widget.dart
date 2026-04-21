@@ -250,8 +250,7 @@ class _AddEventWidgetState extends State<AddEventWidget> {
                                                                 context)
                                                             .bodyMedium
                                                             .override(
-                                                              fontFamily:
-                                                                  'Andika New Basic',
+                                                              fontFamily: FFAppState().currentFontFamily,
                                                               letterSpacing: 0.0,
                                                             ),
                                                       ),
@@ -603,8 +602,7 @@ class _AddEventWidgetState extends State<AddEventWidget> {
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMedium
                                                         .override(
-                                                          fontFamily:
-                                                              'Andika New Basic',
+                                                          fontFamily: FFAppState().currentFontFamily,
                                                           fontSize: 16.0,
                                                           letterSpacing: 0.0,
                                                         ),
