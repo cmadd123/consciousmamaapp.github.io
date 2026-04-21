@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
 import '/components/home_nav_bar_widget.dart';
+import '/v2/creator/creator_theme_wrapper.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
@@ -28,14 +29,9 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
         backgroundColor: FlutterFlowTheme.of(context).primary,
         child: const Icon(Icons.add, color: Colors.white),
       ),
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFFD7F2EB), Color(0xFFFFE9E1)],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
+      body: CreatorThemedBackground(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
         child: SafeArea(
         child: Column(
           children: [

@@ -55,23 +55,45 @@ extension CreatorThemeExtension on BuildContext {
 }
 
 /// A widget that rebuilds when the creator theme changes.
-/// Wraps its child with the creator's background gradient when active.
+/// Wraps its child with the creator's background gradient when active,
+/// falling back to the app's default teal-to-pink when not.
+///
+/// Accepts [begin]/[end]/[stops] so each page can keep its own gradient
+/// direction without hardcoding the color stops.
 class CreatorThemedBackground extends StatelessWidget {
   final Widget child;
+  final AlignmentGeometry begin;
+  final AlignmentGeometry end;
+  final List<double>? stops;
+  final double? width;
+  final double? height;
 
-  const CreatorThemedBackground({super.key, required this.child});
+  const CreatorThemedBackground({
+    super.key,
+    required this.child,
+    this.begin = Alignment.topLeft,
+    this.end = Alignment.bottomRight,
+    this.stops,
+    this.width,
+    this.height,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Consumer<CreatorThemeNotifier>(
-      builder: (context, creatorTheme, _) {
-        return Container(
-          decoration: BoxDecoration(
-            gradient: context.creatorBackgroundGradient,
+      builder: (context, _, __) => Container(
+        width: width,
+        height: height,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [context.creatorGradientStart, context.creatorGradientEnd],
+            stops: stops,
+            begin: begin,
+            end: end,
           ),
-          child: child,
-        );
-      },
+        ),
+        child: child,
+      ),
     );
   }
 }

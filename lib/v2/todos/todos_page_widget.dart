@@ -6,6 +6,7 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/components/page_animations.dart';
+import '/v2/creator/creator_theme_wrapper.dart';
 import 'package:flutter/material.dart';
 
 /// Todos Page - Grocery-list style todo management
@@ -118,17 +119,12 @@ class _TodosPageWidgetState extends State<TodosPageWidget> with TickerProviderSt
             size: 28.0,
           ),
         ) : null,
-        body: Container(
+        body: CreatorThemedBackground(
           width: double.infinity,
           height: double.infinity,
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0xFFD7F2EB), Color(0xFFFFE9E1)],
-              stops: [0.0, 1.0],
-              begin: AlignmentDirectional(0.0, -1.0),
-              end: AlignmentDirectional(0, 1.0),
-            ),
-          ),
+          stops: const [0.0, 1.0],
+          begin: const AlignmentDirectional(0.0, -1.0),
+          end: const AlignmentDirectional(0, 1.0),
           child: SafeArea(
             child: Column(
               children: [

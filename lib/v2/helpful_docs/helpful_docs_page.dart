@@ -10,6 +10,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
+import '/v2/creator/creator_theme_wrapper.dart';
 
 class HelpfulDocsPage extends StatefulWidget {
   const HelpfulDocsPage({super.key});
@@ -23,14 +24,9 @@ class _HelpfulDocsPageState extends State<HelpfulDocsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.transparent,
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFFD7F2EB), Color(0xFFFFE9E1)],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
+      body: CreatorThemedBackground(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
         child: SafeArea(
           child: Column(
             children: [
@@ -272,14 +268,9 @@ class _HelpfulDocsPageState extends State<HelpfulDocsPage> {
       MaterialPageRoute(
         builder: (context) => Scaffold(
           backgroundColor: Colors.transparent,
-          body: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xFFD7F2EB), Color(0xFFFFE9E1)],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-              ),
-            ),
+          body: CreatorThemedBackground(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
             child: SafeArea(
               child: Column(
                 children: [

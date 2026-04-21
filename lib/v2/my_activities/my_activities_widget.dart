@@ -7,8 +7,11 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/components/momrise_confirmation.dart';
+import '/v2/creator/creator_theme_notifier.dart';
+import '/v2/creator/creator_theme_wrapper.dart';
 import '/v2/todo/addcalender/addcalender_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'my_activities_model.dart';
 export 'my_activities_model.dart';
 
@@ -52,6 +55,9 @@ class _MyActivitiesWidgetState extends State<MyActivitiesWidget> {
 
   @override
   Widget build(BuildContext context) {
+    // Subscribe so the background gradient repaints when the follower toggles
+    // creator theme on/off.
+    context.watch<CreatorThemeNotifier>();
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
@@ -93,14 +99,16 @@ class _MyActivitiesWidgetState extends State<MyActivitiesWidget> {
         ),
         body: Container(
           decoration: BoxDecoration(
+            // Comfort mode forces its own dark gradient; creator theme only
+            // applies in the normal color path.
             gradient: FFAppState().isComfortMode
                 ? const LinearGradient(
                     colors: [Color(0xFF2C3E50), Color(0xFF34495E)],
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                   )
-                : const LinearGradient(
-                    colors: [Color(0xFFD7F2EB), Color(0xFFFFE9E1)],
+                : LinearGradient(
+                    colors: [context.creatorGradientStart, context.creatorGradientEnd],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),

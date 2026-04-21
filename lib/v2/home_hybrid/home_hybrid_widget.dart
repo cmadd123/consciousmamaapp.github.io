@@ -2,6 +2,7 @@ import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
 import '/backend/schema/enums/enums.dart';
 import '/components/home_nav_bar_widget.dart';
+import '/v2/creator/creator_theme_wrapper.dart';
 import '/components/parent_circle_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -129,17 +130,12 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
         child: Scaffold(
           key: scaffoldKey,
           backgroundColor: const Color(0xFFFFF8F5),
-          body: Container(
+          body: CreatorThemedBackground(
           width: double.infinity,
           height: double.infinity,
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0xFFD7F2EB), Color(0xFFFFE9E1)],
-              stops: [0.0, 1.0],
-              begin: AlignmentDirectional(0.0, -1.0),
-              end: AlignmentDirectional(0, 1.0),
-            ),
-          ),
+          stops: const [0.0, 1.0],
+          begin: const AlignmentDirectional(0.0, -1.0),
+          end: const AlignmentDirectional(0, 1.0),
           child: SafeArea(
             child: StreamBuilder<List<ChildernRecord>>(
               stream: queryChildernRecord(
