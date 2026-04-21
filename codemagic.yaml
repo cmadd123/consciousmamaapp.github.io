@@ -26,12 +26,35 @@ workflows:
           source: true
 
     scripts:
+      - name: Detect website-only commit (skip to save build minutes)
+        script: |
+          # If the most recent commit touches only website/backend files,
+          # set CM_BUILD_SKIP so every subsequent step exits early. Saves
+          # Codemagic minutes on commits that don't change the Flutter app.
+          CHANGED=$(git log --name-only --pretty=format: -1 HEAD | grep -v '^$' | sort -u || true)
+          if [ -z "$CHANGED" ]; then
+            echo "No file list available — running full build"
+            exit 0
+          fi
+          APP=$(echo "$CHANGED" | grep -vE '^(creator/|s/|\.well-known/|app_store_assets/|firebase/|firestore\.|functions/|.*\.(html|md|yml|yaml|ico)$|favicon\..*|_config\.yml|CNAME|QA_REPORT\.md|codemagic\.yaml)' || true)
+          if [ -z "$APP" ]; then
+            echo "::: Website/backend-only commit — skipping iOS build :::"
+            echo "Changed files:"
+            echo "$CHANGED" | sed 's/^/  /'
+            echo "CM_BUILD_SKIP=true" >> $CM_ENV
+          else
+            echo "App files changed — running full iOS build:"
+            echo "$APP" | sed 's/^/  /'
+          fi
+
       - name: Create GoogleService-Info.plist from environment variable
         script: |
+          [ "$CM_BUILD_SKIP" = "true" ] && { echo "Skipped (website-only)"; exit 0; }
           echo "$GOOGLE_SERVICE_INFO_PLIST" > ios/Runner/GoogleService-Info.plist
 
       - name: Set up code signing
         script: |
+          [ "$CM_BUILD_SKIP" = "true" ] && { echo "Skipped (website-only)"; exit 0; }
           set -e  # Exit on error
           echo "=== Initializing keychain ==="
           keychain initialize
@@ -58,19 +81,23 @@ workflows:
 
       - name: Get Flutter packages
         script: |
+          [ "$CM_BUILD_SKIP" = "true" ] && { echo "Skipped (website-only)"; exit 0; }
           flutter pub get
 
       - name: Install CocoaPods dependencies
         script: |
+          [ "$CM_BUILD_SKIP" = "true" ] && { echo "Skipped (website-only)"; exit 0; }
           cd ios && pod install
 
       - name: Flutter analyze
         script: |
+          [ "$CM_BUILD_SKIP" = "true" ] && { echo "Skipped (website-only)"; exit 0; }
           flutter analyze --no-fatal-infos
         ignore_failure: true
 
       - name: Build iOS IPA with timestamp build number
         script: |
+          [ "$CM_BUILD_SKIP" = "true" ] && { echo "Skipped (website-only)"; exit 0; }
           # Use Unix timestamp as build number — always unique, always increasing,
           # never collides with a previous upload. No API queries, no stale floors.
           BUILD_NUMBER=$(date +%s)
@@ -117,20 +144,40 @@ workflows:
           source: true
 
     scripts:
+      - name: Detect website-only commit (skip to save build minutes)
+        script: |
+          CHANGED=$(git log --name-only --pretty=format: -1 HEAD | grep -v '^$' | sort -u || true)
+          if [ -z "$CHANGED" ]; then
+            echo "No file list available — running full build"
+            exit 0
+          fi
+          APP=$(echo "$CHANGED" | grep -vE '^(creator/|s/|\.well-known/|app_store_assets/|firebase/|firestore\.|functions/|.*\.(html|md|yml|yaml|ico)$|favicon\..*|_config\.yml|CNAME|QA_REPORT\.md|codemagic\.yaml)' || true)
+          if [ -z "$APP" ]; then
+            echo "::: Website/backend-only commit — skipping Android build :::"
+            echo "$CHANGED" | sed 's/^/  /'
+            echo "CM_BUILD_SKIP=true" >> $CM_ENV
+          else
+            echo "App files changed — running full Android build"
+          fi
+
       - name: Create google-services.json from environment variable
         script: |
+          [ "$CM_BUILD_SKIP" = "true" ] && { echo "Skipped (website-only)"; exit 0; }
           echo "$GOOGLE_SERVICES_JSON" > android/app/google-services.json
 
       - name: Get Flutter packages
         script: |
+          [ "$CM_BUILD_SKIP" = "true" ] && { echo "Skipped (website-only)"; exit 0; }
           flutter pub get
 
       - name: Build Android APK
         script: |
+          [ "$CM_BUILD_SKIP" = "true" ] && { echo "Skipped (website-only)"; exit 0; }
           flutter build apk --release
 
       - name: Build Android App Bundle
         script: |
+          [ "$CM_BUILD_SKIP" = "true" ] && { echo "Skipped (website-only)"; exit 0; }
           flutter build appbundle --release
 
     artifacts:
