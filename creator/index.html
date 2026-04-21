@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MomRise · Creator Dashboard</title>
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #52A097;
+      --primary-dark: #2A6F67;
+      --accent: #EE8B60;
+      --bg: #F9FAFB;
+      --surface: #FFFFFF;
+      --text: #1F2937;
+      --text-muted: #6B7280;
+      --border: #E5E7EB;
+      --danger: #EF4444;
+      --success: #10B981;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; padding: 0;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      min-height: 100vh;
+    }
+    a { color: var(--primary); }
+    button { cursor: pointer; font-family: inherit; }
+
+    /* Layout */
+    .app { display: flex; flex-direction: column; min-height: 100vh; }
+    header.topbar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 24px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; }
+    .brand .logo {
+      width: 32px; height: 32px; border-radius: 8px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+    }
+    .user-chip { display: flex; align-items: center; gap: 10px; font-size: 14px; }
+    .user-chip img { width: 28px; height: 28px; border-radius: 50%; }
+    .user-chip .signout { color: var(--text-muted); background: none; border: none; padding: 6px; }
+    .user-chip .signout:hover { color: var(--danger); }
+
+    main {
+      flex: 1;
+      max-width: 960px; margin: 0 auto; padding: 24px; width: 100%;
+    }
+
+    /* Views */
+    .view { display: none; }
+    .view.active { display: block; }
+
+    /* Sign-in view */
+    .signin {
+      min-height: calc(100vh - 60px);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 24px; padding: 24px;
+      text-align: center;
+    }
+    .signin h1 { font-size: 28px; margin: 0; }
+    .signin p { color: var(--text-muted); margin: 0 0 8px; max-width: 360px; }
+    .signin-buttons { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 320px; }
+    .btn-oauth {
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      padding: 12px 16px; border-radius: 10px; font-size: 15px; font-weight: 500;
+      border: 1px solid var(--border); background: var(--surface);
+      color: var(--text); transition: transform 80ms, border-color 120ms;
+    }
+    .btn-oauth:hover { border-color: var(--primary); }
+    .btn-oauth:active { transform: scale(0.98); }
+    .btn-oauth.apple { background: #000; color: #fff; border-color: #000; }
+    .btn-oauth svg { width: 18px; height: 18px; }
+
+    /* Gate (not-a-creator) */
+    .gate {
+      background: var(--surface); border-radius: 14px; border: 1px solid var(--border);
+      padding: 32px; text-align: center; max-width: 480px; margin: 48px auto;
+    }
+    .gate h2 { margin-top: 0; }
+
+    /* Dashboard */
+    .tabs {
+      display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin-bottom: 24px;
+    }
+    .tab {
+      background: none; border: none; padding: 10px 16px; font-size: 15px;
+      color: var(--text-muted); border-bottom: 2px solid transparent; margin-bottom: -1px;
+    }
+    .tab.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 600; }
+
+    section.panel { display: none; }
+    section.panel.active { display: block; }
+
+    .section-head {
+      display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;
+    }
+    .section-head h2 { margin: 0; font-size: 20px; }
+
+    .btn {
+      background: var(--primary); color: white; border: none;
+      padding: 10px 16px; border-radius: 10px; font-size: 14px; font-weight: 600;
+    }
+    .btn:hover { background: var(--primary-dark); }
+    .btn.ghost { background: transparent; color: var(--primary); border: 1px solid var(--primary); }
+    .btn.ghost:hover { background: rgba(82,160,151,0.08); }
+    .btn.danger { background: var(--danger); }
+
+    /* Doc list */
+    .doc-list { display: flex; flex-direction: column; gap: 10px; }
+    .doc-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+      padding: 14px 16px; display: flex; align-items: center; gap: 14px;
+    }
+    .doc-emoji { font-size: 28px; width: 44px; height: 44px; display: grid; place-items: center;
+      background: rgba(82,160,151,0.1); border-radius: 10px; }
+    .doc-main { flex: 1; min-width: 0; }
+    .doc-title { font-weight: 600; margin: 0 0 2px; }
+    .doc-meta { font-size: 12px; color: var(--text-muted); }
+    .doc-actions { display: flex; gap: 8px; }
+    .chip {
+      font-size: 11px; padding: 2px 8px; border-radius: 6px; font-weight: 600;
+      background: #E0E7FF; color: #3730A3;
+    }
+    .chip.published { background: #D1FAE5; color: #065F46; }
+    .chip.draft { background: #FEF3C7; color: #92400E; }
+
+    .empty {
+      text-align: center; padding: 48px 24px; color: var(--text-muted);
+    }
+
+    /* Form */
+    .form-grid { display: grid; gap: 16px; }
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field label { font-size: 13px; font-weight: 500; }
+    .field input, .field textarea, .field select {
+      padding: 10px 12px; font-size: 14px; border: 1px solid var(--border); border-radius: 8px;
+      font-family: inherit; background: var(--surface);
+    }
+    .field input:focus, .field textarea:focus, .field select:focus {
+      outline: 2px solid var(--primary); outline-offset: -1px; border-color: var(--primary);
+    }
+    .file-input { position: relative; }
+    .file-input input[type=file] { display: none; }
+    .file-input label {
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 14px; border: 1px dashed var(--border); border-radius: 10px;
+      cursor: pointer; color: var(--text-muted);
+    }
+    .file-input label:hover { border-color: var(--primary); color: var(--primary); }
+    .file-input.has-file label { border-style: solid; color: var(--text); }
+
+    .toggle { display: flex; align-items: center; gap: 10px; }
+    .toggle input { width: 18px; height: 18px; accent-color: var(--primary); }
+
+    /* Modal */
+    .modal-backdrop {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.4);
+      display: none; align-items: center; justify-content: center; padding: 16px;
+      z-index: 50;
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal {
+      background: var(--surface); border-radius: 14px; width: 100%; max-width: 520px;
+      padding: 24px; max-height: 90vh; overflow-y: auto;
+    }
+    .modal h3 { margin: 0 0 16px; }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; }
+
+    /* Analytics */
+    .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 24px; }
+    .stat-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+      padding: 16px 18px;
+    }
+    .stat-label { font-size: 11px; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
+    .stat-value { font-size: 32px; font-weight: 700; line-height: 1; }
+    .stat-sub { font-size: 12px; color: var(--text-muted); margin-top: 6px; }
+    .stat-sub .up { color: var(--success); font-weight: 600; }
+    .stat-sub .down { color: var(--danger); font-weight: 600; }
+
+    .analytics-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 16px;
+    }
+    .analytics-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+      padding: 18px 20px;
+    }
+    .analytics-card.span-2 { grid-column: 1 / -1; }
+    .analytics-card h3 { margin: 0 0 14px; font-size: 15px; display: flex; align-items: center; gap: 8px; }
+    .analytics-card h3 .muted { color: var(--text-muted); font-weight: 400; font-size: 12px; }
+
+    /* Horizontal bar charts */
+    .bar-chart { display: flex; flex-direction: column; gap: 10px; }
+    .bar-row { display: flex; flex-direction: column; gap: 4px; }
+    .bar-row .bar-head { display: flex; justify-content: space-between; align-items: baseline; font-size: 13px; }
+    .bar-row .bar-head .bar-name { color: var(--text); font-weight: 500; display: flex; align-items: center; gap: 6px; max-width: 75%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .bar-row .bar-head .bar-val { color: var(--text-muted); font-weight: 600; tabular-nums: true; font-variant-numeric: tabular-nums; }
+    .bar-row .bar-track { height: 8px; background: #F3F4F6; border-radius: 6px; overflow: hidden; }
+    .bar-row .bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+      border-radius: 6px;
+      width: 0%;
+      transition: width 500ms cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    .bar-row.accent .bar-fill { background: linear-gradient(90deg, var(--accent), #D4723F); }
+    .bar-empty { text-align: center; color: var(--text-muted); font-size: 13px; padding: 24px; }
+
+    /* Retention row */
+    .retention-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; }
+    .retention-cell { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+    .retention-label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
+    .retention-caption { font-size: 12px; color: var(--text-muted); text-align: center; }
+
+    .retention-ring { position: relative; width: 140px; height: 140px; }
+    .ring-svg { transform: rotate(-90deg); width: 100%; height: 100%; }
+    .ring-bg { fill: none; stroke: #F3F4F6; stroke-width: 3; }
+    .ring-fg { fill: none; stroke: var(--primary); stroke-width: 3; stroke-linecap: round; transition: stroke-dasharray 600ms ease; }
+    .ring-label { position: absolute; inset: 0; display: grid; place-items: center; font-size: 28px; font-weight: 700; color: var(--text); }
+
+    .retention-bars { width: 100%; display: flex; flex-direction: column; gap: 12px; margin-top: 4px; }
+    .reach-row { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; }
+    .reach-row .reach-label { font-size: 13px; color: var(--text-muted); }
+    .reach-row .reach-bar { grid-column: 1 / -1; height: 6px; background: #F3F4F6; border-radius: 4px; overflow: hidden; }
+    .reach-row .reach-fill { height: 100%; background: var(--primary); border-radius: 4px; transition: width 500ms; }
+    .reach-row .reach-val { font-size: 13px; color: var(--text); font-weight: 600; font-variant-numeric: tabular-nums; }
+
+    .toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+      background: #111827; color: #fff; padding: 10px 16px; border-radius: 10px;
+      font-size: 14px; opacity: 0; pointer-events: none; transition: opacity 200ms;
+      z-index: 100;
+    }
+    .toast.show { opacity: 1; }
+
+    .loader {
+      width: 20px; height: 20px; border: 2px solid rgba(0,0,0,0.1);
+      border-top-color: var(--primary); border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 640px) {
+      main { padding: 16px; }
+      .doc-card { flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app" id="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo"></div>
+        MomRise · Creator
+      </div>
+      <div class="user-chip" id="userChip" style="display:none;">
+        <img id="userPhoto" src="" alt="">
+        <span id="userName"></span>
+        <button class="signout" id="signOutBtn" title="Sign out">Sign out</button>
+      </div>
+    </header>
+
+    <main>
+      <!-- 1. Sign-in view -->
+      <div class="view active" id="viewSignIn">
+        <div class="signin">
+          <h1>Creator Dashboard</h1>
+          <p>Sign in with the same account tied to your MomRise creator profile to manage your helpful docs.</p>
+          <div class="signin-buttons">
+            <button class="btn-oauth" id="googleSignInBtn">
+              <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+              Continue with Google
+            </button>
+            <button class="btn-oauth apple" id="appleSignInBtn">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+              Continue with Apple
+            </button>
+          </div>
+          <a href="/" style="font-size: 13px; color: var(--text-muted);">← Back to momrise.app</a>
+        </div>
+      </div>
+
+      <!-- 2. Not-a-creator gate -->
+      <div class="view" id="viewGate">
+        <div class="gate">
+          <h2>This dashboard is for creators</h2>
+          <p>The account you signed in with doesn't have a creator profile yet. Creator profiles are provisioned by MomRise — reach out if you'd like one.</p>
+          <button class="btn ghost" id="gateSignOutBtn">Sign out and try another account</button>
+        </div>
+      </div>
+
+      <!-- 3. Main dashboard -->
+      <div class="view" id="viewDashboard">
+        <div class="tabs">
+          <button class="tab active" data-tab="docs">Helpful Docs</button>
+          <button class="tab" data-tab="analytics">Analytics</button>
+        </div>
+
+        <!-- Docs panel -->
+        <section class="panel active" id="panelDocs">
+          <div class="section-head">
+            <h2>Your helpful docs</h2>
+            <button class="btn" id="newDocBtn">+ New doc</button>
+          </div>
+          <div class="doc-list" id="docList">
+            <div class="empty"><div class="loader" style="margin: 0 auto 12px;"></div>Loading docs…</div>
+          </div>
+        </section>
+
+        <!-- Analytics panel -->
+        <section class="panel" id="panelAnalytics">
+          <div class="section-head">
+            <h2>Analytics</h2>
+            <button class="btn ghost" id="refreshAnalyticsBtn">↻ Refresh</button>
+          </div>
+
+          <div class="stat-grid">
+            <div class="stat-card">
+              <div class="stat-label">Followers</div>
+              <div class="stat-value" id="statFollowers">—</div>
+              <div class="stat-sub" id="statFollowersSub"></div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Published docs</div>
+              <div class="stat-value" id="statDocs">—</div>
+              <div class="stat-sub" id="statDocsSub"></div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Total doc views</div>
+              <div class="stat-value" id="statViews">—</div>
+              <div class="stat-sub" id="statViewsSub"></div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Meal plans published</div>
+              <div class="stat-value" id="statMealPlans">—</div>
+              <div class="stat-sub" id="statMealPlansSub"></div>
+            </div>
+          </div>
+
+          <div class="analytics-grid">
+            <!-- Per-doc engagement -->
+            <div class="analytics-card">
+              <h3>Doc engagement <span class="muted" id="docsSubtitle"></span></h3>
+              <div id="docsChart" class="bar-chart"></div>
+            </div>
+
+            <!-- Meal plan import rate -->
+            <div class="analytics-card">
+              <h3>Meal plan imports <span class="muted" id="mealSubtitle"></span></h3>
+              <div id="mealChart" class="bar-chart"></div>
+            </div>
+
+            <!-- Retention -->
+            <div class="analytics-card span-2">
+              <h3>Retention snapshot</h3>
+              <div class="retention-row" id="retentionRow">
+                <div class="retention-cell">
+                  <div class="retention-label">Active followers</div>
+                  <div class="retention-ring">
+                    <svg viewBox="0 0 36 36" class="ring-svg">
+                      <path class="ring-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                      <path class="ring-fg" id="ringRetention" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                    </svg>
+                    <div class="ring-label" id="ringRetentionLabel">—</div>
+                  </div>
+                  <div class="retention-caption" id="retentionCaption">Followers who've opened any content</div>
+                </div>
+                <div class="retention-cell">
+                  <div class="retention-label">Content reach</div>
+                  <div class="retention-bars" id="reachBars"></div>
+                  <div class="retention-caption">Avg views per published doc × meal plan imports</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <!-- New/Edit doc modal -->
+  <div class="modal-backdrop" id="docModal">
+    <div class="modal">
+      <h3 id="docModalTitle">New helpful doc</h3>
+      <form id="docForm" class="form-grid">
+        <div class="field">
+          <label for="docTitle">Title</label>
+          <input type="text" id="docTitle" required maxlength="120" placeholder="e.g. How to establish a morning routine">
+        </div>
+        <div class="field">
+          <label for="docEmoji">Emoji</label>
+          <input type="text" id="docEmoji" maxlength="4" placeholder="📄" value="📄">
+        </div>
+        <div class="field">
+          <label for="docCategory">Category</label>
+          <input type="text" id="docCategory" maxlength="40" placeholder="e.g. Routines, Nutrition, Sleep">
+        </div>
+        <div class="field">
+          <label for="docReadTime">Estimated read time (minutes)</label>
+          <input type="number" id="docReadTime" min="1" max="120" placeholder="5">
+        </div>
+        <div class="field">
+          <label>PDF file</label>
+          <div class="file-input" id="fileWrap">
+            <input type="file" id="docPdf" accept="application/pdf,.pdf">
+            <label for="docPdf" id="fileLabel">Choose a PDF file…</label>
+          </div>
+        </div>
+        <div class="toggle">
+          <input type="checkbox" id="docPublished" checked>
+          <label for="docPublished">Publish immediately (visible to followers)</label>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn ghost" id="cancelDocBtn">Cancel</button>
+          <button type="submit" class="btn" id="saveDocBtn">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <!-- Firebase (v9 compat for a single-file vanilla page) -->
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+    import {
+      getAuth, onAuthStateChanged, signOut,
+      GoogleAuthProvider, OAuthProvider, signInWithPopup,
+    } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+    import {
+      getFirestore, collection, doc, query, where, onSnapshot, orderBy,
+      addDoc, updateDoc, deleteDoc, getDocs, serverTimestamp,
+    } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+    import {
+      getStorage, ref as storageRef, uploadBytes, getDownloadURL, deleteObject,
+    } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBucTVaWpYhDYScTpQ4JH9XdJgCBFmbHWk",
+      authDomain: "parenting-plus-7szrif.firebaseapp.com",
+      projectId: "parenting-plus-7szrif",
+      storageBucket: "parenting-plus-7szrif.appspot.com",
+      messagingSenderId: "67449654316",
+      appId: "1:67449654316:web:88be5e06e598d56dd55589",
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
+
+    // State
+    let currentUser = null;
+    let creatorDoc = null; // { id, data }
+    let editingDocId = null;
+    let docsUnsub = null;
+
+    // DOM
+    const $ = (id) => document.getElementById(id);
+    const show = (id) => {
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      $(id).classList.add('active');
+    };
+    const toast = (msg, danger = false) => {
+      const el = $('toast');
+      el.textContent = msg;
+      el.style.background = danger ? 'var(--danger)' : '#111827';
+      el.classList.add('show');
+      setTimeout(() => el.classList.remove('show'), 3000);
+    };
+
+    // Auth buttons
+    $('googleSignInBtn').addEventListener('click', async () => {
+      try { await signInWithPopup(auth, new GoogleAuthProvider()); }
+      catch (e) { toast('Google sign-in failed: ' + e.message, true); }
+    });
+    $('appleSignInBtn').addEventListener('click', async () => {
+      try {
+        const provider = new OAuthProvider('apple.com');
+        provider.addScope('email');
+        provider.addScope('name');
+        await signInWithPopup(auth, provider);
+      } catch (e) { toast('Apple sign-in failed: ' + e.message, true); }
+    });
+    const doSignOut = async () => {
+      if (docsUnsub) { docsUnsub(); docsUnsub = null; }
+      await signOut(auth);
+    };
+    $('signOutBtn').addEventListener('click', doSignOut);
+    $('gateSignOutBtn').addEventListener('click', doSignOut);
+
+    // Tabs
+    document.querySelectorAll('.tab').forEach(t => {
+      t.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+        document.querySelectorAll('.panel').forEach(x => x.classList.remove('active'));
+        t.classList.add('active');
+        $('panel' + t.dataset.tab.charAt(0).toUpperCase() + t.dataset.tab.slice(1)).classList.add('active');
+        if (t.dataset.tab === 'analytics') loadAnalytics();
+      });
+    });
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        currentUser = null;
+        creatorDoc = null;
+        $('userChip').style.display = 'none';
+        show('viewSignIn');
+        if (docsUnsub) { docsUnsub(); docsUnsub = null; }
+        return;
+      }
+      currentUser = user;
+      $('userChip').style.display = 'flex';
+      $('userPhoto').src = user.photoURL || 'https://www.gravatar.com/avatar/0?d=mp';
+      $('userName').textContent = user.displayName || user.email || 'Creator';
+
+      // Lookup creator profile
+      const q = query(collection(db, 'creators'), where('user_ref', '==', doc(db, 'users', user.uid)));
+      const snap = await getDocs(q);
+      if (snap.empty) {
+        show('viewGate');
+        return;
+      }
+      creatorDoc = { id: snap.docs[0].id, ref: snap.docs[0].ref, data: snap.docs[0].data() };
+      show('viewDashboard');
+      subscribeDocs();
+    });
+
+    // --- Docs list ---
+    function subscribeDocs() {
+      if (docsUnsub) docsUnsub();
+      const q = query(
+        collection(db, 'app_content'),
+        where('creator_ref', '==', creatorDoc.ref),
+      );
+      docsUnsub = onSnapshot(q, (snap) => {
+        const docs = snap.docs.map(d => ({ id: d.id, ref: d.ref, ...d.data() }));
+        // newest first (avoid compound index requirement)
+        docs.sort((a, b) => (b.created_at?.seconds || 0) - (a.created_at?.seconds || 0));
+        renderDocs(docs);
+      }, (err) => {
+        console.error(err);
+        toast('Failed to load docs: ' + err.message, true);
+      });
+    }
+
+    function renderDocs(docs) {
+      const list = $('docList');
+      if (!docs.length) {
+        list.innerHTML = `<div class="empty">
+          No docs yet. Tap <strong>+ New doc</strong> to upload your first PDF.
+        </div>`;
+        return;
+      }
+      list.innerHTML = docs.map(d => `
+        <div class="doc-card" data-id="${d.id}">
+          <div class="doc-emoji">${escapeHtml(d.emoji || '📄')}</div>
+          <div class="doc-main">
+            <div class="doc-title">${escapeHtml(d.title || 'Untitled')}</div>
+            <div class="doc-meta">
+              ${d.category ? escapeHtml(d.category) + ' · ' : ''}${d.read_time_minutes || 0} min read
+              ${d.view_count ? ' · ' + d.view_count + ' views' : ''}
+            </div>
+          </div>
+          <span class="chip ${d.is_published ? 'published' : 'draft'}">${d.is_published ? 'Published' : 'Draft'}</span>
+          <div class="doc-actions">
+            ${d.pdf_url ? `<a class="btn ghost" href="${d.pdf_url}" target="_blank">View</a>` : ''}
+            <button class="btn ghost" data-edit="${d.id}">Edit</button>
+            <button class="btn danger" data-delete="${d.id}">Delete</button>
+          </div>
+        </div>
+      `).join('');
+
+      list.querySelectorAll('[data-edit]').forEach(b => b.addEventListener('click', () => openDocModal(docs.find(x => x.id === b.dataset.edit))));
+      list.querySelectorAll('[data-delete]').forEach(b => b.addEventListener('click', () => confirmDelete(docs.find(x => x.id === b.dataset.delete))));
+    }
+
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+
+    // --- Modal ---
+    $('newDocBtn').addEventListener('click', () => openDocModal());
+    $('cancelDocBtn').addEventListener('click', closeDocModal);
+
+    $('docPdf').addEventListener('change', (e) => {
+      const f = e.target.files[0];
+      if (f) {
+        $('fileLabel').textContent = f.name;
+        $('fileWrap').classList.add('has-file');
+      } else {
+        $('fileLabel').textContent = 'Choose a PDF file…';
+        $('fileWrap').classList.remove('has-file');
+      }
+    });
+
+    function openDocModal(existing) {
+      editingDocId = existing?.id || null;
+      $('docModalTitle').textContent = existing ? 'Edit doc' : 'New helpful doc';
+      $('docTitle').value = existing?.title || '';
+      $('docEmoji').value = existing?.emoji || '📄';
+      $('docCategory').value = existing?.category || '';
+      $('docReadTime').value = existing?.read_time_minutes || '';
+      $('docPublished').checked = existing ? !!existing.is_published : true;
+      $('docPdf').value = '';
+      $('fileLabel').textContent = existing?.pdf_url ? 'Keep existing PDF (or choose a new one)' : 'Choose a PDF file…';
+      $('fileWrap').classList.toggle('has-file', !!existing?.pdf_url);
+      $('docModal').classList.add('open');
+    }
+    function closeDocModal() { $('docModal').classList.remove('open'); editingDocId = null; }
+
+    $('docForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const saveBtn = $('saveDocBtn');
+      saveBtn.disabled = true;
+      saveBtn.textContent = 'Saving…';
+      try {
+        const file = $('docPdf').files[0];
+        const payload = {
+          title: $('docTitle').value.trim(),
+          emoji: $('docEmoji').value.trim() || '📄',
+          category: $('docCategory').value.trim(),
+          read_time_minutes: parseInt($('docReadTime').value, 10) || 0,
+          is_published: $('docPublished').checked,
+          author: creatorDoc.data.name,
+          creator_ref: creatorDoc.ref,
+          content_type: 'pdf',
+        };
+
+        let docRefRes;
+        if (editingDocId) {
+          docRefRes = doc(db, 'app_content', editingDocId);
+        } else {
+          payload.created_at = serverTimestamp();
+          payload.view_count = 0;
+          docRefRes = await addDoc(collection(db, 'app_content'), payload);
+        }
+
+        if (file) {
+          const path = `helpful_docs/${creatorDoc.id}/${Date.now()}_${file.name}`;
+          const ref = storageRef(storage, path);
+          await uploadBytes(ref, file, { contentType: 'application/pdf' });
+          const url = await getDownloadURL(ref);
+          payload.pdf_url = url;
+          payload.pdf_storage_path = path;
+        }
+
+        if (editingDocId) {
+          await updateDoc(docRefRes, payload);
+        } else if (payload.pdf_url) {
+          await updateDoc(docRefRes, { pdf_url: payload.pdf_url, pdf_storage_path: payload.pdf_storage_path });
+        }
+
+        toast(editingDocId ? 'Doc updated' : 'Doc uploaded');
+        closeDocModal();
+      } catch (e) {
+        console.error(e);
+        toast('Save failed: ' + e.message, true);
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'Save';
+      }
+    });
+
+    async function confirmDelete(d) {
+      if (!confirm(`Delete "${d.title}"? This can't be undone.`)) return;
+      try {
+        if (d.pdf_storage_path) {
+          try { await deleteObject(storageRef(storage, d.pdf_storage_path)); } catch (_) {}
+        }
+        await deleteDoc(d.ref);
+        toast('Doc deleted');
+      } catch (e) {
+        toast('Delete failed: ' + e.message, true);
+      }
+    }
+
+    // --- Analytics ---
+    $('refreshAnalyticsBtn').addEventListener('click', loadAnalytics);
+
+    async function loadAnalytics() {
+      try {
+        const [followers, docsSnap, mealPlans] = await Promise.all([
+          getDocs(query(collection(db, 'users'), where('active_creator_code', '==', creatorDoc.data.code))),
+          getDocs(query(collection(db, 'app_content'), where('creator_ref', '==', creatorDoc.ref))),
+          getDocs(query(collection(db, 'creator_content'),
+            where('creator_code', '==', creatorDoc.data.code),
+            where('type', '==', 'meal_plan'))),
+        ]);
+
+        const docs = docsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+        const plans = mealPlans.docs.map(d => ({ id: d.id, ...d.data() }));
+
+        const publishedDocs = docs.filter(d => d.is_published === true);
+        const totalViews = docs.reduce((s, d) => s + (d.view_count || 0), 0);
+        const totalImports = plans.reduce((s, p) => s + (p.download_count || 0), 0);
+
+        // Stat cards
+        $('statFollowers').textContent = followers.size;
+        $('statDocs').textContent = publishedDocs.length;
+        $('statViews').textContent = totalViews;
+        $('statMealPlans').textContent = plans.length;
+
+        // Sub-labels
+        const draftDocs = docs.length - publishedDocs.length;
+        $('statDocsSub').innerHTML = draftDocs > 0
+          ? `<span class="muted">${draftDocs} draft${draftDocs === 1 ? '' : 's'}</span>` : '';
+        $('statViewsSub').innerHTML = publishedDocs.length > 0
+          ? `<span>${(totalViews / publishedDocs.length).toFixed(1)} per doc avg</span>` : '';
+        const activePlans = plans.filter(p => p.is_active).length;
+        $('statMealPlansSub').innerHTML = activePlans > 0
+          ? `<span>${activePlans} active</span>` : '';
+        $('statFollowersSub').innerHTML = '';
+
+        // Per-doc chart
+        renderBarChart('docsChart', publishedDocs
+          .sort((a, b) => (b.view_count || 0) - (a.view_count || 0))
+          .slice(0, 8)
+          .map(d => ({
+            name: `${d.emoji || '📄'} ${d.title || 'Untitled'}`,
+            value: d.view_count || 0,
+          })),
+          'views',
+          'No published docs yet. Upload one to start tracking engagement.'
+        );
+        $('docsSubtitle').textContent = publishedDocs.length > 8
+          ? `top 8 of ${publishedDocs.length}` : '';
+
+        // Per-meal-plan chart
+        renderBarChart('mealChart', plans
+          .sort((a, b) => (b.download_count || 0) - (a.download_count || 0))
+          .slice(0, 8)
+          .map(p => ({
+            name: p.title || 'Untitled plan',
+            value: p.download_count || 0,
+            accent: true,
+          })),
+          'imports',
+          'No meal plans published yet.'
+        );
+        $('mealSubtitle').textContent = plans.length > 8 ? `top 8 of ${plans.length}` : '';
+
+        // Retention — followers who have any view or import
+        // Proxy: (total views + total imports) / followers — how many content
+        // interactions per follower on average, capped at 100%.
+        const interactions = totalViews + totalImports;
+        const retentionPct = followers.size === 0
+          ? 0
+          : Math.min(100, Math.round((interactions / followers.size) * 100));
+        $('ringRetention').setAttribute('stroke-dasharray', `${retentionPct}, 100`);
+        $('ringRetentionLabel').textContent = `${retentionPct}%`;
+        $('retentionCaption').textContent = followers.size === 0
+          ? 'No followers yet'
+          : `${interactions} interactions across ${followers.size} follower${followers.size === 1 ? '' : 's'}`;
+
+        // Reach breakdown
+        const avgViewsPerDoc = publishedDocs.length > 0
+          ? Math.round(totalViews / publishedDocs.length) : 0;
+        const mealImportRate = plans.length > 0
+          ? Math.round(totalImports / plans.length) : 0;
+        const maxReach = Math.max(avgViewsPerDoc, mealImportRate, 1);
+        $('reachBars').innerHTML = `
+          <div class="reach-row">
+            <span class="reach-label">Avg views per doc</span>
+            <span class="reach-val">${avgViewsPerDoc}</span>
+            <div class="reach-bar"><div class="reach-fill" style="width:${(avgViewsPerDoc / maxReach) * 100}%"></div></div>
+          </div>
+          <div class="reach-row">
+            <span class="reach-label">Avg imports per meal plan</span>
+            <span class="reach-val">${mealImportRate}</span>
+            <div class="reach-bar"><div class="reach-fill" style="width:${(mealImportRate / maxReach) * 100}%; background: var(--accent);"></div></div>
+          </div>`;
+      } catch (e) {
+        console.error(e);
+        toast('Analytics load failed: ' + e.message, true);
+      }
+    }
+
+    function renderBarChart(containerId, items, unit, emptyText) {
+      const el = $(containerId);
+      if (items.length === 0) {
+        el.innerHTML = `<div class="bar-empty">${emptyText}</div>`;
+        return;
+      }
+      const max = Math.max(1, ...items.map(i => i.value));
+      el.innerHTML = items.map(i => `
+        <div class="bar-row ${i.accent ? 'accent' : ''}">
+          <div class="bar-head">
+            <span class="bar-name">${escapeHtml(i.name)}</span>
+            <span class="bar-val">${i.value} ${unit}</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill" style="width: ${(i.value / max) * 100}%"></div></div>
+        </div>`).join('');
+      // Animate width after insert so the transition plays.
+      requestAnimationFrame(() => {
+        el.querySelectorAll('.bar-fill').forEach(f => {
+          const target = f.style.width;
+          f.style.width = '0%';
+          requestAnimationFrame(() => { f.style.width = target; });
+        });
+      });
+    }
+  </script>
+</body>
+</html>

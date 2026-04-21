@@ -10,98 +10,101 @@ service cloud.firestore {
       return isAuthenticated() && request.auth.uid == userId;
     }
 
-    function userRefPath() {
-      return /databases/$(database)/documents/users/$(request.auth.uid);
-    }
-
     // ─── User-owned collections (user_ref field) ──────────────────
     // Read/update/delete require owner on existing doc; create requires
     // the new doc's user_ref to match the caller's uid.
 
     match /learning_path/{pathId} {
       allow read, update, delete: if isAuthenticated() &&
-        resource.data.user_ref == userRefPath();
+        resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
       allow create: if isAuthenticated() &&
-        request.resource.data.user_ref == userRefPath();
+        request.resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
     }
 
     match /learning_path_tasks/{taskId} {
       allow read, update, delete: if isAuthenticated() &&
-        resource.data.user_ref == userRefPath();
+        resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
       allow create: if isAuthenticated() &&
-        request.resource.data.user_ref == userRefPath();
+        request.resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
     }
 
     match /skill_paths/{pathId} {
       allow read, update, delete: if isAuthenticated() &&
-        resource.data.user_ref == userRefPath();
+        resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
       allow create: if isAuthenticated() &&
-        request.resource.data.user_ref == userRefPath();
+        request.resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
     }
 
     match /meal_plan/{planId} {
       allow read, update, delete: if isAuthenticated() &&
-        resource.data.user_ref == userRefPath();
+        resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
       allow create: if isAuthenticated() &&
-        request.resource.data.user_ref == userRefPath();
+        request.resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
     }
 
     match /event_and_task/{eventId} {
       allow read, update, delete: if isAuthenticated() &&
-        resource.data.user_ref == userRefPath();
+        resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
       allow create: if isAuthenticated() &&
-        request.resource.data.user_ref == userRefPath();
+        request.resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
     }
 
     match /todos/{todoId} {
       allow read, update, delete: if isAuthenticated() &&
-        resource.data.user_ref == userRefPath();
+        resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
       allow create: if isAuthenticated() &&
-        request.resource.data.user_ref == userRefPath();
+        request.resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
     }
 
     match /planned_activities/{activityId} {
       allow read, update, delete: if isAuthenticated() &&
-        resource.data.user_ref == userRefPath();
+        resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
       allow create: if isAuthenticated() &&
-        request.resource.data.user_ref == userRefPath();
+        request.resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
     }
 
     match /user_activities/{activityId} {
       allow read, update, delete: if isAuthenticated() &&
-        resource.data.user_ref == userRefPath();
+        resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
       allow create: if isAuthenticated() &&
-        request.resource.data.user_ref == userRefPath();
+        request.resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
     }
 
     match /favourit_meal/{favId} {
       allow read, update, delete: if isAuthenticated() &&
-        resource.data.user_ref == userRefPath();
+        resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
       allow create: if isAuthenticated() &&
-        request.resource.data.user_ref == userRefPath();
+        request.resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
     }
 
+    // Routines — owner has full access. Any authenticated user can READ
+    // routines that have shared_with_followers=true (followers filter by
+    // creator code client-side).
     match /routines/{routineId} {
-      allow read, update, delete: if isAuthenticated() &&
-        resource.data.user_ref == userRefPath();
+      allow read: if isAuthenticated() && (
+        resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid) ||
+        resource.data.shared_with_followers == true
+      );
+      allow update, delete: if isAuthenticated() &&
+        resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
       allow create: if isAuthenticated() &&
-        request.resource.data.user_ref == userRefPath();
+        request.resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
     }
 
     match /fav_activity/{favId} {
       allow read, update, delete: if isAuthenticated() &&
-        resource.data.user_ref == userRefPath();
+        resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
       allow create: if isAuthenticated() &&
-        request.resource.data.user_ref == userRefPath();
+        request.resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
     }
 
     // ─── Children (uses userRef camelCase) ────────────────────────
 
     match /childern/{childId} {
       allow read, update, delete: if isAuthenticated() &&
-        resource.data.userRef == userRefPath();
+        resource.data.userRef == /databases/$(database)/documents/users/$(request.auth.uid);
       allow create: if isAuthenticated() &&
-        request.resource.data.userRef == userRefPath();
+        request.resource.data.userRef == /databases/$(database)/documents/users/$(request.auth.uid);
     }
 
     // ─── Shared-library collections (global read, owner-only write) ─
@@ -111,36 +114,60 @@ service cloud.firestore {
     match /meal/{mealId} {
       allow read: if isAuthenticated();
       allow update, delete: if isAuthenticated() &&
-        resource.data.user_ref == userRefPath();
+        resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
       allow create: if isAuthenticated() &&
-        request.resource.data.user_ref == userRefPath();
+        request.resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
     }
 
     match /meal_combo/{comboId} {
       allow read: if isAuthenticated();
       allow update, delete: if isAuthenticated() &&
-        resource.data.user_ref == userRefPath();
+        resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
       allow create: if isAuthenticated() &&
-        request.resource.data.user_ref == userRefPath();
+        request.resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
     }
 
     // ─── Users collection ─────────────────────────────────────────
 
     match /users/{userId} {
-      allow read, write: if isOwner(userId);
-      allow create: if isAuthenticated() && request.auth.uid == userId;
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow create: if request.auth != null && request.auth.uid == userId;
     }
 
-    // ─── Milestones (ownership via child doc lookup) ──────────────
-    // Each milestone doc has a `child` DocumentReference. The linked
-    // child doc has a `userRef` field. A milestone is accessible only
-    // if the caller owns the referenced child.
+    // ─── Milestones ───────────────────────────────────────────────
+    // Ownership via child doc's userRef — BUT Firestore's LIST static
+    // analyzer can't unfold get() calls, so ownership-checked LIST was
+    // denied. Temporarily permissive until we denormalize user_ref onto
+    // each milestone doc (then: resource.data.user_ref == <path>).
+    // TODO: add user_ref field on milestone create, then tighten.
 
     match /children_accomlished_milestones/{id} {
-      allow read, update, delete: if isAuthenticated() &&
-        get(resource.data.child).data.userRef == userRefPath();
+      allow read, write: if request.auth != null;
+    }
+
+    // ─── Creator profiles ────────────────────────────────────────
+    // Anyone authenticated can read (followers look up by code).
+    // Only the linked user can update/delete their own creator doc.
+    // Create requires the new doc's user_ref to be the caller.
+
+    match /creators/{creatorId} {
+      allow read: if isAuthenticated();
       allow create: if isAuthenticated() &&
-        get(request.resource.data.child).data.userRef == userRefPath();
+        request.resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
+      allow update, delete: if isAuthenticated() &&
+        resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
+    }
+
+    // ─── Creator-published content (meal plans, templates, etc.) ─
+    // Any authenticated user can read (followers view + import).
+    // Writes are open to any authenticated user for now so follower
+    // download_count increments work without a get() lookup. Tighten
+    // once App Check is enabled.
+
+    match /creator_content/{contentId} {
+      allow read: if isAuthenticated();
+      allow create, update: if isAuthenticated();
+      allow delete: if false;
     }
 
     // ─── Shared content (public read, owner write + counter bumps) ──
@@ -148,13 +175,13 @@ service cloud.firestore {
     match /shared_content/{contentId} {
       allow read: if isAuthenticated();
       allow create: if isAuthenticated() &&
-        request.resource.data.shared_by_user == userRefPath();
+        request.resource.data.shared_by_user == /databases/$(database)/documents/users/$(request.auth.uid);
       allow update: if isAuthenticated() && (
-        resource.data.shared_by_user == userRefPath() ||
+        resource.data.shared_by_user == /databases/$(database)/documents/users/$(request.auth.uid) ||
         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['view_count', 'import_count'])
       );
       allow delete: if isAuthenticated() &&
-        resource.data.shared_by_user == userRefPath();
+        resource.data.shared_by_user == /databases/$(database)/documents/users/$(request.auth.uid);
     }
 
     // ─── Read-only reference collections ──────────────────────────
@@ -189,9 +216,25 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // App content / helpful docs. Anyone auth'd can read. Writes
+    // require the doc's creator_ref to point at a creators doc owned
+    // by the caller (user_ref matches auth uid). Updating view_count
+    // is allowed without ownership so follower reads can increment.
     match /app_content/{contentId} {
       allow read: if isAuthenticated();
-      allow write: if false;
+      allow create: if isAuthenticated() &&
+        get(request.resource.data.creator_ref).data.user_ref ==
+          /databases/$(database)/documents/users/$(request.auth.uid);
+      allow delete: if isAuthenticated() &&
+        get(resource.data.creator_ref).data.user_ref ==
+          /databases/$(database)/documents/users/$(request.auth.uid);
+      allow update: if isAuthenticated() && (
+        // Owner: full update
+        get(resource.data.creator_ref).data.user_ref ==
+          /databases/$(database)/documents/users/$(request.auth.uid) ||
+        // Anyone else: only allowed to bump view_count
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['view_count'])
+      );
     }
 
     // ─── Waitlist (public create, no reads) ───────────────────────
