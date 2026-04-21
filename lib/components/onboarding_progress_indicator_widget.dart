@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '/app_state.dart';
 /// Animated progress indicator for onboarding flow
 ///
 /// Shows current step with animated dots and progress bar
@@ -108,10 +109,10 @@ class _OnboardingProgressIndicatorState extends State<OnboardingProgressIndicato
                       borderRadius: BorderRadius.circular(4.0),
                       boxShadow: isCurrent
                           ? [
-                              BoxShadow(
-                                color: const Color(0x6652A097), // 40% opacity
+                              const BoxShadow(
+                                color: Color(0x6652A097), // 40% opacity
                                 blurRadius: 8.0,
-                                offset: const Offset(0, 2),
+                                offset: Offset(0, 2),
                               ),
                             ]
                           : null,
@@ -174,8 +175,8 @@ class _OnboardingProgressIndicatorState extends State<OnboardingProgressIndicato
               scale: _scaleAnimation.value,
               child: Text(
                 'Step ${widget.currentStep} of ${widget.totalSteps}',
-                style: const TextStyle(
-                  fontFamily: 'Andika New Basic',
+                style: TextStyle(
+                  fontFamily: FFAppState().currentFontFamily,
                   fontSize: 12.0,
                   color: Color(0xFF57636C),
                   fontWeight: FontWeight.w500,

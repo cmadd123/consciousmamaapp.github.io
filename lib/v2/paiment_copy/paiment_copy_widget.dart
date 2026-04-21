@@ -7,7 +7,6 @@ import '/index.dart';
 import '/custom_code/actions/index.dart';
 import '/v2/auth/demo_data_notifier.dart';
 import 'dart:io';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/scheduler.dart';
@@ -254,7 +253,7 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
           .doc(currentUserUid)
           .get();
       if (!userSnapshot.exists) return;
-      final userData = userSnapshot.data() as Map<String, dynamic>?;
+      final userData = userSnapshot.data();
       if (userData == null) return;
 
       final freeTrialStart = userData['free_trial_start'] as Timestamp?;
@@ -334,7 +333,7 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
                             'You\'re In!',
                             textAlign: TextAlign.center,
                             style: FlutterFlowTheme.of(context).headlineLarge.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               fontSize: 36.0,
                               fontWeight: FontWeight.bold,
                             ),
@@ -360,7 +359,7 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
                             'Your family\'s journey starts now',
                             textAlign: TextAlign.center,
                             style: FlutterFlowTheme.of(context).bodyLarge.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               fontSize: 18.0,
                               color: FlutterFlowTheme.of(context).secondaryText,
                             ),
@@ -391,7 +390,7 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
                               Text(
                                 'Your 7-day trial starts today',
                                 style: FlutterFlowTheme.of(context).bodyLarge.override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   fontWeight: FontWeight.bold,
                                 ),
                                 textAlign: TextAlign.center,
@@ -400,7 +399,7 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
                               Text(
                                 'Then ${_model.selectedPayment == 'yearly' ? '\$69.99/year' : '\$6.99/month'}',
                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   color: FlutterFlowTheme.of(context).secondaryText,
                                 ),
                                 textAlign: TextAlign.center,
@@ -448,7 +447,7 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
                             height: 56,
                             color: FlutterFlowTheme.of(context).primary,
                             textStyle: FlutterFlowTheme.of(context).titleLarge.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
                               fontSize: 18,
@@ -516,7 +515,7 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
                             Text(
                               'Back',
                               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     color: FlutterFlowTheme.of(context).secondaryText,
                                     fontSize: 14.0,
                                     letterSpacing: 0.0,
@@ -531,7 +530,7 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
                         child: Text(
                           'Maybe later',
                           style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                fontFamily: 'Andika New Basic',
+                                fontFamily: FFAppState().currentFontFamily,
                                 color: FlutterFlowTheme.of(context).secondaryText,
                                 fontSize: 14.0,
                                 letterSpacing: 0.0,
@@ -559,14 +558,14 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
                               Container(
                                 width: 64.0,
                                 height: 64.0,
-                                decoration: BoxDecoration(
+                                decoration: const BoxDecoration(
                                   color: Colors.white,
                                   shape: BoxShape.circle,
                                   boxShadow: [
                                     BoxShadow(
                                       blurRadius: 8.0,
-                                      color: const Color(0x1A000000),
-                                      offset: const Offset(0, 2),
+                                      color: Color(0x1A000000),
+                                      offset: Offset(0, 2),
                                     ),
                                   ],
                                 ),
@@ -584,7 +583,7 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
                                 'Unlock MomRise',
                                 textAlign: TextAlign.center,
                                 style: FlutterFlowTheme.of(context).headlineLarge.override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       fontSize: 30.0,
                                       fontWeight: FontWeight.bold,
                                       letterSpacing: 0.0,
@@ -595,7 +594,7 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
                                 'Everything you just saw, always in your pocket',
                                 textAlign: TextAlign.center,
                                 style: FlutterFlowTheme.of(context).bodyLarge.override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       fontSize: 16.0,
                                       letterSpacing: 0.0,
                                       color: FlutterFlowTheme.of(context).secondaryText,
@@ -656,7 +655,7 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
                               Text(
                                 'What you get',
                                 style: FlutterFlowTheme.of(context).bodyLarge.override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       fontSize: 18.0,
                                       fontWeight: FontWeight.w600,
                                       letterSpacing: 0.0,
@@ -731,7 +730,7 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
                 'Subscribe at momrise.app',
                 textAlign: TextAlign.center,
                 style: FlutterFlowTheme.of(context).bodyLarge.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   fontSize: 16.0,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 0.0,
@@ -742,7 +741,7 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
                 'Visit momrise.app/subscribe in your browser to start your 7-day free trial. Then come back and tap the button below.',
                 textAlign: TextAlign.center,
                 style: FlutterFlowTheme.of(context).bodySmall.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   color: FlutterFlowTheme.of(context).secondaryText,
                   fontSize: 13.0,
                   letterSpacing: 0.0,
@@ -779,7 +778,7 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
             height: 56.0,
             color: FlutterFlowTheme.of(context).primary,
             textStyle: FlutterFlowTheme.of(context).titleMedium.override(
-              fontFamily: 'Andika New Basic',
+              fontFamily: FFAppState().currentFontFamily,
               color: Colors.white,
               fontSize: 16.0,
               fontWeight: FontWeight.w600,
@@ -824,7 +823,7 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
           child: Text(
             'Restore purchases',
             style: FlutterFlowTheme.of(context).bodySmall.override(
-              fontFamily: 'Andika New Basic',
+              fontFamily: FFAppState().currentFontFamily,
               color: FlutterFlowTheme.of(context).secondaryText,
               fontSize: 13.0,
               letterSpacing: 0.0,
@@ -847,7 +846,7 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
               child: Text(
                 'Terms of Service',
                 style: FlutterFlowTheme.of(context).bodySmall.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   color: FlutterFlowTheme.of(context).secondaryText,
                   fontSize: 11.0,
                   letterSpacing: 0.0,
@@ -875,7 +874,7 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
               child: Text(
                 'Privacy Policy',
                 style: FlutterFlowTheme.of(context).bodySmall.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   color: FlutterFlowTheme.of(context).secondaryText,
                   fontSize: 11.0,
                   letterSpacing: 0.0,
@@ -921,7 +920,7 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
               padding: const EdgeInsets.symmetric(horizontal: 24.0),
               color: FlutterFlowTheme.of(context).primary,
               textStyle: FlutterFlowTheme.of(context).titleMedium.override(
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
                 color: Colors.white,
                 fontSize: 18.0,
                 fontWeight: FontWeight.w600,
@@ -939,7 +938,7 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
           '7-day free trial, cancel anytime',
           textAlign: TextAlign.center,
           style: FlutterFlowTheme.of(context).bodySmall.override(
-            fontFamily: 'Andika New Basic',
+            fontFamily: FFAppState().currentFontFamily,
             color: FlutterFlowTheme.of(context).secondaryText,
             fontSize: 12.0,
             letterSpacing: 0.0,
@@ -982,7 +981,7 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
             child: Text(
               'Restore purchases',
               style: FlutterFlowTheme.of(context).bodySmall.override(
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
                 color: FlutterFlowTheme.of(context).secondaryText,
                 fontSize: 12.0,
                 letterSpacing: 0.0,
@@ -1006,7 +1005,7 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
               child: Text(
                 'Terms of Service',
                 style: FlutterFlowTheme.of(context).bodySmall.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   color: FlutterFlowTheme.of(context).secondaryText,
                   fontSize: 11.0,
                   letterSpacing: 0.0,
@@ -1034,7 +1033,7 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
               child: Text(
                 'Privacy Policy',
                 style: FlutterFlowTheme.of(context).bodySmall.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   color: FlutterFlowTheme.of(context).secondaryText,
                   fontSize: 11.0,
                   letterSpacing: 0.0,
@@ -1090,7 +1089,7 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
                 Text(
                   price,
                   style: FlutterFlowTheme.of(context).headlineMedium.override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         fontSize: 24.0,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 0.0,
@@ -1104,7 +1103,7 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
                 Text(
                   period,
                   style: FlutterFlowTheme.of(context).bodyMedium.override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         fontSize: 14.0,
                         letterSpacing: 0.0,
                         color: FlutterFlowTheme.of(context).secondaryText,
@@ -1139,7 +1138,7 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
                       child: Text(
                         badge,
                         style: FlutterFlowTheme.of(context).bodySmall.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               color: Colors.white,
                               fontSize: 11.0,
                               fontWeight: FontWeight.w600,
@@ -1188,7 +1187,7 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
                 Text(
                   title,
                   style: FlutterFlowTheme.of(context).bodyMedium.override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         fontSize: 15.0,
                         fontWeight: FontWeight.w600,
                         letterSpacing: 0.0,
@@ -1198,7 +1197,7 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
                 Text(
                   subtitle,
                   style: FlutterFlowTheme.of(context).bodySmall.override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         fontSize: 13.0,
                         letterSpacing: 0.0,
                         color: FlutterFlowTheme.of(context).secondaryText,

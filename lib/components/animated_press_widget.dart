@@ -388,7 +388,7 @@ class _BouncingDotsState extends State<BouncingDots>
                 : Curves.easeIn.transform((1 - value) * 2);
 
             return Container(
-              margin: EdgeInsets.symmetric(horizontal: 2),
+              margin: const EdgeInsets.symmetric(horizontal: 2),
               child: Transform.translate(
                 offset: Offset(0, -bounce * widget.size),
                 child: Container(

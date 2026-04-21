@@ -1,11 +1,7 @@
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import '/flutter_flow/flutter_flow_widgets.dart';
-import 'dart:ui';
 import '/index.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'week_plan_model.dart';
 export 'week_plan_model.dart';
 
@@ -46,14 +42,14 @@ class _WeekPlanWidgetState extends State<WeekPlanWidget> {
       },
       child: Scaffold(
         key: scaffoldKey,
-        backgroundColor: Color(0xFFEDFFFD),
+        backgroundColor: const Color(0xFFEDFFFD),
         body: SafeArea(
           top: true,
           child: Column(
             mainAxisSize: MainAxisSize.max,
             children: [
               Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(12.0, 0.0, 12.0, 0.0),
+                padding: const EdgeInsetsDirectional.fromSTEB(12.0, 0.0, 12.0, 0.0),
                 child: Material(
                   color: Colors.transparent,
                   elevation: 1.0,
@@ -73,7 +69,7 @@ class _WeekPlanWidgetState extends State<WeekPlanWidget> {
                       mainAxisSize: MainAxisSize.max,
                       children: [
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               24.0, 26.0, 24.0, 0.0),
                           child: Text(
                             'How would you like to create your meal plan?',
@@ -81,14 +77,14 @@ class _WeekPlanWidgetState extends State<WeekPlanWidget> {
                             style: FlutterFlowTheme.of(context)
                                 .bodyMedium
                                 .override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   fontSize: 24.0,
                                   letterSpacing: 0.0,
                                 ),
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               12.0, 40.0, 12.0, 40.0),
                           child: InkWell(
                             splashColor: Colors.transparent,
@@ -114,7 +110,7 @@ class _WeekPlanWidgetState extends State<WeekPlanWidget> {
                                 children: [
                                   Container(
                                     height: 86.0,
-                                    decoration: BoxDecoration(),
+                                    decoration: const BoxDecoration(),
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(14.0),
                                       child: Image.asset(
@@ -126,14 +122,14 @@ class _WeekPlanWidgetState extends State<WeekPlanWidget> {
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(
                                         0.0, 31.0, 0.0, 0.0),
                                     child: Text(
                                       'Generate from cookbook',
                                       style: FlutterFlowTheme.of(context)
                                           .bodyMedium
                                           .override(
-                                            fontFamily: 'Andika New Basic',
+                                            fontFamily: FFAppState().currentFontFamily,
                                             fontSize: 24.0,
                                             letterSpacing: 0.0,
                                           ),
@@ -145,7 +141,7 @@ class _WeekPlanWidgetState extends State<WeekPlanWidget> {
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               12.0, 0.0, 12.0, 60.0),
                           child: InkWell(
                             splashColor: Colors.transparent,
@@ -170,7 +166,7 @@ class _WeekPlanWidgetState extends State<WeekPlanWidget> {
                                 children: [
                                   Container(
                                     height: 86.0,
-                                    decoration: BoxDecoration(),
+                                    decoration: const BoxDecoration(),
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(14.0),
                                       child: Image.asset(
@@ -182,14 +178,14 @@ class _WeekPlanWidgetState extends State<WeekPlanWidget> {
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(
                                         0.0, 31.0, 0.0, 0.0),
                                     child: Text(
                                       'Hand-craft myself',
                                       style: FlutterFlowTheme.of(context)
                                           .bodyMedium
                                           .override(
-                                            fontFamily: 'Andika New Basic',
+                                            fontFamily: FFAppState().currentFontFamily,
                                             fontSize: 24.0,
                                             letterSpacing: 0.0,
                                           ),

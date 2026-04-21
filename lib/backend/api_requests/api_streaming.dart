@@ -54,7 +54,7 @@ class ResponseStreamMessage {
       } else if (line.startsWith('event:')) {
         event = line.substring(6).trim();
       } else if (line.startsWith('data:')) {
-        data += line.substring(5).trim() + '\n';
+        data += '${line.substring(5).trim()}\n';
       } else if (line.startsWith('retry:')) {
         retry = int.tryParse(line.substring(6).trim());
       }

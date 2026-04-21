@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '/app_state.dart';
 import 'dart:convert';
 
 /// Debug overlay widget that shows diagnostic information in the app
@@ -64,8 +65,8 @@ class _DebugOverlayWidgetState extends State<DebugOverlayWidget> {
                       Expanded(
                         child: Text(
                           widget.title,
-                          style: const TextStyle(
-                            fontFamily: 'Andika New Basic',
+                          style: TextStyle(
+                            fontFamily: FFAppState().currentFontFamily,
                             color: Colors.white,
                             fontSize: 14.0,
                             fontWeight: FontWeight.w600,
@@ -149,8 +150,8 @@ class _DebugOverlayWidgetState extends State<DebugOverlayWidget> {
         children: [
           Text(
             label,
-            style: const TextStyle(
-              fontFamily: 'Andika New Basic',
+            style: TextStyle(
+              fontFamily: FFAppState().currentFontFamily,
               color: Colors.white70,
               fontSize: 12.0,
               fontWeight: FontWeight.w600,

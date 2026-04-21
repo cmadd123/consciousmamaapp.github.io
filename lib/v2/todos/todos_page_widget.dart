@@ -169,7 +169,7 @@ class _TodosPageWidgetState extends State<TodosPageWidget> with TickerProviderSt
           Text(
             'To-Dos',
             style: FlutterFlowTheme.of(context).headlineMedium.override(
-              fontFamily: 'Andika New Basic',
+              fontFamily: FFAppState().currentFontFamily,
               color: const Color(0xFF5D4E60),
               fontSize: 24.0,
               fontWeight: FontWeight.w600,
@@ -209,7 +209,7 @@ class _TodosPageWidgetState extends State<TodosPageWidget> with TickerProviderSt
                       Text(
                         'Clear done',
                         style: FlutterFlowTheme.of(context).bodySmall.override(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           color: const Color(0xFF9B8A9E),
                           fontSize: 12.0,
                         ),
@@ -314,7 +314,7 @@ class _TodosPageWidgetState extends State<TodosPageWidget> with TickerProviderSt
                         child: Text(
                           'Swipe left to delete \u2022 Tap to assign',
                           style: FlutterFlowTheme.of(context).bodySmall.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: const Color(0xFFBBBBBB),
                             fontSize: 11.0,
                             fontStyle: FontStyle.italic,
@@ -337,16 +337,16 @@ class _TodosPageWidgetState extends State<TodosPageWidget> with TickerProviderSt
                       // Completed header
                       Row(
                         children: [
-                          Icon(
+                          const Icon(
                             Icons.check_circle_rounded,
-                            color: const Color(0xFF9B8A9E),
+                            color: Color(0xFF9B8A9E),
                             size: 18.0,
                           ),
                           const SizedBox(width: 8.0),
                           Text(
                             'Completed (${completedTodos.length})',
                             style: FlutterFlowTheme.of(context).bodySmall.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               color: const Color(0xFF9B8A9E),
                               fontSize: 13.0,
                               fontWeight: FontWeight.w500,
@@ -363,10 +363,10 @@ class _TodosPageWidgetState extends State<TodosPageWidget> with TickerProviderSt
                       Center(
                         child: Column(
                           children: [
-                            Icon(
+                            const Icon(
                               Icons.checklist_rounded,
                               size: 48.0,
-                              color: const Color(0xFFDADADA),
+                              color: Color(0xFFDADADA),
                             ),
                             const SizedBox(height: 20.0),
                             FFButtonWidget(
@@ -381,7 +381,7 @@ class _TodosPageWidgetState extends State<TodosPageWidget> with TickerProviderSt
                                 padding: const EdgeInsets.symmetric(horizontal: 24),
                                 color: FlutterFlowTheme.of(context).primary,
                                 textStyle: FlutterFlowTheme.of(context).titleSmall.override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   color: Colors.white,
                                   fontSize: 15,
                                   fontWeight: FontWeight.w600,
@@ -395,7 +395,7 @@ class _TodosPageWidgetState extends State<TodosPageWidget> with TickerProviderSt
                               'Keep track of things you need to get done.\nAssign to-dos to family members too.',
                               textAlign: TextAlign.center,
                               style: FlutterFlowTheme.of(context).bodySmall.override(
-                                fontFamily: 'Andika New Basic',
+                                fontFamily: FFAppState().currentFontFamily,
                                 color: const Color(0xFFBBBBBB),
                                 fontSize: 13.0,
                                 lineHeight: 1.5,
@@ -445,14 +445,14 @@ class _TodosPageWidgetState extends State<TodosPageWidget> with TickerProviderSt
                 textInputAction: TextInputAction.done,
                 onSubmitted: (_) => _submitTodo(),
                 style: FlutterFlowTheme.of(context).bodyMedium.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   color: const Color(0xFF5D4E60),
                   fontSize: 15.0,
                 ),
                 decoration: InputDecoration(
                   hintText: 'Add a to-do...',
                   hintStyle: FlutterFlowTheme.of(context).bodyMedium.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     color: const Color(0xFFBBBBBB),
                     fontSize: 15.0,
                   ),
@@ -548,7 +548,7 @@ class _TodosPageWidgetState extends State<TodosPageWidget> with TickerProviderSt
                       Text(
                         'Mom',
                         style: FlutterFlowTheme.of(context).bodySmall.override(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           color: _assignToMom ? const Color(0xFFEC407A) : const Color(0xFF9B8A9E),
                           fontSize: 12.0,
                           fontWeight: _assignToMom ? FontWeight.w600 : FontWeight.w500,
@@ -584,14 +584,14 @@ class _TodosPageWidgetState extends State<TodosPageWidget> with TickerProviderSt
                           shape: BoxShape.circle,
                         ),
                         child: Center(
-                          child: Text(_parentInfo.partnerInitial, style: TextStyle(color: Colors.white, fontSize: 10.0, fontWeight: FontWeight.bold)),
+                          child: Text(_parentInfo.partnerInitial, style: const TextStyle(color: Colors.white, fontSize: 10.0, fontWeight: FontWeight.bold)),
                         ),
                       ),
                       const SizedBox(width: 6.0),
                       Text(
                         _parentInfo.partnerName,
                         style: FlutterFlowTheme.of(context).bodySmall.override(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           color: _assignToDad ? Color(_parentInfo.partnerColor.value) : const Color(0xFF9B8A9E),
                           fontSize: 12.0,
                           fontWeight: _assignToDad ? FontWeight.w600 : FontWeight.w500,
@@ -653,7 +653,7 @@ class _TodosPageWidgetState extends State<TodosPageWidget> with TickerProviderSt
                           Text(
                             child.name.length > 6 ? '${child.name.substring(0, 6)}...' : child.name,
                             style: FlutterFlowTheme.of(context).bodySmall.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               color: isSelected ? childColor : const Color(0xFF9B8A9E),
                               fontSize: 11.0,
                               fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
@@ -792,7 +792,7 @@ class _TodosPageWidgetState extends State<TodosPageWidget> with TickerProviderSt
                   child: Text(
                     todo.title,
                     style: FlutterFlowTheme.of(context).bodyMedium.override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       color: isCompleted ? const Color(0xFF9B8A9E) : const Color(0xFF5D4E60),
                       fontSize: 15.0,
                       fontWeight: FontWeight.w500,
@@ -1034,7 +1034,7 @@ class _AssignmentBottomSheetState extends State<_AssignmentBottomSheet> {
               Text(
                 'Assign To',
                 style: FlutterFlowTheme.of(context).headlineSmall.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   color: const Color(0xFF5D4E60),
                   fontSize: 20.0,
                   fontWeight: FontWeight.w600,
@@ -1044,7 +1044,7 @@ class _AssignmentBottomSheetState extends State<_AssignmentBottomSheet> {
               Text(
                 widget.todo.title,
                 style: FlutterFlowTheme.of(context).bodyMedium.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   color: const Color(0xFF9B8A9E),
                   fontSize: 14.0,
                 ),
@@ -1096,7 +1096,7 @@ class _AssignmentBottomSheetState extends State<_AssignmentBottomSheet> {
                             Text(
                               'Mom',
                               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                fontFamily: 'Andika New Basic',
+                                fontFamily: FFAppState().currentFontFamily,
                                 color: const Color(0xFF5D4E60),
                                 fontSize: 15.0,
                                 fontWeight: FontWeight.w500,
@@ -1139,7 +1139,7 @@ class _AssignmentBottomSheetState extends State<_AssignmentBottomSheet> {
                               child: Center(
                                 child: Text(
                                   widget.parentInfo.partnerInitial,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 14.0,
                                     fontWeight: FontWeight.bold,
@@ -1151,7 +1151,7 @@ class _AssignmentBottomSheetState extends State<_AssignmentBottomSheet> {
                             Text(
                               widget.parentInfo.partnerName,
                               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                fontFamily: 'Andika New Basic',
+                                fontFamily: FFAppState().currentFontFamily,
                                 color: const Color(0xFF5D4E60),
                                 fontSize: 15.0,
                                 fontWeight: FontWeight.w500,
@@ -1169,7 +1169,7 @@ class _AssignmentBottomSheetState extends State<_AssignmentBottomSheet> {
               Text(
                 'Children',
                 style: FlutterFlowTheme.of(context).bodyMedium.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   color: const Color(0xFF9B8A9E),
                   fontSize: 13.0,
                   fontWeight: FontWeight.w500,
@@ -1190,7 +1190,7 @@ class _AssignmentBottomSheetState extends State<_AssignmentBottomSheet> {
                       child: Text(
                         'No children added yet',
                         style: FlutterFlowTheme.of(context).bodySmall.override(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           color: const Color(0xFFBBBBBB),
                           fontSize: 13.0,
                         ),
@@ -1250,7 +1250,7 @@ class _AssignmentBottomSheetState extends State<_AssignmentBottomSheet> {
                               Text(
                                 child.name,
                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   color: const Color(0xFF5D4E60),
                                   fontSize: 14.0,
                                   fontWeight: FontWeight.w500,
@@ -1291,7 +1291,7 @@ class _AssignmentBottomSheetState extends State<_AssignmentBottomSheet> {
                       : Text(
                           'Save',
                           style: FlutterFlowTheme.of(context).bodyMedium.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: Colors.white,
                             fontSize: 16.0,
                             fontWeight: FontWeight.w600,

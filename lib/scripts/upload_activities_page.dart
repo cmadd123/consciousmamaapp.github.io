@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '/app_state.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import 'clear_and_reupload_activities.dart';
 
@@ -46,7 +47,7 @@ class _UploadActivitiesPageState extends State<UploadActivitiesPage> {
         title: Text(
           'Upload Activities',
           style: FlutterFlowTheme.of(context).headlineMedium.override(
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
                 color: Colors.white,
                 fontSize: 22.0,
                 letterSpacing: 0.0,
@@ -70,7 +71,7 @@ class _UploadActivitiesPageState extends State<UploadActivitiesPage> {
                 _status,
                 textAlign: TextAlign.center,
                 style: FlutterFlowTheme.of(context).titleMedium.override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       fontSize: 18.0,
                       letterSpacing: 0.0,
                     ),
@@ -92,7 +93,7 @@ class _UploadActivitiesPageState extends State<UploadActivitiesPage> {
                   child: Text(
                     'Clear & Re-upload Activities',
                     style: FlutterFlowTheme.of(context).titleSmall.override(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           color: Colors.white,
                           fontSize: 16.0,
                           letterSpacing: 0.0,
@@ -110,7 +111,7 @@ class _UploadActivitiesPageState extends State<UploadActivitiesPage> {
                 'This will delete old activities and upload 10 new activities with descriptions',
                 textAlign: TextAlign.center,
                 style: FlutterFlowTheme.of(context).bodySmall.override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       color: FlutterFlowTheme.of(context).secondaryText,
                       fontSize: 13.0,
                       letterSpacing: 0.0,

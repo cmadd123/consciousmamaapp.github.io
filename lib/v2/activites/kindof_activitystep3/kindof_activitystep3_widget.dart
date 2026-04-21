@@ -1,17 +1,12 @@
 import '/backend/backend.dart';
-import '/backend/schema/structs/index.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/flutter_flow/instant_timer.dart';
 import '/v2/learning_path/loading_learn_pass/loading_learn_pass_widget.dart';
-import 'dart:ui';
 import '/custom_code/actions/index.dart' as actions;
 import '/index.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'kindof_activitystep3_model.dart';
 export 'kindof_activitystep3_model.dart';
 
@@ -69,7 +64,7 @@ class _KindofActivitystep3WidgetState extends State<KindofActivitystep3Widget> {
               children: [
                 Padding(
                   padding:
-                      EdgeInsetsDirectional.fromSTEB(12.0, 20.0, 12.0, 0.0),
+                      const EdgeInsetsDirectional.fromSTEB(12.0, 20.0, 12.0, 0.0),
                   child: Material(
                     color: Colors.transparent,
                     elevation: 1.0,
@@ -98,7 +93,7 @@ class _KindofActivitystep3WidgetState extends State<KindofActivitystep3Widget> {
                                   mainAxisSize: MainAxisSize.max,
                                   children: [
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(
                                           24.0, 26.0, 24.0, 0.0),
                                       child: Text(
                                         'Would you like this to be a quiet activity?',
@@ -106,14 +101,14 @@ class _KindofActivitystep3WidgetState extends State<KindofActivitystep3Widget> {
                                         style: FlutterFlowTheme.of(context)
                                             .bodyMedium
                                             .override(
-                                              fontFamily: 'Andika New Basic',
+                                              fontFamily: FFAppState().currentFontFamily,
                                               fontSize: 24.0,
                                               letterSpacing: 0.0,
                                             ),
                                       ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(
                                           12.0, 40.0, 12.0, 40.0),
                                       child: InkWell(
                                         splashColor: Colors.transparent,
@@ -150,7 +145,7 @@ class _KindofActivitystep3WidgetState extends State<KindofActivitystep3Widget> {
                                             children: [
                                               Container(
                                                 height: 86.0,
-                                                decoration: BoxDecoration(),
+                                                decoration: const BoxDecoration(),
                                                 child: ClipRRect(
                                                   borderRadius:
                                                       BorderRadius.circular(
@@ -164,7 +159,7 @@ class _KindofActivitystep3WidgetState extends State<KindofActivitystep3Widget> {
                                                 ),
                                               ),
                                               Padding(
-                                                padding: EdgeInsetsDirectional
+                                                padding: const EdgeInsetsDirectional
                                                     .fromSTEB(
                                                         0.0, 31.0, 0.0, 0.0),
                                                 child: Text(
@@ -186,7 +181,7 @@ class _KindofActivitystep3WidgetState extends State<KindofActivitystep3Widget> {
                                       ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(
                                           12.0, 0.0, 12.0, 0.0),
                                       child: InkWell(
                                         splashColor: Colors.transparent,
@@ -223,7 +218,7 @@ class _KindofActivitystep3WidgetState extends State<KindofActivitystep3Widget> {
                                             children: [
                                               Container(
                                                 height: 86.0,
-                                                decoration: BoxDecoration(),
+                                                decoration: const BoxDecoration(),
                                                 child: ClipRRect(
                                                   borderRadius:
                                                       BorderRadius.circular(
@@ -237,7 +232,7 @@ class _KindofActivitystep3WidgetState extends State<KindofActivitystep3Widget> {
                                                 ),
                                               ),
                                               Padding(
-                                                padding: EdgeInsetsDirectional
+                                                padding: const EdgeInsetsDirectional
                                                     .fromSTEB(
                                                         0.0, 31.0, 0.0, 0.0),
                                                 child: Text(
@@ -265,7 +260,7 @@ class _KindofActivitystep3WidgetState extends State<KindofActivitystep3Widget> {
                                   children: [
                                     Expanded(
                                       child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                        padding: const EdgeInsetsDirectional.fromSTEB(
                                             20.0, 35.0, 20.0, 20.0),
                                         child: FFButtonWidget(
                                           onPressed: () async {
@@ -276,10 +271,10 @@ class _KindofActivitystep3WidgetState extends State<KindofActivitystep3Widget> {
                                             width: 112.0,
                                             height: 40.0,
                                             padding:
-                                                EdgeInsetsDirectional.fromSTEB(
+                                                const EdgeInsetsDirectional.fromSTEB(
                                                     16.0, 0.0, 16.0, 0.0),
                                             iconPadding:
-                                                EdgeInsetsDirectional.fromSTEB(
+                                                const EdgeInsetsDirectional.fromSTEB(
                                                     0.0, 0.0, 0.0, 0.0),
                                             color: FlutterFlowTheme.of(context)
                                                 .primary,
@@ -301,7 +296,7 @@ class _KindofActivitystep3WidgetState extends State<KindofActivitystep3Widget> {
                                     ),
                                     Expanded(
                                       child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                        padding: const EdgeInsetsDirectional.fromSTEB(
                                             20.0, 35.0, 20.0, 20.0),
                                         child: FFButtonWidget(
                                           onPressed: () async {
@@ -312,7 +307,7 @@ class _KindofActivitystep3WidgetState extends State<KindofActivitystep3Widget> {
                                                 safeSetState(() {});
                                                 _model.instantTimer3 =
                                                     InstantTimer.periodic(
-                                                  duration: Duration(
+                                                  duration: const Duration(
                                                       milliseconds: 1000),
                                                   callback: (timer) async {
                                                     _model.loadingIndecator =
@@ -320,7 +315,7 @@ class _KindofActivitystep3WidgetState extends State<KindofActivitystep3Widget> {
                                                     safeSetState(() {});
                                                     _model.instantTimer1 =
                                                         InstantTimer.periodic(
-                                                      duration: Duration(
+                                                      duration: const Duration(
                                                           milliseconds: 1000),
                                                       callback: (timer) async {
                                                         _model.loadingIndecator =
@@ -329,7 +324,7 @@ class _KindofActivitystep3WidgetState extends State<KindofActivitystep3Widget> {
                                                         _model.instantTimer2 =
                                                             InstantTimer
                                                                 .periodic(
-                                                          duration: Duration(
+                                                          duration: const Duration(
                                                               milliseconds:
                                                                   1000),
                                                           callback:
@@ -351,8 +346,8 @@ class _KindofActivitystep3WidgetState extends State<KindofActivitystep3Widget> {
                                               Future(() async {
                                                 _model.activity = await actions
                                                     .genrateAIActivity(
-                                                  widget!.selectedchild,
-                                                  widget!.kindOfActivity,
+                                                  widget.selectedchild,
+                                                  widget.kindOfActivity,
                                                   _model.quitActivity
                                                       ? 'Quiet'
                                                       : 'Not Quiet',
@@ -388,10 +383,10 @@ class _KindofActivitystep3WidgetState extends State<KindofActivitystep3Widget> {
                                             width: 112.0,
                                             height: 40.0,
                                             padding:
-                                                EdgeInsetsDirectional.fromSTEB(
+                                                const EdgeInsetsDirectional.fromSTEB(
                                                     16.0, 0.0, 16.0, 0.0),
                                             iconPadding:
-                                                EdgeInsetsDirectional.fromSTEB(
+                                                const EdgeInsetsDirectional.fromSTEB(
                                                     0.0, 0.0, 0.0, 0.0),
                                             color: FlutterFlowTheme.of(context)
                                                 .primary,
@@ -416,7 +411,7 @@ class _KindofActivitystep3WidgetState extends State<KindofActivitystep3Widget> {
                               ],
                             );
                           } else {
-                            return Align(
+                            return const Align(
                               alignment: AlignmentDirectional(0.0, 0.0),
                               child: LoadingLearnPassWidget(
                                 title:

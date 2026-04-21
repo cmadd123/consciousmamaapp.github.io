@@ -1,24 +1,15 @@
 import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
-import '/backend/schema/enums/enums.dart';
 import '/components/empty_widget_component_widget.dart';
 import '/components/home_nav_bar_widget.dart';
-import '/components/share_content_bottom_sheet.dart';
 import '/components/parent_circle_widget.dart';
 import '/flutter_flow/flutter_flow_calendar.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import '/flutter_flow/flutter_flow_widgets.dart';
 import '/utils/holidays.dart';
-import 'dart:ui';
-import '/custom_code/actions/index.dart' as actions;
 import '/index.dart';
 import '/v2/learning_path/learn_path_details_component/learn_path_details_component_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
-import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import '/components/page_animations.dart';
 import 'calendarpage_model.dart';
 export 'calendarpage_model.dart';
@@ -229,7 +220,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
         behavior: HitTestBehavior.translucent,
         child: Scaffold(
         key: scaffoldKey,
-        backgroundColor: FFAppState().isComfortMode ? Color(0xFF2C3E50) : FlutterFlowTheme.of(context).secondaryBackground,
+        backgroundColor: FFAppState().isComfortMode ? const Color(0xFF2C3E50) : FlutterFlowTheme.of(context).secondaryBackground,
         body: SafeArea(
           top: true,
           child: Stack(
@@ -263,10 +254,10 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
 
                         return Container(
                           width: double.infinity,
-                          padding: EdgeInsetsDirectional.fromSTEB(16.0, 16.0, 16.0, 8.0),
+                          padding: const EdgeInsetsDirectional.fromSTEB(16.0, 16.0, 16.0, 8.0),
                           decoration: BoxDecoration(
                             color: FFAppState().isComfortMode
-                                ? Color(0xFF2C3E50)
+                                ? const Color(0xFF2C3E50)
                                 : FlutterFlowTheme.of(context).secondaryBackground,
                           ),
                           child: Center(
@@ -278,7 +269,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                 children: [
                                 // "All" circle
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(0, 0, 10.0, 0),
+                                  padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 10.0, 0),
                                   child: InkWell(
                                     onTap: () {
                                       setState(() {
@@ -293,7 +284,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                       decoration: BoxDecoration(
                                         color: (_model.selectedChildFilters.isEmpty && !_model.filterByMom && !_model.filterByDad)
                                             ? FlutterFlowTheme.of(context).primary
-                                            : (FFAppState().isComfortMode ? Color(0xFF34495E) : Colors.white),
+                                            : (FFAppState().isComfortMode ? const Color(0xFF34495E) : Colors.white),
                                         shape: BoxShape.circle,
                                         border: (_model.selectedChildFilters.isEmpty && !_model.filterByMom && !_model.filterByDad)
                                             ? null
@@ -303,7 +294,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                         child: Text(
                                           'All',
                                           style: TextStyle(
-                                            fontFamily: 'Andika New Basic',
+                                            fontFamily: FFAppState().currentFontFamily,
                                             fontSize: 12.0,
                                             fontWeight: FontWeight.bold,
                                             color: (_model.selectedChildFilters.isEmpty && !_model.filterByMom && !_model.filterByDad)
@@ -317,7 +308,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                 ),
                                 // "Me" circle
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(0, 0, 10.0, 0),
+                                  padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 10.0, 0),
                                   child: InkWell(
                                     onTap: () {
                                       setState(() {
@@ -330,7 +321,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                       decoration: BoxDecoration(
                                         color: _model.filterByMom
                                             ? _model.parentInfo.myColor
-                                            : (FFAppState().isComfortMode ? Color(0xFF34495E) : Colors.white),
+                                            : (FFAppState().isComfortMode ? const Color(0xFF34495E) : Colors.white),
                                         shape: BoxShape.circle,
                                         border: _model.filterByMom
                                             ? null
@@ -340,7 +331,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                         child: Text(
                                           _model.parentInfo.myInitial,
                                           style: TextStyle(
-                                            fontFamily: 'Andika New Basic',
+                                            fontFamily: FFAppState().currentFontFamily,
                                             fontSize: 16.0,
                                             fontWeight: FontWeight.bold,
                                             color: _model.filterByMom ? Colors.white : _model.parentInfo.myColor,
@@ -352,7 +343,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                 ),
                                 // Partner circle
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(0, 0, 10.0, 0),
+                                  padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 10.0, 0),
                                   child: InkWell(
                                     onTap: () {
                                       setState(() {
@@ -365,7 +356,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                       decoration: BoxDecoration(
                                         color: _model.filterByDad
                                             ? _model.parentInfo.partnerColor
-                                            : (FFAppState().isComfortMode ? Color(0xFF34495E) : Colors.white),
+                                            : (FFAppState().isComfortMode ? const Color(0xFF34495E) : Colors.white),
                                         shape: BoxShape.circle,
                                         border: _model.filterByDad
                                             ? null
@@ -375,7 +366,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                         child: Text(
                                           _model.parentInfo.partnerInitial,
                                           style: TextStyle(
-                                            fontFamily: 'Andika New Basic',
+                                            fontFamily: FFAppState().currentFontFamily,
                                             fontSize: 16.0,
                                             fontWeight: FontWeight.bold,
                                             color: _model.filterByDad ? Colors.white : _model.parentInfo.partnerColor,
@@ -393,7 +384,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                   final childColor = child.selectedColor ?? FlutterFlowTheme.of(context).primary;
                                   final initial = child.name.isNotEmpty ? child.name[0].toLowerCase() : '?';
                                   return Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(0, 0, 10.0, 0),
+                                    padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 10.0, 0),
                                     child: InkWell(
                                       onTap: () {
                                         setState(() {
@@ -410,7 +401,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                         decoration: BoxDecoration(
                                           color: isSelected
                                               ? childColor
-                                              : (FFAppState().isComfortMode ? Color(0xFF34495E) : Colors.white),
+                                              : (FFAppState().isComfortMode ? const Color(0xFF34495E) : Colors.white),
                                           shape: BoxShape.circle,
                                           border: isSelected
                                               ? null
@@ -420,7 +411,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                           child: Text(
                                             initial,
                                             style: TextStyle(
-                                              fontFamily: 'Andika New Basic',
+                                              fontFamily: FFAppState().currentFontFamily,
                                               fontSize: 16.0,
                                               fontWeight: FontWeight.bold,
                                               color: isSelected ? Colors.white : childColor,
@@ -430,7 +421,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                       ),
                                     ),
                                   );
-                                }).toList(),
+                                }),
                                 ],
                               ),
                             ),
@@ -443,7 +434,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                       Container(
                         decoration: BoxDecoration(
                           color: FlutterFlowTheme.of(context).secondaryBackground,
-                          boxShadow: [
+                          boxShadow: const [
                             BoxShadow(
                               blurRadius: 2.0,
                               color: Color(0x1A000000),
@@ -662,31 +653,31 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                               safeSetState(() {});
                             },
                             titleStyle: FlutterFlowTheme.of(context).headlineSmall.override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   fontSize: 20.0,
                                   fontWeight: FontWeight.w600,
                                   letterSpacing: 0.0,
                                 ),
                             dayOfWeekStyle: FlutterFlowTheme.of(context).labelSmall.override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   color: FlutterFlowTheme.of(context).secondaryText,
                                   fontSize: 11.0,
                                   fontWeight: FontWeight.w500,
                                   letterSpacing: 0.5,
                                 ),
                             dateStyle: FlutterFlowTheme.of(context).bodyMedium.override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   fontSize: 14.0,
                                   letterSpacing: 0.0,
                                 ),
                             selectedDateStyle: FlutterFlowTheme.of(context).titleSmall.override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   fontSize: 14.0,
                                   fontWeight: FontWeight.w600,
                                   letterSpacing: 0.0,
                                 ),
                             inactiveDateStyle: FlutterFlowTheme.of(context).labelMedium.override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   color: FlutterFlowTheme.of(context).secondaryText.withOpacity(0.4),
                                   letterSpacing: 0.0,
                                 ),
@@ -718,10 +709,10 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                           children: [
                     // Selected date text
                     Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(0.0, 4.0, 0.0, 0.0),
+                      padding: const EdgeInsetsDirectional.fromSTEB(0.0, 4.0, 0.0, 0.0),
                       child: Container(
                         width: double.infinity,
-                        padding: EdgeInsetsDirectional.fromSTEB(16.0, 12.0, 16.0, 12.0),
+                        padding: const EdgeInsetsDirectional.fromSTEB(16.0, 12.0, 16.0, 12.0),
                         child: Text(
                           dateTimeFormat(
                             "MMMMEEEEd",
@@ -729,7 +720,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                             locale: FFLocalizations.of(context).languageCode,
                           ),
                           style: FlutterFlowTheme.of(context).bodyLarge.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: FlutterFlowTheme.of(context).primaryText,
                             fontSize: 16.0,
                             fontWeight: FontWeight.w600,
@@ -740,16 +731,16 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                     ),
                     // Filter chips
                     Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(16.0, 0, 16.0, 8.0),
+                      padding: const EdgeInsetsDirectional.fromSTEB(16.0, 0, 16.0, 8.0),
                       child: SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             _buildFilterChip('All'),
-                            SizedBox(width: 8.0),
+                            const SizedBox(width: 8.0),
                             _buildFilterChip('Event'),
-                            SizedBox(width: 8.0),
+                            const SizedBox(width: 8.0),
                             _buildFilterChip('Learning'),
                             // REMOVED: Activity filter - feature being replaced
                             // SizedBox(width: 8.0),
@@ -760,7 +751,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                     ),
                     // Schedule items
                     Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(
+                        padding: const EdgeInsetsDirectional.fromSTEB(
                             0.0, 0.0, 0.0, 30.0),
                         child: Column(
                           children: [
@@ -806,7 +797,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                 scheduleContent = Center(
                                   key: const ValueKey('schedule_error'),
                                   child: Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(12.0, 12.0, 12.0, 12.0),
+                                    padding: const EdgeInsetsDirectional.fromSTEB(12.0, 12.0, 12.0, 12.0),
                                     child: EmptyWidgetComponentWidget(
                                       titleParams: 'Nothing planned for this day\nTap + to add something',
                                       actionParam: () async {
@@ -832,7 +823,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                   scheduleContent = Center(
                                     key: const ValueKey('schedule_empty'),
                                     child: Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(12.0, 12.0, 12.0, 12.0),
+                                      padding: const EdgeInsetsDirectional.fromSTEB(12.0, 12.0, 12.0, 12.0),
                                       child: EmptyWidgetComponentWidget(
                                         titleParams: 'Nothing planned for this day\nTap + to add something',
                                         actionParam: () async {
@@ -986,7 +977,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
 
                               scheduleContent = Container(
                                 key: ValueKey('schedule_content_${_model.selecteddate}'),
-                                decoration: BoxDecoration(),
+                                decoration: const BoxDecoration(),
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
@@ -994,7 +985,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                     if (dayItems.isEmpty && _model.selectedFilter == 'Learning')
                                       Center(
                                         child: Padding(
-                                          padding: EdgeInsetsDirectional.fromSTEB(
+                                          padding: const EdgeInsetsDirectional.fromSTEB(
                                               12.0, 12.0, 12.0, 12.0),
                                           child: EmptyWidgetComponentWidget(
                                             titleParams: 'No lessons planned for this day\nTap + to create a learning path',
@@ -1008,7 +999,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                     if (dayItems.isEmpty && _model.selectedFilter == 'Activity')
                                       Center(
                                         child: Padding(
-                                          padding: EdgeInsetsDirectional.fromSTEB(
+                                          padding: const EdgeInsetsDirectional.fromSTEB(
                                               12.0, 12.0, 12.0, 12.0),
                                           child: EmptyWidgetComponentWidget(
                                             titleParams: 'No activities planned for this day\nTap + to add an activity',
@@ -1022,7 +1013,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                     if (dayItems.isEmpty && _model.selectedFilter != 'Learning' && _model.selectedFilter != 'Activity')
                                       Center(
                                         child: Padding(
-                                          padding: EdgeInsetsDirectional.fromSTEB(
+                                          padding: const EdgeInsetsDirectional.fromSTEB(
                                               12.0, 12.0, 12.0, 12.0),
                                           child: EmptyWidgetComponentWidget(
                                             titleParams: 'Nothing planned for this day\nTap + to add something',
@@ -1099,7 +1090,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                             if (_model.selectedFilter == 'Learning') {
                                               return Center(
                                                 child: Padding(
-                                                  padding: EdgeInsets.symmetric(vertical: 12.0),
+                                                  padding: const EdgeInsets.symmetric(vertical: 12.0),
                                                   child: EmptyWidgetComponentWidget(
                                                     titleParams:
                                                         'No lessons planned for this day\nTap + to create a learning path',
@@ -1113,7 +1104,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                             if (_model.selectedFilter == 'Activity') {
                                               return Center(
                                                 child: Padding(
-                                                  padding: EdgeInsets.symmetric(vertical: 12.0),
+                                                  padding: const EdgeInsets.symmetric(vertical: 12.0),
                                                   child: EmptyWidgetComponentWidget(
                                                     titleParams:
                                                         'No activities planned for this day\nTap + to add an activity',
@@ -1126,7 +1117,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                             }
                                             return Center(
                                               child: Padding(
-                                                padding: EdgeInsets.symmetric(vertical: 12.0),
+                                                padding: const EdgeInsets.symmetric(vertical: 12.0),
                                                 child: EmptyWidgetComponentWidget(
                                                   titleParams:
                                                       'Nothing planned for this day\nTap + to add something',
@@ -1156,7 +1147,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                                     child: Text(
                                                       'Swipe right to complete • Swipe left to delete',
                                                       style: FlutterFlowTheme.of(context).bodySmall.override(
-                                                        fontFamily: 'Andika New Basic',
+                                                        fontFamily: FFAppState().currentFontFamily,
                                                         color: FFAppState().isComfortMode
                                                             ? const Color(0xFF95A5A6)
                                                             : const Color(0xFFBBBBBB),
@@ -1182,28 +1173,28 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                                 key: Key(containerVarItem.reference.id),
                                                 direction: DismissDirection.horizontal,
                                                 background: Container(
-                                                  margin: EdgeInsetsDirectional.fromSTEB(12.0, 0.0, 12.0, 10.0),
+                                                  margin: const EdgeInsetsDirectional.fromSTEB(12.0, 0.0, 12.0, 10.0),
                                                   decoration: BoxDecoration(
                                                     color: Colors.green,
                                                     borderRadius: BorderRadius.circular(14.0),
                                                   ),
                                                   alignment: Alignment.centerLeft,
-                                                  padding: EdgeInsetsDirectional.fromSTEB(20.0, 0, 0, 0),
-                                                  child: Icon(
+                                                  padding: const EdgeInsetsDirectional.fromSTEB(20.0, 0, 0, 0),
+                                                  child: const Icon(
                                                     Icons.check_circle,
                                                     color: Colors.white,
                                                     size: 32.0,
                                                   ),
                                                 ),
                                                 secondaryBackground: Container(
-                                                  margin: EdgeInsetsDirectional.fromSTEB(12.0, 0.0, 12.0, 10.0),
+                                                  margin: const EdgeInsetsDirectional.fromSTEB(12.0, 0.0, 12.0, 10.0),
                                                   decoration: BoxDecoration(
                                                     color: Colors.red,
                                                     borderRadius: BorderRadius.circular(14.0),
                                                   ),
                                                   alignment: Alignment.centerRight,
-                                                  padding: EdgeInsetsDirectional.fromSTEB(0, 0, 20.0, 0),
-                                                  child: Icon(
+                                                  padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 20.0, 0),
+                                                  child: const Icon(
                                                     Icons.delete,
                                                     color: Colors.white,
                                                     size: 32.0,
@@ -1226,7 +1217,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                                     ScaffoldMessenger.of(context).showSnackBar(
                                                       SnackBar(
                                                         content: Text('${containerVarItem.name} deleted'),
-                                                        duration: Duration(seconds: 2),
+                                                        duration: const Duration(seconds: 2),
                                                       ),
                                                     );
                                                   }
@@ -1265,19 +1256,19 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                                   },
                                                   child: Padding(
                                                   padding:
-                                                      EdgeInsetsDirectional
+                                                      const EdgeInsetsDirectional
                                                           .fromSTEB(16.0, 0.0,
                                                               16.0, 8.0),
                                                   child: Container(
                                                     width: double.infinity,
                                                     decoration: BoxDecoration(
                                                       color: containerVarItem.type == 'Todo'
-                                                        ? Color(0xFFE3F2FD) // Blue for todos
+                                                        ? const Color(0xFFE3F2FD) // Blue for todos
                                                         : containerVarItem.type == 'Learning'
                                                           ? (containerVarItem.childColor ?? FlutterFlowTheme.of(context).primary).withValues(alpha: 0.15)
                                                           : containerVarItem.type == 'Activity'
-                                                            ? Color(0xFFFFF3E0) // Orange for activities
-                                                            : Color(0xFFE6F5F3), // Teal for events
+                                                            ? const Color(0xFFFFF3E0) // Orange for activities
+                                                            : const Color(0xFFE6F5F3), // Teal for events
                                                       borderRadius:
                                                           BorderRadius
                                                               .circular(12.0),
@@ -1288,7 +1279,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                                       children: [
                                                         Padding(
                                                           padding:
-                                                              EdgeInsetsDirectional
+                                                              const EdgeInsetsDirectional
                                                                   .fromSTEB(
                                                                       16.0,
                                                                       16.0,
@@ -1302,15 +1293,15 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                                                 children: [
                                                                   // Type badge
                                                                   Container(
-                                                                    padding: EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
+                                                                    padding: const EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
                                                                     decoration: BoxDecoration(
                                                                       color: containerVarItem.type == 'Todo'
-                                                                          ? Color(0xFF1976D2) // Blue for todos
+                                                                          ? const Color(0xFF1976D2) // Blue for todos
                                                                           : containerVarItem.type == 'Learning'
-                                                                            ? Color(0xFF7C4DFF) // Purple for learning
+                                                                            ? const Color(0xFF7C4DFF) // Purple for learning
                                                                             : containerVarItem.type == 'Activity'
-                                                                              ? Color(0xFFFF9800) // Orange for activities
-                                                                              : Color(0xFF00897B), // Teal for events
+                                                                              ? const Color(0xFFFF9800) // Orange for activities
+                                                                              : const Color(0xFF00897B), // Teal for events
                                                                       borderRadius: BorderRadius.circular(14.0),
                                                                     ),
                                                                     child: Row(
@@ -1327,13 +1318,13 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                                                           size: 14.0,
                                                                           color: Colors.white,
                                                                         ),
-                                                                        SizedBox(width: 4.0),
+                                                                        const SizedBox(width: 4.0),
                                                                         Text(
                                                                           containerVarItem.type,
                                                                           style: FlutterFlowTheme.of(context)
                                                                               .bodyMedium
                                                                               .override(
-                                                                                fontFamily: 'Andika New Basic',
+                                                                                fontFamily: FFAppState().currentFontFamily,
                                                                                 fontSize: 11.0,
                                                                                 fontWeight: FontWeight.w600,
                                                                                 color: Colors.white,
@@ -1343,7 +1334,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                                                       ],
                                                                     ),
                                                                   ),
-                                                                  SizedBox(width: 8.0),
+                                                                  const SizedBox(width: 8.0),
                                                                   Expanded(
                                                                     child: Text(
                                                                       valueOrDefault<String>(
@@ -1353,7 +1344,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                                                       style: FlutterFlowTheme.of(context)
                                                                           .bodyMedium
                                                                           .override(
-                                                                            fontFamily: 'Andika New Basic',
+                                                                            fontFamily: FFAppState().currentFontFamily,
                                                                             fontSize: 20.0,
                                                                             letterSpacing: 0.0,
                                                                             decoration: containerVarItem.isCompleted
@@ -1365,7 +1356,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                                                 ],
                                                               ),
                                                               // Row 2: Time + Pattern/Date Range
-                                                              SizedBox(height: 6.0),
+                                                              const SizedBox(height: 6.0),
                                                               Row(
                                                                 mainAxisSize: MainAxisSize.min,
                                                                 children: [
@@ -1374,7 +1365,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                                                     size: 16.0,
                                                                     color: FlutterFlowTheme.of(context).secondaryText,
                                                                   ),
-                                                                  SizedBox(width: 4.0),
+                                                                  const SizedBox(width: 4.0),
                                                                   Text(
                                                                     dateTimeFormat(
                                                                       "jm",
@@ -1384,7 +1375,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                                                     style: FlutterFlowTheme.of(context)
                                                                         .bodyMedium
                                                                         .override(
-                                                                          fontFamily: 'Andika New Basic',
+                                                                          fontFamily: FFAppState().currentFontFamily,
                                                                           fontSize: 14.0,
                                                                           color: FlutterFlowTheme.of(context).secondaryText,
                                                                           letterSpacing: 0.0,
@@ -1393,7 +1384,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                                                   // Show pattern or date range
                                                                   if (containerVarItem.isRecurring && containerVarItem.recurringPattern != null && containerVarItem.recurringPattern != 'None')
                                                                     Padding(
-                                                                      padding: EdgeInsetsDirectional.fromSTEB(6.0, 0, 0, 0),
+                                                                      padding: const EdgeInsetsDirectional.fromSTEB(6.0, 0, 0, 0),
                                                                       child: Row(
                                                                         mainAxisSize: MainAxisSize.min,
                                                                         children: [
@@ -1404,19 +1395,19 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                                                               fontSize: 14.0,
                                                                             ),
                                                                           ),
-                                                                          SizedBox(width: 6.0),
+                                                                          const SizedBox(width: 6.0),
                                                                           Icon(
                                                                             Icons.repeat,
                                                                             size: 16.0,
                                                                             color: FlutterFlowTheme.of(context).primary,
                                                                           ),
-                                                                          SizedBox(width: 4.0),
+                                                                          const SizedBox(width: 4.0),
                                                                           Text(
                                                                             containerVarItem.recurringPattern!,
                                                                             style: FlutterFlowTheme.of(context)
                                                                                 .bodyMedium
                                                                                 .override(
-                                                                                  fontFamily: 'Andika New Basic',
+                                                                                  fontFamily: FFAppState().currentFontFamily,
                                                                                   fontSize: 14.0,
                                                                                   color: FlutterFlowTheme.of(context).primary,
                                                                                   letterSpacing: 0.0,
@@ -1427,7 +1418,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                                                     )
                                                                   else if (!containerVarItem.isRecurring && containerVarItem.endDate != null)
                                                                     Padding(
-                                                                      padding: EdgeInsetsDirectional.fromSTEB(6.0, 0, 0, 0),
+                                                                      padding: const EdgeInsetsDirectional.fromSTEB(6.0, 0, 0, 0),
                                                                       child: Row(
                                                                         mainAxisSize: MainAxisSize.min,
                                                                         children: [
@@ -1438,19 +1429,19 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                                                               fontSize: 14.0,
                                                                             ),
                                                                           ),
-                                                                          SizedBox(width: 6.0),
+                                                                          const SizedBox(width: 6.0),
                                                                           Icon(
                                                                             Icons.event_note,
                                                                             size: 16.0,
                                                                             color: FlutterFlowTheme.of(context).primary,
                                                                           ),
-                                                                          SizedBox(width: 4.0),
+                                                                          const SizedBox(width: 4.0),
                                                                           Text(
                                                                             '${dateTimeFormat("MMMd", containerVarItem.date, locale: FFLocalizations.of(context).languageCode)}-${dateTimeFormat("MMMd", containerVarItem.endDate, locale: FFLocalizations.of(context).languageCode)}',
                                                                             style: FlutterFlowTheme.of(context)
                                                                                 .bodyMedium
                                                                                 .override(
-                                                                                  fontFamily: 'Andika New Basic',
+                                                                                  fontFamily: FFAppState().currentFontFamily,
                                                                                   fontSize: 14.0,
                                                                                   color: FlutterFlowTheme.of(context).primary,
                                                                                   letterSpacing: 0.0,
@@ -1466,11 +1457,11 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                                         ),
                                                         Align(
                                                           alignment:
-                                                              AlignmentDirectional(
+                                                              const AlignmentDirectional(
                                                                   -1.0, 0.0),
                                                           child: Padding(
                                                             padding:
-                                                                EdgeInsetsDirectional
+                                                                const EdgeInsetsDirectional
                                                                     .fromSTEB(
                                                                         16.0,
                                                                         0.0,
@@ -1500,14 +1491,14 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                                         // Assignment badges
                                                         if (containerVarItem.assignedToMom || containerVarItem.assignedToDad || containerVarItem.childName != null || containerVarItem.childNames.isNotEmpty)
                                                           Padding(
-                                                            padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 10.0),
+                                                            padding: const EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 10.0),
                                                             child: Wrap(
                                                               spacing: 6.0,
                                                               runSpacing: 4.0,
                                                               children: [
                                                                 if (containerVarItem.assignedToMom)
                                                                   Container(
-                                                                    padding: EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
+                                                                    padding: const EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
                                                                     decoration: BoxDecoration(
                                                                       color: _model.parentInfo.myColor.withOpacity(0.85),
                                                                       borderRadius: BorderRadius.circular(14.0),
@@ -1515,7 +1506,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                                                     child: Text(
                                                                       _model.parentInfo.myName,
                                                                       style: FlutterFlowTheme.of(context).bodySmall.override(
-                                                                        fontFamily: 'Andika New Basic',
+                                                                        fontFamily: FFAppState().currentFontFamily,
                                                                         fontSize: 11.0,
                                                                         fontWeight: FontWeight.w600,
                                                                         color: Colors.white,
@@ -1525,7 +1516,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                                                   ),
                                                                 if (containerVarItem.assignedToDad)
                                                                   Container(
-                                                                    padding: EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
+                                                                    padding: const EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
                                                                     decoration: BoxDecoration(
                                                                       color: _model.parentInfo.partnerColor.withOpacity(0.85),
                                                                       borderRadius: BorderRadius.circular(14.0),
@@ -1533,7 +1524,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                                                     child: Text(
                                                                       _model.parentInfo.partnerName,
                                                                       style: FlutterFlowTheme.of(context).bodySmall.override(
-                                                                        fontFamily: 'Andika New Basic',
+                                                                        fontFamily: FFAppState().currentFontFamily,
                                                                         fontSize: 11.0,
                                                                         fontWeight: FontWeight.w600,
                                                                         color: Colors.white,
@@ -1545,7 +1536,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                                                 if (containerVarItem.childNames.isNotEmpty)
                                                                   ...List.generate(containerVarItem.childNames.length, (i) {
                                                                     return Container(
-                                                                      padding: EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
+                                                                      padding: const EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
                                                                       decoration: BoxDecoration(
                                                                         color: i < containerVarItem.childColors.length
                                                                             ? containerVarItem.childColors[i]
@@ -1555,7 +1546,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                                                       child: Text(
                                                                         containerVarItem.childNames[i],
                                                                         style: FlutterFlowTheme.of(context).bodySmall.override(
-                                                                          fontFamily: 'Andika New Basic',
+                                                                          fontFamily: FFAppState().currentFontFamily,
                                                                           fontSize: 11.0,
                                                                           fontWeight: FontWeight.w600,
                                                                           color: Colors.white,
@@ -1566,7 +1557,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                                                   })
                                                                 else if (containerVarItem.childName != null)
                                                                   Container(
-                                                                    padding: EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
+                                                                    padding: const EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
                                                                     decoration: BoxDecoration(
                                                                       color: containerVarItem.childColor ?? FlutterFlowTheme.of(context).primary,
                                                                       borderRadius: BorderRadius.circular(14.0),
@@ -1574,7 +1565,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                                                     child: Text(
                                                                       containerVarItem.childName!,
                                                                       style: FlutterFlowTheme.of(context).bodySmall.override(
-                                                                        fontFamily: 'Andika New Basic',
+                                                                        fontFamily: FFAppState().currentFontFamily,
                                                                         fontSize: 11.0,
                                                                         fontWeight: FontWeight.w600,
                                                                         color: Colors.white,
@@ -1596,18 +1587,18 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                           // Completed items section
                                           if (completedItems.isNotEmpty)
                                             Padding(
-                                              padding: EdgeInsetsDirectional.fromSTEB(16.0, 16.0, 16.0, 0),
+                                              padding: const EdgeInsetsDirectional.fromSTEB(16.0, 16.0, 16.0, 0),
                                               child: Theme(
                                                 data: Theme.of(context).copyWith(
                                                   dividerColor: Colors.transparent,
                                                 ),
                                                 child: ExpansionTile(
                                                   initiallyExpanded: false,
-                                                  tilePadding: EdgeInsetsDirectional.fromSTEB(12.0, 0, 12.0, 0),
+                                                  tilePadding: const EdgeInsetsDirectional.fromSTEB(12.0, 0, 12.0, 0),
                                                   title: Text(
                                                     'Completed (${completedItems.length})',
                                                     style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                      fontFamily: 'Andika New Basic',
+                                                      fontFamily: FFAppState().currentFontFamily,
                                                       fontSize: 16.0,
                                                       fontWeight: FontWeight.w600,
                                                       color: FlutterFlowTheme.of(context).secondaryText,
@@ -1620,7 +1611,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                                       padding: EdgeInsets.zero,
                                                       primary: false,
                                                       shrinkWrap: true,
-                                                      physics: NeverScrollableScrollPhysics(),
+                                                      physics: const NeverScrollableScrollPhysics(),
                                                       itemCount: completedItems.length,
                                                       itemBuilder: (context, completedIndex) {
                                                         final containerVarItem = completedItems[completedIndex];
@@ -1628,28 +1619,28 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                                           key: Key(containerVarItem.reference.id),
                                                           direction: DismissDirection.horizontal,
                                                           background: Container(
-                                                            margin: EdgeInsetsDirectional.fromSTEB(12.0, 0.0, 12.0, 10.0),
+                                                            margin: const EdgeInsetsDirectional.fromSTEB(12.0, 0.0, 12.0, 10.0),
                                                             decoration: BoxDecoration(
                                                               color: Colors.green,
                                                               borderRadius: BorderRadius.circular(14.0),
                                                             ),
                                                             alignment: Alignment.centerLeft,
-                                                            padding: EdgeInsetsDirectional.fromSTEB(20.0, 0, 0, 0),
-                                                            child: Icon(
+                                                            padding: const EdgeInsetsDirectional.fromSTEB(20.0, 0, 0, 0),
+                                                            child: const Icon(
                                                               Icons.check_circle,
                                                               color: Colors.white,
                                                               size: 32.0,
                                                             ),
                                                           ),
                                                           secondaryBackground: Container(
-                                                            margin: EdgeInsetsDirectional.fromSTEB(12.0, 0.0, 12.0, 10.0),
+                                                            margin: const EdgeInsetsDirectional.fromSTEB(12.0, 0.0, 12.0, 10.0),
                                                             decoration: BoxDecoration(
                                                               color: Colors.red,
                                                               borderRadius: BorderRadius.circular(14.0),
                                                             ),
                                                             alignment: Alignment.centerRight,
-                                                            padding: EdgeInsetsDirectional.fromSTEB(0, 0, 20.0, 0),
-                                                            child: Icon(
+                                                            padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 20.0, 0),
+                                                            child: const Icon(
                                                               Icons.delete,
                                                               color: Colors.white,
                                                               size: 32.0,
@@ -1674,7 +1665,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                                               messenger?.showSnackBar(
                                                                 SnackBar(
                                                                   content: Text('$itemName deleted'),
-                                                                  duration: Duration(seconds: 2),
+                                                                  duration: const Duration(seconds: 2),
                                                                 ),
                                                               );
                                                             }
@@ -1712,24 +1703,24 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                                               }
                                                             },
                                                             child: Padding(
-                                                              padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 8.0),
+                                                              padding: const EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 8.0),
                                                               child: Container(
                                                                 width: double.infinity,
                                                                 decoration: BoxDecoration(
                                                                   color: containerVarItem.type == 'Todo'
-                                                                    ? Color(0xFFE3F2FD) // Blue for todos
+                                                                    ? const Color(0xFFE3F2FD) // Blue for todos
                                                                     : containerVarItem.type == 'Learning'
                                                                       ? (containerVarItem.childColor ?? FlutterFlowTheme.of(context).primary).withValues(alpha: 0.15)
                                                                       : containerVarItem.type == 'Activity'
-                                                                        ? Color(0xFFFFF3E0) // Orange for activities
-                                                                        : Color(0xFFE6F5F3), // Teal for events
+                                                                        ? const Color(0xFFFFF3E0) // Orange for activities
+                                                                        : const Color(0xFFE6F5F3), // Teal for events
                                                                   borderRadius: BorderRadius.circular(14.0),
                                                                 ),
                                                                 child: Column(
                                                                   mainAxisSize: MainAxisSize.max,
                                                                   children: [
                                                                     Padding(
-                                                                      padding: EdgeInsetsDirectional.fromSTEB(16.0, 16.0, 16.0, 8.0),
+                                                                      padding: const EdgeInsetsDirectional.fromSTEB(16.0, 16.0, 16.0, 8.0),
                                                                       child: Column(
                                                                         crossAxisAlignment: CrossAxisAlignment.start,
                                                                         children: [
@@ -1738,15 +1729,15 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                                                             children: [
                                                                               // Type badge
                                                                               Container(
-                                                                                padding: EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
+                                                                                padding: const EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
                                                                                 decoration: BoxDecoration(
                                                                                   color: containerVarItem.type == 'Todo'
-                                                                                      ? Color(0xFF1976D2) // Blue for todos
+                                                                                      ? const Color(0xFF1976D2) // Blue for todos
                                                                                       : containerVarItem.type == 'Learning'
-                                                                                        ? Color(0xFF7C4DFF) // Purple for learning
+                                                                                        ? const Color(0xFF7C4DFF) // Purple for learning
                                                                                         : containerVarItem.type == 'Activity'
-                                                                                          ? Color(0xFFFF9800) // Orange for activities
-                                                                                          : Color(0xFF00897B), // Teal for events
+                                                                                          ? const Color(0xFFFF9800) // Orange for activities
+                                                                                          : const Color(0xFF00897B), // Teal for events
                                                                                   borderRadius: BorderRadius.circular(14.0),
                                                                                 ),
                                                                                 child: Row(
@@ -1763,13 +1754,13 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                                                                       size: 14.0,
                                                                                       color: Colors.white,
                                                                                     ),
-                                                                                    SizedBox(width: 4.0),
+                                                                                    const SizedBox(width: 4.0),
                                                                                     Text(
                                                                                       containerVarItem.type,
                                                                                       style: FlutterFlowTheme.of(context)
                                                                                           .bodyMedium
                                                                                           .override(
-                                                                                            fontFamily: 'Andika New Basic',
+                                                                                            fontFamily: FFAppState().currentFontFamily,
                                                                                             fontSize: 11.0,
                                                                                             fontWeight: FontWeight.w600,
                                                                                             color: Colors.white,
@@ -1779,7 +1770,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                                                                   ],
                                                                                 ),
                                                                               ),
-                                                                              SizedBox(width: 8.0),
+                                                                              const SizedBox(width: 8.0),
                                                                               Expanded(
                                                                                 child: Text(
                                                                                   valueOrDefault<String>(
@@ -1789,7 +1780,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                                                                   style: FlutterFlowTheme.of(context)
                                                                                       .bodyMedium
                                                                                       .override(
-                                                                                        fontFamily: 'Andika New Basic',
+                                                                                        fontFamily: FFAppState().currentFontFamily,
                                                                                         fontSize: 20.0,
                                                                                         letterSpacing: 0.0,
                                                                                         decoration: containerVarItem.isCompleted
@@ -1801,7 +1792,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                                                             ],
                                                                           ),
                                                                           // Row 2: Time + Pattern/Date Range
-                                                                          SizedBox(height: 6.0),
+                                                                          const SizedBox(height: 6.0),
                                                                           Row(
                                                                             mainAxisSize: MainAxisSize.min,
                                                                             children: [
@@ -1810,7 +1801,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                                                                 size: 16.0,
                                                                                 color: FlutterFlowTheme.of(context).secondaryText,
                                                                               ),
-                                                                              SizedBox(width: 4.0),
+                                                                              const SizedBox(width: 4.0),
                                                                               Text(
                                                                                 dateTimeFormat(
                                                                                   "jm",
@@ -1820,7 +1811,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                                                                 style: FlutterFlowTheme.of(context)
                                                                                     .bodyMedium
                                                                                     .override(
-                                                                                      fontFamily: 'Andika New Basic',
+                                                                                      fontFamily: FFAppState().currentFontFamily,
                                                                                       fontSize: 14.0,
                                                                                       color: FlutterFlowTheme.of(context).secondaryText,
                                                                                       letterSpacing: 0.0,
@@ -1829,7 +1820,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                                                               // Show pattern or date range
                                                                               if (containerVarItem.isRecurring && containerVarItem.recurringPattern != null && containerVarItem.recurringPattern != 'None')
                                                                                 Padding(
-                                                                                  padding: EdgeInsetsDirectional.fromSTEB(6.0, 0, 0, 0),
+                                                                                  padding: const EdgeInsetsDirectional.fromSTEB(6.0, 0, 0, 0),
                                                                                   child: Row(
                                                                                     mainAxisSize: MainAxisSize.min,
                                                                                     children: [
@@ -1840,19 +1831,19 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                                                                           fontSize: 14.0,
                                                                                         ),
                                                                                       ),
-                                                                                      SizedBox(width: 6.0),
+                                                                                      const SizedBox(width: 6.0),
                                                                                       Icon(
                                                                                         Icons.repeat,
                                                                                         size: 16.0,
                                                                                         color: FlutterFlowTheme.of(context).primary,
                                                                                       ),
-                                                                                      SizedBox(width: 4.0),
+                                                                                      const SizedBox(width: 4.0),
                                                                                       Text(
                                                                                         containerVarItem.recurringPattern!,
                                                                                         style: FlutterFlowTheme.of(context)
                                                                                             .bodyMedium
                                                                                             .override(
-                                                                                              fontFamily: 'Andika New Basic',
+                                                                                              fontFamily: FFAppState().currentFontFamily,
                                                                                               fontSize: 14.0,
                                                                                               color: FlutterFlowTheme.of(context).primary,
                                                                                               letterSpacing: 0.0,
@@ -1863,7 +1854,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                                                                 )
                                                                               else if (!containerVarItem.isRecurring && containerVarItem.endDate != null)
                                                                                 Padding(
-                                                                                  padding: EdgeInsetsDirectional.fromSTEB(6.0, 0, 0, 0),
+                                                                                  padding: const EdgeInsetsDirectional.fromSTEB(6.0, 0, 0, 0),
                                                                                   child: Row(
                                                                                     mainAxisSize: MainAxisSize.min,
                                                                                     children: [
@@ -1874,19 +1865,19 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                                                                           fontSize: 14.0,
                                                                                         ),
                                                                                       ),
-                                                                                      SizedBox(width: 6.0),
+                                                                                      const SizedBox(width: 6.0),
                                                                                       Icon(
                                                                                         Icons.event_note,
                                                                                         size: 16.0,
                                                                                         color: FlutterFlowTheme.of(context).primary,
                                                                                       ),
-                                                                                      SizedBox(width: 4.0),
+                                                                                      const SizedBox(width: 4.0),
                                                                                       Text(
                                                                                         '${dateTimeFormat("MMMd", containerVarItem.date, locale: FFLocalizations.of(context).languageCode)}-${dateTimeFormat("MMMd", containerVarItem.endDate, locale: FFLocalizations.of(context).languageCode)}',
                                                                                         style: FlutterFlowTheme.of(context)
                                                                                             .bodyMedium
                                                                                             .override(
-                                                                                              fontFamily: 'Andika New Basic',
+                                                                                              fontFamily: FFAppState().currentFontFamily,
                                                                                               fontSize: 14.0,
                                                                                               color: FlutterFlowTheme.of(context).primary,
                                                                                               letterSpacing: 0.0,
@@ -1901,9 +1892,9 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                                                       ),
                                                                     ),
                                                                     Align(
-                                                                      alignment: AlignmentDirectional(-1.0, 0.0),
+                                                                      alignment: const AlignmentDirectional(-1.0, 0.0),
                                                                       child: Padding(
-                                                                        padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 0.0, 8.0),
+                                                                        padding: const EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 0.0, 8.0),
                                                                         child: Text(
                                                                           valueOrDefault<String>(
                                                                             containerVarItem.description,
@@ -1912,7 +1903,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                                                           style: FlutterFlowTheme.of(context)
                                                                               .bodyMedium
                                                                               .override(
-                                                                                fontFamily: 'Andika New Basic',
+                                                                                fontFamily: FFAppState().currentFontFamily,
                                                                                 fontSize: 13.0,
                                                                                 letterSpacing: 0.0,
                                                                               ),
@@ -1922,14 +1913,14 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                                                     // Assignment badges for completed items
                                                                     if (containerVarItem.assignedToMom || containerVarItem.assignedToDad || containerVarItem.childName != null || containerVarItem.childNames.isNotEmpty)
                                                                       Padding(
-                                                                        padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 10.0),
+                                                                        padding: const EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 10.0),
                                                                         child: Wrap(
                                                                           spacing: 6.0,
                                                                           runSpacing: 4.0,
                                                                           children: [
                                                                             if (containerVarItem.assignedToMom)
                                                                               Container(
-                                                                                padding: EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
+                                                                                padding: const EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
                                                                                 decoration: BoxDecoration(
                                                                                   color: _model.parentInfo.myColor.withOpacity(0.85),
                                                                                   borderRadius: BorderRadius.circular(14.0),
@@ -1937,7 +1928,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                                                                 child: Text(
                                                                                   _model.parentInfo.myName,
                                                                                   style: FlutterFlowTheme.of(context).bodySmall.override(
-                                                                                    fontFamily: 'Andika New Basic',
+                                                                                    fontFamily: FFAppState().currentFontFamily,
                                                                                     fontSize: 11.0,
                                                                                     fontWeight: FontWeight.w600,
                                                                                     color: Colors.white,
@@ -1947,7 +1938,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                                                               ),
                                                                             if (containerVarItem.assignedToDad)
                                                                               Container(
-                                                                                padding: EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
+                                                                                padding: const EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
                                                                                 decoration: BoxDecoration(
                                                                                   color: _model.parentInfo.partnerColor.withOpacity(0.85),
                                                                                   borderRadius: BorderRadius.circular(14.0),
@@ -1955,7 +1946,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                                                                 child: Text(
                                                                                   _model.parentInfo.partnerName,
                                                                                   style: FlutterFlowTheme.of(context).bodySmall.override(
-                                                                                    fontFamily: 'Andika New Basic',
+                                                                                    fontFamily: FFAppState().currentFontFamily,
                                                                                     fontSize: 11.0,
                                                                                     fontWeight: FontWeight.w600,
                                                                                     color: Colors.white,
@@ -1967,7 +1958,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                                                             if (containerVarItem.childNames.isNotEmpty)
                                                                               ...List.generate(containerVarItem.childNames.length, (i) {
                                                                                 return Container(
-                                                                                  padding: EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
+                                                                                  padding: const EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
                                                                                   decoration: BoxDecoration(
                                                                                     color: i < containerVarItem.childColors.length
                                                                                         ? containerVarItem.childColors[i]
@@ -1977,7 +1968,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                                                                   child: Text(
                                                                                     containerVarItem.childNames[i],
                                                                                     style: FlutterFlowTheme.of(context).bodySmall.override(
-                                                                                      fontFamily: 'Andika New Basic',
+                                                                                      fontFamily: FFAppState().currentFontFamily,
                                                                                       fontSize: 11.0,
                                                                                       fontWeight: FontWeight.w600,
                                                                                       color: Colors.white,
@@ -1988,7 +1979,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                                                               })
                                                                             else if (containerVarItem.childName != null)
                                                                               Container(
-                                                                                padding: EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
+                                                                                padding: const EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
                                                                                 decoration: BoxDecoration(
                                                                                   color: containerVarItem.childColor ?? FlutterFlowTheme.of(context).primary,
                                                                                   borderRadius: BorderRadius.circular(14.0),
@@ -1996,7 +1987,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                                                                 child: Text(
                                                                                   containerVarItem.childName!,
                                                                                   style: FlutterFlowTheme.of(context).bodySmall.override(
-                                                                                    fontFamily: 'Andika New Basic',
+                                                                                    fontFamily: FFAppState().currentFontFamily,
                                                                                     fontSize: 11.0,
                                                                                     fontWeight: FontWeight.w600,
                                                                                     color: Colors.white,
@@ -2046,7 +2037,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                     ), // end AnimatedSlide (bottom half)
                     // Comfort mode: Show agenda list grouped by date
                     if (FFAppState().isComfortMode && !_dataReady)
-                      CalendarScheduleSkeleton(isComfortMode: true),
+                      const CalendarScheduleSkeleton(isComfortMode: true),
                     if (FFAppState().isComfortMode && _dataReady)
                       AnimatedSlide(
                         duration: const Duration(milliseconds: 400),
@@ -2056,7 +2047,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                           duration: const Duration(milliseconds: 300),
                           opacity: _showBottom ? 1.0 : 0.0,
                           child: Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(0.0, 16.0, 0.0, 30.0),
+                        padding: const EdgeInsetsDirectional.fromSTEB(0.0, 16.0, 0.0, 30.0),
                         child: StreamBuilder<List<EventAndTaskRecord>>(
                           stream: queryEventAndTaskRecord(
                             queryBuilder: (eventAndTaskRecord) =>
@@ -2134,7 +2125,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
 
                             if (sortedDates.isEmpty) {
                               return Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(16.0, 50.0, 16.0, 50.0),
+                                padding: const EdgeInsetsDirectional.fromSTEB(16.0, 50.0, 16.0, 50.0),
                                 child: EmptyWidgetComponentWidget(
                                   titleParams: 'Nothing planned\nTap + to add something',
                                   actionParam: () async {
@@ -2159,13 +2150,13 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                 var completedEvents = events.where((e) => e.isCompleted).toList();
 
                                 return Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 32.0),
+                                  padding: const EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 32.0),
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       // Date header
                                       Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 16.0),
+                                        padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 16.0),
                                         child: Text(
                                           dateTimeFormat(
                                             "MMMMEEEEd",
@@ -2173,38 +2164,38 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                             locale: FFLocalizations.of(context).languageCode,
                                           ),
                                           style: FlutterFlowTheme.of(context).bodyLarge.override(
-                                            fontFamily: 'Andika New Basic',
+                                            fontFamily: FFAppState().currentFontFamily,
                                             fontSize: 22.0,
                                             fontWeight: FontWeight.bold,
-                                            color: Color(0xFFECF0F1),
+                                            color: const Color(0xFFECF0F1),
                                             letterSpacing: 0.0,
                                           ),
                                         ),
                                       ),
                                       // Active tasks
-                                      ...activeEvents.map((item) => _buildComfortModeTaskCard(context, item)).toList(),
+                                      ...activeEvents.map((item) => _buildComfortModeTaskCard(context, item)),
                                       // Completed tasks
                                       if (completedEvents.isNotEmpty)
                                         Padding(
-                                          padding: EdgeInsetsDirectional.fromSTEB(0.0, 12.0, 0.0, 0.0),
+                                          padding: const EdgeInsetsDirectional.fromSTEB(0.0, 12.0, 0.0, 0.0),
                                           child: Theme(
                                             data: Theme.of(context).copyWith(
                                               dividerColor: Colors.transparent,
                                             ),
                                             child: ExpansionTile(
                                               initiallyExpanded: false,
-                                              tilePadding: EdgeInsetsDirectional.fromSTEB(16.0, 8.0, 16.0, 8.0),
+                                              tilePadding: const EdgeInsetsDirectional.fromSTEB(16.0, 8.0, 16.0, 8.0),
                                               title: Text(
                                                 'Completed (${completedEvents.length})',
                                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                  fontFamily: 'Andika New Basic',
+                                                  fontFamily: FFAppState().currentFontFamily,
                                                   fontSize: 18.0,
                                                   fontWeight: FontWeight.w600,
-                                                  color: Color(0xFF95A5A6),
+                                                  color: const Color(0xFF95A5A6),
                                                   letterSpacing: 0.0,
                                                 ),
                                               ),
-                                              iconColor: Color(0xFF95A5A6),
+                                              iconColor: const Color(0xFF95A5A6),
                                               children: completedEvents.map((event) => _buildComfortModeTaskCard(context, event)).toList(),
                                             ),
                                           ),
@@ -2219,13 +2210,13 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                       ),
                         ), // end AnimatedOpacity (comfort bottom)
                       ), // end AnimatedSlide (comfort bottom)
-                  ].addToEnd(SizedBox(height: 90.0)),
+                  ].addToEnd(const SizedBox(height: 90.0)),
                 ),
               ),
               Align(
-                alignment: AlignmentDirectional(1.0, 1.0),
+                alignment: const AlignmentDirectional(1.0, 1.0),
                 child: Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 16.0, 100.0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 16.0, 100.0),
                   child: ScaleTransition(
                     scale: _breathingAnimation,
                     child: FloatingActionButton(
@@ -2357,7 +2348,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
         });
       },
       child: Container(
-        padding: EdgeInsetsDirectional.fromSTEB(16.0, 8.0, 16.0, 8.0),
+        padding: const EdgeInsetsDirectional.fromSTEB(16.0, 8.0, 16.0, 8.0),
         decoration: BoxDecoration(
           color: isSelected
               ? FlutterFlowTheme.of(context).primary
@@ -2373,7 +2364,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
         child: Text(
           filterType,
           style: FlutterFlowTheme.of(context).bodyMedium.override(
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
                 fontSize: 14.0,
                 fontWeight: FontWeight.w600,
                 color: isSelected
@@ -2388,7 +2379,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
 
   Widget _buildComfortModeTaskCard(BuildContext context, EventAndTaskRecord event) {
     return Padding(
-      padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 16.0),
+      padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 16.0),
       child: Dismissible(
         key: Key(event.reference.id),
         direction: DismissDirection.horizontal,
@@ -2398,8 +2389,8 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
             borderRadius: BorderRadius.circular(14.0),
           ),
           alignment: Alignment.centerLeft,
-          padding: EdgeInsetsDirectional.fromSTEB(20.0, 0, 0, 0),
-          child: Icon(
+          padding: const EdgeInsetsDirectional.fromSTEB(20.0, 0, 0, 0),
+          child: const Icon(
             Icons.check_circle,
             color: Colors.white,
             size: 32.0,
@@ -2411,8 +2402,8 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
             borderRadius: BorderRadius.circular(14.0),
           ),
           alignment: Alignment.centerRight,
-          padding: EdgeInsetsDirectional.fromSTEB(0, 0, 20.0, 0),
-          child: Icon(
+          padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 20.0, 0),
+          child: const Icon(
             Icons.delete,
             color: Colors.white,
             size: 32.0,
@@ -2435,7 +2426,7 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text('${event.name} deleted'),
-                duration: Duration(seconds: 2),
+                duration: const Duration(seconds: 2),
               ),
             );
           }
@@ -2454,15 +2445,15 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
           child: Container(
             width: double.infinity,
             decoration: BoxDecoration(
-              color: Color(0xFF34495E),
+              color: const Color(0xFF34495E),
               borderRadius: BorderRadius.circular(14.0),
               border: Border.all(
-                color: Color(0xFF7F8C8D),
+                color: const Color(0xFF7F8C8D),
                 width: 1.0,
               ),
             ),
             child: Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(20.0, 20.0, 20.0, 20.0),
+              padding: const EdgeInsetsDirectional.fromSTEB(20.0, 20.0, 20.0, 20.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -2472,9 +2463,9 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                     children: [
                       // Type badge
                       Container(
-                        padding: EdgeInsetsDirectional.fromSTEB(12.0, 6.0, 12.0, 6.0),
+                        padding: const EdgeInsetsDirectional.fromSTEB(12.0, 6.0, 12.0, 6.0),
                         decoration: BoxDecoration(
-                          color: Color(0xFF7F8C8D),
+                          color: const Color(0xFF7F8C8D),
                           borderRadius: BorderRadius.circular(14.0),
                         ),
                         child: Row(
@@ -2485,16 +2476,16 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                                   ? Icons.check_box_outlined
                                   : Icons.event_outlined,
                               size: 18.0,
-                              color: Color(0xFFECF0F1),
+                              color: const Color(0xFFECF0F1),
                             ),
-                            SizedBox(width: 6.0),
+                            const SizedBox(width: 6.0),
                             Text(
                               (event.typ == 'Task' || event.typ == 'Tasks') ? 'Task' : (event.typ == 'Activity' ? 'Activity' : 'Event'),
                               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                fontFamily: 'Andika New Basic',
+                                fontFamily: FFAppState().currentFontFamily,
                                 fontSize: 14.0,
                                 fontWeight: FontWeight.w600,
-                                color: Color(0xFFECF0F1),
+                                color: const Color(0xFFECF0F1),
                                 letterSpacing: 0.0,
                               ),
                             ),
@@ -2505,12 +2496,12 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                       Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(
+                          const Icon(
                             Icons.access_time,
                             size: 20.0,
                             color: Color(0xFF95A5A6),
                           ),
-                          SizedBox(width: 6.0),
+                          const SizedBox(width: 6.0),
                           Text(
                             dateTimeFormat(
                               "jm",
@@ -2518,8 +2509,8 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                               locale: FFLocalizations.of(context).languageCode,
                             ),
                             style: FlutterFlowTheme.of(context).bodySmall.override(
-                              fontFamily: 'Andika New Basic',
-                              color: Color(0xFF95A5A6),
+                              fontFamily: FFAppState().currentFontFamily,
+                              color: const Color(0xFF95A5A6),
                               fontSize: 16.0,
                               letterSpacing: 0.0,
                             ),
@@ -2528,28 +2519,28 @@ class _CalendarpageWidgetState extends State<CalendarpageWidget> with SingleTick
                       ),
                     ],
                   ),
-                  SizedBox(height: 16.0),
+                  const SizedBox(height: 16.0),
                   Text(
                     event.name,
                     style: FlutterFlowTheme.of(context).bodyLarge.override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       fontSize: 20.0,
                       fontWeight: FontWeight.w600,
-                      color: Color(0xFFECF0F1),
+                      color: const Color(0xFFECF0F1),
                       decoration: event.isCompleted
                           ? TextDecoration.lineThrough
                           : TextDecoration.none,
                       letterSpacing: 0.0,
                     ),
                   ),
-                  if (event.description != null && event.description != '')
+                  if (event.description != '')
                     Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(0.0, 10.0, 0.0, 0.0),
+                      padding: const EdgeInsetsDirectional.fromSTEB(0.0, 10.0, 0.0, 0.0),
                       child: Text(
                         event.description,
                         style: FlutterFlowTheme.of(context).bodySmall.override(
-                          fontFamily: 'Andika New Basic',
-                          color: Color(0xFF95A5A6),
+                          fontFamily: FFAppState().currentFontFamily,
+                          color: const Color(0xFF95A5A6),
                           fontSize: 16.0,
                           letterSpacing: 0.0,
                         ),

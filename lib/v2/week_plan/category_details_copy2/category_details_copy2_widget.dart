@@ -2,14 +2,8 @@ import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import '/flutter_flow/flutter_flow_widgets.dart';
-import 'dart:ui';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'package:text_search/text_search.dart';
 import 'category_details_copy2_model.dart';
 export 'category_details_copy2_model.dart';
@@ -72,14 +66,14 @@ class _CategoryDetailsCopy2WidgetState
         body: SafeArea(
           top: true,
           child: Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(10.0, 0.0, 10.0, 0.0),
+            padding: const EdgeInsetsDirectional.fromSTEB(10.0, 0.0, 10.0, 0.0),
             child: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 children: [
                   Padding(
                     padding:
-                        EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
+                        const EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
                     child: Material(
                       color: Colors.transparent,
                       elevation: 2.0,
@@ -93,7 +87,7 @@ class _CategoryDetailsCopy2WidgetState
                           decoration: BoxDecoration(
                             color: FlutterFlowTheme.of(context)
                                 .secondaryBackground,
-                            boxShadow: [
+                            boxShadow: const [
                               BoxShadow(
                                 blurRadius: 4.0,
                                 color: Color(0x33000000),
@@ -105,18 +99,18 @@ class _CategoryDetailsCopy2WidgetState
                             ],
                             borderRadius: BorderRadius.circular(14.0),
                             border: Border.all(
-                              color: Color(0xFF999999),
+                              color: const Color(0xFF999999),
                               width: 1.0,
                             ),
                           ),
                           child: Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 0.0, 0.0, 20.0),
                             child: Column(
                               mainAxisSize: MainAxisSize.max,
                               children: [
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       11.0, 16.0, 0.0, 20.0),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.max,
@@ -141,9 +135,9 @@ class _CategoryDetailsCopy2WidgetState
                                       Expanded(
                                         child: Padding(
                                           padding:
-                                              EdgeInsetsDirectional.fromSTEB(
+                                              const EdgeInsetsDirectional.fromSTEB(
                                                   12.0, 0.0, 12.0, 0.0),
-                                          child: Container(
+                                          child: SizedBox(
                                             width: double.infinity,
                                             child: TextFormField(
                                               controller: _model.textController,
@@ -163,11 +157,11 @@ class _CategoryDetailsCopy2WidgetState
                                                                           record,
                                                                           [
                                                                     record
-                                                                        .recipeName!,
+                                                                        .recipeName,
                                                                     record
-                                                                        .mainOrSides!,
+                                                                        .mainOrSides,
                                                                     record
-                                                                        .mealTyp!
+                                                                        .mealTyp
                                                                   ]),
                                                             )
                                                             .toList(),
@@ -211,7 +205,7 @@ class _CategoryDetailsCopy2WidgetState
                                                         ),
                                                 enabledBorder:
                                                     OutlineInputBorder(
-                                                  borderSide: BorderSide(
+                                                  borderSide: const BorderSide(
                                                     color: Color(0x00000000),
                                                     width: 1.0,
                                                   ),
@@ -221,7 +215,7 @@ class _CategoryDetailsCopy2WidgetState
                                                 ),
                                                 focusedBorder:
                                                     OutlineInputBorder(
-                                                  borderSide: BorderSide(
+                                                  borderSide: const BorderSide(
                                                     color: Color(0x00000000),
                                                     width: 1.0,
                                                   ),
@@ -256,7 +250,7 @@ class _CategoryDetailsCopy2WidgetState
                                                 fillColor:
                                                     FlutterFlowTheme.of(context)
                                                         .secondaryBackground,
-                                                suffixIcon: Icon(
+                                                suffixIcon: const Icon(
                                                   Icons.search_outlined,
                                                 ),
                                               ),
@@ -320,14 +314,10 @@ class _CategoryDetailsCopy2WidgetState
                                       ),
                                       child: Align(
                                         alignment:
-                                            AlignmentDirectional(0.0, -1.0),
+                                            const AlignmentDirectional(0.0, -1.0),
                                         child: Builder(
                                           builder: (context) {
-                                            final containerVar = (_model
-                                                                .textController
-                                                                .text !=
-                                                            null &&
-                                                        _model.textController
+                                            final containerVar = (_model.textController
                                                                 .text !=
                                                             ''
                                                     ? _model.simpleSearchResults
@@ -361,16 +351,16 @@ class _CategoryDetailsCopy2WidgetState
                                                       width: 160.0,
                                                       height: 190.0,
                                                       decoration:
-                                                          BoxDecoration(),
+                                                          const BoxDecoration(),
                                                       child: Align(
                                                         alignment:
-                                                            AlignmentDirectional(
+                                                            const AlignmentDirectional(
                                                                 1.0, -1.0),
                                                         child: Stack(
                                                           children: [
                                                             ClipRRect(
                                                               borderRadius:
-                                                                  BorderRadius
+                                                                  const BorderRadius
                                                                       .only(
                                                                 bottomLeft: Radius
                                                                     .circular(
@@ -394,7 +384,7 @@ class _CategoryDetailsCopy2WidgetState
                                                                           context)
                                                                       .secondaryBackground,
                                                                   borderRadius:
-                                                                      BorderRadius
+                                                                      const BorderRadius
                                                                           .only(
                                                                     bottomLeft:
                                                                         Radius.circular(
@@ -432,11 +422,11 @@ class _CategoryDetailsCopy2WidgetState
                                                             ),
                                                             Align(
                                                               alignment:
-                                                                  AlignmentDirectional(
+                                                                  const AlignmentDirectional(
                                                                       0.0, 1.0),
                                                               child: Padding(
                                                                 padding:
-                                                                    EdgeInsetsDirectional
+                                                                    const EdgeInsetsDirectional
                                                                         .fromSTEB(
                                                                             0.0,
                                                                             0.0,
@@ -449,7 +439,7 @@ class _CategoryDetailsCopy2WidgetState
                                                                     width: double
                                                                         .infinity,
                                                                     decoration:
-                                                                        BoxDecoration(
+                                                                        const BoxDecoration(
                                                                       color: Color(
                                                                           0x80D9D9D9),
                                                                     ),
@@ -481,11 +471,11 @@ class _CategoryDetailsCopy2WidgetState
                                                             ),
                                                             Align(
                                                               alignment:
-                                                                  AlignmentDirectional(
+                                                                  const AlignmentDirectional(
                                                                       1.0,
                                                                       -1.0),
                                                               child: Padding(
-                                                                padding: EdgeInsetsDirectional
+                                                                padding: const EdgeInsetsDirectional
                                                                     .fromSTEB(
                                                                         0.0,
                                                                         16.0,
@@ -549,7 +539,7 @@ class _CategoryDetailsCopy2WidgetState
 
                                                                     return Container(
                                                                       decoration:
-                                                                          BoxDecoration(
+                                                                          const BoxDecoration(
                                                                         shape: BoxShape
                                                                             .circle,
                                                                       ),
@@ -614,7 +604,7 @@ class _CategoryDetailsCopy2WidgetState
                                   },
                                 ),
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       0.0, 8.0, 0.0, 0.0),
                                   child: Container(
                                     width: double.infinity,

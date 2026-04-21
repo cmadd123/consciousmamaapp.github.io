@@ -5,14 +5,9 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/components/momrise_confirmation.dart';
-import 'dart:ui';
 import '/index.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'edite_learning_pathtask_model.dart';
 export 'edite_learning_pathtask_model.dart';
 
@@ -45,24 +40,24 @@ class _EditeLearningPathtaskWidgetState
 
     // On page load action.
     SchedulerBinding.instance.addPostFrameCallback((_) async {
-      _model.selectedDate = widget!.learingTask?.taskTime;
-      _model.seectedChild = widget!.learingTask?.childRef;
+      _model.selectedDate = widget.learingTask?.taskTime;
+      _model.seectedChild = widget.learingTask?.childRef;
       safeSetState(() {});
     });
 
     _model.textController1 ??= TextEditingController(
         text: valueOrDefault<String>(
-      widget!.learingTask?.title,
+      widget.learingTask?.title,
       'pathTitle',
     ));
     _model.textFieldFocusNode1 ??= FocusNode();
 
     _model.textController2 ??=
-        TextEditingController(text: widget!.learingTask?.description);
+        TextEditingController(text: widget.learingTask?.description);
     _model.textFieldFocusNode2 ??= FocusNode();
 
     _model.textController3 ??=
-        TextEditingController(text: widget!.learingTask?.duration?.toString());
+        TextEditingController(text: widget.learingTask?.duration.toString());
     _model.textFieldFocusNode3 ??= FocusNode();
   }
 
@@ -89,21 +84,21 @@ class _EditeLearningPathtaskWidgetState
             key: _model.formKey,
             autovalidateMode: AutovalidateMode.disabled,
             child: Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(12.0, 0.0, 12.0, 0.0),
+              padding: const EdgeInsetsDirectional.fromSTEB(12.0, 0.0, 12.0, 0.0),
               child: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
                   children: [
                     Align(
-                      alignment: AlignmentDirectional(0.0, -1.0),
+                      alignment: const AlignmentDirectional(0.0, -1.0),
                       child: Padding(
                         padding:
-                            EdgeInsetsDirectional.fromSTEB(0.0, 50.0, 0.0, 0.0),
+                            const EdgeInsetsDirectional.fromSTEB(0.0, 50.0, 0.0, 0.0),
                         child: Text(
                           'Edit Path Details',
                           style:
                               FlutterFlowTheme.of(context).bodyMedium.override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     fontSize: 24.0,
                                     letterSpacing: 0.0,
                                   ),
@@ -111,16 +106,16 @@ class _EditeLearningPathtaskWidgetState
                       ),
                     ),
                     Align(
-                      alignment: AlignmentDirectional(0.0, -1.0),
+                      alignment: const AlignmentDirectional(0.0, -1.0),
                       child: Padding(
                         padding:
-                            EdgeInsetsDirectional.fromSTEB(0.0, 20.0, 0.0, 0.0),
+                            const EdgeInsetsDirectional.fromSTEB(0.0, 20.0, 0.0, 0.0),
                         child: Text(
                           'Edit your lesson details below to update',
                           style:
                               FlutterFlowTheme.of(context).bodyMedium.override(
-                                    fontFamily: 'Andika New Basic',
-                                    color: Color(0xC6000000),
+                                    fontFamily: FFAppState().currentFontFamily,
+                                    color: const Color(0xC6000000),
                                     fontSize: 16.0,
                                     letterSpacing: 0.0,
                                   ),
@@ -129,14 +124,14 @@ class _EditeLearningPathtaskWidgetState
                     ),
                     Padding(
                       padding:
-                          EdgeInsetsDirectional.fromSTEB(0.0, 30.0, 0.0, 0.0),
+                          const EdgeInsetsDirectional.fromSTEB(0.0, 30.0, 0.0, 0.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             'Title',
                             style: FlutterFlowTheme.of(context).bodyMedium.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               fontWeight: FontWeight.w600,
                               letterSpacing: 0.0,
                             ),
@@ -148,11 +143,11 @@ class _EditeLearningPathtaskWidgetState
                           color: FlutterFlowTheme.of(context).prim30,
                           borderRadius: BorderRadius.circular(14.0),
                           border: Border.all(
-                            color: Color(0xFFCBE3E0),
+                            color: const Color(0xFFCBE3E0),
                             width: 1.0,
                           ),
                         ),
-                        child: Container(
+                        child: SizedBox(
                           width: double.infinity,
                           child: TextFormField(
                             controller: _model.textController1,
@@ -164,7 +159,7 @@ class _EditeLearningPathtaskWidgetState
                               labelStyle: FlutterFlowTheme.of(context)
                                   .labelMedium
                                   .override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     color: FlutterFlowTheme.of(context)
                                         .primaryText,
                                     fontSize: 16.0,
@@ -174,21 +169,21 @@ class _EditeLearningPathtaskWidgetState
                               hintStyle: FlutterFlowTheme.of(context)
                                   .labelMedium
                                   .override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     color: FlutterFlowTheme.of(context)
                                         .primaryText,
                                     fontSize: 16.0,
                                     letterSpacing: 0.0,
                                   ),
                               enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
+                                borderSide: const BorderSide(
                                   color: Color(0x00000000),
                                   width: 1.0,
                                 ),
                                 borderRadius: BorderRadius.circular(14.0),
                               ),
                               focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
+                                borderSide: const BorderSide(
                                   color: Color(0x00000000),
                                   width: 1.0,
                                 ),
@@ -212,7 +207,7 @@ class _EditeLearningPathtaskWidgetState
                             style: FlutterFlowTheme.of(context)
                                 .bodyMedium
                                 .override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   fontSize: 16.0,
                                   letterSpacing: 0.0,
                                 ),
@@ -229,14 +224,14 @@ class _EditeLearningPathtaskWidgetState
                     ),
                     Padding(
                       padding:
-                          EdgeInsetsDirectional.fromSTEB(0.0, 30.0, 0.0, 0.0),
+                          const EdgeInsetsDirectional.fromSTEB(0.0, 30.0, 0.0, 0.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             'Date & Time',
                             style: FlutterFlowTheme.of(context).bodyMedium.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               fontWeight: FontWeight.w600,
                               letterSpacing: 0.0,
                             ),
@@ -276,12 +271,12 @@ class _EditeLearningPathtaskWidgetState
                                   color: FlutterFlowTheme.of(context).prim30,
                                   borderRadius: BorderRadius.circular(14.0),
                                   border: Border.all(
-                                    color: Color(0xFFCBE3E0),
+                                    color: const Color(0xFFCBE3E0),
                                     width: 1.0,
                                   ),
                                 ),
                                 child: Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       0.0, 0.0, 16.0, 0.0),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.max,
@@ -290,10 +285,10 @@ class _EditeLearningPathtaskWidgetState
                                     children: [
                                       Align(
                                         alignment:
-                                            AlignmentDirectional(-1.0, 0.0),
+                                            const AlignmentDirectional(-1.0, 0.0),
                                         child: Padding(
                                           padding:
-                                              EdgeInsetsDirectional.fromSTEB(
+                                              const EdgeInsetsDirectional.fromSTEB(
                                                   16.0, 0.0, 0.0, 0.0),
                                           child: Text(
                                             _model.selectedDate != null
@@ -328,21 +323,21 @@ class _EditeLearningPathtaskWidgetState
                               ),
                             ),
                           ),
-                        ].divide(SizedBox(width: 11.0)),
+                        ].divide(const SizedBox(width: 11.0)),
                       ),
                         ],
                       ),
                     ),
                     Padding(
                       padding:
-                          EdgeInsetsDirectional.fromSTEB(0.0, 30.0, 0.0, 0.0),
+                          const EdgeInsetsDirectional.fromSTEB(0.0, 30.0, 0.0, 0.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             'Description',
                             style: FlutterFlowTheme.of(context).bodyMedium.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               fontWeight: FontWeight.w600,
                               letterSpacing: 0.0,
                             ),
@@ -353,11 +348,11 @@ class _EditeLearningPathtaskWidgetState
                           color: FlutterFlowTheme.of(context).prim30,
                           borderRadius: BorderRadius.circular(14.0),
                           border: Border.all(
-                            color: Color(0xFFCBE3E0),
+                            color: const Color(0xFFCBE3E0),
                             width: 1.0,
                           ),
                         ),
-                        child: Container(
+                        child: SizedBox(
                           width: double.infinity,
                           child: TextFormField(
                             controller: _model.textController2,
@@ -369,7 +364,7 @@ class _EditeLearningPathtaskWidgetState
                               labelStyle: FlutterFlowTheme.of(context)
                                   .labelMedium
                                   .override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     color: FlutterFlowTheme.of(context)
                                         .primaryText,
                                     fontSize: 16.0,
@@ -380,21 +375,21 @@ class _EditeLearningPathtaskWidgetState
                               hintStyle: FlutterFlowTheme.of(context)
                                   .labelMedium
                                   .override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     color: FlutterFlowTheme.of(context)
                                         .primaryText,
                                     fontSize: 16.0,
                                     letterSpacing: 0.0,
                                   ),
                               enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
+                                borderSide: const BorderSide(
                                   color: Color(0x00000000),
                                   width: 1.0,
                                 ),
                                 borderRadius: BorderRadius.circular(14.0),
                               ),
                               focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
+                                borderSide: const BorderSide(
                                   color: Color(0x00000000),
                                   width: 1.0,
                                 ),
@@ -418,7 +413,7 @@ class _EditeLearningPathtaskWidgetState
                             style: FlutterFlowTheme.of(context)
                                 .bodyMedium
                                 .override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   fontSize: 16.0,
                                   letterSpacing: 0.0,
                                 ),
@@ -436,14 +431,14 @@ class _EditeLearningPathtaskWidgetState
                     ),
                     Padding(
                       padding:
-                          EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
+                          const EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             'Duration (minutes)',
                             style: FlutterFlowTheme.of(context).bodyMedium.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               fontWeight: FontWeight.w600,
                               letterSpacing: 0.0,
                             ),
@@ -455,11 +450,11 @@ class _EditeLearningPathtaskWidgetState
                           color: FlutterFlowTheme.of(context).prim30,
                           borderRadius: BorderRadius.circular(14.0),
                           border: Border.all(
-                            color: Color(0xFFCBE3E0),
+                            color: const Color(0xFFCBE3E0),
                             width: 1.0,
                           ),
                         ),
-                        child: Container(
+                        child: SizedBox(
                           width: double.infinity,
                           child: TextFormField(
                             controller: _model.textController3,
@@ -471,7 +466,7 @@ class _EditeLearningPathtaskWidgetState
                               labelStyle: FlutterFlowTheme.of(context)
                                   .labelMedium
                                   .override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     color: FlutterFlowTheme.of(context)
                                         .primaryText,
                                     fontSize: 16.0,
@@ -481,21 +476,21 @@ class _EditeLearningPathtaskWidgetState
                               hintStyle: FlutterFlowTheme.of(context)
                                   .labelMedium
                                   .override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     color: FlutterFlowTheme.of(context)
                                         .secondaryText,
                                     fontSize: 16.0,
                                     letterSpacing: 0.0,
                                   ),
                               enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
+                                borderSide: const BorderSide(
                                   color: Color(0x00000000),
                                   width: 1.0,
                                 ),
                                 borderRadius: BorderRadius.circular(14.0),
                               ),
                               focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
+                                borderSide: const BorderSide(
                                   color: Color(0x00000000),
                                   width: 1.0,
                                 ),
@@ -519,7 +514,7 @@ class _EditeLearningPathtaskWidgetState
                             style: FlutterFlowTheme.of(context)
                                 .bodyMedium
                                 .override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   fontSize: 16.0,
                                   letterSpacing: 0.0,
                                 ),
@@ -537,17 +532,17 @@ class _EditeLearningPathtaskWidgetState
                     ),
                     Padding(
                       padding:
-                          EdgeInsetsDirectional.fromSTEB(0.0, 16.0, 0.0, 0.0),
+                          const EdgeInsetsDirectional.fromSTEB(0.0, 16.0, 0.0, 0.0),
                       child: Container(
                         width: double.infinity,
-                        constraints: BoxConstraints(
+                        constraints: const BoxConstraints(
                           minHeight: 52.0,
                         ),
                         decoration: BoxDecoration(
                           color: FlutterFlowTheme.of(context).prim30,
                           borderRadius: BorderRadius.circular(14.0),
                           border: Border.all(
-                            color: Color(0xFFCBE3E0),
+                            color: const Color(0xFFCBE3E0),
                             width: 1.0,
                           ),
                         ),
@@ -555,7 +550,7 @@ class _EditeLearningPathtaskWidgetState
                           mainAxisSize: MainAxisSize.max,
                           children: [
                             Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   0.0, 8.0, 16.0, 8.0),
                               child: Row(
                                 mainAxisSize: MainAxisSize.max,
@@ -563,16 +558,16 @@ class _EditeLearningPathtaskWidgetState
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Align(
-                                    alignment: AlignmentDirectional(-1.0, 0.0),
+                                    alignment: const AlignmentDirectional(-1.0, 0.0),
                                     child: Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(
                                           16.0, 0.0, 0.0, 0.0),
                                       child: Text(
                                         'Select child',
                                         style: FlutterFlowTheme.of(context)
                                             .bodyMedium
                                             .override(
-                                              fontFamily: 'Andika New Basic',
+                                              fontFamily: FFAppState().currentFontFamily,
                                               fontSize: 16.0,
                                               letterSpacing: 0.0,
                                             ),
@@ -580,7 +575,7 @@ class _EditeLearningPathtaskWidgetState
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(
                                         0.0, 0.0, 8.0, 0.0),
                                     child: Icon(
                                       Icons.keyboard_arrow_down_sharp,
@@ -629,7 +624,7 @@ class _EditeLearningPathtaskWidgetState
                                         listViewChildernRecordList[
                                             listViewIndex];
                                     return Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(
                                           0.0, 0.0, 0.0, 20.0),
                                       child: Row(
                                         mainAxisSize: MainAxisSize.max,
@@ -638,7 +633,7 @@ class _EditeLearningPathtaskWidgetState
                                         children: [
                                           Padding(
                                             padding:
-                                                EdgeInsetsDirectional.fromSTEB(
+                                                const EdgeInsetsDirectional.fromSTEB(
                                                     16.0, 0.0, 0.0, 0.0),
                                             child: Row(
                                               mainAxisSize: MainAxisSize.max,
@@ -686,7 +681,7 @@ class _EditeLearningPathtaskWidgetState
                                                           ),
                                                           child: Align(
                                                             alignment:
-                                                                AlignmentDirectional(
+                                                                const AlignmentDirectional(
                                                                     0.0, 0.0),
                                                             child: Icon(
                                                               Icons
@@ -714,12 +709,12 @@ class _EditeLearningPathtaskWidgetState
                                                         letterSpacing: 0.0,
                                                       ),
                                                 ),
-                                              ].divide(SizedBox(width: 8.0)),
+                                              ].divide(const SizedBox(width: 8.0)),
                                             ),
                                           ),
                                           Padding(
                                             padding:
-                                                EdgeInsetsDirectional.fromSTEB(
+                                                const EdgeInsetsDirectional.fromSTEB(
                                                     0.0, 0.0, 24.0, 0.0),
                                             child: Container(
                                               width: 24.0,
@@ -732,7 +727,7 @@ class _EditeLearningPathtaskWidgetState
                                                     BorderRadius.circular(5.0),
                                               ),
                                               child: Padding(
-                                                padding: EdgeInsetsDirectional
+                                                padding: const EdgeInsetsDirectional
                                                     .fromSTEB(
                                                         3.0, 3.0, 3.0, 3.0),
                                                 child: Container(
@@ -760,7 +755,7 @@ class _EditeLearningPathtaskWidgetState
                     ),
                     Padding(
                       padding:
-                          EdgeInsetsDirectional.fromSTEB(24.0, 60.0, 24.0, 0.0),
+                          const EdgeInsetsDirectional.fromSTEB(24.0, 60.0, 24.0, 0.0),
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -773,16 +768,16 @@ class _EditeLearningPathtaskWidgetState
                               text: 'Cancel',
                               options: FFButtonOptions(
                                 height: 40.0,
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     16.0, 0.0, 16.0, 0.0),
-                                iconPadding: EdgeInsetsDirectional.fromSTEB(
+                                iconPadding: const EdgeInsetsDirectional.fromSTEB(
                                     0.0, 0.0, 0.0, 0.0),
                                 color: FlutterFlowTheme.of(context)
                                     .secondaryBackground,
                                 textStyle: FlutterFlowTheme.of(context)
                                     .titleSmall
                                     .override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       color:
                                           FlutterFlowTheme.of(context).primary,
                                       letterSpacing: 0.0,
@@ -804,22 +799,22 @@ class _EditeLearningPathtaskWidgetState
                                   return;
                                 }
 
-                                await widget!.learingTask!.programRef!
+                                await widget.learingTask!.programRef!
                                     .update(createLearningPathRecordData(
                                   childRef: _model.seectedChild,
                                 ));
                                 _model.pathref =
                                     await LearningPathRecord.getDocumentOnce(
-                                        widget!.learingTask!.programRef!);
+                                        widget.learingTask!.programRef!);
 
-                                await widget!.learingTask!.reference
+                                await widget.learingTask!.reference
                                     .update(createLearningPathTasksRecordData(
                                   title: _model.textController1.text,
                                   taskTime: _model.selectedDate,
                                   description: _model.textController2.text,
                                   duration:
                                       int.tryParse(_model.textController3.text),
-                                  programRef: widget!.learingTask?.programRef,
+                                  programRef: widget.learingTask?.programRef,
                                 ));
 
                                 if (mounted) {
@@ -841,15 +836,15 @@ class _EditeLearningPathtaskWidgetState
                               text: 'Update',
                               options: FFButtonOptions(
                                 height: 40.0,
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     16.0, 0.0, 16.0, 0.0),
-                                iconPadding: EdgeInsetsDirectional.fromSTEB(
+                                iconPadding: const EdgeInsetsDirectional.fromSTEB(
                                     0.0, 0.0, 0.0, 0.0),
                                 color: FlutterFlowTheme.of(context).primary,
                                 textStyle: FlutterFlowTheme.of(context)
                                     .titleSmall
                                     .override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       color: Colors.white,
                                       letterSpacing: 0.0,
                                     ),
@@ -858,7 +853,7 @@ class _EditeLearningPathtaskWidgetState
                               ),
                             ),
                           ),
-                        ].divide(SizedBox(width: 16.0)),
+                        ].divide(const SizedBox(width: 16.0)),
                       ),
                     ),
                   ],

@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
-import '/flutter_flow/flutter_flow_widgets.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/custom_code/actions/creator_service.dart';
 import 'creator_theme_notifier.dart';
@@ -147,7 +145,7 @@ class _CreatorThemeEditorWidgetState extends State<CreatorThemeEditorWidget> {
         title: Text(
           'Customize Theme',
           style: FlutterFlowTheme.of(context).titleMedium.override(
-            fontFamily: 'Andika New Basic',
+            fontFamily: FFAppState().currentFontFamily,
             fontWeight: FontWeight.w600,
             letterSpacing: 0.0,
           ),
@@ -190,7 +188,7 @@ class _CreatorThemeEditorWidgetState extends State<CreatorThemeEditorWidget> {
                     child: Text(
                       'Tap any colored element in the preview to change it. Your followers see these colors.',
                       style: FlutterFlowTheme.of(context).bodySmall.override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         color: _primary,
                         fontSize: 12,
                         letterSpacing: 0,
@@ -387,7 +385,7 @@ class _CreatorThemeEditorWidgetState extends State<CreatorThemeEditorWidget> {
                         children: [
                           Icon(Icons.restaurant_menu_rounded, color: _iconColor, size: 18),
                           const SizedBox(width: 6),
-                          Text("Today's Meals", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: const Color(0xFF5D4E60))),
+                          const Text("Today's Meals", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Color(0xFF5D4E60))),
                           const Spacer(),
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
@@ -436,7 +434,7 @@ class _CreatorThemeEditorWidgetState extends State<CreatorThemeEditorWidget> {
                         children: [
                           Icon(Icons.calendar_today_rounded, color: _iconColor, size: 18),
                           const SizedBox(width: 6),
-                          Text("Today's Events", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: const Color(0xFF5D4E60))),
+                          const Text("Today's Events", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Color(0xFF5D4E60))),
                           const Spacer(),
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
@@ -640,10 +638,10 @@ class _CreatorThemeEditorWidgetState extends State<CreatorThemeEditorWidget> {
             Text('Hue', style: TextStyle(fontSize: 10, color: Colors.grey[500])),
             Expanded(
               child: SliderTheme(
-                data: SliderThemeData(
+                data: const SliderThemeData(
                   trackHeight: 8,
-                  thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 10),
-                  overlayShape: const RoundSliderOverlayShape(overlayRadius: 16),
+                  thumbShape: RoundSliderThumbShape(enabledThumbRadius: 10),
+                  overlayShape: RoundSliderOverlayShape(overlayRadius: 16),
                 ),
                 child: Slider(
                   value: hsl.hue,
@@ -673,10 +671,10 @@ class _CreatorThemeEditorWidgetState extends State<CreatorThemeEditorWidget> {
             Text('Light', style: TextStyle(fontSize: 10, color: Colors.grey[500])),
             Expanded(
               child: SliderTheme(
-                data: SliderThemeData(
+                data: const SliderThemeData(
                   trackHeight: 8,
-                  thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 10),
-                  overlayShape: const RoundSliderOverlayShape(overlayRadius: 16),
+                  thumbShape: RoundSliderThumbShape(enabledThumbRadius: 10),
+                  overlayShape: RoundSliderOverlayShape(overlayRadius: 16),
                 ),
                 child: Slider(
                   value: hsl.lightness,

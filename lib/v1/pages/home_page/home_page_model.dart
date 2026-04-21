@@ -1,27 +1,9 @@
-import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
-import '/backend/schema/structs/index.dart';
-import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import '/flutter_flow/flutter_flow_widgets.dart';
-import '/v1/activities/activity_details_pop_up/activity_details_pop_up_widget.dart';
-import '/v1/create_task_or_program/create_task_or_program_widget.dart';
-import '/v1/empty_list_view_component/empty_list_view_component_widget.dart';
-import '/v1/loading_nothing/loading_nothing_widget.dart';
 import '/v1/nav_bar/nav_bar_widget.dart';
-import '/v1/tasks/task_details_pop_up/task_details_pop_up_widget.dart';
-import 'dart:ui';
-import '/flutter_flow/custom_functions.dart' as functions;
 import '/index.dart';
 import 'home_page_widget.dart' show HomePageWidget;
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:percent_indicator/percent_indicator.dart';
-import 'package:provider/provider.dart';
 
 class HomePageModel extends FlutterFlowModel<HomePageWidget> {
   ///  Local state fields for this page.

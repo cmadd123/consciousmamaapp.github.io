@@ -2,13 +2,9 @@ import '/backend/schema/enums/enums.dart';
 import '/backend/schema/structs/index.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import '/flutter_flow/flutter_flow_widgets.dart';
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'chat_model.dart';
 export 'chat_model.dart';
 
@@ -52,9 +48,9 @@ class _ChatWidgetState extends State<ChatWidget> {
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        if (widget!.messages?.role == Role.user.name)
+        if (widget.messages?.role == Role.user.name)
           Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(35.0, 0.0, 20.0, 20.0),
+            padding: const EdgeInsetsDirectional.fromSTEB(35.0, 0.0, 20.0, 20.0),
             child: Container(
               decoration: BoxDecoration(
                 color: FlutterFlowTheme.of(context).secondaryBackground,
@@ -65,14 +61,14 @@ class _ChatWidgetState extends State<ChatWidget> {
                 ),
               ),
               child: Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 1.0),
+                padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 1.0),
                 child: Row(
                   mainAxisSize: MainAxisSize.max,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     if (false)
                       Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(
+                        padding: const EdgeInsetsDirectional.fromSTEB(
                             12.0, 20.0, 0.0, 0.0),
                         child: ClipOval(
                           child: Container(
@@ -83,13 +79,13 @@ class _ChatWidgetState extends State<ChatWidget> {
                               shape: BoxShape.circle,
                             ),
                             child: Align(
-                              alignment: AlignmentDirectional(0.0, 0.0),
+                              alignment: const AlignmentDirectional(0.0, 0.0),
                               child: Text(
                                 'A',
                                 style: FlutterFlowTheme.of(context)
                                     .bodyMedium
                                     .override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       color: FlutterFlowTheme.of(context)
                                           .secondaryBackground,
                                       fontSize: 18.0,
@@ -106,14 +102,14 @@ class _ChatWidgetState extends State<ChatWidget> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 20.0, 12.0, 20.0, 12.0),
                             child: Text(
                               'You',
                               style: FlutterFlowTheme.of(context)
                                   .bodyMedium
                                   .override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     color: FlutterFlowTheme.of(context)
                                         .primaryText,
                                     letterSpacing: 0.0,
@@ -123,9 +119,9 @@ class _ChatWidgetState extends State<ChatWidget> {
                           ),
                           Container(
                             width: double.infinity,
-                            decoration: BoxDecoration(),
+                            decoration: const BoxDecoration(),
                             child: Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   20.0, 0.0, 10.0, 20.0),
                               child: Wrap(
                                 spacing: 0.0,
@@ -139,7 +135,7 @@ class _ChatWidgetState extends State<ChatWidget> {
                                 children: [
                                   MarkdownBody(
                                     data: valueOrDefault<String>(
-                                      widget!.messages?.content,
+                                      widget.messages?.content,
                                       '- -',
                                     ),
                                     selectable: true,
@@ -149,13 +145,13 @@ class _ChatWidgetState extends State<ChatWidget> {
                                     SelectionArea(
                                         child: Text(
                                       valueOrDefault<String>(
-                                        widget!.messages?.content,
+                                        widget.messages?.content,
                                         '- -',
                                       ),
                                       style: FlutterFlowTheme.of(context)
                                           .bodyMedium
                                           .override(
-                                            fontFamily: 'Andika New Basic',
+                                            fontFamily: FFAppState().currentFontFamily,
                                             color: FlutterFlowTheme.of(context)
                                                 .secondaryText,
                                             fontSize: 16.0,
@@ -175,9 +171,9 @@ class _ChatWidgetState extends State<ChatWidget> {
               ),
             ),
           ),
-        if (widget!.messages?.role == 'assistant')
+        if (widget.messages?.role == 'assistant')
           Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(20.0, 0.0, 30.0, 20.0),
+            padding: const EdgeInsetsDirectional.fromSTEB(20.0, 0.0, 30.0, 20.0),
             child: Container(
               width: double.infinity,
               decoration: BoxDecoration(
@@ -189,14 +185,14 @@ class _ChatWidgetState extends State<ChatWidget> {
                 ),
               ),
               child: Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 1.0),
+                padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 1.0),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     if (false)
                       Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(
+                        padding: const EdgeInsetsDirectional.fromSTEB(
                             12.0, 20.0, 0.0, 0.0),
                         child: ClipOval(
                           child: Container(
@@ -221,14 +217,14 @@ class _ChatWidgetState extends State<ChatWidget> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 20.0, 12.0, 20.0, 12.0),
                             child: Text(
                               'Chatbot',
                               style: FlutterFlowTheme.of(context)
                                   .bodyMedium
                                   .override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     color: FlutterFlowTheme.of(context)
                                         .primaryText,
                                     letterSpacing: 0.0,
@@ -238,9 +234,9 @@ class _ChatWidgetState extends State<ChatWidget> {
                           ),
                           Container(
                             width: double.infinity,
-                            decoration: BoxDecoration(),
+                            decoration: const BoxDecoration(),
                             child: Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   20.0, 0.0, 10.0, 20.0),
                               child: Wrap(
                                 spacing: 0.0,
@@ -256,13 +252,13 @@ class _ChatWidgetState extends State<ChatWidget> {
                                     SelectionArea(
                                         child: Text(
                                       valueOrDefault<String>(
-                                        widget!.messages?.content,
+                                        widget.messages?.content,
                                         '- -',
                                       ),
                                       style: FlutterFlowTheme.of(context)
                                           .bodyMedium
                                           .override(
-                                            fontFamily: 'Andika New Basic',
+                                            fontFamily: FFAppState().currentFontFamily,
                                             color: FlutterFlowTheme.of(context)
                                                 .secondaryText,
                                             fontSize: 16.0,
@@ -272,7 +268,7 @@ class _ChatWidgetState extends State<ChatWidget> {
                                     )),
                                   MarkdownBody(
                                     data: valueOrDefault<String>(
-                                      widget!.messages?.content,
+                                      widget.messages?.content,
                                       '- -',
                                     ),
                                     selectable: true,
@@ -286,7 +282,7 @@ class _ChatWidgetState extends State<ChatWidget> {
                             mainAxisSize: MainAxisSize.max,
                             children: [
                               Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     20.0, 0.0, 0.0, 10.0),
                                 child: InkWell(
                                   splashColor: Colors.transparent,
@@ -295,7 +291,7 @@ class _ChatWidgetState extends State<ChatWidget> {
                                   highlightColor: Colors.transparent,
                                   onTap: () async {
                                     await Clipboard.setData(ClipboardData(
-                                        text: widget!.messages!.content));
+                                        text: widget.messages!.content));
                                   },
                                   child: Icon(
                                     Icons.content_copy,

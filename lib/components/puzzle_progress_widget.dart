@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '/app_state.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 
 /// Puzzle themes with their emoji/icon representations
@@ -174,7 +175,7 @@ class PuzzleProgressWidget extends StatelessWidget {
           Text(
             '$completedTasks of $totalTasks tasks',
             style: ffTheme.bodyMedium.override(
-              fontFamily: 'Andika New Basic',
+              fontFamily: FFAppState().currentFontFamily,
               color: theme.primaryColor,
               fontWeight: FontWeight.w600,
             ),
@@ -281,7 +282,7 @@ class PuzzleThemePicker extends StatelessWidget {
         Text(
           'Choose a reward theme:',
           style: ffTheme.bodyMedium.override(
-            fontFamily: 'Andika New Basic',
+            fontFamily: FFAppState().currentFontFamily,
             color: ffTheme.secondaryText,
           ),
         ),
@@ -320,7 +321,7 @@ class PuzzleThemePicker extends StatelessWidget {
                     Text(
                       theme.name,
                       style: ffTheme.bodySmall.override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         color: theme.primaryColor,
                         fontWeight:
                             isSelected ? FontWeight.bold : FontWeight.normal,

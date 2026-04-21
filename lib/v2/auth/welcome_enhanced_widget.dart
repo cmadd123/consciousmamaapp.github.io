@@ -101,7 +101,7 @@ class _WelcomeEnhancedWidgetState extends State<WelcomeEnhancedWidget>
                         style: FlutterFlowTheme.of(context)
                             .headlineLarge
                             .override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               fontSize: 42.0,
                               fontWeight: FontWeight.bold,
                               letterSpacing: -0.5,
@@ -116,7 +116,7 @@ class _WelcomeEnhancedWidgetState extends State<WelcomeEnhancedWidget>
                         style: FlutterFlowTheme.of(context)
                             .bodyLarge
                             .override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               fontSize: 16.0,
                               fontWeight: FontWeight.w500,
                               letterSpacing: 1.0,
@@ -136,7 +136,7 @@ class _WelcomeEnhancedWidgetState extends State<WelcomeEnhancedWidget>
                           style: FlutterFlowTheme.of(context)
                               .headlineSmall
                               .override(
-                                fontFamily: 'Andika New Basic',
+                                fontFamily: FFAppState().currentFontFamily,
                                 fontSize: 20.0,
                                 fontWeight: FontWeight.w600,
                                 letterSpacing: 0.0,
@@ -175,7 +175,7 @@ class _WelcomeEnhancedWidgetState extends State<WelcomeEnhancedWidget>
                             textStyle: FlutterFlowTheme.of(context)
                                 .titleMedium
                                 .override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   color: Colors.white,
                                   fontSize: 18.0,
                                   fontWeight: FontWeight.w600,

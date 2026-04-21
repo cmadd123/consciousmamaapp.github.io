@@ -1,19 +1,12 @@
 import '/backend/api_requests/api_calls.dart';
-import '/backend/api_requests/api_streaming.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import '/flutter_flow/flutter_flow_widgets.dart';
 import '/v1/empty_list_view_component/empty_list_view_component_widget.dart';
 import '/components/home_nav_bar_widget.dart';
 import '/v1/programmes/milestones/meals/advanced_search_meals/advanced_search_meals_widget.dart';
-import 'dart:convert';
-import 'dart:ui';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'meals_model.dart';
 export 'meals_model.dart';
 
@@ -80,7 +73,7 @@ class _MealsWidgetState extends State<MealsWidget> {
         body: Container(
           width: double.infinity,
           height: double.infinity,
-          decoration: BoxDecoration(),
+          decoration: const BoxDecoration(),
           child: Stack(
             children: [
               Column(
@@ -88,19 +81,19 @@ class _MealsWidgetState extends State<MealsWidget> {
                 children: [
                   Padding(
                     padding:
-                        EdgeInsetsDirectional.fromSTEB(20.0, 50.0, 20.0, 0.0),
+                        const EdgeInsetsDirectional.fromSTEB(20.0, 50.0, 20.0, 0.0),
                     child: Row(
                       mainAxisSize: MainAxisSize.max,
                       children: [
                         Align(
-                          alignment: AlignmentDirectional(-1.0, 0.0),
+                          alignment: const AlignmentDirectional(-1.0, 0.0),
                           child: Text(
                             'Find a meal!',
                             textAlign: TextAlign.start,
                             style: FlutterFlowTheme.of(context)
                                 .bodyMedium
                                 .override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   fontSize: 20.0,
                                   letterSpacing: 0.0,
                                   fontWeight: FontWeight.bold,
@@ -112,7 +105,7 @@ class _MealsWidgetState extends State<MealsWidget> {
                   ),
                   Padding(
                     padding:
-                        EdgeInsetsDirectional.fromSTEB(20.0, 20.0, 20.0, 0.0),
+                        const EdgeInsetsDirectional.fromSTEB(20.0, 20.0, 20.0, 0.0),
                     child: Container(
                       height: 56.0,
                       decoration: BoxDecoration(
@@ -123,7 +116,7 @@ class _MealsWidgetState extends State<MealsWidget> {
                         mainAxisSize: MainAxisSize.max,
                         children: [
                           Expanded(
-                            child: Container(
+                            child: SizedBox(
                               width: 200.0,
                               child: TextFormField(
                                 controller: _model.textController,
@@ -155,8 +148,8 @@ class _MealsWidgetState extends State<MealsWidget> {
                                   labelStyle: FlutterFlowTheme.of(context)
                                       .labelMedium
                                       .override(
-                                        fontFamily: 'Andika New Basic',
-                                        color: Color(0x0000AAEF),
+                                        fontFamily: FFAppState().currentFontFamily,
+                                        color: const Color(0x0000AAEF),
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.w500,
                                       ),
@@ -164,20 +157,20 @@ class _MealsWidgetState extends State<MealsWidget> {
                                   hintStyle: FlutterFlowTheme.of(context)
                                       .labelMedium
                                       .override(
-                                        fontFamily: 'Andika New Basic',
-                                        color: Color(0xFF747E8D),
+                                        fontFamily: FFAppState().currentFontFamily,
+                                        color: const Color(0xFF747E8D),
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.w500,
                                       ),
                                   enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
+                                    borderSide: const BorderSide(
                                       color: Color(0x00000000),
                                       width: 1.0,
                                     ),
                                     borderRadius: BorderRadius.circular(8.0),
                                   ),
                                   focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
+                                    borderSide: const BorderSide(
                                       color: Color(0x00000000),
                                       width: 1.0,
                                     ),
@@ -200,7 +193,7 @@ class _MealsWidgetState extends State<MealsWidget> {
                                   filled: true,
                                   fillColor: FlutterFlowTheme.of(context)
                                       .secondaryBackground,
-                                  prefixIcon: Icon(
+                                  prefixIcon: const Icon(
                                     Icons.search,
                                     size: 16.0,
                                   ),
@@ -208,7 +201,7 @@ class _MealsWidgetState extends State<MealsWidget> {
                                 style: FlutterFlowTheme.of(context)
                                     .bodyMedium
                                     .override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       letterSpacing: 0.0,
                                       fontWeight: FontWeight.w500,
                                     ),
@@ -221,7 +214,7 @@ class _MealsWidgetState extends State<MealsWidget> {
                           ),
                           Builder(
                             builder: (context) => Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   0.0, 0.0, 16.0, 0.0),
                               child: InkWell(
                                 splashColor: Colors.transparent,
@@ -237,7 +230,7 @@ class _MealsWidgetState extends State<MealsWidget> {
                                         insetPadding: EdgeInsets.zero,
                                         backgroundColor: Colors.transparent,
                                         alignment:
-                                            AlignmentDirectional(0.0, 0.0)
+                                            const AlignmentDirectional(0.0, 0.0)
                                                 .resolve(
                                                     Directionality.of(context)),
                                         child: GestureDetector(
@@ -247,7 +240,7 @@ class _MealsWidgetState extends State<MealsWidget> {
                                             FocusManager.instance.primaryFocus
                                                 ?.unfocus();
                                           },
-                                          child: AdvancedSearchMealsWidget(),
+                                          child: const AdvancedSearchMealsWidget(),
                                         ),
                                       );
                                     },
@@ -265,17 +258,17 @@ class _MealsWidgetState extends State<MealsWidget> {
                                   width: 100.0,
                                   height: 32.0,
                                   decoration: BoxDecoration(
-                                    color: Color(0xFFF4F5F6),
+                                    color: const Color(0xFFF4F5F6),
                                     borderRadius: BorderRadius.circular(27.0),
                                   ),
                                   child: Align(
-                                    alignment: AlignmentDirectional(0.0, 0.0),
+                                    alignment: const AlignmentDirectional(0.0, 0.0),
                                     child: Text(
                                       'Advanced',
                                       style: FlutterFlowTheme.of(context)
                                           .bodyMedium
                                           .override(
-                                            fontFamily: 'Andika New Basic',
+                                            fontFamily: FFAppState().currentFontFamily,
                                             color: FlutterFlowTheme.of(context)
                                                 .primary,
                                             letterSpacing: 0.0,
@@ -292,14 +285,14 @@ class _MealsWidgetState extends State<MealsWidget> {
                   ),
                   Expanded(
                     child: Container(
-                      decoration: BoxDecoration(),
+                      decoration: const BoxDecoration(),
                       child: Padding(
-                        padding: EdgeInsets.all(20.0),
+                        padding: const EdgeInsets.all(20.0),
                         child: Builder(
                           builder: (context) {
                             final data1 = _model.result.toList();
                             if (data1.isEmpty) {
-                              return EmptyListViewComponentWidget(
+                              return const EmptyListViewComponentWidget(
                                 icon: Icon(
                                   FFIcons.kgameIconsHotMeal,
                                 ),
@@ -313,7 +306,7 @@ class _MealsWidgetState extends State<MealsWidget> {
                               scrollDirection: Axis.vertical,
                               itemCount: data1.length,
                               separatorBuilder: (_, __) =>
-                                  SizedBox(height: 20.0),
+                                  const SizedBox(height: 20.0),
                               itemBuilder: (context, data1Index) {
                                 final data1Item = data1[data1Index];
                                 return ClipRRect(
@@ -326,7 +319,7 @@ class _MealsWidgetState extends State<MealsWidget> {
                                       borderRadius: BorderRadius.circular(32.0),
                                     ),
                                     child: Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(
                                           0.0, 0.0, 0.0, 10.0),
                                       child: Column(
                                         mainAxisSize: MainAxisSize.max,
@@ -357,9 +350,9 @@ class _MealsWidgetState extends State<MealsWidget> {
                                           ),
                                           Align(
                                             alignment:
-                                                AlignmentDirectional(-1.0, 0.0),
+                                                const AlignmentDirectional(-1.0, 0.0),
                                             child: Padding(
-                                              padding: EdgeInsetsDirectional
+                                              padding: const EdgeInsetsDirectional
                                                   .fromSTEB(
                                                       12.0, 12.0, 0.0, 0.0),
                                               child: Text(
@@ -386,9 +379,9 @@ class _MealsWidgetState extends State<MealsWidget> {
                                           ),
                                           Align(
                                             alignment:
-                                                AlignmentDirectional(-1.0, 0.0),
+                                                const AlignmentDirectional(-1.0, 0.0),
                                             child: Padding(
-                                              padding: EdgeInsetsDirectional
+                                              padding: const EdgeInsetsDirectional
                                                   .fromSTEB(
                                                       10.0, 16.0, 10.0, 0.0),
                                               child: Text(
@@ -419,13 +412,13 @@ class _MealsWidgetState extends State<MealsWidget> {
                                           ),
                                           Padding(
                                             padding:
-                                                EdgeInsetsDirectional.fromSTEB(
+                                                const EdgeInsetsDirectional.fromSTEB(
                                                     0.0, 8.0, 0.0, 16.0),
                                             child: Row(
                                               mainAxisSize: MainAxisSize.max,
                                               children: [
                                                 Padding(
-                                                  padding: EdgeInsetsDirectional
+                                                  padding: const EdgeInsetsDirectional
                                                       .fromSTEB(
                                                           12.0, 8.0, 0.0, 0.0),
                                                   child: Row(
@@ -441,7 +434,7 @@ class _MealsWidgetState extends State<MealsWidget> {
                                                         decoration:
                                                             BoxDecoration(
                                                           color:
-                                                              Color(0x2952A097),
+                                                              const Color(0x2952A097),
                                                           borderRadius:
                                                               BorderRadius
                                                                   .circular(
@@ -459,7 +452,7 @@ class _MealsWidgetState extends State<MealsWidget> {
                                                       ),
                                                       Padding(
                                                         padding:
-                                                            EdgeInsetsDirectional
+                                                            const EdgeInsetsDirectional
                                                                 .fromSTEB(
                                                                     8.0,
                                                                     0.0,
@@ -489,7 +482,7 @@ class _MealsWidgetState extends State<MealsWidget> {
                                                   ),
                                                 ),
                                                 Padding(
-                                                  padding: EdgeInsetsDirectional
+                                                  padding: const EdgeInsetsDirectional
                                                       .fromSTEB(
                                                           12.0, 8.0, 0.0, 0.0),
                                                   child: Row(
@@ -505,7 +498,7 @@ class _MealsWidgetState extends State<MealsWidget> {
                                                         decoration:
                                                             BoxDecoration(
                                                           color:
-                                                              Color(0x2952A097),
+                                                              const Color(0x2952A097),
                                                           borderRadius:
                                                               BorderRadius
                                                                   .circular(
@@ -515,7 +508,7 @@ class _MealsWidgetState extends State<MealsWidget> {
                                                         ),
                                                         child: Align(
                                                           alignment:
-                                                              AlignmentDirectional(
+                                                              const AlignmentDirectional(
                                                                   0.0, 0.0),
                                                           child: FaIcon(
                                                             FontAwesomeIcons
@@ -529,7 +522,7 @@ class _MealsWidgetState extends State<MealsWidget> {
                                                       ),
                                                       Padding(
                                                         padding:
-                                                            EdgeInsetsDirectional
+                                                            const EdgeInsetsDirectional
                                                                 .fromSTEB(
                                                                     8.0,
                                                                     0.0,
@@ -562,12 +555,12 @@ class _MealsWidgetState extends State<MealsWidget> {
                                                                           0.0,
                                                                     ),
                                                               ),
-                                                              TextSpan(
+                                                              const TextSpan(
                                                                 text: ' ',
                                                                 style:
                                                                     TextStyle(),
                                                               ),
-                                                              TextSpan(
+                                                              const TextSpan(
                                                                 text: 'Min',
                                                                 style:
                                                                     TextStyle(),
@@ -589,7 +582,7 @@ class _MealsWidgetState extends State<MealsWidget> {
                                                   ),
                                                 ),
                                                 Padding(
-                                                  padding: EdgeInsetsDirectional
+                                                  padding: const EdgeInsetsDirectional
                                                       .fromSTEB(
                                                           12.0, 8.0, 0.0, 0.0),
                                                   child: Row(
@@ -605,7 +598,7 @@ class _MealsWidgetState extends State<MealsWidget> {
                                                         decoration:
                                                             BoxDecoration(
                                                           color:
-                                                              Color(0x2952A097),
+                                                              const Color(0x2952A097),
                                                           borderRadius:
                                                               BorderRadius
                                                                   .circular(
@@ -624,7 +617,7 @@ class _MealsWidgetState extends State<MealsWidget> {
                                                       ),
                                                       Padding(
                                                         padding:
-                                                            EdgeInsetsDirectional
+                                                            const EdgeInsetsDirectional
                                                                 .fromSTEB(
                                                                     8.0,
                                                                     0.0,
@@ -657,7 +650,7 @@ class _MealsWidgetState extends State<MealsWidget> {
                                                                           0.0,
                                                                     ),
                                                               ),
-                                                              TextSpan(
+                                                              const TextSpan(
                                                                 text: ' Kcal',
                                                                 style:
                                                                     TextStyle(),

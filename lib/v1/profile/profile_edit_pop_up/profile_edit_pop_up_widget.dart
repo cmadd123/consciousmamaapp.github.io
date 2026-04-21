@@ -5,11 +5,7 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/flutter_flow/upload_data.dart';
-import 'dart:ui';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'profile_edit_pop_up_model.dart';
 export 'profile_edit_pop_up_model.dart';
 
@@ -52,9 +48,9 @@ class _ProfileEditPopUpWidgetState extends State<ProfileEditPopUpWidget> {
   @override
   Widget build(BuildContext context) {
     return Align(
-      alignment: AlignmentDirectional(0.0, 0.0),
+      alignment: const AlignmentDirectional(0.0, 0.0),
       child: Padding(
-        padding: EdgeInsetsDirectional.fromSTEB(20.0, 0.0, 20.0, 0.0),
+        padding: const EdgeInsetsDirectional.fromSTEB(20.0, 0.0, 20.0, 0.0),
         child: Container(
           width: 400.0,
           height: 487.23,
@@ -63,21 +59,21 @@ class _ProfileEditPopUpWidgetState extends State<ProfileEditPopUpWidget> {
             borderRadius: BorderRadius.circular(27.0),
           ),
           child: Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 20.0),
+            padding: const EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 20.0),
             child: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Align(
-                    alignment: AlignmentDirectional(0.0, -1.0),
+                    alignment: const AlignmentDirectional(0.0, -1.0),
                     child: Padding(
                       padding:
-                          EdgeInsetsDirectional.fromSTEB(0.0, 20.0, 0.0, 0.0),
+                          const EdgeInsetsDirectional.fromSTEB(0.0, 20.0, 0.0, 0.0),
                       child: Text(
                         'Edit Profile',
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               fontSize: 28.0,
                               letterSpacing: 0.0,
                               fontWeight: FontWeight.w800,
@@ -86,14 +82,14 @@ class _ProfileEditPopUpWidgetState extends State<ProfileEditPopUpWidget> {
                     ),
                   ),
                   Align(
-                    alignment: AlignmentDirectional(0.0, -1.0),
+                    alignment: const AlignmentDirectional(0.0, -1.0),
                     child: Padding(
                       padding:
-                          EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 24.0),
+                          const EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 24.0),
                       child: Text(
                         'Enter your new information below to update.',
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               color: FlutterFlowTheme.of(context).secondaryText,
                               letterSpacing: 0.0,
                             ),
@@ -101,29 +97,28 @@ class _ProfileEditPopUpWidgetState extends State<ProfileEditPopUpWidget> {
                     ),
                   ),
                   Align(
-                    alignment: AlignmentDirectional(0.0, 0.0),
+                    alignment: const AlignmentDirectional(0.0, 0.0),
                     child: ClipRRect(
                       child: Container(
                         width: 120.0,
                         height: 120.0,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           shape: BoxShape.rectangle,
                         ),
                         child: Stack(
                           children: [
                             Align(
-                              alignment: AlignmentDirectional(0.0, 0.0),
+                              alignment: const AlignmentDirectional(0.0, 0.0),
                               child: ClipOval(
                                 child: Container(
                                   width: 96.0,
                                   height: 96.0,
-                                  decoration: BoxDecoration(
+                                  decoration: const BoxDecoration(
                                     shape: BoxShape.circle,
                                   ),
                                   child: Builder(
                                     builder: (context) {
-                                      if ((currentUserPhoto != null &&
-                                              currentUserPhoto != '') &&
+                                      if ((currentUserPhoto != '') &&
                                           (_model.uploadedImage == null ||
                                               _model.uploadedImage == '')) {
                                         return ClipRRect(
@@ -166,9 +161,9 @@ class _ProfileEditPopUpWidgetState extends State<ProfileEditPopUpWidget> {
                               ),
                             ),
                             Align(
-                              alignment: AlignmentDirectional(1.0, 1.0),
+                              alignment: const AlignmentDirectional(1.0, 1.0),
                               child: Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     0.0, 0.0, 20.0, 10.0),
                                 child: InkWell(
                                   splashColor: Colors.transparent,
@@ -261,7 +256,7 @@ class _ProfileEditPopUpWidgetState extends State<ProfileEditPopUpWidget> {
                                           FlutterFlowTheme.of(context).primary,
                                       shape: BoxShape.circle,
                                     ),
-                                    child: Icon(
+                                    child: const Icon(
                                       Icons.camera_alt_outlined,
                                       color: Colors.white,
                                       size: 18.0,
@@ -282,7 +277,7 @@ class _ProfileEditPopUpWidgetState extends State<ProfileEditPopUpWidget> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         AuthUserStreamWidget(
-                          builder: (context) => Container(
+                          builder: (context) => SizedBox(
                             width: double.infinity,
                             child: TextFormField(
                               controller: _model.textController1,
@@ -294,25 +289,25 @@ class _ProfileEditPopUpWidgetState extends State<ProfileEditPopUpWidget> {
                                 labelStyle: FlutterFlowTheme.of(context)
                                     .labelMedium
                                     .override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       letterSpacing: 0.0,
                                     ),
                                 hintText: 'Name',
                                 hintStyle: FlutterFlowTheme.of(context)
                                     .labelMedium
                                     .override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       letterSpacing: 0.0,
                                     ),
                                 enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color(0x00000000),
                                     width: 1.0,
                                   ),
                                   borderRadius: BorderRadius.circular(27.0),
                                 ),
                                 focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color(0x00000000),
                                     width: 1.0,
                                   ),
@@ -333,13 +328,13 @@ class _ProfileEditPopUpWidgetState extends State<ProfileEditPopUpWidget> {
                                   borderRadius: BorderRadius.circular(27.0),
                                 ),
                                 filled: true,
-                                contentPadding: EdgeInsetsDirectional.fromSTEB(
+                                contentPadding: const EdgeInsetsDirectional.fromSTEB(
                                     20.0, 20.0, 20.0, 20.0),
                               ),
                               style: FlutterFlowTheme.of(context)
                                   .bodyMedium
                                   .override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     letterSpacing: 0.0,
                                   ),
                               cursorColor:
@@ -350,7 +345,7 @@ class _ProfileEditPopUpWidgetState extends State<ProfileEditPopUpWidget> {
                           ),
                         ),
                         AuthUserStreamWidget(
-                          builder: (context) => Container(
+                          builder: (context) => SizedBox(
                             width: double.infinity,
                             child: TextFormField(
                               controller: _model.textController2,
@@ -362,25 +357,25 @@ class _ProfileEditPopUpWidgetState extends State<ProfileEditPopUpWidget> {
                                 labelStyle: FlutterFlowTheme.of(context)
                                     .labelMedium
                                     .override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       letterSpacing: 0.0,
                                     ),
                                 hintText: 'phone number',
                                 hintStyle: FlutterFlowTheme.of(context)
                                     .labelMedium
                                     .override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       letterSpacing: 0.0,
                                     ),
                                 enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color(0x00000000),
                                     width: 1.0,
                                   ),
                                   borderRadius: BorderRadius.circular(27.0),
                                 ),
                                 focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color(0x00000000),
                                     width: 1.0,
                                   ),
@@ -401,13 +396,13 @@ class _ProfileEditPopUpWidgetState extends State<ProfileEditPopUpWidget> {
                                   borderRadius: BorderRadius.circular(27.0),
                                 ),
                                 filled: true,
-                                contentPadding: EdgeInsetsDirectional.fromSTEB(
+                                contentPadding: const EdgeInsetsDirectional.fromSTEB(
                                     20.0, 20.0, 20.0, 20.0),
                               ),
                               style: FlutterFlowTheme.of(context)
                                   .bodyMedium
                                   .override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     letterSpacing: 0.0,
                                   ),
                               cursorColor:
@@ -428,15 +423,15 @@ class _ProfileEditPopUpWidgetState extends State<ProfileEditPopUpWidget> {
                                 text: 'Cancel',
                                 options: FFButtonOptions(
                                   height: 49.0,
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       16.0, 0.0, 16.0, 0.0),
-                                  iconPadding: EdgeInsetsDirectional.fromSTEB(
+                                  iconPadding: const EdgeInsetsDirectional.fromSTEB(
                                       0.0, 0.0, 0.0, 0.0),
-                                  color: Color(0x0052A097),
+                                  color: const Color(0x0052A097),
                                   textStyle: FlutterFlowTheme.of(context)
                                       .titleSmall
                                       .override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         color: FlutterFlowTheme.of(context)
                                             .primary,
                                         letterSpacing: 0.0,
@@ -473,15 +468,15 @@ class _ProfileEditPopUpWidgetState extends State<ProfileEditPopUpWidget> {
                                 text: 'Update',
                                 options: FFButtonOptions(
                                   height: 48.0,
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       16.0, 0.0, 16.0, 0.0),
-                                  iconPadding: EdgeInsetsDirectional.fromSTEB(
+                                  iconPadding: const EdgeInsetsDirectional.fromSTEB(
                                       0.0, 0.0, 0.0, 0.0),
                                   color: FlutterFlowTheme.of(context).primary,
                                   textStyle: FlutterFlowTheme.of(context)
                                       .titleSmall
                                       .override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         color: Colors.white,
                                         letterSpacing: 0.0,
                                       ),
@@ -490,9 +485,9 @@ class _ProfileEditPopUpWidgetState extends State<ProfileEditPopUpWidget> {
                                 ),
                               ),
                             ),
-                          ].divide(SizedBox(width: 10.0)),
+                          ].divide(const SizedBox(width: 10.0)),
                         ),
-                      ].divide(SizedBox(height: 16.0)),
+                      ].divide(const SizedBox(height: 16.0)),
                     ),
                   ),
                 ],

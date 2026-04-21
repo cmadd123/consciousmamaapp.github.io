@@ -6,7 +6,6 @@ import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/index.dart';
 import '/v2/auth/demo_data_notifier.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'family_preview_model.dart';
@@ -133,7 +132,7 @@ class _FamilyPreviewWidgetState extends State<FamilyPreviewWidget>
                                 children: [
                               // Back arrow
                               Align(
-                                alignment: AlignmentDirectional(-1.0, 0.0),
+                                alignment: const AlignmentDirectional(-1.0, 0.0),
                                 child: InkWell(
                                   splashColor: Colors.transparent,
                                   focusColor: Colors.transparent,
@@ -173,7 +172,7 @@ class _FamilyPreviewWidgetState extends State<FamilyPreviewWidget>
                                 'Your family is ready!',
                                 textAlign: TextAlign.center,
                                 style: FlutterFlowTheme.of(context).headlineMedium.override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   fontSize: 28.0,
                                   fontWeight: FontWeight.w600,
                                   letterSpacing: 0.0,
@@ -184,7 +183,7 @@ class _FamilyPreviewWidgetState extends State<FamilyPreviewWidget>
                                 'Here\'s how your family will look in the app',
                                 textAlign: TextAlign.center,
                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   color: FlutterFlowTheme.of(context).secondaryText,
                                   letterSpacing: 0.0,
                                 ),
@@ -221,7 +220,7 @@ class _FamilyPreviewWidgetState extends State<FamilyPreviewWidget>
                                         Text(
                                           'My Week Preview',
                                           style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                            fontFamily: 'Andika New Basic',
+                                            fontFamily: FFAppState().currentFontFamily,
                                             color: FlutterFlowTheme.of(context).primary,
                                             fontWeight: FontWeight.w600,
                                             letterSpacing: 0.0,
@@ -309,7 +308,7 @@ class _FamilyPreviewWidgetState extends State<FamilyPreviewWidget>
                                     Text(
                                       'Your Family',
                                       style: FlutterFlowTheme.of(context).titleMedium.override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         fontWeight: FontWeight.w600,
                                         letterSpacing: 0.0,
                                       ),
@@ -406,7 +405,7 @@ class _FamilyPreviewWidgetState extends State<FamilyPreviewWidget>
                                     height: 56.0,
                                     color: FlutterFlowTheme.of(context).primary,
                                     textStyle: FlutterFlowTheme.of(context).titleSmall.override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       color: Colors.white,
                                       fontSize: 18.0,
                                       letterSpacing: 0.0,
@@ -470,7 +469,7 @@ class _FamilyPreviewWidgetState extends State<FamilyPreviewWidget>
                 Text(
                   title,
                   style: FlutterFlowTheme.of(context).bodyMedium.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 0.0,
                   ),
@@ -491,11 +490,11 @@ class _FamilyPreviewWidgetState extends State<FamilyPreviewWidget>
                         size: 10.0,
                         color: Color(0xFF9C27B0),
                       ),
-                      const SizedBox(width: 3.0),
+                      SizedBox(width: 3.0),
                       Text(
                         duration,
-                        style: const TextStyle(
-                          fontFamily: 'Andika New Basic',
+                        style: TextStyle(
+                          fontFamily: FFAppState().currentFontFamily,
                           fontSize: 10.0,
                           fontWeight: FontWeight.w500,
                           color: Color(0xFF9C27B0),
@@ -573,7 +572,7 @@ class _FamilyPreviewWidgetState extends State<FamilyPreviewWidget>
                 color: Colors.white,
                 fontSize: isChild ? 18.0 : 24.0,
                 fontWeight: FontWeight.bold,
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
               ),
             ),
           ),
@@ -582,7 +581,7 @@ class _FamilyPreviewWidgetState extends State<FamilyPreviewWidget>
         Text(
           name,
           style: FlutterFlowTheme.of(context).bodySmall.override(
-            fontFamily: 'Andika New Basic',
+            fontFamily: FFAppState().currentFontFamily,
             fontWeight: FontWeight.w500,
             letterSpacing: 0.0,
           ),

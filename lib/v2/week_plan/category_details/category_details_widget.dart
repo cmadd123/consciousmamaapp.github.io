@@ -4,12 +4,8 @@ import '/backend/schema/enums/enums.dart';
 import '/components/home_nav_bar_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import '/flutter_flow/flutter_flow_widgets.dart';
-import 'dart:ui';
 import '/index.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'category_details_model.dart';
 export 'category_details_model.dart';
@@ -23,7 +19,7 @@ class CategoryDetailsWidget extends StatefulWidget {
     this.mealPlan,
     bool? isFromGenrate,
     required this.mealRef,
-  }) : this.isFromGenrate = isFromGenrate ?? false;
+  }) : isFromGenrate = isFromGenrate ?? false;
 
   final String? categoryTearm;
   final MealTyp? mealTyp;
@@ -114,7 +110,7 @@ class _CategoryDetailsWidgetState extends State<CategoryDetailsWidget> {
         body: SafeArea(
           top: true,
           child: Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(10.0, 24.0, 10.0, 0.0),
+            padding: const EdgeInsetsDirectional.fromSTEB(10.0, 24.0, 10.0, 0.0),
             child: Material(
               color: Colors.transparent,
               elevation: 2.0,
@@ -130,7 +126,7 @@ class _CategoryDetailsWidgetState extends State<CategoryDetailsWidget> {
                   ),
                   decoration: BoxDecoration(
                     color: FlutterFlowTheme.of(context).secondaryBackground,
-                    boxShadow: [
+                    boxShadow: const [
                       BoxShadow(
                         blurRadius: 4.0,
                         color: Color(0x33000000),
@@ -142,19 +138,19 @@ class _CategoryDetailsWidgetState extends State<CategoryDetailsWidget> {
                     ],
                     borderRadius: BorderRadius.circular(14.0),
                     border: Border.all(
-                      color: Color(0xFF999999),
+                      color: const Color(0xFF999999),
                       width: 1.0,
                     ),
                   ),
                   child: Padding(
                     padding:
-                        EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 20.0),
+                        const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 20.0),
                     child: SingleChildScrollView(
                       child: Column(
                         mainAxisSize: MainAxisSize.max,
                         children: [
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 16.0, 16.0, 0.0, 0.0),
                             child: Row(
                               mainAxisSize: MainAxisSize.max,
@@ -187,31 +183,31 @@ class _CategoryDetailsWidgetState extends State<CategoryDetailsWidget> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 11.0, 16.0, 0.0, 20.0),
                             child: Row(
                               mainAxisSize: MainAxisSize.max,
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       0.0, 0.0, 24.0, 0.0),
                                   child: Text(
                                     valueOrDefault<String>(
-                                      widget!.categoryTearm,
+                                      widget.categoryTearm,
                                       'pageTitle',
                                     ),
                                     style: FlutterFlowTheme.of(context)
                                         .bodyMedium
                                         .override(
-                                          fontFamily: 'Andika New Basic',
+                                          fontFamily: FFAppState().currentFontFamily,
                                           fontSize: 20.0,
                                           letterSpacing: 0.0,
                                         ),
                                   ),
                                 ),
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       0.0, 0.0, 8.0, 0.0),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.max,
@@ -244,9 +240,9 @@ class _CategoryDetailsWidgetState extends State<CategoryDetailsWidget> {
                                           ),
                                           child: Align(
                                             alignment:
-                                                AlignmentDirectional(0.0, 0.0),
+                                                const AlignmentDirectional(0.0, 0.0),
                                             child: Padding(
-                                              padding: EdgeInsetsDirectional
+                                              padding: const EdgeInsetsDirectional
                                                   .fromSTEB(
                                                       16.0, 0.0, 16.0, 0.0),
                                               child: Text(
@@ -302,9 +298,9 @@ class _CategoryDetailsWidgetState extends State<CategoryDetailsWidget> {
                                           ),
                                           child: Align(
                                             alignment:
-                                                AlignmentDirectional(0.0, 0.0),
+                                                const AlignmentDirectional(0.0, 0.0),
                                             child: Padding(
-                                              padding: EdgeInsetsDirectional
+                                              padding: const EdgeInsetsDirectional
                                                   .fromSTEB(
                                                       16.0, 0.0, 16.0, 0.0),
                                               child: Text(
@@ -359,9 +355,9 @@ class _CategoryDetailsWidgetState extends State<CategoryDetailsWidget> {
                                           ),
                                           child: Align(
                                             alignment:
-                                                AlignmentDirectional(0.0, 0.0),
+                                                const AlignmentDirectional(0.0, 0.0),
                                             child: Padding(
-                                              padding: EdgeInsetsDirectional
+                                              padding: const EdgeInsetsDirectional
                                                   .fromSTEB(
                                                       16.0, 0.0, 16.0, 0.0),
                                               child: Text(
@@ -387,7 +383,7 @@ class _CategoryDetailsWidgetState extends State<CategoryDetailsWidget> {
                                           ),
                                         ),
                                       ),
-                                    ].divide(SizedBox(width: 9.0)),
+                                    ].divide(const SizedBox(width: 9.0)),
                                   ),
                                 ),
                               ],
@@ -395,7 +391,7 @@ class _CategoryDetailsWidgetState extends State<CategoryDetailsWidget> {
                           ),
                           StreamBuilder<List<MealRecord>>(
                             stream: FFAppState().mealCash(
-                              uniqueQueryKey: '${widget!.categoryTearm}',
+                              uniqueQueryKey: '${widget.categoryTearm}',
                               overrideCache: FFAppState().MealCashtearm,
                               requestFn: () => queryMealRecord(
                                 queryBuilder: (mealRecord) => mealRecord.where(
@@ -430,10 +426,10 @@ class _CategoryDetailsWidgetState extends State<CategoryDetailsWidget> {
                                   borderRadius: BorderRadius.circular(5.0),
                                 ),
                                 child: Align(
-                                  alignment: AlignmentDirectional(0.0, -1.0),
+                                  alignment: const AlignmentDirectional(0.0, -1.0),
                                   child: Builder(
                                     builder: (context) {
-                                      final containerVar = (widget!
+                                      final containerVar = (widget
                                                       .categoryTearm ==
                                                   'All'
                                               ? (_model.mainSide == 'All'
@@ -447,12 +443,12 @@ class _CategoryDetailsWidgetState extends State<CategoryDetailsWidget> {
                                                   ? containerMealRecordList
                                                       .where((e) =>
                                                           e.mealTyp ==
-                                                          widget!.categoryTearm)
+                                                          widget.categoryTearm)
                                                       .toList()
                                                   : containerMealRecordList
                                                       .where((e) =>
                                                           (e.mealTyp ==
-                                                              widget!
+                                                              widget
                                                                   .categoryTearm) &&
                                                           (e.mainOrSides ==
                                                               _model.mainSide))
@@ -508,16 +504,16 @@ class _CategoryDetailsWidgetState extends State<CategoryDetailsWidget> {
                                                 child: Container(
                                                   width: 160.0,
                                                   height: 190.0,
-                                                  decoration: BoxDecoration(),
+                                                  decoration: const BoxDecoration(),
                                                   child: Align(
                                                     alignment:
-                                                        AlignmentDirectional(
+                                                        const AlignmentDirectional(
                                                             1.0, -1.0),
                                                     child: Stack(
                                                       children: [
                                                         ClipRRect(
                                                           borderRadius:
-                                                              BorderRadius.only(
+                                                              const BorderRadius.only(
                                                             bottomLeft:
                                                                 Radius.circular(
                                                                     5.0),
@@ -540,7 +536,7 @@ class _CategoryDetailsWidgetState extends State<CategoryDetailsWidget> {
                                                                       .of(context)
                                                                   .secondaryBackground,
                                                               borderRadius:
-                                                                  BorderRadius
+                                                                  const BorderRadius
                                                                       .only(
                                                                 bottomLeft: Radius
                                                                     .circular(
@@ -577,11 +573,11 @@ class _CategoryDetailsWidgetState extends State<CategoryDetailsWidget> {
                                                         ),
                                                         Align(
                                                           alignment:
-                                                              AlignmentDirectional(
+                                                              const AlignmentDirectional(
                                                                   0.0, 1.0),
                                                           child: Padding(
                                                             padding:
-                                                                EdgeInsetsDirectional
+                                                                const EdgeInsetsDirectional
                                                                     .fromSTEB(
                                                                         0.0,
                                                                         0.0,
@@ -592,7 +588,7 @@ class _CategoryDetailsWidgetState extends State<CategoryDetailsWidget> {
                                                                 width: double
                                                                     .infinity,
                                                                 decoration:
-                                                                    BoxDecoration(
+                                                                    const BoxDecoration(
                                                                   color: Color(
                                                                       0x80D9D9D9),
                                                                 ),
@@ -606,7 +602,7 @@ class _CategoryDetailsWidgetState extends State<CategoryDetailsWidget> {
                                                                       ),
                                                                       textAlign: TextAlign.center,
                                                                       style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                        fontFamily: 'Andika New Basic',
+                                                                        fontFamily: FFAppState().currentFontFamily,
                                                                         fontSize: 12.0,
                                                                         letterSpacing: 0.0,
                                                                       ),
@@ -614,8 +610,8 @@ class _CategoryDetailsWidgetState extends State<CategoryDetailsWidget> {
                                                                     if (FFAppState().showMealCosts && containerVarItem.hasEstimatedCost())
                                                                       Text(
                                                                         '\$${containerVarItem.estimatedCost.round()}',
-                                                                        style: const TextStyle(
-                                                                          fontFamily: 'Andika New Basic',
+                                                                        style: TextStyle(
+                                                                          fontFamily: FFAppState().currentFontFamily,
                                                                           fontSize: 11.0,
                                                                           color: Color(0xFF2E7D32),
                                                                           fontWeight: FontWeight.w600,
@@ -629,11 +625,11 @@ class _CategoryDetailsWidgetState extends State<CategoryDetailsWidget> {
                                                         ),
                                                         Align(
                                                           alignment:
-                                                              AlignmentDirectional(
+                                                              const AlignmentDirectional(
                                                                   1.0, -1.0),
                                                           child: Padding(
                                                             padding:
-                                                                EdgeInsetsDirectional
+                                                                const EdgeInsetsDirectional
                                                                     .fromSTEB(
                                                                         0.0,
                                                                         16.0,
@@ -694,7 +690,7 @@ class _CategoryDetailsWidgetState extends State<CategoryDetailsWidget> {
 
                                                                 return Container(
                                                                   decoration:
-                                                                      BoxDecoration(
+                                                                      const BoxDecoration(
                                                                     shape: BoxShape
                                                                         .circle,
                                                                   ),
@@ -783,7 +779,7 @@ class _CategoryDetailsWidgetState extends State<CategoryDetailsWidget> {
                             },
                           ),
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 8.0, 0.0, 0.0),
                             child: Container(
                               width: double.infinity,

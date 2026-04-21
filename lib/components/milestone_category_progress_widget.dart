@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import '/app_state.dart';
 import 'package:flutter/material.dart';
 import '/backend/backend.dart';
 import '/backend/schema/enums/enums.dart';
@@ -95,7 +96,7 @@ class MilestoneCategoryProgressWidget extends StatelessWidget {
                 Text(
                   'Milestones',
                   style: FlutterFlowTheme.of(context).titleSmall.override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         fontWeight: FontWeight.bold,
                       ),
                 ),
@@ -104,7 +105,7 @@ class MilestoneCategoryProgressWidget extends StatelessWidget {
                     Text(
                       'View All',
                       style: FlutterFlowTheme.of(context).bodySmall.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: FlutterFlowTheme.of(context).primary,
                           ),
                     ),
@@ -238,7 +239,7 @@ class _CategoryProgressItem extends StatelessWidget {
         Text(
           total > 0 ? '$completed/$total' : '-',
           style: FlutterFlowTheme.of(context).bodySmall.override(
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
                 fontSize: 11,
                 color: FlutterFlowTheme.of(context).secondaryText,
               ),

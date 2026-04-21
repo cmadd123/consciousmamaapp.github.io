@@ -6,13 +6,10 @@ import '/components/notifications_reminder_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
-import 'dart:ui';
 import '/flutter_flow/custom_functions.dart' as functions;
 import '/index.dart';
 import '/v2/week_plan/create_grocery_list/grocery_list_bottom_sheet.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'genrate_form_cook_model.dart';
 export 'genrate_form_cook_model.dart';
 
@@ -60,20 +57,20 @@ class _GenrateFormCookWidgetState extends State<GenrateFormCookWidget> {
           child: Stack(
             children: [
               Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
+                padding: const EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
                 child: SingleChildScrollView(
                   child: Column(
                     mainAxisSize: MainAxisSize.max,
                     children: [
                       Padding(
                         padding:
-                            EdgeInsetsDirectional.fromSTEB(0.0, 17.0, 0.0, 0.0),
+                            const EdgeInsetsDirectional.fromSTEB(0.0, 17.0, 0.0, 0.0),
                         child: Container(
                           width: double.infinity,
                           decoration: BoxDecoration(
                             color: FlutterFlowTheme.of(context)
                                 .secondaryBackground,
-                            boxShadow: [
+                            boxShadow: const [
                               BoxShadow(
                                 blurRadius: 4.0,
                                 color: Color(0x33000000),
@@ -85,17 +82,17 @@ class _GenrateFormCookWidgetState extends State<GenrateFormCookWidget> {
                             ],
                             borderRadius: BorderRadius.circular(14.0),
                             border: Border.all(
-                              color: Color(0x76999999),
+                              color: const Color(0x76999999),
                             ),
                           ),
                           child: Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 8.0, 0.0, 8.0, 0.0),
                             child: Column(
                               mainAxisSize: MainAxisSize.max,
                               children: [
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       0.0, 8.0, 0.0, 0.0),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.max,
@@ -120,7 +117,7 @@ class _GenrateFormCookWidgetState extends State<GenrateFormCookWidget> {
                                                   backgroundColor:
                                                       Colors.transparent,
                                                   alignment:
-                                                      AlignmentDirectional(
+                                                      const AlignmentDirectional(
                                                               0.0, 0.0)
                                                           .resolve(
                                                               Directionality.of(
@@ -135,7 +132,7 @@ class _GenrateFormCookWidgetState extends State<GenrateFormCookWidget> {
                                                           ?.unfocus();
                                                     },
                                                     child:
-                                                        NotificationsReminderWidget(),
+                                                        const NotificationsReminderWidget(),
                                                   ),
                                                 );
                                               },
@@ -150,14 +147,14 @@ class _GenrateFormCookWidgetState extends State<GenrateFormCookWidget> {
                                         ),
                                       ),
                                       Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                        padding: const EdgeInsetsDirectional.fromSTEB(
                                             0.0, 20.0, 0.0, 5.0),
                                         child: Text(
                                           'My Meal Plan',
                                           style: FlutterFlowTheme.of(context)
                                               .bodyMedium
                                               .override(
-                                                fontFamily: 'Andika New Basic',
+                                                fontFamily: FFAppState().currentFontFamily,
                                                 fontSize: 24.0,
                                                 letterSpacing: 0.0,
                                               ),
@@ -182,7 +179,7 @@ class _GenrateFormCookWidgetState extends State<GenrateFormCookWidget> {
                                   ),
                                 ),
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       0.0, 0.0, 0.0, 20.0),
                                   child: FFButtonWidget(
                                     onPressed: () {
@@ -197,24 +194,24 @@ class _GenrateFormCookWidgetState extends State<GenrateFormCookWidget> {
                                       ),
                                       'EEEE',
                                     ),
-                                    icon: Icon(
+                                    icon: const Icon(
                                       Icons.arrow_forward_ios,
                                       size: 10.0,
                                     ),
                                     options: FFButtonOptions(
                                       height: 24.0,
-                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(
                                           16.0, 0.0, 16.0, 0.0),
                                       iconAlignment: IconAlignment.end,
                                       iconPadding:
-                                          EdgeInsetsDirectional.fromSTEB(
+                                          const EdgeInsetsDirectional.fromSTEB(
                                               0.0, 0.0, 0.0, 0.0),
                                       color:
                                           FlutterFlowTheme.of(context).primary,
                                       textStyle: FlutterFlowTheme.of(context)
                                           .titleSmall
                                           .override(
-                                            fontFamily: 'Andika New Basic',
+                                            fontFamily: FFAppState().currentFontFamily,
                                             color: Colors.white,
                                             fontSize: 14.0,
                                             letterSpacing: 0.0,
@@ -226,7 +223,7 @@ class _GenrateFormCookWidgetState extends State<GenrateFormCookWidget> {
                                   ),
                                 ),
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       0.0, 8.0, 0.0, 0.0),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.max,
@@ -235,7 +232,7 @@ class _GenrateFormCookWidgetState extends State<GenrateFormCookWidget> {
                                       if (false)
                                         Padding(
                                           padding:
-                                              EdgeInsetsDirectional.fromSTEB(
+                                              const EdgeInsetsDirectional.fromSTEB(
                                                   0.0, 0.0, 0.0, 6.0),
                                           child: Text(
                                             'This weeks cost: \$ 187.14',
@@ -257,9 +254,9 @@ class _GenrateFormCookWidgetState extends State<GenrateFormCookWidget> {
                         ),
                       ),
                       Container(
-                        decoration: BoxDecoration(),
+                        decoration: const BoxDecoration(),
                         child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 24.0, 0.0, 81.0),
                           child: Builder(
                             builder: (context) {
@@ -273,7 +270,7 @@ class _GenrateFormCookWidgetState extends State<GenrateFormCookWidget> {
                                 scrollDirection: Axis.vertical,
                                 itemCount: weeksFromCurrentDay.length,
                                 separatorBuilder: (_, __) =>
-                                    SizedBox(height: 24.0),
+                                    const SizedBox(height: 24.0),
                                 itemBuilder:
                                     (context, weeksFromCurrentDayIndex) {
                                   final weeksFromCurrentDayItem =
@@ -292,7 +289,7 @@ class _GenrateFormCookWidgetState extends State<GenrateFormCookWidget> {
                                         decoration: BoxDecoration(
                                           color: FlutterFlowTheme.of(context)
                                               .secondaryBackground,
-                                          boxShadow: [
+                                          boxShadow: const [
                                             BoxShadow(
                                               blurRadius: 4.0,
                                               color: Color(0x33000000),
@@ -305,7 +302,7 @@ class _GenrateFormCookWidgetState extends State<GenrateFormCookWidget> {
                                           borderRadius:
                                               BorderRadius.circular(14.0),
                                           border: Border.all(
-                                            color: Color(0xFF999999),
+                                            color: const Color(0xFF999999),
                                             width: 1.0,
                                           ),
                                         ),
@@ -313,7 +310,7 @@ class _GenrateFormCookWidgetState extends State<GenrateFormCookWidget> {
                                           mainAxisSize: MainAxisSize.max,
                                           children: [
                                             Padding(
-                                              padding: EdgeInsetsDirectional
+                                              padding: const EdgeInsetsDirectional
                                                   .fromSTEB(
                                                       11.0, 16.0, 0.0, 0.0),
                                               child: Row(
@@ -363,7 +360,7 @@ class _GenrateFormCookWidgetState extends State<GenrateFormCookWidget> {
                                                     BorderRadius.circular(5.0),
                                               ),
                                               child: Padding(
-                                                padding: EdgeInsetsDirectional
+                                                padding: const EdgeInsetsDirectional
                                                     .fromSTEB(
                                                         12.0, 6.0, 12.0, 0.0),
                                                 child: SingleChildScrollView(
@@ -491,10 +488,10 @@ class _GenrateFormCookWidgetState extends State<GenrateFormCookWidget> {
 
                                                           return Container(
                                                             decoration:
-                                                                BoxDecoration(),
+                                                                const BoxDecoration(),
                                                             child: Padding(
                                                               padding:
-                                                                  EdgeInsetsDirectional
+                                                                  const EdgeInsetsDirectional
                                                                       .fromSTEB(
                                                                           0.0,
                                                                           8.0,
@@ -535,7 +532,7 @@ class _GenrateFormCookWidgetState extends State<GenrateFormCookWidget> {
                                                                             .length,
                                                                     separatorBuilder: (_,
                                                                             __) =>
-                                                                        SizedBox(
+                                                                        const SizedBox(
                                                                             height:
                                                                                 9.0),
                                                                     itemBuilder:
@@ -604,15 +601,15 @@ class _GenrateFormCookWidgetState extends State<GenrateFormCookWidget> {
                                                                                 },
                                                                                 child: Container(
                                                                                   width: double.infinity,
-                                                                                  constraints: BoxConstraints(
+                                                                                  constraints: const BoxConstraints(
                                                                                     minHeight: 31.0,
                                                                                   ),
                                                                                   decoration: BoxDecoration(
-                                                                                    color: Color(0xFFD7F2EB),
+                                                                                    color: const Color(0xFFD7F2EB),
                                                                                     borderRadius: BorderRadius.circular(5.0),
                                                                                   ),
                                                                                   child: Padding(
-                                                                                    padding: EdgeInsetsDirectional.fromSTEB(8.0, 3.0, 8.0, 3.0),
+                                                                                    padding: const EdgeInsetsDirectional.fromSTEB(8.0, 3.0, 8.0, 3.0),
                                                                                     child: Row(
                                                                                       mainAxisSize: MainAxisSize.max,
                                                                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -624,7 +621,7 @@ class _GenrateFormCookWidgetState extends State<GenrateFormCookWidget> {
                                                                                               'Recipe Name',
                                                                                             ),
                                                                                             style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                                  fontFamily: 'Andika New Basic',
+                                                                                                  fontFamily: FFAppState().currentFontFamily,
                                                                                                   fontSize: 12.0,
                                                                                                   letterSpacing: 0.0,
                                                                                                 ),
@@ -636,7 +633,7 @@ class _GenrateFormCookWidgetState extends State<GenrateFormCookWidget> {
                                                                                             'main',
                                                                                           ),
                                                                                           style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                                fontFamily: 'Andika New Basic',
+                                                                                                fontFamily: FFAppState().currentFontFamily,
                                                                                                 fontSize: 12.0,
                                                                                                 letterSpacing: 0.0,
                                                                                               ),
@@ -673,7 +670,7 @@ class _GenrateFormCookWidgetState extends State<GenrateFormCookWidget> {
                                                                 .override(
                                                                   fontFamily:
                                                                       'Andika New Basic',
-                                                                  color: Color(
+                                                                  color: const Color(
                                                                       0xFFF27676),
                                                                   letterSpacing:
                                                                       0.0,
@@ -773,10 +770,10 @@ class _GenrateFormCookWidgetState extends State<GenrateFormCookWidget> {
 
                                                           return Container(
                                                             decoration:
-                                                                BoxDecoration(),
+                                                                const BoxDecoration(),
                                                             child: Padding(
                                                               padding:
-                                                                  EdgeInsetsDirectional
+                                                                  const EdgeInsetsDirectional
                                                                       .fromSTEB(
                                                                           0.0,
                                                                           8.0,
@@ -815,7 +812,7 @@ class _GenrateFormCookWidgetState extends State<GenrateFormCookWidget> {
                                                                             .length,
                                                                     separatorBuilder: (_,
                                                                             __) =>
-                                                                        SizedBox(
+                                                                        const SizedBox(
                                                                             height:
                                                                                 9.0),
                                                                     itemBuilder:
@@ -884,11 +881,11 @@ class _GenrateFormCookWidgetState extends State<GenrateFormCookWidget> {
                                                                                   child: Container(
                                                                                     width: double.infinity,
                                                                                     decoration: BoxDecoration(
-                                                                                      color: Color(0x88F9BBBB),
+                                                                                      color: const Color(0x88F9BBBB),
                                                                                       borderRadius: BorderRadius.circular(5.0),
                                                                                     ),
                                                                                     child: Padding(
-                                                                                      padding: EdgeInsetsDirectional.fromSTEB(8.0, 3.0, 8.0, 3.0),
+                                                                                      padding: const EdgeInsetsDirectional.fromSTEB(8.0, 3.0, 8.0, 3.0),
                                                                                       child: Row(
                                                                                         mainAxisSize: MainAxisSize.max,
                                                                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -900,7 +897,7 @@ class _GenrateFormCookWidgetState extends State<GenrateFormCookWidget> {
                                                                                                 'name',
                                                                                               ),
                                                                                               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                                    fontFamily: 'Andika New Basic',
+                                                                                                    fontFamily: FFAppState().currentFontFamily,
                                                                                                     fontSize: 12.0,
                                                                                                     letterSpacing: 0.0,
                                                                                                   ),
@@ -912,7 +909,7 @@ class _GenrateFormCookWidgetState extends State<GenrateFormCookWidget> {
                                                                                               'side',
                                                                                             ),
                                                                                             style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                                  fontFamily: 'Andika New Basic',
+                                                                                                  fontFamily: FFAppState().currentFontFamily,
                                                                                                   fontSize: 12.0,
                                                                                                   letterSpacing: 0.0,
                                                                                                 ),
@@ -949,7 +946,7 @@ class _GenrateFormCookWidgetState extends State<GenrateFormCookWidget> {
                                                                 .override(
                                                                   fontFamily:
                                                                       'Andika New Basic',
-                                                                  color: Color(
+                                                                  color: const Color(
                                                                       0xFF506FBC),
                                                                   letterSpacing:
                                                                       0.0,
@@ -1049,10 +1046,10 @@ class _GenrateFormCookWidgetState extends State<GenrateFormCookWidget> {
 
                                                           return Container(
                                                             decoration:
-                                                                BoxDecoration(),
+                                                                const BoxDecoration(),
                                                             child: Padding(
                                                               padding:
-                                                                  EdgeInsetsDirectional
+                                                                  const EdgeInsetsDirectional
                                                                       .fromSTEB(
                                                                           0.0,
                                                                           8.0,
@@ -1091,7 +1088,7 @@ class _GenrateFormCookWidgetState extends State<GenrateFormCookWidget> {
                                                                             .length,
                                                                     separatorBuilder: (_,
                                                                             __) =>
-                                                                        SizedBox(
+                                                                        const SizedBox(
                                                                             height:
                                                                                 9.0),
                                                                     itemBuilder:
@@ -1160,11 +1157,11 @@ class _GenrateFormCookWidgetState extends State<GenrateFormCookWidget> {
                                                                                   child: Container(
                                                                                     width: double.infinity,
                                                                                     decoration: BoxDecoration(
-                                                                                      color: Color(0xFFD9E3FC),
+                                                                                      color: const Color(0xFFD9E3FC),
                                                                                       borderRadius: BorderRadius.circular(5.0),
                                                                                     ),
                                                                                     child: Padding(
-                                                                                      padding: EdgeInsetsDirectional.fromSTEB(8.0, 3.0, 8.0, 3.0),
+                                                                                      padding: const EdgeInsetsDirectional.fromSTEB(8.0, 3.0, 8.0, 3.0),
                                                                                       child: Row(
                                                                                         mainAxisSize: MainAxisSize.max,
                                                                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1176,7 +1173,7 @@ class _GenrateFormCookWidgetState extends State<GenrateFormCookWidget> {
                                                                                                 'name',
                                                                                               ),
                                                                                               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                                    fontFamily: 'Andika New Basic',
+                                                                                                    fontFamily: FFAppState().currentFontFamily,
                                                                                                     fontSize: 12.0,
                                                                                                     letterSpacing: 0.0,
                                                                                                   ),
@@ -1188,7 +1185,7 @@ class _GenrateFormCookWidgetState extends State<GenrateFormCookWidget> {
                                                                                               'sides',
                                                                                             ),
                                                                                             style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                                  fontFamily: 'Andika New Basic',
+                                                                                                  fontFamily: FFAppState().currentFontFamily,
                                                                                                   fontSize: 12.0,
                                                                                                   letterSpacing: 0.0,
                                                                                                 ),
@@ -1225,7 +1222,7 @@ class _GenrateFormCookWidgetState extends State<GenrateFormCookWidget> {
                                                                 .override(
                                                                   fontFamily:
                                                                       'Andika New Basic',
-                                                                  color: Color(
+                                                                  color: const Color(
                                                                       0xFFE39072),
                                                                   letterSpacing:
                                                                       0.0,
@@ -1325,10 +1322,10 @@ class _GenrateFormCookWidgetState extends State<GenrateFormCookWidget> {
 
                                                           return Container(
                                                             decoration:
-                                                                BoxDecoration(),
+                                                                const BoxDecoration(),
                                                             child: Padding(
                                                               padding:
-                                                                  EdgeInsetsDirectional
+                                                                  const EdgeInsetsDirectional
                                                                       .fromSTEB(
                                                                           0.0,
                                                                           8.0,
@@ -1367,7 +1364,7 @@ class _GenrateFormCookWidgetState extends State<GenrateFormCookWidget> {
                                                                             .length,
                                                                     separatorBuilder: (_,
                                                                             __) =>
-                                                                        SizedBox(
+                                                                        const SizedBox(
                                                                             height:
                                                                                 9.0),
                                                                     itemBuilder:
@@ -1436,11 +1433,11 @@ class _GenrateFormCookWidgetState extends State<GenrateFormCookWidget> {
                                                                                   child: Container(
                                                                                     width: double.infinity,
                                                                                     decoration: BoxDecoration(
-                                                                                      color: Color(0x88FFAD8F),
+                                                                                      color: const Color(0x88FFAD8F),
                                                                                       borderRadius: BorderRadius.circular(5.0),
                                                                                     ),
                                                                                     child: Padding(
-                                                                                      padding: EdgeInsetsDirectional.fromSTEB(8.0, 3.0, 8.0, 3.0),
+                                                                                      padding: const EdgeInsetsDirectional.fromSTEB(8.0, 3.0, 8.0, 3.0),
                                                                                       child: Row(
                                                                                         mainAxisSize: MainAxisSize.max,
                                                                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1452,7 +1449,7 @@ class _GenrateFormCookWidgetState extends State<GenrateFormCookWidget> {
                                                                                                 'name',
                                                                                               ),
                                                                                               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                                    fontFamily: 'Andika New Basic',
+                                                                                                    fontFamily: FFAppState().currentFontFamily,
                                                                                                     fontSize: 12.0,
                                                                                                     letterSpacing: 0.0,
                                                                                                   ),
@@ -1464,7 +1461,7 @@ class _GenrateFormCookWidgetState extends State<GenrateFormCookWidget> {
                                                                                               'sides',
                                                                                             ),
                                                                                             style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                                  fontFamily: 'Andika New Basic',
+                                                                                                  fontFamily: FFAppState().currentFontFamily,
                                                                                                   fontSize: 12.0,
                                                                                                   letterSpacing: 0.0,
                                                                                                 ),

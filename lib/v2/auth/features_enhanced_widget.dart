@@ -1,4 +1,3 @@
-import 'dart:ui';
 
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -39,7 +38,7 @@ class _FeaturesEnhancedWidgetState extends State<FeaturesEnhancedWidget>
   late AnimationController _shimmerController;
 
   // Card tap feedback scales
-  Map<int, double> _tapScales = {};
+  final Map<int, double> _tapScales = {};
 
   // Animation controllers for each feature card
   late List<AnimationController> _cardControllers;
@@ -202,7 +201,7 @@ class _FeaturesEnhancedWidgetState extends State<FeaturesEnhancedWidget>
                             style: FlutterFlowTheme.of(context)
                                 .headlineSmall
                                 .override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   fontSize: 20.0,
                                   fontWeight: FontWeight.bold,
                                   letterSpacing: 0.0,
@@ -214,7 +213,7 @@ class _FeaturesEnhancedWidgetState extends State<FeaturesEnhancedWidget>
                             style: FlutterFlowTheme.of(context)
                                 .bodyMedium
                                 .override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   fontSize: 15.0,
                                   fontWeight: FontWeight.normal,
                                   letterSpacing: 0.0,
@@ -314,7 +313,7 @@ class _FeaturesEnhancedWidgetState extends State<FeaturesEnhancedWidget>
                             style: FlutterFlowTheme.of(context)
                                 .headlineLarge
                                 .override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   fontSize: 32.0,
                                   fontWeight: FontWeight.bold,
                                   letterSpacing: 0.0,
@@ -330,7 +329,7 @@ class _FeaturesEnhancedWidgetState extends State<FeaturesEnhancedWidget>
                             style: FlutterFlowTheme.of(context)
                                 .bodyLarge
                                 .override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   fontSize: 18.0,
                                   fontWeight: FontWeight.w500,
                                   letterSpacing: 0.0,
@@ -422,7 +421,7 @@ class _FeaturesEnhancedWidgetState extends State<FeaturesEnhancedWidget>
                       textStyle: FlutterFlowTheme.of(context)
                           .titleMedium
                           .override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: Colors.white,
                             fontSize: 18.0,
                             fontWeight: FontWeight.w600,

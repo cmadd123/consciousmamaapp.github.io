@@ -43,13 +43,13 @@ class _WeekViewWidgetState extends State<WeekViewWidget> {
       },
       child: Scaffold(
         key: scaffoldKey,
-        backgroundColor: Color(0xFF2C3E50),
+        backgroundColor: const Color(0xFF2C3E50),
         bottomNavigationBar: const HomeNavBarWidget(currentPage: HomeNavPage.homeSubpage),
         body: SafeArea(
           child: Container(
             width: double.infinity,
             height: double.infinity,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               gradient: LinearGradient(
                 colors: [Color(0xFF2C3E50), Color(0xFF34495E)],
                 stops: [0.0, 1.0],
@@ -59,7 +59,7 @@ class _WeekViewWidgetState extends State<WeekViewWidget> {
             ),
             child: SingleChildScrollView(
               child: Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(24.0, 40.0, 24.0, 24.0),
+                padding: const EdgeInsetsDirectional.fromSTEB(24.0, 40.0, 24.0, 24.0),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -72,19 +72,19 @@ class _WeekViewWidgetState extends State<WeekViewWidget> {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(
+                          const Icon(
                             Icons.arrow_back,
                             color: Color(0xFF95A5A6),
                             size: 20.0,
                           ),
-                          SizedBox(width: 8.0),
+                          const SizedBox(width: 8.0),
                           Text(
                             'Back',
                             style: FlutterFlowTheme.of(context)
                                 .bodySmall
                                 .override(
-                                  fontFamily: 'Andika New Basic',
-                                  color: Color(0xFF95A5A6),
+                                  fontFamily: FFAppState().currentFontFamily,
+                                  color: const Color(0xFF95A5A6),
                                   fontSize: 14.0,
                                   letterSpacing: 0.5,
                                 ),
@@ -93,7 +93,7 @@ class _WeekViewWidgetState extends State<WeekViewWidget> {
                       ),
                     ),
 
-                    SizedBox(height: 40.0),
+                    const SizedBox(height: 40.0),
 
                     // Page title
                     Center(
@@ -102,16 +102,16 @@ class _WeekViewWidgetState extends State<WeekViewWidget> {
                         style: FlutterFlowTheme.of(context)
                             .headlineMedium
                             .override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               fontSize: 28.0,
                               letterSpacing: 0.5,
                               fontWeight: FontWeight.w300,
-                              color: Color(0xFFECF0F1),
+                              color: const Color(0xFFECF0F1),
                             ),
                       ),
                     ),
 
-                    SizedBox(height: 48.0),
+                    const SizedBox(height: 48.0),
 
                     // Week days
                     _buildDayCard(
@@ -122,7 +122,7 @@ class _WeekViewWidgetState extends State<WeekViewWidget> {
                       DateTime.now().weekday == DateTime.monday,
                     ),
 
-                    SizedBox(height: 16.0),
+                    const SizedBox(height: 16.0),
 
                     _buildDayCard(
                       context,
@@ -132,7 +132,7 @@ class _WeekViewWidgetState extends State<WeekViewWidget> {
                       DateTime.now().weekday == DateTime.tuesday,
                     ),
 
-                    SizedBox(height: 16.0),
+                    const SizedBox(height: 16.0),
 
                     _buildDayCard(
                       context,
@@ -142,7 +142,7 @@ class _WeekViewWidgetState extends State<WeekViewWidget> {
                       DateTime.now().weekday == DateTime.wednesday,
                     ),
 
-                    SizedBox(height: 16.0),
+                    const SizedBox(height: 16.0),
 
                     _buildDayCard(
                       context,
@@ -152,7 +152,7 @@ class _WeekViewWidgetState extends State<WeekViewWidget> {
                       DateTime.now().weekday == DateTime.thursday,
                     ),
 
-                    SizedBox(height: 16.0),
+                    const SizedBox(height: 16.0),
 
                     _buildDayCard(
                       context,
@@ -162,7 +162,7 @@ class _WeekViewWidgetState extends State<WeekViewWidget> {
                       DateTime.now().weekday == DateTime.friday,
                     ),
 
-                    SizedBox(height: 16.0),
+                    const SizedBox(height: 16.0),
 
                     _buildDayCard(
                       context,
@@ -172,7 +172,7 @@ class _WeekViewWidgetState extends State<WeekViewWidget> {
                       DateTime.now().weekday == DateTime.saturday,
                     ),
 
-                    SizedBox(height: 16.0),
+                    const SizedBox(height: 16.0),
 
                     _buildDayCard(
                       context,
@@ -182,7 +182,7 @@ class _WeekViewWidgetState extends State<WeekViewWidget> {
                       DateTime.now().weekday == DateTime.sunday,
                     ),
 
-                    SizedBox(height: 48.0),
+                    const SizedBox(height: 48.0),
 
                     // Footer message
                     Center(
@@ -192,15 +192,15 @@ class _WeekViewWidgetState extends State<WeekViewWidget> {
                         style: FlutterFlowTheme.of(context)
                             .bodySmall
                             .override(
-                              fontFamily: 'Andika New Basic',
-                              color: Color(0xFF7F8C8D),
+                              fontFamily: FFAppState().currentFontFamily,
+                              color: const Color(0xFF7F8C8D),
                               fontSize: 13.0,
                               letterSpacing: 0.0,
                             ),
                       ),
                     ),
 
-                    SizedBox(height: 32.0),
+                    const SizedBox(height: 32.0),
                   ],
                 ),
               ),
@@ -220,12 +220,12 @@ class _WeekViewWidgetState extends State<WeekViewWidget> {
   ) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.all(20.0),
+      padding: const EdgeInsets.all(20.0),
       decoration: BoxDecoration(
-        color: isToday ? Color(0xFF3E5568) : Color(0x1AFFFFFF),
+        color: isToday ? const Color(0xFF3E5568) : const Color(0x1AFFFFFF),
         borderRadius: BorderRadius.circular(4.0),
         border: Border.all(
-          color: isToday ? Color(0xFF7F8C8D) : Color(0x33FFFFFF),
+          color: isToday ? const Color(0xFF7F8C8D) : const Color(0x33FFFFFF),
           width: isToday ? 1.5 : 1.0,
         ),
       ),
@@ -238,8 +238,8 @@ class _WeekViewWidgetState extends State<WeekViewWidget> {
               Text(
                 day,
                 style: FlutterFlowTheme.of(context).bodySmall.override(
-                      fontFamily: 'Andika New Basic',
-                      color: Color(0xFF95A5A6),
+                      fontFamily: FFAppState().currentFontFamily,
+                      color: const Color(0xFF95A5A6),
                       fontSize: 12.0,
                       letterSpacing: 1.5,
                       fontWeight: FontWeight.w400,
@@ -249,8 +249,8 @@ class _WeekViewWidgetState extends State<WeekViewWidget> {
                 Text(
                   'TODAY',
                   style: FlutterFlowTheme.of(context).bodySmall.override(
-                        fontFamily: 'Andika New Basic',
-                        color: Color(0xFFBDC3C7),
+                        fontFamily: FFAppState().currentFontFamily,
+                        color: const Color(0xFFBDC3C7),
                         fontSize: 11.0,
                         letterSpacing: 1.5,
                         fontWeight: FontWeight.w500,
@@ -258,23 +258,23 @@ class _WeekViewWidgetState extends State<WeekViewWidget> {
                 ),
             ],
           ),
-          SizedBox(height: 12.0),
+          const SizedBox(height: 12.0),
           Text(
             focus,
             style: FlutterFlowTheme.of(context).titleMedium.override(
-                  fontFamily: 'Andika New Basic',
-                  color: Color(0xFFFFFFFF),
+                  fontFamily: FFAppState().currentFontFamily,
+                  color: const Color(0xFFFFFFFF),
                   fontSize: 18.0,
                   letterSpacing: 0.0,
                   fontWeight: FontWeight.w500,
                 ),
           ),
-          SizedBox(height: 8.0),
+          const SizedBox(height: 8.0),
           Text(
             description,
             style: FlutterFlowTheme.of(context).bodySmall.override(
-                  fontFamily: 'Andika New Basic',
-                  color: Color(0xFFBDC3C7),
+                  fontFamily: FFAppState().currentFontFamily,
+                  color: const Color(0xFFBDC3C7),
                   fontSize: 14.0,
                   letterSpacing: 0.0,
                 ),

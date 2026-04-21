@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '/app_state.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import 'clear_and_reupload_activities.dart';
 import 'clear_duplicate_events.dart';
@@ -43,12 +44,12 @@ class _CleanupDuplicatesPageState extends State<CleanupDuplicatesPage> {
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            title: Text('Success!'),
-            content: Text('Deleted all old activities and uploaded 30 new activities.\n\nGo to Activities → Situations tab to see them.'),
+            title: const Text('Success!'),
+            content: const Text('Deleted all old activities and uploaded 30 new activities.\n\nGo to Activities → Situations tab to see them.'),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: Text('OK'),
+                child: const Text('OK'),
               ),
             ],
           ),
@@ -137,7 +138,7 @@ class _CleanupDuplicatesPageState extends State<CleanupDuplicatesPage> {
         title: Text(
           'Clean Up Duplicates',
           style: FlutterFlowTheme.of(context).headlineMedium.override(
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
                 color: Colors.white,
                 fontSize: 22.0,
                 letterSpacing: 0.0,
@@ -161,7 +162,7 @@ class _CleanupDuplicatesPageState extends State<CleanupDuplicatesPage> {
                 _status,
                 textAlign: TextAlign.center,
                 style: FlutterFlowTheme.of(context).titleMedium.override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       fontSize: 18.0,
                       letterSpacing: 0.0,
                     ),
@@ -221,13 +222,13 @@ class _CleanupDuplicatesPageState extends State<CleanupDuplicatesPage> {
                   children: [
                     Row(
                       children: [
-                        Icon(Icons.warning_amber, color: Colors.orange),
+                        const Icon(Icons.warning_amber, color: Colors.orange),
                         const SizedBox(width: 8.0),
                         Expanded(
                           child: Text(
                             'Warning',
                             style: FlutterFlowTheme.of(context).titleSmall.override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   color: Colors.orange[900],
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -239,7 +240,7 @@ class _CleanupDuplicatesPageState extends State<CleanupDuplicatesPage> {
                     Text(
                       'This will permanently delete duplicate data. For activities, it deletes ALL and re-uploads from clean source. For events and learning paths, it keeps one copy of each unique item.',
                       style: FlutterFlowTheme.of(context).bodySmall.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: Colors.orange[900],
                             fontSize: 13.0,
                           ),
@@ -270,7 +271,7 @@ class _CleanupDuplicatesPageState extends State<CleanupDuplicatesPage> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(12.0),
           border: Border.all(color: color, width: 2.0),
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
               blurRadius: 4.0,
               color: Color(0x1A000000),
@@ -284,7 +285,7 @@ class _CleanupDuplicatesPageState extends State<CleanupDuplicatesPage> {
             Text(
               title,
               style: FlutterFlowTheme.of(context).titleSmall.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     color: color,
                     fontSize: 16.0,
                     fontWeight: FontWeight.w600,
@@ -294,7 +295,7 @@ class _CleanupDuplicatesPageState extends State<CleanupDuplicatesPage> {
             Text(
               description,
               style: FlutterFlowTheme.of(context).bodySmall.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     color: FlutterFlowTheme.of(context).secondaryText,
                     fontSize: 13.0,
                   ),

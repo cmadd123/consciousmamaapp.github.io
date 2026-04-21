@@ -3,13 +3,8 @@ import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
-import 'dart:ui';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'add_new_child_copy_copy_model.dart';
 export 'add_new_child_copy_copy_model.dart';
 
@@ -44,7 +39,7 @@ class _AddNewChildCopyCopyWidgetState extends State<AddNewChildCopyCopyWidget> {
 
     // On component load action.
     SchedulerBinding.instance.addPostFrameCallback((_) async {
-      _model.selectedChildern = widget!.litstOfChldern;
+      _model.selectedChildern = widget.litstOfChldern;
       safeSetState(() {});
     });
 
@@ -65,9 +60,9 @@ class _AddNewChildCopyCopyWidgetState extends State<AddNewChildCopyCopyWidget> {
   @override
   Widget build(BuildContext context) {
     return Align(
-      alignment: AlignmentDirectional(0.0, 0.0),
+      alignment: const AlignmentDirectional(0.0, 0.0),
       child: StreamBuilder<TasksRecord>(
-        stream: TasksRecord.getDocument(widget!.taskRef!),
+        stream: TasksRecord.getDocument(widget.taskRef!),
         builder: (context, snapshot) {
           // Customize what your widget looks like when it's loading.
           if (!snapshot.hasData) {
@@ -94,22 +89,22 @@ class _AddNewChildCopyCopyWidgetState extends State<AddNewChildCopyCopyWidget> {
               borderRadius: BorderRadius.circular(27.0),
             ),
             child: Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 20.0),
+              padding: const EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 20.0),
               child: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Align(
-                      alignment: AlignmentDirectional(0.0, -1.0),
+                      alignment: const AlignmentDirectional(0.0, -1.0),
                       child: Padding(
                         padding:
-                            EdgeInsetsDirectional.fromSTEB(0.0, 32.0, 0.0, 0.0),
+                            const EdgeInsetsDirectional.fromSTEB(0.0, 32.0, 0.0, 0.0),
                         child: Text(
                           'Edit Task Details',
                           style:
                               FlutterFlowTheme.of(context).bodyMedium.override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     fontSize: 28.0,
                                     letterSpacing: 0.0,
                                     fontWeight: FontWeight.bold,
@@ -118,16 +113,16 @@ class _AddNewChildCopyCopyWidgetState extends State<AddNewChildCopyCopyWidget> {
                       ),
                     ),
                     Align(
-                      alignment: AlignmentDirectional(0.0, -1.0),
+                      alignment: const AlignmentDirectional(0.0, -1.0),
                       child: Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(
+                        padding: const EdgeInsetsDirectional.fromSTEB(
                             0.0, 24.0, 0.0, 50.0),
                         child: Text(
                           'Enter your task details below to update.',
                           style: FlutterFlowTheme.of(context)
                               .bodyMedium
                               .override(
-                                fontFamily: 'Andika New Basic',
+                                fontFamily: FFAppState().currentFontFamily,
                                 color:
                                     FlutterFlowTheme.of(context).secondaryText,
                                 letterSpacing: 0.0,
@@ -141,7 +136,7 @@ class _AddNewChildCopyCopyWidgetState extends State<AddNewChildCopyCopyWidget> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Container(
+                          SizedBox(
                             width: double.infinity,
                             child: TextFormField(
                               controller: _model.textController1 ??=
@@ -156,25 +151,25 @@ class _AddNewChildCopyCopyWidgetState extends State<AddNewChildCopyCopyWidget> {
                                 labelStyle: FlutterFlowTheme.of(context)
                                     .labelMedium
                                     .override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       letterSpacing: 0.0,
                                     ),
                                 hintText: 'Title',
                                 hintStyle: FlutterFlowTheme.of(context)
                                     .labelMedium
                                     .override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       letterSpacing: 0.0,
                                     ),
                                 enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color(0x00000000),
                                     width: 1.0,
                                   ),
                                   borderRadius: BorderRadius.circular(27.0),
                                 ),
                                 focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color(0x00000000),
                                     width: 1.0,
                                   ),
@@ -195,13 +190,13 @@ class _AddNewChildCopyCopyWidgetState extends State<AddNewChildCopyCopyWidget> {
                                   borderRadius: BorderRadius.circular(27.0),
                                 ),
                                 filled: true,
-                                contentPadding: EdgeInsetsDirectional.fromSTEB(
+                                contentPadding: const EdgeInsetsDirectional.fromSTEB(
                                     20.0, 20.0, 20.0, 20.0),
                               ),
                               style: FlutterFlowTheme.of(context)
                                   .bodyMedium
                                   .override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     letterSpacing: 0.0,
                                   ),
                               cursorColor:
@@ -211,9 +206,9 @@ class _AddNewChildCopyCopyWidgetState extends State<AddNewChildCopyCopyWidget> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 0.0, 0.0, 10.0),
-                            child: Container(
+                            child: SizedBox(
                               width: double.infinity,
                               child: TextFormField(
                                 controller: _model.textController2 ??=
@@ -228,7 +223,7 @@ class _AddNewChildCopyCopyWidgetState extends State<AddNewChildCopyCopyWidget> {
                                   labelStyle: FlutterFlowTheme.of(context)
                                       .labelMedium
                                       .override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         color: FlutterFlowTheme.of(context)
                                             .primaryText,
                                         letterSpacing: 0.0,
@@ -237,20 +232,20 @@ class _AddNewChildCopyCopyWidgetState extends State<AddNewChildCopyCopyWidget> {
                                   hintStyle: FlutterFlowTheme.of(context)
                                       .labelMedium
                                       .override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         color: FlutterFlowTheme.of(context)
                                             .primaryText,
                                         letterSpacing: 0.0,
                                       ),
                                   enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
+                                    borderSide: const BorderSide(
                                       color: Color(0x00000000),
                                       width: 1.0,
                                     ),
                                     borderRadius: BorderRadius.circular(27.0),
                                   ),
                                   focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
+                                    borderSide: const BorderSide(
                                       color: Color(0x00000000),
                                       width: 1.0,
                                     ),
@@ -272,13 +267,13 @@ class _AddNewChildCopyCopyWidgetState extends State<AddNewChildCopyCopyWidget> {
                                   ),
                                   filled: true,
                                   contentPadding:
-                                      EdgeInsetsDirectional.fromSTEB(
+                                      const EdgeInsetsDirectional.fromSTEB(
                                           20.0, 25.0, 0.0, 25.0),
                                 ),
                                 style: FlutterFlowTheme.of(context)
                                     .bodyMedium
                                     .override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       color: FlutterFlowTheme.of(context)
                                           .primaryText,
                                       letterSpacing: 0.0,
@@ -297,7 +292,7 @@ class _AddNewChildCopyCopyWidgetState extends State<AddNewChildCopyCopyWidget> {
                             hoverColor: Colors.transparent,
                             highlightColor: Colors.transparent,
                             onTap: () async {
-                              final _datePickedDate = await showDatePicker(
+                              final datePickedDate = await showDatePicker(
                                 context: context,
                                 initialDate: getCurrentTimestamp,
                                 firstDate: getCurrentTimestamp,
@@ -314,7 +309,7 @@ class _AddNewChildCopyCopyWidgetState extends State<AddNewChildCopyCopyWidget> {
                                         FlutterFlowTheme.of(context)
                                             .headlineLarge
                                             .override(
-                                              fontFamily: 'Andika New Basic',
+                                              fontFamily: FFAppState().currentFontFamily,
                                               fontSize: 32.0,
                                               letterSpacing: 0.0,
                                               fontWeight: FontWeight.w600,
@@ -337,9 +332,9 @@ class _AddNewChildCopyCopyWidgetState extends State<AddNewChildCopyCopyWidget> {
                                 },
                               );
 
-                              TimeOfDay? _datePickedTime;
-                              if (_datePickedDate != null) {
-                                _datePickedTime = await showTimePicker(
+                              TimeOfDay? datePickedTime;
+                              if (datePickedDate != null) {
+                                datePickedTime = await showTimePicker(
                                   context: context,
                                   initialTime: TimeOfDay.fromDateTime(
                                       getCurrentTimestamp),
@@ -355,7 +350,7 @@ class _AddNewChildCopyCopyWidgetState extends State<AddNewChildCopyCopyWidget> {
                                           FlutterFlowTheme.of(context)
                                               .headlineLarge
                                               .override(
-                                                fontFamily: 'Andika New Basic',
+                                                fontFamily: FFAppState().currentFontFamily,
                                                 fontSize: 32.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -379,15 +374,15 @@ class _AddNewChildCopyCopyWidgetState extends State<AddNewChildCopyCopyWidget> {
                                 );
                               }
 
-                              if (_datePickedDate != null &&
-                                  _datePickedTime != null) {
+                              if (datePickedDate != null &&
+                                  datePickedTime != null) {
                                 safeSetState(() {
                                   _model.datePicked = DateTime(
-                                    _datePickedDate.year,
-                                    _datePickedDate.month,
-                                    _datePickedDate.day,
-                                    _datePickedTime!.hour,
-                                    _datePickedTime.minute,
+                                    datePickedDate.year,
+                                    datePickedDate.month,
+                                    datePickedDate.day,
+                                    datePickedTime!.hour,
+                                    datePickedTime.minute,
                                   );
                                 });
                               } else if (_model.datePicked != null) {
@@ -410,7 +405,7 @@ class _AddNewChildCopyCopyWidgetState extends State<AddNewChildCopyCopyWidget> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(
                                         20.0, 20.0, 20.0, 20.0),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.max,
@@ -441,7 +436,7 @@ class _AddNewChildCopyCopyWidgetState extends State<AddNewChildCopyCopyWidget> {
                                           style: FlutterFlowTheme.of(context)
                                               .bodyMedium
                                               .override(
-                                                fontFamily: 'Andika New Basic',
+                                                fontFamily: FFAppState().currentFontFamily,
                                                 color:
                                                     FlutterFlowTheme.of(context)
                                                         .primaryText,
@@ -463,22 +458,22 @@ class _AddNewChildCopyCopyWidgetState extends State<AddNewChildCopyCopyWidget> {
                           ),
                           if (_model.isTaskTimeSelected == false)
                             Align(
-                              alignment: AlignmentDirectional(-1.0, 0.0),
+                              alignment: const AlignmentDirectional(-1.0, 0.0),
                               child: Text(
                                 'Please select Task Time',
                                 style: FlutterFlowTheme.of(context)
                                     .bodyMedium
                                     .override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       color: FlutterFlowTheme.of(context).error,
                                       letterSpacing: 0.0,
                                     ),
                               ),
                             ),
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 0.0, 0.0, 10.0),
-                            child: Container(
+                            child: SizedBox(
                               width: double.infinity,
                               child: TextFormField(
                                 controller: _model.textController3 ??=
@@ -494,7 +489,7 @@ class _AddNewChildCopyCopyWidgetState extends State<AddNewChildCopyCopyWidget> {
                                   labelStyle: FlutterFlowTheme.of(context)
                                       .labelMedium
                                       .override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         color: FlutterFlowTheme.of(context)
                                             .primaryText,
                                         letterSpacing: 0.0,
@@ -503,20 +498,20 @@ class _AddNewChildCopyCopyWidgetState extends State<AddNewChildCopyCopyWidget> {
                                   hintStyle: FlutterFlowTheme.of(context)
                                       .labelMedium
                                       .override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         color: FlutterFlowTheme.of(context)
                                             .primaryText,
                                         letterSpacing: 0.0,
                                       ),
                                   enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
+                                    borderSide: const BorderSide(
                                       color: Color(0x00000000),
                                       width: 1.0,
                                     ),
                                     borderRadius: BorderRadius.circular(27.0),
                                   ),
                                   focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
+                                    borderSide: const BorderSide(
                                       color: Color(0x00000000),
                                       width: 1.0,
                                     ),
@@ -538,13 +533,13 @@ class _AddNewChildCopyCopyWidgetState extends State<AddNewChildCopyCopyWidget> {
                                   ),
                                   filled: true,
                                   contentPadding:
-                                      EdgeInsetsDirectional.fromSTEB(
+                                      const EdgeInsetsDirectional.fromSTEB(
                                           20.0, 25.0, 0.0, 25.0),
                                 ),
                                 style: FlutterFlowTheme.of(context)
                                     .bodyMedium
                                     .override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       color: FlutterFlowTheme.of(context)
                                           .primaryText,
                                       letterSpacing: 0.0,
@@ -571,7 +566,7 @@ class _AddNewChildCopyCopyWidgetState extends State<AddNewChildCopyCopyWidget> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       20.0, 16.0, 20.0, 16.0),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.max,
@@ -583,7 +578,7 @@ class _AddNewChildCopyCopyWidgetState extends State<AddNewChildCopyCopyWidget> {
                                         style: FlutterFlowTheme.of(context)
                                             .bodyMedium
                                             .override(
-                                              fontFamily: 'Andika New Basic',
+                                              fontFamily: FFAppState().currentFontFamily,
                                               color:
                                                   FlutterFlowTheme.of(context)
                                                       .black60,
@@ -600,7 +595,7 @@ class _AddNewChildCopyCopyWidgetState extends State<AddNewChildCopyCopyWidget> {
                                   ),
                                 ),
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       0.0, 16.0, 0.0, 20.0),
                                   child: StreamBuilder<List<ChildernRecord>>(
                                     stream: queryChildernRecord(
@@ -644,7 +639,7 @@ class _AddNewChildCopyCopyWidgetState extends State<AddNewChildCopyCopyWidget> {
                                                   listViewIndex];
                                           return Padding(
                                             padding:
-                                                EdgeInsetsDirectional.fromSTEB(
+                                                const EdgeInsetsDirectional.fromSTEB(
                                                     20.0, 0.0, 20.0, 2.0),
                                             child: Row(
                                               mainAxisSize: MainAxisSize.max,
@@ -665,7 +660,7 @@ class _AddNewChildCopyCopyWidgetState extends State<AddNewChildCopyCopyWidget> {
                                                                   .reference) {
                                                             return Padding(
                                                               padding:
-                                                                  EdgeInsetsDirectional
+                                                                  const EdgeInsetsDirectional
                                                                       .fromSTEB(
                                                                           0.0,
                                                                           0.0,
@@ -701,7 +696,7 @@ class _AddNewChildCopyCopyWidgetState extends State<AddNewChildCopyCopyWidget> {
                                                           } else {
                                                             return Padding(
                                                               padding:
-                                                                  EdgeInsetsDirectional
+                                                                  const EdgeInsetsDirectional
                                                                       .fromSTEB(
                                                                           0.0,
                                                                           0.0,
@@ -801,13 +796,13 @@ class _AddNewChildCopyCopyWidgetState extends State<AddNewChildCopyCopyWidget> {
                           ),
                           if (_model.isChildSelected == false)
                             Align(
-                              alignment: AlignmentDirectional(-1.0, 0.0),
+                              alignment: const AlignmentDirectional(-1.0, 0.0),
                               child: Text(
                                 'Please select a child',
                                 style: FlutterFlowTheme.of(context)
                                     .bodyMedium
                                     .override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       color: FlutterFlowTheme.of(context).error,
                                       letterSpacing: 0.0,
                                     ),
@@ -824,15 +819,15 @@ class _AddNewChildCopyCopyWidgetState extends State<AddNewChildCopyCopyWidget> {
                                   text: 'Cancel',
                                   options: FFButtonOptions(
                                     height: 49.0,
-                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(
                                         16.0, 0.0, 16.0, 0.0),
-                                    iconPadding: EdgeInsetsDirectional.fromSTEB(
+                                    iconPadding: const EdgeInsetsDirectional.fromSTEB(
                                         0.0, 0.0, 0.0, 0.0),
-                                    color: Color(0x0052A097),
+                                    color: const Color(0x0052A097),
                                     textStyle: FlutterFlowTheme.of(context)
                                         .titleSmall
                                         .override(
-                                          fontFamily: 'Andika New Basic',
+                                          fontFamily: FFAppState().currentFontFamily,
                                           color: FlutterFlowTheme.of(context)
                                               .primary,
                                           letterSpacing: 0.0,
@@ -855,47 +850,42 @@ class _AddNewChildCopyCopyWidgetState extends State<AddNewChildCopyCopyWidget> {
                                             .validate()) {
                                       return;
                                     }
-                                    if (_model.isTaskTimeSelected != null) {
-                                      _model.isTaskTimeSelected = true;
+                                    _model.isTaskTimeSelected = true;
+                                    safeSetState(() {});
+                                    if (_model.selectedChildern != null) {
+                                      _model.isChildSelected = true;
                                       safeSetState(() {});
-                                      if (_model.selectedChildern != null) {
-                                        _model.isChildSelected = true;
-                                        safeSetState(() {});
 
-                                        await widget!.taskRef!
-                                            .update(createTasksRecordData(
-                                          title: _model.textController1.text,
-                                          description:
-                                              _model.textController2.text,
-                                          duration: double.tryParse(
-                                              _model.textController3.text),
-                                          createdBy: currentUserReference,
-                                          selectedChild:
-                                              _model.selectedChildern,
-                                          taskStartTime: _model.datepickerValue,
-                                        ));
-                                        Navigator.pop(context);
-                                      } else {
-                                        _model.isChildSelected = false;
-                                        safeSetState(() {});
-                                      }
+                                      await widget.taskRef!
+                                          .update(createTasksRecordData(
+                                        title: _model.textController1.text,
+                                        description:
+                                            _model.textController2.text,
+                                        duration: double.tryParse(
+                                            _model.textController3.text),
+                                        createdBy: currentUserReference,
+                                        selectedChild:
+                                            _model.selectedChildern,
+                                        taskStartTime: _model.datepickerValue,
+                                      ));
+                                      Navigator.pop(context);
                                     } else {
-                                      _model.isTaskTimeSelected = false;
+                                      _model.isChildSelected = false;
                                       safeSetState(() {});
                                     }
-                                  },
+                                                                    },
                                   text: 'Update',
                                   options: FFButtonOptions(
                                     height: 48.0,
-                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(
                                         16.0, 0.0, 16.0, 0.0),
-                                    iconPadding: EdgeInsetsDirectional.fromSTEB(
+                                    iconPadding: const EdgeInsetsDirectional.fromSTEB(
                                         0.0, 0.0, 0.0, 0.0),
                                     color: FlutterFlowTheme.of(context).primary,
                                     textStyle: FlutterFlowTheme.of(context)
                                         .titleSmall
                                         .override(
-                                          fontFamily: 'Andika New Basic',
+                                          fontFamily: FFAppState().currentFontFamily,
                                           color: Colors.white,
                                           letterSpacing: 0.0,
                                         ),
@@ -904,9 +894,9 @@ class _AddNewChildCopyCopyWidgetState extends State<AddNewChildCopyCopyWidget> {
                                   ),
                                 ),
                               ),
-                            ].divide(SizedBox(width: 10.0)),
+                            ].divide(const SizedBox(width: 10.0)),
                           ),
-                        ].divide(SizedBox(height: 16.0)),
+                        ].divide(const SizedBox(height: 16.0)),
                       ),
                     ),
                   ],

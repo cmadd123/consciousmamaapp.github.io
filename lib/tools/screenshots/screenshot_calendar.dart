@@ -26,11 +26,11 @@ class ScreenshotCalendar extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          _FilterCircle(label: 'All', color: kPrimary, selected: true),
+                          const _FilterCircle(label: 'All', color: kPrimary, selected: true),
                           const SizedBox(width: 10),
-                          _FilterCircle(label: 'S', color: const Color(0xFF9C27B0), selected: false),
+                          const _FilterCircle(label: 'S', color: Color(0xFF9C27B0), selected: false),
                           const SizedBox(width: 10),
-                          _FilterCircle(label: 'D', color: const Color(0xFF1976D2), selected: false),
+                          const _FilterCircle(label: 'D', color: Color(0xFF1976D2), selected: false),
                           const SizedBox(width: 10),
                           _FilterCircle(
                             label: demoChildren[0].initial,
@@ -108,10 +108,10 @@ class ScreenshotCalendar extends StatelessWidget {
                           const SizedBox(height: 8),
 
                           // Calendar weeks (Feb 2026 starts on Sunday)
-                          _CalendarWeek(days: [1, 2, 3, 4, 5, 6, 7], today: 17, eventDays: {3, 5, 7, 10, 12, 14, 17, 19, 21, 24}),
-                          _CalendarWeek(days: [8, 9, 10, 11, 12, 13, 14], today: 17, eventDays: {3, 5, 7, 10, 12, 14, 17, 19, 21, 24}),
-                          _CalendarWeek(days: [15, 16, 17, 18, 19, 20, 21], today: 17, eventDays: {3, 5, 7, 10, 12, 14, 17, 19, 21, 24}),
-                          _CalendarWeek(days: [22, 23, 24, 25, 26, 27, 28], today: 17, eventDays: {3, 5, 7, 10, 12, 14, 17, 19, 21, 24}),
+                          const _CalendarWeek(days: [1, 2, 3, 4, 5, 6, 7], today: 17, eventDays: {3, 5, 7, 10, 12, 14, 17, 19, 21, 24}),
+                          const _CalendarWeek(days: [8, 9, 10, 11, 12, 13, 14], today: 17, eventDays: {3, 5, 7, 10, 12, 14, 17, 19, 21, 24}),
+                          const _CalendarWeek(days: [15, 16, 17, 18, 19, 20, 21], today: 17, eventDays: {3, 5, 7, 10, 12, 14, 17, 19, 21, 24}),
+                          const _CalendarWeek(days: [22, 23, 24, 25, 26, 27, 28], today: 17, eventDays: {3, 5, 7, 10, 12, 14, 17, 19, 21, 24}),
                         ],
                       ),
                     ),
@@ -143,7 +143,7 @@ class ScreenshotCalendar extends StatelessWidget {
                       completed: false,
                     ),
 
-                    _EventCard(
+                    const _EventCard(
                       title: 'Playdate at the park',
                       time: '2:00 PM',
                       type: 'Activity',
@@ -152,11 +152,11 @@ class ScreenshotCalendar extends StatelessWidget {
                       completed: false,
                     ),
 
-                    _EventCard(
+                    const _EventCard(
                       title: 'Chicken Stir Fry',
                       time: '5:30 PM',
                       type: 'Dinner',
-                      assignees: const [],
+                      assignees: [],
                       color: kTertiary,
                       completed: false,
                     ),

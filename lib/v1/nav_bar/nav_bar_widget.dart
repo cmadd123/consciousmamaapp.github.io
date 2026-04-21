@@ -2,14 +2,9 @@ import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import '/flutter_flow/flutter_flow_widgets.dart';
-import 'dart:ui';
 import '/index.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'nav_bar_model.dart';
 export 'nav_bar_model.dart';
 
@@ -56,7 +51,7 @@ class _NavBarWidgetState extends State<NavBarWidget> {
         color: FlutterFlowTheme.of(context).secondaryBackground,
       ),
       child: Padding(
-        padding: EdgeInsetsDirectional.fromSTEB(16.0, 16.0, 16.0, 32.0),
+        padding: const EdgeInsetsDirectional.fromSTEB(16.0, 16.0, 16.0, 32.0),
         child: Row(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -70,7 +65,7 @@ class _NavBarWidgetState extends State<NavBarWidget> {
                 context.goNamed(
                   HomePageWidget.routeName,
                   extra: <String, dynamic>{
-                    kTransitionInfoKey: TransitionInfo(
+                    kTransitionInfoKey: const TransitionInfo(
                       hasTransition: true,
                       transitionType: PageTransitionType.fade,
                       duration: Duration(milliseconds: 0),
@@ -80,12 +75,12 @@ class _NavBarWidgetState extends State<NavBarWidget> {
               },
               child: Container(
                 height: 46.0,
-                constraints: BoxConstraints(
+                constraints: const BoxConstraints(
                   minWidth: 40.0,
                 ),
                 decoration: BoxDecoration(
                   color: valueOrDefault<Color>(
-                    widget!.currentPage == 'Home'
+                    widget.currentPage == 'Home'
                         ? FlutterFlowTheme.of(context).primary
                         : Colors.transparent,
                     FlutterFlowTheme.of(context).primary,
@@ -93,7 +88,7 @@ class _NavBarWidgetState extends State<NavBarWidget> {
                   borderRadius: BorderRadius.circular(16.0),
                 ),
                 child: Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
                   child: Row(
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -101,25 +96,25 @@ class _NavBarWidgetState extends State<NavBarWidget> {
                       Icon(
                         FFIcons.khomeicone,
                         color: valueOrDefault<Color>(
-                          widget!.currentPage == 'Home'
+                          widget.currentPage == 'Home'
                               ? Colors.white
                               : FlutterFlowTheme.of(context).primary,
-                          Color(0xFFAFCECA),
+                          const Color(0xFFAFCECA),
                         ),
                         size: 18.0,
                       ),
-                      if (widget!.currentPage == 'Home')
+                      if (widget.currentPage == 'Home')
                         Text(
                           'Home',
                           style:
                               FlutterFlowTheme.of(context).bodyMedium.override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     color: Colors.white,
                                     fontSize: 12.0,
                                     letterSpacing: 0.0,
                                   ),
                         ),
-                    ].divide(SizedBox(width: 5.0)),
+                    ].divide(const SizedBox(width: 5.0)),
                   ),
                 ),
               ),
@@ -133,7 +128,7 @@ class _NavBarWidgetState extends State<NavBarWidget> {
                 context.goNamed(
                   MealsWidget.routeName,
                   extra: <String, dynamic>{
-                    kTransitionInfoKey: TransitionInfo(
+                    kTransitionInfoKey: const TransitionInfo(
                       hasTransition: true,
                       transitionType: PageTransitionType.fade,
                       duration: Duration(milliseconds: 0),
@@ -143,20 +138,20 @@ class _NavBarWidgetState extends State<NavBarWidget> {
               },
               child: Container(
                 height: 100.0,
-                constraints: BoxConstraints(
+                constraints: const BoxConstraints(
                   minWidth: 40.0,
                 ),
                 decoration: BoxDecoration(
                   color: valueOrDefault<Color>(
-                    widget!.currentPage == 'Meals'
+                    widget.currentPage == 'Meals'
                         ? FlutterFlowTheme.of(context).primary
-                        : Color(0x00AFCECA),
+                        : const Color(0x00AFCECA),
                     Colors.transparent,
                   ),
                   borderRadius: BorderRadius.circular(16.0),
                 ),
                 child: Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(10.0, 0.0, 10.0, 0.0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(10.0, 0.0, 10.0, 0.0),
                   child: Row(
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -164,25 +159,25 @@ class _NavBarWidgetState extends State<NavBarWidget> {
                       Icon(
                         FFIcons.kgameIconsHotMeal,
                         color: valueOrDefault<Color>(
-                          widget!.currentPage == 'Meals'
+                          widget.currentPage == 'Meals'
                               ? Colors.white
                               : FlutterFlowTheme.of(context).primary,
-                          Color(0xFFAFCECA),
+                          const Color(0xFFAFCECA),
                         ),
                         size: 18.0,
                       ),
-                      if (widget!.currentPage == 'Meals')
+                      if (widget.currentPage == 'Meals')
                         Text(
                           'Meals',
                           style:
                               FlutterFlowTheme.of(context).bodyMedium.override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     color: Colors.white,
                                     fontSize: 12.0,
                                     letterSpacing: 0.0,
                                   ),
                         ),
-                    ].divide(SizedBox(width: 5.0)),
+                    ].divide(const SizedBox(width: 5.0)),
                   ),
                 ),
               ),
@@ -196,7 +191,7 @@ class _NavBarWidgetState extends State<NavBarWidget> {
                 context.goNamed(
                   CalendarWidget.routeName,
                   extra: <String, dynamic>{
-                    kTransitionInfoKey: TransitionInfo(
+                    kTransitionInfoKey: const TransitionInfo(
                       hasTransition: true,
                       transitionType: PageTransitionType.fade,
                       duration: Duration(milliseconds: 0),
@@ -206,12 +201,12 @@ class _NavBarWidgetState extends State<NavBarWidget> {
               },
               child: Container(
                 height: 100.0,
-                constraints: BoxConstraints(
+                constraints: const BoxConstraints(
                   minWidth: 40.0,
                 ),
                 decoration: BoxDecoration(
                   color: valueOrDefault<Color>(
-                    widget!.currentPage == 'calendar'
+                    widget.currentPage == 'calendar'
                         ? FlutterFlowTheme.of(context).primary
                         : Colors.transparent,
                     Colors.transparent,
@@ -219,7 +214,7 @@ class _NavBarWidgetState extends State<NavBarWidget> {
                   borderRadius: BorderRadius.circular(16.0),
                 ),
                 child: Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(10.0, 0.0, 10.0, 0.0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(10.0, 0.0, 10.0, 0.0),
                   child: Row(
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -227,25 +222,25 @@ class _NavBarWidgetState extends State<NavBarWidget> {
                       Icon(
                         Icons.edit_calendar,
                         color: valueOrDefault<Color>(
-                          widget!.currentPage == 'calendar'
+                          widget.currentPage == 'calendar'
                               ? Colors.white
                               : FlutterFlowTheme.of(context).primary,
-                          Color(0xFFAFCECA),
+                          const Color(0xFFAFCECA),
                         ),
                         size: 18.0,
                       ),
-                      if (widget!.currentPage == 'calendar')
+                      if (widget.currentPage == 'calendar')
                         Text(
                           'calendar',
                           style:
                               FlutterFlowTheme.of(context).bodyMedium.override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     color: Colors.white,
                                     fontSize: 12.0,
                                     letterSpacing: 0.0,
                                   ),
                         ),
-                    ].divide(SizedBox(width: 5.0)),
+                    ].divide(const SizedBox(width: 5.0)),
                   ),
                 ),
               ),
@@ -272,7 +267,7 @@ class _NavBarWidgetState extends State<NavBarWidget> {
                 context.goNamed(
                   MilestonessWidget.routeName,
                   extra: <String, dynamic>{
-                    kTransitionInfoKey: TransitionInfo(
+                    kTransitionInfoKey: const TransitionInfo(
                       hasTransition: true,
                       transitionType: PageTransitionType.fade,
                       duration: Duration(milliseconds: 0),
@@ -284,20 +279,20 @@ class _NavBarWidgetState extends State<NavBarWidget> {
               },
               child: Container(
                 height: 100.0,
-                constraints: BoxConstraints(
+                constraints: const BoxConstraints(
                   minWidth: 40.0,
                 ),
                 decoration: BoxDecoration(
                   color: valueOrDefault<Color>(
-                    widget!.currentPage == 'Milestones'
+                    widget.currentPage == 'Milestones'
                         ? FlutterFlowTheme.of(context).primary
-                        : Color(0x00AFCECA),
+                        : const Color(0x00AFCECA),
                     Colors.transparent,
                   ),
                   borderRadius: BorderRadius.circular(16.0),
                 ),
                 child: Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(10.0, 0.0, 10.0, 0.0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(10.0, 0.0, 10.0, 0.0),
                   child: Row(
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -305,25 +300,25 @@ class _NavBarWidgetState extends State<NavBarWidget> {
                       Icon(
                         FFIcons.kmileicon,
                         color: valueOrDefault<Color>(
-                          widget!.currentPage == 'Milestones'
+                          widget.currentPage == 'Milestones'
                               ? Colors.white
                               : FlutterFlowTheme.of(context).primary,
-                          Color(0xFFAFCECA),
+                          const Color(0xFFAFCECA),
                         ),
                         size: 18.0,
                       ),
-                      if (widget!.currentPage == 'Milestones')
+                      if (widget.currentPage == 'Milestones')
                         Text(
                           'Milestones',
                           style:
                               FlutterFlowTheme.of(context).bodyMedium.override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     color: Colors.white,
                                     fontSize: 12.0,
                                     letterSpacing: 0.0,
                                   ),
                         ),
-                    ].divide(SizedBox(width: 5.0)),
+                    ].divide(const SizedBox(width: 5.0)),
                   ),
                 ),
               ),
@@ -337,7 +332,7 @@ class _NavBarWidgetState extends State<NavBarWidget> {
                 context.goNamed(
                   ChildrenWidget.routeName,
                   extra: <String, dynamic>{
-                    kTransitionInfoKey: TransitionInfo(
+                    kTransitionInfoKey: const TransitionInfo(
                       hasTransition: true,
                       transitionType: PageTransitionType.fade,
                       duration: Duration(milliseconds: 0),
@@ -347,50 +342,50 @@ class _NavBarWidgetState extends State<NavBarWidget> {
               },
               child: Container(
                 height: 100.0,
-                constraints: BoxConstraints(
+                constraints: const BoxConstraints(
                   minWidth: 40.0,
                 ),
                 decoration: BoxDecoration(
                   color: valueOrDefault<Color>(
-                    widget!.currentPage == 'Children'
+                    widget.currentPage == 'Children'
                         ? FlutterFlowTheme.of(context).primary
-                        : Color(0x00AFCECA),
+                        : const Color(0x00AFCECA),
                     Colors.transparent,
                   ),
                   borderRadius: BorderRadius.circular(16.0),
                 ),
                 child: Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(10.0, 0.0, 10.0, 0.0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(10.0, 0.0, 10.0, 0.0),
                   child: Row(
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Padding(
                         padding:
-                            EdgeInsetsDirectional.fromSTEB(0.0, 1.0, 0.0, 0.0),
+                            const EdgeInsetsDirectional.fromSTEB(0.0, 1.0, 0.0, 0.0),
                         child: Icon(
                           FFIcons.kcilChild,
                           color: valueOrDefault<Color>(
-                            widget!.currentPage == 'Children'
+                            widget.currentPage == 'Children'
                                 ? Colors.white
                                 : FlutterFlowTheme.of(context).primary,
-                            Color(0xFFAFCECA),
+                            const Color(0xFFAFCECA),
                           ),
                           size: 18.0,
                         ),
                       ),
-                      if (widget!.currentPage == 'Children')
+                      if (widget.currentPage == 'Children')
                         Text(
                           'Children',
                           style:
                               FlutterFlowTheme.of(context).bodyMedium.override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     color: Colors.white,
                                     fontSize: 12.0,
                                     letterSpacing: 0.0,
                                   ),
                         ),
-                    ].divide(SizedBox(width: 5.0)),
+                    ].divide(const SizedBox(width: 5.0)),
                   ),
                 ),
               ),

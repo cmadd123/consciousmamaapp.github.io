@@ -1,12 +1,8 @@
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
-import 'dart:ui';
 import '/index.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'on_boadrding_last_model.dart';
 export 'on_boadrding_last_model.dart';
 
@@ -56,7 +52,7 @@ class _OnBoadrdingLastWidgetState extends State<OnBoadrdingLastWidget> {
         body: Container(
           width: double.infinity,
           height: double.infinity,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             gradient: LinearGradient(
               colors: [Color(0xFFECE5E5), Color(0xFFEDFFFD)],
               stops: [0.0, 1.0],
@@ -69,10 +65,10 @@ class _OnBoadrdingLastWidgetState extends State<OnBoadrdingLastWidget> {
             children: [
               Expanded(
                 child: Container(
-                  decoration: BoxDecoration(),
+                  decoration: const BoxDecoration(),
                   child: Padding(
                     padding:
-                        EdgeInsetsDirectional.fromSTEB(24.0, 50.0, 24.0, 10.0),
+                        const EdgeInsetsDirectional.fromSTEB(24.0, 50.0, 24.0, 10.0),
                     child: SingleChildScrollView(
                       child: Column(
                         mainAxisSize: MainAxisSize.max,
@@ -80,9 +76,9 @@ class _OnBoadrdingLastWidgetState extends State<OnBoadrdingLastWidget> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Align(
-                            alignment: AlignmentDirectional(-1.0, 0.0),
+                            alignment: const AlignmentDirectional(-1.0, 0.0),
                             child: Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   0.0, 100.0, 0.0, 0.0),
                               child: ClipOval(
                                 child: Container(
@@ -106,14 +102,14 @@ class _OnBoadrdingLastWidgetState extends State<OnBoadrdingLastWidget> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 32.0, 0.0, 56.0),
                             child: Text(
                               'Based on your goals and the challenges you face, we’ve crafted a plan that can transform your parenting journey. With our premium subscription you’ll unlock a dedicated AI chatbot trained on expert toddler parenting advice, daily tailored tips, and real-time support whenever you need it. Ready to embrace a more confident, empowered you—and a thriving, independent child?',
                               style: FlutterFlowTheme.of(context)
                                   .bodyMedium
                                   .override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     color: FlutterFlowTheme.of(context)
                                         .secondaryText,
                                     fontSize: 16.0,
@@ -122,15 +118,15 @@ class _OnBoadrdingLastWidgetState extends State<OnBoadrdingLastWidget> {
                             ),
                           ),
                           Align(
-                            alignment: AlignmentDirectional(0.0, 0.0),
+                            alignment: const AlignmentDirectional(0.0, 0.0),
                             child: Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   0.0, 0.0, 0.0, 100.0),
                               child: ClipOval(
                                 child: Container(
                                   width: 80.0,
                                   height: 80.0,
-                                  decoration: BoxDecoration(
+                                  decoration: const BoxDecoration(
                                     shape: BoxShape.circle,
                                   ),
                                   child: ClipRRect(
@@ -157,15 +153,15 @@ class _OnBoadrdingLastWidgetState extends State<OnBoadrdingLastWidget> {
                                   text: 'Go to home',
                                   options: FFButtonOptions(
                                     height: 48.0,
-                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(
                                         16.0, 0.0, 16.0, 0.0),
-                                    iconPadding: EdgeInsetsDirectional.fromSTEB(
+                                    iconPadding: const EdgeInsetsDirectional.fromSTEB(
                                         0.0, 0.0, 0.0, 0.0),
                                     color: FlutterFlowTheme.of(context).primary,
                                     textStyle: FlutterFlowTheme.of(context)
                                         .titleSmall
                                         .override(
-                                          fontFamily: 'Andika New Basic',
+                                          fontFamily: FFAppState().currentFontFamily,
                                           color: Colors.white,
                                           letterSpacing: 0.0,
                                         ),
@@ -174,7 +170,7 @@ class _OnBoadrdingLastWidgetState extends State<OnBoadrdingLastWidget> {
                                   ),
                                 ),
                               ),
-                            ].divide(SizedBox(width: 10.0)),
+                            ].divide(const SizedBox(width: 10.0)),
                           ),
                         ],
                       ),

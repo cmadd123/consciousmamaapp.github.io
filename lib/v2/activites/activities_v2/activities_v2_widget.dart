@@ -1,17 +1,12 @@
 import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
-import '/backend/schema/enums/enums.dart';
 import '/components/empty_widget_component_widget.dart';
 import '/components/home_nav_bar_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import '/flutter_flow/flutter_flow_widgets.dart';
 import '/v2/activites/activitycart_component/activitycart_component_widget.dart';
-import 'dart:ui';
 import '/index.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'activities_v2_model.dart';
 export 'activities_v2_model.dart';
 
@@ -63,7 +58,7 @@ class _ActivitiesV2WidgetState extends State<ActivitiesV2Widget>
             ? const Color(0xFF2C3E50)
             : FlutterFlowTheme.of(context).secondaryBackground,
         floatingActionButton: Padding(
-          padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 32.0, 50.0),
+          padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 32.0, 50.0),
           child: FloatingActionButton(
             onPressed: () async {
               context.pushNamed(KindofActivitystepWidget.routeName);
@@ -90,7 +85,7 @@ class _ActivitiesV2WidgetState extends State<ActivitiesV2Widget>
                 children: [
                   Padding(
                     padding:
-                        EdgeInsetsDirectional.fromSTEB(12.0, 0.0, 12.0, 0.0),
+                        const EdgeInsetsDirectional.fromSTEB(12.0, 0.0, 12.0, 0.0),
                     child: Material(
                       color: Colors.transparent,
                       elevation: 1.0,
@@ -112,7 +107,7 @@ class _ActivitiesV2WidgetState extends State<ActivitiesV2Widget>
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   24.0, 26.0, 24.0, 0.0),
                               child: Text(
                                 'Activities',
@@ -120,14 +115,14 @@ class _ActivitiesV2WidgetState extends State<ActivitiesV2Widget>
                                 style: FlutterFlowTheme.of(context)
                                     .bodyMedium
                                     .override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       fontSize: 24.0,
                                       letterSpacing: 0.0,
                                     ),
                               ),
                             ),
                             Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   20.0, 8.0, 20.0, 0.0),
                               child: Text(
                                 'Activities enhance your child’s play time and take the pressure off of you to come up with fun and engaging play times. For example, if it’s raining outside and you need ideas for inside fun, this will give you ideas on what fun things your kids can do. ',
@@ -135,8 +130,8 @@ class _ActivitiesV2WidgetState extends State<ActivitiesV2Widget>
                                 style: FlutterFlowTheme.of(context)
                                     .bodyMedium
                                     .override(
-                                      fontFamily: 'Andika New Basic',
-                                      color: Color(0xB71B1F26),
+                                      fontFamily: FFAppState().currentFontFamily,
+                                      color: const Color(0xB71B1F26),
                                       letterSpacing: 0.0,
                                     ),
                               ),
@@ -151,7 +146,7 @@ class _ActivitiesV2WidgetState extends State<ActivitiesV2Widget>
                               child: Column(
                                 children: [
                                   Align(
-                                    alignment: Alignment(0.0, 0),
+                                    alignment: const Alignment(0.0, 0),
                                     child: TabBar(
                                       labelColor:
                                           FlutterFlowTheme.of(context).primary,
@@ -159,12 +154,12 @@ class _ActivitiesV2WidgetState extends State<ActivitiesV2Widget>
                                           FlutterFlowTheme.of(context)
                                               .primaryText,
                                       labelPadding:
-                                          EdgeInsetsDirectional.fromSTEB(
+                                          const EdgeInsetsDirectional.fromSTEB(
                                               1.0, 0.0, 0.0, 0.0),
                                       labelStyle: FlutterFlowTheme.of(context)
                                           .titleMedium
                                           .override(
-                                            fontFamily: 'Andika New Basic',
+                                            fontFamily: FFAppState().currentFontFamily,
                                             fontSize: 14.0,
                                             letterSpacing: 0.0,
                                           ),
@@ -172,14 +167,14 @@ class _ActivitiesV2WidgetState extends State<ActivitiesV2Widget>
                                           FlutterFlowTheme.of(context)
                                               .titleMedium
                                               .override(
-                                                fontFamily: 'Andika New Basic',
+                                                fontFamily: FFAppState().currentFontFamily,
                                                 fontSize: 14.0,
                                                 letterSpacing: 0.0,
                                               ),
                                       indicatorColor:
                                           FlutterFlowTheme.of(context).primary,
-                                      padding: EdgeInsets.all(24.0),
-                                      tabs: [
+                                      padding: const EdgeInsets.all(24.0),
+                                      tabs: const [
                                         Tab(
                                           text: 'All Activities',
                                         ),
@@ -254,7 +249,7 @@ class _ActivitiesV2WidgetState extends State<ActivitiesV2Widget>
                                                         columnActivityRecord,
                                                   );
                                                 }).addToEnd(
-                                                    SizedBox(height: 150.0)),
+                                                    const SizedBox(height: 150.0)),
                                               ),
                                             );
                                           },
@@ -300,7 +295,7 @@ class _ActivitiesV2WidgetState extends State<ActivitiesV2Widget>
                                                       snapshot.data!;
 
                                                   if (columnFavActivityRecordList.isEmpty) {
-                                                    return EmptyWidgetComponentWidget(
+                                                    return const EmptyWidgetComponentWidget(
                                                       titleParams: 'No favorite activities yet.\nTap the heart on any activity to save it here!',
                                                     );
                                                   }
@@ -356,7 +351,7 @@ class _ActivitiesV2WidgetState extends State<ActivitiesV2Widget>
                                                             );
                                                           },
                                                         );
-                                                      }).addToEnd(SizedBox(
+                                                      }).addToEnd(const SizedBox(
                                                           height: 50.0)),
                                                     ),
                                                   );

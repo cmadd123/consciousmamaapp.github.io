@@ -1,11 +1,8 @@
 import 'dart:convert';
-import 'dart:typed_data';
-import '../schema/structs/index.dart';
 
 import 'package:flutter/foundation.dart';
 
 import '/flutter_flow/flutter_flow_util.dart';
-import '/app_state.dart';
 import 'api_manager.dart';
 
 export 'api_manager.dart' show ApiCallResponse;
@@ -41,7 +38,7 @@ class CreateThreadNCall {
 
     return ApiManager.instance.makeApiCall(
       callName: 'createThreadN',
-      apiUrl: '${baseUrl}/threads',
+      apiUrl: '$baseUrl/threads',
       callType: ApiCallType.POST,
       headers: {
         'Authorization': _getOpenAiAuthHeader(),
@@ -79,7 +76,7 @@ class AddMessageToThreidCall {
 }''';
     return ApiManager.instance.makeApiCall(
       callName: 'Add message to threid',
-      apiUrl: '${baseUrl}/threads/${threadId}/messages',
+      apiUrl: '$baseUrl/threads/$threadId/messages',
       callType: ApiCallType.POST,
       headers: {
         'Authorization': _getOpenAiAuthHeader(),
@@ -112,7 +109,7 @@ class CreateRunnCall {
 }''';
     return ApiManager.instance.makeApiCall(
       callName: 'create runn',
-      apiUrl: '${baseUrl}/threads/${threadId}/runs',
+      apiUrl: '$baseUrl/threads/$threadId/runs',
       callType: ApiCallType.POST,
       headers: {
         'Authorization': _getOpenAiAuthHeader(),
@@ -140,7 +137,7 @@ class GetMessagesCall {
 
     return ApiManager.instance.makeApiCall(
       callName: 'get messages',
-      apiUrl: '${baseUrl}/threads/${threadId}/messages',
+      apiUrl: '$baseUrl/threads/$threadId/messages',
       callType: ApiCallType.GET,
       headers: {
         'Authorization': _getOpenAiAuthHeader(),
@@ -160,7 +157,7 @@ class GetMessagesCall {
 
 class ChatCompletionCall {
   Future<ApiCallResponse> call({
-    dynamic? messagesJson,
+    dynamic messagesJson,
   }) async {
     final baseUrl = OpenAiCustomGroup.getBaseUrl();
 
@@ -168,12 +165,12 @@ class ChatCompletionCall {
     final ffApiRequestBody = '''
 {
   "model": "gpt-4o-mini",
-  "messages": ${messages},
+  "messages": $messages,
   "stream": true
 }''';
     return ApiManager.instance.makeApiCall(
       callName: 'Chat completion ',
-      apiUrl: '${baseUrl}/chat/completions',
+      apiUrl: '$baseUrl/chat/completions',
       callType: ApiCallType.POST,
       headers: {
         'Authorization': _getOpenAiAuthHeader(),
@@ -217,7 +214,7 @@ class CreateProgrammesCall {
 }''';
     return ApiManager.instance.makeApiCall(
       callName: 'Create Programmes',
-      apiUrl: '${baseUrl}/chat/completions',
+      apiUrl: '$baseUrl/chat/completions',
       callType: ApiCallType.POST,
       headers: {
         'Authorization': _getOpenAiAuthHeader(),
@@ -250,7 +247,7 @@ class GetRunNCall {
 
     return ApiManager.instance.makeApiCall(
       callName: 'get run n',
-      apiUrl: '${baseUrl}/threads/${threadId}/runs/${runId}',
+      apiUrl: '$baseUrl/threads/$threadId/runs/$runId',
       callType: ApiCallType.GET,
       headers: {
         'Authorization': _getOpenAiAuthHeader(),
@@ -323,7 +320,7 @@ class MealNewCall {
     int? maxReadyTime,
   }) async {
     // Return empty/failed response - this feature is deprecated
-    return ApiCallResponse(null, {}, 501);
+    return const ApiCallResponse(null, {}, 501);
   }
 
   static List? result(dynamic response) => [];

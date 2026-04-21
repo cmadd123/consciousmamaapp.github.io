@@ -1,11 +1,7 @@
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import '/flutter_flow/flutter_flow_widgets.dart';
 import '/v2/learning_path/loading_learn_pass/loading_learn_pass_widget.dart';
-import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'loadinglearn_path_model.dart';
 export 'loadinglearn_path_model.dart';
 
@@ -46,7 +42,7 @@ class _LoadinglearnPathWidgetState extends State<LoadinglearnPathWidget> {
       },
       child: Scaffold(
         key: scaffoldKey,
-        backgroundColor: Color(0xFFEDFFFD),
+        backgroundColor: const Color(0xFFEDFFFD),
         body: SafeArea(
           top: true,
           child: Column(
@@ -54,7 +50,7 @@ class _LoadinglearnPathWidgetState extends State<LoadinglearnPathWidget> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(12.0, 20.0, 12.0, 0.0),
+                padding: const EdgeInsetsDirectional.fromSTEB(12.0, 20.0, 12.0, 0.0),
                 child: Material(
                   color: Colors.transparent,
                   elevation: 1.0,
@@ -79,7 +75,7 @@ class _LoadinglearnPathWidgetState extends State<LoadinglearnPathWidget> {
                           model: _model.loadingLearnPassModel,
                           updateCallback: () => safeSetState(() {}),
                           updateOnChange: true,
-                          child: LoadingLearnPassWidget(
+                          child: const LoadingLearnPassWidget(
                             title:
                                 'Hold on. We are generating your learning path. ',
                           ),

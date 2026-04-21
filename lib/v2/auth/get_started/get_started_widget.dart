@@ -1,13 +1,8 @@
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
-import 'dart:ui';
 import '/index.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'get_started_model.dart';
 export 'get_started_model.dart';
 
@@ -59,7 +54,7 @@ class _GetStartedWidgetState extends State<GetStartedWidget> {
             Container(
               width: double.infinity,
               height: double.infinity,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   colors: [Color(0xFFD7F2EB), Color(0xFFFFE9E1)],
                   stops: [0.0, 1.0],
@@ -68,19 +63,19 @@ class _GetStartedWidgetState extends State<GetStartedWidget> {
                 ),
               ),
               child: Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(0.0, 50.0, 0.0, 0.0),
+                padding: const EdgeInsetsDirectional.fromSTEB(0.0, 50.0, 0.0, 0.0),
                 child: SingleChildScrollView(
                   child: Column(
                     mainAxisSize: MainAxisSize.max,
                     children: [
                       Align(
-                        alignment: AlignmentDirectional(0.0, 0.0),
+                        alignment: const AlignmentDirectional(0.0, 0.0),
                         child: Container(
                           width: 182.0,
                           height: 152.8,
-                          decoration: BoxDecoration(),
+                          decoration: const BoxDecoration(),
                           child: Align(
-                            alignment: AlignmentDirectional(-1.0, 0.0),
+                            alignment: const AlignmentDirectional(-1.0, 0.0),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(14.0),
                               child: Image.asset(
@@ -94,7 +89,7 @@ class _GetStartedWidgetState extends State<GetStartedWidget> {
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(
+                        padding: const EdgeInsetsDirectional.fromSTEB(
                             24.0, 0.0, 24.0, 10.0),
                         child: Column(
                           mainAxisSize: MainAxisSize.max,
@@ -106,21 +101,21 @@ class _GetStartedWidgetState extends State<GetStartedWidget> {
                               style: FlutterFlowTheme.of(context)
                                   .bodyMedium
                                   .override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     fontSize: 30.0,
                                     letterSpacing: 0.0,
                                     fontWeight: FontWeight.w600,
                                   ),
                             ),
                             Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   0.0, 20.0, 0.0, 20.0),
                               child: Text(
                                 'Congratulations on taking a proactive step towards creating a peaceful home. By choosing this app, you’re investing in a future where you feel confident in the rhythms you have set in place to help you and your family thrive.',
                                 style: FlutterFlowTheme.of(context)
                                     .bodyMedium
                                     .override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       color: FlutterFlowTheme.of(context)
                                           .secondaryText,
                                       fontSize: 16.0,
@@ -133,7 +128,7 @@ class _GetStartedWidgetState extends State<GetStartedWidget> {
                               children: [
                                 Expanded(
                                   child: Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(
                                         0.0, 60.0, 0.0, 0.0),
                                     child: FFButtonWidget(
                                       onPressed: () async {
@@ -143,17 +138,17 @@ class _GetStartedWidgetState extends State<GetStartedWidget> {
                                       text: 'Lets Get Started',
                                       options: FFButtonOptions(
                                         height: 48.0,
-                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                        padding: const EdgeInsetsDirectional.fromSTEB(
                                             16.0, 0.0, 16.0, 0.0),
                                         iconPadding:
-                                            EdgeInsetsDirectional.fromSTEB(
+                                            const EdgeInsetsDirectional.fromSTEB(
                                                 0.0, 0.0, 0.0, 0.0),
                                         color: FlutterFlowTheme.of(context)
                                             .primary,
                                         textStyle: FlutterFlowTheme.of(context)
                                             .titleSmall
                                             .override(
-                                              fontFamily: 'Andika New Basic',
+                                              fontFamily: FFAppState().currentFontFamily,
                                               color: Colors.white,
                                               letterSpacing: 0.0,
                                             ),
@@ -164,7 +159,7 @@ class _GetStartedWidgetState extends State<GetStartedWidget> {
                                     ),
                                   ),
                                 ),
-                              ].divide(SizedBox(width: 10.0)),
+                              ].divide(const SizedBox(width: 10.0)),
                             ),
                           ],
                         ),
@@ -175,9 +170,9 @@ class _GetStartedWidgetState extends State<GetStartedWidget> {
               ),
             ),
             Align(
-              alignment: AlignmentDirectional(0.0, 1.0),
+              alignment: const AlignmentDirectional(0.0, 1.0),
               child: Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 50.0),
+                padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 50.0),
                 child: RichText(
                   textScaler: MediaQuery.of(context).textScaler,
                   text: TextSpan(
@@ -185,7 +180,7 @@ class _GetStartedWidgetState extends State<GetStartedWidget> {
                       TextSpan(
                         text: 'By Continuing, you are agree to our ',
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               color: FlutterFlowTheme.of(context).secondaryText,
                               fontSize: 12.0,
                               letterSpacing: 0.0,
@@ -200,8 +195,8 @@ class _GetStartedWidgetState extends State<GetStartedWidget> {
                       )
                     ],
                     style: FlutterFlowTheme.of(context).bodyMedium.override(
-                          fontFamily: 'Andika New Basic',
-                          color: Color(0x8F000000),
+                          fontFamily: FFAppState().currentFontFamily,
+                          color: const Color(0x8F000000),
                           fontSize: 12.0,
                           letterSpacing: 0.0,
                         ),

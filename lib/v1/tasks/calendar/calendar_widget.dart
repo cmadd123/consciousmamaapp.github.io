@@ -3,16 +3,11 @@ import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_calendar.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import '/flutter_flow/flutter_flow_widgets.dart';
 import '/v1/create_task_or_program/create_task_or_program_widget.dart';
 import '/v1/loading_nothing/loading_nothing_widget.dart';
 import '/v1/nav_bar/nav_bar_widget.dart';
 import '/v1/tasks/task_details_pop_up/task_details_pop_up_widget.dart';
-import 'dart:ui';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'calendar_model.dart';
 export 'calendar_model.dart';
 
@@ -55,7 +50,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
         floatingActionButton: Padding(
-          padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 70.0),
+          padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 70.0),
           child: FloatingActionButton(
             onPressed: () async {
               await showModalBottomSheet(
@@ -71,7 +66,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                     },
                     child: Padding(
                       padding: MediaQuery.viewInsetsOf(context),
-                      child: CreateTaskOrProgramWidget(),
+                      child: const CreateTaskOrProgramWidget(),
                     ),
                   );
                 },
@@ -89,7 +84,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
         body: Container(
           width: double.infinity,
           height: double.infinity,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             color: Colors.white,
           ),
           child: Stack(
@@ -97,7 +92,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
               Container(
                 width: double.infinity,
                 height: double.infinity,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   gradient: LinearGradient(
                     colors: [Color(0xFFF6FFFE), Color(0xFFEDFFFD)],
                     stops: [0.0, 1.0],
@@ -111,20 +106,20 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                   children: [
                     Padding(
                       padding:
-                          EdgeInsetsDirectional.fromSTEB(20.0, 50.0, 20.0, 0.0),
+                          const EdgeInsetsDirectional.fromSTEB(20.0, 50.0, 20.0, 0.0),
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         children: [
                           Expanded(
                             child: Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   0.0, 0.0, 10.0, 0.0),
                               child: Row(
                                 mainAxisSize: MainAxisSize.max,
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(
                                         0.0, 0.0, 20.0, 0.0),
                                     child: Text(
                                       'Calendar',
@@ -132,7 +127,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                                       style: FlutterFlowTheme.of(context)
                                           .bodyMedium
                                           .override(
-                                            fontFamily: 'Andika New Basic',
+                                            fontFamily: FFAppState().currentFontFamily,
                                             fontSize: 20.0,
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.bold,
@@ -149,7 +144,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                     Expanded(
                       child: Padding(
                         padding:
-                            EdgeInsetsDirectional.fromSTEB(0.0, 20.0, 0.0, 0.0),
+                            const EdgeInsetsDirectional.fromSTEB(0.0, 20.0, 0.0, 0.0),
                         child: SingleChildScrollView(
                           child: Column(
                             mainAxisSize: MainAxisSize.max,
@@ -168,26 +163,26 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                                 titleStyle: FlutterFlowTheme.of(context)
                                     .titleLarge
                                     .override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       letterSpacing: 0.0,
                                     ),
                                 dayOfWeekStyle: FlutterFlowTheme.of(context)
                                     .bodyLarge
                                     .override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       fontSize: 14.0,
                                       letterSpacing: 0.0,
                                     ),
                                 dateStyle: FlutterFlowTheme.of(context)
                                     .bodyMedium
                                     .override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       letterSpacing: 0.0,
                                     ),
                                 selectedDateStyle: FlutterFlowTheme.of(context)
                                     .titleSmall
                                     .override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       color: FlutterFlowTheme.of(context)
                                           .secondaryBackground,
                                       letterSpacing: 0.0,
@@ -195,23 +190,23 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                                 inactiveDateStyle: FlutterFlowTheme.of(context)
                                     .labelMedium
                                     .override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       letterSpacing: 0.0,
                                     ),
                                 locale:
                                     FFLocalizations.of(context).languageCode,
                               ),
                               Align(
-                                alignment: AlignmentDirectional(-1.0, 0.0),
+                                alignment: const AlignmentDirectional(-1.0, 0.0),
                                 child: Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       16.0, 16.0, 0.0, 0.0),
                                   child: Text(
                                     'Tasks',
                                     style: FlutterFlowTheme.of(context)
                                         .bodyMedium
                                         .override(
-                                          fontFamily: 'Andika New Basic',
+                                          fontFamily: FFAppState().currentFontFamily,
                                           fontSize: 18.0,
                                           letterSpacing: 0.0,
                                           fontWeight: FontWeight.w600,
@@ -220,7 +215,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                                 ),
                               ),
                               Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     0.0, 20.0, 0.0, 0.0),
                                 child: StreamBuilder<List<TasksRecord>>(
                                   stream: queryTasksRecord(
@@ -266,14 +261,14 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                                       scrollDirection: Axis.vertical,
                                       itemCount: listViewTasksRecordList.length,
                                       separatorBuilder: (_, __) =>
-                                          SizedBox(height: 10.0),
+                                          const SizedBox(height: 10.0),
                                       itemBuilder: (context, listViewIndex) {
                                         final listViewTasksRecord =
                                             listViewTasksRecordList[
                                                 listViewIndex];
                                         return Padding(
                                           padding:
-                                              EdgeInsetsDirectional.fromSTEB(
+                                              const EdgeInsetsDirectional.fromSTEB(
                                                   0.0, 2.0, 0.0, 0.0),
                                           child: Row(
                                             mainAxisSize: MainAxisSize.max,
@@ -281,7 +276,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Padding(
-                                                padding: EdgeInsetsDirectional
+                                                padding: const EdgeInsetsDirectional
                                                     .fromSTEB(
                                                         20.0, 16.0, 12.0, 0.0),
                                                 child: RichText(
@@ -317,7 +312,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                                                                           .w600,
                                                                 ),
                                                       ),
-                                                      TextSpan(
+                                                      const TextSpan(
                                                         text: '',
                                                         style: TextStyle(),
                                                       )
@@ -329,7 +324,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                                                           fontFamily:
                                                               'Andika New Basic',
                                                           color:
-                                                              Color(0xFF595959),
+                                                              const Color(0xFF595959),
                                                           letterSpacing: 0.0,
                                                           fontWeight:
                                                               FontWeight.w600,
@@ -351,7 +346,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                                                 child: Builder(
                                                   builder: (context) => Padding(
                                                     padding:
-                                                        EdgeInsetsDirectional
+                                                        const EdgeInsetsDirectional
                                                             .fromSTEB(0.0, 0.0,
                                                                 24.0, 0.0),
                                                     child: StreamBuilder<
@@ -364,7 +359,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                                                           (context, snapshot) {
                                                         // Customize what your widget looks like when it's loading.
                                                         if (!snapshot.hasData) {
-                                                          return LoadingNothingWidget();
+                                                          return const LoadingNothingWidget();
                                                         }
 
                                                         final containerChildernRecord =
@@ -392,7 +387,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                                                                   backgroundColor:
                                                                       Colors
                                                                           .transparent,
-                                                                  alignment: AlignmentDirectional(
+                                                                  alignment: const AlignmentDirectional(
                                                                           0.0,
                                                                           0.0)
                                                                       .resolve(
@@ -433,7 +428,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                                                             ),
                                                             child: Padding(
                                                               padding:
-                                                                  EdgeInsetsDirectional
+                                                                  const EdgeInsetsDirectional
                                                                       .fromSTEB(
                                                                           16.0,
                                                                           0.0,
@@ -487,7 +482,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                                                                         ),
                                                                       ),
                                                                       Padding(
-                                                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                                                        padding: const EdgeInsetsDirectional.fromSTEB(
                                                                             8.0,
                                                                             5.0,
                                                                             0.0,
@@ -502,7 +497,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                                                                               CrossAxisAlignment.start,
                                                                           children: [
                                                                             Padding(
-                                                                              padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 2.0),
+                                                                              padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 2.0),
                                                                               child: Text(
                                                                                 valueOrDefault<String>(
                                                                                   listViewTasksRecord.title,
@@ -510,7 +505,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                                                                                 ),
                                                                                 maxLines: 1,
                                                                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                      fontFamily: 'Andika New Basic',
+                                                                                      fontFamily: FFAppState().currentFontFamily,
                                                                                       color: Colors.black,
                                                                                       fontSize: 14.0,
                                                                                       letterSpacing: 0.0,
@@ -519,7 +514,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                                                                               ),
                                                                             ),
                                                                             Padding(
-                                                                              padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 8.0),
+                                                                              padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 8.0),
                                                                               child: Text(
                                                                                 valueOrDefault<String>(
                                                                                   containerChildernRecord.name,
@@ -527,7 +522,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                                                                                 ),
                                                                                 maxLines: 1,
                                                                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                      fontFamily: 'Andika New Basic',
+                                                                                      fontFamily: FFAppState().currentFontFamily,
                                                                                       color: FlutterFlowTheme.of(context).secondaryText,
                                                                                       fontSize: 12.0,
                                                                                       letterSpacing: 0.0,
@@ -537,7 +532,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                                                                             Text(
                                                                               'View details',
                                                                               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                    fontFamily: 'Andika New Basic',
+                                                                                    fontFamily: FFAppState().currentFontFamily,
                                                                                     color: FlutterFlowTheme.of(context).secondaryText,
                                                                                     letterSpacing: 0.0,
                                                                                     decoration: TextDecoration.underline,
@@ -567,16 +562,16 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                                 ),
                               ),
                               Align(
-                                alignment: AlignmentDirectional(-1.0, 0.0),
+                                alignment: const AlignmentDirectional(-1.0, 0.0),
                                 child: Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       16.0, 16.0, 0.0, 0.0),
                                   child: Text(
                                     'Meals',
                                     style: FlutterFlowTheme.of(context)
                                         .bodyMedium
                                         .override(
-                                          fontFamily: 'Andika New Basic',
+                                          fontFamily: FFAppState().currentFontFamily,
                                           fontSize: 18.0,
                                           letterSpacing: 0.0,
                                           fontWeight: FontWeight.w600,
@@ -585,7 +580,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                                 ),
                               ),
                               Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     0.0, 20.0, 0.0, 0.0),
                                 child: StreamBuilder<List<TasksRecord>>(
                                   stream: queryTasksRecord(
@@ -631,14 +626,14 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                                       scrollDirection: Axis.vertical,
                                       itemCount: listViewTasksRecordList.length,
                                       separatorBuilder: (_, __) =>
-                                          SizedBox(height: 10.0),
+                                          const SizedBox(height: 10.0),
                                       itemBuilder: (context, listViewIndex) {
                                         final listViewTasksRecord =
                                             listViewTasksRecordList[
                                                 listViewIndex];
                                         return Padding(
                                           padding:
-                                              EdgeInsetsDirectional.fromSTEB(
+                                              const EdgeInsetsDirectional.fromSTEB(
                                                   0.0, 2.0, 0.0, 0.0),
                                           child: Row(
                                             mainAxisSize: MainAxisSize.max,
@@ -646,7 +641,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Padding(
-                                                padding: EdgeInsetsDirectional
+                                                padding: const EdgeInsetsDirectional
                                                     .fromSTEB(
                                                         20.0, 16.0, 12.0, 0.0),
                                                 child: RichText(
@@ -682,7 +677,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                                                                           .w600,
                                                                 ),
                                                       ),
-                                                      TextSpan(
+                                                      const TextSpan(
                                                         text: '',
                                                         style: TextStyle(),
                                                       )
@@ -694,7 +689,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                                                           fontFamily:
                                                               'Andika New Basic',
                                                           color:
-                                                              Color(0xFF595959),
+                                                              const Color(0xFF595959),
                                                           letterSpacing: 0.0,
                                                           fontWeight:
                                                               FontWeight.w600,
@@ -716,7 +711,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                                                 child: Builder(
                                                   builder: (context) => Padding(
                                                     padding:
-                                                        EdgeInsetsDirectional
+                                                        const EdgeInsetsDirectional
                                                             .fromSTEB(0.0, 0.0,
                                                                 24.0, 0.0),
                                                     child: StreamBuilder<
@@ -729,7 +724,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                                                           (context, snapshot) {
                                                         // Customize what your widget looks like when it's loading.
                                                         if (!snapshot.hasData) {
-                                                          return LoadingNothingWidget();
+                                                          return const LoadingNothingWidget();
                                                         }
 
                                                         final containerChildernRecord =
@@ -757,7 +752,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                                                                   backgroundColor:
                                                                       Colors
                                                                           .transparent,
-                                                                  alignment: AlignmentDirectional(
+                                                                  alignment: const AlignmentDirectional(
                                                                           0.0,
                                                                           0.0)
                                                                       .resolve(
@@ -798,7 +793,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                                                             ),
                                                             child: Padding(
                                                               padding:
-                                                                  EdgeInsetsDirectional
+                                                                  const EdgeInsetsDirectional
                                                                       .fromSTEB(
                                                                           16.0,
                                                                           0.0,
@@ -852,7 +847,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                                                                         ),
                                                                       ),
                                                                       Padding(
-                                                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                                                        padding: const EdgeInsetsDirectional.fromSTEB(
                                                                             8.0,
                                                                             5.0,
                                                                             0.0,
@@ -867,7 +862,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                                                                               CrossAxisAlignment.start,
                                                                           children: [
                                                                             Padding(
-                                                                              padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 2.0),
+                                                                              padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 2.0),
                                                                               child: Text(
                                                                                 valueOrDefault<String>(
                                                                                   listViewTasksRecord.title,
@@ -875,7 +870,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                                                                                 ),
                                                                                 maxLines: 1,
                                                                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                      fontFamily: 'Andika New Basic',
+                                                                                      fontFamily: FFAppState().currentFontFamily,
                                                                                       color: Colors.black,
                                                                                       fontSize: 14.0,
                                                                                       letterSpacing: 0.0,
@@ -884,7 +879,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                                                                               ),
                                                                             ),
                                                                             Padding(
-                                                                              padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 8.0),
+                                                                              padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 8.0),
                                                                               child: Text(
                                                                                 valueOrDefault<String>(
                                                                                   containerChildernRecord.name,
@@ -892,7 +887,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                                                                                 ),
                                                                                 maxLines: 1,
                                                                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                      fontFamily: 'Andika New Basic',
+                                                                                      fontFamily: FFAppState().currentFontFamily,
                                                                                       color: FlutterFlowTheme.of(context).secondaryText,
                                                                                       fontSize: 12.0,
                                                                                       letterSpacing: 0.0,
@@ -902,7 +897,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                                                                             Text(
                                                                               'View details',
                                                                               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                    fontFamily: 'Andika New Basic',
+                                                                                    fontFamily: FFAppState().currentFontFamily,
                                                                                     color: FlutterFlowTheme.of(context).secondaryText,
                                                                                     letterSpacing: 0.0,
                                                                                     decoration: TextDecoration.underline,
@@ -931,7 +926,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                                   },
                                 ),
                               ),
-                            ].addToEnd(SizedBox(height: 100.0)),
+                            ].addToEnd(const SizedBox(height: 100.0)),
                           ),
                         ),
                       ),
@@ -940,13 +935,13 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                 ),
               ),
               Align(
-                alignment: AlignmentDirectional(0.0, 1.0),
+                alignment: const AlignmentDirectional(0.0, 1.0),
                 child: Container(
-                  decoration: BoxDecoration(),
+                  decoration: const BoxDecoration(),
                   child: wrapWithModel(
                     model: _model.navBarModel,
                     updateCallback: () => safeSetState(() {}),
-                    child: NavBarWidget(
+                    child: const NavBarWidget(
                       currentPage: 'calendar',
                     ),
                   ),

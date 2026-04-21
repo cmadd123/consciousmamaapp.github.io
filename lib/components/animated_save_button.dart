@@ -169,7 +169,7 @@ class _AnimatedSaveButtonState extends State<AnimatedSaveButton>
           widget.label,
           key: const ValueKey('label'),
           style: theme.titleSmall.override(
-            fontFamily: 'Andika New Basic',
+            fontFamily: FFAppState().currentFontFamily,
             color: Colors.white,
             fontSize: 16.0,
             letterSpacing: 0.0,
@@ -177,8 +177,8 @@ class _AnimatedSaveButtonState extends State<AnimatedSaveButton>
           ),
         );
       case _ButtonState.saving:
-        return SizedBox(
-          key: const ValueKey('spinner'),
+        return const SizedBox(
+          key: ValueKey('spinner'),
           width: 24.0,
           height: 24.0,
           child: CircularProgressIndicator(

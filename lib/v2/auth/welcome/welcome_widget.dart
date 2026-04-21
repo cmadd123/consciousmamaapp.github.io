@@ -60,7 +60,7 @@ class _WelcomeWidgetState extends State<WelcomeWidget>
       end: Offset.zero,
     ).animate(CurvedAnimation(
       parent: _slideController,
-      curve: Interval(0.3, 1.0, curve: Curves.easeOutCubic),
+      curve: const Interval(0.3, 1.0, curve: Curves.easeOutCubic),
     ));
 
     // Start animations
@@ -91,7 +91,7 @@ class _WelcomeWidgetState extends State<WelcomeWidget>
         body: Container(
           width: double.infinity,
           height: double.infinity,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             gradient: LinearGradient(
               colors: [Color(0xFFD7F2EB), Color(0xFFFFE9E1)],
               stops: [0.0, 1.0],
@@ -108,13 +108,13 @@ class _WelcomeWidgetState extends State<WelcomeWidget>
                       minHeight: constraints.maxHeight,
                     ),
                     child: Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 24.0),
+                      padding: const EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 24.0),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                     // Back button
                     Align(
-                      alignment: AlignmentDirectional(-1.0, 0.0),
+                      alignment: const AlignmentDirectional(-1.0, 0.0),
                       child: InkWell(
                         splashColor: Colors.transparent,
                         focusColor: Colors.transparent,
@@ -122,7 +122,7 @@ class _WelcomeWidgetState extends State<WelcomeWidget>
                         highlightColor: Colors.transparent,
                         onTap: () => context.safePop(),
                         child: Container(
-                          padding: EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.all(8.0),
                           decoration: BoxDecoration(
                             color: Colors.white.withOpacity(0.5),
                             borderRadius: BorderRadius.circular(14.0),
@@ -135,11 +135,11 @@ class _WelcomeWidgetState extends State<WelcomeWidget>
                         ),
                       ),
                     ),
-                    SizedBox(height: 20.0),
+                    const SizedBox(height: 20.0),
                     // Logo with fade animation
                     FadeTransition(
                       opacity: _fadeAnimation,
-                      child: Container(
+                      child: SizedBox(
                         width: 160.0,
                         height: 140.0,
                         child: Image.asset(
@@ -149,7 +149,7 @@ class _WelcomeWidgetState extends State<WelcomeWidget>
                       ),
                     ),
 
-                    SizedBox(height: 24.0),
+                    const SizedBox(height: 24.0),
 
                     // Welcome text with slide animation
                     SlideTransition(
@@ -164,35 +164,35 @@ class _WelcomeWidgetState extends State<WelcomeWidget>
                               style: FlutterFlowTheme.of(context)
                                   .headlineLarge
                                   .override(
-                                    fontFamily: 'Andika New Basic',
-                                    color: Color(0xFF3D3D3D),
+                                    fontFamily: FFAppState().currentFontFamily,
+                                    color: const Color(0xFF3D3D3D),
                                     fontSize: 28.0,
                                     fontWeight: FontWeight.bold,
                                     letterSpacing: 0.0,
                                   ),
                             ),
-                            SizedBox(height: 12.0),
+                            const SizedBox(height: 12.0),
                             Text(
                               'mom life, simplified',
                               textAlign: TextAlign.center,
                               style: FlutterFlowTheme.of(context)
                                   .titleMedium
                                   .override(
-                                    fontFamily: 'Andika New Basic',
-                                    color: Color(0xFF5D4E60),
+                                    fontFamily: FFAppState().currentFontFamily,
+                                    color: const Color(0xFF5D4E60),
                                     fontSize: 16.0,
                                     letterSpacing: 0.0,
                                   ),
                             ),
-                            SizedBox(height: 32.0),
+                            const SizedBox(height: 32.0),
                             // Feature highlights with different colors
                             _buildFeatureItem(
                               context,
                               Icons.restaurant_menu,
                               'Meal Planning',
                               'Easy weekly meal plans for your family',
-                              Color(0xFFFF9800), // Orange
-                              Color(0xFFFFF3E0), // Light orange bg
+                              const Color(0xFFFF9800), // Orange
+                              const Color(0xFFFFF3E0), // Light orange bg
                             ),
                             _buildStepArrow(),
                             _buildFeatureItem(
@@ -200,8 +200,8 @@ class _WelcomeWidgetState extends State<WelcomeWidget>
                               Icons.child_care,
                               'Child Development',
                               'Track milestones and learning paths',
-                              Color(0xFF9C27B0), // Purple
-                              Color(0xFFF3E5F5), // Light purple bg
+                              const Color(0xFF9C27B0), // Purple
+                              const Color(0xFFF3E5F5), // Light purple bg
                             ),
                             _buildStepArrow(),
                             _buildFeatureItem(
@@ -209,15 +209,15 @@ class _WelcomeWidgetState extends State<WelcomeWidget>
                               Icons.calendar_today,
                               'Family Calendar',
                               'Stay organized with events and tasks',
-                              Color(0xFF2196F3), // Blue
-                              Color(0xFFE3F2FD), // Light blue bg
+                              const Color(0xFF2196F3), // Blue
+                              const Color(0xFFE3F2FD), // Light blue bg
                             ),
                           ],
                         ),
                       ),
                     ),
 
-                    SizedBox(height: 32.0),
+                    const SizedBox(height: 32.0),
 
                     // Buttons with slide animation
                     SlideTransition(
@@ -235,15 +235,15 @@ class _WelcomeWidgetState extends State<WelcomeWidget>
                               options: FFButtonOptions(
                                 width: double.infinity,
                                 height: 56.0,
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     0.0, 0.0, 0.0, 0.0),
-                                iconPadding: EdgeInsetsDirectional.fromSTEB(
+                                iconPadding: const EdgeInsetsDirectional.fromSTEB(
                                     0.0, 0.0, 0.0, 0.0),
                                 color: FlutterFlowTheme.of(context).primary,
                                 textStyle: FlutterFlowTheme.of(context)
                                     .titleMedium
                                     .override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       color: Colors.white,
                                       fontSize: 18.0,
                                       fontWeight: FontWeight.w600,
@@ -253,7 +253,7 @@ class _WelcomeWidgetState extends State<WelcomeWidget>
                                 borderRadius: BorderRadius.circular(28.0),
                               ),
                             ),
-                            SizedBox(height: 16.0),
+                            const SizedBox(height: 16.0),
                             // Skip to sign in
                             GestureDetector(
                               onTap: () {
@@ -267,7 +267,7 @@ class _WelcomeWidgetState extends State<WelcomeWidget>
                                   style: FlutterFlowTheme.of(context)
                                       .bodyMedium
                                       .override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         color: FlutterFlowTheme.of(context).primary,
                                         fontSize: 16.0,
                                         fontWeight: FontWeight.w600,
@@ -277,7 +277,7 @@ class _WelcomeWidgetState extends State<WelcomeWidget>
                                 ),
                               ),
                             ),
-                            SizedBox(height: 8.0),
+                            const SizedBox(height: 8.0),
                             // Already have account
                             GestureDetector(
                               onTap: () {
@@ -295,8 +295,8 @@ class _WelcomeWidgetState extends State<WelcomeWidget>
                                       style: FlutterFlowTheme.of(context)
                                           .bodyMedium
                                           .override(
-                                            fontFamily: 'Andika New Basic',
-                                            color: Color(0xFF5D4E60),
+                                            fontFamily: FFAppState().currentFontFamily,
+                                            color: const Color(0xFF5D4E60),
                                             letterSpacing: 0.0,
                                           ),
                                     ),
@@ -305,7 +305,7 @@ class _WelcomeWidgetState extends State<WelcomeWidget>
                                       style: FlutterFlowTheme.of(context)
                                           .bodyMedium
                                           .override(
-                                            fontFamily: 'Andika New Basic',
+                                            fontFamily: FFAppState().currentFontFamily,
                                             color: FlutterFlowTheme.of(context)
                                                 .primary,
                                             fontWeight: FontWeight.w600,
@@ -334,8 +334,8 @@ class _WelcomeWidgetState extends State<WelcomeWidget>
   }
 
   Widget _buildStepArrow() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6.0),
+    return const Padding(
+      padding: EdgeInsets.symmetric(vertical: 6.0),
       child: Icon(
         Icons.keyboard_arrow_down_rounded,
         color: Color(0xFF9B8A9E),
@@ -353,7 +353,7 @@ class _WelcomeWidgetState extends State<WelcomeWidget>
     Color bgColor,
   ) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
       decoration: BoxDecoration(
         color: bgColor.withOpacity(0.8),
         borderRadius: BorderRadius.circular(14.0),
@@ -374,7 +374,7 @@ class _WelcomeWidgetState extends State<WelcomeWidget>
               size: 22.0,
             ),
           ),
-          SizedBox(width: 14.0),
+          const SizedBox(width: 14.0),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -382,7 +382,7 @@ class _WelcomeWidgetState extends State<WelcomeWidget>
                 Text(
                   title,
                   style: FlutterFlowTheme.of(context).bodyLarge.override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         color: iconColor.withOpacity(0.9),
                         fontWeight: FontWeight.w600,
                         fontSize: 15.0,
@@ -392,8 +392,8 @@ class _WelcomeWidgetState extends State<WelcomeWidget>
                 Text(
                   subtitle,
                   style: FlutterFlowTheme.of(context).bodySmall.override(
-                        fontFamily: 'Andika New Basic',
-                        color: Color(0xFF6B6B6B),
+                        fontFamily: FFAppState().currentFontFamily,
+                        color: const Color(0xFF6B6B6B),
                         fontSize: 12.0,
                         letterSpacing: 0.0,
                       ),

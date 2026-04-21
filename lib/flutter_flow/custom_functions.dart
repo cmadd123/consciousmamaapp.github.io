@@ -1,18 +1,6 @@
-import 'dart:convert';
-import 'dart:math' as math;
 
-import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:timeago/timeago.dart' as timeago;
-import 'lat_lng.dart';
-import 'place.dart';
-import 'uploaded_file.dart';
 import '/backend/backend.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import '/backend/schema/structs/index.dart';
-import '/backend/schema/enums/enums.dart';
-import '/auth/firebase_auth/auth_util.dart';
 
 List<dynamic> listOfMessagesToListOfJson(List<MessagesRecord>? messages) {
   if (messages == null) return [];
@@ -109,7 +97,7 @@ List<HomeActivtyModelStruct>? convertModel(
     final childRef =
         childActivity.userchilde; // Ensure this matches your schema field name
     final activities = childActivity.activity
-            ?.whereType<DocumentReference>() // Filter valid references
+            .whereType<DocumentReference>() // Filter valid references
             .take(2) // Take only first 2 activities
             .toList() ??
         []; // Convert to list or fallback to empty
@@ -162,7 +150,7 @@ String? getFullMessage(List<String>? allMessages) {
 }
 
 int getCurrentIndex(List<ChatCompletioninputItemStruct> list) {
-  if (list != null && list.isNotEmpty) {
+  if (list.isNotEmpty) {
     return list.length - 1;
   } else {
     return 0;
@@ -243,7 +231,7 @@ String? getTimeFormatiedWithTodayString(DateTime? date) {
 
   if (givenDate == today) {
     return "Today";
-  } else if (givenDate == today.add(Duration(days: 1))) {
+  } else if (givenDate == today.add(const Duration(days: 1))) {
     return "Tomorrow";
   } else {
     return DateFormat('EEE, d').format(date);

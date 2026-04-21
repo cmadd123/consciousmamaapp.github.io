@@ -1,13 +1,8 @@
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
-import 'dart:ui';
 import '/index.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'on_boadrding_first_model.dart';
 export 'on_boadrding_first_model.dart';
 
@@ -57,7 +52,7 @@ class _OnBoadrdingFirstWidgetState extends State<OnBoadrdingFirstWidget> {
         body: Container(
           width: double.infinity,
           height: double.infinity,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             gradient: LinearGradient(
               colors: [Color(0xFFECE5E5), Color(0xFFEDFFFD)],
               stops: [0.0, 1.0],
@@ -70,10 +65,10 @@ class _OnBoadrdingFirstWidgetState extends State<OnBoadrdingFirstWidget> {
             children: [
               Expanded(
                 child: Container(
-                  decoration: BoxDecoration(),
+                  decoration: const BoxDecoration(),
                   child: Padding(
                     padding:
-                        EdgeInsetsDirectional.fromSTEB(24.0, 50.0, 24.0, 10.0),
+                        const EdgeInsetsDirectional.fromSTEB(24.0, 50.0, 24.0, 10.0),
                     child: SingleChildScrollView(
                       child: Column(
                         mainAxisSize: MainAxisSize.max,
@@ -81,9 +76,9 @@ class _OnBoadrdingFirstWidgetState extends State<OnBoadrdingFirstWidget> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Align(
-                            alignment: AlignmentDirectional(-1.0, 0.0),
+                            alignment: const AlignmentDirectional(-1.0, 0.0),
                             child: Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   0.0, 100.0, 0.0, 0.0),
                               child: ClipOval(
                                 child: Container(
@@ -107,14 +102,14 @@ class _OnBoadrdingFirstWidgetState extends State<OnBoadrdingFirstWidget> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 32.0, 0.0, 0.0),
                             child: Text(
                               'Let’s get started on this journey together!',
                               style: FlutterFlowTheme.of(context)
                                   .bodyMedium
                                   .override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     fontSize: 32.0,
                                     letterSpacing: 0.0,
                                     fontWeight: FontWeight.bold,
@@ -122,14 +117,14 @@ class _OnBoadrdingFirstWidgetState extends State<OnBoadrdingFirstWidget> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 32.0, 0.0, 150.0),
                             child: Text(
                               'Congratulations on taking a proactive step towards equipping both you and your children. By choosing this app, you’re investing in a future where they grow with confidence, and you feel supported in every parenting decision.',
                               style: FlutterFlowTheme.of(context)
                                   .bodyMedium
                                   .override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     color: FlutterFlowTheme.of(context)
                                         .secondaryText,
                                     fontSize: 16.0,
@@ -141,7 +136,7 @@ class _OnBoadrdingFirstWidgetState extends State<OnBoadrdingFirstWidget> {
                             mainAxisSize: MainAxisSize.max,
                             children: [
                               Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     0.0, 0.0, 0.0, 16.0),
                                 child: FFButtonWidget(
                                   onPressed: () async {
@@ -149,7 +144,7 @@ class _OnBoadrdingFirstWidgetState extends State<OnBoadrdingFirstWidget> {
                                       OnBoardingPrimaryGoalWidget.routeName,
                                       queryParameters: {
                                         'childrean': serializeParam(
-                                          widget!.childran,
+                                          widget.childran,
                                           ParamType.DocumentReference,
                                         ),
                                       }.withoutNulls,
@@ -159,15 +154,15 @@ class _OnBoadrdingFirstWidgetState extends State<OnBoadrdingFirstWidget> {
                                   options: FFButtonOptions(
                                     width: double.infinity,
                                     height: 56.0,
-                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(
                                         16.0, 0.0, 16.0, 0.0),
-                                    iconPadding: EdgeInsetsDirectional.fromSTEB(
+                                    iconPadding: const EdgeInsetsDirectional.fromSTEB(
                                         0.0, 0.0, 0.0, 0.0),
                                     color: FlutterFlowTheme.of(context).primary,
                                     textStyle: FlutterFlowTheme.of(context)
                                         .titleSmall
                                         .override(
-                                          fontFamily: 'Andika New Basic',
+                                          fontFamily: FFAppState().currentFontFamily,
                                           color: Colors.white,
                                           letterSpacing: 0.0,
                                         ),
@@ -185,9 +180,9 @@ class _OnBoadrdingFirstWidgetState extends State<OnBoadrdingFirstWidget> {
                 ),
               ),
               Align(
-                alignment: AlignmentDirectional(0.0, 1.0),
+                alignment: const AlignmentDirectional(0.0, 1.0),
                 child: Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 40.0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 40.0),
                   child: RichText(
                     textScaler: MediaQuery.of(context).textScaler,
                     text: TextSpan(
@@ -197,7 +192,7 @@ class _OnBoadrdingFirstWidgetState extends State<OnBoadrdingFirstWidget> {
                           style: FlutterFlowTheme.of(context)
                               .bodyMedium
                               .override(
-                                fontFamily: 'Andika New Basic',
+                                fontFamily: FFAppState().currentFontFamily,
                                 color:
                                     FlutterFlowTheme.of(context).secondaryText,
                                 fontSize: 12.0,
@@ -213,8 +208,8 @@ class _OnBoadrdingFirstWidgetState extends State<OnBoadrdingFirstWidget> {
                         )
                       ],
                       style: FlutterFlowTheme.of(context).bodyMedium.override(
-                            fontFamily: 'Andika New Basic',
-                            color: Color(0x8F000000),
+                            fontFamily: FFAppState().currentFontFamily,
+                            color: const Color(0x8F000000),
                             fontSize: 12.0,
                             letterSpacing: 0.0,
                           ),

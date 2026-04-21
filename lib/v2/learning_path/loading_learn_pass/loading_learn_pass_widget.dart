@@ -144,7 +144,7 @@ class LoadingLearnPassWidgetState extends State<LoadingLearnPassWidget>
             widget.title,
             textAlign: TextAlign.center,
             style: theme.titleMedium.override(
-              fontFamily: 'Andika New Basic',
+              fontFamily: FFAppState().currentFontFamily,
               color: theme.primaryText,
               fontWeight: FontWeight.bold,
               letterSpacing: 0.0,
@@ -156,7 +156,7 @@ class LoadingLearnPassWidgetState extends State<LoadingLearnPassWidget>
           Text(
             '${(_currentProgress * 100).round()}% complete',
             style: theme.bodyMedium.override(
-              fontFamily: 'Andika New Basic',
+              fontFamily: FFAppState().currentFontFamily,
               color: theme.secondaryText,
               letterSpacing: 0.0,
             ),
@@ -189,7 +189,7 @@ class LoadingLearnPassWidgetState extends State<LoadingLearnPassWidget>
               _loadingMessages[_currentStep],
               key: ValueKey(_currentStep),
               style: theme.bodyMedium.override(
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
                 color: theme.primary,
                 letterSpacing: 0.0,
               ),

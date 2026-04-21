@@ -1,21 +1,13 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import '/backend/backend.dart';
-import '/backend/schema/structs/index.dart';
 import '/backend/schema/enums/enums.dart';
 
 import '/auth/base_auth_user_provider.dart';
 
-import '/main.dart';
-import '/flutter_flow/flutter_flow_theme.dart';
-import '/flutter_flow/lat_lng.dart';
-import '/flutter_flow/place.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import 'serialization_util.dart';
 
 import '/index.dart';
 import '/components/animated_splash_screen.dart';
@@ -110,44 +102,44 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         return null;
       },
       errorBuilder: (context, state) =>
-          WelcomeEnhancedWidget(),
+          const WelcomeEnhancedWidget(),
       routes: [
         FFRoute(
           name: '_initialize',
           path: '/',
           builder: (context, _) =>
-              WelcomeEnhancedWidget(),
+              const WelcomeEnhancedWidget(),
         ),
         FFRoute(
           name: HomePageWidget.routeName,
           path: HomePageWidget.routePath,
-          builder: (context, params) => HomePageWidget(),
+          builder: (context, params) => const HomePageWidget(),
         ),
         FFRoute(
           name: HomeHybridWidget.routeName,
           path: HomeHybridWidget.routePath,
-          builder: (context, params) => HomeHybridWidget(),
+          builder: (context, params) => const HomeHybridWidget(),
         ),
         FFRoute(
           name: AuthHomeWidget.routeName,
           path: AuthHomeWidget.routePath,
-          builder: (context, params) => AuthHomeWidget(),
+          builder: (context, params) => const AuthHomeWidget(),
         ),
         FFRoute(
           name: LoginWidget.routeName,
           path: LoginWidget.routePath,
-          builder: (context, params) => LoginWidget(),
+          builder: (context, params) => const LoginWidget(),
         ),
         FFRoute(
           name: SignUpWidget.routeName,
           path: SignUpWidget.routePath,
-          builder: (context, params) => SignUpWidget(),
+          builder: (context, params) => const SignUpWidget(),
         ),
         // REMOVED: OnboardingSelector testing page (production launch)
         FFRoute(
           name: WelcomeEnhancedWidget.routeName,
           path: WelcomeEnhancedWidget.routePath,
-          builder: (context, params) => WelcomeEnhancedWidget(),
+          builder: (context, params) => const WelcomeEnhancedWidget(),
         ),
         FFRoute(
           name: AddChildEnhancedWidget.routeName,
@@ -159,17 +151,17 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: ParentSetupEnhancedWidget.routeName,
           path: ParentSetupEnhancedWidget.routePath,
-          builder: (context, params) => ParentSetupEnhancedWidget(),
+          builder: (context, params) => const ParentSetupEnhancedWidget(),
         ),
         FFRoute(
           name: FeaturesEnhancedWidget.routeName,
           path: FeaturesEnhancedWidget.routePath,
-          builder: (context, params) => FeaturesEnhancedWidget(),
+          builder: (context, params) => const FeaturesEnhancedWidget(),
         ),
         FFRoute(
           name: MealIntroTransitionWidget.routeName,
           path: MealIntroTransitionWidget.routePath,
-          builder: (context, params) => MealIntroTransitionWidget(),
+          builder: (context, params) => const MealIntroTransitionWidget(),
         ),
         FFRoute(
           name: FeatureWalkthroughWidget.routeName,
@@ -179,17 +171,17 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: MealPlannerSpotlightWidget.routeName,
           path: MealPlannerSpotlightWidget.routePath,
-          builder: (context, params) => MealPlannerSpotlightWidget(),
+          builder: (context, params) => const MealPlannerSpotlightWidget(),
         ),
         FFRoute(
           name: DaySelectorDemoWidget.routeName,
           path: DaySelectorDemoWidget.routePath,
-          builder: (context, params) => DaySelectorDemoWidget(),
+          builder: (context, params) => const DaySelectorDemoWidget(),
         ),
         FFRoute(
           name: WelcomeCelebrationWidget.routeName,
           path: WelcomeCelebrationWidget.routePath,
-          builder: (context, params) => WelcomeCelebrationWidget(),
+          builder: (context, params) => const WelcomeCelebrationWidget(),
         ),
         FFRoute(
           name: SetupTransitionWidget.routeName,
@@ -229,7 +221,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           // Meals route now points to v2 CreateMealPlan (weekly meal planning)
           name: 'Meals',
           path: '/meals',
-          builder: (context, params) => CreateMealPlanWidget(),
+          builder: (context, params) => const CreateMealPlanWidget(),
         ),
         FFRoute(
           name: ActivitiesWidget.routeName,
@@ -246,7 +238,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: CreateActivityWidget.routeName,
           path: CreateActivityWidget.routePath,
-          builder: (context, params) => CreateActivityWidget(),
+          builder: (context, params) => const CreateActivityWidget(),
         ),
         FFRoute(
           name: AiChatWidget.routeName,
@@ -272,17 +264,17 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: CalendarWidget.routeName,
           path: CalendarWidget.routePath,
-          builder: (context, params) => CalendarWidget(),
+          builder: (context, params) => const CalendarWidget(),
         ),
         FFRoute(
           name: ProfileWidget.routeName,
           path: ProfileWidget.routePath,
-          builder: (context, params) => ProfileWidget(),
+          builder: (context, params) => const ProfileWidget(),
         ),
         FFRoute(
           name: NotificationSettingsWidget.routeName,
           path: NotificationSettingsWidget.routePath,
-          builder: (context, params) => NotificationSettingsWidget(),
+          builder: (context, params) => const NotificationSettingsWidget(),
         ),
         // REMOVED: Debug/script pages - not for production
         // FFRoute(name: 'UploadActivities', path: '/upload-activities', builder: (context, params) => UploadActivitiesPage()),
@@ -300,7 +292,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: MilestonessWidget.routeName,
           path: MilestonessWidget.routePath,
-          builder: (context, params) => MilestonessWidget(),
+          builder: (context, params) => const MilestonessWidget(),
         ),
         FFRoute(
           name: ChildrenWidget.routeName,
@@ -317,7 +309,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: PaimentWidget.routeName,
           path: PaimentWidget.routePath,
-          builder: (context, params) => PaimentWidget(),
+          builder: (context, params) => const PaimentWidget(),
         ),
         FFRoute(
           name: OnBoadrdingFirstWidget.routeName,
@@ -370,7 +362,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: OnBoardingTypeOfSupportCopyWidget.routeName,
           path: OnBoardingTypeOfSupportCopyWidget.routePath,
-          builder: (context, params) => OnBoardingTypeOfSupportCopyWidget(),
+          builder: (context, params) => const OnBoardingTypeOfSupportCopyWidget(),
         ),
         FFRoute(
           name: OBoardingselectChallengeWidget.routeName,
@@ -387,7 +379,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: ProgramesWidget.routeName,
           path: ProgramesWidget.routePath,
-          builder: (context, params) => ProgramesWidget(),
+          builder: (context, params) => const ProgramesWidget(),
         ),
         // REMOVED: Debug AI chat test page
         // FFRoute(name: AiChattestAssitantWidget.routeName, path: AiChattestAssitantWidget.routePath, builder: (context, params) => AiChattestAssitantWidget()),
@@ -407,7 +399,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: CreatingProgramStep1Widget.routeName,
           path: CreatingProgramStep1Widget.routePath,
-          builder: (context, params) => CreatingProgramStep1Widget(),
+          builder: (context, params) => const CreatingProgramStep1Widget(),
         ),
         FFRoute(
           name: CreateAProgramStep2SelectChildIssueWidget.routeName,
@@ -490,7 +482,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: AiChatCompletionWidget.routeName,
           path: AiChatCompletionWidget.routePath,
-          builder: (context, params) => AiChatCompletionWidget(),
+          builder: (context, params) => const AiChatCompletionWidget(),
         ),
         FFRoute(
           name: ChildSummaryWidget.routeName,
@@ -517,7 +509,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: TasksWidget.routeName,
           path: TasksWidget.routePath,
-          builder: (context, params) => TasksWidget(),
+          builder: (context, params) => const TasksWidget(),
         ),
         FFRoute(
           name: OBoardingStep1Widget.routeName,
@@ -527,27 +519,27 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: AuthPageWidget.routeName,
           path: AuthPageWidget.routePath,
-          builder: (context, params) => AuthPageWidget(),
+          builder: (context, params) => const AuthPageWidget(),
         ),
         FFRoute(
           name: WelcomeWidget.routeName,
           path: WelcomeWidget.routePath,
-          builder: (context, params) => WelcomeWidget(),
+          builder: (context, params) => const WelcomeWidget(),
         ),
         FFRoute(
           name: Loginv2Widget.routeName,
           path: Loginv2Widget.routePath,
-          builder: (context, params) => Loginv2Widget(),
+          builder: (context, params) => const Loginv2Widget(),
         ),
         FFRoute(
           name: SignUpv2Widget.routeName,
           path: SignUpv2Widget.routePath,
-          builder: (context, params) => SignUpv2Widget(),
+          builder: (context, params) => const SignUpv2Widget(),
         ),
         FFRoute(
           name: PreparationWidget.routeName,
           path: PreparationWidget.routePath,
-          builder: (context, params) => PreparationWidget(),
+          builder: (context, params) => const PreparationWidget(),
         ),
         FFRoute(
           name: FamilySetupIntroWidget.routeName,
@@ -567,12 +559,12 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: ParentSetupWidget.routeName,
           path: ParentSetupWidget.routePath,
-          builder: (context, params) => ParentSetupWidget(),
+          builder: (context, params) => const ParentSetupWidget(),
         ),
         FFRoute(
           name: FamilyPreviewWidget.routeName,
           path: FamilyPreviewWidget.routePath,
-          builder: (context, params) => FamilyPreviewWidget(),
+          builder: (context, params) => const FamilyPreviewWidget(),
         ),
         FFRoute(
           name: OBoardingStep2Widget.routeName,
@@ -616,27 +608,27 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: PaimentCopyWidget.routeName,
           path: PaimentCopyWidget.routePath,
-          builder: (context, params) => PaimentCopyWidget(),
+          builder: (context, params) => const PaimentCopyWidget(),
         ),
         FFRoute(
           name: HomePageV2Widget.routeName,
           path: HomePageV2Widget.routePath,
-          builder: (context, params) => HomePageV2Widget(),
+          builder: (context, params) => const HomePageV2Widget(),
         ),
         FFRoute(
           name: WeekPlanWidget.routeName,
           path: WeekPlanWidget.routePath,
-          builder: (context, params) => WeekPlanWidget(),
+          builder: (context, params) => const WeekPlanWidget(),
         ),
         FFRoute(
           name: GenrateFormCookWidget.routeName,
           path: GenrateFormCookWidget.routePath,
-          builder: (context, params) => GenrateFormCookWidget(),
+          builder: (context, params) => const GenrateFormCookWidget(),
         ),
         FFRoute(
           name: CreateGroceryListWidget.routeName,
           path: CreateGroceryListWidget.routePath,
-          builder: (context, params) => CreateGroceryListWidget(),
+          builder: (context, params) => const CreateGroceryListWidget(),
         ),
         FFRoute(
           name: AddToGroceryWidget.routeName,
@@ -697,7 +689,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: AddMealIteamPageWidget.routeName,
           path: AddMealIteamPageWidget.routePath,
-          builder: (context, params) => AddMealIteamPageWidget(),
+          builder: (context, params) => const AddMealIteamPageWidget(),
         ),
         FFRoute(
           name: MealComposerWidget.routeName,
@@ -824,12 +816,12 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: LearnPathWidget.routeName,
           path: LearnPathWidget.routePath,
-          builder: (context, params) => LearnPathWidget(),
+          builder: (context, params) => const LearnPathWidget(),
         ),
         FFRoute(
           name: LearnPathSteponeWidget.routeName,
           path: LearnPathSteponeWidget.routePath,
-          builder: (context, params) => LearnPathSteponeWidget(),
+          builder: (context, params) => const LearnPathSteponeWidget(),
         ),
         FFRoute(
           name: LearnPathSteponStep2Widget.routeName,
@@ -880,7 +872,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: LoadinglearnPathWidget.routeName,
           path: LoadinglearnPathWidget.routePath,
-          builder: (context, params) => LoadinglearnPathWidget(),
+          builder: (context, params) => const LoadinglearnPathWidget(),
         ),
         FFRoute(
           name: LearnPathDetialsWidget.routeName,
@@ -911,12 +903,12 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: ActivitiesV2Widget.routeName,
           path: ActivitiesV2Widget.routePath,
-          builder: (context, params) => ActivitiesV2Widget(),
+          builder: (context, params) => const ActivitiesV2Widget(),
         ),
         FFRoute(
           name: KindofActivitystepWidget.routeName,
           path: KindofActivitystepWidget.routePath,
-          builder: (context, params) => KindofActivitystepWidget(),
+          builder: (context, params) => const KindofActivitystepWidget(),
         ),
         FFRoute(
           name: KindofActivitystep2Widget.routeName,
@@ -949,13 +941,13 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: LoadinglearnPathCopyWidget.routeName,
           path: LoadinglearnPathCopyWidget.routePath,
-          builder: (context, params) => LoadinglearnPathCopyWidget(),
+          builder: (context, params) => const LoadinglearnPathCopyWidget(),
         ),
         // REMOVED: KindofActivityCopyCopyWidget - duplicate from activitiesv3 (use v2/activites instead)
         FFRoute(
           name: EditetASKWidget.routeName,
           path: EditetASKWidget.routePath,
-          builder: (context, params) => EditetASKWidget(),
+          builder: (context, params) => const EditetASKWidget(),
         ),
         FFRoute(
           name: AddtaskWidget.routeName,
@@ -994,12 +986,12 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: MilstonesWidget.routeName,
           path: MilstonesWidget.routePath,
-          builder: (context, params) => MilstonesWidget(),
+          builder: (context, params) => const MilstonesWidget(),
         ),
         FFRoute(
           name: CalendarpageWidget.routeName,
           path: CalendarpageWidget.routePath,
-          builder: (context, params) => CalendarpageWidget(),
+          builder: (context, params) => const CalendarpageWidget(),
         ),
         FFRoute(
           name: CategoryDetailsLocalProducWidget.routeName,
@@ -1033,7 +1025,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: CategoryDetailsCopy2Widget.routeName,
           path: CategoryDetailsCopy2Widget.routePath,
-          builder: (context, params) => CategoryDetailsCopy2Widget(),
+          builder: (context, params) => const CategoryDetailsCopy2Widget(),
         ),
         FFRoute(
           name: FavMealPageWidget.routeName,
@@ -1068,7 +1060,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: PopupWidget.routeName,
           path: PopupWidget.routePath,
-          builder: (context, params) => PopupWidget(),
+          builder: (context, params) => const PopupWidget(),
         ),
         FFRoute(
           name: WeekPlanItemBoxTabCopyWidget.routeName,
@@ -1133,7 +1125,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: WeekViewWidget.routeName,
           path: WeekViewWidget.routePath,
-          builder: (context, params) => WeekViewWidget(),
+          builder: (context, params) => const WeekViewWidget(),
         ),
         // REMOVED: Activities feature being replaced
         // FFRoute(
@@ -1243,7 +1235,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: ResourcesPageWidget.routeName,
           path: ResourcesPageWidget.routePath,
-          builder: (context, params) => ResourcesPageWidget(),
+          builder: (context, params) => const ResourcesPageWidget(),
         ),
         FFRoute(
           name: ArticleDetailWidget.routeName,
@@ -1280,7 +1272,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: 'skillsPreview',
           path: '/skillsPreview',
-          builder: (context, params) => SkillsHomePreviewWidget(),
+          builder: (context, params) => const SkillsHomePreviewWidget(),
         ),
       ].map((r) => r.toRoute(appStateNotifier)).toList(),
     );
@@ -1510,10 +1502,10 @@ class TransitionInfo {
   final Duration duration;
   final Alignment? alignment;
 
-  static TransitionInfo appDefault() => TransitionInfo(
+  static TransitionInfo appDefault() => const TransitionInfo(
     hasTransition: true,
     transitionType: PageTransitionType.fade,
-    duration: const Duration(milliseconds: 150),
+    duration: Duration(milliseconds: 150),
   );
 }
 

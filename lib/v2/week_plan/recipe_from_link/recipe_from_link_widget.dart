@@ -7,16 +7,8 @@ import '/components/home_nav_bar_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
-import '/flutter_flow/custom_icons.dart';
 import '/v2/cong_for_a_new_meal/cong_for_a_new_meal_widget.dart';
-import 'dart:ui';
-import '/index.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 import 'recipe_from_link_model.dart';
 export 'recipe_from_link_model.dart';
 
@@ -28,7 +20,7 @@ class RecipeFromLinkWidget extends StatefulWidget {
     bool? isGenrateForm,
     this.isReplceItem,
     this.editCookingMeal,
-  }) : this.isGenrateForm = isGenrateForm ?? true;
+  }) : isGenrateForm = isGenrateForm ?? true;
 
   final DateTime? weekData;
   final MealTyp? dateTyyp;
@@ -417,14 +409,14 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
   Future<void> _saveRecipe() async {
     if (_model.recipeName == null || _model.recipeName!.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Recipe name is required')),
+        const SnackBar(content: Text('Recipe name is required')),
       );
       return;
     }
 
     if (_model.ingredientsList.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please add at least one ingredient')),
+        const SnackBar(content: Text('Please add at least one ingredient')),
       );
       return;
     }
@@ -563,7 +555,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
             elevation: 0,
             insetPadding: EdgeInsets.zero,
             backgroundColor: Colors.transparent,
-            alignment: AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(context)),
+            alignment: const AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(context)),
             child: GestureDetector(
               onTap: () {
                 FocusScope.of(dialogContext).unfocus();
@@ -583,7 +575,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
         _model.isLoading = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to save recipe. Please try again.')),
+        const SnackBar(content: Text('Failed to save recipe. Please try again.')),
       );
     }
   }
@@ -605,14 +597,14 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
             key: _model.formKey,
             autovalidateMode: AutovalidateMode.disabled,
             child: Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(12.0, 20.0, 12.0, 0.0),
+              padding: const EdgeInsetsDirectional.fromSTEB(12.0, 20.0, 12.0, 0.0),
               child: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
                   children: [
                     // Back button
                     Align(
-                      alignment: AlignmentDirectional(-1.0, 0.0),
+                      alignment: const AlignmentDirectional(-1.0, 0.0),
                       child: InkWell(
                         splashColor: Colors.transparent,
                         focusColor: Colors.transparent,
@@ -630,13 +622,13 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                     ),
                     // Title
                     Align(
-                      alignment: AlignmentDirectional(0.0, -1.0),
+                      alignment: const AlignmentDirectional(0.0, -1.0),
                       child: Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(0.0, 20.0, 0.0, 0.0),
+                        padding: const EdgeInsetsDirectional.fromSTEB(0.0, 20.0, 0.0, 0.0),
                         child: Text(
                           'Import Recipe',
                           style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                fontFamily: 'Andika New Basic',
+                                fontFamily: FFAppState().currentFontFamily,
                                 fontSize: 24.0,
                                 letterSpacing: 0.0,
                               ),
@@ -646,7 +638,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                     // Mode toggle tabs
                     if (!_model.hasExtracted)
                       Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(0.0, 16.0, 0.0, 0.0),
+                        padding: const EdgeInsetsDirectional.fromSTEB(0.0, 16.0, 0.0, 0.0),
                         child: Container(
                           decoration: BoxDecoration(
                             color: const Color(0xFFF5F5F5),
@@ -684,7 +676,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                                         const SizedBox(width: 6.0),
                                         Text('From Link',
                                           style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                fontFamily: 'Andika New Basic',
+                                                fontFamily: FFAppState().currentFontFamily,
                                                 fontSize: 13.0,
                                                 fontWeight: !_model.isPasteMode ? FontWeight.w600 : FontWeight.normal,
                                                 color: !_model.isPasteMode
@@ -727,7 +719,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                                         const SizedBox(width: 6.0),
                                         Text('Paste Recipe',
                                           style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                fontFamily: 'Andika New Basic',
+                                                fontFamily: FFAppState().currentFontFamily,
                                                 fontSize: 13.0,
                                                 fontWeight: _model.isPasteMode ? FontWeight.w600 : FontWeight.normal,
                                                 color: _model.isPasteMode
@@ -748,15 +740,15 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                     // Subtitle - contextual based on mode
                     if (!_model.hasExtracted)
                       Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(16.0, 8.0, 16.0, 0.0),
+                        padding: const EdgeInsetsDirectional.fromSTEB(16.0, 8.0, 16.0, 0.0),
                         child: Text(
                           _model.isPasteMode
                               ? 'Copy a recipe from any website or message and paste it here — we will organize it for you'
                               : 'Works best with recipe blogs. Sites like Instagram, TikTok, and Etsy don\'t share recipe data.',
                           textAlign: TextAlign.center,
                           style: FlutterFlowTheme.of(context).bodySmall.override(
-                                fontFamily: 'Andika New Basic',
-                                color: Color(0x801B1F26),
+                                fontFamily: FFAppState().currentFontFamily,
+                                color: const Color(0x801B1F26),
                                 fontSize: 12.0,
                                 letterSpacing: 0.0,
                               ),
@@ -828,13 +820,13 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                     // URL Input (link mode)
                     if (!_model.isPasteMode)
                       Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
+                        padding: const EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
                         child: Container(
                           decoration: BoxDecoration(
                             color: FlutterFlowTheme.of(context).prim30,
                             borderRadius: BorderRadius.circular(14.0),
                             border: Border.all(
-                              color: Color(0xFFCBE3E0),
+                              color: const Color(0xFFCBE3E0),
                               width: 1.0,
                             ),
                           ),
@@ -850,16 +842,16 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                                     isDense: true,
                                     hintText: 'Paste your recipe URL here',
                                     hintStyle: FlutterFlowTheme.of(context).labelMedium.override(
-                                          fontFamily: 'Andika New Basic',
+                                          fontFamily: FFAppState().currentFontFamily,
                                           color: FlutterFlowTheme.of(context).primaryText,
                                           letterSpacing: 0.0,
                                         ),
                                     enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(color: Color(0x00000000), width: 1.0),
+                                      borderSide: const BorderSide(color: Color(0x00000000), width: 1.0),
                                       borderRadius: BorderRadius.circular(14.0),
                                     ),
                                     focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(color: Color(0x00000000), width: 1.0),
+                                      borderSide: const BorderSide(color: Color(0x00000000), width: 1.0),
                                       borderRadius: BorderRadius.circular(14.0),
                                     ),
                                     errorBorder: OutlineInputBorder(
@@ -872,23 +864,23 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                                     ),
                                   ),
                                   style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         letterSpacing: 0.0,
                                       ),
                                   cursorColor: FlutterFlowTheme.of(context).primaryText,
                                 ),
                               ),
                               Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 8.0, 0.0),
+                                padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 8.0, 0.0),
                                 child: FFButtonWidget(
                                   onPressed: (_model.isLoading || _model.hasExtracted) ? null : _extractRecipe,
                                   text: _model.hasExtracted ? 'Extracted' : 'Extract',
                                   options: FFButtonOptions(
                                     height: 36.0,
-                                    padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
+                                    padding: const EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
                                     color: FlutterFlowTheme.of(context).primary,
                                     textStyle: FlutterFlowTheme.of(context).titleSmall.override(
-                                          fontFamily: 'Andika New Basic',
+                                          fontFamily: FFAppState().currentFontFamily,
                                           color: Colors.white,
                                           fontSize: 14.0,
                                           letterSpacing: 0.0,
@@ -907,7 +899,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                     // Paste text area (paste mode)
                     if (_model.isPasteMode && !_model.hasExtracted)
                       Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(0.0, 16.0, 0.0, 0.0),
+                        padding: const EdgeInsetsDirectional.fromSTEB(0.0, 16.0, 0.0, 0.0),
                         child: Column(
                           children: [
                             Container(
@@ -915,7 +907,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                                 color: FlutterFlowTheme.of(context).prim30,
                                 borderRadius: BorderRadius.circular(14.0),
                                 border: Border.all(
-                                  color: Color(0xFFCBE3E0),
+                                  color: const Color(0xFFCBE3E0),
                                   width: 1.0,
                                 ),
                               ),
@@ -926,21 +918,21 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                                 decoration: InputDecoration(
                                   hintText: 'Paste your recipe here...\n\nInclude the name, ingredients, and instructions',
                                   hintStyle: FlutterFlowTheme.of(context).labelMedium.override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         color: const Color(0x801B1F26),
                                         letterSpacing: 0.0,
                                       ),
                                   enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(color: Color(0x00000000), width: 1.0),
+                                    borderSide: const BorderSide(color: Color(0x00000000), width: 1.0),
                                     borderRadius: BorderRadius.circular(14.0),
                                   ),
                                   focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(color: Color(0x00000000), width: 1.0),
+                                    borderSide: const BorderSide(color: Color(0x00000000), width: 1.0),
                                     borderRadius: BorderRadius.circular(14.0),
                                   ),
                                 ),
                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       fontSize: 13.0,
                                       letterSpacing: 0.0,
                                     ),
@@ -952,13 +944,13 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                               child: FFButtonWidget(
                                 onPressed: _model.isLoading ? null : _extractFromText,
                                 text: 'Import Recipe',
-                                icon: Icon(Icons.auto_awesome, size: 18.0, color: Colors.white),
+                                icon: const Icon(Icons.auto_awesome, size: 18.0, color: Colors.white),
                                 options: FFButtonOptions(
                                   height: 44.0,
-                                  padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
+                                  padding: const EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
                                   color: FlutterFlowTheme.of(context).primary,
                                   textStyle: FlutterFlowTheme.of(context).titleSmall.override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         color: Colors.white,
                                         fontSize: 15.0,
                                         letterSpacing: 0.0,
@@ -976,7 +968,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                     // Error/Warning message
                     if (_model.errorMessage != null)
                       Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(0.0, 8.0, 0.0, 0.0),
+                        padding: const EdgeInsetsDirectional.fromSTEB(0.0, 8.0, 0.0, 0.0),
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
                           decoration: BoxDecoration(
@@ -999,7 +991,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                                 child: Text(
                                   _model.errorMessage!,
                                   style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         color: _model.hasExtracted
                                             ? const Color(0xFFE65100)
                                             : FlutterFlowTheme.of(context).error,
@@ -1015,11 +1007,11 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                     // Default tip (shown when no error and not loading and not extracted)
                     if (_model.errorMessage == null && !_model.isLoading && !_model.hasExtracted && !_model.isPasteMode)
                       Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(0.0, 8.0, 0.0, 0.0),
+                        padding: const EdgeInsetsDirectional.fromSTEB(0.0, 8.0, 0.0, 0.0),
                         child: Text(
                           'Pinterest pins with a website link work best.',
                           style: FlutterFlowTheme.of(context).bodySmall.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: FlutterFlowTheme.of(context).secondaryText,
                             fontSize: 12.0,
                             letterSpacing: 0.0,
@@ -1029,7 +1021,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                     // Loading indicator
                     if (_model.isLoading)
                       Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
+                        padding: const EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
                         child: Column(
                           children: [
                             CircularProgressIndicator(
@@ -1038,11 +1030,11 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                               ),
                             ),
                             Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(0.0, 12.0, 0.0, 0.0),
+                              padding: const EdgeInsetsDirectional.fromSTEB(0.0, 12.0, 0.0, 0.0),
                               child: Text(
                                 _model.isPasteMode ? 'Reading your recipe...' : 'Extracting recipe...',
                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       letterSpacing: 0.0,
                                     ),
                               ),
@@ -1055,7 +1047,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                       // Recipe image
                       if (_model.mealImage != null && _model.mealImage!.isNotEmpty)
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
+                          padding: const EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(14.0),
                             child: Image.network(
@@ -1093,7 +1085,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                                 },
                                 textAlign: TextAlign.center,
                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       fontSize: 20.0,
                                       fontWeight: FontWeight.w600,
                                       letterSpacing: 0.0,
@@ -1102,7 +1094,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                                   isDense: true,
                                   hintText: 'Recipe Name',
                                   hintStyle: FlutterFlowTheme.of(context).bodyMedium.override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         fontSize: 20.0,
                                         fontWeight: FontWeight.w600,
                                         color: const Color(0x801B1F26),
@@ -1133,14 +1125,14 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                       // Recipe description
                       if (_model.recipeDescription != null && _model.recipeDescription!.isNotEmpty)
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(12.0, 8.0, 12.0, 0.0),
+                          padding: const EdgeInsetsDirectional.fromSTEB(12.0, 8.0, 12.0, 0.0),
                           child: Text(
                             _model.recipeDescription!,
                             textAlign: TextAlign.center,
                             maxLines: 4,
                             overflow: TextOverflow.ellipsis,
                             style: FlutterFlowTheme.of(context).bodySmall.override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   color: const Color(0xB71B1F26),
                                   fontSize: 13.0,
                                   letterSpacing: 0.0,
@@ -1164,7 +1156,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                                 Text(
                                   'View original recipe',
                                   style: FlutterFlowTheme.of(context).bodySmall.override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         color: FlutterFlowTheme.of(context).primary,
                                         decoration: TextDecoration.underline,
                                         letterSpacing: 0.0,
@@ -1183,24 +1175,24 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                             children: [
                               if (_model.prepTime > 0)
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 16.0, 0.0),
+                                  padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 16.0, 0.0),
                                   child: Text(
                                     'Prep: ${_model.prepTime} min',
                                     style: FlutterFlowTheme.of(context).bodySmall.override(
-                                          fontFamily: 'Andika New Basic',
-                                          color: Color(0xB71B1F26),
+                                          fontFamily: FFAppState().currentFontFamily,
+                                          color: const Color(0xB71B1F26),
                                           letterSpacing: 0.0,
                                         ),
                                   ),
                                 ),
                               if (_model.cookTime > 0)
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 16.0, 0.0),
+                                  padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 16.0, 0.0),
                                   child: Text(
                                     'Cook: ${_model.cookTime} min',
                                     style: FlutterFlowTheme.of(context).bodySmall.override(
-                                          fontFamily: 'Andika New Basic',
-                                          color: Color(0xB71B1F26),
+                                          fontFamily: FFAppState().currentFontFamily,
+                                          color: const Color(0xB71B1F26),
                                           letterSpacing: 0.0,
                                         ),
                                   ),
@@ -1209,8 +1201,8 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                                 Text(
                                   'Serves: ${_model.servings}',
                                   style: FlutterFlowTheme.of(context).bodySmall.override(
-                                        fontFamily: 'Andika New Basic',
-                                        color: Color(0xB71B1F26),
+                                        fontFamily: FFAppState().currentFontFamily,
+                                        color: const Color(0xB71B1F26),
                                         letterSpacing: 0.0,
                                       ),
                                 ),
@@ -1239,7 +1231,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                                           ? 'Est. cost: \$${_formatImportCost(_model.estimatedCost!)}'
                                           : 'Add est. cost',
                                       style: FlutterFlowTheme.of(context).bodySmall.override(
-                                            fontFamily: 'Andika New Basic',
+                                            fontFamily: FFAppState().currentFontFamily,
                                             color: const Color(0xFF2E7D32),
                                             fontWeight: FontWeight.w600,
                                             letterSpacing: 0.0,
@@ -1256,23 +1248,23 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                       ),
                       // Ingredients section
                       Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
+                        padding: const EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
                         child: Container(
                           width: double.infinity,
                           decoration: BoxDecoration(
                             color: FlutterFlowTheme.of(context).prim30,
                             borderRadius: BorderRadius.circular(14.0),
-                            border: Border.all(color: Color(0xFFCBE3E0), width: 1.0),
+                            border: Border.all(color: const Color(0xFFCBE3E0), width: 1.0),
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(12.0, 12.0, 12.0, 8.0),
+                                padding: const EdgeInsetsDirectional.fromSTEB(12.0, 12.0, 12.0, 8.0),
                                 child: Text(
                                   'Ingredients (${_model.ingredientsList.length})',
                                   style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         fontWeight: FontWeight.w600,
                                         letterSpacing: 0.0,
                                       ),
@@ -1280,16 +1272,16 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                               ),
                               ..._model.ingredientsList.asMap().entries.map((entry) {
                                 return Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(12.0, 0.0, 12.0, 8.0),
+                                  padding: const EdgeInsetsDirectional.fromSTEB(12.0, 0.0, 12.0, 8.0),
                                   child: Row(
                                     children: [
                                       Icon(Icons.check_circle_outline, size: 16.0, color: FlutterFlowTheme.of(context).primary),
-                                      SizedBox(width: 8.0),
+                                      const SizedBox(width: 8.0),
                                       Expanded(
                                         child: Text(
                                           entry.value,
                                           style: FlutterFlowTheme.of(context).bodySmall.override(
-                                                fontFamily: 'Andika New Basic',
+                                                fontFamily: FFAppState().currentFontFamily,
                                                 letterSpacing: 0.0,
                                               ),
                                         ),
@@ -1305,10 +1297,10 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                                     ],
                                   ),
                                 );
-                              }).toList(),
+                              }),
                               // Add ingredient field
                               Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(12.0, 0.0, 12.0, 12.0),
+                                padding: const EdgeInsetsDirectional.fromSTEB(12.0, 0.0, 12.0, 12.0),
                                 child: Row(
                                   children: [
                                     Expanded(
@@ -1370,7 +1362,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                                 child: Text(
                                   'Instructions (${_model.cookingInsturction.length} steps)',
                                   style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         fontWeight: FontWeight.w600,
                                         letterSpacing: 0.0,
                                       ),
@@ -1393,7 +1385,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                                           child: Text(
                                             '${entry.key + 1}',
                                             style: FlutterFlowTheme.of(context).bodySmall.override(
-                                                  fontFamily: 'Andika New Basic',
+                                                  fontFamily: FFAppState().currentFontFamily,
                                                   color: Colors.white,
                                                   fontSize: 12.0,
                                                   letterSpacing: 0.0,
@@ -1406,7 +1398,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                                         child: Text(
                                           entry.value,
                                           style: FlutterFlowTheme.of(context).bodySmall.override(
-                                                fontFamily: 'Andika New Basic',
+                                                fontFamily: FFAppState().currentFontFamily,
                                                 letterSpacing: 0.0,
                                               ),
                                         ),
@@ -1473,14 +1465,14 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                     // Category selection (always show when extracted)
                     if (_model.hasExtracted)
                       Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(12.0, 16.0, 12.0, 0.0),
+                        padding: const EdgeInsetsDirectional.fromSTEB(12.0, 16.0, 12.0, 0.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               'What kind of recipe is this?',
                               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     fontWeight: FontWeight.w600,
                                     letterSpacing: 0.0,
                                   ),
@@ -1529,7 +1521,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                                     child: Text(
                                       mealType,
                                       style: FlutterFlowTheme.of(context).bodySmall.override(
-                                            fontFamily: 'Andika New Basic',
+                                            fontFamily: FFAppState().currentFontFamily,
                                             color: isSelected ? Colors.white : FlutterFlowTheme.of(context).primary,
                                             fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
                                             letterSpacing: 0.0,
@@ -1545,7 +1537,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                             Text(
                               'Dietary & Allergen Info (optional)',
                               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     fontSize: 13.0,
                                     fontWeight: FontWeight.w600,
                                     letterSpacing: 0.0,
@@ -1581,19 +1573,19 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                                     padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
                                     decoration: BoxDecoration(
                                       color: isSelected
-                                          ? Color(0xFF52A097)
-                                          : Color(0xFF52A097).withValues(alpha: 0.1),
+                                          ? const Color(0xFF52A097)
+                                          : const Color(0xFF52A097).withValues(alpha: 0.1),
                                       border: Border.all(
                                         color: isSelected
-                                            ? Color(0xFF52A097)
-                                            : Color(0xFF52A097).withValues(alpha: 0.3),
+                                            ? const Color(0xFF52A097)
+                                            : const Color(0xFF52A097).withValues(alpha: 0.3),
                                         width: isSelected ? 2.0 : 1.0,
                                       ),
                                       borderRadius: BorderRadius.circular(14.0),
                                       boxShadow: isSelected
                                           ? [
                                               BoxShadow(
-                                                color: Color(0xFF52A097).withValues(alpha: 0.3),
+                                                color: const Color(0xFF52A097).withValues(alpha: 0.3),
                                                 blurRadius: 8.0,
                                                 offset: const Offset(0, 2),
                                               ),
@@ -1603,8 +1595,8 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                                     child: Text(
                                       '$emoji $label',
                                       style: FlutterFlowTheme.of(context).bodySmall.override(
-                                            fontFamily: 'Andika New Basic',
-                                            color: isSelected ? Colors.white : Color(0xFF52A097),
+                                            fontFamily: FFAppState().currentFontFamily,
+                                            color: isSelected ? Colors.white : const Color(0xFF52A097),
                                             fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
                                             letterSpacing: 0.0,
                                           ),
@@ -1619,7 +1611,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                             Text(
                               'What type of dish is this?',
                               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     fontWeight: FontWeight.w600,
                                     letterSpacing: 0.0,
                                   ),
@@ -1670,7 +1662,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                                     child: Text(
                                       '$emoji $label',
                                       style: FlutterFlowTheme.of(context).bodySmall.override(
-                                            fontFamily: 'Andika New Basic',
+                                            fontFamily: FFAppState().currentFontFamily,
                                             color: isSelected ? Colors.white : FlutterFlowTheme.of(context).secondary,
                                             fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
                                             letterSpacing: 0.0,
@@ -1686,7 +1678,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                     // Meal plan section (always show when extracted)
                     if (_model.hasExtracted)
                       Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(12.0, 16.0, 12.0, 0.0),
+                        padding: const EdgeInsetsDirectional.fromSTEB(12.0, 16.0, 12.0, 0.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -1722,7 +1714,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                                       child: Text(
                                         'Add to meal plan for ${widget.dateTyyp?.name ?? 'today'}',
                                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                              fontFamily: 'Andika New Basic',
+                                              fontFamily: FFAppState().currentFontFamily,
                                               letterSpacing: 0.0,
                                             ),
                                       ),
@@ -1769,7 +1761,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                                           child: Text(
                                             'When do you want to plan your meal?',
                                             style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                  fontFamily: 'Andika New Basic',
+                                                  fontFamily: FFAppState().currentFontFamily,
                                                   letterSpacing: 0.0,
                                                 ),
                                           ),
@@ -1827,7 +1819,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                                                     Text(
                                                       dayName,
                                                       style: FlutterFlowTheme.of(context).bodySmall.override(
-                                                            fontFamily: 'Andika New Basic',
+                                                            fontFamily: FFAppState().currentFontFamily,
                                                             color: isSelected ? Colors.white : const Color(0xFF666666),
                                                             fontSize: 11.0,
                                                             fontWeight: FontWeight.w600,
@@ -1838,7 +1830,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                                                     Text(
                                                       dayNum,
                                                       style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                            fontFamily: 'Andika New Basic',
+                                                            fontFamily: FFAppState().currentFontFamily,
                                                             color: isSelected ? Colors.white : FlutterFlowTheme.of(context).primaryText,
                                                             fontSize: 16.0,
                                                             fontWeight: FontWeight.w600,
@@ -1884,7 +1876,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                                             child: Text(
                                               mealType.name,
                                               style: FlutterFlowTheme.of(context).bodySmall.override(
-                                                    fontFamily: 'Andika New Basic',
+                                                    fontFamily: FFAppState().currentFontFamily,
                                                     color: isSelected ? Colors.white : FlutterFlowTheme.of(context).primaryText,
                                                     letterSpacing: 0.0,
                                                   ),
@@ -1901,7 +1893,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                       ),
                     // Action buttons
                     Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(24.0, 24.0, 24.0, 0.0),
+                      padding: const EdgeInsetsDirectional.fromSTEB(24.0, 24.0, 24.0, 0.0),
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -1914,10 +1906,10 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                               text: 'Cancel',
                               options: FFButtonOptions(
                                 height: 40.0,
-                                padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
+                                padding: const EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
                                 color: FlutterFlowTheme.of(context).secondaryBackground,
                                 textStyle: FlutterFlowTheme.of(context).titleSmall.override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       color: FlutterFlowTheme.of(context).primary,
                                       letterSpacing: 0.0,
                                     ),
@@ -1941,10 +1933,10 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                                   : 'Save to Cookbook',
                               options: FFButtonOptions(
                                 height: 40.0,
-                                padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
+                                padding: const EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
                                 color: FlutterFlowTheme.of(context).primary,
                                 textStyle: FlutterFlowTheme.of(context).titleSmall.override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       color: Colors.white,
                                       letterSpacing: 0.0,
                                     ),
@@ -1968,7 +1960,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                             : 'Recipe will be saved to your cookbook',
                         textAlign: TextAlign.center,
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               color: const Color(0x991B1F26),
                               fontSize: 12.0,
                               letterSpacing: 0.0,

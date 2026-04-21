@@ -1,15 +1,7 @@
-import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
-import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import '/flutter_flow/flutter_flow_widgets.dart';
-import 'dart:ui';
 import 'add_new_r_task_copy_widget.dart' show AddNewRTaskCopyWidget;
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 
 class AddNewRTaskCopyModel extends FlutterFlowModel<AddNewRTaskCopyWidget> {
   ///  Local state fields for this component.
@@ -20,7 +12,7 @@ class AddNewRTaskCopyModel extends FlutterFlowModel<AddNewRTaskCopyWidget> {
 
   String selectedAvatar = '0';
 
-  Color? selectedColor = Color(1280483479);
+  Color? selectedColor = const Color(0x4c52a097);
 
   bool isChildSelected = true;
 

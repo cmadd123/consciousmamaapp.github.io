@@ -127,7 +127,9 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
       double total = 0;
       for (final plan in plans) {
         if (widget.existingMealPlan != null &&
-            plan.reference.path == widget.existingMealPlan!.reference.path) continue;
+            plan.reference.path == widget.existingMealPlan!.reference.path) {
+          continue;
+        }
         if (plan.date == null) continue;
         final dayKey = '${plan.date!.year}-${plan.date!.month}-${plan.date!.day}';
         if (!visibleDays.contains(dayKey)) continue;
@@ -389,7 +391,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
   /// Replace in-memory selected recipe objects with their freshly loaded
   /// counterparts so the UI shows up-to-date data after edits.
   void _refreshSelectedFromLoaded() {
-    MealRecord? _findFresh(MealRecord old) {
+    MealRecord? findFresh(MealRecord old) {
       for (final r in _userRecipes) {
         if (r.reference.path == old.reference.path) return r;
       }
@@ -397,15 +399,15 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
     }
 
     if (_selectedEntree != null) {
-      _selectedEntree = _findFresh(_selectedEntree!) ?? _selectedEntree;
+      _selectedEntree = findFresh(_selectedEntree!) ?? _selectedEntree;
     }
 
-    _selectedSides = _selectedSides.map((s) => _findFresh(s) ?? s).toList();
-    _selectedDesserts = _selectedDesserts.map((d) => _findFresh(d) ?? d).toList();
-    _selectedSnackItems = _selectedSnackItems.map((s) => _findFresh(s) ?? s).toList();
+    _selectedSides = _selectedSides.map((s) => findFresh(s) ?? s).toList();
+    _selectedDesserts = _selectedDesserts.map((d) => findFresh(d) ?? d).toList();
+    _selectedSnackItems = _selectedSnackItems.map((s) => findFresh(s) ?? s).toList();
   }
 
-  List<MealRecord> _getFilteredRecipes(RecipeType? type, {bool userOnly = false, bool curatedOnly = false}) {
+  List<MealRecord> _getFilteredRecipes(RecipeType? type, {bool curatedOnly = false}) {
     List<MealRecord> recipes = [];
     if (!curatedOnly) recipes.addAll(_userRecipes);
     if (type == null) return recipes;
@@ -517,7 +519,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
                   child: _isLoading
                       ? Center(child: BouncingDots(color: theme.primary, size: 12.0))
                       : SingleChildScrollView(
-                          padding: EdgeInsets.all(16.0),
+                          padding: const EdgeInsets.all(16.0),
                           child: isSnacks ? _buildSnacksLayout(context) : _buildMealLayout(context),
                         ),
                 ),
@@ -574,12 +576,12 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
                           selectedColor: theme.primary,
                           backgroundColor: Colors.white,
                           side: BorderSide(
-                            color: _selectedMealType == mealType ? theme.primary : Color(0xFFE0E0E0),
+                            color: _selectedMealType == mealType ? theme.primary : const Color(0xFFE0E0E0),
                             width: 1.0,
                           ),
                           labelStyle: TextStyle(
                             color: _selectedMealType == mealType ? Colors.white : theme.primaryText,
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             fontSize: 13.0,
                             fontWeight: FontWeight.w600,
                           ),
@@ -593,7 +595,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
                       Text(
                         widget.mealType.name.toUpperCase(),
                         style: theme.titleMedium.override(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 1.0,
                         ),
@@ -602,7 +604,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
                         Text(
                           dateTimeFormat('EEEE, MMMM d', widget.date),
                           style: theme.bodySmall.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: theme.secondaryText,
                           ),
                         ),
@@ -617,7 +619,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
               onTap: () => _shareMeal(context),
               borderRadius: BorderRadius.circular(14.0),
               child: Container(
-                padding: EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(8.0),
                 decoration: BoxDecoration(
                   color: theme.secondary.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(14.0),
@@ -642,7 +644,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
 
     // Show loading
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
+      const SnackBar(
         content: Row(
           children: [
             SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)),
@@ -721,7 +723,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Error loading meal data'),
           backgroundColor: Colors.red,
         ),
@@ -732,7 +734,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
   Widget _buildOldScaffold(BuildContext context, FlutterFlowTheme theme, bool isSnacks) {
     // Old scaffold kept for reference
     return Scaffold(
-      backgroundColor: Color(0xFFFFF0F0),
+      backgroundColor: const Color(0xFFFFF0F0),
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -746,7 +748,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
             Text(
               widget.mealType.name.toUpperCase(),
               style: theme.titleMedium.override(
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
                 fontWeight: FontWeight.w600,
                 letterSpacing: 1.0,
               ),
@@ -754,7 +756,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
             Text(
               dateTimeFormat('EEEE, MMMM d', widget.date),
               style: theme.bodySmall.override(
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
                 color: theme.secondaryText,
                 fontSize: 12.0,
               ),
@@ -769,7 +771,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
               children: [
                 Expanded(
                   child: SingleChildScrollView(
-                    padding: EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.all(16.0),
                     child: isSnacks
                         ? _buildSnacksLayout(context)
                         : _buildMealLayout(context),
@@ -799,7 +801,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
             onRemove: () => setState(() => _selectedEntree = null),
           ),
         ),
-        SizedBox(height: 20.0),
+        const SizedBox(height: 20.0),
 
         _buildSection(
           context,
@@ -823,7 +825,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
             ],
           ),
         ),
-        SizedBox(height: 20.0),
+        const SizedBox(height: 20.0),
 
         _buildSection(
           context,
@@ -847,7 +849,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
             ],
           ),
         ),
-        SizedBox(height: 20.0),
+        const SizedBox(height: 20.0),
 
         _buildSection(
           context,
@@ -855,14 +857,14 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
           icon: Icons.local_drink,
           child: _buildDrinkSlot(context),
         ),
-        SizedBox(height: 20.0),
+        const SizedBox(height: 20.0),
 
         _buildNotesSection(context),
-        SizedBox(height: 20.0),
+        const SizedBox(height: 20.0),
 
         // Custom meal field
         _buildCustomMealField(context),
-        SizedBox(height: 16.0),
+        const SizedBox(height: 16.0),
       ],
     );
   }
@@ -893,7 +895,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
             ],
           ),
         ),
-        SizedBox(height: 20.0),
+        const SizedBox(height: 20.0),
 
         _buildSection(
           context,
@@ -901,13 +903,13 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
           icon: Icons.local_drink,
           child: _buildDrinkSlot(context),
         ),
-        SizedBox(height: 20.0),
+        const SizedBox(height: 20.0),
 
         _buildNotesSection(context),
-        SizedBox(height: 20.0),
+        const SizedBox(height: 20.0),
 
         _buildCustomSnackField(context),
-        SizedBox(height: 16.0),
+        const SizedBox(height: 16.0),
       ],
     );
   }
@@ -922,26 +924,26 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
         Row(
           children: [
             Container(
-              padding: EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(8.0),
               decoration: BoxDecoration(
-                color: Color(0xFFFF9800).withOpacity(0.1),
+                color: const Color(0xFFFF9800).withOpacity(0.1),
                 borderRadius: BorderRadius.circular(10.0),
               ),
-              child: Icon(Icons.edit_note, size: 18.0, color: Color(0xFFFF9800)),
+              child: const Icon(Icons.edit_note, size: 18.0, color: Color(0xFFFF9800)),
             ),
-            SizedBox(width: 12.0),
+            const SizedBox(width: 12.0),
             Text(
               'Or, add custom meal',
               style: theme.bodyLarge.override(
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
                 fontWeight: FontWeight.w600,
-                color: Color(0xFF5D4E60),
+                color: const Color(0xFF5D4E60),
                 letterSpacing: 0.0,
               ),
             ),
           ],
         ),
-        SizedBox(height: 14.0),
+        const SizedBox(height: 14.0),
         TextField(
           controller: _customMealController,
           onChanged: (_) => setState(() {}),
@@ -949,28 +951,28 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
             hintText: 'E.g., "Eating Out", "Pizza Delivery", "Takeout"',
             hintStyle: TextStyle(
               fontSize: 14.0,
-              color: Color(0xFF999999),
-              fontFamily: 'Andika New Basic',
+              color: const Color(0xFF999999),
+              fontFamily: FFAppState().currentFontFamily,
             ),
             filled: true,
-            fillColor: Color(0xFFF9F9F9),
+            fillColor: const Color(0xFFF9F9F9),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12.0),
-              borderSide: BorderSide(color: Color(0xFFE0E0E0)),
+              borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12.0),
-              borderSide: BorderSide(color: Color(0xFFE0E0E0)),
+              borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12.0),
               borderSide: BorderSide(color: theme.primary, width: 2.0),
             ),
-            contentPadding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
           ),
           style: TextStyle(
             fontSize: 14.0,
-            fontFamily: 'Andika New Basic',
+            fontFamily: FFAppState().currentFontFamily,
           ),
         ),
         if (FFAppState().showMealCosts) ...[
@@ -981,7 +983,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
           decoration: InputDecoration(
             prefixText: '\$ ',
             hintText: 'Cost (optional)',
-            hintStyle: const TextStyle(fontSize: 14.0, color: Color(0xFF999999), fontFamily: 'Andika New Basic'),
+            hintStyle: TextStyle(fontSize: 14.0, color: Color(0xFF999999), fontFamily: FFAppState().currentFontFamily),
             filled: true,
             fillColor: const Color(0xFFF9F9F9),
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0), borderSide: const BorderSide(color: Color(0xFFE0E0E0))),
@@ -989,10 +991,10 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
             focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0), borderSide: BorderSide(color: theme.primary, width: 2.0)),
             contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
           ),
-          style: const TextStyle(fontSize: 14.0, fontFamily: 'Andika New Basic'),
+          style: TextStyle(fontSize: 14.0, fontFamily: FFAppState().currentFontFamily),
         ),
         ],
-        SizedBox(height: 8.0),
+        const SizedBox(height: 8.0),
         Text(
           _customMealController.text.trim().isNotEmpty
               ? 'Custom meal will be used instead of recipes above'
@@ -1001,8 +1003,8 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
             fontSize: 12.0,
             color: _customMealController.text.trim().isNotEmpty
                 ? const Color(0xFFFF9800)
-                : Color(0xFF999999),
-            fontFamily: 'Andika New Basic',
+                : const Color(0xFF999999),
+            fontFamily: FFAppState().currentFontFamily,
             fontWeight: _customMealController.text.trim().isNotEmpty
                 ? FontWeight.w600
                 : FontWeight.normal,
@@ -1027,17 +1029,17 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
             const SizedBox(width: 12.0),
             Text(
               'Or, add custom snack',
-              style: theme.bodyLarge.override(fontFamily: 'Andika New Basic', fontWeight: FontWeight.w600, color: const Color(0xFF5D4E60), letterSpacing: 0.0),
+              style: theme.bodyLarge.override(fontFamily: FFAppState().currentFontFamily, fontWeight: FontWeight.w600, color: const Color(0xFF5D4E60), letterSpacing: 0.0),
             ),
           ],
         ),
-        const SizedBox(height: 14.0),
+        SizedBox(height: 14.0),
         TextField(
           controller: _customSnackController,
           onChanged: (_) => setState(() {}),
           decoration: InputDecoration(
             hintText: 'E.g., "Coffee Run", "Snack Bar"',
-            hintStyle: const TextStyle(fontSize: 14.0, color: Color(0xFF999999), fontFamily: 'Andika New Basic'),
+            hintStyle: TextStyle(fontSize: 14.0, color: Color(0xFF999999), fontFamily: FFAppState().currentFontFamily),
             filled: true,
             fillColor: const Color(0xFFF9F9F9),
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0), borderSide: const BorderSide(color: Color(0xFFE0E0E0))),
@@ -1045,17 +1047,17 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
             focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0), borderSide: BorderSide(color: theme.primary, width: 2.0)),
             contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
           ),
-          style: const TextStyle(fontSize: 14.0, fontFamily: 'Andika New Basic'),
+          style: TextStyle(fontSize: 14.0, fontFamily: FFAppState().currentFontFamily),
         ),
         if (FFAppState().showMealCosts) ...[
-        const SizedBox(height: 10.0),
+        SizedBox(height: 10.0),
         TextField(
           controller: _customSnackCostController,
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
           decoration: InputDecoration(
             prefixText: '\$ ',
             hintText: 'Cost (optional)',
-            hintStyle: const TextStyle(fontSize: 14.0, color: Color(0xFF999999), fontFamily: 'Andika New Basic'),
+            hintStyle: TextStyle(fontSize: 14.0, color: Color(0xFF999999), fontFamily: FFAppState().currentFontFamily),
             filled: true,
             fillColor: const Color(0xFFF9F9F9),
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0), borderSide: const BorderSide(color: Color(0xFFE0E0E0))),
@@ -1063,7 +1065,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
             focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0), borderSide: BorderSide(color: theme.primary, width: 2.0)),
             contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
           ),
-          style: const TextStyle(fontSize: 14.0, fontFamily: 'Andika New Basic'),
+          style: TextStyle(fontSize: 14.0, fontFamily: FFAppState().currentFontFamily),
         ),
         ],
       ],
@@ -1078,40 +1080,40 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
         Row(
           children: [
             Container(
-              padding: EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(8.0),
               decoration: BoxDecoration(
                 color: theme.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(10.0),
               ),
               child: Icon(Icons.lightbulb_outline_rounded, size: 18.0, color: theme.primary),
             ),
-            SizedBox(width: 12.0),
+            const SizedBox(width: 12.0),
             Text(
               'Notes',
               style: theme.bodyLarge.override(
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
                 fontWeight: FontWeight.w600,
-                color: Color(0xFF5D4E60),
+                color: const Color(0xFF5D4E60),
                 letterSpacing: 0.0,
               ),
             ),
-            SizedBox(width: 8.0),
+            const SizedBox(width: 8.0),
             Text(
               '(optional)',
               style: theme.bodySmall.override(
-                fontFamily: 'Andika New Basic',
-                color: Color(0xFF9B8A9E),
+                fontFamily: FFAppState().currentFontFamily,
+                color: const Color(0xFF9B8A9E),
                 fontSize: 12.0,
               ),
             ),
           ],
         ),
-        SizedBox(height: 14.0),
+        const SizedBox(height: 14.0),
         Container(
           decoration: BoxDecoration(
-            color: Color(0xFFFAF8F5),
+            color: const Color(0xFFFAF8F5),
             borderRadius: BorderRadius.circular(14.0),
-            border: Border.all(color: Color(0xFFE8DDD5)),
+            border: Border.all(color: const Color(0xFFE8DDD5)),
           ),
           child: TextField(
             controller: _notesController,
@@ -1119,15 +1121,15 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
             decoration: InputDecoration(
               hintText: 'Any thoughts? e.g., Make extra for tomorrow...',
               hintStyle: theme.bodySmall.override(
-                fontFamily: 'Andika New Basic',
-                color: Color(0xFF9B8A9E).withValues(alpha: 0.7),
+                fontFamily: FFAppState().currentFontFamily,
+                color: const Color(0xFF9B8A9E).withValues(alpha: 0.7),
               ),
               border: InputBorder.none,
-              contentPadding: EdgeInsets.all(14.0),
+              contentPadding: const EdgeInsets.all(14.0),
             ),
             style: theme.bodyMedium.override(
-              fontFamily: 'Andika New Basic',
-              color: Color(0xFF5D4E60),
+              fontFamily: FFAppState().currentFontFamily,
+              color: const Color(0xFF5D4E60),
             ),
           ),
         ),
@@ -1154,21 +1156,21 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
         Row(
           children: [
             Container(
-              padding: EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(8.0),
               decoration: BoxDecoration(
                 color: theme.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(10.0),
               ),
               child: Icon(icon, size: 18.0, color: theme.primary),
             ),
-            SizedBox(width: 12.0),
+            const SizedBox(width: 12.0),
             Expanded(
               child: Text(
                 friendlyTitle,
                 style: theme.bodyLarge.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   fontWeight: FontWeight.w600,
-                  color: Color(0xFF5D4E60), // Warm purple-grey
+                  color: const Color(0xFF5D4E60), // Warm purple-grey
                   letterSpacing: 0.0,
                 ),
               ),
@@ -1179,12 +1181,12 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
                 onTap: () => onLeftoverChanged(!isLeftover),
                 borderRadius: BorderRadius.circular(8.0),
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
                   decoration: BoxDecoration(
-                    color: isLeftover ? Color(0xFFFF9800).withOpacity(0.1) : Colors.transparent,
+                    color: isLeftover ? const Color(0xFFFF9800).withOpacity(0.1) : Colors.transparent,
                     borderRadius: BorderRadius.circular(8.0),
                     border: Border.all(
-                      color: isLeftover ? Color(0xFFFF9800) : Color(0xFFE0E0E0),
+                      color: isLeftover ? const Color(0xFFFF9800) : const Color(0xFFE0E0E0),
                       width: 1.5,
                     ),
                   ),
@@ -1194,16 +1196,16 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
                       Icon(
                         isLeftover ? Icons.check_box : Icons.check_box_outline_blank,
                         size: 18.0,
-                        color: isLeftover ? Color(0xFFFF9800) : Color(0xFF999999),
+                        color: isLeftover ? const Color(0xFFFF9800) : const Color(0xFF999999),
                       ),
-                      SizedBox(width: 6.0),
+                      const SizedBox(width: 6.0),
                       Text(
                         'Leftover',
                         style: TextStyle(
                           fontSize: 13.0,
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           fontWeight: FontWeight.w600,
-                          color: isLeftover ? Color(0xFFFF9800) : Color(0xFF666666),
+                          color: isLeftover ? const Color(0xFFFF9800) : const Color(0xFF666666),
                         ),
                       ),
                     ],
@@ -1212,7 +1214,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
               ),
           ],
         ),
-        SizedBox(height: 14.0),
+        const SizedBox(height: 14.0),
         child,
       ],
     );
@@ -1232,7 +1234,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
         borderRadius: BorderRadius.circular(14.0),
         child: Container(
           width: double.infinity,
-          padding: EdgeInsets.symmetric(vertical: 28.0, horizontal: 16.0),
+          padding: const EdgeInsets.symmetric(vertical: 28.0, horizontal: 16.0),
           decoration: BoxDecoration(
             // Transparent to let page gradient show through
             color: Colors.transparent,
@@ -1246,19 +1248,19 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
           child: Column(
             children: [
               Container(
-                padding: EdgeInsets.all(12.0),
+                padding: const EdgeInsets.all(12.0),
                 decoration: BoxDecoration(
                   color: theme.primary.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(Icons.add_rounded, size: 28.0, color: theme.primary),
               ),
-              SizedBox(height: 10.0),
+              const SizedBox(height: 10.0),
               Text(
                 placeholder,
                 style: theme.bodyMedium.override(
-                  fontFamily: 'Andika New Basic',
-                  color: Color(0xFF5D4E60),
+                  fontFamily: FFAppState().currentFontFamily,
+                  color: const Color(0xFF5D4E60),
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -1281,20 +1283,20 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
         child: Row(
           children: [
             ClipRRect(
-              borderRadius: BorderRadius.horizontal(left: Radius.circular(11.0)),
+              borderRadius: const BorderRadius.horizontal(left: Radius.circular(11.0)),
               child: _buildRecipeImage(item, size: 80.0),
             ),
-            SizedBox(width: 12.0),
+            const SizedBox(width: 12.0),
             Expanded(
               child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 12.0),
+                padding: const EdgeInsets.symmetric(vertical: 12.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       item.recipeName,
                       style: theme.bodyLarge.override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         fontWeight: FontWeight.w600,
                       ),
                       maxLines: 2,
@@ -1302,22 +1304,22 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
                     ),
                     if (item.prepareTime > 0 || item.cookingTime > 0 || item.hasEstimatedCost())
                       Padding(
-                        padding: EdgeInsets.only(top: 4.0),
+                        padding: const EdgeInsets.only(top: 4.0),
                         child: Row(
                           children: [
                             if (item.prepareTime > 0 || item.cookingTime > 0) ...[
                               Icon(Icons.schedule, size: 14.0, color: theme.secondaryText),
-                              SizedBox(width: 4.0),
+                              const SizedBox(width: 4.0),
                               Text(
                                 '${(item.prepareTime + item.cookingTime).toInt()} min',
                                 style: theme.bodySmall.override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   color: theme.secondaryText,
                                 ),
                               ),
                             ],
                             if (FFAppState().showMealCosts) ...[
-                              SizedBox(width: 10.0),
+                              const SizedBox(width: 10.0),
                               InkWell(
                                 onTap: () => _editMealCost(item),
                                 borderRadius: BorderRadius.circular(6),
@@ -1328,8 +1330,8 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
                                         ? '\$${item.estimatedCost.round()}'
                                         : '+ \$',
                                     style: theme.bodySmall.override(
-                                      fontFamily: 'Andika New Basic',
-                                      color: Color(0xFF2E7D32),
+                                      fontFamily: FFAppState().currentFontFamily,
+                                      color: const Color(0xFF2E7D32),
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),
@@ -1341,11 +1343,11 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
                       ),
                     // Hint text to tap to change
                     Padding(
-                      padding: EdgeInsets.only(top: 4.0),
+                      padding: const EdgeInsets.only(top: 4.0),
                       child: Text(
                         'Tap to change',
                         style: theme.bodySmall.override(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           color: theme.primary.withValues(alpha: 0.7),
                           fontSize: 11.0,
                         ),
@@ -1418,7 +1420,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
           Text(
             'This meal: $fmtCost  •  ${isOver ? 'Over by ${fmtRemaining.replaceFirst('-', '')}' : '$fmtRemaining remaining'}',
             style: TextStyle(
-              fontFamily: 'Andika New Basic',
+              fontFamily: FFAppState().currentFontFamily,
               fontSize: 12,
               color: isOver ? const Color(0xFFD32F2F) : const Color(0xFF2E7D32),
               fontWeight: FontWeight.w600,
@@ -1488,7 +1490,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
     required int index, // Added to track which item to replace
   }) {
     final theme = FlutterFlowTheme.of(context);
-    if (item == null) return SizedBox.shrink();
+    if (item == null) return const SizedBox.shrink();
 
     return InkWell(
       onTap: () => _showRecipePickerForReplace(slotType, index), // Tap to change
@@ -1505,7 +1507,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
             Stack(
               children: [
                 ClipRRect(
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(9.0)),
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(9.0)),
                   child: _buildRecipeImage(item, size: 100.0, aspectRatio: 1.0),
                 ),
                 Positioned(
@@ -1514,12 +1516,12 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
                   child: InkWell(
                     onTap: onRemove,
                     child: Container(
-                      padding: EdgeInsets.all(4.0),
-                      decoration: BoxDecoration(
+                      padding: const EdgeInsets.all(4.0),
+                      decoration: const BoxDecoration(
                         color: Colors.black54,
                         shape: BoxShape.circle,
                       ),
-                      child: Icon(Icons.close, size: 14.0, color: Colors.white),
+                      child: const Icon(Icons.close, size: 14.0, color: Colors.white),
                     ),
                   ),
                 ),
@@ -1530,26 +1532,26 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
                   child: InkWell(
                     onTap: () => _viewRecipeDetails(item),
                     child: Container(
-                      padding: EdgeInsets.all(4.0),
-                      decoration: BoxDecoration(
+                      padding: const EdgeInsets.all(4.0),
+                      decoration: const BoxDecoration(
                         color: Colors.black54,
                         shape: BoxShape.circle,
                       ),
-                      child: Icon(Icons.visibility_outlined, size: 14.0, color: Colors.white),
+                      child: const Icon(Icons.visibility_outlined, size: 14.0, color: Colors.white),
                     ),
                   ),
                 ),
               ],
             ),
             Padding(
-              padding: EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(8.0),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
                     item.recipeName,
                     style: theme.bodySmall.override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       fontWeight: FontWeight.w500,
                     ),
                     maxLines: 2,
@@ -1565,8 +1567,8 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
                           item.hasEstimatedCost()
                               ? '\$${item.estimatedCost.round()}'
                               : '+ \$',
-                          style: const TextStyle(
-                            fontFamily: 'Andika New Basic',
+                          style: TextStyle(
+                            fontFamily: FFAppState().currentFontFamily,
                             fontSize: 11.0,
                             color: Color(0xFF2E7D32),
                             fontWeight: FontWeight.w600,
@@ -1603,11 +1605,11 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(Icons.add, size: 24.0, color: theme.primary),
-              SizedBox(height: 4.0),
+              const SizedBox(height: 4.0),
               Text(
                 'Add drink',
                 style: theme.bodySmall.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   color: theme.primary,
                 ),
               ),
@@ -1622,7 +1624,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
         : _selectedDrinkType!.name;
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
       decoration: BoxDecoration(
         color: Colors.transparent,
         borderRadius: BorderRadius.circular(14.0),
@@ -1632,15 +1634,15 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(_getDrinkIcon(_selectedDrinkType!), color: theme.primary, size: 24.0),
-          SizedBox(width: 12.0),
+          const SizedBox(width: 12.0),
           Text(
             drinkName,
             style: theme.bodyMedium.override(
-              fontFamily: 'Andika New Basic',
+              fontFamily: FFAppState().currentFontFamily,
               fontWeight: FontWeight.w500,
             ),
           ),
-          SizedBox(width: 8.0),
+          const SizedBox(width: 8.0),
           InkWell(
             onTap: () => setState(() {
               _selectedDrinkType = null;
@@ -1673,11 +1675,11 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(Icons.add, size: 28.0, color: theme.primary),
-            SizedBox(height: 4.0),
+            const SizedBox(height: 4.0),
             Text(
               label,
               style: theme.bodySmall.override(
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
                 color: theme.primary,
               ),
             ),
@@ -1697,8 +1699,8 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
             placeholder: (_, __) => _buildPlaceholder(recipe, size),
             errorWidget: (_, __, ___) => _buildPlaceholder(recipe, size),
             // Reduce fade duration to minimize stutter
-            fadeInDuration: Duration(milliseconds: 50),
-            fadeOutDuration: Duration(milliseconds: 50),
+            fadeInDuration: const Duration(milliseconds: 50),
+            fadeOutDuration: const Duration(milliseconds: 50),
           )
         : _buildPlaceholder(recipe, size);
 
@@ -1709,7 +1711,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
   }
 
   Widget _buildPlaceholder(MealRecord recipe, double size) {
-    final colors = [Color(0xFF52A097), Color(0xFF39D2C0), Color(0xFFEE8B60), Color(0xFF2A6F67)];
+    final colors = [const Color(0xFF52A097), const Color(0xFF39D2C0), const Color(0xFFEE8B60), const Color(0xFF2A6F67)];
     final color = colors[recipe.recipeName.hashCode.abs() % colors.length];
 
     return Container(
@@ -1751,15 +1753,15 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
     return showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Custom Drink'),
+        title: const Text('Custom Drink'),
         content: TextField(
           controller: controller,
-          decoration: InputDecoration(hintText: 'Enter drink name'),
+          decoration: const InputDecoration(hintText: 'Enter drink name'),
           autofocus: true,
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: Text('Cancel')),
-          TextButton(onPressed: () => Navigator.pop(context, controller.text), child: Text('OK')),
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+          TextButton(onPressed: () => Navigator.pop(context, controller.text), child: const Text('OK')),
         ],
       ),
     );
@@ -1902,11 +1904,11 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
   Widget _buildBottomActions(BuildContext context) {
     final theme = FlutterFlowTheme.of(context);
     return Container(
-      padding: EdgeInsets.fromLTRB(16.0, 12.0, 16.0, 12.0),
+      padding: const EdgeInsets.fromLTRB(16.0, 12.0, 16.0, 12.0),
       decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: [
-          BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10, offset: Offset(0, -2)),
+          BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10, offset: const Offset(0, -2)),
         ],
       ),
       child: Column(
@@ -1920,11 +1922,11 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
                   context,
                   icon: Icons.restaurant_menu,
                   label: 'Templates',
-                  color: Color(0xFFFF9800), // Orange to match planner
+                  color: const Color(0xFFFF9800), // Orange to match planner
                   onTap: _showMealComboPicker,
                 ),
               ),
-              SizedBox(width: 8.0),
+              const SizedBox(width: 8.0),
               Expanded(
                 child: _buildActionButton(
                   context,
@@ -1934,7 +1936,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
                   onTap: _navigateToCookbook,
                 ),
               ),
-              SizedBox(width: 8.0),
+              const SizedBox(width: 8.0),
               Expanded(
                 child: _buildActionButton(
                   context,
@@ -1944,13 +1946,13 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
                   onTap: _navigateToCreateRecipe,
                 ),
               ),
-              SizedBox(width: 8.0),
+              const SizedBox(width: 8.0),
               Expanded(
                 child: _buildActionButton(
                   context,
                   icon: Icons.shopping_cart,
                   label: 'Grocery',
-                  color: Color(0xFF9B8AA0), // Purple/mauve to match other grocery buttons
+                  color: const Color(0xFF9B8AA0), // Purple/mauve to match other grocery buttons
                   onTap: _navigateToGroceryList,
                 ),
               ),
@@ -1959,7 +1961,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
 
           // Action buttons row: Save as Meal, Done, Remove (horizontal layout)
           if (_hasAnyItems || widget.existingMealPlan != null) ...[
-            SizedBox(height: 12.0),
+            const SizedBox(height: 12.0),
             Row(
               children: [
                 // When editing an existing day template meal, show simple "Done" that updates in place
@@ -1968,15 +1970,15 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
                     Expanded(
                       child: ElevatedButton(
                         onPressed: _isSaving ? null : () => _updateExistingCombo(_templateName ?? ''),
-                        child: _isSaving
-                            ? SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                            : Text('Done'),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: theme.primary,
                           foregroundColor: Colors.white,
-                          padding: EdgeInsets.symmetric(vertical: 12.0),
+                          padding: const EdgeInsets.symmetric(vertical: 12.0),
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.0)),
                         ),
+                        child: _isSaving
+                            ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                            : const Text('Done'),
                       ),
                     ),
                 // When editing an existing standalone template, show Update + Save as New inline
@@ -1984,28 +1986,28 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
                   Expanded(
                     child: ElevatedButton.icon(
                       onPressed: _isSaving ? null : () => _updateExistingCombo(_templateName ?? ''),
-                      icon: Icon(Icons.save, size: 18.0),
+                      icon: const Icon(Icons.save, size: 18.0),
                       label: _isSaving
-                          ? SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                          : Text('Update', style: TextStyle(fontSize: 13.0)),
+                          ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                          : const Text('Update', style: TextStyle(fontSize: 13.0)),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: theme.primary,
                         foregroundColor: Colors.white,
-                        padding: EdgeInsets.symmetric(vertical: 12.0),
+                        padding: const EdgeInsets.symmetric(vertical: 12.0),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.0)),
                       ),
                     ),
                   ),
-                  SizedBox(width: 8.0),
+                  const SizedBox(width: 8.0),
                   Expanded(
                     child: OutlinedButton.icon(
                       onPressed: _isSaving ? null : () => _promptSaveAsNew(),
-                      icon: Icon(Icons.add_circle_outline, size: 18.0),
-                      label: Text('Save as New', style: TextStyle(fontSize: 13.0)),
+                      icon: const Icon(Icons.add_circle_outline, size: 18.0),
+                      label: const Text('Save as New', style: TextStyle(fontSize: 13.0)),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: theme.primary,
                         side: BorderSide(color: theme.primary),
-                        padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 6.0),
+                        padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 6.0),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.0)),
                       ),
                     ),
@@ -2016,32 +2018,32 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
                     Expanded(
                       child: OutlinedButton.icon(
                         onPressed: _showSaveAsMealDialog,
-                        icon: Icon(Icons.bookmark_add_outlined, size: 18.0),
-                        label: Text('Meal Templates', style: TextStyle(fontSize: 12.0)),
+                        icon: const Icon(Icons.bookmark_add_outlined, size: 18.0),
+                        label: const Text('Meal Templates', style: TextStyle(fontSize: 12.0)),
                         style: OutlinedButton.styleFrom(
                           foregroundColor: theme.primary,
                           side: BorderSide(color: theme.primary),
-                          padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 6.0),
+                          padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 6.0),
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.0)),
                         ),
                       ),
                     ),
-                    SizedBox(width: 8.0),
+                    const SizedBox(width: 8.0),
                   ],
                   if (_hasAnyItems)
                     Expanded(
                       flex: _canSaveAsMeal ? 1 : 2,
                       child: ElevatedButton(
                         onPressed: _isSaving ? null : _saveDayTemplateMeal,
-                        child: _isSaving
-                            ? SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                            : Text('Done'),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: theme.primary,
                           foregroundColor: Colors.white,
-                          padding: EdgeInsets.symmetric(vertical: 12.0),
+                          padding: const EdgeInsets.symmetric(vertical: 12.0),
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.0)),
                         ),
+                        child: _isSaving
+                            ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                            : const Text('Done'),
                       ),
                     ),
                 ] else if (widget.editTemplateId == 'new') ...[
@@ -2049,14 +2051,14 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
                   Expanded(
                     child: ElevatedButton.icon(
                       onPressed: _isSaving ? null : _showSaveAsMealDialog,
-                      icon: Icon(Icons.bookmark_add_outlined, size: 18.0),
+                      icon: const Icon(Icons.bookmark_add_outlined, size: 18.0),
                       label: _isSaving
-                          ? SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                          : Text('Save Meal Template'),
+                          ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                          : const Text('Save Meal Template'),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: theme.primary,
                         foregroundColor: Colors.white,
-                        padding: EdgeInsets.symmetric(vertical: 12.0),
+                        padding: const EdgeInsets.symmetric(vertical: 12.0),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.0)),
                       ),
                     ),
@@ -2067,17 +2069,17 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
                     Expanded(
                       child: OutlinedButton.icon(
                         onPressed: _showSaveAsMealDialog,
-                        icon: Icon(Icons.bookmark_add_outlined, size: 18.0),
-                        label: Text('Meal Templates', style: TextStyle(fontSize: 12.0)),
+                        icon: const Icon(Icons.bookmark_add_outlined, size: 18.0),
+                        label: const Text('Meal Templates', style: TextStyle(fontSize: 12.0)),
                         style: OutlinedButton.styleFrom(
                           foregroundColor: theme.primary,
                           side: BorderSide(color: theme.primary),
-                          padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 6.0),
+                          padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 6.0),
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.0)),
                         ),
                       ),
                     ),
-                    SizedBox(width: 8.0),
+                    const SizedBox(width: 8.0),
                   ],
 
                   // Done button
@@ -2086,31 +2088,31 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
                       flex: _canSaveAsMeal ? 1 : 2,
                       child: ElevatedButton(
                         onPressed: _isSaving ? null : _saveMealPlan,
-                        child: _isSaving
-                            ? SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                            : Text('Done'),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: theme.primary,
                           foregroundColor: Colors.white,
-                          padding: EdgeInsets.symmetric(vertical: 12.0),
+                          padding: const EdgeInsets.symmetric(vertical: 12.0),
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.0)),
                         ),
+                        child: _isSaving
+                            ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                            : const Text('Done'),
                       ),
                     ),
                 ],
 
                 // Remove from Plan button (only when editing existing meal)
                 if (widget.existingMealPlan != null) ...[
-                  SizedBox(width: 8.0),
+                  const SizedBox(width: 8.0),
                   Expanded(
                     child: OutlinedButton.icon(
                       onPressed: _deleteMealPlan,
-                      icon: Icon(Icons.delete_outline, size: 18.0),
-                      label: Text('Remove', style: TextStyle(fontSize: 13.0)),
+                      icon: const Icon(Icons.delete_outline, size: 18.0),
+                      label: const Text('Remove', style: TextStyle(fontSize: 13.0)),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: Colors.red,
                         side: BorderSide(color: Colors.red.withValues(alpha: 0.5)),
-                        padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 8.0),
+                        padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 8.0),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.0)),
                       ),
                     ),
@@ -2131,17 +2133,17 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Remove from Plan?'),
+        title: const Text('Remove from Plan?'),
         content: Text('This will remove this meal from your plan for ${dateTimeFormat('EEEE, MMMM d', widget.date)}.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: Text('Cancel'),
+            child: const Text('Cancel'),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: Text('Remove'),
+            child: const Text('Remove'),
           ),
         ],
       ),
@@ -2155,7 +2157,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text('Meal removed from plan'),
             backgroundColor: Colors.green,
             behavior: SnackBarBehavior.floating,
@@ -2167,7 +2169,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
       debugPrint('Error deleting meal plan: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text('Failed to remove meal'),
             backgroundColor: Colors.red,
             behavior: SnackBarBehavior.floating,
@@ -2184,7 +2186,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
     VoidCallback? onTap,
   }) {
     final isDisabled = onTap == null;
-    final displayColor = isDisabled ? Color(0xFFCCCCCC) : color;
+    final displayColor = isDisabled ? const Color(0xFFCCCCCC) : color;
 
     return InkWell(
       onTap: onTap,
@@ -2192,7 +2194,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
       child: Opacity(
         opacity: isDisabled ? 0.5 : 1.0,
         child: Container(
-          padding: EdgeInsets.symmetric(vertical: 10.0),
+          padding: const EdgeInsets.symmetric(vertical: 10.0),
           decoration: BoxDecoration(
             color: displayColor.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(14.0),
@@ -2201,11 +2203,11 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
           child: Column(
             children: [
               Icon(icon, color: displayColor, size: 20.0),
-              SizedBox(height: 2.0),
+              const SizedBox(height: 2.0),
               Text(
                 label,
                 style: TextStyle(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   fontSize: 10.0,
                   color: displayColor,
                   fontWeight: FontWeight.w500,
@@ -2240,23 +2242,23 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
         minChildSize: 0.4,
         maxChildSize: 0.8,
         builder: (_, scrollController) => Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
           ),
           child: Column(
             children: [
               Container(
-                margin: EdgeInsets.only(top: 12.0),
+                margin: const EdgeInsets.only(top: 12.0),
                 width: 40.0,
                 height: 4.0,
-                decoration: BoxDecoration(color: Color(0xFFE0E0E0), borderRadius: BorderRadius.circular(2.0)),
+                decoration: BoxDecoration(color: const Color(0xFFE0E0E0), borderRadius: BorderRadius.circular(2.0)),
               ),
               Padding(
-                padding: EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(16.0),
                 child: Text(
                   'Your Templates',
-                  style: theme.titleMedium.override(fontFamily: 'Andika New Basic', fontWeight: FontWeight.w600),
+                  style: theme.titleMedium.override(fontFamily: FFAppState().currentFontFamily, fontWeight: FontWeight.w600),
                 ),
               ),
               Expanded(
@@ -2265,17 +2267,17 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(Icons.restaurant_menu, size: 48.0, color: Color(0xFFCCCCCC)),
-                            SizedBox(height: 12.0),
-                            Text('No meal templates yet', style: theme.bodyMedium.override(fontFamily: 'Andika New Basic', color: theme.secondaryText)),
-                            SizedBox(height: 4.0),
-                            Text('Build a meal and tap "Save Meal Template" to save one', style: theme.bodySmall.override(fontFamily: 'Andika New Basic', color: theme.secondaryText)),
+                            const Icon(Icons.restaurant_menu, size: 48.0, color: Color(0xFFCCCCCC)),
+                            const SizedBox(height: 12.0),
+                            Text('No meal templates yet', style: theme.bodyMedium.override(fontFamily: FFAppState().currentFontFamily, color: theme.secondaryText)),
+                            const SizedBox(height: 4.0),
+                            Text('Build a meal and tap "Save Meal Template" to save one', style: theme.bodySmall.override(fontFamily: FFAppState().currentFontFamily, color: theme.secondaryText)),
                           ],
                         ),
                       )
                     : ListView.builder(
                         controller: scrollController,
-                        padding: EdgeInsets.symmetric(horizontal: 16.0),
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
                         itemCount: combos.length,
                         itemBuilder: (context, index) => _buildMealComboItem(combos[index], sheetContext),
                       ),
@@ -2307,12 +2309,12 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
             await _loadMealCombo(combo);
           },
           child: Container(
-            margin: EdgeInsets.only(bottom: 12.0),
-            padding: EdgeInsets.all(12.0),
+            margin: const EdgeInsets.only(bottom: 12.0),
+            padding: const EdgeInsets.all(12.0),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(14.0),
-              border: Border.all(color: Color(0xFFE0E0E0)),
+              border: Border.all(color: const Color(0xFFE0E0E0)),
             ),
             child: Row(
               children: [
@@ -2322,27 +2324,27 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
                     children: [
                       Text(
                         combo.name.isNotEmpty ? combo.name : 'Unnamed Meal',
-                        style: theme.bodyMedium.override(fontFamily: 'Andika New Basic', fontWeight: FontWeight.w600),
+                        style: theme.bodyMedium.override(fontFamily: FFAppState().currentFontFamily, fontWeight: FontWeight.w600),
                       ),
                       if (entreeName.isNotEmpty) ...[
-                        SizedBox(height: 4.0),
+                        const SizedBox(height: 4.0),
                         Text(
                           'Entree: $entreeName',
-                          style: theme.bodySmall.override(fontFamily: 'Andika New Basic', color: theme.secondaryText),
+                          style: theme.bodySmall.override(fontFamily: FFAppState().currentFontFamily, color: theme.secondaryText),
                         ),
                       ],
                       if (sideNames.isNotEmpty) ...[
-                        SizedBox(height: 2.0),
+                        const SizedBox(height: 2.0),
                         Text(
                           'Sides: ${sideNames.join(", ")}',
-                          style: theme.bodySmall.override(fontFamily: 'Andika New Basic', color: theme.secondaryText),
+                          style: theme.bodySmall.override(fontFamily: FFAppState().currentFontFamily, color: theme.secondaryText),
                         ),
                       ],
                       if (drinkDisplay.isNotEmpty) ...[
-                        SizedBox(height: 2.0),
+                        const SizedBox(height: 2.0),
                         Text(
                           'Drink: $drinkDisplay',
-                          style: theme.bodySmall.override(fontFamily: 'Andika New Basic', color: theme.secondaryText),
+                          style: theme.bodySmall.override(fontFamily: FFAppState().currentFontFamily, color: theme.secondaryText),
                         ),
                       ],
                     ],
@@ -2353,8 +2355,8 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
                     padding: const EdgeInsets.only(right: 4.0),
                     child: Text(
                       '\$${(snapshot.data!['totalCost'] as double).round()}',
-                      style: const TextStyle(
-                        fontFamily: 'Andika New Basic',
+                      style: TextStyle(
+                        fontFamily: FFAppState().currentFontFamily,
                         fontSize: 13.0,
                         color: Color(0xFF2E7D32),
                         fontWeight: FontWeight.w600,
@@ -2471,7 +2473,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
       context: context,
       builder: (dialogContext) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.0)),
-        title: Text('Save as New Saved Day'),
+        title: const Text('Save as New Saved Day'),
         content: TextField(
           controller: nameController,
           decoration: InputDecoration(
@@ -2481,14 +2483,14 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
           autofocus: true,
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(dialogContext), child: Text('Cancel')),
+          TextButton(onPressed: () => Navigator.pop(dialogContext), child: const Text('Cancel')),
           ElevatedButton(
             onPressed: () async {
               Navigator.pop(dialogContext);
               await _saveAsNewCombo(nameController.text);
             },
             style: ElevatedButton.styleFrom(backgroundColor: theme.primary),
-            child: Text('Save'),
+            child: const Text('Save'),
           ),
         ],
       ),
@@ -2516,7 +2518,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
                     : (_isDayTemplateMeal ? 'Give this meal a name:' : 'Give this meal template a name:'),
                 style: theme.bodyMedium,
               ),
-              SizedBox(height: 8.0),
+              const SizedBox(height: 8.0),
               TextField(
                 controller: nameController,
                 decoration: InputDecoration(
@@ -2525,16 +2527,16 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
                 ),
                 autofocus: true,
               ),
-              SizedBox(height: 16.0),
-              Text('This saved day includes:', style: theme.bodySmall.override(fontFamily: 'Andika New Basic', color: theme.secondaryText)),
-              SizedBox(height: 4.0),
+              const SizedBox(height: 16.0),
+              Text('This saved day includes:', style: theme.bodySmall.override(fontFamily: FFAppState().currentFontFamily, color: theme.secondaryText)),
+              const SizedBox(height: 4.0),
               if (_selectedEntree != null) Text('  ${_selectedEntree!.recipeName} (entrée)'),
               ..._selectedSides.map((s) => Text('  ${s.recipeName} (side)')),
               ..._selectedDesserts.map((d) => Text('  ${d.recipeName} (dessert)')),
               if (!isEditing && !_isDayTemplateMeal) ...[
-                SizedBox(height: 12.0),
+                const SizedBox(height: 12.0),
                 Container(
-                  padding: EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(8.0),
                   decoration: BoxDecoration(
                     color: theme.primary.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8.0),
@@ -2542,11 +2544,11 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
                   child: Row(
                     children: [
                       Icon(Icons.info_outline, size: 16.0, color: theme.primary),
-                      SizedBox(width: 8.0),
+                      const SizedBox(width: 8.0),
                       Expanded(
                         child: Text(
                           'You can reuse this template from the Meal Templates tab in your cookbook!',
-                          style: theme.bodySmall.override(fontFamily: 'Andika New Basic', color: theme.primary, fontSize: 11.0),
+                          style: theme.bodySmall.override(fontFamily: FFAppState().currentFontFamily, color: theme.primary, fontSize: 11.0),
                         ),
                       ),
                     ],
@@ -2557,7 +2559,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
           ),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(dialogContext), child: Text('Cancel')),
+          TextButton(onPressed: () => Navigator.pop(dialogContext), child: const Text('Cancel')),
           if (isEditing) ...[
             OutlinedButton(
               onPressed: () async {
@@ -2568,7 +2570,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
                 foregroundColor: theme.primary,
                 side: BorderSide(color: theme.primary),
               ),
-              child: Text('Save as New'),
+              child: const Text('Save as New'),
             ),
             ElevatedButton(
               onPressed: () async {
@@ -2576,7 +2578,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
                 await _updateExistingCombo(nameController.text);
               },
               style: ElevatedButton.styleFrom(backgroundColor: theme.primary),
-              child: Text('Update Saved Day'),
+              child: const Text('Update Saved Day'),
             ),
           ] else
             ElevatedButton(
@@ -2915,7 +2917,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
       debugPrint('Error saving meal plan: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to save. Please try again.'), backgroundColor: Colors.red),
+          const SnackBar(content: Text('Failed to save. Please try again.'), backgroundColor: Colors.red),
         );
       }
     } finally {
@@ -2949,7 +2951,7 @@ class _DrinkPickerSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
       ),
@@ -2957,23 +2959,23 @@ class _DrinkPickerSheet extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            margin: EdgeInsets.only(top: 12.0),
+            margin: const EdgeInsets.only(top: 12.0),
             width: 40.0,
             height: 4.0,
-            decoration: BoxDecoration(color: Color(0xFFE0E0E0), borderRadius: BorderRadius.circular(2.0)),
+            decoration: BoxDecoration(color: const Color(0xFFE0E0E0), borderRadius: BorderRadius.circular(2.0)),
           ),
           Padding(
-            padding: EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(16.0),
             child: Text(
               'Select Drink',
               style: FlutterFlowTheme.of(context).titleMedium.override(
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
                 fontWeight: FontWeight.w600,
               ),
             ),
           ),
           Padding(
-            padding: EdgeInsets.fromLTRB(16.0, 0, 16.0, 24.0),
+            padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 24.0),
             child: Wrap(
               spacing: 8.0,
               runSpacing: 8.0,
@@ -2983,7 +2985,7 @@ class _DrinkPickerSheet extends StatelessWidget {
                 return InkWell(
                   onTap: () => Navigator.pop(context, drink),
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
                     decoration: BoxDecoration(
                       color: isSelected ? drinkColor : drinkColor.withOpacity(0.15),
                       borderRadius: BorderRadius.circular(14.0),
@@ -2993,7 +2995,7 @@ class _DrinkPickerSheet extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(_getDrinkIcon(drink), color: isSelected ? Colors.white : drinkColor, size: 20),
-                        SizedBox(width: 8.0),
+                        const SizedBox(width: 8.0),
                         Text(
                           drink.name,
                           style: TextStyle(
@@ -3030,15 +3032,15 @@ class _DrinkPickerSheet extends StatelessWidget {
 
   Color _getDrinkColor(DrinkType drink) {
     switch (drink) {
-      case DrinkType.Water: return Color(0xFF42A5F5); // Blue
-      case DrinkType.Milk: return Color(0xFF8D6E63); // Brown (for visibility)
-      case DrinkType.Juice: return Color(0xFFFF9800); // Orange
-      case DrinkType.Lemonade: return Color(0xFFFBC02D); // Darker yellow
-      case DrinkType.Smoothie: return Color(0xFFE91E63); // Pink
-      case DrinkType.Tea: return Color(0xFF66BB6A); // Green
-      case DrinkType.Coffee: return Color(0xFF5D4037); // Dark brown
-      case DrinkType.Soda: return Color(0xFF7E57C2); // Purple
-      case DrinkType.Other: return Color(0xFF78909C); // Blue grey
+      case DrinkType.Water: return const Color(0xFF42A5F5); // Blue
+      case DrinkType.Milk: return const Color(0xFF8D6E63); // Brown (for visibility)
+      case DrinkType.Juice: return const Color(0xFFFF9800); // Orange
+      case DrinkType.Lemonade: return const Color(0xFFFBC02D); // Darker yellow
+      case DrinkType.Smoothie: return const Color(0xFFE91E63); // Pink
+      case DrinkType.Tea: return const Color(0xFF66BB6A); // Green
+      case DrinkType.Coffee: return const Color(0xFF5D4037); // Dark brown
+      case DrinkType.Soda: return const Color(0xFF7E57C2); // Purple
+      case DrinkType.Other: return const Color(0xFF78909C); // Blue grey
     }
   }
 }
@@ -3101,7 +3103,7 @@ class _RecipePickerSheetState extends State<_RecipePickerSheet> {
       minChildSize: 0.5,
       maxChildSize: 0.9,
       builder: (_, scrollController) => Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
         ),
@@ -3109,20 +3111,20 @@ class _RecipePickerSheetState extends State<_RecipePickerSheet> {
           children: [
             // Handle
             Container(
-              margin: EdgeInsets.only(top: 12.0),
+              margin: const EdgeInsets.only(top: 12.0),
               width: 40.0,
               height: 4.0,
-              decoration: BoxDecoration(color: Color(0xFFE0E0E0), borderRadius: BorderRadius.circular(2.0)),
+              decoration: BoxDecoration(color: const Color(0xFFE0E0E0), borderRadius: BorderRadius.circular(2.0)),
             ),
             // Header
             Padding(
-              padding: EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(16.0),
               child: Text(
                 widget.title,
-                style: theme.titleMedium.override(fontFamily: 'Andika New Basic', fontWeight: FontWeight.w600),
+                style: theme.titleMedium.override(fontFamily: FFAppState().currentFontFamily, fontWeight: FontWeight.w600),
               ),
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             // Content - My Recipes only
             Expanded(
               child: _buildRecipeList(_filteredUserRecipes, scrollController, showCreateButton: true),
@@ -3142,15 +3144,15 @@ class _RecipePickerSheetState extends State<_RecipePickerSheet> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.restaurant_menu, size: 48.0, color: Color(0xFFCCCCCC)),
-            SizedBox(height: 12.0),
-            Text('No recipes found', style: theme.bodyMedium.override(fontFamily: 'Andika New Basic', color: theme.secondaryText)),
+            const Icon(Icons.restaurant_menu, size: 48.0, color: Color(0xFFCCCCCC)),
+            const SizedBox(height: 12.0),
+            Text('No recipes found', style: theme.bodyMedium.override(fontFamily: FFAppState().currentFontFamily, color: theme.secondaryText)),
             if (showCreateButton) ...[
-              SizedBox(height: 12.0),
+              const SizedBox(height: 12.0),
               TextButton.icon(
                 onPressed: widget.onCreateNew,
-                icon: Icon(Icons.add),
-                label: Text('Create one'),
+                icon: const Icon(Icons.add),
+                label: const Text('Create one'),
               ),
             ],
           ],
@@ -3160,8 +3162,8 @@ class _RecipePickerSheetState extends State<_RecipePickerSheet> {
 
     return GridView.builder(
       controller: controller,
-      padding: EdgeInsets.symmetric(horizontal: 16.0),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,
         crossAxisSpacing: 12.0,
         mainAxisSpacing: 12.0,
@@ -3183,12 +3185,12 @@ class _RecipePickerSheetState extends State<_RecipePickerSheet> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(Icons.add_circle_outline, size: 36.0, color: theme.primary),
-                  SizedBox(height: 8.0),
+                  const SizedBox(height: 8.0),
                   Text(
                     'Create\nNew',
                     textAlign: TextAlign.center,
                     style: theme.bodySmall.override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       color: theme.primary,
                       fontWeight: FontWeight.w600,
                       letterSpacing: 0.0,
@@ -3217,7 +3219,7 @@ class _RecipePickerSheetState extends State<_RecipePickerSheet> {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(14.0),
-          border: Border.all(color: Color(0xFFE0E0E0)),
+          border: Border.all(color: const Color(0xFFE0E0E0)),
         ),
         child: Column(
           children: [
@@ -3226,7 +3228,7 @@ class _RecipePickerSheetState extends State<_RecipePickerSheet> {
               child: Stack(
                 children: [
                   ClipRRect(
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(9.0)),
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(9.0)),
                     child: hasImage
                         ? CachedNetworkImage(
                             imageUrl: recipe.imageUrl,
@@ -3248,12 +3250,12 @@ class _RecipePickerSheetState extends State<_RecipePickerSheet> {
                     child: InkWell(
                       onTap: () => _showRecipeDetails(recipe),
                       child: Container(
-                        padding: EdgeInsets.all(4.0),
-                        decoration: BoxDecoration(
+                        padding: const EdgeInsets.all(4.0),
+                        decoration: const BoxDecoration(
                           color: Colors.black54,
                           shape: BoxShape.circle,
                         ),
-                        child: Icon(Icons.info_outline, size: 14.0, color: Colors.white),
+                        child: const Icon(Icons.info_outline, size: 14.0, color: Colors.white),
                       ),
                     ),
                   ),
@@ -3263,14 +3265,14 @@ class _RecipePickerSheetState extends State<_RecipePickerSheet> {
             Expanded(
               flex: 2,
               child: Padding(
-                padding: EdgeInsets.all(4.0),
+                padding: const EdgeInsets.all(4.0),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
                       recipe.recipeName,
                       style: theme.bodySmall.override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         fontWeight: FontWeight.w500,
                         fontSize: 10.0,
                       ),
@@ -3281,8 +3283,8 @@ class _RecipePickerSheetState extends State<_RecipePickerSheet> {
                     if (FFAppState().showMealCosts && recipe.hasEstimatedCost())
                       Text(
                         '\$${recipe.estimatedCost.round()}',
-                        style: const TextStyle(
-                          fontFamily: 'Andika New Basic',
+                        style: TextStyle(
+                          fontFamily: FFAppState().currentFontFamily,
                           fontSize: 10.0,
                           color: Color(0xFF2E7D32),
                           fontWeight: FontWeight.w600,
@@ -3313,7 +3315,7 @@ class _RecipePickerSheetState extends State<_RecipePickerSheet> {
   }
 
   Widget _buildPlaceholder(MealRecord recipe) {
-    final colors = [Color(0xFF52A097), Color(0xFF39D2C0), Color(0xFFEE8B60), Color(0xFF2A6F67)];
+    final colors = [const Color(0xFF52A097), const Color(0xFF39D2C0), const Color(0xFFEE8B60), const Color(0xFF2A6F67)];
     final color = colors[recipe.recipeName.hashCode.abs() % colors.length];
 
     return Container(

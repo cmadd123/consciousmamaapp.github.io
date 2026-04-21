@@ -111,7 +111,7 @@ class _NotificationSettingsWidgetState
     if (granted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Notifications enabled!'),
+          content: const Text('Notifications enabled!'),
           backgroundColor: FlutterFlowTheme.of(context).primary,
         ),
       );
@@ -194,7 +194,7 @@ class _NotificationSettingsWidgetState
           title: Text(
             'Notifications',
             style: FlutterFlowTheme.of(context).headlineMedium.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   fontSize: 20.0,
                   letterSpacing: 0.0,
                   fontWeight: FontWeight.w600,
@@ -237,7 +237,7 @@ class _NotificationSettingsWidgetState
                             Text(
                               'Enable Notifications',
                               style: FlutterFlowTheme.of(context).bodyLarge.override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     fontWeight: FontWeight.w600,
                                     letterSpacing: 0.0,
                                   ),
@@ -247,7 +247,7 @@ class _NotificationSettingsWidgetState
                               'Allow notifications to receive meal reminders, learning prompts, and encouragement.',
                               textAlign: TextAlign.center,
                               style: FlutterFlowTheme.of(context).bodySmall.override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     letterSpacing: 0.0,
                                   ),
                             ),
@@ -260,7 +260,7 @@ class _NotificationSettingsWidgetState
                                 padding: const EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
                                 color: FlutterFlowTheme.of(context).primary,
                                 textStyle: FlutterFlowTheme.of(context).titleSmall.override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       color: Colors.white,
                                       letterSpacing: 0.0,
                                     ),
@@ -285,7 +285,7 @@ class _NotificationSettingsWidgetState
                               child: Text(
                                 'Reminders',
                                 style: FlutterFlowTheme.of(context).titleMedium.override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       letterSpacing: 0.0,
                                       fontWeight: FontWeight.w600,
                                     ),
@@ -357,7 +357,7 @@ class _NotificationSettingsWidgetState
                               child: Text(
                                 'Quiet Hours',
                                 style: FlutterFlowTheme.of(context).titleMedium.override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       letterSpacing: 0.0,
                                       fontWeight: FontWeight.w600,
                                     ),
@@ -369,7 +369,7 @@ class _NotificationSettingsWidgetState
                               child: Text(
                                 'No notifications will be sent during these hours',
                                 style: FlutterFlowTheme.of(context).bodySmall.override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       color: FlutterFlowTheme.of(context).secondaryText,
                                       letterSpacing: 0.0,
                                     ),
@@ -398,13 +398,13 @@ class _NotificationSettingsWidgetState
                                   await actions.notificationService.showTestNotification();
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
-                                      content: Text('Test notification sent!'),
+                                      content: const Text('Test notification sent!'),
                                       backgroundColor: FlutterFlowTheme.of(context).primary,
                                     ),
                                   );
                                 },
                                 text: 'Send Test Notification',
-                                icon: Icon(
+                                icon: const Icon(
                                   Icons.notifications_active_outlined,
                                   size: 20.0,
                                 ),
@@ -413,7 +413,7 @@ class _NotificationSettingsWidgetState
                                   height: 50.0,
                                   color: FlutterFlowTheme.of(context).secondaryBackground,
                                   textStyle: FlutterFlowTheme.of(context).titleSmall.override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         color: FlutterFlowTheme.of(context).primaryText,
                                         letterSpacing: 0.0,
                                       ),
@@ -468,7 +468,7 @@ class _NotificationSettingsWidgetState
           title: Text(
             title,
             style: FlutterFlowTheme.of(context).bodyLarge.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   letterSpacing: 0.0,
                   fontWeight: FontWeight.w500,
                 ),
@@ -477,7 +477,7 @@ class _NotificationSettingsWidgetState
               ? Text(
                   subtitle,
                   style: FlutterFlowTheme.of(context).bodySmall.override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         color: FlutterFlowTheme.of(context).secondaryText,
                         letterSpacing: 0.0,
                       ),
@@ -486,7 +486,7 @@ class _NotificationSettingsWidgetState
           trailing: Switch(
             value: value,
             onChanged: _notificationsPermissionGranted ? onChanged : null,
-            activeColor: FlutterFlowTheme.of(context).primary,
+            activeThumbColor: FlutterFlowTheme.of(context).primary,
           ),
         ),
       ),
@@ -515,7 +515,7 @@ class _NotificationSettingsWidgetState
               Text(
                 title,
                 style: FlutterFlowTheme.of(context).bodyMedium.override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       letterSpacing: 0.0,
                     ),
               ),
@@ -524,7 +524,7 @@ class _NotificationSettingsWidgetState
                   Text(
                     _formatTime(time),
                     style: FlutterFlowTheme.of(context).bodyMedium.override(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           color: FlutterFlowTheme.of(context).primary,
                           letterSpacing: 0.0,
                           fontWeight: FontWeight.w600,
@@ -562,7 +562,7 @@ class _NotificationSettingsWidgetState
             Text(
               'Reminder Day',
               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     letterSpacing: 0.0,
                   ),
             ),
@@ -595,7 +595,7 @@ class _NotificationSettingsWidgetState
                     child: Text(
                       days[index],
                       style: FlutterFlowTheme.of(context).bodySmall.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: isSelected
                                 ? Colors.white
                                 : FlutterFlowTheme.of(context).primaryText,

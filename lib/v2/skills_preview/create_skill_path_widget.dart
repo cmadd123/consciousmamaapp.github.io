@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'dart:convert';
-import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/custom_code/actions/generate_skill_curriculum.dart';
 import '/components/debug_overlay_widget.dart';
@@ -270,8 +268,8 @@ class _CreateSkillPathWidgetState extends State<CreateSkillPathWidget> {
           _model.selectedSkill == null
               ? 'Choose a Skill'
               : 'Create ${_model.selectedSkill!.name} Path',
-          style: const TextStyle(
-            fontFamily: 'Andika New Basic',
+          style: TextStyle(
+            fontFamily: FFAppState().currentFontFamily,
             color: Color(0xFF5D4E60),
             fontSize: 18.0,
             fontWeight: FontWeight.w600,
@@ -327,10 +325,10 @@ class _CreateSkillPathWidgetState extends State<CreateSkillPathWidget> {
     return ListView(
       padding: const EdgeInsets.all(20.0),
       children: [
-        const Text(
+        Text(
           'What skill would you like to learn?',
           style: TextStyle(
-            fontFamily: 'Andika New Basic',
+            fontFamily: FFAppState().currentFontFamily,
             color: Color(0xFF5D4E60),
             fontSize: 20.0,
             fontWeight: FontWeight.w600,
@@ -372,12 +370,12 @@ class _CreateSkillPathWidgetState extends State<CreateSkillPathWidget> {
                 skill.icon,
                 style: const TextStyle(fontSize: 48.0),
               ),
-              const SizedBox(width: 16.0),
+              SizedBox(width: 16.0),
               Expanded(
                 child: Text(
                   skill.name,
-                  style: const TextStyle(
-                    fontFamily: 'Andika New Basic',
+                  style: TextStyle(
+                    fontFamily: FFAppState().currentFontFamily,
                     color: Color(0xFF5D4E60),
                     fontSize: 18.0,
                     fontWeight: FontWeight.w600,
@@ -457,10 +455,10 @@ class _CreateSkillPathWidgetState extends State<CreateSkillPathWidget> {
                             borderRadius: BorderRadius.circular(12.0),
                           ),
                         ),
-                        child: const Text(
+                        child: Text(
                           'Back',
                           style: TextStyle(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: Color(0xFF5D4E60),
                             fontSize: 16.0,
                             fontWeight: FontWeight.w600,
@@ -485,8 +483,8 @@ class _CreateSkillPathWidgetState extends State<CreateSkillPathWidget> {
                         _model.currentStepIndex == _model.creationSteps.length - 1
                             ? 'Create Path'
                             : 'Next',
-                        style: const TextStyle(
-                          fontFamily: 'Andika New Basic',
+                        style: TextStyle(
+                          fontFamily: FFAppState().currentFontFamily,
                           color: Colors.white,
                           fontSize: 16.0,
                           fontWeight: FontWeight.w600,
@@ -513,28 +511,28 @@ class _CreateSkillPathWidgetState extends State<CreateSkillPathWidget> {
       children: [
         Text(
           'Step $stepNumber of ${_model.creationSteps.length}',
-          style: const TextStyle(
-            fontFamily: 'Andika New Basic',
+          style: TextStyle(
+            fontFamily: FFAppState().currentFontFamily,
             color: Color(0xFF9B8A9E),
             fontSize: 14.0,
             fontWeight: FontWeight.w500,
           ),
         ),
-        const SizedBox(height: 8.0),
+        SizedBox(height: 8.0),
         Text(
           stepTitle,
-          style: const TextStyle(
-            fontFamily: 'Andika New Basic',
+          style: TextStyle(
+            fontFamily: FFAppState().currentFontFamily,
             color: Color(0xFF5D4E60),
             fontSize: 22.0,
             fontWeight: FontWeight.w600,
           ),
         ),
-        const SizedBox(height: 16.0),
+        SizedBox(height: 16.0),
         Text(
           question,
-          style: const TextStyle(
-            fontFamily: 'Andika New Basic',
+          style: TextStyle(
+            fontFamily: FFAppState().currentFontFamily,
             color: Color(0xFF5D4E60),
             fontSize: 16.0,
           ),
@@ -601,17 +599,17 @@ class _CreateSkillPathWidgetState extends State<CreateSkillPathWidget> {
                         Text(
                           label,
                           style: TextStyle(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: const Color(0xFF5D4E60),
                             fontSize: 16.0,
                             fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                           ),
                         ),
-                        const SizedBox(height: 4.0),
+                        SizedBox(height: 4.0),
                         Text(
                           description,
-                          style: const TextStyle(
-                            fontFamily: 'Andika New Basic',
+                          style: TextStyle(
+                            fontFamily: FFAppState().currentFontFamily,
                             color: Color(0xFF9B8A9E),
                             fontSize: 14.0,
                           ),
@@ -680,17 +678,17 @@ class _CreateSkillPathWidgetState extends State<CreateSkillPathWidget> {
                         Text(
                           label,
                           style: TextStyle(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: const Color(0xFF5D4E60),
                             fontSize: 16.0,
                             fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                           ),
                         ),
-                        const SizedBox(height: 4.0),
+                        SizedBox(height: 4.0),
                         Text(
                           description,
-                          style: const TextStyle(
-                            fontFamily: 'Andika New Basic',
+                          style: TextStyle(
+                            fontFamily: FFAppState().currentFontFamily,
                             color: Color(0xFF9B8A9E),
                             fontSize: 14.0,
                           ),
@@ -735,8 +733,8 @@ class _CreateSkillPathWidgetState extends State<CreateSkillPathWidget> {
               children: [
                 Text(
                   label,
-                  style: const TextStyle(
-                    fontFamily: 'Andika New Basic',
+                  style: TextStyle(
+                    fontFamily: FFAppState().currentFontFamily,
                     color: Color(0xFF5D4E60),
                     fontSize: 16.0,
                     fontWeight: FontWeight.w600,
@@ -774,8 +772,8 @@ class _CreateSkillPathWidgetState extends State<CreateSkillPathWidget> {
                       ),
                       child: Text(
                         '${currentValue.round()} ${unit == "minutes" ? "min" : unit}',
-                        style: const TextStyle(
-                          fontFamily: 'Andika New Basic',
+                        style: TextStyle(
+                          fontFamily: FFAppState().currentFontFamily,
                           color: Color(0xFF5D4E60),
                           fontSize: 14.0,
                           fontWeight: FontWeight.w600,
@@ -799,8 +797,8 @@ class _CreateSkillPathWidgetState extends State<CreateSkillPathWidget> {
               children: [
                 Text(
                   label,
-                  style: const TextStyle(
-                    fontFamily: 'Andika New Basic',
+                  style: TextStyle(
+                    fontFamily: FFAppState().currentFontFamily,
                     color: Color(0xFF5D4E60),
                     fontSize: 16.0,
                     fontWeight: FontWeight.w600,
@@ -847,17 +845,17 @@ class _CreateSkillPathWidgetState extends State<CreateSkillPathWidget> {
                                   Text(
                                     optionLabel,
                                     style: TextStyle(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       color: const Color(0xFF5D4E60),
                                       fontSize: 14.0,
                                       fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                                     ),
                                   ),
-                                  const SizedBox(height: 2.0),
+                                  SizedBox(height: 2.0),
                                   Text(
                                     optionDesc,
-                                    style: const TextStyle(
-                                      fontFamily: 'Andika New Basic',
+                                    style: TextStyle(
+                                      fontFamily: FFAppState().currentFontFamily,
                                       color: Color(0xFF9B8A9E),
                                       fontSize: 12.0,
                                     ),
@@ -870,7 +868,7 @@ class _CreateSkillPathWidgetState extends State<CreateSkillPathWidget> {
                       ),
                     ),
                   );
-                }).toList(),
+                }),
               ],
             ),
           );

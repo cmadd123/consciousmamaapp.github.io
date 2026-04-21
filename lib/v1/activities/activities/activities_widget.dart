@@ -1,17 +1,11 @@
 import '/backend/backend.dart';
-import '/backend/schema/structs/index.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import '/flutter_flow/flutter_flow_widgets.dart';
 import '/v1/activities/activity_details_pop_up/activity_details_pop_up_widget.dart';
 import '/v1/empty_list_view_component/empty_list_view_component_widget.dart';
-import 'dart:ui';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'activities_model.dart';
 export 'activities_model.dart';
 
@@ -42,10 +36,10 @@ class _ActivitiesWidgetState extends State<ActivitiesWidget> {
 
     // On page load action.
     SchedulerBinding.instance.addPostFrameCallback((_) async {
-      if (widget!.childActivity != null &&
-          (widget!.childActivity)!.isNotEmpty) {
-        _model.selectedChild = widget!.childActivity?.firstOrNull?.userchilde;
-        _model.selectedModle = widget!.childActivity?.firstOrNull;
+      if (widget.childActivity != null &&
+          (widget.childActivity)!.isNotEmpty) {
+        _model.selectedChild = widget.childActivity?.firstOrNull?.userchilde;
+        _model.selectedModle = widget.childActivity?.firstOrNull;
         safeSetState(() {});
       }
     });
@@ -71,7 +65,7 @@ class _ActivitiesWidgetState extends State<ActivitiesWidget> {
         body: Container(
           width: double.infinity,
           height: double.infinity,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             color: Color(0xFFEDFFFD),
           ),
           child: Column(
@@ -79,7 +73,7 @@ class _ActivitiesWidgetState extends State<ActivitiesWidget> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(20.0, 50.0, 20.0, 20.0),
+                padding: const EdgeInsetsDirectional.fromSTEB(20.0, 50.0, 20.0, 20.0),
                 child: Row(
                   mainAxisSize: MainAxisSize.max,
                   children: [
@@ -100,13 +94,13 @@ class _ActivitiesWidgetState extends State<ActivitiesWidget> {
                     Expanded(
                       child: Padding(
                         padding:
-                            EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 10.0, 0.0),
+                            const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 10.0, 0.0),
                         child: Row(
                           mainAxisSize: MainAxisSize.max,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   0.0, 0.0, 20.0, 0.0),
                               child: Text(
                                 'Activities',
@@ -114,7 +108,7 @@ class _ActivitiesWidgetState extends State<ActivitiesWidget> {
                                 style: FlutterFlowTheme.of(context)
                                     .bodyMedium
                                     .override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       fontSize: 20.0,
                                       letterSpacing: 0.0,
                                       fontWeight: FontWeight.bold,
@@ -129,10 +123,10 @@ class _ActivitiesWidgetState extends State<ActivitiesWidget> {
                 ),
               ),
               Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(0.0, 20.0, 0.0, 0.0),
+                padding: const EdgeInsetsDirectional.fromSTEB(0.0, 20.0, 0.0, 0.0),
                 child: Builder(
                   builder: (context) {
-                    final child = widget!.childActivity!.toList();
+                    final child = widget.childActivity!.toList();
 
                     return SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
@@ -173,7 +167,7 @@ class _ActivitiesWidgetState extends State<ActivitiesWidget> {
                                   safeSetState(() {});
                                 },
                                 child: Container(
-                                  decoration: BoxDecoration(
+                                  decoration: const BoxDecoration(
                                     shape: BoxShape.circle,
                                   ),
                                   child: Column(
@@ -191,7 +185,7 @@ class _ActivitiesWidgetState extends State<ActivitiesWidget> {
                                               BorderRadius.circular(50.0),
                                         ),
                                         child: Padding(
-                                          padding: EdgeInsets.all(4.0),
+                                          padding: const EdgeInsets.all(4.0),
                                           child: ClipRRect(
                                             borderRadius:
                                                 BorderRadius.circular(50.0),
@@ -206,7 +200,7 @@ class _ActivitiesWidgetState extends State<ActivitiesWidget> {
                                       ),
                                       Align(
                                         alignment:
-                                            AlignmentDirectional(0.0, 0.0),
+                                            const AlignmentDirectional(0.0, 0.0),
                                         child: Text(
                                           valueOrDefault<String>(
                                             containerChildernRecord.name,
@@ -215,7 +209,7 @@ class _ActivitiesWidgetState extends State<ActivitiesWidget> {
                                           style: FlutterFlowTheme.of(context)
                                               .bodyMedium
                                               .override(
-                                                fontFamily: 'Andika New Basic',
+                                                fontFamily: FFAppState().currentFontFamily,
                                                 color:
                                                     FlutterFlowTheme.of(context)
                                                         .black40,
@@ -232,8 +226,8 @@ class _ActivitiesWidgetState extends State<ActivitiesWidget> {
                             },
                           );
                         })
-                            .divide(SizedBox(width: 20.0))
-                            .addToStart(SizedBox(width: 20.0)),
+                            .divide(const SizedBox(width: 20.0))
+                            .addToStart(const SizedBox(width: 20.0)),
                       ),
                     );
                   },
@@ -242,13 +236,13 @@ class _ActivitiesWidgetState extends State<ActivitiesWidget> {
               Expanded(
                 child: Padding(
                   padding:
-                      EdgeInsetsDirectional.fromSTEB(20.0, 16.0, 20.0, 0.0),
+                      const EdgeInsetsDirectional.fromSTEB(20.0, 16.0, 20.0, 0.0),
                   child: Builder(
                     builder: (context) {
                       final modelList =
-                          _model.selectedModle?.activity?.toList() ?? [];
+                          _model.selectedModle?.activity.toList() ?? [];
                       if (modelList.isEmpty) {
-                        return EmptyListViewComponentWidget(
+                        return const EmptyListViewComponentWidget(
                           icon: Icon(
                             Icons.directions_run_outlined,
                             size: 32.0,
@@ -258,7 +252,7 @@ class _ActivitiesWidgetState extends State<ActivitiesWidget> {
                       }
 
                       return ListView.separated(
-                        padding: EdgeInsets.fromLTRB(
+                        padding: const EdgeInsets.fromLTRB(
                           0,
                           10.0,
                           0,
@@ -267,7 +261,7 @@ class _ActivitiesWidgetState extends State<ActivitiesWidget> {
                         shrinkWrap: true,
                         scrollDirection: Axis.vertical,
                         itemCount: modelList.length,
-                        separatorBuilder: (_, __) => SizedBox(height: 10.0),
+                        separatorBuilder: (_, __) => const SizedBox(height: 10.0),
                         itemBuilder: (context, modelListIndex) {
                           final modelListItem = modelList[modelListIndex];
                           return StreamBuilder<ActivitiesRecord>(
@@ -299,7 +293,7 @@ class _ActivitiesWidgetState extends State<ActivitiesWidget> {
                                 ),
                                 child: Builder(
                                   builder: (context) => Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(
                                         14.0, 14.0, 14.0, 14.0),
                                     child: StreamBuilder<ChildernRecord>(
                                       stream: ChildernRecord.getDocument(
@@ -341,7 +335,7 @@ class _ActivitiesWidgetState extends State<ActivitiesWidget> {
                                                   backgroundColor:
                                                       Colors.transparent,
                                                   alignment:
-                                                      AlignmentDirectional(
+                                                      const AlignmentDirectional(
                                                               0.0, 0.0)
                                                           .resolve(
                                                               Directionality.of(
@@ -406,7 +400,7 @@ class _ActivitiesWidgetState extends State<ActivitiesWidget> {
                                                   Expanded(
                                                     child: Padding(
                                                       padding:
-                                                          EdgeInsetsDirectional
+                                                          const EdgeInsetsDirectional
                                                               .fromSTEB(
                                                                   8.0,
                                                                   0.0,
@@ -424,7 +418,7 @@ class _ActivitiesWidgetState extends State<ActivitiesWidget> {
                                                         children: [
                                                           Padding(
                                                             padding:
-                                                                EdgeInsetsDirectional
+                                                                const EdgeInsetsDirectional
                                                                     .fromSTEB(
                                                                         0.0,
                                                                         0.0,
@@ -457,7 +451,7 @@ class _ActivitiesWidgetState extends State<ActivitiesWidget> {
                                                           ),
                                                           Padding(
                                                             padding:
-                                                                EdgeInsetsDirectional
+                                                                const EdgeInsetsDirectional
                                                                     .fromSTEB(
                                                                         0.0,
                                                                         0.0,
@@ -502,7 +496,7 @@ class _ActivitiesWidgetState extends State<ActivitiesWidget> {
                                                           mainAxisSize:
                                                               MainAxisSize.max,
                                                           children: [
-                                                            Padding(
+                                                            const Padding(
                                                               padding:
                                                                   EdgeInsetsDirectional
                                                                       .fromSTEB(
@@ -520,7 +514,7 @@ class _ActivitiesWidgetState extends State<ActivitiesWidget> {
                                                             ),
                                                             Padding(
                                                               padding:
-                                                                  EdgeInsetsDirectional
+                                                                  const EdgeInsetsDirectional
                                                                       .fromSTEB(
                                                                           6.0,
                                                                           0.0,
@@ -540,7 +534,7 @@ class _ActivitiesWidgetState extends State<ActivitiesWidget> {
                                                                     .override(
                                                                       fontFamily:
                                                                           'Andika New Basic',
-                                                                      color: Color(
+                                                                      color: const Color(
                                                                           0xFF595959),
                                                                       letterSpacing:
                                                                           0.0,
@@ -553,7 +547,7 @@ class _ActivitiesWidgetState extends State<ActivitiesWidget> {
                                                           mainAxisSize:
                                                               MainAxisSize.max,
                                                           children: [
-                                                            Padding(
+                                                            const Padding(
                                                               padding:
                                                                   EdgeInsetsDirectional
                                                                       .fromSTEB(
@@ -571,7 +565,7 @@ class _ActivitiesWidgetState extends State<ActivitiesWidget> {
                                                             ),
                                                             Padding(
                                                               padding:
-                                                                  EdgeInsetsDirectional
+                                                                  const EdgeInsetsDirectional
                                                                       .fromSTEB(
                                                                           6.0,
                                                                           0.0,
@@ -585,7 +579,7 @@ class _ActivitiesWidgetState extends State<ActivitiesWidget> {
                                                                     .override(
                                                                       fontFamily:
                                                                           'Andika New Basic',
-                                                                      color: Color(
+                                                                      color: const Color(
                                                                           0xFF595959),
                                                                       letterSpacing:
                                                                           0.0,
@@ -599,7 +593,7 @@ class _ActivitiesWidgetState extends State<ActivitiesWidget> {
                                                 ],
                                               ),
                                               Padding(
-                                                padding: EdgeInsetsDirectional
+                                                padding: const EdgeInsetsDirectional
                                                     .fromSTEB(
                                                         0.0, 12.0, 0.0, 0.0),
                                                 child: Text(
@@ -623,7 +617,7 @@ class _ActivitiesWidgetState extends State<ActivitiesWidget> {
                                                 ),
                                               ),
                                               Padding(
-                                                padding: EdgeInsetsDirectional
+                                                padding: const EdgeInsetsDirectional
                                                     .fromSTEB(
                                                         0.0, 10.0, 14.0, 10.0),
                                                 child: Row(
@@ -642,7 +636,7 @@ class _ActivitiesWidgetState extends State<ActivitiesWidget> {
                                                             children: [
                                                               Padding(
                                                                 padding:
-                                                                    EdgeInsetsDirectional
+                                                                    const EdgeInsetsDirectional
                                                                         .fromSTEB(
                                                                             0.0,
                                                                             2.0,
@@ -659,7 +653,7 @@ class _ActivitiesWidgetState extends State<ActivitiesWidget> {
                                                               ),
                                                               Padding(
                                                                 padding:
-                                                                    EdgeInsetsDirectional
+                                                                    const EdgeInsetsDirectional
                                                                         .fromSTEB(
                                                                             4.0,
                                                                             0.0,
@@ -679,7 +673,7 @@ class _ActivitiesWidgetState extends State<ActivitiesWidget> {
                                                                       .override(
                                                                         fontFamily:
                                                                             'Andika New Basic',
-                                                                        color: Color(
+                                                                        color: const Color(
                                                                             0xFF595959),
                                                                         letterSpacing:
                                                                             0.0,
@@ -703,7 +697,7 @@ class _ActivitiesWidgetState extends State<ActivitiesWidget> {
                                                               ),
                                                               Padding(
                                                                 padding:
-                                                                    EdgeInsetsDirectional
+                                                                    const EdgeInsetsDirectional
                                                                         .fromSTEB(
                                                                             4.0,
                                                                             0.0,
@@ -722,7 +716,7 @@ class _ActivitiesWidgetState extends State<ActivitiesWidget> {
                                                                       .override(
                                                                         fontFamily:
                                                                             'Andika New Basic',
-                                                                        color: Color(
+                                                                        color: const Color(
                                                                             0xFF595959),
                                                                         letterSpacing:
                                                                             0.0,
@@ -736,7 +730,7 @@ class _ActivitiesWidgetState extends State<ActivitiesWidget> {
                                                     ),
                                                     Padding(
                                                       padding:
-                                                          EdgeInsetsDirectional
+                                                          const EdgeInsetsDirectional
                                                               .fromSTEB(
                                                                   0.0,
                                                                   0.0,
@@ -746,7 +740,7 @@ class _ActivitiesWidgetState extends State<ActivitiesWidget> {
                                                         width: 30.0,
                                                         height: 30.0,
                                                         decoration:
-                                                            BoxDecoration(
+                                                            const BoxDecoration(
                                                           color:
                                                               Color(0x3852A097),
                                                           shape:

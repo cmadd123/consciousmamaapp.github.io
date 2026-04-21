@@ -2,22 +2,16 @@ import '/auth/firebase_auth/auth_util.dart';
 import '/backend/api_requests/api_calls.dart';
 import '/backend/api_requests/api_streaming.dart';
 import '/backend/backend.dart';
-import '/backend/schema/structs/index.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import '/flutter_flow/flutter_flow_widgets.dart';
 import '/v1/chat/chat/chat_widget.dart';
 import 'dart:convert';
-import 'dart:ui';
 import '/custom_code/actions/index.dart' as actions;
 import '/flutter_flow/custom_functions.dart' as functions;
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'ai_chat_completion_model.dart';
 export 'ai_chat_completion_model.dart';
 
@@ -52,7 +46,7 @@ class _AiChatCompletionWidgetState extends State<AiChatCompletionWidget> {
       _model.addToMessages(ChatCompletioninputItemStruct(
         role: 'developer',
         content:
-            'You are a specialist in child development, and your role is to discuss with mothers the current health, mental, physical, communication, or any other aspects of their children\'s well-being. adresse the current user my its name :  ${currentUserDisplayName} . Note the user have the following children :  ${functions.getinstructionForChildren(_model.myChildren?.toList())}',
+            'You are a specialist in child development, and your role is to discuss with mothers the current health, mental, physical, communication, or any other aspects of their children\'s well-being. adresse the current user my its name :  $currentUserDisplayName . Note the user have the following children :  ${functions.getinstructionForChildren(_model.myChildren?.toList())}',
       ));
       safeSetState(() {});
     });
@@ -107,7 +101,7 @@ class _AiChatCompletionWidgetState extends State<AiChatCompletionWidget> {
               return Container(
                 width: double.infinity,
                 height: double.infinity,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   gradient: LinearGradient(
                     colors: [Color(0xFFF6FFFE), Color(0xFFEDFFFD)],
                     stops: [0.0, 1.0],
@@ -121,7 +115,7 @@ class _AiChatCompletionWidgetState extends State<AiChatCompletionWidget> {
                   children: [
                     Padding(
                       padding:
-                          EdgeInsetsDirectional.fromSTEB(20.0, 0.0, 20.0, 16.0),
+                          const EdgeInsetsDirectional.fromSTEB(20.0, 0.0, 20.0, 16.0),
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         children: [
@@ -150,7 +144,7 @@ class _AiChatCompletionWidgetState extends State<AiChatCompletionWidget> {
                                   style: FlutterFlowTheme.of(context)
                                       .bodyMedium
                                       .override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         fontSize: 20.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.bold,
@@ -168,19 +162,19 @@ class _AiChatCompletionWidgetState extends State<AiChatCompletionWidget> {
                         children: [
                           if (false)
                             Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   20.0, 24.0, 20.0, 0.0),
                               child: Column(
                                 mainAxisSize: MainAxisSize.max,
                                 children: [
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(
                                         0.0, 32.0, 0.0, 0.0),
                                     child: ClipRRect(
                                       child: Container(
                                         width: double.infinity,
                                         height: 189.0,
-                                        decoration: BoxDecoration(),
+                                        decoration: const BoxDecoration(),
                                         child: ClipRRect(
                                           borderRadius:
                                               BorderRadius.circular(8.0),
@@ -195,7 +189,7 @@ class _AiChatCompletionWidgetState extends State<AiChatCompletionWidget> {
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(
                                         0.0, 32.0, 0.0, 0.0),
                                     child: Text(
                                       'Welcome to conscious AI',
@@ -203,7 +197,7 @@ class _AiChatCompletionWidgetState extends State<AiChatCompletionWidget> {
                                       style: FlutterFlowTheme.of(context)
                                           .bodyMedium
                                           .override(
-                                            fontFamily: 'Andika New Basic',
+                                            fontFamily: FFAppState().currentFontFamily,
                                             fontSize: 28.0,
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.bold,
@@ -211,7 +205,7 @@ class _AiChatCompletionWidgetState extends State<AiChatCompletionWidget> {
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(
                                         0.0, 20.0, 0.0, 0.0),
                                     child: Text(
                                       'Ask me anything what is on your mind. I am here to assist you.',
@@ -219,7 +213,7 @@ class _AiChatCompletionWidgetState extends State<AiChatCompletionWidget> {
                                       style: FlutterFlowTheme.of(context)
                                           .bodyMedium
                                           .override(
-                                            fontFamily: 'Andika New Basic',
+                                            fontFamily: FFAppState().currentFontFamily,
                                             color: FlutterFlowTheme.of(context)
                                                 .secondaryText,
                                             letterSpacing: 0.0,
@@ -227,14 +221,14 @@ class _AiChatCompletionWidgetState extends State<AiChatCompletionWidget> {
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(
                                         0.0, 24.0, 0.0, 0.0),
                                     child: Column(
                                       mainAxisSize: MainAxisSize.max,
                                       children: [
                                         Padding(
                                           padding:
-                                              EdgeInsetsDirectional.fromSTEB(
+                                              const EdgeInsetsDirectional.fromSTEB(
                                                   0.0, 0.0, 0.0, 20.0),
                                           child: Row(
                                             mainAxisSize: MainAxisSize.max,
@@ -264,7 +258,7 @@ class _AiChatCompletionWidgetState extends State<AiChatCompletionWidget> {
                                                     children: [
                                                       Padding(
                                                         padding:
-                                                            EdgeInsetsDirectional
+                                                            const EdgeInsetsDirectional
                                                                 .fromSTEB(
                                                                     15.0,
                                                                     0.0,
@@ -281,7 +275,7 @@ class _AiChatCompletionWidgetState extends State<AiChatCompletionWidget> {
                                                       Expanded(
                                                         child: Padding(
                                                           padding:
-                                                              EdgeInsetsDirectional
+                                                              const EdgeInsetsDirectional
                                                                   .fromSTEB(
                                                                       20.0,
                                                                       0.0,
@@ -333,7 +327,7 @@ class _AiChatCompletionWidgetState extends State<AiChatCompletionWidget> {
                                                     children: [
                                                       Padding(
                                                         padding:
-                                                            EdgeInsetsDirectional
+                                                            const EdgeInsetsDirectional
                                                                 .fromSTEB(
                                                                     15.0,
                                                                     0.0,
@@ -350,7 +344,7 @@ class _AiChatCompletionWidgetState extends State<AiChatCompletionWidget> {
                                                       Expanded(
                                                         child: Padding(
                                                           padding:
-                                                              EdgeInsetsDirectional
+                                                              const EdgeInsetsDirectional
                                                                   .fromSTEB(
                                                                       20.0,
                                                                       0.0,
@@ -377,7 +371,7 @@ class _AiChatCompletionWidgetState extends State<AiChatCompletionWidget> {
                                                   ),
                                                 ),
                                               ),
-                                            ].divide(SizedBox(width: 10.0)),
+                                            ].divide(const SizedBox(width: 10.0)),
                                           ),
                                         ),
                                         Row(
@@ -407,7 +401,7 @@ class _AiChatCompletionWidgetState extends State<AiChatCompletionWidget> {
                                                   children: [
                                                     Padding(
                                                       padding:
-                                                          EdgeInsetsDirectional
+                                                          const EdgeInsetsDirectional
                                                               .fromSTEB(
                                                                   15.0,
                                                                   0.0,
@@ -425,7 +419,7 @@ class _AiChatCompletionWidgetState extends State<AiChatCompletionWidget> {
                                                     Expanded(
                                                       child: Padding(
                                                         padding:
-                                                            EdgeInsetsDirectional
+                                                            const EdgeInsetsDirectional
                                                                 .fromSTEB(
                                                                     20.0,
                                                                     0.0,
@@ -476,7 +470,7 @@ class _AiChatCompletionWidgetState extends State<AiChatCompletionWidget> {
                                                   children: [
                                                     Padding(
                                                       padding:
-                                                          EdgeInsetsDirectional
+                                                          const EdgeInsetsDirectional
                                                               .fromSTEB(
                                                                   15.0,
                                                                   0.0,
@@ -494,7 +488,7 @@ class _AiChatCompletionWidgetState extends State<AiChatCompletionWidget> {
                                                     Expanded(
                                                       child: Padding(
                                                         padding:
-                                                            EdgeInsetsDirectional
+                                                            const EdgeInsetsDirectional
                                                                 .fromSTEB(
                                                                     20.0,
                                                                     0.0,
@@ -521,7 +515,7 @@ class _AiChatCompletionWidgetState extends State<AiChatCompletionWidget> {
                                                 ),
                                               ),
                                             ),
-                                          ].divide(SizedBox(width: 10.0)),
+                                          ].divide(const SizedBox(width: 10.0)),
                                         ),
                                       ],
                                     ),
@@ -531,7 +525,7 @@ class _AiChatCompletionWidgetState extends State<AiChatCompletionWidget> {
                             ),
                           Expanded(
                             child: Container(
-                              decoration: BoxDecoration(),
+                              decoration: const BoxDecoration(),
                               child: Builder(
                                 builder: (context) {
                                   final messagesRef = functions
@@ -563,14 +557,14 @@ class _AiChatCompletionWidgetState extends State<AiChatCompletionWidget> {
                     ),
                     Padding(
                       padding:
-                          EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 20.0),
+                          const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 20.0),
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Expanded(
                             child: Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   20.0, 0.0, 20.0, 0.0),
                               child: Container(
                                 decoration: BoxDecoration(
@@ -578,7 +572,7 @@ class _AiChatCompletionWidgetState extends State<AiChatCompletionWidget> {
                                       .secondaryBackground,
                                   borderRadius: BorderRadius.circular(27.0),
                                   border: Border.all(
-                                    color: Color(0x2A52A097),
+                                    color: const Color(0x2A52A097),
                                     width: 1.0,
                                   ),
                                 ),
@@ -589,7 +583,7 @@ class _AiChatCompletionWidgetState extends State<AiChatCompletionWidget> {
                                       child: Builder(
                                         builder: (context) {
                                           if (_model.isloadingData == false) {
-                                            return Container(
+                                            return SizedBox(
                                               width: 200.0,
                                               child: TextFormField(
                                                 controller: _model
@@ -622,7 +616,7 @@ class _AiChatCompletionWidgetState extends State<AiChatCompletionWidget> {
                                                           ),
                                                   enabledBorder:
                                                       OutlineInputBorder(
-                                                    borderSide: BorderSide(
+                                                    borderSide: const BorderSide(
                                                       color: Color(0x00000000),
                                                       width: 1.0,
                                                     ),
@@ -632,7 +626,7 @@ class _AiChatCompletionWidgetState extends State<AiChatCompletionWidget> {
                                                   ),
                                                   focusedBorder:
                                                       OutlineInputBorder(
-                                                    borderSide: BorderSide(
+                                                    borderSide: const BorderSide(
                                                       color: Color(0x00000000),
                                                       width: 1.0,
                                                     ),
@@ -713,7 +707,7 @@ class _AiChatCompletionWidgetState extends State<AiChatCompletionWidget> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 0.0, 20.0, 0.0),
                             child: InkWell(
                               splashColor: Colors.transparent,
@@ -737,9 +731,9 @@ class _AiChatCompletionWidgetState extends State<AiChatCompletionWidget> {
                                   messagesJson: functions.convertDatatype(
                                       _model.messages.toList()),
                                 );
-                                if (streamingApiResult?.succeeded ?? true) {
+                                if (streamingApiResult.succeeded ?? true) {
                                   final streamSubscription = streamingApiResult
-                                      ?.streamedResponse?.stream
+                                      .streamedResponse?.stream
                                       .transform(utf8.decoder)
                                       .transform(const LineSplitter())
                                       .transform(
@@ -763,9 +757,9 @@ class _AiChatCompletionWidgetState extends State<AiChatCompletionWidget> {
                                                         .serverSentEvent
                                                         .jsonData)
                                                 ?.choices
-                                                ?.firstOrNull
+                                                .firstOrNull
                                                 ?.delta
-                                                ?.content,
+                                                .content,
                                           ));
                                           safeSetState(() {});
                                         } else {
@@ -775,7 +769,7 @@ class _AiChatCompletionWidgetState extends State<AiChatCompletionWidget> {
                                             (e) => e
                                               ..role = 'assistant'
                                               ..content =
-                                                  '${_model.messages.elementAtOrNull(functions.getCurrentIndex(_model.messages.toList()))?.content}${ChatCompletionResultStruct.maybeFromMap(onMessageInput.serverSentEvent.jsonData)?.choices?.firstOrNull?.delta?.content}',
+                                                  '${_model.messages.elementAtOrNull(functions.getCurrentIndex(_model.messages.toList()))?.content}${ChatCompletionResultStruct.maybeFromMap(onMessageInput.serverSentEvent.jsonData)?.choices.firstOrNull?.delta.content}',
                                           );
                                           safeSetState(() {});
                                         }
@@ -793,7 +787,7 @@ class _AiChatCompletionWidgetState extends State<AiChatCompletionWidget> {
                                 }
 
                                 await actions.printStaf(
-                                  'Please address the user as ${currentUserDisplayName}The user has this children : ${functions.getinstructionForChildren(containerChildernRecordList.toList())} . The parent has the following id : ${currentUserUid} don\'t mentions ids to the user because we only need them for function calling',
+                                  'Please address the user as ${currentUserDisplayName}The user has this children : ${functions.getinstructionForChildren(containerChildernRecordList.toList())} . The parent has the following id : $currentUserUid don\'t mentions ids to the user because we only need them for function calling',
                                 );
                                 safeSetState(() {
                                   _model.promtTextFeildTextController?.clear();

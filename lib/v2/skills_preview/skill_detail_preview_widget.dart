@@ -1,11 +1,8 @@
-import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/backend/backend.dart';
-import '/auth/firebase_auth/auth_util.dart';
 import '/components/home_nav_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SkillDetailPreviewWidget extends StatefulWidget {
   const SkillDetailPreviewWidget({
@@ -111,9 +108,9 @@ class _SkillDetailPreviewWidgetState extends State<SkillDetailPreviewWidget> {
       stream: SkillPathRecord.getDocument(widget.skillPathRef),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          return Scaffold(
-            backgroundColor: const Color(0xFFFAF7F5),
-            body: const Center(
+          return const Scaffold(
+            backgroundColor: Color(0xFFFAF7F5),
+            body: Center(
               child: SizedBox(
                 width: 50.0,
                 height: 50.0,
@@ -182,11 +179,11 @@ class _SkillDetailPreviewWidgetState extends State<SkillDetailPreviewWidget> {
                               ),
                             ),
                           ),
-                          const SizedBox(height: 12.0),
+                          SizedBox(height: 12.0),
                           Text(
                             skillPath.skillName,
-                            style: const TextStyle(
-                              fontFamily: 'Andika New Basic',
+                            style: TextStyle(
+                              fontFamily: FFAppState().currentFontFamily,
                               color: Color(0xFF5D4E60),
                               fontSize: 28.0,
                               fontWeight: FontWeight.w600,
@@ -229,15 +226,15 @@ class _SkillDetailPreviewWidgetState extends State<SkillDetailPreviewWidget> {
                           circularStrokeCap: CircularStrokeCap.round,
                           center: Text(
                             '${skillPath.progressPercentage.toInt()}%',
-                            style: const TextStyle(
-                              fontFamily: 'Andika New Basic',
+                            style: TextStyle(
+                              fontFamily: FFAppState().currentFontFamily,
                               color: Color(0xFF5D4E60),
                               fontSize: 20.0,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
                         ),
-                        const SizedBox(width: 24.0),
+                        SizedBox(width: 24.0),
                         // Progress text
                         Expanded(
                           child: Column(
@@ -245,18 +242,18 @@ class _SkillDetailPreviewWidgetState extends State<SkillDetailPreviewWidget> {
                             children: [
                               Text(
                                 '${skillPath.completedMilestones} of ${skillPath.totalMilestones} Milestones',
-                                style: const TextStyle(
-                                  fontFamily: 'Andika New Basic',
+                                style: TextStyle(
+                                  fontFamily: FFAppState().currentFontFamily,
                                   color: Color(0xFF5D4E60),
                                   fontSize: 16.0,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
-                              const SizedBox(height: 4.0),
+                              SizedBox(height: 4.0),
                               Text(
                                 '${skillPath.completedSubMilestones} of ${skillPath.totalSubMilestones} steps complete',
-                                style: const TextStyle(
-                                  fontFamily: 'Andika New Basic',
+                                style: TextStyle(
+                                  fontFamily: FFAppState().currentFontFamily,
                                   color: Color(0xFF9B8A9E),
                                   fontSize: 13.0,
                                 ),
@@ -333,8 +330,8 @@ class _SkillDetailPreviewWidgetState extends State<SkillDetailPreviewWidget> {
                                                 )
                                               : Text(
                                                   '${milestone.number}',
-                                                  style: const TextStyle(
-                                                    fontFamily: 'Andika New Basic',
+                                                  style: TextStyle(
+                                                    fontFamily: FFAppState().currentFontFamily,
                                                     color: Color(0xFF9B8A9E),
                                                     fontSize: 16.0,
                                                     fontWeight: FontWeight.w600,
@@ -351,7 +348,7 @@ class _SkillDetailPreviewWidgetState extends State<SkillDetailPreviewWidget> {
                                             Text(
                                               milestone.title,
                                               style: TextStyle(
-                                                fontFamily: 'Andika New Basic',
+                                                fontFamily: FFAppState().currentFontFamily,
                                                 color: const Color(0xFF5D4E60),
                                                 fontSize: 15.0,
                                                 fontWeight: FontWeight.w600,
@@ -359,11 +356,11 @@ class _SkillDetailPreviewWidgetState extends State<SkillDetailPreviewWidget> {
                                                 decorationColor: const Color(0xFF9B8A9E),
                                               ),
                                             ),
-                                            const SizedBox(height: 4.0),
+                                            SizedBox(height: 4.0),
                                             Text(
                                               '$completedCount of ${subMilestones.length} steps',
-                                              style: const TextStyle(
-                                                fontFamily: 'Andika New Basic',
+                                              style: TextStyle(
+                                                fontFamily: FFAppState().currentFontFamily,
                                                 color: Color(0xFF9B8A9E),
                                                 fontSize: 12.0,
                                               ),
@@ -431,7 +428,7 @@ class _SkillDetailPreviewWidgetState extends State<SkillDetailPreviewWidget> {
                                                   child: Text(
                                                     subMilestone.title,
                                                     style: TextStyle(
-                                                      fontFamily: 'Andika New Basic',
+                                                      fontFamily: FFAppState().currentFontFamily,
                                                       color: const Color(0xFF5D4E60),
                                                       fontSize: 14.0,
                                                       height: 1.4,

@@ -1,16 +1,12 @@
 import '/auth/firebase_auth/auth_util.dart';
 import '/backend/custom_cloud_functions/custom_cloud_function_response_manager.dart';
-import '/backend/schema/structs/index.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
-import 'dart:ui';
 import '/flutter_flow/custom_functions.dart' as functions;
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'notifications_reminder_model.dart';
 export 'notifications_reminder_model.dart';
 
@@ -48,16 +44,16 @@ class _NotificationsReminderWidgetState
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsetsDirectional.fromSTEB(15.0, 0.0, 15.0, 0.0),
+      padding: const EdgeInsetsDirectional.fromSTEB(15.0, 0.0, 15.0, 0.0),
       child: Container(
         width: double.infinity,
         height: 210.0,
         decoration: BoxDecoration(
-          color: Color(0xFFFFF5F2),
+          color: const Color(0xFFFFF5F2),
           borderRadius: BorderRadius.circular(14.0),
         ),
         child: Padding(
-          padding: EdgeInsetsDirectional.fromSTEB(21.0, 21.0, 21.0, 21.0),
+          padding: const EdgeInsetsDirectional.fromSTEB(21.0, 21.0, 21.0, 21.0),
           child: Container(
             width: double.infinity,
             height: double.infinity,
@@ -73,24 +69,24 @@ class _NotificationsReminderWidgetState
               mainAxisSize: MainAxisSize.max,
               children: [
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(0.0, 8.0, 0.0, 0.0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(0.0, 8.0, 0.0, 0.0),
                   child: Text(
                     'Set Meal Plan Reminder:',
                     style: FlutterFlowTheme.of(context).bodyMedium.override(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           fontSize: 18.0,
                           letterSpacing: 0.0,
                         ),
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(0.0, 8.0, 0.0, 0.0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(0.0, 8.0, 0.0, 0.0),
                   child: FFButtonWidget(
                     onPressed: () async {
                       await showModalBottomSheet<bool>(
                           context: context,
                           builder: (context) {
-                            final _datePickedCupertinoTheme =
+                            final datePickedCupertinoTheme =
                                 CupertinoTheme.of(context);
                             return Container(
                               height: MediaQuery.of(context).size.height / 3,
@@ -98,14 +94,14 @@ class _NotificationsReminderWidgetState
                               color: FlutterFlowTheme.of(context)
                                   .secondaryBackground,
                               child: CupertinoTheme(
-                                data: _datePickedCupertinoTheme.copyWith(
-                                  textTheme: _datePickedCupertinoTheme.textTheme
+                                data: datePickedCupertinoTheme.copyWith(
+                                  textTheme: datePickedCupertinoTheme.textTheme
                                       .copyWith(
                                     dateTimePickerTextStyle:
                                         FlutterFlowTheme.of(context)
                                             .headlineMedium
                                             .override(
-                                              fontFamily: 'Andika New Basic',
+                                              fontFamily: FFAppState().currentFontFamily,
                                               color:
                                                   FlutterFlowTheme.of(context)
                                                       .primaryText,
@@ -143,13 +139,13 @@ class _NotificationsReminderWidgetState
                     options: FFButtonOptions(
                       height: 25.0,
                       padding:
-                          EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
+                          const EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
                       iconPadding:
-                          EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
+                          const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
                       color: FlutterFlowTheme.of(context).primary,
                       textStyle:
                           FlutterFlowTheme.of(context).titleSmall.override(
-                                fontFamily: 'Andika New Basic',
+                                fontFamily: FFAppState().currentFontFamily,
                                 color: Colors.white,
                                 fontSize: 12.0,
                                 letterSpacing: 0.0,
@@ -160,19 +156,19 @@ class _NotificationsReminderWidgetState
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(0.0, 8.0, 0.0, 0.0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(0.0, 8.0, 0.0, 0.0),
                   child: Text(
                     'You will be reminded every week date selected to create a meal plan',
                     textAlign: TextAlign.center,
                     style: FlutterFlowTheme.of(context).bodyMedium.override(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           fontSize: 12.0,
                           letterSpacing: 0.0,
                         ),
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(0.0, 8.0, 0.0, 0.0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(0.0, 8.0, 0.0, 0.0),
                   child: InkWell(
                     splashColor: Colors.transparent,
                     focusColor: Colors.transparent,
@@ -215,7 +211,7 @@ class _NotificationsReminderWidgetState
                                       FlutterFlowTheme.of(context).primaryText,
                                 ),
                               ),
-                              duration: Duration(milliseconds: 4000),
+                              duration: const Duration(milliseconds: 4000),
                               backgroundColor:
                                   FlutterFlowTheme.of(context).secondary,
                             ),
@@ -230,7 +226,7 @@ class _NotificationsReminderWidgetState
                                       FlutterFlowTheme.of(context).primaryText,
                                 ),
                               ),
-                              duration: Duration(milliseconds: 4000),
+                              duration: const Duration(milliseconds: 4000),
                               backgroundColor:
                                   FlutterFlowTheme.of(context).error,
                             ),
@@ -247,8 +243,8 @@ class _NotificationsReminderWidgetState
                     child: Text(
                       'Done',
                       style: FlutterFlowTheme.of(context).bodyMedium.override(
-                            fontFamily: 'Andika New Basic',
-                            color: Color(0xFF52A097),
+                            fontFamily: FFAppState().currentFontFamily,
+                            color: const Color(0xFF52A097),
                             fontSize: 13.0,
                             letterSpacing: 0.0,
                           ),

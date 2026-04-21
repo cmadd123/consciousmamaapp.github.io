@@ -101,14 +101,14 @@ class ScreenshotMilestones extends StatelessWidget {
                     const SizedBox(height: 24),
 
                     // Categories
-                    _CategorySection(
+                    const _CategorySection(
                       title: 'Physical',
                       icon: Icons.directions_run,
-                      color: const Color(0xFF4CAF50),
+                      color: Color(0xFF4CAF50),
                       progress: 0.6,
                       completed: 3,
                       total: 5,
-                      milestones: const [
+                      milestones: [
                         DemoMilestone(title: 'Walks without support', completed: true),
                         DemoMilestone(title: 'Kicks a ball forward', completed: true),
                         DemoMilestone(title: 'Runs with coordination', completed: true),
@@ -117,14 +117,14 @@ class ScreenshotMilestones extends StatelessWidget {
                       ],
                     ),
 
-                    _CategorySection(
+                    const _CategorySection(
                       title: 'Cognitive',
                       icon: Icons.psychology,
-                      color: const Color(0xFF64B5F6),
+                      color: Color(0xFF64B5F6),
                       progress: 0.4,
                       completed: 2,
                       total: 5,
-                      milestones: const [
+                      milestones: [
                         DemoMilestone(title: 'Sorts shapes and colors', completed: true),
                         DemoMilestone(title: 'Follows two-step instructions', completed: true),
                         DemoMilestone(title: 'Names familiar objects'),
@@ -133,14 +133,14 @@ class ScreenshotMilestones extends StatelessWidget {
                       ],
                     ),
 
-                    _CategorySection(
+                    const _CategorySection(
                       title: 'Communication',
                       icon: Icons.chat_bubble_outline,
                       color: kPrimary,
                       progress: 0.4,
                       completed: 2,
                       total: 5,
-                      milestones: const [
+                      milestones: [
                         DemoMilestone(title: 'Says 50+ words', completed: true),
                         DemoMilestone(title: 'Uses 2-word phrases', completed: true),
                         DemoMilestone(title: 'Asks "what" and "where" questions'),

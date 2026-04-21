@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '/flutter_flow/flutter_flow_theme.dart';
 
 /// Friendly error screen shown when critical errors occur
 /// This prevents white screen crashes and gives users actionable info
@@ -8,10 +7,10 @@ class ErrorScreenWidget extends StatelessWidget {
   final String? customMessage;
 
   const ErrorScreenWidget({
-    Key? key,
+    super.key,
     this.errorDetails,
     this.customMessage,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +44,7 @@ class ErrorScreenWidget extends StatelessWidget {
                   Text(
                     'Oops! Something went wrong',
                     style: TextStyle(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       fontSize: 24,
                       fontWeight: FontWeight.w600,
                       color: const Color(0xFF14181B),
@@ -59,7 +58,7 @@ class ErrorScreenWidget extends StatelessWidget {
                     customMessage ??
                         'We\'re sorry for the inconvenience. The app encountered an unexpected error.',
                     style: TextStyle(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       fontSize: 16,
                       color: const Color(0xFF57636C),
                       height: 1.5,
@@ -88,7 +87,7 @@ class ErrorScreenWidget extends StatelessWidget {
                     child: const Text(
                       'Try Again',
                       style: TextStyle(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                         color: Colors.white,
@@ -101,7 +100,7 @@ class ErrorScreenWidget extends StatelessWidget {
                   Text(
                     'If this problem persists, please try:\n• Restarting the app\n• Checking your internet connection\n• Updating to the latest version',
                     style: TextStyle(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       fontSize: 14,
                       color: const Color(0xFF95A1AC),
                       height: 1.5,
@@ -125,22 +124,22 @@ class ErrorScreenWidget extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
+                          const Text(
                             'Error Details (for developers):',
                             style: TextStyle(
                               fontFamily: 'Courier',
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
-                              color: const Color(0xFF57636C),
+                              color: Color(0xFF57636C),
                             ),
                           ),
                           const SizedBox(height: 8),
                           Text(
                             errorDetails!.exceptionAsString(),
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontFamily: 'Courier',
                               fontSize: 11,
-                              color: const Color(0xFF95A1AC),
+                              color: Color(0xFF95A1AC),
                             ),
                             maxLines: 5,
                             overflow: TextOverflow.ellipsis,

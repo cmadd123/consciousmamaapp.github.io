@@ -1,19 +1,14 @@
 // Automatic FlutterFlow imports
 import '/backend/backend.dart';
-import '/backend/schema/structs/index.dart';
-import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import '/custom_code/actions/index.dart'; // Imports other custom actions
-import '/flutter_flow/custom_functions.dart'; // Imports custom functions
+// Imports other custom actions
+// Imports custom functions
 import 'package:flutter/material.dart';
 // Begin custom action code
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
-import 'dart:convert';
 import 'package:flutter_stripe/flutter_stripe.dart';
-import 'package:http/http.dart' as http;
 import 'package:cloud_functions/cloud_functions.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import '/auth/firebase_auth/auth_util.dart';
 
 /// Stripe Service for MomRise Subscription Management
@@ -104,7 +99,7 @@ Future<String> createSubscription({
         customerId: customerId,
         merchantDisplayName: 'MomRise',
         style: ThemeMode.system,
-        appearance: PaymentSheetAppearance(
+        appearance: const PaymentSheetAppearance(
           primaryButton: PaymentSheetPrimaryButtonAppearance(
             colors: PaymentSheetPrimaryButtonTheme(
               light: PaymentSheetPrimaryButtonThemeColors(
@@ -152,7 +147,7 @@ Future<bool> hasActiveSubscription() async {
 
     if (!userSnapshot.exists) return false;
 
-    final userData = userSnapshot.data() as Map<String, dynamic>?;
+    final userData = userSnapshot.data();
     if (userData == null) return false;
 
     final subscriptionStatus = userData['subscription_status'] as String?;

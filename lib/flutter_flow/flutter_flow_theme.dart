@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import '/app_state.dart';
 import '/v2/creator/creator_theme_notifier.dart';
 
 abstract class FlutterFlowTheme {
@@ -244,122 +245,122 @@ class ThemeTypography extends Typography {
 
   final FlutterFlowTheme theme;
 
-  String get displayLargeFamily => 'Andika New Basic';
+  String get displayLargeFamily => FFAppState().currentFontFamily;
   bool get displayLargeIsCustom => true;
   TextStyle get displayLarge => TextStyle(
-        fontFamily: 'Andika New Basic',
+        fontFamily: FFAppState().currentFontFamily,
         color: theme.primaryText,
         fontWeight: FontWeight.w600,
         fontSize: 64.0,
       );
-  String get displayMediumFamily => 'Andika New Basic';
+  String get displayMediumFamily => FFAppState().currentFontFamily;
   bool get displayMediumIsCustom => true;
   TextStyle get displayMedium => TextStyle(
-        fontFamily: 'Andika New Basic',
+        fontFamily: FFAppState().currentFontFamily,
         color: theme.primaryText,
         fontWeight: FontWeight.w600,
         fontSize: 44.0,
       );
-  String get displaySmallFamily => 'Andika New Basic';
+  String get displaySmallFamily => FFAppState().currentFontFamily;
   bool get displaySmallIsCustom => true;
   TextStyle get displaySmall => TextStyle(
-        fontFamily: 'Andika New Basic',
+        fontFamily: FFAppState().currentFontFamily,
         color: theme.primaryText,
         fontWeight: FontWeight.w600,
         fontSize: 36.0,
       );
-  String get headlineLargeFamily => 'Andika New Basic';
+  String get headlineLargeFamily => FFAppState().currentFontFamily;
   bool get headlineLargeIsCustom => true;
   TextStyle get headlineLarge => TextStyle(
-        fontFamily: 'Andika New Basic',
+        fontFamily: FFAppState().currentFontFamily,
         color: theme.primaryText,
         fontWeight: FontWeight.w600,
         fontSize: 32.0,
       );
-  String get headlineMediumFamily => 'Andika New Basic';
+  String get headlineMediumFamily => FFAppState().currentFontFamily;
   bool get headlineMediumIsCustom => true;
   TextStyle get headlineMedium => TextStyle(
-        fontFamily: 'Andika New Basic',
+        fontFamily: FFAppState().currentFontFamily,
         color: theme.primaryText,
         fontWeight: FontWeight.w600,
         fontSize: 28.0,
       );
-  String get headlineSmallFamily => 'Andika New Basic';
+  String get headlineSmallFamily => FFAppState().currentFontFamily;
   bool get headlineSmallIsCustom => true;
   TextStyle get headlineSmall => TextStyle(
-        fontFamily: 'Andika New Basic',
+        fontFamily: FFAppState().currentFontFamily,
         color: theme.primaryText,
         fontWeight: FontWeight.w600,
         fontSize: 24.0,
       );
-  String get titleLargeFamily => 'Andika New Basic';
+  String get titleLargeFamily => FFAppState().currentFontFamily;
   bool get titleLargeIsCustom => true;
   TextStyle get titleLarge => TextStyle(
-        fontFamily: 'Andika New Basic',
+        fontFamily: FFAppState().currentFontFamily,
         color: theme.primaryText,
         fontWeight: FontWeight.w600,
         fontSize: 20.0,
       );
-  String get titleMediumFamily => 'Andika New Basic';
+  String get titleMediumFamily => FFAppState().currentFontFamily;
   bool get titleMediumIsCustom => true;
   TextStyle get titleMedium => TextStyle(
-        fontFamily: 'Andika New Basic',
+        fontFamily: FFAppState().currentFontFamily,
         color: theme.primaryText,
         fontWeight: FontWeight.w600,
         fontSize: 18.0,
       );
-  String get titleSmallFamily => 'Andika New Basic';
+  String get titleSmallFamily => FFAppState().currentFontFamily;
   bool get titleSmallIsCustom => true;
   TextStyle get titleSmall => TextStyle(
-        fontFamily: 'Andika New Basic',
+        fontFamily: FFAppState().currentFontFamily,
         color: theme.primaryText,
         fontWeight: FontWeight.w600,
         fontSize: 16.0,
       );
-  String get labelLargeFamily => 'Andika New Basic';
+  String get labelLargeFamily => FFAppState().currentFontFamily;
   bool get labelLargeIsCustom => true;
   TextStyle get labelLarge => TextStyle(
-        fontFamily: 'Andika New Basic',
+        fontFamily: FFAppState().currentFontFamily,
         color: theme.secondaryText,
         fontWeight: FontWeight.normal,
         fontSize: 16.0,
       );
-  String get labelMediumFamily => 'Andika New Basic';
+  String get labelMediumFamily => FFAppState().currentFontFamily;
   bool get labelMediumIsCustom => true;
   TextStyle get labelMedium => TextStyle(
-        fontFamily: 'Andika New Basic',
+        fontFamily: FFAppState().currentFontFamily,
         color: theme.secondaryText,
         fontWeight: FontWeight.normal,
         fontSize: 14.0,
       );
-  String get labelSmallFamily => 'Andika New Basic';
+  String get labelSmallFamily => FFAppState().currentFontFamily;
   bool get labelSmallIsCustom => true;
   TextStyle get labelSmall => TextStyle(
-        fontFamily: 'Andika New Basic',
+        fontFamily: FFAppState().currentFontFamily,
         color: theme.secondaryText,
         fontWeight: FontWeight.normal,
         fontSize: 12.0,
       );
-  String get bodyLargeFamily => 'Andika New Basic';
+  String get bodyLargeFamily => FFAppState().currentFontFamily;
   bool get bodyLargeIsCustom => true;
   TextStyle get bodyLarge => TextStyle(
-        fontFamily: 'Andika New Basic',
+        fontFamily: FFAppState().currentFontFamily,
         color: theme.primaryText,
         fontWeight: FontWeight.normal,
         fontSize: 16.0,
       );
-  String get bodyMediumFamily => 'Andika New Basic';
+  String get bodyMediumFamily => FFAppState().currentFontFamily;
   bool get bodyMediumIsCustom => true;
   TextStyle get bodyMedium => TextStyle(
-        fontFamily: 'Andika New Basic',
+        fontFamily: FFAppState().currentFontFamily,
         color: theme.primaryText,
         fontWeight: FontWeight.normal,
         fontSize: 14.0,
       );
-  String get bodySmallFamily => 'Andika New Basic';
+  String get bodySmallFamily => FFAppState().currentFontFamily;
   bool get bodySmallIsCustom => true;
   TextStyle get bodySmall => TextStyle(
-        fontFamily: 'Andika New Basic',
+        fontFamily: FFAppState().currentFontFamily,
         color: theme.primaryText,
         fontWeight: FontWeight.normal,
         fontSize: 12.0,

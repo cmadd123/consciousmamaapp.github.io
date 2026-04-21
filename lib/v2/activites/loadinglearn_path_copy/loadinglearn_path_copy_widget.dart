@@ -1,11 +1,7 @@
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import '/flutter_flow/flutter_flow_widgets.dart';
-import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:percent_indicator/percent_indicator.dart';
-import 'package:provider/provider.dart';
 import 'loadinglearn_path_copy_model.dart';
 export 'loadinglearn_path_copy_model.dart';
 
@@ -56,7 +52,7 @@ class _LoadinglearnPathCopyWidgetState
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(12.0, 20.0, 12.0, 0.0),
+                padding: const EdgeInsetsDirectional.fromSTEB(12.0, 20.0, 12.0, 0.0),
                 child: Material(
                   color: Colors.transparent,
                   elevation: 1.0,
@@ -78,9 +74,9 @@ class _LoadinglearnPathCopyWidgetState
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Align(
-                          alignment: AlignmentDirectional(-1.0, 0.0),
+                          alignment: const AlignmentDirectional(-1.0, 0.0),
                           child: Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 15.0, 0.0, 0.0, 0.0),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(14.0),
@@ -94,7 +90,7 @@ class _LoadinglearnPathCopyWidgetState
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               24.0, 0.0, 24.0, 0.0),
                           child: Text(
                             'Hold on. We are finding your activities. ',
@@ -102,14 +98,14 @@ class _LoadinglearnPathCopyWidgetState
                             style: FlutterFlowTheme.of(context)
                                 .bodyMedium
                                 .override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   fontSize: 24.0,
                                   letterSpacing: 0.0,
                                 ),
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               24.0, 8.0, 24.0, 0.0),
                           child: LinearPercentIndicator(
                             percent: 0.5,
@@ -117,9 +113,9 @@ class _LoadinglearnPathCopyWidgetState
                             lineHeight: 12.0,
                             animation: true,
                             animateFromLastPercent: true,
-                            progressColor: Color(0xFF52A097),
-                            backgroundColor: Color(0x75D9D9D9),
-                            barRadius: Radius.circular(8.0),
+                            progressColor: const Color(0xFF52A097),
+                            backgroundColor: const Color(0x75D9D9D9),
+                            barRadius: const Radius.circular(8.0),
                             padding: EdgeInsets.zero,
                           ),
                         ),

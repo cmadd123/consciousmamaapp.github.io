@@ -24,7 +24,6 @@ import 'schema/fav_activity_record.dart';
 import 'schema/favourit_meal_record.dart';
 import 'schema/event_and_task_record.dart';
 import 'schema/meal_combo_record.dart';
-import 'schema/shared_content_record.dart';
 import 'schema/todo_record.dart';
 import 'schema/planned_activity_record.dart';
 import 'schema/user_activity_record.dart';
@@ -1193,7 +1192,7 @@ Future<FFFirestorePage<T>> queryCollectionPage<T>(
   } else {
     docSnapshot = await query.get();
   }
-  final getDocs = (QuerySnapshot s) => s.docs
+  List<T> getDocs(QuerySnapshot s) => s.docs
       .map(
         (d) => safeGet(
           () => recordBuilder(d),

@@ -586,7 +586,7 @@ class GroceryItemStruct extends FFFirebaseStruct {
     String processWord(String w) {
       // Words ending in "ies" -> "y" (berries -> berry)
       if (w.endsWith('ies') && w.length > 4) {
-        return w.substring(0, w.length - 3) + 'y';
+        return '${w.substring(0, w.length - 3)}y';
       }
       // Words ending in "oes" -> "o" (tomatoes -> tomato)
       if (w.endsWith('oes') && w.length > 4) {

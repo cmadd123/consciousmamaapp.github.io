@@ -1,17 +1,9 @@
-import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
-import '/backend/schema/enums/enums.dart';
-import '/backend/schema/structs/index.dart';
 import '/components/home_nav_bar_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import '/flutter_flow/flutter_flow_widgets.dart';
-import 'dart:ui';
 import '/index.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'kindof_activity_copy_copy_model.dart';
 export 'kindof_activity_copy_copy_model.dart';
 
@@ -72,7 +64,7 @@ class _KindofActivityCopyCopyWidgetState
                   children: [
                     Padding(
                       padding:
-                          EdgeInsetsDirectional.fromSTEB(12.0, 20.0, 12.0, 0.0),
+                          const EdgeInsetsDirectional.fromSTEB(12.0, 20.0, 12.0, 0.0),
                       child: Material(
                         color: Colors.transparent,
                         elevation: 1.0,
@@ -94,7 +86,7 @@ class _KindofActivityCopyCopyWidgetState
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     24.0, 26.0, 24.0, 0.0),
                                 child: Text(
                                   'Would you like this to be a quiet activity?',
@@ -102,19 +94,19 @@ class _KindofActivityCopyCopyWidgetState
                                   style: FlutterFlowTheme.of(context)
                                       .bodyMedium
                                       .override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         fontSize: 24.0,
                                         letterSpacing: 0.0,
                                       ),
                                 ),
                               ),
                               Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     0.0, 0.0, 0.0, 20.0),
                                 child: Builder(
                                   builder: (context) {
                                     final threediffrentActivity =
-                                        widget!.activityModel!.toList();
+                                        widget.activityModel!.toList();
 
                                     return ListView.builder(
                                       padding: EdgeInsets.zero,
@@ -129,7 +121,7 @@ class _KindofActivityCopyCopyWidgetState
                                                 threediffrentActivityIndex];
                                         return Padding(
                                           padding:
-                                              EdgeInsetsDirectional.fromSTEB(
+                                              const EdgeInsetsDirectional.fromSTEB(
                                                   16.0, 20.0, 16.0, 0.0),
                                           child: InkWell(
                                             splashColor: Colors.transparent,
@@ -165,7 +157,7 @@ class _KindofActivityCopyCopyWidgetState
                                             child: Container(
                                               width: double.infinity,
                                               decoration: BoxDecoration(
-                                                color: Color(0x5AFFD8E4),
+                                                color: const Color(0x5AFFD8E4),
                                                 borderRadius:
                                                     BorderRadius.circular(14.0),
                                                 border: Border.all(
@@ -176,7 +168,7 @@ class _KindofActivityCopyCopyWidgetState
                                                 ),
                                               ),
                                               child: Padding(
-                                                padding: EdgeInsetsDirectional
+                                                padding: const EdgeInsetsDirectional
                                                     .fromSTEB(
                                                         8.0, 8.0, 8.0, 4.0),
                                                 child: Column(
@@ -194,7 +186,7 @@ class _KindofActivityCopyCopyWidgetState
                                                       children: [
                                                         Padding(
                                                           padding:
-                                                              EdgeInsetsDirectional
+                                                              const EdgeInsetsDirectional
                                                                   .fromSTEB(
                                                                       2.0,
                                                                       0.0,
@@ -222,7 +214,7 @@ class _KindofActivityCopyCopyWidgetState
                                                     ),
                                                     Padding(
                                                       padding:
-                                                          EdgeInsetsDirectional
+                                                          const EdgeInsetsDirectional
                                                               .fromSTEB(
                                                                   0.0,
                                                                   5.0,
@@ -242,7 +234,7 @@ class _KindofActivityCopyCopyWidgetState
                                                           ),
                                                           Padding(
                                                             padding:
-                                                                EdgeInsetsDirectional
+                                                                const EdgeInsetsDirectional
                                                                     .fromSTEB(
                                                                         3.0,
                                                                         0.0,
@@ -273,7 +265,7 @@ class _KindofActivityCopyCopyWidgetState
                                                           ),
                                                           Padding(
                                                             padding:
-                                                                EdgeInsetsDirectional
+                                                                const EdgeInsetsDirectional
                                                                     .fromSTEB(
                                                                         9.0,
                                                                         0.0,
@@ -290,7 +282,7 @@ class _KindofActivityCopyCopyWidgetState
                                                           ),
                                                           Padding(
                                                             padding:
-                                                                EdgeInsetsDirectional
+                                                                const EdgeInsetsDirectional
                                                                     .fromSTEB(
                                                                         3.0,
                                                                         0.0,
@@ -324,11 +316,11 @@ class _KindofActivityCopyCopyWidgetState
                                                     ),
                                                     Align(
                                                       alignment:
-                                                          AlignmentDirectional(
+                                                          const AlignmentDirectional(
                                                               -1.0, 0.0),
                                                       child: Padding(
                                                         padding:
-                                                            EdgeInsetsDirectional
+                                                            const EdgeInsetsDirectional
                                                                 .fromSTEB(
                                                                     2.0,
                                                                     10.0,
@@ -351,11 +343,11 @@ class _KindofActivityCopyCopyWidgetState
                                                     ),
                                                     Align(
                                                       alignment:
-                                                          AlignmentDirectional(
+                                                          const AlignmentDirectional(
                                                               -1.0, 0.0),
                                                       child: Padding(
                                                         padding:
-                                                            EdgeInsetsDirectional
+                                                            const EdgeInsetsDirectional
                                                                 .fromSTEB(
                                                                     2.0,
                                                                     0.0,
@@ -374,7 +366,7 @@ class _KindofActivityCopyCopyWidgetState
                                                               .override(
                                                                 fontFamily:
                                                                     'Andika New Basic',
-                                                                color: Color(
+                                                                color: const Color(
                                                                     0xC4000000),
                                                                 fontSize: 10.0,
                                                                 letterSpacing:
@@ -385,11 +377,11 @@ class _KindofActivityCopyCopyWidgetState
                                                     ),
                                                     Align(
                                                       alignment:
-                                                          AlignmentDirectional(
+                                                          const AlignmentDirectional(
                                                               -1.0, 0.0),
                                                       child: Padding(
                                                         padding:
-                                                            EdgeInsetsDirectional
+                                                            const EdgeInsetsDirectional
                                                                 .fromSTEB(
                                                                     2.0,
                                                                     20.0,
@@ -434,12 +426,12 @@ class _KindofActivityCopyCopyWidgetState
                                                                     activityNeedsIndex];
                                                             return Align(
                                                               alignment:
-                                                                  AlignmentDirectional(
+                                                                  const AlignmentDirectional(
                                                                       -1.0,
                                                                       0.0),
                                                               child: Padding(
                                                                 padding:
-                                                                    EdgeInsetsDirectional
+                                                                    const EdgeInsetsDirectional
                                                                         .fromSTEB(
                                                                             2.0,
                                                                             0.0,
@@ -457,7 +449,7 @@ class _KindofActivityCopyCopyWidgetState
                                                                       .override(
                                                                         fontFamily:
                                                                             'Andika New Basic',
-                                                                        color: Color(
+                                                                        color: const Color(
                                                                             0xC4000000),
                                                                         fontSize:
                                                                             10.0,
@@ -473,11 +465,11 @@ class _KindofActivityCopyCopyWidgetState
                                                     ),
                                                     Align(
                                                       alignment:
-                                                          AlignmentDirectional(
+                                                          const AlignmentDirectional(
                                                               -1.0, 0.0),
                                                       child: Padding(
                                                         padding:
-                                                            EdgeInsetsDirectional
+                                                            const EdgeInsetsDirectional
                                                                 .fromSTEB(
                                                                     2.0,
                                                                     20.0,
@@ -500,11 +492,11 @@ class _KindofActivityCopyCopyWidgetState
                                                     ),
                                                     Align(
                                                       alignment:
-                                                          AlignmentDirectional(
+                                                          const AlignmentDirectional(
                                                               -1.0, 0.0),
                                                       child: Padding(
                                                         padding:
-                                                            EdgeInsetsDirectional
+                                                            const EdgeInsetsDirectional
                                                                 .fromSTEB(
                                                                     2.0,
                                                                     0.0,
@@ -523,7 +515,7 @@ class _KindofActivityCopyCopyWidgetState
                                                               .override(
                                                                 fontFamily:
                                                                     'Andika New Basic',
-                                                                color: Color(
+                                                                color: const Color(
                                                                     0xC4000000),
                                                                 fontSize: 10.0,
                                                                 letterSpacing:
@@ -548,7 +540,7 @@ class _KindofActivityCopyCopyWidgetState
                         ),
                       ),
                     ),
-                  ].addToEnd(SizedBox(height: 82.0)),
+                  ].addToEnd(const SizedBox(height: 82.0)),
                 ),
               ),
             ],

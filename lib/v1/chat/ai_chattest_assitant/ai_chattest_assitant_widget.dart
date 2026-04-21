@@ -3,19 +3,14 @@ import '/backend/api_requests/api_calls.dart';
 import '/backend/api_requests/api_streaming.dart';
 import '/backend/backend.dart';
 import '/backend/schema/enums/enums.dart';
-import '/backend/schema/structs/index.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import '/flutter_flow/flutter_flow_widgets.dart';
 import 'dart:convert';
-import 'dart:ui';
 import '/custom_code/actions/index.dart' as actions;
 import '/flutter_flow/custom_functions.dart' as functions;
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'ai_chattest_assitant_model.dart';
 export 'ai_chattest_assitant_model.dart';
 
@@ -102,7 +97,7 @@ class _AiChattestAssitantWidgetState extends State<AiChattestAssitantWidget> {
               return Container(
                 width: double.infinity,
                 height: double.infinity,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   gradient: LinearGradient(
                     colors: [Color(0xFFF6FFFE), Color(0xFFEDFFFD)],
                     stops: [0.0, 1.0],
@@ -116,7 +111,7 @@ class _AiChattestAssitantWidgetState extends State<AiChattestAssitantWidget> {
                   children: [
                     Padding(
                       padding:
-                          EdgeInsetsDirectional.fromSTEB(20.0, 0.0, 20.0, 16.0),
+                          const EdgeInsetsDirectional.fromSTEB(20.0, 0.0, 20.0, 16.0),
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         children: [
@@ -145,7 +140,7 @@ class _AiChattestAssitantWidgetState extends State<AiChattestAssitantWidget> {
                                   style: FlutterFlowTheme.of(context)
                                       .bodyMedium
                                       .override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         fontSize: 20.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.bold,
@@ -163,19 +158,19 @@ class _AiChattestAssitantWidgetState extends State<AiChattestAssitantWidget> {
                         children: [
                           if (false)
                             Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   20.0, 24.0, 20.0, 0.0),
                               child: Column(
                                 mainAxisSize: MainAxisSize.max,
                                 children: [
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(
                                         0.0, 32.0, 0.0, 0.0),
                                     child: ClipRRect(
                                       child: Container(
                                         width: double.infinity,
                                         height: 189.0,
-                                        decoration: BoxDecoration(),
+                                        decoration: const BoxDecoration(),
                                         child: ClipRRect(
                                           borderRadius:
                                               BorderRadius.circular(8.0),
@@ -190,7 +185,7 @@ class _AiChattestAssitantWidgetState extends State<AiChattestAssitantWidget> {
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(
                                         0.0, 32.0, 0.0, 0.0),
                                     child: Text(
                                       'Welcome to conscious AI',
@@ -198,7 +193,7 @@ class _AiChattestAssitantWidgetState extends State<AiChattestAssitantWidget> {
                                       style: FlutterFlowTheme.of(context)
                                           .bodyMedium
                                           .override(
-                                            fontFamily: 'Andika New Basic',
+                                            fontFamily: FFAppState().currentFontFamily,
                                             fontSize: 28.0,
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.bold,
@@ -206,7 +201,7 @@ class _AiChattestAssitantWidgetState extends State<AiChattestAssitantWidget> {
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(
                                         0.0, 20.0, 0.0, 0.0),
                                     child: Text(
                                       'Ask me anything what is on your mind. I am here to assist you.',
@@ -214,7 +209,7 @@ class _AiChattestAssitantWidgetState extends State<AiChattestAssitantWidget> {
                                       style: FlutterFlowTheme.of(context)
                                           .bodyMedium
                                           .override(
-                                            fontFamily: 'Andika New Basic',
+                                            fontFamily: FFAppState().currentFontFamily,
                                             color: FlutterFlowTheme.of(context)
                                                 .secondaryText,
                                             letterSpacing: 0.0,
@@ -222,14 +217,14 @@ class _AiChattestAssitantWidgetState extends State<AiChattestAssitantWidget> {
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(
                                         0.0, 24.0, 0.0, 0.0),
                                     child: Column(
                                       mainAxisSize: MainAxisSize.max,
                                       children: [
                                         Padding(
                                           padding:
-                                              EdgeInsetsDirectional.fromSTEB(
+                                              const EdgeInsetsDirectional.fromSTEB(
                                                   0.0, 0.0, 0.0, 20.0),
                                           child: Row(
                                             mainAxisSize: MainAxisSize.max,
@@ -259,7 +254,7 @@ class _AiChattestAssitantWidgetState extends State<AiChattestAssitantWidget> {
                                                     children: [
                                                       Padding(
                                                         padding:
-                                                            EdgeInsetsDirectional
+                                                            const EdgeInsetsDirectional
                                                                 .fromSTEB(
                                                                     15.0,
                                                                     0.0,
@@ -276,7 +271,7 @@ class _AiChattestAssitantWidgetState extends State<AiChattestAssitantWidget> {
                                                       Expanded(
                                                         child: Padding(
                                                           padding:
-                                                              EdgeInsetsDirectional
+                                                              const EdgeInsetsDirectional
                                                                   .fromSTEB(
                                                                       20.0,
                                                                       0.0,
@@ -328,7 +323,7 @@ class _AiChattestAssitantWidgetState extends State<AiChattestAssitantWidget> {
                                                     children: [
                                                       Padding(
                                                         padding:
-                                                            EdgeInsetsDirectional
+                                                            const EdgeInsetsDirectional
                                                                 .fromSTEB(
                                                                     15.0,
                                                                     0.0,
@@ -345,7 +340,7 @@ class _AiChattestAssitantWidgetState extends State<AiChattestAssitantWidget> {
                                                       Expanded(
                                                         child: Padding(
                                                           padding:
-                                                              EdgeInsetsDirectional
+                                                              const EdgeInsetsDirectional
                                                                   .fromSTEB(
                                                                       20.0,
                                                                       0.0,
@@ -372,7 +367,7 @@ class _AiChattestAssitantWidgetState extends State<AiChattestAssitantWidget> {
                                                   ),
                                                 ),
                                               ),
-                                            ].divide(SizedBox(width: 10.0)),
+                                            ].divide(const SizedBox(width: 10.0)),
                                           ),
                                         ),
                                         Row(
@@ -402,7 +397,7 @@ class _AiChattestAssitantWidgetState extends State<AiChattestAssitantWidget> {
                                                   children: [
                                                     Padding(
                                                       padding:
-                                                          EdgeInsetsDirectional
+                                                          const EdgeInsetsDirectional
                                                               .fromSTEB(
                                                                   15.0,
                                                                   0.0,
@@ -420,7 +415,7 @@ class _AiChattestAssitantWidgetState extends State<AiChattestAssitantWidget> {
                                                     Expanded(
                                                       child: Padding(
                                                         padding:
-                                                            EdgeInsetsDirectional
+                                                            const EdgeInsetsDirectional
                                                                 .fromSTEB(
                                                                     20.0,
                                                                     0.0,
@@ -471,7 +466,7 @@ class _AiChattestAssitantWidgetState extends State<AiChattestAssitantWidget> {
                                                   children: [
                                                     Padding(
                                                       padding:
-                                                          EdgeInsetsDirectional
+                                                          const EdgeInsetsDirectional
                                                               .fromSTEB(
                                                                   15.0,
                                                                   0.0,
@@ -489,7 +484,7 @@ class _AiChattestAssitantWidgetState extends State<AiChattestAssitantWidget> {
                                                     Expanded(
                                                       child: Padding(
                                                         padding:
-                                                            EdgeInsetsDirectional
+                                                            const EdgeInsetsDirectional
                                                                 .fromSTEB(
                                                                     20.0,
                                                                     0.0,
@@ -516,7 +511,7 @@ class _AiChattestAssitantWidgetState extends State<AiChattestAssitantWidget> {
                                                 ),
                                               ),
                                             ),
-                                          ].divide(SizedBox(width: 10.0)),
+                                          ].divide(const SizedBox(width: 10.0)),
                                         ),
                                       ],
                                     ),
@@ -526,7 +521,7 @@ class _AiChattestAssitantWidgetState extends State<AiChattestAssitantWidget> {
                             ),
                           Expanded(
                             child: Container(
-                              decoration: BoxDecoration(),
+                              decoration: const BoxDecoration(),
                             ),
                           ),
                         ],
@@ -534,13 +529,13 @@ class _AiChattestAssitantWidgetState extends State<AiChattestAssitantWidget> {
                     ),
                     Padding(
                       padding:
-                          EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 20.0),
+                          const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 20.0),
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         children: [
                           Expanded(
                             child: Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   20.0, 0.0, 20.0, 0.0),
                               child: Container(
                                 height: 56.0,
@@ -549,7 +544,7 @@ class _AiChattestAssitantWidgetState extends State<AiChattestAssitantWidget> {
                                       .secondaryBackground,
                                   borderRadius: BorderRadius.circular(27.0),
                                   border: Border.all(
-                                    color: Color(0x2A52A097),
+                                    color: const Color(0x2A52A097),
                                     width: 1.0,
                                   ),
                                 ),
@@ -560,7 +555,7 @@ class _AiChattestAssitantWidgetState extends State<AiChattestAssitantWidget> {
                                       child: Builder(
                                         builder: (context) {
                                           if (_model.isloadingData == false) {
-                                            return Container(
+                                            return SizedBox(
                                               width: 200.0,
                                               child: TextFormField(
                                                 controller: _model
@@ -592,7 +587,7 @@ class _AiChattestAssitantWidgetState extends State<AiChattestAssitantWidget> {
                                                           ),
                                                   enabledBorder:
                                                       OutlineInputBorder(
-                                                    borderSide: BorderSide(
+                                                    borderSide: const BorderSide(
                                                       color: Color(0x00000000),
                                                       width: 1.0,
                                                     ),
@@ -602,7 +597,7 @@ class _AiChattestAssitantWidgetState extends State<AiChattestAssitantWidget> {
                                                   ),
                                                   focusedBorder:
                                                       OutlineInputBorder(
-                                                    borderSide: BorderSide(
+                                                    borderSide: const BorderSide(
                                                       color: Color(0x00000000),
                                                       width: 1.0,
                                                     ),
@@ -681,7 +676,7 @@ class _AiChattestAssitantWidgetState extends State<AiChattestAssitantWidget> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 0.0, 20.0, 0.0),
                             child: InkWell(
                               splashColor: Colors.transparent,
@@ -706,11 +701,11 @@ class _AiChattestAssitantWidgetState extends State<AiChattestAssitantWidget> {
                                   message:
                                       _model.promtTextFeildTextController.text,
                                   instructions:
-                                      'Please address the user as ${currentUserDisplayName}The user has this children : ${functions.getinstructionForChildren(containerChildernRecordList.toList())} . The parent has the following id : ${currentUserUid} . Create the program only for the child specified by the user. If he doesn\'t give you a name for his child, ask him to choose one of his children and give him the names of his children.  whenever you call createProgramme, produce a final text message that: 1. Briefly summarizes the program creation. 2. Addresses the user and confirms the tasks have been created.',
+                                      'Please address the user as ${currentUserDisplayName}The user has this children : ${functions.getinstructionForChildren(containerChildernRecordList.toList())} . The parent has the following id : $currentUserUid . Create the program only for the child specified by the user. If he doesn\'t give you a name for his child, ask him to choose one of his children and give him the names of his children.  whenever you call createProgramme, produce a final text message that: 1. Briefly summarizes the program creation. 2. Addresses the user and confirms the tasks have been created.',
                                 );
-                                if (streamingApiResult2?.succeeded ?? true) {
+                                if (streamingApiResult2.succeeded ?? true) {
                                   final streamSubscription = streamingApiResult2
-                                      ?.streamedResponse?.stream
+                                      .streamedResponse?.stream
                                       .transform(utf8.decoder)
                                       .transform(const LineSplitter())
                                       .transform(
@@ -728,7 +723,7 @@ class _AiChattestAssitantWidgetState extends State<AiChattestAssitantWidget> {
                                 }
 
                                 await actions.printStaf(
-                                  'Please address the user as ${currentUserDisplayName}The user has this children : ${functions.getinstructionForChildren(containerChildernRecordList.toList())} . The parent has the following id : ${currentUserUid} don\'t mentions ids to the user because we only need them for function calling',
+                                  'Please address the user as ${currentUserDisplayName}The user has this children : ${functions.getinstructionForChildren(containerChildernRecordList.toList())} . The parent has the following id : $currentUserUid don\'t mentions ids to the user because we only need them for function calling',
                                 );
                                 safeSetState(() {
                                   _model.promtTextFeildTextController?.clear();

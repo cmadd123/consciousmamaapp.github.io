@@ -4,10 +4,8 @@ import '/backend/schema/enums/enums.dart';
 import '/components/home_nav_bar_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import 'dart:ui';
 import '/flutter_flow/custom_functions.dart' as functions;
 import '/v2/learning_path/create_learning_path_bottom_sheet/create_learning_path_bottom_sheet_widget.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:provider/provider.dart';
@@ -295,7 +293,7 @@ class _MilstonesWidgetState extends State<MilstonesWidget> {
                 child: Text(
                   'Milestones',
                   style: FlutterFlowTheme.of(context).headlineMedium.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     fontSize: 24,
                   ),
                 ),
@@ -438,7 +436,7 @@ class _MilstonesWidgetState extends State<MilstonesWidget> {
                   Text(
                     "Track ${_selectedChild?.name ?? 'your child'}'s developmental milestones.",
                     style: FlutterFlowTheme.of(context).bodyMedium.override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       color: const Color(0xC2000000),
                     ),
                   ),
@@ -446,7 +444,7 @@ class _MilstonesWidgetState extends State<MilstonesWidget> {
                   Text(
                     'Tap a milestone to turn it into a learning path.',
                     style: FlutterFlowTheme.of(context).bodySmall.override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       color: FlutterFlowTheme.of(context).secondaryText,
                       fontStyle: FontStyle.italic,
                     ),
@@ -464,7 +462,7 @@ class _MilstonesWidgetState extends State<MilstonesWidget> {
               center: Text(
                 '${(progress * 100).toInt()}%',
                 style: FlutterFlowTheme.of(context).headlineSmall.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   color: FlutterFlowTheme.of(context).primary,
                   fontSize: 18,
                 ),
@@ -491,7 +489,7 @@ class _MilstonesWidgetState extends State<MilstonesWidget> {
 
     Widget maybeAnimate(int index, Widget child) {
       if (!animate) return child;
-      return CascadeItem(index: index, baseDelayMs: cascadeBaseDelay!, staggerMs: 100, child: child);
+      return CascadeItem(index: index, baseDelayMs: cascadeBaseDelay, staggerMs: 100, child: child);
     }
 
     return Container(
@@ -523,14 +521,14 @@ class _MilstonesWidgetState extends State<MilstonesWidget> {
                       Text(
                         title,
                         style: FlutterFlowTheme.of(context).bodyLarge.override(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                       Text(
                         '$accomplishedCount of $total completed',
                         style: FlutterFlowTheme.of(context).bodySmall.override(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           color: color,
                         ),
                       ),
@@ -563,7 +561,7 @@ class _MilstonesWidgetState extends State<MilstonesWidget> {
               child: Text(
                 'No milestones for this category at age ${_childAge.toInt()}',
                 style: FlutterFlowTheme.of(context).bodySmall.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   color: FlutterFlowTheme.of(context).secondaryText,
                 ),
               ),
@@ -607,7 +605,7 @@ class _MilstonesWidgetState extends State<MilstonesWidget> {
                             child: Text(
                               milestone.title,
                               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                fontFamily: 'Andika New Basic',
+                                fontFamily: FFAppState().currentFontFamily,
                                 decoration: isCompleted ? TextDecoration.lineThrough : null,
                                 color: isCompleted
                                     ? FlutterFlowTheme.of(context).secondaryText

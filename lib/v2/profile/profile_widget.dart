@@ -1,28 +1,21 @@
 import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
-import '/backend/schema/enums/enums.dart';
 import '/v2/creator/creator_theme_notifier.dart';
 import '/v2/creator/creator_theme_wrapper.dart';
 import '/v2/creator/enter_creator_code_widget.dart';
 import '/v2/creator/creator_theme_editor.dart';
 import '/custom_code/actions/creator_service.dart';
-import '/backend/schema/structs/index.dart';
 import '/components/home_nav_bar_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import '/flutter_flow/flutter_flow_widgets.dart';
-import '/v1/pages/childern/children/children_widget.dart';
 import '/v1/profile/delete_user/delete_user_widget.dart';
 import '/v1/profile/profile_edit_pop_up/profile_edit_pop_up_widget.dart';
 import '/v1/profile/profile_edite_email_pop_up/profile_edite_email_pop_up_widget.dart';
-import 'dart:ui';
 import '/index.dart';
 import '/custom_code/actions/index.dart' as actions;
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '/components/page_animations.dart';
 import '/v2/profile/edit_parent_info_sheet.dart' show EditParentInfoPage;
@@ -102,7 +95,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                     children: [
                     animateItem(0, Padding(
                       padding:
-                          EdgeInsetsDirectional.fromSTEB(20.0, 20.0, 20.0, 0.0),
+                          const EdgeInsetsDirectional.fromSTEB(20.0, 20.0, 20.0, 0.0),
                     child: Row(
                       mainAxisSize: MainAxisSize.max,
                       children: [
@@ -122,14 +115,14 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                         ),
                         Expanded(
                           child: Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 0.0, 10.0, 0.0),
                             child: Row(
                               mainAxisSize: MainAxisSize.max,
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       0.0, 0.0, 20.0, 0.0),
                                   child: Text(
                                     'Settings',
@@ -137,7 +130,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                                     style: FlutterFlowTheme.of(context)
                                         .bodyMedium
                                         .override(
-                                          fontFamily: 'Andika New Basic',
+                                          fontFamily: FFAppState().currentFontFamily,
                                           fontSize: 20.0,
                                           letterSpacing: 0.0,
                                           fontWeight: FontWeight.bold,
@@ -153,7 +146,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                   )),
                   animateItem(1, Padding(
                     padding:
-                        EdgeInsetsDirectional.fromSTEB(24.0, 24.0, 24.0, 0.0),
+                        const EdgeInsetsDirectional.fromSTEB(24.0, 24.0, 24.0, 0.0),
                     child: Container(
                       width: double.infinity,
                       height: 94.0,
@@ -165,7 +158,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                         mainAxisSize: MainAxisSize.max,
                         children: [
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 10.0, 0.0, 0.0, 0.0),
                             child: breathingWidget(ClipOval(
                               child: Container(
@@ -178,8 +171,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                                 ),
                                 child: Builder(
                                   builder: (context) {
-                                    if (currentUserPhoto != null &&
-                                        currentUserPhoto != '') {
+                                    if (currentUserPhoto != '') {
                                       return ClipRRect(
                                         borderRadius:
                                             BorderRadius.circular(14.0),
@@ -209,7 +201,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                           ),
                           Expanded(
                             child: Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   20.0, 0.0, 0.0, 0.0),
                               child: Column(
                                 mainAxisSize: MainAxisSize.max,
@@ -217,7 +209,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(
                                         0.0, 0.0, 0.0, 8.0),
                                     child: AuthUserStreamWidget(
                                       builder: (context) => Text(
@@ -227,7 +219,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                                         style: FlutterFlowTheme.of(context)
                                             .bodyMedium
                                             .override(
-                                              fontFamily: 'Andika New Basic',
+                                              fontFamily: FFAppState().currentFontFamily,
                                               fontSize: 24.0,
                                               letterSpacing: 0.0,
                                               fontWeight: FontWeight.w800,
@@ -241,7 +233,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                                       style: FlutterFlowTheme.of(context)
                                           .bodyMedium
                                           .override(
-                                            fontFamily: 'Andika New Basic',
+                                            fontFamily: FFAppState().currentFontFamily,
                                             letterSpacing: 0.0,
                                           ),
                                     ),
@@ -252,7 +244,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                           ),
                           Builder(
                             builder: (context) => Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   0.0, 0.0, 16.0, 0.0),
                               child: InkWell(
                                 splashColor: Colors.transparent,
@@ -268,7 +260,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                                         insetPadding: EdgeInsets.zero,
                                         backgroundColor: Colors.transparent,
                                         alignment:
-                                            AlignmentDirectional(0.0, 0.0)
+                                            const AlignmentDirectional(0.0, 0.0)
                                                 .resolve(
                                                     Directionality.of(context)),
                                         child: GestureDetector(
@@ -278,7 +270,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                                             FocusManager.instance.primaryFocus
                                                 ?.unfocus();
                                           },
-                                          child: ProfileEditPopUpWidget(),
+                                          child: const ProfileEditPopUpWidget(),
                                         ),
                                       );
                                     },
@@ -300,7 +292,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                   if (false)
                     Padding(
                       padding:
-                          EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),
+                          const EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),
                       child: Container(
                         width: double.infinity,
                         height: 60.0,
@@ -325,7 +317,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                                       elevation: 0,
                                       insetPadding: EdgeInsets.zero,
                                       backgroundColor: Colors.transparent,
-                                      alignment: AlignmentDirectional(0.0, 0.0)
+                                      alignment: const AlignmentDirectional(0.0, 0.0)
                                           .resolve(Directionality.of(context)),
                                       child: GestureDetector(
                                         onTap: () {
@@ -334,7 +326,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                                           FocusManager.instance.primaryFocus
                                               ?.unfocus();
                                         },
-                                        child: ProfileEditeEmailPopUpWidget(),
+                                        child: const ProfileEditeEmailPopUpWidget(),
                                       ),
                                     );
                                   },
@@ -350,7 +342,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
                                       Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                        padding: const EdgeInsetsDirectional.fromSTEB(
                                             16.0, 0.0, 16.0, 0.0),
                                         child: Icon(
                                           Icons.lock_outline,
@@ -364,7 +356,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                                         style: FlutterFlowTheme.of(context)
                                             .bodyMedium
                                             .override(
-                                              fontFamily: 'Andika New Basic',
+                                              fontFamily: FFAppState().currentFontFamily,
                                               fontSize: 16.0,
                                               letterSpacing: 0.0,
                                               fontWeight: FontWeight.w500,
@@ -373,7 +365,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                                     ],
                                   ),
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(
                                         16.0, 0.0, 16.0, 0.0),
                                     child: Icon(
                                       Icons.arrow_forward_ios,
@@ -391,7 +383,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                     ),
                   CascadeItem(index: 0, baseDelayMs: 400, staggerMs: 80, child: Padding(
                     padding:
-                        EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),
+                        const EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),
                     child: Container(
                       width: double.infinity,
                       height: 60.0,
@@ -416,7 +408,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       16.0, 0.0, 16.0, 0.0),
                                   child: Icon(
                                     Icons.people_outline,
@@ -429,7 +421,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                                   style: FlutterFlowTheme.of(context)
                                       .bodyMedium
                                       .override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         fontSize: 16.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.w500,
@@ -438,7 +430,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                               ],
                             ),
                             Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   16.0, 0.0, 16.0, 0.0),
                               child: Icon(
                                 Icons.arrow_forward_ios,
@@ -454,7 +446,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                   // Parent Info (names & colors)
                   CascadeItem(index: 0, baseDelayMs: 400, staggerMs: 80, child: Padding(
                     padding:
-                        EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),
+                        const EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),
                     child: Container(
                       width: double.infinity,
                       height: 60.0,
@@ -483,7 +475,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       16.0, 0.0, 16.0, 0.0),
                                   child: Icon(
                                     Icons.family_restroom,
@@ -496,7 +488,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                                   style: FlutterFlowTheme.of(context)
                                       .bodyMedium
                                       .override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         fontSize: 16.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.w500,
@@ -505,7 +497,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                               ],
                             ),
                             Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   16.0, 0.0, 16.0, 0.0),
                               child: Icon(
                                 Icons.arrow_forward_ios,
@@ -554,7 +546,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                   //                 style: FlutterFlowTheme.of(context)
                   //                     .bodyMedium
                   //                     .override(
-                  //                       fontFamily: 'Andika New Basic',
+                  //                       fontFamily: FFAppState().currentFontFamily,
                   //                       fontSize: 16.0,
                   //                       letterSpacing: 0.0,
                   //                       fontWeight: FontWeight.w500,
@@ -579,7 +571,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                   // ),
                   CascadeItem(index: 1, baseDelayMs: 400, staggerMs: 80, child: Padding(
                     padding:
-                        EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),
+                        const EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),
                     child: Container(
                       width: double.infinity,
                       height: 60.0,
@@ -612,7 +604,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       16.0, 0.0, 16.0, 0.0),
                                   child: Icon(
                                     Icons.lock_outline,
@@ -625,7 +617,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                                   style: FlutterFlowTheme.of(context)
                                       .bodyMedium
                                       .override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         fontSize: 16.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.w500,
@@ -634,7 +626,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                               ],
                             ),
                             Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   16.0, 0.0, 16.0, 0.0),
                               child: Icon(
                                 Icons.arrow_forward_ios,
@@ -650,7 +642,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                   // Notifications
                   CascadeItem(index: 2, baseDelayMs: 400, staggerMs: 80, child: Padding(
                     padding:
-                        EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),
+                        const EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),
                     child: Container(
                       width: double.infinity,
                       height: 60.0,
@@ -675,7 +667,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       16.0, 0.0, 16.0, 0.0),
                                   child: Icon(
                                     Icons.notifications_outlined,
@@ -688,7 +680,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                                   style: FlutterFlowTheme.of(context)
                                       .bodyMedium
                                       .override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         fontSize: 16.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.w500,
@@ -697,7 +689,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                               ],
                             ),
                             Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   16.0, 0.0, 16.0, 0.0),
                               child: Icon(
                                 Icons.arrow_forward_ios,
@@ -713,7 +705,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                   // Clear Calendar
                   CascadeItem(index: 3, baseDelayMs: 400, staggerMs: 80, child: Padding(
                     padding:
-                        EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),
+                        const EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),
                     child: Container(
                       width: double.infinity,
                       height: 60.0,
@@ -738,7 +730,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                                 style: FlutterFlowTheme.of(context)
                                     .bodyMedium
                                     .override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       fontSize: 20.0,
                                       letterSpacing: 0.0,
                                       fontWeight: FontWeight.bold,
@@ -749,7 +741,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                                 style: FlutterFlowTheme.of(context)
                                     .bodyMedium
                                     .override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       fontSize: 14.0,
                                       letterSpacing: 0.0,
                                     ),
@@ -760,7 +752,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                                   child: Text(
                                     'Cancel',
                                     style: TextStyle(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       color: FlutterFlowTheme.of(context).secondaryText,
                                     ),
                                   ),
@@ -770,7 +762,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                                   child: Text(
                                     'Delete All',
                                     style: TextStyle(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       color: FlutterFlowTheme.of(context).error,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -832,7 +824,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                               SnackBar(
                                 content: Text(
                                   'Cleared $total items from your calendar.',
-                                  style: const TextStyle(fontFamily: 'Andika New Basic'),
+                                  style: TextStyle(fontFamily: FFAppState().currentFontFamily),
                                 ),
                                 backgroundColor: FlutterFlowTheme.of(context).primary,
                                 behavior: SnackBarBehavior.floating,
@@ -847,7 +839,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                               SnackBar(
                                 content: Text(
                                   'Failed to clear calendar. Please try again.',
-                                  style: const TextStyle(fontFamily: 'Andika New Basic'),
+                                  style: TextStyle(fontFamily: FFAppState().currentFontFamily),
                                 ),
                                 backgroundColor: FlutterFlowTheme.of(context).error,
                                 behavior: SnackBarBehavior.floating,
@@ -867,7 +859,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       16.0, 0.0, 16.0, 0.0),
                                   child: Icon(
                                     Icons.calendar_month_outlined,
@@ -880,7 +872,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                                   style: FlutterFlowTheme.of(context)
                                       .bodyMedium
                                       .override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         fontSize: 16.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.w500,
@@ -889,7 +881,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                               ],
                             ),
                             Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   16.0, 0.0, 16.0, 0.0),
                               child: Icon(
                                 Icons.arrow_forward_ios,
@@ -905,7 +897,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                   // Creator Code — enter/change. Shows the active creator's
                   // code as a pill once set, otherwise a chevron.
                   CascadeItem(index: 5, baseDelayMs: 400, staggerMs: 80, child: Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),
+                    padding: const EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),
                     child: Container(
                       width: double.infinity,
                       decoration: BoxDecoration(
@@ -923,7 +915,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                               final result = await showEnterCreatorCodeSheet(context);
                               if (result == true && mounted) setState(() {});
                             },
-                            child: Container(
+                            child: SizedBox(
                               height: 60.0,
                               child: Row(
                                 mainAxisSize: MainAxisSize.max,
@@ -933,13 +925,13 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                                     mainAxisSize: MainAxisSize.max,
                                     children: [
                                       Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
+                                        padding: const EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
                                         child: Icon(Icons.palette_outlined, color: FlutterFlowTheme.of(context).primary, size: 24.0),
                                       ),
                                       Text(
                                         'Creator Code',
                                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                          fontFamily: 'Andika New Basic',
+                                          fontFamily: FFAppState().currentFontFamily,
                                           fontSize: 16.0,
                                           letterSpacing: 0.0,
                                           fontWeight: FontWeight.w500,
@@ -948,14 +940,14 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                                     ],
                                   ),
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
+                                    padding: const EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
                                     child: Consumer<CreatorThemeNotifier>(
                                       builder: (context, creatorTheme, _) {
                                         if (creatorTheme.hasActiveCreator) {
                                           return Text(
                                             creatorTheme.activeCreator!.code,
                                             style: FlutterFlowTheme.of(context).bodySmall.override(
-                                              fontFamily: 'Andika New Basic',
+                                              fontFamily: FFAppState().currentFontFamily,
                                               color: FlutterFlowTheme.of(context).primary,
                                               fontSize: 13.0,
                                               fontWeight: FontWeight.w600,
@@ -986,7 +978,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                                         Text(
                                           'Use ${creatorTheme.activeCreator!.name}\'s style',
                                           style: FlutterFlowTheme.of(context).bodySmall.override(
-                                            fontFamily: 'Andika New Basic',
+                                            fontFamily: FFAppState().currentFontFamily,
                                             color: FlutterFlowTheme.of(context).secondaryText,
                                             fontSize: 14.0,
                                             letterSpacing: 0.0,
@@ -1011,7 +1003,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                   // Customize Theme — creators only, above Subscription
                   if (_creatorProfile != null)
                     CascadeItem(index: 5, baseDelayMs: 400, staggerMs: 80, child: Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),
+                      padding: const EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),
                       child: Container(
                         width: double.infinity,
                         height: 60.0,
@@ -1036,13 +1028,13 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                               Row(
                                 children: [
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
+                                    padding: const EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
                                     child: Icon(Icons.color_lens_outlined, color: FlutterFlowTheme.of(context).primary, size: 24.0),
                                   ),
                                   Text(
                                     'Customize Theme',
                                     style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       fontSize: 16.0,
                                       letterSpacing: 0.0,
                                       fontWeight: FontWeight.w500,
@@ -1051,7 +1043,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                                 ],
                               ),
                               Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
+                                padding: const EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
                                 child: Icon(Icons.arrow_forward_ios, color: FlutterFlowTheme.of(context).primaryText, size: 18.0),
                               ),
                             ],
@@ -1062,7 +1054,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                   // Subscription
                   CascadeItem(index: 5, baseDelayMs: 400, staggerMs: 80, child: Padding(
                     padding:
-                        EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),
+                        const EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),
                     child: Container(
                       width: double.infinity,
                       height: 60.0,
@@ -1087,7 +1079,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       16.0, 0.0, 16.0, 0.0),
                                   child: FaIcon(
                                     FontAwesomeIcons.dollarSign,
@@ -1100,7 +1092,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                                   style: FlutterFlowTheme.of(context)
                                       .bodyMedium
                                       .override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         fontSize: 16.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.w500,
@@ -1109,7 +1101,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                               ],
                             ),
                             Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   16.0, 0.0, 16.0, 0.0),
                               child: Icon(
                                 Icons.arrow_forward_ios,
@@ -1125,7 +1117,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                   // Cancel Subscription
                   CascadeItem(index: 6, baseDelayMs: 400, staggerMs: 80, child: Padding(
                     padding:
-                        EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),
+                        const EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),
                     child: Container(
                       width: double.infinity,
                       height: 60.0,
@@ -1142,18 +1134,18 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                           final confirm = await showDialog<bool>(
                             context: context,
                             builder: (context) => AlertDialog(
-                              title: Text('Cancel Subscription?'),
-                              content: Text(
+                              title: const Text('Cancel Subscription?'),
+                              content: const Text(
                                 'Your subscription will remain active until the end of your current billing period. You won\'t be charged again.',
                               ),
                               actions: [
                                 TextButton(
                                   onPressed: () => Navigator.pop(context, false),
-                                  child: Text('Keep Subscription'),
+                                  child: const Text('Keep Subscription'),
                                 ),
                                 TextButton(
                                   onPressed: () => Navigator.pop(context, true),
-                                  child: Text(
+                                  child: const Text(
                                     'Cancel Subscription',
                                     style: TextStyle(color: Colors.red),
                                   ),
@@ -1179,7 +1171,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       16.0, 0.0, 16.0, 0.0),
                                   child: Icon(
                                     Icons.cancel_outlined,
@@ -1192,7 +1184,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                                   style: FlutterFlowTheme.of(context)
                                       .bodyMedium
                                       .override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         fontSize: 16.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.w500,
@@ -1202,7 +1194,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                               ],
                             ),
                             Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   16.0, 0.0, 16.0, 0.0),
                               child: Icon(
                                 Icons.arrow_forward_ios,
@@ -1218,7 +1210,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                   // Enter Share Code
                   CascadeItem(index: 6, baseDelayMs: 400, staggerMs: 80, child: Padding(
                     padding:
-                        EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),
+                        const EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),
                     child: Container(
                       width: double.infinity,
                       height: 60.0,
@@ -1242,7 +1234,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                               title: Text(
                                 'Enter Share Code',
                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   fontSize: 20.0,
                                   fontWeight: FontWeight.bold,
                                   letterSpacing: 0.0,
@@ -1254,7 +1246,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                                   Text(
                                     'Enter the 8-character code to import shared content.',
                                     style: FlutterFlowTheme.of(context).bodySmall.override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       color: FlutterFlowTheme.of(context).secondaryText,
                                       fontSize: 13.0,
                                       letterSpacing: 0.0,
@@ -1266,7 +1258,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                                     textCapitalization: TextCapitalization.characters,
                                     maxLength: 8,
                                     style: FlutterFlowTheme.of(context).bodyLarge.override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       fontSize: 20.0,
                                       fontWeight: FontWeight.w600,
                                       letterSpacing: 3.0,
@@ -1324,7 +1316,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
+                                  padding: const EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
                                   child: Icon(
                                     Icons.qr_code_2,
                                     color: FlutterFlowTheme.of(context).primary,
@@ -1334,7 +1326,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                                 Text(
                                   'Enter Share Code',
                                   style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     fontSize: 16.0,
                                     letterSpacing: 0.0,
                                     fontWeight: FontWeight.w500,
@@ -1343,7 +1335,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                               ],
                             ),
                             Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
+                              padding: const EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
                               child: Icon(
                                 Icons.arrow_forward_ios,
                                 color: FlutterFlowTheme.of(context).primaryText,
@@ -1358,7 +1350,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                   // Logout
                   CascadeItem(index: 7, baseDelayMs: 400, staggerMs: 80, child: Padding(
                     padding:
-                        EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),
+                        const EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),
                     child: InkWell(
                       splashColor: Colors.transparent,
                       focusColor: Colors.transparent,
@@ -1376,7 +1368,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                               style: FlutterFlowTheme.of(context)
                                   .bodyMedium
                                   .override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     fontSize: 20.0,
                                     letterSpacing: 0.0,
                                     fontWeight: FontWeight.bold,
@@ -1387,7 +1379,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                               style: FlutterFlowTheme.of(context)
                                   .bodyMedium
                                   .override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     fontSize: 14.0,
                                     letterSpacing: 0.0,
                                   ),
@@ -1398,7 +1390,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                                 child: Text(
                                   'Cancel',
                                   style: TextStyle(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     color: FlutterFlowTheme.of(context).secondaryText,
                                   ),
                                 ),
@@ -1408,7 +1400,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                                 child: Text(
                                   'Logout',
                                   style: TextStyle(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     color: FlutterFlowTheme.of(context).error,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -1445,7 +1437,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       16.0, 0.0, 16.0, 0.0),
                                   child: Icon(
                                     Icons.logout_rounded,
@@ -1458,7 +1450,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                                   style: FlutterFlowTheme.of(context)
                                       .bodyMedium
                                       .override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         fontSize: 16.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.w500,
@@ -1467,7 +1459,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                               ],
                             ),
                             Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   16.0, 0.0, 16.0, 0.0),
                               child: Icon(
                                 Icons.arrow_forward_ios,
@@ -1484,7 +1476,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                   CascadeItem(index: 8, baseDelayMs: 400, staggerMs: 80, child: Builder(
                     builder: (context) => Padding(
                       padding:
-                          EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),
+                          const EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),
                       child: InkWell(
                         splashColor: Colors.transparent,
                         focusColor: Colors.transparent,
@@ -1498,7 +1490,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                                 elevation: 0,
                                 insetPadding: EdgeInsets.zero,
                                 backgroundColor: Colors.transparent,
-                                alignment: AlignmentDirectional(0.0, 0.0)
+                                alignment: const AlignmentDirectional(0.0, 0.0)
                                     .resolve(Directionality.of(context)),
                                 child: GestureDetector(
                                   onTap: () {
@@ -1506,7 +1498,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                                     FocusManager.instance.primaryFocus
                                         ?.unfocus();
                                   },
-                                  child: DeleteUserWidget(),
+                                  child: const DeleteUserWidget(),
                                 ),
                               );
                             },
@@ -1529,7 +1521,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(
                                         16.0, 0.0, 16.0, 0.0),
                                     child: Icon(
                                       Icons.delete_sweep,
@@ -1542,7 +1534,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                                     style: FlutterFlowTheme.of(context)
                                         .bodyMedium
                                         .override(
-                                          fontFamily: 'Andika New Basic',
+                                          fontFamily: FFAppState().currentFontFamily,
                                           fontSize: 16.0,
                                           letterSpacing: 0.0,
                                           fontWeight: FontWeight.w500,
@@ -1551,7 +1543,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                                 ],
                               ),
                               Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     16.0, 0.0, 16.0, 0.0),
                                 child: Icon(
                                   Icons.arrow_forward_ios,
@@ -1585,7 +1577,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                     begin: const Alignment(0, -1),
                     end: const Alignment(0, 1),
                     colors: [
-                      Color(0xFFEDFFFD).withValues(alpha: 0.0),
+                      const Color(0xFFEDFFFD).withValues(alpha: 0.0),
                       const Color(0xFFEDFFFD),
                     ],
                   ),

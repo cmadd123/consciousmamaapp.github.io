@@ -19,7 +19,7 @@ class GroceryListBottomSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
       ),
@@ -28,28 +28,28 @@ class GroceryListBottomSheet extends StatelessWidget {
         children: [
           // Handle
           Container(
-            margin: EdgeInsets.only(top: 12.0),
+            margin: const EdgeInsets.only(top: 12.0),
             width: 40.0,
             height: 4.0,
             decoration: BoxDecoration(
-              color: Color(0xFFE0E0E0),
+              color: const Color(0xFFE0E0E0),
               borderRadius: BorderRadius.circular(2.0),
             ),
           ),
           // Title
           Padding(
-            padding: EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(16.0),
             child: Text(
               'Add to Grocery List',
               style: FlutterFlowTheme.of(context).titleMedium.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 0.0,
                   ),
             ),
           ),
           Padding(
-            padding: EdgeInsets.fromLTRB(16.0, 0, 16.0, 24.0),
+            padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 24.0),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -69,7 +69,7 @@ class GroceryListBottomSheet extends StatelessWidget {
                   );
                 },
               ),
-              SizedBox(height: 12.0),
+              const SizedBox(height: 12.0),
               // Today only option
               _GroceryOption(
                 icon: Icons.today_rounded,
@@ -86,7 +86,7 @@ class GroceryListBottomSheet extends StatelessWidget {
                   );
                 },
               ),
-              SizedBox(height: 12.0),
+              const SizedBox(height: 12.0),
               // Manual selection option
               _GroceryOption(
                 icon: Icons.checklist_rounded,
@@ -137,12 +137,12 @@ class _GroceryOption extends StatelessWidget {
       borderRadius: BorderRadius.circular(14.0),
       child: Container(
         width: double.infinity,
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         decoration: BoxDecoration(
-          color: isPrimary ? primaryColor.withValues(alpha: 0.1) : Color(0xFFFAFAFA),
+          color: isPrimary ? primaryColor.withValues(alpha: 0.1) : const Color(0xFFFAFAFA),
           borderRadius: BorderRadius.circular(14.0),
           border: Border.all(
-            color: isPrimary ? primaryColor : Color(0xFFE0E0E0),
+            color: isPrimary ? primaryColor : const Color(0xFFE0E0E0),
             width: isPrimary ? 2.0 : 1.0,
           ),
         ),
@@ -152,16 +152,16 @@ class _GroceryOption extends StatelessWidget {
               width: 48.0,
               height: 48.0,
               decoration: BoxDecoration(
-                color: isPrimary ? primaryColor.withValues(alpha: 0.15) : Color(0xFFF5F5F5),
+                color: isPrimary ? primaryColor.withValues(alpha: 0.15) : const Color(0xFFF5F5F5),
                 borderRadius: BorderRadius.circular(14.0),
               ),
               child: Icon(
                 icon,
-                color: isPrimary ? primaryColor : Color(0xFF666666),
+                color: isPrimary ? primaryColor : const Color(0xFF666666),
                 size: 24.0,
               ),
             ),
-            SizedBox(width: 16.0),
+            const SizedBox(width: 16.0),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -169,18 +169,18 @@ class _GroceryOption extends StatelessWidget {
                   Text(
                     title,
                     style: FlutterFlowTheme.of(context).bodyMedium.override(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           fontSize: 16.0,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 0.0,
                         ),
                   ),
-                  SizedBox(height: 2.0),
+                  const SizedBox(height: 2.0),
                   Text(
                     subtitle,
                     style: FlutterFlowTheme.of(context).bodySmall.override(
-                          fontFamily: 'Andika New Basic',
-                          color: Color(0xFF888888),
+                          fontFamily: FFAppState().currentFontFamily,
+                          color: const Color(0xFF888888),
                           fontSize: 13.0,
                           letterSpacing: 0.0,
                         ),
@@ -190,7 +190,7 @@ class _GroceryOption extends StatelessWidget {
             ),
             Icon(
               Icons.chevron_right,
-              color: isPrimary ? primaryColor : Color(0xFFCCCCCC),
+              color: isPrimary ? primaryColor : const Color(0xFFCCCCCC),
               size: 24.0,
             ),
           ],

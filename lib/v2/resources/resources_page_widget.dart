@@ -42,7 +42,7 @@ class _ResourcesPageWidgetState extends State<ResourcesPageWidget> {
           title: Text(
             'Resources',
             style: FlutterFlowTheme.of(context).headlineMedium.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   fontSize: 20.0,
                   letterSpacing: 0.0,
                   fontWeight: FontWeight.w600,
@@ -61,7 +61,7 @@ class _ResourcesPageWidgetState extends State<ResourcesPageWidget> {
                   'Practical tips and guides to help bring peace to your home.',
                   textAlign: TextAlign.center,
                   style: FlutterFlowTheme.of(context).bodyMedium.override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         color: FlutterFlowTheme.of(context).secondaryText,
                         letterSpacing: 0.0,
                       ),
@@ -125,7 +125,7 @@ class _ResourcesPageWidgetState extends State<ResourcesPageWidget> {
                             Text(
                               'Resources coming soon!',
                               style: FlutterFlowTheme.of(context).bodyLarge.override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     fontWeight: FontWeight.w600,
                                     letterSpacing: 0.0,
                                   ),
@@ -137,7 +137,7 @@ class _ResourcesPageWidgetState extends State<ResourcesPageWidget> {
                                 'We\'re preparing helpful articles to support your parenting journey.',
                                 textAlign: TextAlign.center,
                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       color: FlutterFlowTheme.of(context).secondaryText,
                                       letterSpacing: 0.0,
                                     ),
@@ -211,7 +211,7 @@ class _ResourcesPageWidgetState extends State<ResourcesPageWidget> {
                     Text(
                       article.title ?? 'Untitled',
                       style: FlutterFlowTheme.of(context).bodyLarge.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             fontWeight: FontWeight.w600,
                             letterSpacing: 0.0,
                           ),
@@ -221,7 +221,7 @@ class _ResourcesPageWidgetState extends State<ResourcesPageWidget> {
                       Text(
                         article.subtitle!,
                         style: FlutterFlowTheme.of(context).bodySmall.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               color: FlutterFlowTheme.of(context).secondaryText,
                               letterSpacing: 0.0,
                             ),
@@ -241,7 +241,7 @@ class _ResourcesPageWidgetState extends State<ResourcesPageWidget> {
                         Text(
                           '${article.readTimeMinutes ?? 3} min read',
                           style: FlutterFlowTheme.of(context).bodySmall.override(
-                                fontFamily: 'Andika New Basic',
+                                fontFamily: FFAppState().currentFontFamily,
                                 color: FlutterFlowTheme.of(context).secondaryText,
                                 fontSize: 12.0,
                                 letterSpacing: 0.0,
@@ -258,7 +258,7 @@ class _ResourcesPageWidgetState extends State<ResourcesPageWidget> {
                             child: Text(
                               ArticleCategory.displayNames[article.category] ?? article.category!,
                               style: FlutterFlowTheme.of(context).bodySmall.override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     color: FlutterFlowTheme.of(context).primary,
                                     fontSize: 10.0,
                                     letterSpacing: 0.0,

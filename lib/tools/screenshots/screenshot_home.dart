@@ -64,31 +64,31 @@ class ScreenshotHome extends StatelessWidget {
                       const SizedBox(height: 36),
 
                       // Calendar/Tasks card
-                      _HomeCard(
+                      const _HomeCard(
                         icon: Icons.calendar_today_outlined,
                         title: 'Playdate at 2:00 PM',
                         subtitle: 'Emma & Lucas',
-                        childDots: const [Color(0xFFFF8A80), Color(0xFF80D8FF)],
+                        childDots: [Color(0xFFFF8A80), Color(0xFF80D8FF)],
                       ),
 
                       const SizedBox(height: 20),
 
                       // Meals card
-                      _HomeCard(
+                      const _HomeCard(
                         icon: Icons.restaurant_outlined,
                         title: 'Dinner: Chicken Stir Fry',
                         subtitle: 'Family meal',
-                        childDots: const [],
+                        childDots: [],
                       ),
 
                       const SizedBox(height: 20),
 
                       // Activities card
-                      _HomeCard(
+                      const _HomeCard(
                         icon: Icons.palette_outlined,
                         title: 'Find an activity',
                         subtitle: 'Based on your mood',
-                        childDots: const [],
+                        childDots: [],
                         isEmpty: true,
                       ),
 

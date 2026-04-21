@@ -1,11 +1,8 @@
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
-import 'dart:ui';
 import '/index.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'cong_for_a_new_meal_model.dart';
 export 'cong_for_a_new_meal_model.dart';
 
@@ -17,7 +14,7 @@ class CongForANewMealWidget extends StatefulWidget {
     bool? isMealPlan,
     required this.isGenrateForm,
     this.showNavigationOptions = false,
-  }) : this.isMealPlan = isMealPlan ?? false;
+  }) : isMealPlan = isMealPlan ?? false;
 
   final bool isMealPlan;
   final bool? isGenrateForm;
@@ -29,7 +26,7 @@ class CongForANewMealWidget extends StatefulWidget {
 
 class _CongForANewMealWidgetState extends State<CongForANewMealWidget> {
   late CongForANewMealModel _model;
-  bool _isNavigating = false;
+  final bool _isNavigating = false;
 
   @override
   void setState(VoidCallback callback) {
@@ -53,17 +50,17 @@ class _CongForANewMealWidgetState extends State<CongForANewMealWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Colors.transparent,
       ),
       child: Padding(
-        padding: EdgeInsetsDirectional.fromSTEB(24.0, 24.0, 24.0, 24.0),
+        padding: const EdgeInsetsDirectional.fromSTEB(24.0, 24.0, 24.0, 24.0),
         child: Stack(
           children: [
             Container(
               decoration: BoxDecoration(
                 color: FlutterFlowTheme.of(context).secondaryBackground,
-                boxShadow: [
+                boxShadow: const [
                   BoxShadow(
                     blurRadius: 12.0,
                     color: Color(0x33000000),
@@ -77,7 +74,7 @@ class _CongForANewMealWidgetState extends State<CongForANewMealWidget> {
                 borderRadius: BorderRadius.circular(14.0),
               ),
               child: Padding(
-                padding: EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(16.0),
                 child: Column(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
@@ -105,7 +102,7 @@ class _CongForANewMealWidgetState extends State<CongForANewMealWidget> {
                       textAlign: TextAlign.center,
                       style:
                           FlutterFlowTheme.of(context).headlineMedium.override(
-                                fontFamily: 'Andika New Basic',
+                                fontFamily: FFAppState().currentFontFamily,
                                 color: FlutterFlowTheme.of(context).primaryText,
                                 letterSpacing: 0.0,
                               ),
@@ -116,12 +113,12 @@ class _CongForANewMealWidgetState extends State<CongForANewMealWidget> {
                           : 'Your new meal has been saved to your cookbook.',
                       textAlign: TextAlign.center,
                       style: FlutterFlowTheme.of(context).bodyMedium.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: FlutterFlowTheme.of(context).secondaryText,
                             letterSpacing: 0.0,
                           ),
                     ),
-                  ].divide(SizedBox(height: 8.0)),
+                  ].divide(const SizedBox(height: 8.0)),
                 ),
                 // Show navigation options if requested
                 if (widget.showNavigationOptions) ...[
@@ -141,16 +138,16 @@ class _CongForANewMealWidgetState extends State<CongForANewMealWidget> {
                     options: FFButtonOptions(
                       width: double.infinity,
                       height: 48.0,
-                      padding: EdgeInsets.all(8.0),
-                      iconPadding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
+                      padding: const EdgeInsets.all(8.0),
+                      iconPadding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
                       color: FlutterFlowTheme.of(context).primary,
                       textStyle: FlutterFlowTheme.of(context).titleSmall.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: FlutterFlowTheme.of(context).info,
                             letterSpacing: 0.0,
                           ),
                       elevation: 0.0,
-                      borderSide: BorderSide(
+                      borderSide: const BorderSide(
                         color: Colors.transparent,
                         width: 1.0,
                       ),
@@ -173,11 +170,11 @@ class _CongForANewMealWidgetState extends State<CongForANewMealWidget> {
                     options: FFButtonOptions(
                       width: double.infinity,
                       height: 48.0,
-                      padding: EdgeInsets.all(8.0),
-                      iconPadding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
+                      padding: const EdgeInsets.all(8.0),
+                      iconPadding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
                       color: Colors.transparent,
                       textStyle: FlutterFlowTheme.of(context).titleSmall.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: FlutterFlowTheme.of(context).primary,
                             letterSpacing: 0.0,
                           ),
@@ -199,8 +196,8 @@ class _CongForANewMealWidgetState extends State<CongForANewMealWidget> {
                       await Future.delayed(const Duration(milliseconds: 50));
                       if (!mounted) return;
 
-                      if (widget!.isMealPlan == true) {
-                        if (widget!.isGenrateForm == false) {
+                      if (widget.isMealPlan == true) {
+                        if (widget.isGenrateForm == false) {
                           // Pop recipe page and push to meal planner in one operation
                           context.goNamed(CreateMealPlanWidget.routeName);
                         } else {
@@ -215,24 +212,24 @@ class _CongForANewMealWidgetState extends State<CongForANewMealWidget> {
                     options: FFButtonOptions(
                       width: double.infinity,
                       height: 48.0,
-                      padding: EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.all(8.0),
                       iconPadding:
-                          EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
+                          const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
                       color: FlutterFlowTheme.of(context).primary,
                       textStyle: FlutterFlowTheme.of(context).titleSmall.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: FlutterFlowTheme.of(context).info,
                             letterSpacing: 0.0,
                           ),
                       elevation: 0.0,
-                      borderSide: BorderSide(
+                      borderSide: const BorderSide(
                         color: Colors.transparent,
                         width: 1.0,
                       ),
                       borderRadius: BorderRadius.circular(24.0),
                     ),
                   ),
-              ].divide(SizedBox(height: 20.0)),
+              ].divide(const SizedBox(height: 20.0)),
             ),
           ),
         ),

@@ -1,11 +1,8 @@
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
-import 'dart:ui';
 import '/index.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'learn_path_stepone_model.dart';
 export 'learn_path_stepone_model.dart';
 
@@ -49,7 +46,7 @@ class _LearnPathSteponeWidgetState extends State<LearnPathSteponeWidget> {
       },
       borderRadius: BorderRadius.circular(20.0),
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 14.0, vertical: 8.0),
+        padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 8.0),
         decoration: BoxDecoration(
           color: theme.primary.withOpacity(0.1),
           borderRadius: BorderRadius.circular(20.0),
@@ -58,7 +55,7 @@ class _LearnPathSteponeWidgetState extends State<LearnPathSteponeWidget> {
         child: Text(
           label,
           style: theme.bodySmall.override(
-            fontFamily: 'Andika New Basic',
+            fontFamily: FFAppState().currentFontFamily,
             color: theme.primary,
             fontWeight: FontWeight.w500,
           ),
@@ -76,18 +73,18 @@ class _LearnPathSteponeWidgetState extends State<LearnPathSteponeWidget> {
       },
       child: Scaffold(
         key: scaffoldKey,
-        backgroundColor: Color(0xFFEDFFFD),
+        backgroundColor: const Color(0xFFEDFFFD),
         body: SafeArea(
           top: true,
           child: Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
+            padding: const EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
             child: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 children: [
                   Padding(
                     padding:
-                        EdgeInsetsDirectional.fromSTEB(12.0, 20.0, 12.0, 0.0),
+                        const EdgeInsetsDirectional.fromSTEB(12.0, 20.0, 12.0, 0.0),
                     child: Material(
                       color: Colors.transparent,
                       elevation: 1.0,
@@ -115,7 +112,7 @@ class _LearnPathSteponeWidgetState extends State<LearnPathSteponeWidget> {
                                   mainAxisSize: MainAxisSize.max,
                                   children: [
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(
                                           18.0, 9.0, 0.0, 0.0),
                                       child: Container(
                                         width: 33.0,
@@ -129,36 +126,36 @@ class _LearnPathSteponeWidgetState extends State<LearnPathSteponeWidget> {
                                       ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(
                                           3.0, 9.0, 0.0, 0.0),
                                       child: Container(
                                         width: 5.0,
                                         height: 5.0,
-                                        decoration: BoxDecoration(
+                                        decoration: const BoxDecoration(
                                           color: Color(0x6652A097),
                                           shape: BoxShape.circle,
                                         ),
                                       ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(
                                           3.0, 9.0, 0.0, 0.0),
                                       child: Container(
                                         width: 5.0,
                                         height: 5.0,
-                                        decoration: BoxDecoration(
+                                        decoration: const BoxDecoration(
                                           color: Color(0x6652A097),
                                           shape: BoxShape.circle,
                                         ),
                                       ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(
                                           3.0, 9.0, 0.0, 0.0),
                                       child: Container(
                                         width: 5.0,
                                         height: 5.0,
-                                        decoration: BoxDecoration(
+                                        decoration: const BoxDecoration(
                                           color: Color(0x6652A097),
                                           shape: BoxShape.circle,
                                         ),
@@ -167,14 +164,14 @@ class _LearnPathSteponeWidgetState extends State<LearnPathSteponeWidget> {
                                   ],
                                 ),
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       0.0, 5.0, 16.0, 0.0),
                                   child: Text(
                                     'Step 1/4',
                                     style: FlutterFlowTheme.of(context)
                                         .bodyMedium
                                         .override(
-                                          fontFamily: 'Andika New Basic',
+                                          fontFamily: FFAppState().currentFontFamily,
                                           color: FlutterFlowTheme.of(context)
                                               .primary,
                                           letterSpacing: 0.0,
@@ -184,9 +181,9 @@ class _LearnPathSteponeWidgetState extends State<LearnPathSteponeWidget> {
                               ],
                             ),
                             Align(
-                              alignment: AlignmentDirectional(-1.0, 0.0),
+                              alignment: const AlignmentDirectional(-1.0, 0.0),
                               child: Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     15.0, 20.0, 0.0, 0.0),
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(14.0),
@@ -200,7 +197,7 @@ class _LearnPathSteponeWidgetState extends State<LearnPathSteponeWidget> {
                               ),
                             ),
                             Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   24.0, 0.0, 24.0, 0.0),
                               child: Text(
                                 'Let’s kick off the creation of a learning path ',
@@ -208,14 +205,14 @@ class _LearnPathSteponeWidgetState extends State<LearnPathSteponeWidget> {
                                 style: FlutterFlowTheme.of(context)
                                     .bodyMedium
                                     .override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       fontSize: 24.0,
                                       letterSpacing: 0.0,
                                     ),
                               ),
                             ),
                             Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   20.0, 8.0, 20.0, 0.0),
                               child: Text(
                                 'Choose a common challenge below or describe your own:',
@@ -223,15 +220,15 @@ class _LearnPathSteponeWidgetState extends State<LearnPathSteponeWidget> {
                                 style: FlutterFlowTheme.of(context)
                                     .bodyMedium
                                     .override(
-                                      fontFamily: 'Andika New Basic',
-                                      color: Color(0xB71B1F26),
+                                      fontFamily: FFAppState().currentFontFamily,
+                                      color: const Color(0xB71B1F26),
                                       letterSpacing: 0.0,
                                     ),
                               ),
                             ),
                             // Common challenge templates
                             Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   16.0, 16.0, 16.0, 0.0),
                               child: Wrap(
                                 spacing: 8.0,
@@ -254,18 +251,18 @@ class _LearnPathSteponeWidgetState extends State<LearnPathSteponeWidget> {
                               key: _model.formKey,
                               autovalidateMode: AutovalidateMode.disabled,
                               child: Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     16.0, 30.0, 16.0, 0.0),
                                 child: Container(
                                   decoration: BoxDecoration(
                                     color: FlutterFlowTheme.of(context).prim30,
                                     borderRadius: BorderRadius.circular(14.0),
                                     border: Border.all(
-                                      color: Color(0xFFCBE3E0),
+                                      color: const Color(0xFFCBE3E0),
                                       width: 1.0,
                                     ),
                                   ),
-                                  child: Container(
+                                  child: SizedBox(
                                     width: double.infinity,
                                     child: TextFormField(
                                       controller: _model.textController,
@@ -277,7 +274,7 @@ class _LearnPathSteponeWidgetState extends State<LearnPathSteponeWidget> {
                                         labelStyle: FlutterFlowTheme.of(context)
                                             .labelMedium
                                             .override(
-                                              fontFamily: 'Andika New Basic',
+                                              fontFamily: FFAppState().currentFontFamily,
                                               color:
                                                   FlutterFlowTheme.of(context)
                                                       .primaryText,
@@ -288,14 +285,14 @@ class _LearnPathSteponeWidgetState extends State<LearnPathSteponeWidget> {
                                         hintStyle: FlutterFlowTheme.of(context)
                                             .labelMedium
                                             .override(
-                                              fontFamily: 'Andika New Basic',
+                                              fontFamily: FFAppState().currentFontFamily,
                                               color:
                                                   FlutterFlowTheme.of(context)
                                                       .primaryText,
                                               letterSpacing: 0.0,
                                             ),
                                         enabledBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(
+                                          borderSide: const BorderSide(
                                             color: Color(0x00000000),
                                             width: 1.0,
                                           ),
@@ -303,7 +300,7 @@ class _LearnPathSteponeWidgetState extends State<LearnPathSteponeWidget> {
                                               BorderRadius.circular(14.0),
                                         ),
                                         focusedBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(
+                                          borderSide: const BorderSide(
                                             color: Color(0x00000000),
                                             width: 1.0,
                                           ),
@@ -332,7 +329,7 @@ class _LearnPathSteponeWidgetState extends State<LearnPathSteponeWidget> {
                                       style: FlutterFlowTheme.of(context)
                                           .bodyMedium
                                           .override(
-                                            fontFamily: 'Andika New Basic',
+                                            fontFamily: FFAppState().currentFontFamily,
                                             letterSpacing: 0.0,
                                           ),
                                       maxLines: 5,
@@ -347,7 +344,7 @@ class _LearnPathSteponeWidgetState extends State<LearnPathSteponeWidget> {
                               ),
                             ),
                             Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   20.0, 35.0, 20.0, 20.0),
                               child: FFButtonWidget(
                                 onPressed: () async {
@@ -371,15 +368,15 @@ class _LearnPathSteponeWidgetState extends State<LearnPathSteponeWidget> {
                                 options: FFButtonOptions(
                                   width: double.infinity,
                                   height: 40.0,
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       16.0, 0.0, 16.0, 0.0),
-                                  iconPadding: EdgeInsetsDirectional.fromSTEB(
+                                  iconPadding: const EdgeInsetsDirectional.fromSTEB(
                                       0.0, 0.0, 0.0, 0.0),
                                   color: FlutterFlowTheme.of(context).primary,
                                   textStyle: FlutterFlowTheme.of(context)
                                       .titleSmall
                                       .override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         color: Colors.white,
                                         letterSpacing: 0.0,
                                       ),

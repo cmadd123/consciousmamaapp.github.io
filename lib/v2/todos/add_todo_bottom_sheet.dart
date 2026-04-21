@@ -41,7 +41,7 @@ class AddTodoBottomSheet extends StatelessWidget {
             child: Text(
               'Add To-Do',
               style: FlutterFlowTheme.of(context).titleMedium.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 0.0,
                   ),
@@ -139,7 +139,7 @@ class _TodoOption extends StatelessWidget {
                   Text(
                     title,
                     style: FlutterFlowTheme.of(context).bodyMedium.override(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           fontSize: 16.0,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 0.0,
@@ -149,7 +149,7 @@ class _TodoOption extends StatelessWidget {
                   Text(
                     subtitle,
                     style: FlutterFlowTheme.of(context).bodySmall.override(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           color: const Color(0xFF888888),
                           fontSize: 13.0,
                           letterSpacing: 0.0,

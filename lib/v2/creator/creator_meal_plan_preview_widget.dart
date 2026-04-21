@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '/app_state.dart';
 import 'package:flutter/services.dart';
 import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
@@ -129,7 +130,7 @@ class _CreatorMealPlanPreviewWidgetState extends State<CreatorMealPlanPreviewWid
         title: Text(
           'Preview Meal Plan',
           style: theme.titleMedium.override(
-            fontFamily: 'Andika New Basic',
+            fontFamily: FFAppState().currentFontFamily,
             color: theme.primaryText,
             fontWeight: FontWeight.w600,
           ),
@@ -193,7 +194,7 @@ class _CreatorMealPlanPreviewWidgetState extends State<CreatorMealPlanPreviewWid
                 child: Text(
                   creator.name,
                   style: theme.bodyMedium.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     fontWeight: FontWeight.w600,
                     color: primary,
                   ),
@@ -205,7 +206,7 @@ class _CreatorMealPlanPreviewWidgetState extends State<CreatorMealPlanPreviewWid
           Text(
             widget.mealPlan.title,
             style: theme.titleMedium.override(
-              fontFamily: 'Andika New Basic',
+              fontFamily: FFAppState().currentFontFamily,
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -214,7 +215,7 @@ class _CreatorMealPlanPreviewWidgetState extends State<CreatorMealPlanPreviewWid
             Text(
               widget.mealPlan.description,
               style: theme.bodySmall.override(
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
                 color: theme.secondaryText,
               ),
             ),
@@ -281,7 +282,7 @@ class _CreatorMealPlanPreviewWidgetState extends State<CreatorMealPlanPreviewWid
                           Text(
                             _dayLabels[i],
                             style: theme.bodyLarge.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -296,7 +297,7 @@ class _CreatorMealPlanPreviewWidgetState extends State<CreatorMealPlanPreviewWid
                               child: Text(
                                 'Will replace',
                                 style: theme.bodySmall.override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   color: Colors.amber.shade900,
                                   fontSize: 11,
                                   fontWeight: FontWeight.w600,
@@ -310,7 +311,7 @@ class _CreatorMealPlanPreviewWidgetState extends State<CreatorMealPlanPreviewWid
                       Text(
                         names.join(' · '),
                         style: theme.bodySmall.override(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           color: theme.secondaryText,
                         ),
                       ),
@@ -320,7 +321,7 @@ class _CreatorMealPlanPreviewWidgetState extends State<CreatorMealPlanPreviewWid
                           child: Text(
                             'You already have meals on this day.',
                             style: theme.bodySmall.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               color: Colors.amber.shade900,
                               fontSize: 11,
                               fontStyle: FontStyle.italic,
@@ -371,7 +372,7 @@ class _CreatorMealPlanPreviewWidgetState extends State<CreatorMealPlanPreviewWid
               child: Text(
                 'Will replace $replaceCount day${replaceCount == 1 ? '' : 's'} you already planned',
                 style: theme.bodySmall.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   color: Colors.amber.shade900,
                 ),
               ),
@@ -384,7 +385,7 @@ class _CreatorMealPlanPreviewWidgetState extends State<CreatorMealPlanPreviewWid
               height: 48,
               color: canImport ? primary : theme.alternate,
               textStyle: theme.bodyMedium.override(
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
                 color: Colors.white,
                 fontWeight: FontWeight.w600,
               ),

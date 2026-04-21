@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '/app_state.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
@@ -131,7 +132,7 @@ class _EnterCreatorCodeSheetState extends State<EnterCreatorCodeSheet> {
           Text(
             'Enter Creator Code',
             style: FlutterFlowTheme.of(context).titleLarge.override(
-              fontFamily: 'Andika New Basic',
+              fontFamily: FFAppState().currentFontFamily,
               fontSize: 22.0,
               fontWeight: FontWeight.w600,
               letterSpacing: 0.0,
@@ -142,7 +143,7 @@ class _EnterCreatorCodeSheetState extends State<EnterCreatorCodeSheet> {
             'Get a personalized experience from your favorite creator',
             textAlign: TextAlign.center,
             style: FlutterFlowTheme.of(context).bodySmall.override(
-              fontFamily: 'Andika New Basic',
+              fontFamily: FFAppState().currentFontFamily,
               color: FlutterFlowTheme.of(context).secondaryText,
               fontSize: 14.0,
               letterSpacing: 0.0,
@@ -159,7 +160,7 @@ class _EnterCreatorCodeSheetState extends State<EnterCreatorCodeSheet> {
                   focusNode: _focusNode,
                   textCapitalization: TextCapitalization.characters,
                   style: FlutterFlowTheme.of(context).bodyLarge.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     fontSize: 18.0,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 2.0,
@@ -190,7 +191,7 @@ class _EnterCreatorCodeSheetState extends State<EnterCreatorCodeSheet> {
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   color: FlutterFlowTheme.of(context).primary,
                   textStyle: FlutterFlowTheme.of(context).titleSmall.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     color: Colors.white,
                     fontSize: 16.0,
                     letterSpacing: 0.0,
@@ -227,7 +228,7 @@ class _EnterCreatorCodeSheetState extends State<EnterCreatorCodeSheet> {
                 color: parseHexColor(_validatedCreator!.themePrimary) ??
                     FlutterFlowTheme.of(context).primary,
                 textStyle: FlutterFlowTheme.of(context).titleSmall.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   color: Colors.white,
                   fontSize: 16.0,
                   fontWeight: FontWeight.w600,
@@ -283,7 +284,7 @@ class _EnterCreatorCodeSheetState extends State<EnterCreatorCodeSheet> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(creator.name, style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: const Color(0xFF5D4E60))),
+                    Text(creator.name, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: Color(0xFF5D4E60))),
                     if (creator.hasNiche())
                       Text(creator.niche, style: TextStyle(fontSize: 10, color: primary, fontWeight: FontWeight.w500)),
                   ],
@@ -309,7 +310,7 @@ class _EnterCreatorCodeSheetState extends State<EnterCreatorCodeSheet> {
                   children: [
                     Icon(Icons.restaurant_menu_rounded, color: primary, size: 16),
                     const SizedBox(width: 6),
-                    Text("Today's Meals", style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: const Color(0xFF5D4E60))),
+                    const Text("Today's Meals", style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Color(0xFF5D4E60))),
                   ],
                 ),
                 const SizedBox(height: 8),
@@ -343,7 +344,7 @@ class _EnterCreatorCodeSheetState extends State<EnterCreatorCodeSheet> {
               children: [
                 Icon(Icons.calendar_today_rounded, color: primary, size: 16),
                 const SizedBox(width: 6),
-                Text("Today's Events", style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: const Color(0xFF5D4E60))),
+                const Text("Today's Events", style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Color(0xFF5D4E60))),
                 const Spacer(),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),

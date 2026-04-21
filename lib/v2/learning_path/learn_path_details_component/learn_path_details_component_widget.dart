@@ -1,16 +1,11 @@
-import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/v2/learning_path/compele_taskpopup/compele_taskpopup_widget.dart';
-import 'dart:ui';
 import '/index.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'learn_path_details_component_model.dart';
 export 'learn_path_details_component_model.dart';
 
@@ -20,8 +15,8 @@ class LearnPathDetailsComponentWidget extends StatefulWidget {
     required this.learningTask,
     int? filterlist,
     int? notfilteredlist,
-  })  : this.filterlist = filterlist ?? 0,
-        this.notfilteredlist = notfilteredlist ?? 0;
+  })  : filterlist = filterlist ?? 0,
+        notfilteredlist = notfilteredlist ?? 0;
 
   final LearningPathTasksRecord? learningTask;
   final int filterlist;
@@ -49,7 +44,7 @@ class _LearnPathDetailsComponentWidgetState
 
     // On component load action.
     SchedulerBinding.instance.addPostFrameCallback((_) async {
-      _model.iscompleted = widget!.learningTask!.isCompleted;
+      _model.iscompleted = widget.learningTask!.isCompleted;
       safeSetState(() {});
     });
   }
@@ -95,7 +90,7 @@ class _LearnPathDetailsComponentWidgetState
     String content,
   ) {
     return Padding(
-      padding: EdgeInsetsDirectional.fromSTEB(16.0, 16.0, 16.0, 0.0),
+      padding: const EdgeInsetsDirectional.fromSTEB(16.0, 16.0, 16.0, 0.0),
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
@@ -104,18 +99,18 @@ class _LearnPathDetailsComponentWidgetState
           border: Border.all(color: color.withOpacity(0.2)),
         ),
         child: Padding(
-          padding: EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
                   Icon(icon, color: color, size: 20.0),
-                  SizedBox(width: 8.0),
+                  const SizedBox(width: 8.0),
                   Text(
                     title,
                     style: FlutterFlowTheme.of(context).bodyMedium.override(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           color: color,
                           fontSize: 14.0,
                           fontWeight: FontWeight.w600,
@@ -124,11 +119,11 @@ class _LearnPathDetailsComponentWidgetState
                   ),
                 ],
               ),
-              SizedBox(height: 8.0),
+              const SizedBox(height: 8.0),
               Text(
                 content,
                 style: FlutterFlowTheme.of(context).bodyMedium.override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       fontSize: 15.0,
                       letterSpacing: 0.0,
                     ),
@@ -149,7 +144,7 @@ class _LearnPathDetailsComponentWidgetState
       expand: false,
       builder: (context, scrollController) {
         return Padding(
-          padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
+          padding: const EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(25.0),
             child: Container(
@@ -166,26 +161,26 @@ class _LearnPathDetailsComponentWidgetState
                     // Drag handle for swipe to close
                     Center(
                       child: Container(
-                        margin: EdgeInsets.only(top: 12.0),
+                        margin: const EdgeInsets.only(top: 12.0),
                         width: 40.0,
                         height: 4.0,
                         decoration: BoxDecoration(
-                          color: Color(0xFFE0E0E0),
+                          color: const Color(0xFFE0E0E0),
                           borderRadius: BorderRadius.circular(2.0),
                         ),
                       ),
                     ),
                 // Header with lesson title
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(24.0, 16.0, 24.0, 0.0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(24.0, 16.0, 24.0, 0.0),
                   child: Text(
                     valueOrDefault<String>(
-                      widget!.learningTask?.title,
+                      widget.learningTask?.title,
                       'Lesson Details',
                     ),
                     textAlign: TextAlign.center,
                     style: FlutterFlowTheme.of(context).bodyMedium.override(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           fontSize: 22.0,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 0.0,
@@ -199,7 +194,7 @@ class _LearnPathDetailsComponentWidgetState
                   Icons.play_circle_outline,
                   FlutterFlowTheme.of(context).primary,
                   valueOrDefault<String>(
-                    widget!.learningTask?.description,
+                    widget.learningTask?.description,
                     'Follow the instructions for this lesson.',
                   ),
                 ),
@@ -208,12 +203,12 @@ class _LearnPathDetailsComponentWidgetState
                   future: _getFieldFromSnapshot('parent_tip'),
                   builder: (context, snapshot) {
                     final tip = snapshot.data;
-                    if (tip == null || tip.isEmpty) return SizedBox.shrink();
+                    if (tip == null || tip.isEmpty) return const SizedBox.shrink();
                     return _buildSection(
                       context,
                       'Parent Tip',
                       Icons.lightbulb_outline,
-                      Color(0xFFFF9800),
+                      const Color(0xFFFF9800),
                       tip,
                     );
                   },
@@ -223,12 +218,12 @@ class _LearnPathDetailsComponentWidgetState
                   future: _getFieldFromSnapshot('success_signs'),
                   builder: (context, snapshot) {
                     final signs = snapshot.data;
-                    if (signs == null || signs.isEmpty) return SizedBox.shrink();
+                    if (signs == null || signs.isEmpty) return const SizedBox.shrink();
                     return _buildSection(
                       context,
                       'Signs of Progress',
                       Icons.trending_up,
-                      Color(0xFF4CAF50),
+                      const Color(0xFF4CAF50),
                       signs,
                     );
                   },
@@ -238,12 +233,12 @@ class _LearnPathDetailsComponentWidgetState
                   future: _getFieldFromSnapshot('if_resistant'),
                   builder: (context, snapshot) {
                     final resistant = snapshot.data;
-                    if (resistant == null || resistant.isEmpty) return SizedBox.shrink();
+                    if (resistant == null || resistant.isEmpty) return const SizedBox.shrink();
                     return _buildSection(
                       context,
                       'If They Resist',
                       Icons.sentiment_neutral_outlined,
-                      Color(0xFF9C27B0),
+                      const Color(0xFF9C27B0),
                       resistant,
                     );
                   },
@@ -253,36 +248,36 @@ class _LearnPathDetailsComponentWidgetState
                   FutureBuilder<Map<String, String?>>(
                     future: _getCompletionData(),
                     builder: (context, snapshot) {
-                      if (!snapshot.hasData) return SizedBox.shrink();
+                      if (!snapshot.hasData) return const SizedBox.shrink();
                       final feedback = snapshot.data!['feedback'];
                       final note = snapshot.data!['note'];
                       if ((feedback == null || feedback.isEmpty) &&
                           (note == null || note.isEmpty)) {
-                        return SizedBox.shrink();
+                        return const SizedBox.shrink();
                       }
                       return Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(16.0, 16.0, 16.0, 0.0),
+                        padding: const EdgeInsetsDirectional.fromSTEB(16.0, 16.0, 16.0, 0.0),
                         child: Container(
                           width: double.infinity,
                           decoration: BoxDecoration(
-                            color: Color(0xFF4CAF50).withOpacity(0.08),
+                            color: const Color(0xFF4CAF50).withOpacity(0.08),
                             borderRadius: BorderRadius.circular(14.0),
-                            border: Border.all(color: Color(0xFF4CAF50).withOpacity(0.2)),
+                            border: Border.all(color: const Color(0xFF4CAF50).withOpacity(0.2)),
                           ),
                           child: Padding(
-                            padding: EdgeInsets.all(16.0),
+                            padding: const EdgeInsets.all(16.0),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Row(
                                   children: [
-                                    Icon(Icons.check_circle, color: Color(0xFF4CAF50), size: 20.0),
-                                    SizedBox(width: 8.0),
+                                    const Icon(Icons.check_circle, color: Color(0xFF4CAF50), size: 20.0),
+                                    const SizedBox(width: 8.0),
                                     Text(
                                       'Completion Notes',
                                       style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                            fontFamily: 'Andika New Basic',
-                                            color: Color(0xFF4CAF50),
+                                            fontFamily: FFAppState().currentFontFamily,
+                                            color: const Color(0xFF4CAF50),
                                             fontSize: 14.0,
                                             fontWeight: FontWeight.w600,
                                             letterSpacing: 0.0,
@@ -291,13 +286,13 @@ class _LearnPathDetailsComponentWidgetState
                                   ],
                                 ),
                                 if (feedback != null && feedback.isNotEmpty) ...[
-                                  SizedBox(height: 12.0),
+                                  const SizedBox(height: 12.0),
                                   Row(
                                     children: [
                                       Text(
                                         'How it went: ',
                                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                              fontFamily: 'Andika New Basic',
+                                              fontFamily: FFAppState().currentFontFamily,
                                               fontWeight: FontWeight.w600,
                                               fontSize: 14.0,
                                               letterSpacing: 0.0,
@@ -309,7 +304,7 @@ class _LearnPathDetailsComponentWidgetState
                                         feedback == 'struggled' ? 'Struggled' :
                                         feedback[0].toUpperCase() + feedback.substring(1),
                                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                              fontFamily: 'Andika New Basic',
+                                              fontFamily: FFAppState().currentFontFamily,
                                               fontSize: 14.0,
                                               letterSpacing: 0.0,
                                             ),
@@ -318,11 +313,11 @@ class _LearnPathDetailsComponentWidgetState
                                   ),
                                 ],
                                 if (note != null && note.isNotEmpty) ...[
-                                  SizedBox(height: 8.0),
+                                  const SizedBox(height: 8.0),
                                   Text(
                                     note,
                                     style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                          fontFamily: 'Andika New Basic',
+                                          fontFamily: FFAppState().currentFontFamily,
                                           fontSize: 15.0,
                                           letterSpacing: 0.0,
                                         ),
@@ -336,7 +331,7 @@ class _LearnPathDetailsComponentWidgetState
                     },
                   ),
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
                   child: Row(
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -346,34 +341,34 @@ class _LearnPathDetailsComponentWidgetState
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 20.0, 0.0, 0.0),
                             child: Text(
                               'Start',
                               style: FlutterFlowTheme.of(context)
                                   .bodyMedium
                                   .override(
-                                    fontFamily: 'Andika New Basic',
-                                    color: Color(0xC2000000),
+                                    fontFamily: FFAppState().currentFontFamily,
+                                    color: const Color(0xC2000000),
                                     fontSize: 16.0,
                                     letterSpacing: 0.0,
                                   ),
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 5.0, 0.0, 0.0),
                             child: Text(
                               dateTimeFormat(
                                 "jm",
-                                widget!.learningTask!.taskTime!,
+                                widget.learningTask!.taskTime!,
                                 locale:
                                     FFLocalizations.of(context).languageCode,
                               ),
                               style: FlutterFlowTheme.of(context)
                                   .bodyMedium
                                   .override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     fontSize: 16.0,
                                     letterSpacing: 0.0,
                                   ),
@@ -386,17 +381,17 @@ class _LearnPathDetailsComponentWidgetState
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Align(
-                            alignment: AlignmentDirectional(-1.0, 0.0),
+                            alignment: const AlignmentDirectional(-1.0, 0.0),
                             child: Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   0.0, 20.0, 0.0, 0.0),
                               child: Text(
                                 'Duration',
                                 style: FlutterFlowTheme.of(context)
                                     .bodyMedium
                                     .override(
-                                      fontFamily: 'Andika New Basic',
-                                      color: Color(0xC2000000),
+                                      fontFamily: FFAppState().currentFontFamily,
+                                      color: const Color(0xC2000000),
                                       fontSize: 16.0,
                                       letterSpacing: 0.0,
                                     ),
@@ -404,14 +399,14 @@ class _LearnPathDetailsComponentWidgetState
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 5.0, 0.0, 0.0),
                             child: Text(
-                              '${widget!.learningTask?.duration ?? 1} min',
+                              '${widget.learningTask?.duration ?? 1} min',
                               style: FlutterFlowTheme.of(context)
                                   .bodyMedium
                                   .override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     fontSize: 16.0,
                                     letterSpacing: 0.0,
                                   ),
@@ -423,15 +418,15 @@ class _LearnPathDetailsComponentWidgetState
                   ),
                 ),
                 Align(
-                  alignment: AlignmentDirectional(-1.0, 0.0),
+                  alignment: const AlignmentDirectional(-1.0, 0.0),
                   child: Padding(
                     padding:
-                        EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 0.0, 0.0),
+                        const EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 0.0, 0.0),
                     child: Text(
                       'Selected Child',
                       style: FlutterFlowTheme.of(context).bodyMedium.override(
-                            fontFamily: 'Andika New Basic',
-                            color: Color(0xC2000000),
+                            fontFamily: FFAppState().currentFontFamily,
+                            color: const Color(0xC2000000),
                             fontSize: 16.0,
                             letterSpacing: 0.0,
                           ),
@@ -439,13 +434,13 @@ class _LearnPathDetailsComponentWidgetState
                   ),
                 ),
                 Align(
-                  alignment: AlignmentDirectional(-1.0, 0.0),
+                  alignment: const AlignmentDirectional(-1.0, 0.0),
                   child: Padding(
                     padding:
-                        EdgeInsetsDirectional.fromSTEB(24.0, 16.0, 0.0, 0.0),
+                        const EdgeInsetsDirectional.fromSTEB(24.0, 16.0, 0.0, 0.0),
                     child: StreamBuilder<ChildernRecord>(
                       stream: ChildernRecord.getDocument(
-                          widget!.learningTask!.childRef!),
+                          widget.learningTask!.childRef!),
                       builder: (context, snapshot) {
                         // Customize what your widget looks like when it's loading.
                         if (!snapshot.hasData) {
@@ -492,7 +487,7 @@ class _LearnPathDetailsComponentWidgetState
                   Builder(
                     builder: (context) => Padding(
                       padding:
-                          EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),
+                          const EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),
                       child: FFButtonWidget(
                         onPressed: () async {
                           final result = await showDialog<TaskCompletionResult>(
@@ -502,9 +497,9 @@ class _LearnPathDetailsComponentWidgetState
                                 elevation: 0,
                                 insetPadding: EdgeInsets.zero,
                                 backgroundColor: Colors.transparent,
-                                alignment: AlignmentDirectional(0.0, 0.0)
+                                alignment: const AlignmentDirectional(0.0, 0.0)
                                     .resolve(Directionality.of(context)),
-                                child: CompeleTaskpopupWidget(),
+                                child: const CompeleTaskpopupWidget(),
                               );
                             },
                           );
@@ -526,11 +521,11 @@ class _LearnPathDetailsComponentWidgetState
                             _model.iscompleted = true;
 
                             // Update Firestore
-                            await widget!.learningTask!.reference.update(updateData);
+                            await widget.learningTask!.reference.update(updateData);
 
                             // Check if this completes the entire learning path
-                            if (widget!.filterlist == widget!.notfilteredlist) {
-                              await widget!.learningTask!.programRef!
+                            if (widget.filterlist == widget.notfilteredlist) {
+                              await widget.learningTask!.programRef!
                                   .update(createLearningPathRecordData(
                                 isCompleted: true,
                               ));
@@ -551,14 +546,14 @@ class _LearnPathDetailsComponentWidgetState
                         options: FFButtonOptions(
                           width: double.infinity,
                           height: 48.0,
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               16.0, 0.0, 16.0, 0.0),
-                          iconPadding: EdgeInsetsDirectional.fromSTEB(
+                          iconPadding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 0.0, 8.0, 0.0),
                           color: FlutterFlowTheme.of(context).primary,
                           textStyle:
                               FlutterFlowTheme.of(context).titleSmall.override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     color: FlutterFlowTheme.of(context).info,
                                     fontSize: 16.0,
                                     letterSpacing: 0.0,
@@ -573,7 +568,7 @@ class _LearnPathDetailsComponentWidgetState
                 if (_model.iscompleted == false)
                   Padding(
                     padding:
-                        EdgeInsetsDirectional.fromSTEB(24.0, 12.0, 24.0, 0.0),
+                        const EdgeInsetsDirectional.fromSTEB(24.0, 12.0, 24.0, 0.0),
                     child: Row(
                       mainAxisSize: MainAxisSize.max,
                       children: [
@@ -585,18 +580,18 @@ class _LearnPathDetailsComponentWidgetState
                                 context: context,
                                 builder: (dialogContext) {
                                   return AlertDialog(
-                                    title: Text('Skip Lesson?'),
-                                    content: Text(
+                                    title: const Text('Skip Lesson?'),
+                                    content: const Text(
                                       'This will mark the lesson as skipped. You can still complete it later if needed.',
                                     ),
                                     actions: [
                                       TextButton(
                                         onPressed: () => Navigator.pop(dialogContext, false),
-                                        child: Text('Cancel'),
+                                        child: const Text('Cancel'),
                                       ),
                                       TextButton(
                                         onPressed: () => Navigator.pop(dialogContext, true),
-                                        child: Text('Skip'),
+                                        child: const Text('Skip'),
                                       ),
                                     ],
                                   );
@@ -604,7 +599,7 @@ class _LearnPathDetailsComponentWidgetState
                               );
                               if (confirm == true) {
                                 // Mark as skipped (NOT completed - user can still complete later)
-                                await widget!.learningTask!.reference.update({
+                                await widget.learningTask!.reference.update({
                                   'was_skipped': true,
                                 });
                                 safeSetState(() {});
@@ -612,43 +607,43 @@ class _LearnPathDetailsComponentWidgetState
                               }
                             },
                             text: 'Skip',
-                            icon: Icon(
+                            icon: const Icon(
                               Icons.skip_next_outlined,
                               size: 18.0,
                             ),
                             options: FFButtonOptions(
                               height: 40.0,
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   12.0, 0.0, 12.0, 0.0),
-                              iconPadding: EdgeInsetsDirectional.fromSTEB(
+                              iconPadding: const EdgeInsetsDirectional.fromSTEB(
                                   0.0, 0.0, 4.0, 0.0),
-                              color: Color(0xFFFF9800).withOpacity(0.1),
+                              color: const Color(0xFFFF9800).withOpacity(0.1),
                               textStyle: FlutterFlowTheme.of(context)
                                   .titleSmall
                                   .override(
-                                    fontFamily: 'Andika New Basic',
-                                    color: Color(0xFFFF9800),
+                                    fontFamily: FFAppState().currentFontFamily,
+                                    color: const Color(0xFFFF9800),
                                     fontSize: 14.0,
                                     letterSpacing: 0.0,
                                   ),
                               elevation: 0.0,
-                              borderSide: BorderSide(
+                              borderSide: const BorderSide(
                                 color: Color(0xFFFF9800),
                               ),
                               borderRadius: BorderRadius.circular(14.0),
                             ),
                           ),
                         ),
-                        SizedBox(width: 12.0),
+                        const SizedBox(width: 12.0),
                         // Reschedule button
                         Expanded(
                           child: FFButtonWidget(
                             onPressed: () async {
                               final selectedDate = await showDatePicker(
                                 context: context,
-                                initialDate: widget!.learningTask!.taskTime ?? DateTime.now(),
+                                initialDate: widget.learningTask!.taskTime ?? DateTime.now(),
                                 firstDate: DateTime.now(),
-                                lastDate: DateTime.now().add(Duration(days: 365)),
+                                lastDate: DateTime.now().add(const Duration(days: 365)),
                                 builder: (context, child) {
                                   return Theme(
                                     data: Theme.of(context).copyWith(
@@ -662,7 +657,7 @@ class _LearnPathDetailsComponentWidgetState
                               );
                               if (selectedDate != null) {
                                 // Keep the same time, just change the date
-                                final oldTime = widget!.learningTask!.taskTime!;
+                                final oldTime = widget.learningTask!.taskTime!;
                                 final newDateTime = DateTime(
                                   selectedDate.year,
                                   selectedDate.month,
@@ -670,7 +665,7 @@ class _LearnPathDetailsComponentWidgetState
                                   oldTime.hour,
                                   oldTime.minute,
                                 );
-                                await widget!.learningTask!.reference.update({
+                                await widget.learningTask!.reference.update({
                                   'task_time': Timestamp.fromDate(newDateTime),
                                 });
                                 Navigator.pop(context);
@@ -683,21 +678,21 @@ class _LearnPathDetailsComponentWidgetState
                               }
                             },
                             text: 'Reschedule',
-                            icon: Icon(
+                            icon: const Icon(
                               Icons.calendar_today_outlined,
                               size: 18.0,
                             ),
                             options: FFButtonOptions(
                               height: 40.0,
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   12.0, 0.0, 12.0, 0.0),
-                              iconPadding: EdgeInsetsDirectional.fromSTEB(
+                              iconPadding: const EdgeInsetsDirectional.fromSTEB(
                                   0.0, 0.0, 4.0, 0.0),
                               color: FlutterFlowTheme.of(context).secondary.withOpacity(0.1),
                               textStyle: FlutterFlowTheme.of(context)
                                   .titleSmall
                                   .override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     color: FlutterFlowTheme.of(context).secondary,
                                     fontSize: 14.0,
                                     letterSpacing: 0.0,
@@ -715,7 +710,7 @@ class _LearnPathDetailsComponentWidgetState
                   ),
                 Padding(
                   padding:
-                      EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 20.0),
+                      const EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 20.0),
                   child: Row(
                     mainAxisSize: MainAxisSize.max,
                     children: [
@@ -727,15 +722,15 @@ class _LearnPathDetailsComponentWidgetState
                           text: 'Cancel',
                           options: FFButtonOptions(
                             height: 40.0,
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 16.0, 0.0, 16.0, 0.0),
-                            iconPadding: EdgeInsetsDirectional.fromSTEB(
+                            iconPadding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 0.0, 0.0, 0.0),
-                            color: Color(0x0152A097),
+                            color: const Color(0x0152A097),
                             textStyle: FlutterFlowTheme.of(context)
                                 .titleSmall
                                 .override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   color: FlutterFlowTheme.of(context).primary,
                                   letterSpacing: 0.0,
                                 ),
@@ -754,27 +749,27 @@ class _LearnPathDetailsComponentWidgetState
                               EditeLearningPathtaskWidget.routeName,
                               queryParameters: {
                                 'learingTask': serializeParam(
-                                  widget!.learningTask,
+                                  widget.learningTask,
                                   ParamType.Document,
                                 ),
                               }.withoutNulls,
                               extra: <String, dynamic>{
-                                'learingTask': widget!.learningTask,
+                                'learingTask': widget.learningTask,
                               },
                             );
                           },
                           text: 'Edit',
                           options: FFButtonOptions(
                             height: 40.0,
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 16.0, 0.0, 16.0, 0.0),
-                            iconPadding: EdgeInsetsDirectional.fromSTEB(
+                            iconPadding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 0.0, 0.0, 0.0),
                             color: FlutterFlowTheme.of(context).primary,
                             textStyle: FlutterFlowTheme.of(context)
                                 .titleSmall
                                 .override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   color: FlutterFlowTheme.of(context).info,
                                   letterSpacing: 0.0,
                                 ),
@@ -783,7 +778,7 @@ class _LearnPathDetailsComponentWidgetState
                           ),
                         ),
                       ),
-                    ].divide(SizedBox(width: 24.0)),
+                    ].divide(const SizedBox(width: 24.0)),
                   ),
                 ),
                 // Extra bottom padding for safe scrolling (accounts for safe area and gesture area)

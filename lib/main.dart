@@ -2,29 +2,24 @@ import 'dart:async';
 import 'dart:ui';
 import 'package:provider/provider.dart';
 import '/v2/creator/creator_theme_notifier.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'auth/firebase_auth/firebase_user_provider.dart';
 import 'auth/firebase_auth/auth_util.dart';
 
 import 'backend/backend.dart';
 import 'backend/firebase/firebase_config.dart';
-import '/flutter_flow/flutter_flow_theme.dart';
 import 'flutter_flow/flutter_flow_util.dart';
 import 'flutter_flow/internationalization.dart';
-import 'flutter_flow/nav/nav.dart';
 import 'flutter_flow/share_intent_handler.dart';
 import 'flutter_flow/deep_link_handler.dart';
 import 'custom_code/actions/notification_service.dart';
 import 'custom_code/actions/analytics_service.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'v2/auth/demo_data_notifier.dart';
-import 'index.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -96,11 +91,13 @@ void main() async {
       ChangeNotifierProvider(create: (context) => DemoDataNotifier()),
       ChangeNotifierProvider(create: (context) => CreatorThemeNotifier()),
     ],
-    child: MyApp(),
+    child: const MyApp(),
   ));
 }
 
 class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
   // This widget is the root of your application.
   @override
   State<MyApp> createState() => _MyAppState();
@@ -179,7 +176,7 @@ class _MyAppState extends State<MyApp> {
       });
     jwtTokenStream.listen((_) {});
     Future.delayed(
-      Duration(milliseconds: 4500),
+      const Duration(milliseconds: 4500),
       () {
         _appStateNotifier.stopShowingSplashImage();
         // Check for pending deep links after splash finishes
@@ -249,7 +246,7 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       title: 'MomRise',
-      localizationsDelegates: [
+      localizationsDelegates: const [
         FFLocalizationsDelegate(),
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,

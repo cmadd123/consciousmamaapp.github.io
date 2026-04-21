@@ -3,10 +3,7 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/flutter_flow/form_field_controller.dart';
-import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'create_activity_model.dart';
 export 'create_activity_model.dart';
 
@@ -65,7 +62,7 @@ class _CreateActivityWidgetState extends State<CreateActivityWidget> {
           child: Container(
             width: double.infinity,
             height: double.infinity,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               gradient: LinearGradient(
                 colors: [Color(0xFFF6FFFE), Color(0xFFEDFFFD)],
                 stops: [0.0, 1.0],
@@ -79,7 +76,7 @@ class _CreateActivityWidgetState extends State<CreateActivityWidget> {
               children: [
                 Padding(
                   padding:
-                      EdgeInsetsDirectional.fromSTEB(20.0, 20.0, 20.0, 0.0),
+                      const EdgeInsetsDirectional.fromSTEB(20.0, 20.0, 20.0, 0.0),
                   child: Row(
                     mainAxisSize: MainAxisSize.max,
                     children: [
@@ -90,14 +87,14 @@ class _CreateActivityWidgetState extends State<CreateActivityWidget> {
                       ),
                       Expanded(
                         child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 0.0, 10.0, 0.0),
                           child: Row(
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     0.0, 0.0, 20.0, 0.0),
                                 child: Text(
                                   'Create Activity',
@@ -105,7 +102,7 @@ class _CreateActivityWidgetState extends State<CreateActivityWidget> {
                                   style: FlutterFlowTheme.of(context)
                                       .bodyMedium
                                       .override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         fontSize: 20.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.bold,
@@ -125,14 +122,14 @@ class _CreateActivityWidgetState extends State<CreateActivityWidget> {
                     autovalidateMode: AutovalidateMode.disabled,
                     child: Padding(
                       padding:
-                          EdgeInsetsDirectional.fromSTEB(20.0, 24.0, 20.0, 0.0),
+                          const EdgeInsetsDirectional.fromSTEB(20.0, 24.0, 20.0, 0.0),
                       child: Column(
                         mainAxisSize: MainAxisSize.max,
                         children: [
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 0.0, 0.0, 10.0),
-                            child: Container(
+                            child: SizedBox(
                               width: double.infinity,
                               child: TextFormField(
                                 controller: _model.textController1,
@@ -144,25 +141,25 @@ class _CreateActivityWidgetState extends State<CreateActivityWidget> {
                                   labelStyle: FlutterFlowTheme.of(context)
                                       .labelMedium
                                       .override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         letterSpacing: 0.0,
                                       ),
                                   hintText: 'Title',
                                   hintStyle: FlutterFlowTheme.of(context)
                                       .labelMedium
                                       .override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         letterSpacing: 0.0,
                                       ),
                                   enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
+                                    borderSide: const BorderSide(
                                       color: Color(0x3352A097),
                                       width: 1.0,
                                     ),
                                     borderRadius: BorderRadius.circular(27.0),
                                   ),
                                   focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
+                                    borderSide: const BorderSide(
                                       color: Color(0x00000000),
                                       width: 1.0,
                                     ),
@@ -186,13 +183,13 @@ class _CreateActivityWidgetState extends State<CreateActivityWidget> {
                                   fillColor: FlutterFlowTheme.of(context)
                                       .secondaryBackground,
                                   contentPadding:
-                                      EdgeInsetsDirectional.fromSTEB(
+                                      const EdgeInsetsDirectional.fromSTEB(
                                           20.0, 20.0, 0.0, 20.0),
                                 ),
                                 style: FlutterFlowTheme.of(context)
                                     .bodyMedium
                                     .override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       letterSpacing: 0.0,
                                     ),
                                 cursorColor:
@@ -203,9 +200,9 @@ class _CreateActivityWidgetState extends State<CreateActivityWidget> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 0.0, 0.0, 10.0),
-                            child: Container(
+                            child: SizedBox(
                               width: double.infinity,
                               child: TextFormField(
                                 controller: _model.textController2,
@@ -217,25 +214,25 @@ class _CreateActivityWidgetState extends State<CreateActivityWidget> {
                                   labelStyle: FlutterFlowTheme.of(context)
                                       .labelMedium
                                       .override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         letterSpacing: 0.0,
                                       ),
                                   hintText: 'Who will be doing this activity?',
                                   hintStyle: FlutterFlowTheme.of(context)
                                       .labelMedium
                                       .override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         letterSpacing: 0.0,
                                       ),
                                   enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
+                                    borderSide: const BorderSide(
                                       color: Color(0x3352A097),
                                       width: 1.0,
                                     ),
                                     borderRadius: BorderRadius.circular(27.0),
                                   ),
                                   focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
+                                    borderSide: const BorderSide(
                                       color: Color(0x00000000),
                                       width: 1.0,
                                     ),
@@ -259,13 +256,13 @@ class _CreateActivityWidgetState extends State<CreateActivityWidget> {
                                   fillColor: FlutterFlowTheme.of(context)
                                       .secondaryBackground,
                                   contentPadding:
-                                      EdgeInsetsDirectional.fromSTEB(
+                                      const EdgeInsetsDirectional.fromSTEB(
                                           20.0, 20.0, 0.0, 20.0),
                                 ),
                                 style: FlutterFlowTheme.of(context)
                                     .bodyMedium
                                     .override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       letterSpacing: 0.0,
                                     ),
                                 cursorColor:
@@ -276,9 +273,9 @@ class _CreateActivityWidgetState extends State<CreateActivityWidget> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 0.0, 0.0, 10.0),
-                            child: Container(
+                            child: SizedBox(
                               width: double.infinity,
                               child: TextFormField(
                                 controller: _model.textController3,
@@ -290,25 +287,25 @@ class _CreateActivityWidgetState extends State<CreateActivityWidget> {
                                   labelStyle: FlutterFlowTheme.of(context)
                                       .labelMedium
                                       .override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         letterSpacing: 0.0,
                                       ),
                                   hintText: 'Description',
                                   hintStyle: FlutterFlowTheme.of(context)
                                       .labelMedium
                                       .override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         letterSpacing: 0.0,
                                       ),
                                   enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
+                                    borderSide: const BorderSide(
                                       color: Color(0x3352A097),
                                       width: 1.0,
                                     ),
                                     borderRadius: BorderRadius.circular(27.0),
                                   ),
                                   focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
+                                    borderSide: const BorderSide(
                                       color: Color(0x00000000),
                                       width: 1.0,
                                     ),
@@ -332,13 +329,13 @@ class _CreateActivityWidgetState extends State<CreateActivityWidget> {
                                   fillColor: FlutterFlowTheme.of(context)
                                       .secondaryBackground,
                                   contentPadding:
-                                      EdgeInsetsDirectional.fromSTEB(
+                                      const EdgeInsetsDirectional.fromSTEB(
                                           20.0, 20.0, 0.0, 20.0),
                                 ),
                                 style: FlutterFlowTheme.of(context)
                                     .bodyMedium
                                     .override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       letterSpacing: 0.0,
                                     ),
                                 maxLines: 5,
@@ -350,12 +347,12 @@ class _CreateActivityWidgetState extends State<CreateActivityWidget> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 20.0, 0.0, 20.0, 0.0),
                             child: FlutterFlowDropDown<String>(
                               controller: _model.dropDownValueController1 ??=
                                   FormFieldController<String>(null),
-                              options: ['Option 1', 'Option 2', 'Option 3'],
+                              options: const ['Option 1', 'Option 2', 'Option 3'],
                               onChanged: (val) => safeSetState(
                                   () => _model.dropDownValue1 = val),
                               width: double.infinity,
@@ -363,7 +360,7 @@ class _CreateActivityWidgetState extends State<CreateActivityWidget> {
                               textStyle: FlutterFlowTheme.of(context)
                                   .bodyMedium
                                   .override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     color: FlutterFlowTheme.of(context)
                                         .secondaryText,
                                     letterSpacing: 0.0,
@@ -378,10 +375,10 @@ class _CreateActivityWidgetState extends State<CreateActivityWidget> {
                               fillColor: FlutterFlowTheme.of(context)
                                   .secondaryBackground,
                               elevation: 2.0,
-                              borderColor: Color(0x5B52A097),
+                              borderColor: const Color(0x5B52A097),
                               borderWidth: 0.0,
                               borderRadius: 27.0,
-                              margin: EdgeInsetsDirectional.fromSTEB(
+                              margin: const EdgeInsetsDirectional.fromSTEB(
                                   12.0, 0.0, 12.0, 0.0),
                               hidesUnderline: true,
                               isOverButton: false,
@@ -390,20 +387,20 @@ class _CreateActivityWidgetState extends State<CreateActivityWidget> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 16.0, 0.0, 0.0),
                             child: Row(
                               mainAxisSize: MainAxisSize.max,
                               children: [
                                 Expanded(
                                   child: Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(
                                         20.0, 0.0, 0.0, 0.0),
                                     child: FlutterFlowDropDown<String>(
                                       controller:
                                           _model.dropDownValueController2 ??=
                                               FormFieldController<String>(null),
-                                      options: [
+                                      options: const [
                                         'Option 1',
                                         'Option 2',
                                         'Option 3'
@@ -415,7 +412,7 @@ class _CreateActivityWidgetState extends State<CreateActivityWidget> {
                                       textStyle: FlutterFlowTheme.of(context)
                                           .bodyMedium
                                           .override(
-                                            fontFamily: 'Andika New Basic',
+                                            fontFamily: FFAppState().currentFontFamily,
                                             color: FlutterFlowTheme.of(context)
                                                 .secondaryText,
                                             letterSpacing: 0.0,
@@ -430,10 +427,10 @@ class _CreateActivityWidgetState extends State<CreateActivityWidget> {
                                       fillColor: FlutterFlowTheme.of(context)
                                           .secondaryBackground,
                                       elevation: 2.0,
-                                      borderColor: Color(0x5B52A097),
+                                      borderColor: const Color(0x5B52A097),
                                       borderWidth: 0.0,
                                       borderRadius: 27.0,
-                                      margin: EdgeInsetsDirectional.fromSTEB(
+                                      margin: const EdgeInsetsDirectional.fromSTEB(
                                           12.0, 0.0, 12.0, 0.0),
                                       hidesUnderline: true,
                                       isOverButton: false,
@@ -444,13 +441,13 @@ class _CreateActivityWidgetState extends State<CreateActivityWidget> {
                                 ),
                                 Expanded(
                                   child: Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(
                                         0.0, 0.0, 20.0, 0.0),
                                     child: FlutterFlowDropDown<String>(
                                       controller:
                                           _model.dropDownValueController3 ??=
                                               FormFieldController<String>(null),
-                                      options: [
+                                      options: const [
                                         'Option 1',
                                         'Option 2',
                                         'Option 3'
@@ -462,7 +459,7 @@ class _CreateActivityWidgetState extends State<CreateActivityWidget> {
                                       textStyle: FlutterFlowTheme.of(context)
                                           .bodyMedium
                                           .override(
-                                            fontFamily: 'Andika New Basic',
+                                            fontFamily: FFAppState().currentFontFamily,
                                             color: FlutterFlowTheme.of(context)
                                                 .secondaryText,
                                             letterSpacing: 0.0,
@@ -477,10 +474,10 @@ class _CreateActivityWidgetState extends State<CreateActivityWidget> {
                                       fillColor: FlutterFlowTheme.of(context)
                                           .secondaryBackground,
                                       elevation: 2.0,
-                                      borderColor: Color(0x5B52A097),
+                                      borderColor: const Color(0x5B52A097),
                                       borderWidth: 0.0,
                                       borderRadius: 27.0,
-                                      margin: EdgeInsetsDirectional.fromSTEB(
+                                      margin: const EdgeInsetsDirectional.fromSTEB(
                                           12.0, 0.0, 12.0, 0.0),
                                       hidesUnderline: true,
                                       isOverButton: false,
@@ -489,13 +486,13 @@ class _CreateActivityWidgetState extends State<CreateActivityWidget> {
                                     ),
                                   ),
                                 ),
-                              ].divide(SizedBox(width: 10.0)),
+                              ].divide(const SizedBox(width: 10.0)),
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 20.0, 16.0, 20.0, 10.0),
-                            child: Container(
+                            child: SizedBox(
                               width: double.infinity,
                               child: TextFormField(
                                 controller: _model.textController4,
@@ -507,7 +504,7 @@ class _CreateActivityWidgetState extends State<CreateActivityWidget> {
                                   labelStyle: FlutterFlowTheme.of(context)
                                       .labelMedium
                                       .override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         letterSpacing: 0.0,
                                       ),
                                   hintText:
@@ -515,18 +512,18 @@ class _CreateActivityWidgetState extends State<CreateActivityWidget> {
                                   hintStyle: FlutterFlowTheme.of(context)
                                       .labelMedium
                                       .override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         letterSpacing: 0.0,
                                       ),
                                   enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
+                                    borderSide: const BorderSide(
                                       color: Color(0x3352A097),
                                       width: 1.0,
                                     ),
                                     borderRadius: BorderRadius.circular(27.0),
                                   ),
                                   focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
+                                    borderSide: const BorderSide(
                                       color: Color(0x00000000),
                                       width: 1.0,
                                     ),
@@ -550,13 +547,13 @@ class _CreateActivityWidgetState extends State<CreateActivityWidget> {
                                   fillColor: FlutterFlowTheme.of(context)
                                       .secondaryBackground,
                                   contentPadding:
-                                      EdgeInsetsDirectional.fromSTEB(
+                                      const EdgeInsetsDirectional.fromSTEB(
                                           20.0, 20.0, 0.0, 20.0),
                                 ),
                                 style: FlutterFlowTheme.of(context)
                                     .bodyMedium
                                     .override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       letterSpacing: 0.0,
                                     ),
                                 cursorColor:
@@ -567,12 +564,12 @@ class _CreateActivityWidgetState extends State<CreateActivityWidget> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 20.0, 0.0, 20.0, 0.0),
                             child: FlutterFlowDropDown<String>(
                               controller: _model.dropDownValueController4 ??=
                                   FormFieldController<String>(null),
-                              options: ['Option 1', 'Option 2', 'Option 3'],
+                              options: const ['Option 1', 'Option 2', 'Option 3'],
                               onChanged: (val) => safeSetState(
                                   () => _model.dropDownValue4 = val),
                               width: double.infinity,
@@ -580,7 +577,7 @@ class _CreateActivityWidgetState extends State<CreateActivityWidget> {
                               textStyle: FlutterFlowTheme.of(context)
                                   .bodyMedium
                                   .override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     color: FlutterFlowTheme.of(context)
                                         .secondaryText,
                                     letterSpacing: 0.0,
@@ -595,10 +592,10 @@ class _CreateActivityWidgetState extends State<CreateActivityWidget> {
                               fillColor: FlutterFlowTheme.of(context)
                                   .secondaryBackground,
                               elevation: 2.0,
-                              borderColor: Color(0x5B52A097),
+                              borderColor: const Color(0x5B52A097),
                               borderWidth: 0.0,
                               borderRadius: 27.0,
-                              margin: EdgeInsetsDirectional.fromSTEB(
+                              margin: const EdgeInsetsDirectional.fromSTEB(
                                   12.0, 0.0, 12.0, 0.0),
                               hidesUnderline: true,
                               isOverButton: false,
@@ -613,7 +610,7 @@ class _CreateActivityWidgetState extends State<CreateActivityWidget> {
                 ),
                 Padding(
                   padding:
-                      EdgeInsetsDirectional.fromSTEB(20.0, 0.0, 20.0, 20.0),
+                      const EdgeInsetsDirectional.fromSTEB(20.0, 0.0, 20.0, 20.0),
                   child: Row(
                     mainAxisSize: MainAxisSize.max,
                     children: [
@@ -625,16 +622,16 @@ class _CreateActivityWidgetState extends State<CreateActivityWidget> {
                           text: 'Cancel',
                           options: FFButtonOptions(
                             height: 56.0,
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 16.0, 0.0, 16.0, 0.0),
-                            iconPadding: EdgeInsetsDirectional.fromSTEB(
+                            iconPadding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 0.0, 0.0, 0.0),
                             color: FlutterFlowTheme.of(context)
                                 .secondaryBackground,
                             textStyle: FlutterFlowTheme.of(context)
                                 .titleSmall
                                 .override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   color: FlutterFlowTheme.of(context).primary,
                                   letterSpacing: 0.0,
                                 ),
@@ -654,15 +651,15 @@ class _CreateActivityWidgetState extends State<CreateActivityWidget> {
                           text: 'Create',
                           options: FFButtonOptions(
                             height: 56.0,
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 16.0, 0.0, 16.0, 0.0),
-                            iconPadding: EdgeInsetsDirectional.fromSTEB(
+                            iconPadding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 0.0, 0.0, 0.0),
                             color: FlutterFlowTheme.of(context).primary,
                             textStyle: FlutterFlowTheme.of(context)
                                 .titleSmall
                                 .override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   color: Colors.white,
                                   letterSpacing: 0.0,
                                 ),
@@ -671,7 +668,7 @@ class _CreateActivityWidgetState extends State<CreateActivityWidget> {
                           ),
                         ),
                       ),
-                    ].divide(SizedBox(width: 8.0)),
+                    ].divide(const SizedBox(width: 8.0)),
                   ),
                 ),
               ],

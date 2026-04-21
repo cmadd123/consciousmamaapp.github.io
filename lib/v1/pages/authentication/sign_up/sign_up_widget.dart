@@ -3,13 +3,11 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/v2/auth/demo_data_notifier.dart';
-import 'dart:ui';
 import '/index.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'sign_up_model.dart';
 export 'sign_up_model.dart';
@@ -236,12 +234,12 @@ class _SignUpWidgetState extends State<SignUpWidget>
         decoration: InputDecoration(
           isDense: true,
           labelStyle: FlutterFlowTheme.of(context).labelMedium.override(
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
                 letterSpacing: 0.0,
               ),
           hintText: hintText,
           hintStyle: FlutterFlowTheme.of(context).labelMedium.override(
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
                 letterSpacing: 0.0,
               ),
           enabledBorder: OutlineInputBorder(
@@ -314,7 +312,7 @@ class _SignUpWidgetState extends State<SignUpWidget>
                   : null,
         ),
         style: FlutterFlowTheme.of(context).bodyMedium.override(
-              fontFamily: 'Andika New Basic',
+              fontFamily: FFAppState().currentFontFamily,
               letterSpacing: 0.0,
             ),
         cursorColor: FlutterFlowTheme.of(context).primaryText,
@@ -473,14 +471,14 @@ class _SignUpWidgetState extends State<SignUpWidget>
                       child: Container(
                         width: 72.0,
                         height: 72.0,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           color: Colors.white,
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
                               blurRadius: 8.0,
-                              color: const Color(0x1A000000),
-                              offset: const Offset(0, 2),
+                              color: Color(0x1A000000),
+                              offset: Offset(0, 2),
                             ),
                           ],
                         ),
@@ -503,7 +501,7 @@ class _SignUpWidgetState extends State<SignUpWidget>
                       child: Text(
                         'Create an Account',
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               fontSize: 32.0,
                               letterSpacing: 0.0,
                               fontWeight: FontWeight.bold,
@@ -519,7 +517,7 @@ class _SignUpWidgetState extends State<SignUpWidget>
                       child: Text(
                         'Enter details to create your account.',
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               color: FlutterFlowTheme.of(context).secondaryText,
                               fontSize: 16.0,
                               letterSpacing: 0.0,
@@ -601,7 +599,7 @@ class _SignUpWidgetState extends State<SignUpWidget>
                             textStyle: FlutterFlowTheme.of(context)
                                 .titleSmall
                                 .override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   color: Colors.white,
                                   fontSize: 18.0,
                                   fontWeight: FontWeight.w600,
@@ -629,7 +627,7 @@ class _SignUpWidgetState extends State<SignUpWidget>
                                 style: FlutterFlowTheme.of(context)
                                     .bodyMedium
                                     .override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       color: FlutterFlowTheme.of(context)
                                           .secondaryText,
                                       letterSpacing: 0.0,
@@ -664,7 +662,7 @@ class _SignUpWidgetState extends State<SignUpWidget>
                                           padding: const EdgeInsetsDirectional.fromSTEB(
                                               0.0, 0.0, 18.0, 0.0),
                                           child: ClipRRect(
-                                            child: Container(
+                                            child: SizedBox(
                                               width: 24.0,
                                               height: 24.0,
                                               child: ClipRRect(
@@ -684,7 +682,7 @@ class _SignUpWidgetState extends State<SignUpWidget>
                                           style: FlutterFlowTheme.of(context)
                                               .bodyMedium
                                               .override(
-                                                fontFamily: 'Andika New Basic',
+                                                fontFamily: FFAppState().currentFontFamily,
                                                 letterSpacing: 0.0,
                                               ),
                                         ),
@@ -717,7 +715,7 @@ class _SignUpWidgetState extends State<SignUpWidget>
                                           padding: const EdgeInsetsDirectional.fromSTEB(
                                               0.0, 0.0, 18.0, 0.0),
                                           child: ClipRRect(
-                                            child: Container(
+                                            child: SizedBox(
                                               width: 24.0,
                                               height: 24.0,
                                               child: ClipRRect(
@@ -737,7 +735,7 @@ class _SignUpWidgetState extends State<SignUpWidget>
                                           style: FlutterFlowTheme.of(context)
                                               .bodyMedium
                                               .override(
-                                                fontFamily: 'Andika New Basic',
+                                                fontFamily: FFAppState().currentFontFamily,
                                                 letterSpacing: 0.0,
                                               ),
                                         ),
@@ -763,7 +761,7 @@ class _SignUpWidgetState extends State<SignUpWidget>
                                       style: FlutterFlowTheme.of(context)
                                           .bodyMedium
                                           .override(
-                                            fontFamily: 'Andika New Basic',
+                                            fontFamily: FFAppState().currentFontFamily,
                                             letterSpacing: 0.0,
                                           ),
                                     ),
@@ -782,7 +780,7 @@ class _SignUpWidgetState extends State<SignUpWidget>
                                   style: FlutterFlowTheme.of(context)
                                       .bodyMedium
                                       .override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         letterSpacing: 0.0,
                                       ),
                                 ),
@@ -804,7 +802,7 @@ class _SignUpWidgetState extends State<SignUpWidget>
                                       style: FlutterFlowTheme.of(context)
                                           .bodyMedium
                                           .override(
-                                            fontFamily: 'Andika New Basic',
+                                            fontFamily: FFAppState().currentFontFamily,
                                             color: FlutterFlowTheme.of(context)
                                                 .secondaryText,
                                             fontSize: 12.0,
@@ -823,7 +821,7 @@ class _SignUpWidgetState extends State<SignUpWidget>
                                   style: FlutterFlowTheme.of(context)
                                       .bodyMedium
                                       .override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         color: const Color(0x8F000000),
                                         fontSize: 12.0,
                                         letterSpacing: 0.0,

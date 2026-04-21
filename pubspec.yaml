@@ -145,6 +145,8 @@ dependencies:
   cupertino_icons: ^1.0.0
   app_links: ^7.0.0
 
+  crypto: any
+  http_parser: any
 dependency_overrides:
   http: 1.4.0
   uuid: ^4.0.0

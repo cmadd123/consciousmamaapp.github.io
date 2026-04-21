@@ -103,7 +103,7 @@ class CreatorThemedBackground extends StatelessWidget {
             gradient: LinearGradient(
               colors: [start, end],
               stops: stops,
-              begin: this.begin,
+              begin: begin,
               end: this.end,
             ),
           ),

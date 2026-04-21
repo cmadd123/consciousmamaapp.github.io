@@ -4,14 +4,9 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/v2/learning_path/loading_learn_pass/loading_learn_pass_widget.dart';
-import 'dart:ui';
 import '/custom_code/actions/index.dart' as actions;
 import '/index.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'learn_path_stepon_step4_model.dart';
 export 'learn_path_stepon_step4_model.dart';
 
@@ -64,18 +59,18 @@ class _LearnPathSteponStep4WidgetState
       },
       child: Scaffold(
         key: scaffoldKey,
-        backgroundColor: Color(0xFFEDFFFD),
+        backgroundColor: const Color(0xFFEDFFFD),
         body: SafeArea(
           top: true,
           child: Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
+            padding: const EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
             child: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 children: [
                   Padding(
                     padding:
-                        EdgeInsetsDirectional.fromSTEB(12.0, 20.0, 12.0, 20.0),
+                        const EdgeInsetsDirectional.fromSTEB(12.0, 20.0, 12.0, 20.0),
                     child: Material(
                       color: Colors.transparent,
                       elevation: 1.0,
@@ -93,7 +88,7 @@ class _LearnPathSteponStep4WidgetState
                           ),
                         ),
                         child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 20.0, 0.0, 0.0),
                           child: Builder(
                             builder: (context) {
@@ -114,46 +109,46 @@ class _LearnPathSteponStep4WidgetState
                                               mainAxisSize: MainAxisSize.max,
                                               children: [
                                                 Padding(
-                                                  padding: EdgeInsetsDirectional
+                                                  padding: const EdgeInsetsDirectional
                                                       .fromSTEB(
                                                           18.0, 9.0, 0.0, 0.0),
                                                   child: Container(
                                                     width: 5.0,
                                                     height: 5.0,
-                                                    decoration: BoxDecoration(
+                                                    decoration: const BoxDecoration(
                                                       color: Color(0x6652A097),
                                                       shape: BoxShape.circle,
                                                     ),
                                                   ),
                                                 ),
                                                 Padding(
-                                                  padding: EdgeInsetsDirectional
+                                                  padding: const EdgeInsetsDirectional
                                                       .fromSTEB(
                                                           3.0, 9.0, 0.0, 0.0),
                                                   child: Container(
                                                     width: 5.0,
                                                     height: 5.0,
-                                                    decoration: BoxDecoration(
+                                                    decoration: const BoxDecoration(
                                                       color: Color(0x6652A097),
                                                       shape: BoxShape.circle,
                                                     ),
                                                   ),
                                                 ),
                                                 Padding(
-                                                  padding: EdgeInsetsDirectional
+                                                  padding: const EdgeInsetsDirectional
                                                       .fromSTEB(
                                                           3.0, 9.0, 0.0, 0.0),
                                                   child: Container(
                                                     width: 5.0,
                                                     height: 5.0,
-                                                    decoration: BoxDecoration(
+                                                    decoration: const BoxDecoration(
                                                       color: Color(0x6652A097),
                                                       shape: BoxShape.circle,
                                                     ),
                                                   ),
                                                 ),
                                                 Padding(
-                                                  padding: EdgeInsetsDirectional
+                                                  padding: const EdgeInsetsDirectional
                                                       .fromSTEB(
                                                           3.0, 9.0, 0.0, 0.0),
                                                   child: Container(
@@ -173,7 +168,7 @@ class _LearnPathSteponStep4WidgetState
                                               ],
                                             ),
                                             Padding(
-                                              padding: EdgeInsetsDirectional
+                                              padding: const EdgeInsetsDirectional
                                                   .fromSTEB(
                                                       0.0, 5.0, 16.0, 0.0),
                                               child: Text(
@@ -195,10 +190,10 @@ class _LearnPathSteponStep4WidgetState
                                         ),
                                         Align(
                                           alignment:
-                                              AlignmentDirectional(-1.0, 0.0),
+                                              const AlignmentDirectional(-1.0, 0.0),
                                           child: Padding(
                                             padding:
-                                                EdgeInsetsDirectional.fromSTEB(
+                                                const EdgeInsetsDirectional.fromSTEB(
                                                     15.0, 60.0, 0.0, 0.0),
                                             child: ClipRRect(
                                               borderRadius:
@@ -214,7 +209,7 @@ class _LearnPathSteponStep4WidgetState
                                         ),
                                         Padding(
                                           padding:
-                                              EdgeInsetsDirectional.fromSTEB(
+                                              const EdgeInsetsDirectional.fromSTEB(
                                                   24.0, 0.0, 24.0, 0.0),
                                           child: Text(
                                             'What time works best for these lessons?',
@@ -233,17 +228,17 @@ class _LearnPathSteponStep4WidgetState
                                     ),
                                     // Time of day selection - horizontal row
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(16.0, 24.0, 16.0, 0.0),
+                                      padding: const EdgeInsetsDirectional.fromSTEB(16.0, 24.0, 16.0, 0.0),
                                       child: Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           Padding(
-                                            padding: EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 0.0, 12.0),
+                                            padding: const EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 0.0, 12.0),
                                             child: Text(
                                               'Pick a time of day',
                                               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                fontFamily: 'Andika New Basic',
-                                                color: Color(0xC0000000),
+                                                fontFamily: FFAppState().currentFontFamily,
+                                                color: const Color(0xC0000000),
                                                 letterSpacing: 0.0,
                                               ),
                                             ),
@@ -260,7 +255,7 @@ class _LearnPathSteponStep4WidgetState
                                                   safeSetState(() {});
                                                 },
                                               ),
-                                              SizedBox(width: 10.0),
+                                              const SizedBox(width: 10.0),
                                               _buildTimeOfDayCard(
                                                 context: context,
                                                 emoji: '☀️',
@@ -271,7 +266,7 @@ class _LearnPathSteponStep4WidgetState
                                                   safeSetState(() {});
                                                 },
                                               ),
-                                              SizedBox(width: 10.0),
+                                              const SizedBox(width: 10.0),
                                               _buildTimeOfDayCard(
                                                 context: context,
                                                 emoji: '🌙',
@@ -288,16 +283,16 @@ class _LearnPathSteponStep4WidgetState
                                       ),
                                     ),
                                     Align(
-                                      alignment: AlignmentDirectional(0.0, 1.0),
+                                      alignment: const AlignmentDirectional(0.0, 1.0),
                                       child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                        padding: const EdgeInsetsDirectional.fromSTEB(
                                             0.0, 24.0, 0.0, 0.0),
                                         child: Row(
                                           mainAxisSize: MainAxisSize.max,
                                           children: [
                                             Expanded(
                                               child: Padding(
-                                                padding: EdgeInsetsDirectional
+                                                padding: const EdgeInsetsDirectional
                                                     .fromSTEB(
                                                         20.0, 10.0, 20.0, 20.0),
                                                 child: FFButtonWidget(
@@ -309,11 +304,11 @@ class _LearnPathSteponStep4WidgetState
                                                     width: 112.0,
                                                     height: 40.0,
                                                     padding:
-                                                        EdgeInsetsDirectional
+                                                        const EdgeInsetsDirectional
                                                             .fromSTEB(16.0, 0.0,
                                                                 16.0, 0.0),
                                                     iconPadding:
-                                                        EdgeInsetsDirectional
+                                                        const EdgeInsetsDirectional
                                                             .fromSTEB(0.0, 0.0,
                                                                 0.0, 0.0),
                                                     color: FlutterFlowTheme.of(
@@ -338,7 +333,7 @@ class _LearnPathSteponStep4WidgetState
                                             ),
                                             Expanded(
                                               child: Padding(
-                                                padding: EdgeInsetsDirectional
+                                                padding: const EdgeInsetsDirectional
                                                     .fromSTEB(
                                                         20.0, 10.0, 20.0, 20.0),
                                                 child: FFButtonWidget(
@@ -349,14 +344,14 @@ class _LearnPathSteponStep4WidgetState
 
                                                     try {
                                                       // Make the API call
-                                                      _model.childDoc = await ChildernRecord.getDocumentOnce(widget!.childerRef!);
+                                                      _model.childDoc = await ChildernRecord.getDocumentOnce(widget.childerRef!);
                                                       await actions.buildLearningPath(
-                                                        widget!.aiTextField,
+                                                        widget.aiTextField,
                                                         _model.childDoc?.birthDay,
                                                         getCurrentTimestamp.toString(),
                                                         currentUserReference,
-                                                        widget!.childerRef,
-                                                        widget!.frequanceTime,
+                                                        widget.childerRef,
+                                                        widget.frequanceTime,
                                                         _model.selectedTime,
                                                       );
 
@@ -379,7 +374,7 @@ class _LearnPathSteponStep4WidgetState
                                                           SnackBar(
                                                             content: Text(e.toString().replaceFirst('Exception: ', '')),
                                                             backgroundColor: Colors.red,
-                                                            duration: Duration(seconds: 4),
+                                                            duration: const Duration(seconds: 4),
                                                           ),
                                                         );
                                                       }
@@ -390,11 +385,11 @@ class _LearnPathSteponStep4WidgetState
                                                     width: 112.0,
                                                     height: 40.0,
                                                     padding:
-                                                        EdgeInsetsDirectional
+                                                        const EdgeInsetsDirectional
                                                             .fromSTEB(16.0, 0.0,
                                                                 16.0, 0.0),
                                                     iconPadding:
-                                                        EdgeInsetsDirectional
+                                                        const EdgeInsetsDirectional
                                                             .fromSTEB(0.0, 0.0,
                                                                 0.0, 0.0),
                                                     color: FlutterFlowTheme.of(
@@ -429,7 +424,7 @@ class _LearnPathSteponStep4WidgetState
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(
                                           16.0, 100.0, 16.0, 100.0),
                                       child: LoadingLearnPassWidget(
                                         key: _loadingKey,
@@ -467,7 +462,7 @@ class _LearnPathSteponStep4WidgetState
         onTap: onTap,
         borderRadius: BorderRadius.circular(14.0),
         child: Container(
-          padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 8.0),
+          padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 8.0),
           decoration: BoxDecoration(
             color: isSelected
                 ? FlutterFlowTheme.of(context).primary.withOpacity(0.15)
@@ -476,7 +471,7 @@ class _LearnPathSteponStep4WidgetState
             border: Border.all(
               color: isSelected
                   ? FlutterFlowTheme.of(context).primary
-                  : Color(0x3352A097),
+                  : const Color(0x3352A097),
               width: isSelected ? 2.5 : 1.5,
             ),
             boxShadow: isSelected
@@ -484,7 +479,7 @@ class _LearnPathSteponStep4WidgetState
                     BoxShadow(
                       color: FlutterFlowTheme.of(context).primary.withOpacity(0.2),
                       blurRadius: 8.0,
-                      offset: Offset(0, 2),
+                      offset: const Offset(0, 2),
                     ),
                   ]
                 : [],
@@ -494,14 +489,14 @@ class _LearnPathSteponStep4WidgetState
             children: [
               Text(
                 emoji,
-                style: TextStyle(fontSize: 32.0),
+                style: const TextStyle(fontSize: 32.0),
               ),
-              SizedBox(height: 8.0),
+              const SizedBox(height: 8.0),
               Text(
                 label,
                 textAlign: TextAlign.center,
                 style: FlutterFlowTheme.of(context).bodyMedium.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   fontSize: 14.0,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                   color: isSelected
@@ -511,7 +506,7 @@ class _LearnPathSteponStep4WidgetState
                 ),
               ),
               if (isSelected) ...[
-                SizedBox(height: 4.0),
+                const SizedBox(height: 4.0),
                 Icon(
                   Icons.check_circle,
                   color: FlutterFlowTheme.of(context).primary,

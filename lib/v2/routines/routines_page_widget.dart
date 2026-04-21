@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
-import '/components/home_nav_bar_widget.dart';
 import '/v2/creator/creator_theme_wrapper.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -48,7 +47,7 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
                   Text(
                     'Routines',
                     style: FlutterFlowTheme.of(context).titleLarge.override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       fontSize: 22,
                       fontWeight: FontWeight.w600,
                       letterSpacing: 0,
@@ -117,7 +116,7 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
           Text(
             'No routines yet',
             style: FlutterFlowTheme.of(context).bodyMedium.override(
-              fontFamily: 'Andika New Basic',
+              fontFamily: FFAppState().currentFontFamily,
               fontSize: 18,
               fontWeight: FontWeight.w600,
               letterSpacing: 0,
@@ -128,7 +127,7 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
             'Routines are reusable checklists for things you do regularly. Create one and check off steps as you go.\n\nExamples:\n☀️ Morning Routine — Wake up, make bed, brush teeth, breakfast\n🍳 Cooking Routine — Prep, preheat, cook, plate, clean\n🌙 Bedtime Routine — Bath, PJs, story time, lights out',
             textAlign: TextAlign.center,
             style: FlutterFlowTheme.of(context).bodySmall.override(
-              fontFamily: 'Andika New Basic',
+              fontFamily: FFAppState().currentFontFamily,
               color: const Color(0xFF999999),
               fontSize: 13,
               letterSpacing: 0,
@@ -144,7 +143,7 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
               padding: const EdgeInsets.symmetric(horizontal: 24),
               color: FlutterFlowTheme.of(context).primary,
               textStyle: FlutterFlowTheme.of(context).titleSmall.override(
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
                 color: Colors.white,
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
@@ -193,7 +192,7 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
                     child: Text(
                       routine.name,
                       style: FlutterFlowTheme.of(context).bodyMedium.override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                         letterSpacing: 0,
@@ -219,7 +218,7 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
                           : '${routine.steps.length} step${routine.steps.length == 1 ? '' : 's'}';
                       return Text(label,
                       style: FlutterFlowTheme.of(context).bodySmall.override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         color: done > 0 ? FlutterFlowTheme.of(context).primary : const Color(0xFF999999),
                         fontSize: 12,
                         letterSpacing: 0,
@@ -400,7 +399,7 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
                     child: Text(
                       editing != null ? 'Edit Routine' : 'New Routine',
                       style: FlutterFlowTheme.of(context).titleLarge.override(
-                        fontFamily: 'Andika New Basic', fontSize: 22, fontWeight: FontWeight.w600, letterSpacing: 0,
+                        fontFamily: FFAppState().currentFontFamily, fontSize: 22, fontWeight: FontWeight.w600, letterSpacing: 0,
                       ),
                     ),
                   ),
@@ -433,7 +432,7 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
                   TextField(
                     controller: nameController,
                     style: FlutterFlowTheme.of(context).bodyMedium.override(
-                      fontFamily: 'Andika New Basic', fontSize: 16, letterSpacing: 0,
+                      fontFamily: FFAppState().currentFontFamily, fontSize: 16, letterSpacing: 0,
                     ),
                     decoration: InputDecoration(
                       hintText: 'e.g., Morning Routine',
@@ -462,11 +461,11 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
                             child: Text('${i + 1}', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: FlutterFlowTheme.of(context).primary)),
                           ),
                         ),
-                        const SizedBox(width: 8),
+                        SizedBox(width: 8),
                         Expanded(
                           child: TextField(
                             controller: stepControllers[i],
-                            style: const TextStyle(fontSize: 14, fontFamily: 'Andika New Basic'),
+                            style: TextStyle(fontSize: 14, fontFamily: FFAppState().currentFontFamily),
                             decoration: InputDecoration(
                               hintText: 'Step ${i + 1}',
                               filled: true,
@@ -495,7 +494,7 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
                         children: [
                           Icon(Icons.add_circle_outline, size: 20, color: FlutterFlowTheme.of(context).primary),
                           const SizedBox(width: 8),
-                          Text('Add step', style: TextStyle(fontSize: 14, color: FlutterFlowTheme.of(context).primary, fontWeight: FontWeight.w500, fontFamily: 'Andika New Basic')),
+                          Text('Add step', style: TextStyle(fontSize: 14, color: FlutterFlowTheme.of(context).primary, fontWeight: FontWeight.w500, fontFamily: FFAppState().currentFontFamily)),
                         ],
                       ),
                     ),
@@ -511,7 +510,7 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
                       height: 52,
                       color: FlutterFlowTheme.of(context).primary,
                       textStyle: FlutterFlowTheme.of(context).titleSmall.override(
-                        fontFamily: 'Andika New Basic', color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600, letterSpacing: 0,
+                        fontFamily: FFAppState().currentFontFamily, color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600, letterSpacing: 0,
                       ),
                       borderRadius: BorderRadius.circular(14),
                     ),
@@ -586,9 +585,9 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(routine.name, style: FlutterFlowTheme.of(context).titleMedium.override(
-                              fontFamily: 'Andika New Basic', fontWeight: FontWeight.w600, letterSpacing: 0,
+                              fontFamily: FFAppState().currentFontFamily, fontWeight: FontWeight.w600, letterSpacing: 0,
                             )),
-                            Text('$completedCount of ${routine.steps.length} steps', style: TextStyle(fontSize: 12, color: Colors.grey[600], fontFamily: 'Andika New Basic')),
+                            Text('$completedCount of ${routine.steps.length} steps', style: TextStyle(fontSize: 12, color: Colors.grey[600], fontFamily: FFAppState().currentFontFamily)),
                           ],
                         ),
                       ),
@@ -599,7 +598,7 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
                             color: Colors.green.shade50,
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          child: Text('Done!', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: Colors.green.shade700, fontFamily: 'Andika New Basic')),
+                          child: Text('Done!', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: Colors.green.shade700, fontFamily: FFAppState().currentFontFamily)),
                         ),
                     ],
                   ),
@@ -671,7 +670,7 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
                                     routine.steps[i],
                                     style: TextStyle(
                                       fontSize: 15,
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       color: isDone ? Colors.grey.shade500 : const Color(0xFF333333),
                                       decoration: isDone ? TextDecoration.lineThrough : null,
                                     ),
@@ -700,7 +699,7 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
                         color: allDone ? Colors.white : Colors.grey.shade700,
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                       ),
                       borderRadius: BorderRadius.circular(14),
                     ),

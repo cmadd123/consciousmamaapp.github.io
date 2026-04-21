@@ -3,13 +3,9 @@ import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
-import 'dart:ui';
 import 'dart:async';
 import '/index.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'on_boadrding_last_v2_model.dart';
 export 'on_boadrding_last_v2_model.dart';
 
@@ -89,7 +85,7 @@ class _OnBoadrdingLastV2WidgetState extends State<OnBoadrdingLastV2Widget>
         body: Container(
           width: double.infinity,
           height: double.infinity,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             gradient: LinearGradient(
               colors: [Color(0xFFD7F2EB), Color(0xFFFFE9E1)],
               stops: [0.0, 1.0],
@@ -98,19 +94,19 @@ class _OnBoadrdingLastV2WidgetState extends State<OnBoadrdingLastV2Widget>
             ),
           ),
           child: Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(0.0, 50.0, 0.0, 0.0),
+            padding: const EdgeInsetsDirectional.fromSTEB(0.0, 50.0, 0.0, 0.0),
             child: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 children: [
                   Align(
-                    alignment: AlignmentDirectional(0.0, 0.0),
+                    alignment: const AlignmentDirectional(0.0, 0.0),
                     child: Container(
                       width: 182.0,
                       height: 152.8,
-                      decoration: BoxDecoration(),
+                      decoration: const BoxDecoration(),
                       child: Align(
-                        alignment: AlignmentDirectional(-1.0, 0.0),
+                        alignment: const AlignmentDirectional(-1.0, 0.0),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(14.0),
                           child: Image.asset(
@@ -125,7 +121,7 @@ class _OnBoadrdingLastV2WidgetState extends State<OnBoadrdingLastV2Widget>
                   ),
                   Padding(
                     padding:
-                        EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 10.0),
+                        const EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 10.0),
                     child: Column(
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -135,21 +131,21 @@ class _OnBoadrdingLastV2WidgetState extends State<OnBoadrdingLastV2Widget>
                           'Your journey begins...',
                           style:
                               FlutterFlowTheme.of(context).bodyMedium.override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     fontSize: 30.0,
                                     letterSpacing: 0.0,
                                     fontWeight: FontWeight.w600,
                                   ),
                         ),
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 20.0, 0.0, 20.0),
                           child: Text(
                             'We\'ve listened to your goals and understand the challenges you face. Your personalized plan is ready—filled with practical meal ideas, fun activities, and gentle guidance to help your little one thrive.\n\nAre you ready to discover how peaceful and joyful parenting can be?',
                             style: FlutterFlowTheme.of(context)
                                 .bodyMedium
                                 .override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   color: FlutterFlowTheme.of(context)
                                       .secondaryText,
                                   fontSize: 16.0,
@@ -158,9 +154,9 @@ class _OnBoadrdingLastV2WidgetState extends State<OnBoadrdingLastV2Widget>
                           ),
                         ),
                         Align(
-                          alignment: AlignmentDirectional(0.0, 0.0),
+                          alignment: const AlignmentDirectional(0.0, 0.0),
                           child: Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 20.0, 0.0, 60.0),
                             child: ScaleTransition(
                               scale: _pulseAnimation,
@@ -202,15 +198,15 @@ class _OnBoadrdingLastV2WidgetState extends State<OnBoadrdingLastV2Widget>
                           options: FFButtonOptions(
                             width: double.infinity,
                             height: 56.0,
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 16.0, 0.0, 16.0, 0.0),
-                            iconPadding: EdgeInsetsDirectional.fromSTEB(
+                            iconPadding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 0.0, 0.0, 0.0),
                             color: FlutterFlowTheme.of(context).primary,
                             textStyle: FlutterFlowTheme.of(context)
                                 .titleSmall
                                 .override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   color: Colors.white,
                                   fontSize: 18.0,
                                   letterSpacing: 0.0,

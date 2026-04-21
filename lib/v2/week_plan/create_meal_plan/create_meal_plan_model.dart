@@ -1,18 +1,10 @@
 import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
-import '/backend/schema/enums/enums.dart';
-import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import '/flutter_flow/flutter_flow_widgets.dart';
-import 'dart:ui';
 import 'dart:async';
-import '/flutter_flow/custom_functions.dart' as functions;
 import '/index.dart';
 import 'create_meal_plan_widget.dart' show CreateMealPlanWidget;
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 
 class CreateMealPlanModel extends FlutterFlowModel<CreateMealPlanWidget> {
   ///  State fields for stateful widgets in this page.

@@ -1,11 +1,9 @@
-import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/backend/backend.dart';
 import '/auth/firebase_auth/auth_util.dart';
 import '/components/home_nav_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
-import 'skill_preview_data.dart';
 import 'skill_detail_preview_widget.dart';
 import 'create_skill_path_widget.dart';
 
@@ -121,20 +119,20 @@ class _SkillsHomePreviewWidgetState extends State<SkillsHomePreviewWidget> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text(
+                  Text(
                     'Skill Paths',
                     style: TextStyle(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       color: Color(0xFF5D4E60),
                       fontSize: 20.0,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                   const SizedBox(height: 4.0),
-                  const Text(
+                  Text(
                     'High-level milestones - not exhaustive lesson plans',
                     style: TextStyle(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       color: Color(0xB35D4E60), // 70% opacity
                       fontSize: 13.0,
                     ),
@@ -182,7 +180,7 @@ class _SkillsHomePreviewWidgetState extends State<SkillsHomePreviewWidget> {
                 ),
               ],
             ),
-            child: const Row(
+            child: Row(
               children: [
                 Icon(
                   Icons.add_circle_outline,
@@ -194,7 +192,7 @@ class _SkillsHomePreviewWidgetState extends State<SkillsHomePreviewWidget> {
                   child: Text(
                     'Create New Skill Path',
                     style: TextStyle(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       color: Colors.white,
                       fontSize: 18.0,
                       fontWeight: FontWeight.w600,
@@ -220,7 +218,7 @@ class _SkillsHomePreviewWidgetState extends State<SkillsHomePreviewWidget> {
         padding: const EdgeInsets.all(40.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
+          children: [
             Text(
               '🚀',
               style: TextStyle(fontSize: 64.0),
@@ -229,7 +227,7 @@ class _SkillsHomePreviewWidgetState extends State<SkillsHomePreviewWidget> {
             Text(
               'No Skill Paths Yet',
               style: TextStyle(
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
                 color: Color(0xFF5D4E60),
                 fontSize: 20.0,
                 fontWeight: FontWeight.w600,
@@ -240,7 +238,7 @@ class _SkillsHomePreviewWidgetState extends State<SkillsHomePreviewWidget> {
             Text(
               'Tap the button above to create your first AI-generated skill path!',
               style: TextStyle(
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
                 color: Color(0xFF9B8A9E),
                 fontSize: 15.0,
               ),
@@ -353,13 +351,13 @@ class _SkillsHomePreviewWidgetState extends State<SkillsHomePreviewWidget> {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 10.0),
+                    SizedBox(height: 10.0),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       child: Text(
                         skillName,
-                        style: const TextStyle(
-                          fontFamily: 'Andika New Basic',
+                        style: TextStyle(
+                          fontFamily: FFAppState().currentFontFamily,
                           color: Color(0xFF5D4E60),
                           fontSize: 14.0,
                           fontWeight: FontWeight.w600,
@@ -369,11 +367,11 @@ class _SkillsHomePreviewWidgetState extends State<SkillsHomePreviewWidget> {
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    const SizedBox(height: 6.0),
+                    SizedBox(height: 6.0),
                     Text(
                       '$completedMilestones / $totalMilestones milestones',
-                      style: const TextStyle(
-                        fontFamily: 'Andika New Basic',
+                      style: TextStyle(
+                        fontFamily: FFAppState().currentFontFamily,
                         color: Color(0xFF9B8A9E),
                         fontSize: 11.0,
                       ),

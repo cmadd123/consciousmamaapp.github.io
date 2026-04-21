@@ -1,12 +1,8 @@
 import '/components/home_nav_bar_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import '/flutter_flow/flutter_flow_widgets.dart';
-import 'dart:ui';
 import '/index.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'create_grocery_list_model.dart';
 export 'create_grocery_list_model.dart';
 
@@ -58,7 +54,7 @@ class _CreateGroceryListWidgetState extends State<CreateGroceryListWidget> {
               children: [
                 Padding(
                   padding:
-                      EdgeInsetsDirectional.fromSTEB(12.0, 20.0, 12.0, 0.0),
+                      const EdgeInsetsDirectional.fromSTEB(12.0, 20.0, 12.0, 0.0),
                   child: Material(
                     color: Colors.transparent,
                     elevation: 1.0,
@@ -78,16 +74,16 @@ class _CreateGroceryListWidgetState extends State<CreateGroceryListWidget> {
                         mainAxisSize: MainAxisSize.max,
                         children: [
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 26.0, 0.0, 0.0),
                             child: Row(
                               mainAxisSize: MainAxisSize.max,
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Align(
-                                  alignment: AlignmentDirectional(-1.0, -1.0),
+                                  alignment: const AlignmentDirectional(-1.0, -1.0),
                                   child: Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(
                                         24.0, 0.0, 0.0, 0.0),
                                     child: InkWell(
                                       splashColor: Colors.transparent,
@@ -107,7 +103,7 @@ class _CreateGroceryListWidgetState extends State<CreateGroceryListWidget> {
                                   ),
                                 ),
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       0.0, 0.0, 24.0, 0.0),
                                   child: Text(
                                     'Create Grocery List',
@@ -115,7 +111,7 @@ class _CreateGroceryListWidgetState extends State<CreateGroceryListWidget> {
                                     style: FlutterFlowTheme.of(context)
                                         .bodyMedium
                                         .override(
-                                          fontFamily: 'Andika New Basic',
+                                          fontFamily: FFAppState().currentFontFamily,
                                           fontSize: 24.0,
                                           letterSpacing: 0.0,
                                         ),
@@ -133,7 +129,7 @@ class _CreateGroceryListWidgetState extends State<CreateGroceryListWidget> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 20.0, 18.0, 20.0, 0.0),
                             child: Text(
                               'To create a grocery list, select which meals you need groceries for. ',
@@ -141,15 +137,15 @@ class _CreateGroceryListWidgetState extends State<CreateGroceryListWidget> {
                               style: FlutterFlowTheme.of(context)
                                   .bodyMedium
                                   .override(
-                                    fontFamily: 'Andika New Basic',
-                                    color: Color(0xB71B1F26),
+                                    fontFamily: FFAppState().currentFontFamily,
+                                    color: const Color(0xB71B1F26),
                                     letterSpacing: 0.0,
                                   ),
                             ),
                           ),
                           // This Week option
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 12.0, 40.0, 12.0, 20.0),
                             child: InkWell(
                               splashColor: Colors.transparent,
@@ -184,7 +180,7 @@ class _CreateGroceryListWidgetState extends State<CreateGroceryListWidget> {
                                   children: [
                                     Container(
                                       height: 60.0,
-                                      decoration: BoxDecoration(),
+                                      decoration: const BoxDecoration(),
                                       child: Icon(
                                         Icons.calendar_view_week_rounded,
                                         size: 48.0,
@@ -192,14 +188,14 @@ class _CreateGroceryListWidgetState extends State<CreateGroceryListWidget> {
                                       ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(
                                           0.0, 16.0, 0.0, 0.0),
                                       child: Text(
                                         'This Week',
                                         style: FlutterFlowTheme.of(context)
                                             .bodyMedium
                                             .override(
-                                              fontFamily: 'Andika New Basic',
+                                              fontFamily: FFAppState().currentFontFamily,
                                               fontSize: 24.0,
                                               fontWeight: FontWeight.w600,
                                               letterSpacing: 0.0,
@@ -207,15 +203,15 @@ class _CreateGroceryListWidgetState extends State<CreateGroceryListWidget> {
                                       ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(
                                           0.0, 4.0, 0.0, 0.0),
                                       child: Text(
                                         'Add ingredients for the next 7 days',
                                         style: FlutterFlowTheme.of(context)
                                             .bodySmall
                                             .override(
-                                              fontFamily: 'Andika New Basic',
-                                              color: Color(0xB71B1F26),
+                                              fontFamily: FFAppState().currentFontFamily,
+                                              color: const Color(0xB71B1F26),
                                               fontSize: 14.0,
                                               letterSpacing: 0.0,
                                             ),
@@ -228,7 +224,7 @@ class _CreateGroceryListWidgetState extends State<CreateGroceryListWidget> {
                           ),
                           // Today only option
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 12.0, 0.0, 12.0, 20.0),
                             child: InkWell(
                               splashColor: Colors.transparent,
@@ -261,7 +257,7 @@ class _CreateGroceryListWidgetState extends State<CreateGroceryListWidget> {
                                   children: [
                                     Container(
                                       height: 50.0,
-                                      decoration: BoxDecoration(),
+                                      decoration: const BoxDecoration(),
                                       child: Icon(
                                         Icons.today_rounded,
                                         size: 40.0,
@@ -269,14 +265,14 @@ class _CreateGroceryListWidgetState extends State<CreateGroceryListWidget> {
                                       ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(
                                           0.0, 12.0, 0.0, 0.0),
                                       child: Text(
                                         'Today Only',
                                         style: FlutterFlowTheme.of(context)
                                             .bodyMedium
                                             .override(
-                                              fontFamily: 'Andika New Basic',
+                                              fontFamily: FFAppState().currentFontFamily,
                                               fontSize: 20.0,
                                               letterSpacing: 0.0,
                                             ),
@@ -289,7 +285,7 @@ class _CreateGroceryListWidgetState extends State<CreateGroceryListWidget> {
                           ),
                           // Manual selection option
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 12.0, 0.0, 12.0, 60.0),
                             child: InkWell(
                               splashColor: Colors.transparent,
@@ -322,7 +318,7 @@ class _CreateGroceryListWidgetState extends State<CreateGroceryListWidget> {
                                   children: [
                                     Container(
                                       height: 86.0,
-                                      decoration: BoxDecoration(),
+                                      decoration: const BoxDecoration(),
                                       child: ClipRRect(
                                         borderRadius:
                                             BorderRadius.circular(14.0),
@@ -335,14 +331,14 @@ class _CreateGroceryListWidgetState extends State<CreateGroceryListWidget> {
                                       ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(
                                           0.0, 31.0, 0.0, 0.0),
                                       child: Text(
                                         'Let me select',
                                         style: FlutterFlowTheme.of(context)
                                             .bodyMedium
                                             .override(
-                                              fontFamily: 'Andika New Basic',
+                                              fontFamily: FFAppState().currentFontFamily,
                                               fontSize: 24.0,
                                               letterSpacing: 0.0,
                                             ),

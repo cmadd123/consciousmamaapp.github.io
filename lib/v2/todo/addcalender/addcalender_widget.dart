@@ -3,15 +3,10 @@ import '/backend/backend.dart';
 import '/components/animated_press_widget.dart';
 import '/components/custom_date_time_picker.dart';
 import '/components/parent_circle_widget.dart';
-import '/flutter_flow/flutter_flow_drop_down.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
-import '/flutter_flow/form_field_controller.dart';
-import 'dart:ui';
 import '/index.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'addcalender_model.dart';
@@ -25,7 +20,7 @@ class AddcalenderWidget extends StatefulWidget {
     this.prefillName,
     this.prefillDescription,
     this.initialDate,
-  }) : this.fromPage = fromPage ?? 'Home';
+  }) : fromPage = fromPage ?? 'Home';
 
   final String fromPage;
   final DocumentReference? editTaskEvent;
@@ -326,7 +321,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                 key: _model.formKey,
                 autovalidateMode: AutovalidateMode.disabled,
                 child: Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
                   child: SingleChildScrollView(
                     child: Column(
                       mainAxisSize: MainAxisSize.max,
@@ -334,7 +329,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                       children: [
                         // Header with back button
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(0.0, 16.0, 0.0, 0.0),
+                          padding: const EdgeInsetsDirectional.fromSTEB(0.0, 16.0, 0.0, 0.0),
                           child: Row(
                             children: [
                               InkWell(
@@ -353,7 +348,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                               Text(
                                 widget.editTaskEvent != null ? 'Edit' : 'New ${_model.selectedType}',
                                 style: theme.titleLarge.override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   fontSize: 22.0,
                                   fontWeight: FontWeight.w600,
                                   letterSpacing: 0.0,
@@ -366,7 +361,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
 
                         // Name Field - read-only when editing an Activity
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 16.0, 0.0, 0.0),
                           child: TextFormField(
                             controller: _model.nameController,
@@ -381,7 +376,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                   ? FlutterFlowTheme.of(context)
                                       .labelMedium
                                       .override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         color: const Color(0xFF95A5A6),
                                         letterSpacing: 0.0,
                                       )
@@ -390,7 +385,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                               hintStyle: FlutterFlowTheme.of(context)
                                   .labelMedium
                                   .override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     color: FFAppState().isComfortMode
                                         ? const Color(0xFF95A5A6)
                                         : null,
@@ -422,13 +417,13 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                   : (FFAppState().isComfortMode
                                       ? const Color(0xFF34495E)
                                       : FlutterFlowTheme.of(context).prim30),
-                              contentPadding: EdgeInsetsDirectional.fromSTEB(
+                              contentPadding: const EdgeInsetsDirectional.fromSTEB(
                                   20.0, 15.0, 20.0, 15.0),
                             ),
                             style: FlutterFlowTheme.of(context)
                                 .bodyMedium
                                 .override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   color: FFAppState().isComfortMode
                                       ? const Color(0xFFECF0F1)
                                       : null,
@@ -438,7 +433,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                         ),
                         // Description Field - read-only when editing an Activity
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 20.0, 0.0, 0.0),
                           child: TextFormField(
                             controller: _model.descriptionController,
@@ -453,7 +448,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                   ? FlutterFlowTheme.of(context)
                                       .labelMedium
                                       .override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         color: const Color(0xFF95A5A6),
                                         letterSpacing: 0.0,
                                       )
@@ -462,7 +457,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                               hintStyle: FlutterFlowTheme.of(context)
                                   .labelMedium
                                   .override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     color: FFAppState().isComfortMode
                                         ? const Color(0xFF95A5A6)
                                         : null,
@@ -494,13 +489,13 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                   : (FFAppState().isComfortMode
                                       ? const Color(0xFF34495E)
                                       : FlutterFlowTheme.of(context).prim30),
-                              contentPadding: EdgeInsetsDirectional.fromSTEB(
+                              contentPadding: const EdgeInsetsDirectional.fromSTEB(
                                   20.0, 15.0, 20.0, 15.0),
                             ),
                             style: FlutterFlowTheme.of(context)
                                 .bodyMedium
                                 .override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   color: FFAppState().isComfortMode
                                       ? const Color(0xFFECF0F1)
                                       : null,
@@ -511,7 +506,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                         ),
                         // Date Picker (date only)
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 20.0, 0.0, 0.0),
                           child: InkWell(
                             onTap: () async {
@@ -533,7 +528,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                 ),
                               ),
                               child: Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     20.0, 0.0, 20.0, 0.0),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.max,
@@ -551,7 +546,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                       style: FlutterFlowTheme.of(context)
                                           .bodyMedium
                                           .override(
-                                            fontFamily: 'Andika New Basic',
+                                            fontFamily: FFAppState().currentFontFamily,
                                             color: _model.selectedDate != null
                                                 ? (FFAppState().isComfortMode
                                                     ? const Color(0xFFECF0F1)
@@ -577,7 +572,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                         ),
                         // Time Picker (time only)
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 12.0, 0.0, 0.0),
                           child: InkWell(
                             onTap: () async {
@@ -599,7 +594,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                 ),
                               ),
                               child: Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     20.0, 0.0, 20.0, 0.0),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.max,
@@ -617,7 +612,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                       style: FlutterFlowTheme.of(context)
                                           .bodyMedium
                                           .override(
-                                            fontFamily: 'Andika New Basic',
+                                            fontFamily: FFAppState().currentFontFamily,
                                             color: _model.selectedDate != null
                                                 ? (FFAppState().isComfortMode
                                                     ? const Color(0xFFECF0F1)
@@ -644,14 +639,14 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                         // Date validation error
                         if (!_model.isDateSelected && _model.showDateError)
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 20.0, 5.0, 0.0, 0.0),
                             child: Text(
                               'Please select a date and time',
                               style: FlutterFlowTheme.of(context)
                                   .bodyMedium
                                   .override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     color: FlutterFlowTheme.of(context).error,
                                     fontSize: 12.0,
                                     letterSpacing: 0.0,
@@ -662,7 +657,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                         // Disabled when recurring pattern is selected
                         if (_model.selectedType == 'Event')
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 20.0, 0.0, 0.0),
                             child: InkWell(
                               onTap: (_model.recurringPattern != null && _model.recurringPattern != 'None')
@@ -688,7 +683,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                     ),
                                   ),
                                 child: Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       20.0, 0.0, 20.0, 0.0),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.max,
@@ -706,7 +701,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                         style: FlutterFlowTheme.of(context)
                                             .bodyMedium
                                             .override(
-                                              fontFamily: 'Andika New Basic',
+                                              fontFamily: FFAppState().currentFontFamily,
                                               color: _model.endDate != null
                                                   ? (FFAppState().isComfortMode
                                                       ? const Color(0xFFECF0F1)
@@ -757,12 +752,12 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                           ),
                         // Parent Assignment - Mom/Dad chips (styled like child chips)
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(0.0, 20.0, 0.0, 0.0),
+                          padding: const EdgeInsetsDirectional.fromSTEB(0.0, 20.0, 0.0, 0.0),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 12.0),
+                                padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 12.0),
                                 child: Row(
                                   children: [
                                     Icon(
@@ -774,7 +769,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                     Text(
                                       "Who's taking this on?",
                                       style: theme.bodyMedium.override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         fontSize: 14.0,
                                         fontWeight: FontWeight.w600,
                                         color: isComfort ? const Color(0xFFECF0F1) : const Color(0xFF5D4E60),
@@ -785,7 +780,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                     Text(
                                       '(optional)',
                                       style: theme.bodySmall.override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         color: isComfort ? const Color(0xFF95A5A6) : const Color(0xFF9B8A9E),
                                       ),
                                     ),
@@ -793,7 +788,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                 ),
                               ),
                               Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 8.0, 0.0),
+                                padding: const EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 8.0, 0.0),
                                 child: Wrap(
                                   spacing: 8.0,
                                   runSpacing: 8.0,
@@ -844,7 +839,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                             Text(
                                               _model.parentInfo.myName,
                                               style: theme.bodyMedium.override(
-                                                fontFamily: 'Andika New Basic',
+                                                fontFamily: FFAppState().currentFontFamily,
                                                 color: isComfort ? const Color(0xFFECF0F1) : const Color(0xFF5D4E60),
                                                 fontSize: 14.0,
                                                 fontWeight: FontWeight.w500,
@@ -908,7 +903,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                             Text(
                                               _model.parentInfo.partnerName,
                                               style: theme.bodyMedium.override(
-                                                fontFamily: 'Andika New Basic',
+                                                fontFamily: FFAppState().currentFontFamily,
                                                 color: isComfort ? const Color(0xFFECF0F1) : const Color(0xFF5D4E60),
                                                 fontSize: 14.0,
                                                 fontWeight: FontWeight.w500,
@@ -935,13 +930,13 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                         // Child Selection - Multi-select chips (with kids header)
                         if (_model.userChildren != null && _model.userChildren!.isNotEmpty)
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 16.0, 0.0, 0.0),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       0.0, 0.0, 0.0, 12.0),
                                   child: Row(
                                     children: [
@@ -954,7 +949,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                       Text(
                                         'With which kids?',
                                         style: theme.bodyMedium.override(
-                                          fontFamily: 'Andika New Basic',
+                                          fontFamily: FFAppState().currentFontFamily,
                                           fontSize: 14.0,
                                           fontWeight: FontWeight.w600,
                                           color: isComfort ? const Color(0xFFECF0F1) : const Color(0xFF5D4E60),
@@ -965,7 +960,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                       Text(
                                         '(optional)',
                                         style: theme.bodySmall.override(
-                                          fontFamily: 'Andika New Basic',
+                                          fontFamily: FFAppState().currentFontFamily,
                                           color: isComfort ? const Color(0xFF95A5A6) : const Color(0xFF9B8A9E),
                                         ),
                                       ),
@@ -973,7 +968,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                   ),
                                 ),
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       8.0, 0.0, 8.0, 0.0),
                                   child: Wrap(
                                     spacing: 8.0,
@@ -993,9 +988,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                             } else {
                                               _model.selectedChildren.add(child.reference);
                                               // Only set selectedChild if it's currently null
-                                              if (_model.selectedChild == null) {
-                                                _model.selectedChild = child.reference;
-                                              }
+                                              _model.selectedChild ??= child.reference;
                                             }
                                           });
                                         },
@@ -1046,7 +1039,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                               Text(
                                                 child.name,
                                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                  fontFamily: 'Andika New Basic',
+                                                  fontFamily: FFAppState().currentFontFamily,
                                                   color: FFAppState().isComfortMode
                                                       ? const Color(0xFFECF0F1)
                                                       : const Color(0xFF5D4E60),
@@ -1076,13 +1069,13 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                           ),
                         // Repeat - Chips style
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 20.0, 0.0, 0.0),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     0.0, 0.0, 0.0, 12.0),
                                 child: Row(
                                   children: [
@@ -1095,7 +1088,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                     Text(
                                       'How often?',
                                       style: theme.bodyMedium.override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         fontSize: 14.0,
                                         fontWeight: FontWeight.w600,
                                         color: isComfort ? const Color(0xFFECF0F1) : const Color(0xFF5D4E60),
@@ -1106,7 +1099,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                 ),
                               ),
                               Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     8.0, 0.0, 8.0, 0.0),
                                 child: Wrap(
                                   spacing: 8.0,
@@ -1187,7 +1180,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                             Text(
                                               option,
                                               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                fontFamily: 'Andika New Basic',
+                                                fontFamily: FFAppState().currentFontFamily,
                                                 color: isSelected
                                                     ? (FFAppState().isComfortMode
                                                         ? const Color(0xFFECF0F1)
@@ -1222,7 +1215,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                         // Repeat Duration (Count or Until Date) — only when recurring
                         if (_model.recurringPattern != null && _model.recurringPattern != 'None')
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(0.0, 16.0, 0.0, 0.0),
+                            padding: const EdgeInsetsDirectional.fromSTEB(0.0, 16.0, 0.0, 0.0),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -1233,7 +1226,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                     Text(
                                       'How long?',
                                       style: theme.bodyMedium.override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         fontSize: 14.0,
                                         fontWeight: FontWeight.w600,
                                         color: isComfort ? const Color(0xFFECF0F1) : const Color(0xFF5D4E60),
@@ -1263,7 +1256,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                               child: Text(
                                                 'Count',
                                                 style: theme.bodySmall.override(
-                                                  fontFamily: 'Andika New Basic',
+                                                  fontFamily: FFAppState().currentFontFamily,
                                                   color: !_model.useEndDate
                                                       ? Colors.white
                                                       : (isComfort ? const Color(0xFF95A5A6) : const Color(0xFF9B8A9E)),
@@ -1286,7 +1279,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                               child: Text(
                                                 'Until date',
                                                 style: theme.bodySmall.override(
-                                                  fontFamily: 'Andika New Basic',
+                                                  fontFamily: FFAppState().currentFontFamily,
                                                   color: _model.useEndDate
                                                       ? Colors.white
                                                       : (isComfort ? const Color(0xFF95A5A6) : const Color(0xFF9B8A9E)),
@@ -1326,7 +1319,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                             return '$count $unit';
                                           }(),
                                           style: theme.bodyMedium.override(
-                                            fontFamily: 'Andika New Basic',
+                                            fontFamily: FFAppState().currentFontFamily,
                                             fontSize: 16.0,
                                             color: isComfort ? const Color(0xFFECF0F1) : theme.primaryText,
                                             letterSpacing: 0.0,
@@ -1388,7 +1381,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                                   )
                                                 : 'Select end date',
                                             style: theme.bodyMedium.override(
-                                              fontFamily: 'Andika New Basic',
+                                              fontFamily: FFAppState().currentFontFamily,
                                               color: _model.recurringEndDate != null
                                                   ? (isComfort ? const Color(0xFFECF0F1) : theme.primaryText)
                                                   : (isComfort ? const Color(0xFF95A5A6) : theme.secondaryText),
@@ -1434,7 +1427,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                         return '≈ $count $unit';
                                       }(),
                                       style: theme.bodySmall.override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         color: isComfort ? const Color(0xFF95A5A6) : theme.secondaryText,
                                         fontSize: 12.0,
                                         fontStyle: FontStyle.italic,
@@ -1448,16 +1441,16 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                         // Day Selector (only shown for Custom Weekly)
                         if (_model.recurringPattern == 'Custom Weekly')
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(0.0, 16.0, 0.0, 0.0),
+                            padding: const EdgeInsetsDirectional.fromSTEB(0.0, 16.0, 0.0, 0.0),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 8.0),
+                                  padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 8.0),
                                   child: Text(
                                     'Which days of the week?',
                                     style: theme.bodyMedium.override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       fontSize: 14.0,
                                       fontWeight: FontWeight.w600,
                                       color: isComfort ? const Color(0xFFECF0F1) : const Color(0xFF5D4E60),
@@ -1467,7 +1460,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                 ),
                                 // Tip explaining custom weekly
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 12.0),
+                                  padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 12.0),
                                   child: Row(
                                     children: [
                                       Icon(
@@ -1475,12 +1468,12 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                         size: 16.0,
                                         color: isComfort ? const Color(0xFF95A5A6) : FlutterFlowTheme.of(context).secondaryText,
                                       ),
-                                      SizedBox(width: 6.0),
+                                      const SizedBox(width: 6.0),
                                       Expanded(
                                         child: Text(
                                           'Example: Select Tuesday and Thursday for activities that repeat twice a week',
                                           style: theme.bodySmall.override(
-                                            fontFamily: 'Andika New Basic',
+                                            fontFamily: FFAppState().currentFontFamily,
                                             fontSize: 12.0,
                                             color: isComfort ? const Color(0xFF95A5A6) : FlutterFlowTheme.of(context).secondaryText,
                                             letterSpacing: 0.0,
@@ -1543,7 +1536,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                                 Text(
                                                   day['label'] as String,
                                                   style: theme.bodyMedium.override(
-                                                    fontFamily: 'Andika New Basic',
+                                                    fontFamily: FFAppState().currentFontFamily,
                                                     fontSize: 14.0,
                                                     fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                                                     color: isSelected
@@ -1572,7 +1565,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                         );
                                       }).toList(),
                                     ),
-                                    SizedBox(height: 8.0),
+                                    const SizedBox(height: 8.0),
                                     // Second row: Fri-Sun
                                     Wrap(
                                       spacing: 8.0,
@@ -1621,7 +1614,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                                 Text(
                                                   day['label'] as String,
                                                   style: theme.bodyMedium.override(
-                                                    fontFamily: 'Andika New Basic',
+                                                    fontFamily: FFAppState().currentFontFamily,
                                                     fontSize: 14.0,
                                                     fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                                                     color: isSelected
@@ -1715,7 +1708,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                       child: Text(
                                         'Update all recurring events',
                                         style: theme.bodyMedium.override(
-                                          fontFamily: 'Andika New Basic',
+                                          fontFamily: FFAppState().currentFontFamily,
                                           color: isComfort
                                               ? const Color(0xFFECF0F1)
                                               : const Color(0xFF5D4E60),
@@ -1746,7 +1739,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                     style: FlutterFlowTheme.of(context)
                                         .bodyMedium
                                         .override(
-                                          fontFamily: 'Andika New Basic',
+                                          fontFamily: FFAppState().currentFontFamily,
                                           fontSize: 14.0,
                                           fontWeight: FontWeight.w600,
                                           color: FFAppState().isComfortMode
@@ -1771,13 +1764,13 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                           title: Text(
                                             'Delete All Recurring Events?',
                                             style: FlutterFlowTheme.of(context).titleMedium.override(
-                                              fontFamily: 'Andika New Basic',
+                                              fontFamily: FFAppState().currentFontFamily,
                                             ),
                                           ),
                                           content: Text(
                                             'This will delete all instances of this recurring event. This action cannot be undone.',
                                             style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                              fontFamily: 'Andika New Basic',
+                                              fontFamily: FFAppState().currentFontFamily,
                                             ),
                                           ),
                                           actions: [
@@ -1786,7 +1779,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                               child: Text(
                                                 'Cancel',
                                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                  fontFamily: 'Andika New Basic',
+                                                  fontFamily: FFAppState().currentFontFamily,
                                                 ),
                                               ),
                                             ),
@@ -1795,7 +1788,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                               child: Text(
                                                 'Delete All',
                                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                  fontFamily: 'Andika New Basic',
+                                                  fontFamily: FFAppState().currentFontFamily,
                                                   color: Colors.red,
                                                 ),
                                               ),
@@ -1868,7 +1861,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                           child: Row(
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
-                                              Icon(
+                                              const Icon(
                                                 Icons.delete_forever_rounded,
                                                 color: Colors.red,
                                                 size: 20.0,
@@ -1877,7 +1870,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                               Text(
                                                 'Delete All Recurring Events',
                                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                  fontFamily: 'Andika New Basic',
+                                                  fontFamily: FFAppState().currentFontFamily,
                                                   color: Colors.red,
                                                   fontSize: 14.0,
                                                   fontWeight: FontWeight.w600,
@@ -1891,17 +1884,17 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                   ],
                                 ),
                               ),
-                      ].addToEnd(SizedBox(height: 100.0)),
+                      ].addToEnd(const SizedBox(height: 100.0)),
                     ),
                   ),
                 ),
               ),
               // Bottom buttons
               Align(
-                alignment: AlignmentDirectional(0.0, 1.0),
+                alignment: const AlignmentDirectional(0.0, 1.0),
                 child: Padding(
                   padding:
-                      EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 20.0),
+                      const EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 20.0),
                   child: Row(
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -1914,9 +1907,9 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                           text: 'Cancel',
                           options: FFButtonOptions(
                             height: 40.0,
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 16.0, 0.0, 16.0, 0.0),
-                            iconPadding: EdgeInsetsDirectional.fromSTEB(
+                            iconPadding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 0.0, 0.0, 0.0),
                             color: FFAppState().isComfortMode
                                 ? const Color(0xFF34495E)
@@ -1924,7 +1917,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                             textStyle: FlutterFlowTheme.of(context)
                                 .titleSmall
                                 .override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   color: FFAppState().isComfortMode
                                       ? const Color(0xFFECF0F1)
                                       : FlutterFlowTheme.of(context).primary,
@@ -1969,7 +1962,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                       content: Text('Please enter a ${_model.selectedType.toLowerCase()} name'),
-                                      duration: Duration(seconds: 2),
+                                      duration: const Duration(seconds: 2),
                                     ),
                                   );
                                   setState(() {
@@ -2006,7 +1999,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
                                         content: Text('This ${_model.selectedType.toLowerCase()} already exists for this date'),
-                                        duration: Duration(seconds: 2),
+                                        duration: const Duration(seconds: 2),
                                       ),
                                     );
                                     setState(() {
@@ -2019,7 +2012,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
 
                                 // LAYER 3: Rate limiting - check daily limit (30 per day max)
                                 final startOfDay = DateTime(_model.selectedDate!.year, _model.selectedDate!.month, _model.selectedDate!.day);
-                                final endOfDay = startOfDay.add(Duration(days: 1));
+                                final endOfDay = startOfDay.add(const Duration(days: 1));
 
                                 final todayEvents = await EventAndTaskRecord.collection
                                   .where('user_ref', isEqualTo: currentUserReference)
@@ -2030,7 +2023,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                 if (todayEvents.docs.length >= 30) {
                                   if (mounted) {
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
+                                      const SnackBar(
                                         content: Text('Maximum 30 entries per day reached. Please choose a different date or clean up duplicates in Settings.'),
                                         duration: Duration(seconds: 3),
                                       ),
@@ -2197,7 +2190,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                           final instanceDate = currentWeekStart.add(Duration(days: daysToAdd));
 
                                           // Only create instances that are today or in the future
-                                          if (instanceDate.isAfter(startDate.subtract(Duration(days: 1)))) {
+                                          if (instanceDate.isAfter(startDate.subtract(const Duration(days: 1)))) {
                                             debugPrint('  Creating instance: ${instanceDate.toString().split(' ')[0]} (${_getDayName(dayOfWeek)})');
 
                                             await EventAndTaskRecord.collection.doc().set(createEventAndTaskRecordData(
@@ -2225,7 +2218,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                           }
                                         }
                                         // Move to next week
-                                        currentWeekStart = currentWeekStart.add(Duration(days: 7));
+                                        currentWeekStart = currentWeekStart.add(const Duration(days: 7));
                                       }
                                     }
                                   } else {
@@ -2234,9 +2227,9 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                     for (int i = 0; i < count; i++) {
                                       // Calculate next date based on NEW pattern
                                       if (_model.recurringPattern == 'Daily') {
-                                        nextDate = nextDate.add(Duration(days: 1));
+                                        nextDate = nextDate.add(const Duration(days: 1));
                                       } else if (_model.recurringPattern == 'Weekly') {
-                                        nextDate = nextDate.add(Duration(days: 7));
+                                        nextDate = nextDate.add(const Duration(days: 7));
                                       } else if (_model.recurringPattern == 'Monthly') {
                                         nextDate = DateTime(
                                           nextDate.year,
@@ -2290,7 +2283,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                           final daysToAdd = dayOfWeek - DateTime.monday;
                                           final instanceDate = currentWeekStart.add(Duration(days: daysToAdd));
 
-                                          if (instanceDate.isAfter(startDate.subtract(Duration(days: 1)))) {
+                                          if (instanceDate.isAfter(startDate.subtract(const Duration(days: 1)))) {
                                             await EventAndTaskRecord.collection.doc().set(createEventAndTaskRecordData(
                                               description: _model.descriptionController.text,
                                               name: _model.nameController.text,
@@ -2313,7 +2306,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                             ));
                                           }
                                         }
-                                        currentWeekStart = currentWeekStart.add(Duration(days: 7));
+                                        currentWeekStart = currentWeekStart.add(const Duration(days: 7));
                                       }
                                     }
                                   } else {
@@ -2321,9 +2314,9 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                     DateTime nextDate = _model.selectedDate!;
                                     for (int i = 0; i < count; i++) {
                                       if (_model.recurringPattern == 'Daily') {
-                                        nextDate = nextDate.add(Duration(days: 1));
+                                        nextDate = nextDate.add(const Duration(days: 1));
                                       } else if (_model.recurringPattern == 'Weekly') {
-                                        nextDate = nextDate.add(Duration(days: 7));
+                                        nextDate = nextDate.add(const Duration(days: 7));
                                       } else if (_model.recurringPattern == 'Monthly') {
                                         nextDate = DateTime(
                                           nextDate.year,
@@ -2453,7 +2446,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                       final instanceDate = currentWeekStart.add(Duration(days: daysToAdd));
 
                                       // Only create instances that are today or in the future
-                                      if (instanceDate.isAfter(startDate.subtract(Duration(days: 1)))) {
+                                      if (instanceDate.isAfter(startDate.subtract(const Duration(days: 1)))) {
                                         debugPrint('  Creating instance: ${instanceDate.toString().split(' ')[0]} (${_getDayName(dayOfWeek)})');
 
                                         await EventAndTaskRecord.collection.doc().set(createEventAndTaskRecordData(
@@ -2489,7 +2482,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                       }
                                     }
                                     // Move to next week
-                                    currentWeekStart = currentWeekStart.add(Duration(days: 7));
+                                    currentWeekStart = currentWeekStart.add(const Duration(days: 7));
                                   }
                                 }
                               } else {
@@ -2500,9 +2493,9 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                 for (int i = 0; i < count; i++) {
                                   // Calculate next date based on pattern
                                   if (_model.recurringPattern == 'Daily') {
-                                    nextDate = nextDate.add(Duration(days: 1));
+                                    nextDate = nextDate.add(const Duration(days: 1));
                                   } else if (_model.recurringPattern == 'Weekly') {
-                                    nextDate = nextDate.add(Duration(days: 7));
+                                    nextDate = nextDate.add(const Duration(days: 7));
                                   } else if (_model.recurringPattern == 'Monthly') {
                                     nextDate = DateTime(
                                       nextDate.year,
@@ -2599,7 +2592,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                       ? Text(
                                           'Creating ${_model.creatingProgress} of ${_model.creatingTotal}...',
                                           style: FlutterFlowTheme.of(context).titleSmall.override(
-                                            fontFamily: 'Andika New Basic',
+                                            fontFamily: FFAppState().currentFontFamily,
                                             color: FFAppState().isComfortMode ? const Color(0xFFECF0F1) : Colors.white,
                                             letterSpacing: 0.0,
                                             fontSize: 14.0,
@@ -2612,7 +2605,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                     : Text(
                                         widget.editTaskEvent != null ? 'Update' : 'Create',
                                         style: FlutterFlowTheme.of(context).titleSmall.override(
-                                          fontFamily: 'Andika New Basic',
+                                          fontFamily: FFAppState().currentFontFamily,
                                           color: FFAppState().isComfortMode ? const Color(0xFFECF0F1) : Colors.white,
                                           letterSpacing: 0.0,
                                         ),
@@ -2622,7 +2615,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                         ), // Close Material
                 ), // Close Container
               ),  // Close Expanded
-                    ].divide(SizedBox(width: 16.0)),
+                    ].divide(const SizedBox(width: 16.0)),
                   ),
                 ),
               ),

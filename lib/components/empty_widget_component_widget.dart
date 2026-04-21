@@ -1,10 +1,6 @@
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import '/flutter_flow/flutter_flow_widgets.dart';
-import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'empty_widget_component_model.dart';
 export 'empty_widget_component_model.dart';
 
@@ -49,7 +45,7 @@ class _EmptyWidgetComponentWidgetState
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsetsDirectional.fromSTEB(16.0, 24.0, 16.0, 24.0),
+      padding: const EdgeInsetsDirectional.fromSTEB(16.0, 24.0, 16.0, 24.0),
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
@@ -57,7 +53,7 @@ class _EmptyWidgetComponentWidgetState
           borderRadius: BorderRadius.circular(16.0),
         ),
         child: Padding(
-          padding: EdgeInsetsDirectional.fromSTEB(16.0, 32.0, 16.0, 32.0),
+          padding: const EdgeInsetsDirectional.fromSTEB(16.0, 32.0, 16.0, 32.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
@@ -75,7 +71,7 @@ class _EmptyWidgetComponentWidgetState
                   size: 32.0,
                 ),
               ),
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
               InkWell(
                 splashColor: Colors.transparent,
                 focusColor: Colors.transparent,
@@ -91,7 +87,7 @@ class _EmptyWidgetComponentWidgetState
                   ),
                   textAlign: TextAlign.center,
                   style: FlutterFlowTheme.of(context).bodyMedium.override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         color: FlutterFlowTheme.of(context).secondaryText,
                         fontSize: 16.0,
                         letterSpacing: 0.0,
@@ -100,7 +96,7 @@ class _EmptyWidgetComponentWidgetState
               ),
               if (widget.actionParam != null)
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(0.0, 12.0, 0.0, 0.0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(0.0, 12.0, 0.0, 0.0),
                   child: InkWell(
                     onTap: () async {
                       await widget.actionParam?.call();
@@ -108,7 +104,7 @@ class _EmptyWidgetComponentWidgetState
                     child: Text(
                       'Tap to get started',
                       style: FlutterFlowTheme.of(context).bodySmall.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: FlutterFlowTheme.of(context).primary,
                             letterSpacing: 0.0,
                             fontWeight: FontWeight.w500,

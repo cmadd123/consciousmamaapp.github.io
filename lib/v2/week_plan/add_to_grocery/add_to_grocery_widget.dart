@@ -20,9 +20,9 @@ class AddToGroceryWidget extends StatefulWidget {
     bool? isellectAll,
     bool? isWeekly,
     bool? skipToList,
-  }) : this.isellectAll = isellectAll ?? false,
-       this.isWeekly = isWeekly ?? false,
-       this.skipToList = skipToList ?? false;
+  }) : isellectAll = isellectAll ?? false,
+       isWeekly = isWeekly ?? false,
+       skipToList = skipToList ?? false;
 
   final bool isellectAll;
   final bool isWeekly; // If true, add all meals for the week instead of just today
@@ -347,9 +347,9 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
                     ),
                   ],
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.arrow_back_ios_new_rounded,
-                  color: const Color(0xFF5D4E60),
+                  color: Color(0xFF5D4E60),
                   size: 20.0,
                 ),
               ),
@@ -360,7 +360,7 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
               Text(
                 'Grocery List',
                 style: FlutterFlowTheme.of(context).headlineMedium.override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       color: const Color(0xFF5D4E60),
                       fontSize: 24.0,
                       fontWeight: FontWeight.w600,
@@ -370,7 +370,7 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
               Text(
                 'Swipe left to remove items',
                 style: FlutterFlowTheme.of(context).bodySmall.override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       color: const Color(0xFF9B8A9E),
                       fontSize: 12.0,
                       letterSpacing: 0.0,
@@ -485,7 +485,7 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
                   Text(
                     '$checkedItems of $totalItems items',
                     style: FlutterFlowTheme.of(context).bodyMedium.override(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           color: const Color(0xFF5D4E60),
                           fontSize: 14.0,
                           fontWeight: FontWeight.w600,
@@ -496,7 +496,7 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
                     Text(
                       'in your cart',
                       style: FlutterFlowTheme.of(context).bodySmall.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: const Color(0xFF9B8A9E),
                             fontSize: 11.0,
                             letterSpacing: 0.0,
@@ -528,16 +528,16 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.check_circle_outline,
-                      color: const Color(0xFF7CB342),
+                      color: Color(0xFF7CB342),
                       size: 16.0,
                     ),
                     const SizedBox(width: 4.0),
                     Text(
                       'Clear done',
                       style: FlutterFlowTheme.of(context).bodySmall.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: const Color(0xFF7CB342),
                             fontSize: 12.0,
                             fontWeight: FontWeight.w500,
@@ -593,10 +593,10 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
               ),
               const SizedBox(height: 20),
               // Title
-              const Text(
+              Text(
                 'Building Your Grocery List',
                 style: TextStyle(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   fontSize: 17,
                   fontWeight: FontWeight.w600,
                 ),
@@ -606,7 +606,7 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
               Text(
                 _addStatusText,
                 style: TextStyle(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   fontSize: 13,
                   color: Colors.grey[600],
                 ),
@@ -628,7 +628,7 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
               Text(
                 '$_addCurrent of $_addTotal items ready to shop',
                 style: TextStyle(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   fontSize: 12,
                   color: Colors.grey[500],
                 ),
@@ -709,7 +709,7 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
                         alignment: Alignment.center,
                         children: [
                           // Shopping cart
-                          Icon(
+                          const Icon(
                             Icons.shopping_cart_rounded,
                             color: instacartGreen,
                             size: 20.0,
@@ -730,15 +730,15 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
                         ],
                       ),
               ),
-              const SizedBox(width: 12.0),
+              SizedBox(width: 12.0),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       _isInstacartLoading ? 'Connecting...' : 'Shop with Instacart',
-                      style: const TextStyle(
-                        fontFamily: 'Andika New Basic',
+                      style: TextStyle(
+                        fontFamily: FFAppState().currentFontFamily,
                         color: Colors.white,
                         fontSize: 16.0,
                         fontWeight: FontWeight.w600,
@@ -750,7 +750,7 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
                           ? 'Building your shopping list...'
                           : '$itemCount item${itemCount != 1 ? 's' : ''} ready to shop',
                       style: TextStyle(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         color: Colors.white.withOpacity(0.7),
                         fontSize: 12.0,
                       ),
@@ -793,7 +793,7 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
             Text(
               'Your list is empty',
               style: FlutterFlowTheme.of(context).headlineSmall.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     color: const Color(0xFF5D4E60),
                     fontSize: 20.0,
                     fontWeight: FontWeight.w600,
@@ -805,7 +805,7 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
               'Add items from your meal plan\nor tap below to add manually',
               textAlign: TextAlign.center,
               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     color: const Color(0xFF9B8A9E),
                     fontSize: 14.0,
                     letterSpacing: 0.0,
@@ -860,7 +860,7 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
               child: Text(
                 'Sorted by aisle to make shopping faster. Swipe left to remove.',
                 style: FlutterFlowTheme.of(context).bodySmall.override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       color: const Color(0xFF5C9CE5),
                       fontSize: 13.0,
                       letterSpacing: 0.0,
@@ -888,7 +888,7 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
               Text(
                 aisle,
                 style: FlutterFlowTheme.of(context).bodyMedium.override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       color: const Color(0xFF5D4E60),
                       fontSize: 15.0,
                       fontWeight: FontWeight.w600,
@@ -899,7 +899,7 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
               Text(
                 '$uncheckedCount item${uncheckedCount == 1 ? '' : 's'}',
                 style: FlutterFlowTheme.of(context).bodySmall.override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       color: const Color(0xFF9B8A9E),
                       fontSize: 12.0,
                       letterSpacing: 0.0,
@@ -1015,7 +1015,7 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
                         Text(
                           item.name.isNotEmpty ? item.name : item.displayText,
                           style: FlutterFlowTheme.of(context).bodyLarge.override(
-                                fontFamily: 'Andika New Basic',
+                                fontFamily: FFAppState().currentFontFamily,
                                 color: item.isChecked
                                     ? const Color(0xFF9B8A9E)
                                     : const Color(0xFF5D4E60),
@@ -1033,7 +1033,7 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
                             child: Text(
                               _formatQuantityUnit(item),
                               style: FlutterFlowTheme.of(context).bodySmall.override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     color: const Color(0xFF9B8A9E),
                                     fontSize: 13.0,
                                     letterSpacing: 0.0,
@@ -1182,7 +1182,7 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
             Text(
               'Add item',
               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     color: const Color(0xFF5D4E60),
                     fontSize: 16.0,
                     fontWeight: FontWeight.w500,
@@ -1213,7 +1213,7 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
                 isDense: true,
                 hintText: _model.index != null ? 'Edit item...' : 'Add item (e.g., 2 cups flour)',
                 hintStyle: FlutterFlowTheme.of(context).bodyMedium.override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       color: const Color(0xFF9B8A9E),
                       fontSize: 15.0,
                       letterSpacing: 0.0,
@@ -1224,7 +1224,7 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
                 focusedBorder: InputBorder.none,
               ),
               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     color: const Color(0xFF5D4E60),
                     fontSize: 15.0,
                     letterSpacing: 0.0,
@@ -1246,13 +1246,13 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
           },
           child: Container(
             padding: const EdgeInsets.all(12.0),
-            decoration: BoxDecoration(
-              color: const Color(0xFFF5F0F7),
+            decoration: const BoxDecoration(
+              color: Color(0xFFF5F0F7),
               shape: BoxShape.circle,
             ),
-            child: Icon(
+            child: const Icon(
               Icons.close_rounded,
-              color: const Color(0xFF9B8A9E),
+              color: Color(0xFF9B8A9E),
               size: 22.0,
             ),
           ),
@@ -1326,7 +1326,7 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
                   Text(
                     'Select Meals',
                     style: FlutterFlowTheme.of(context).headlineMedium.override(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           color: const Color(0xFF5D4E60),
                           fontSize: 24.0,
                           fontWeight: FontWeight.w600,
@@ -1336,7 +1336,7 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
                   Text(
                     'Choose which meals to add',
                     style: FlutterFlowTheme.of(context).bodySmall.override(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           color: const Color(0xFF9B8A9E),
                           fontSize: 12.0,
                           letterSpacing: 0.0,
@@ -1364,7 +1364,7 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
                       Text(
                         'No meals planned this week',
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               color: const Color(0xFF9B8A9E),
                               letterSpacing: 0.0,
                             ),
@@ -1406,7 +1406,7 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
                       child: Text(
                         'Skip',
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               color: const Color(0xFF5D4E60),
                               fontSize: 16.0,
                               fontWeight: FontWeight.w500,
@@ -1481,7 +1481,7 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
                       child: Text(
                         'Add ${_model.selectedMealPlanIds.length} meal${_model.selectedMealPlanIds.length == 1 ? '' : 's'}',
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               color: Colors.white,
                               fontSize: 16.0,
                               fontWeight: FontWeight.w600,
@@ -1563,7 +1563,7 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
                   Text(
                     dayLabel,
                     style: FlutterFlowTheme.of(context).bodyLarge.override(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           color: const Color(0xFF5D4E60),
                           fontSize: 18.0,
                           fontWeight: FontWeight.w600,
@@ -1574,7 +1574,7 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
                   Text(
                     dateLabel,
                     style: FlutterFlowTheme.of(context).bodyMedium.override(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           color: const Color(0xFF9B8A9E),
                           fontSize: 14.0,
                           letterSpacing: 0.0,
@@ -1673,7 +1673,7 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
                           Text(
                             recipeName,
                             style: FlutterFlowTheme.of(context).bodyLarge.override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   color: const Color(0xFF5D4E60),
                                   fontSize: 16.0,
                                   fontWeight: FontWeight.w500,
@@ -1688,7 +1688,7 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
                               Text(
                                 mealType,
                                 style: FlutterFlowTheme.of(context).bodySmall.override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       color: const Color(0xFF9B8A9E),
                                       fontSize: 12.0,
                                       letterSpacing: 0.0,
@@ -1699,7 +1699,7 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
                                 Text(
                                   '$ingredientCount items',
                                   style: FlutterFlowTheme.of(context).bodySmall.override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         color: FlutterFlowTheme.of(context).primary,
                                         fontSize: 12.0,
                                         letterSpacing: 0.0,

@@ -1,10 +1,7 @@
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
-import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'on_boarding_type_of_support_copy_model.dart';
 export 'on_boarding_type_of_support_copy_model.dart';
 
@@ -51,7 +48,7 @@ class _OnBoardingTypeOfSupportCopyWidgetState
         body: Container(
           width: double.infinity,
           height: double.infinity,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             gradient: LinearGradient(
               colors: [Color(0xFFECE5E5), Color(0xFFEDFFFD)],
               stops: [0.0, 1.0],
@@ -65,16 +62,16 @@ class _OnBoardingTypeOfSupportCopyWidgetState
               Expanded(
                 child: Padding(
                   padding:
-                      EdgeInsetsDirectional.fromSTEB(13.0, 50.0, 13.0, 0.0),
+                      const EdgeInsetsDirectional.fromSTEB(13.0, 50.0, 13.0, 0.0),
                   child: SingleChildScrollView(
                     child: Column(
                       mainAxisSize: MainAxisSize.max,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Align(
-                          alignment: AlignmentDirectional(-1.0, 0.0),
+                          alignment: const AlignmentDirectional(-1.0, 0.0),
                           child: Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 100.0, 0.0, 0.0),
                             child: ClipOval(
                               child: Container(
@@ -98,14 +95,14 @@ class _OnBoardingTypeOfSupportCopyWidgetState
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 32.0, 0.0, 0.0),
                           child: Text(
                             'What is your approach to parenting?',
                             style: FlutterFlowTheme.of(context)
                                 .bodyMedium
                                 .override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   fontSize: 30.0,
                                   letterSpacing: 0.0,
                                   fontWeight: FontWeight.bold,
@@ -113,14 +110,14 @@ class _OnBoardingTypeOfSupportCopyWidgetState
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 24.0, 0.0, 79.0),
                           child: Text(
                             'Select a parenting approach.',
                             style: FlutterFlowTheme.of(context)
                                 .bodyMedium
                                 .override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   color: FlutterFlowTheme.of(context)
                                       .secondaryText,
                                   letterSpacing: 0.0,
@@ -158,12 +155,12 @@ class _OnBoardingTypeOfSupportCopyWidgetState
                                     child: Container(
                                       width: 54.0,
                                       height: 54.0,
-                                      decoration: BoxDecoration(
+                                      decoration: const BoxDecoration(
                                         color: Color(0xB7ACE1E1),
                                         shape: BoxShape.circle,
                                       ),
                                       child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                        padding: const EdgeInsetsDirectional.fromSTEB(
                                             8.0, 8.0, 8.0, 8.0),
                                         child: ClipRRect(
                                           borderRadius:
@@ -179,7 +176,7 @@ class _OnBoardingTypeOfSupportCopyWidgetState
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(
                                         10.0, 12.0, 10.0, 0.0),
                                     child: Text(
                                       'Personalized Parenting Tips',
@@ -187,7 +184,7 @@ class _OnBoardingTypeOfSupportCopyWidgetState
                                       style: FlutterFlowTheme.of(context)
                                           .bodyMedium
                                           .override(
-                                            fontFamily: 'Andika New Basic',
+                                            fontFamily: FFAppState().currentFontFamily,
                                             color: FlutterFlowTheme.of(context)
                                                 .black60,
                                             fontSize: 13.0,
@@ -220,12 +217,12 @@ class _OnBoardingTypeOfSupportCopyWidgetState
                                     child: Container(
                                       width: 54.0,
                                       height: 54.0,
-                                      decoration: BoxDecoration(
+                                      decoration: const BoxDecoration(
                                         color: Color(0xB7ACE1E1),
                                         shape: BoxShape.circle,
                                       ),
                                       child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                        padding: const EdgeInsetsDirectional.fromSTEB(
                                             8.0, 8.0, 8.0, 8.0),
                                         child: ClipRRect(
                                           borderRadius:
@@ -241,7 +238,7 @@ class _OnBoardingTypeOfSupportCopyWidgetState
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(
                                         0.0, 12.0, 0.0, 0.0),
                                     child: Text(
                                       'Daily Reminders & Encouragement',
@@ -249,7 +246,7 @@ class _OnBoardingTypeOfSupportCopyWidgetState
                                       style: FlutterFlowTheme.of(context)
                                           .bodyMedium
                                           .override(
-                                            fontFamily: 'Andika New Basic',
+                                            fontFamily: FFAppState().currentFontFamily,
                                             color: FlutterFlowTheme.of(context)
                                                 .black60,
                                             fontSize: 13.0,
@@ -282,12 +279,12 @@ class _OnBoardingTypeOfSupportCopyWidgetState
                                     child: Container(
                                       width: 54.0,
                                       height: 54.0,
-                                      decoration: BoxDecoration(
+                                      decoration: const BoxDecoration(
                                         color: Color(0xB7ACE1E1),
                                         shape: BoxShape.circle,
                                       ),
                                       child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                        padding: const EdgeInsetsDirectional.fromSTEB(
                                             8.0, 8.0, 8.0, 8.0),
                                         child: ClipRRect(
                                           borderRadius:
@@ -303,7 +300,7 @@ class _OnBoardingTypeOfSupportCopyWidgetState
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(
                                         0.0, 12.0, 0.0, 0.0),
                                     child: Text(
                                       'Instant, On-Demand Guidance',
@@ -311,7 +308,7 @@ class _OnBoardingTypeOfSupportCopyWidgetState
                                       style: FlutterFlowTheme.of(context)
                                           .bodyMedium
                                           .override(
-                                            fontFamily: 'Andika New Basic',
+                                            fontFamily: FFAppState().currentFontFamily,
                                             color: FlutterFlowTheme.of(context)
                                                 .black60,
                                             fontSize: 13.0,
@@ -344,12 +341,12 @@ class _OnBoardingTypeOfSupportCopyWidgetState
                                     child: Container(
                                       width: 54.0,
                                       height: 54.0,
-                                      decoration: BoxDecoration(
+                                      decoration: const BoxDecoration(
                                         color: Color(0xB7ACE1E1),
                                         shape: BoxShape.circle,
                                       ),
                                       child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                        padding: const EdgeInsetsDirectional.fromSTEB(
                                             8.0, 8.0, 8.0, 8.0),
                                         child: ClipRRect(
                                           borderRadius:
@@ -365,14 +362,14 @@ class _OnBoardingTypeOfSupportCopyWidgetState
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(
                                         0.0, 12.0, 0.0, 0.0),
                                     child: Text(
                                       'All - Inclusive Support',
                                       style: FlutterFlowTheme.of(context)
                                           .bodyMedium
                                           .override(
-                                            fontFamily: 'Andika New Basic',
+                                            fontFamily: FFAppState().currentFontFamily,
                                             color: FlutterFlowTheme.of(context)
                                                 .black60,
                                             fontSize: 13.0,
@@ -387,7 +384,7 @@ class _OnBoardingTypeOfSupportCopyWidgetState
                           ],
                         ),
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 60.0, 0.0, 20.0),
                           child: FFButtonWidget(
                             onPressed: () {
@@ -397,15 +394,15 @@ class _OnBoardingTypeOfSupportCopyWidgetState
                             options: FFButtonOptions(
                               width: double.infinity,
                               height: 47.0,
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   16.0, 0.0, 16.0, 0.0),
-                              iconPadding: EdgeInsetsDirectional.fromSTEB(
+                              iconPadding: const EdgeInsetsDirectional.fromSTEB(
                                   0.0, 0.0, 0.0, 0.0),
                               color: FlutterFlowTheme.of(context).primary,
                               textStyle: FlutterFlowTheme.of(context)
                                   .titleSmall
                                   .override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     color: Colors.white,
                                     letterSpacing: 0.0,
                                   ),

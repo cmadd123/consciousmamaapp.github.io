@@ -4,12 +4,8 @@ import '/components/onboarding_progress_indicator_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
-import 'dart:ui';
 import '/index.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'o_boarding_step3_model.dart';
 export 'o_boarding_step3_model.dart';
 
@@ -54,7 +50,7 @@ class _OBoardingStep3WidgetState extends State<OBoardingStep3Widget> {
         body: Container(
           width: double.infinity,
           height: double.infinity,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             gradient: LinearGradient(
               colors: [Color(0xFFD7F2EB), Color(0xFFFFE9E1)],
               stops: [0.0, 1.0],
@@ -70,7 +66,7 @@ class _OBoardingStep3WidgetState extends State<OBoardingStep3Widget> {
                 children: [
                   // Back button and progress indicator
                   Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
+                    padding: const EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
@@ -96,13 +92,13 @@ class _OBoardingStep3WidgetState extends State<OBoardingStep3Widget> {
                     ),
                   ),
                   Align(
-                    alignment: AlignmentDirectional(0.0, 0.0),
+                    alignment: const AlignmentDirectional(0.0, 0.0),
                     child: Container(
                       width: 182.0,
                       height: 140.0,
-                      decoration: BoxDecoration(),
+                      decoration: const BoxDecoration(),
                       child: Align(
-                        alignment: AlignmentDirectional(-1.0, 0.0),
+                        alignment: const AlignmentDirectional(-1.0, 0.0),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(14.0),
                           child: Image.asset(
@@ -117,7 +113,7 @@ class _OBoardingStep3WidgetState extends State<OBoardingStep3Widget> {
                   ),
                   Padding(
                     padding:
-                        EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
+                        const EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
                     child: Column(
                       mainAxisSize: MainAxisSize.max,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -126,21 +122,21 @@ class _OBoardingStep3WidgetState extends State<OBoardingStep3Widget> {
                           'What is difficult about planning your kids\' day?',
                           style:
                               FlutterFlowTheme.of(context).bodyMedium.override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     fontSize: 26.0,
                                     letterSpacing: 0.0,
                                     fontWeight: FontWeight.w600,
                                   ),
                         ),
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 4.0, 0.0, 20.0),
                           child: Text(
                             'Select all that apply',
                             style: FlutterFlowTheme.of(context)
                                 .bodyMedium
                                 .override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   color: FlutterFlowTheme.of(context)
                                       .secondaryText,
                                   letterSpacing: 0.0,
@@ -149,9 +145,9 @@ class _OBoardingStep3WidgetState extends State<OBoardingStep3Widget> {
                         ),
                         Container(
                           width: double.infinity,
-                          decoration: BoxDecoration(),
+                          decoration: const BoxDecoration(),
                           child: Align(
-                            alignment: AlignmentDirectional(0.0, -1.0),
+                            alignment: const AlignmentDirectional(0.0, -1.0),
                             child: LayoutBuilder(
                               builder: (context, constraints) {
                                 final itemWidth = (constraints.maxWidth - 12.0) / 2;
@@ -201,12 +197,12 @@ class _OBoardingStep3WidgetState extends State<OBoardingStep3Widget> {
                                             child: Container(
                                               width: 54.0,
                                               height: 54.0,
-                                              decoration: BoxDecoration(
+                                              decoration: const BoxDecoration(
                                                 color: Color(0xFFA3CDC8),
                                                 shape: BoxShape.circle,
                                               ),
                                               child: Padding(
-                                                padding: EdgeInsetsDirectional
+                                                padding: const EdgeInsetsDirectional
                                                     .fromSTEB(
                                                         12.0, 12.0, 12.0, 12.0),
                                                 child: ClipRRect(
@@ -225,7 +221,7 @@ class _OBoardingStep3WidgetState extends State<OBoardingStep3Widget> {
                                           ),
                                           Padding(
                                             padding:
-                                                EdgeInsetsDirectional.fromSTEB(
+                                                const EdgeInsetsDirectional.fromSTEB(
                                                     0.0, 12.0, 0.0, 0.0),
                                             child: Text(
                                               'Helping foster\nindependent play',
@@ -287,12 +283,12 @@ class _OBoardingStep3WidgetState extends State<OBoardingStep3Widget> {
                                             child: Container(
                                               width: 54.0,
                                               height: 54.0,
-                                              decoration: BoxDecoration(
+                                              decoration: const BoxDecoration(
                                                 color: Color(0xFFA3CDC8),
                                                 shape: BoxShape.circle,
                                               ),
                                               child: Padding(
-                                                padding: EdgeInsetsDirectional
+                                                padding: const EdgeInsetsDirectional
                                                     .fromSTEB(
                                                         8.0, 8.0, 8.0, 8.0),
                                                 child: ClipRRect(
@@ -311,7 +307,7 @@ class _OBoardingStep3WidgetState extends State<OBoardingStep3Widget> {
                                           ),
                                           Padding(
                                             padding:
-                                                EdgeInsetsDirectional.fromSTEB(
+                                                const EdgeInsetsDirectional.fromSTEB(
                                                     16.0, 6.0, 16.0, 0.0),
                                             child: Text(
                                               'Coming up with age\nappropriate games ',
@@ -372,12 +368,12 @@ class _OBoardingStep3WidgetState extends State<OBoardingStep3Widget> {
                                             child: Container(
                                               width: 54.0,
                                               height: 54.0,
-                                              decoration: BoxDecoration(
+                                              decoration: const BoxDecoration(
                                                 color: Color(0xFFA3CDC8),
                                                 shape: BoxShape.circle,
                                               ),
                                               child: Padding(
-                                                padding: EdgeInsetsDirectional
+                                                padding: const EdgeInsetsDirectional
                                                     .fromSTEB(
                                                         8.0, 8.0, 8.0, 8.0),
                                                 child: ClipRRect(
@@ -396,7 +392,7 @@ class _OBoardingStep3WidgetState extends State<OBoardingStep3Widget> {
                                           ),
                                           Padding(
                                             padding:
-                                                EdgeInsetsDirectional.fromSTEB(
+                                                const EdgeInsetsDirectional.fromSTEB(
                                                     0.0, 12.0, 0.0, 0.0),
                                             child: Text(
                                               'All the above',
@@ -428,7 +424,7 @@ class _OBoardingStep3WidgetState extends State<OBoardingStep3Widget> {
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 60.0, 0.0, 20.0),
                           child: FFButtonWidget(
                             onPressed: () async {
@@ -443,15 +439,15 @@ class _OBoardingStep3WidgetState extends State<OBoardingStep3Widget> {
                             options: FFButtonOptions(
                               width: double.infinity,
                               height: 48.0,
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   16.0, 0.0, 16.0, 0.0),
-                              iconPadding: EdgeInsetsDirectional.fromSTEB(
+                              iconPadding: const EdgeInsetsDirectional.fromSTEB(
                                   0.0, 0.0, 0.0, 0.0),
                               color: FlutterFlowTheme.of(context).primary,
                               textStyle: FlutterFlowTheme.of(context)
                                   .titleSmall
                                   .override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     color: Colors.white,
                                     letterSpacing: 0.0,
                                   ),

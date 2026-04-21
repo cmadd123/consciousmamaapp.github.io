@@ -4,17 +4,12 @@ import '/backend/schema/enums/enums.dart';
 import '/components/home_nav_bar_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import '/flutter_flow/flutter_flow_widgets.dart';
-import '/flutter_flow/custom_icons.dart';
 import '/components/share_content_bottom_sheet.dart';
-import 'dart:ui';
 import '/index.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'fav_meal_page_model.dart';
@@ -28,7 +23,7 @@ class FavMealPageWidget extends StatefulWidget {
     this.mealPlan,
     bool? isFromGenrate,
     required this.mealRef,
-  }) : this.isFromGenrate = isFromGenrate ?? false;
+  }) : isFromGenrate = isFromGenrate ?? false;
 
   final MealTyp? mealTyp;
   final DateTime? date;
@@ -92,7 +87,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
   // Build colored placeholder with icon
   Widget _buildRecipeChip(String label, Color color) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 1.0),
+      padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 1.0),
       decoration: BoxDecoration(
         color: color.withOpacity(0.15),
         borderRadius: BorderRadius.circular(4.0),
@@ -101,7 +96,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
       child: Text(
         label,
         style: TextStyle(
-          fontFamily: 'Andika New Basic',
+          fontFamily: FFAppState().currentFontFamily,
           fontSize: 8.0,
           fontWeight: FontWeight.w600,
           color: color,
@@ -282,7 +277,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
       isScrollControlled: true,
       builder: (context) => StatefulBuilder(
         builder: (context, setState) => Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
           ),
@@ -300,7 +295,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                         child: Text(
                           'Add to Meal Plan',
                           style: FlutterFlowTheme.of(context).headlineSmall.override(
-                                fontFamily: 'Andika New Basic',
+                                fontFamily: FFAppState().currentFontFamily,
                                 fontSize: 18.0,
                                 fontWeight: FontWeight.w600,
                                 letterSpacing: 0.0,
@@ -319,7 +314,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                         child: Text(
                           template.name,
                           style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                fontFamily: 'Andika New Basic',
+                                fontFamily: FFAppState().currentFontFamily,
                                 color: FlutterFlowTheme.of(context).secondaryText,
                                 letterSpacing: 0.0,
                               ),
@@ -332,7 +327,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                   Text(
                     'Select Day',
                     style: FlutterFlowTheme.of(context).bodyMedium.override(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 0.0,
                         ),
@@ -375,7 +370,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                               Text(
                                 dayName,
                                 style: TextStyle(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   fontSize: 10.0,
                                   color: isSelected
                                       ? FlutterFlowTheme.of(context).primary
@@ -398,7 +393,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                 child: Text(
                                   dayNum,
                                   style: TextStyle(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     fontSize: 13.0,
                                     fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                                     color: isToday && isSelected
@@ -420,7 +415,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                   Text(
                     'Select Meal Type',
                     style: FlutterFlowTheme.of(context).bodyMedium.override(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 0.0,
                         ),
@@ -440,10 +435,10 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                           backgroundColor: Colors.white,
                           labelStyle: TextStyle(
                             color: selectedMealType == mealType ? Colors.white : Colors.black87,
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                           ),
                           side: BorderSide(
-                            color: selectedMealType == mealType ? FlutterFlowTheme.of(context).primary : Color(0xFFE0E0E0),
+                            color: selectedMealType == mealType ? FlutterFlowTheme.of(context).primary : const Color(0xFFE0E0E0),
                             width: 1.0,
                           ),
                         ),
@@ -528,7 +523,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
       debugPrint('Error adding template to meal plan: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text('Error adding meal template'),
             backgroundColor: Colors.red,
             behavior: SnackBarBehavior.floating,
@@ -544,7 +539,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
       context: context,
       backgroundColor: Colors.transparent,
       builder: (context) => Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
         ),
@@ -554,11 +549,11 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
             children: [
               // Handle
               Container(
-                margin: EdgeInsets.only(top: 12.0),
+                margin: const EdgeInsets.only(top: 12.0),
                 width: 40.0,
                 height: 4.0,
                 decoration: BoxDecoration(
-                  color: Color(0xFFE0E0E0),
+                  color: const Color(0xFFE0E0E0),
                   borderRadius: BorderRadius.circular(2.0),
                 ),
               ),
@@ -571,7 +566,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                     Text(
                       'Edit Template',
                       style: FlutterFlowTheme.of(context).headlineSmall.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             fontSize: 18.0,
                             fontWeight: FontWeight.w600,
                             letterSpacing: 0.0,
@@ -586,7 +581,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                           child: Text(
                             template.name,
                             style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   color: FlutterFlowTheme.of(context).secondaryText,
                                   letterSpacing: 0.0,
                                 ),
@@ -603,8 +598,8 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
               // Action buttons
               ListTile(
                 leading: Icon(Icons.edit, color: FlutterFlowTheme.of(context).primary),
-                title: Text('Edit Meal Template'),
-                subtitle: Text('Change entrée, sides, and drink', style: TextStyle(fontSize: 12.0)),
+                title: const Text('Edit Meal Template'),
+                subtitle: const Text('Change entrée, sides, and drink', style: TextStyle(fontSize: 12.0)),
                 onTap: () {
                   Navigator.pop(context);
                   _editTemplateFullly(template);
@@ -612,7 +607,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
               ),
               ListTile(
                 leading: Icon(Icons.edit_note, color: FlutterFlowTheme.of(context).primary),
-                title: Text('Rename Meal Template'),
+                title: const Text('Rename Meal Template'),
                 onTap: () {
                   Navigator.pop(context);
                   _renameTemplate(template);
@@ -620,22 +615,22 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
               ),
               ListTile(
                 leading: Icon(Icons.share, color: FlutterFlowTheme.of(context).primary),
-                title: Text('Share Meal Template'),
+                title: const Text('Share Meal Template'),
                 onTap: () {
                   Navigator.pop(context);
                   _shareTemplate(template);
                 },
               ),
-              Divider(height: 1),
+              const Divider(height: 1),
               ListTile(
-                leading: Icon(Icons.delete, color: Colors.red),
-                title: Text('Delete Meal Template', style: TextStyle(color: Colors.red)),
+                leading: const Icon(Icons.delete, color: Colors.red),
+                title: const Text('Delete Meal Template', style: TextStyle(color: Colors.red)),
                 onTap: () {
                   Navigator.pop(context);
                   _deleteTemplate(template);
                 },
               ),
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
             ],
           ),
         ),
@@ -654,7 +649,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
       extra: <String, dynamic>{
         'date': DateTime.now(),
         'mealType': template.mealTyp ?? MealTyp.Dinner,
-        kTransitionInfoKey: TransitionInfo(
+        kTransitionInfoKey: const TransitionInfo(
           hasTransition: true,
           transitionType: PageTransitionType.bottomToTop,
         ),
@@ -675,13 +670,13 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
       context: context,
       builder: (dialogContext) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.0)),
-        title: Text('Rename Meal Template'),
+        title: const Text('Rename Meal Template'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('Enter a new name:', style: FlutterFlowTheme.of(context).bodyMedium),
-            SizedBox(height: 8.0),
+            const SizedBox(height: 8.0),
             TextField(
               controller: nameController,
               decoration: InputDecoration(
@@ -693,7 +688,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(dialogContext), child: Text('Cancel')),
+          TextButton(onPressed: () => Navigator.pop(dialogContext), child: const Text('Cancel')),
           ElevatedButton(
             onPressed: () async {
               final newName = nameController.text.trim();
@@ -710,7 +705,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
 
                 if (mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
+                    const SnackBar(
                       content: Text('Meal Template renamed!'),
                       backgroundColor: Colors.green,
                       behavior: SnackBarBehavior.floating,
@@ -721,7 +716,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                 debugPrint('Error renaming template: $e');
                 if (mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
+                    const SnackBar(
                       content: Text('Error renaming meal template'),
                       backgroundColor: Colors.red,
                       behavior: SnackBarBehavior.floating,
@@ -731,7 +726,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
               }
             },
             style: ElevatedButton.styleFrom(backgroundColor: FlutterFlowTheme.of(context).primary),
-            child: Text('Save'),
+            child: const Text('Save'),
           ),
         ],
       ),
@@ -744,7 +739,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
       context: context,
       builder: (dialogContext) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.0)),
-        title: Row(
+        title: const Row(
           children: [
             Icon(Icons.warning, color: Colors.red),
             SizedBox(width: 12.0),
@@ -756,7 +751,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
           style: FlutterFlowTheme.of(context).bodyMedium,
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(dialogContext), child: Text('Cancel')),
+          TextButton(onPressed: () => Navigator.pop(dialogContext), child: const Text('Cancel')),
           ElevatedButton(
             onPressed: () async {
               Navigator.pop(dialogContext);
@@ -770,7 +765,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
 
                 if (mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
+                    const SnackBar(
                       content: Text('Meal Template deleted'),
                       backgroundColor: Colors.orange,
                       behavior: SnackBarBehavior.floating,
@@ -781,7 +776,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                 debugPrint('Error deleting template: $e');
                 if (mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
+                    const SnackBar(
                       content: Text('Error deleting meal template'),
                       backgroundColor: Colors.red,
                       behavior: SnackBarBehavior.floating,
@@ -791,7 +786,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
               }
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: Text('Delete'),
+            child: const Text('Delete'),
           ),
         ],
       ),
@@ -873,7 +868,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
       debugPrint('Error sharing template: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text('Error sharing meal template'),
             backgroundColor: Colors.red,
             behavior: SnackBarBehavior.floating,
@@ -983,33 +978,33 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Bulk Delete (Temporary)', style: TextStyle(color: Colors.red)),
+          title: const Text('Bulk Delete (Temporary)', style: TextStyle(color: Colors.red)),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text('Choose what to delete:', style: TextStyle(fontWeight: FontWeight.bold)),
-              SizedBox(height: 16),
+              const Text('Choose what to delete:', style: TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 16),
               ElevatedButton.icon(
                 onPressed: () {
                   Navigator.pop(context);
                   _deleteAllMealTemplates();
                 },
-                icon: Icon(Icons.restaurant_menu),
-                label: Text('Delete ALL Saved Days'),
+                icon: const Icon(Icons.restaurant_menu),
+                label: const Text('Delete ALL Saved Days'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.orange,
                   foregroundColor: Colors.white,
                 ),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               ElevatedButton.icon(
                 onPressed: () {
                   Navigator.pop(context);
                   _deleteAllMyRecipes();
                 },
-                icon: Icon(Icons.book),
-                label: Text('Delete ALL My Recipes'),
+                icon: const Icon(Icons.book),
+                label: const Text('Delete ALL My Recipes'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
                   foregroundColor: Colors.white,
@@ -1020,7 +1015,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
           ],
         );
@@ -1113,19 +1108,19 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
       },
       child: Scaffold(
         key: scaffoldKey,
-        backgroundColor: Color(0xFFE8F5F3), // Light teal to match Cookbook button
+        backgroundColor: const Color(0xFFE8F5F3), // Light teal to match Cookbook button
         bottomNavigationBar: const HomeNavBarWidget(currentPage: HomeNavPage.meals),
         body: SafeArea(
           top: true,
           child: Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(10.0, 0.0, 10.0, 0.0),
+            padding: const EdgeInsetsDirectional.fromSTEB(10.0, 0.0, 10.0, 0.0),
             child: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 children: [
                   Padding(
                     padding:
-                        EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
+                        const EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
                     child: Material(
                       color: Colors.transparent,
                       elevation: 2.0,
@@ -1142,7 +1137,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                           decoration: BoxDecoration(
                             color: FlutterFlowTheme.of(context)
                                 .secondaryBackground,
-                            boxShadow: [
+                            boxShadow: const [
                               BoxShadow(
                                 blurRadius: 4.0,
                                 color: Color(0x33000000),
@@ -1154,18 +1149,18 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                             ],
                             borderRadius: BorderRadius.circular(10.0),
                             border: Border.all(
-                              color: Color(0xFF999999),
+                              color: const Color(0xFF999999),
                               width: 1.0,
                             ),
                           ),
                           child: Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 0.0, 0.0, 20.0),
                             child: Column(
                               mainAxisSize: MainAxisSize.max,
                               children: [
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       0.0, 16.0, 0.0, 0.0),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.max,
@@ -1174,10 +1169,10 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                     children: [
                                       Align(
                                         alignment:
-                                            AlignmentDirectional(-1.0, 0.0),
+                                            const AlignmentDirectional(-1.0, 0.0),
                                         child: Padding(
                                           padding:
-                                              EdgeInsetsDirectional.fromSTEB(
+                                              const EdgeInsetsDirectional.fromSTEB(
                                                   8.0, 0.0, 0.0, 0.0),
                                           child: InkWell(
                                             splashColor: Colors.transparent,
@@ -1212,16 +1207,16 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                 if (_model.isSelectionMode)
                                   Container(
                                     width: double.infinity,
-                                    margin: EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0.0),
-                                    padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
+                                    margin: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0.0),
+                                    padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
                                     decoration: BoxDecoration(
                                       color: widget.mealPlan != null
-                                          ? Color(0xFFFF9800).withOpacity(0.15)
+                                          ? const Color(0xFFFF9800).withOpacity(0.15)
                                           : FlutterFlowTheme.of(context).primary.withOpacity(0.15),
                                       borderRadius: BorderRadius.circular(8.0),
                                       border: Border.all(
                                         color: widget.mealPlan != null
-                                            ? Color(0xFFFF9800)
+                                            ? const Color(0xFFFF9800)
                                             : FlutterFlowTheme.of(context).primary,
                                         width: 1.0,
                                       ),
@@ -1230,17 +1225,17 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                       children: [
                                         Icon(
                                           widget.mealPlan != null ? Icons.swap_horiz : Icons.add_circle_outline,
-                                          color: widget.mealPlan != null ? Color(0xFFFF9800) : FlutterFlowTheme.of(context).primary,
+                                          color: widget.mealPlan != null ? const Color(0xFFFF9800) : FlutterFlowTheme.of(context).primary,
                                           size: 20.0,
                                         ),
-                                        SizedBox(width: 8.0),
+                                        const SizedBox(width: 8.0),
                                         Expanded(
                                           child: Text(
                                             _getSelectionSubtitle(),
                                             style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                  fontFamily: 'Andika New Basic',
+                                                  fontFamily: FFAppState().currentFontFamily,
                                                   fontWeight: FontWeight.w600,
-                                                  color: widget.mealPlan != null ? Color(0xFFE65100) : FlutterFlowTheme.of(context).primary,
+                                                  color: widget.mealPlan != null ? const Color(0xFFE65100) : FlutterFlowTheme.of(context).primary,
                                                   letterSpacing: 0.0,
                                                 ),
                                           ),
@@ -1248,8 +1243,8 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                         Text(
                                           'Select a recipe',
                                           style: FlutterFlowTheme.of(context).bodySmall.override(
-                                                fontFamily: 'Andika New Basic',
-                                                color: Color(0xFF666666),
+                                                fontFamily: FFAppState().currentFontFamily,
+                                                color: const Color(0xFF666666),
                                                 fontSize: 12.0,
                                                 letterSpacing: 0.0,
                                               ),
@@ -1259,11 +1254,11 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                   ),
                                 // My Recipes / Templates / Saved Days tab toggle
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       8.0, 12.0, 8.0, 12.0),
                                   child: Container(
                                     decoration: BoxDecoration(
-                                      color: Color(0xFFF5F5F5),
+                                      color: const Color(0xFFF5F5F5),
                                       borderRadius: BorderRadius.circular(8.0),
                                     ),
                                     child: Row(
@@ -1276,7 +1271,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                               safeSetState(() {});
                                             },
                                             child: Container(
-                                              padding: EdgeInsets.symmetric(vertical: 10.0),
+                                              padding: const EdgeInsets.symmetric(vertical: 10.0),
                                               decoration: BoxDecoration(
                                                 color: _model.recipeSourceTab == 'my'
                                                     ? FlutterFlowTheme.of(context).primary
@@ -1287,10 +1282,10 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                                 'Recipes',
                                                 textAlign: TextAlign.center,
                                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                  fontFamily: 'Andika New Basic',
+                                                  fontFamily: FFAppState().currentFontFamily,
                                                   color: _model.recipeSourceTab == 'my'
                                                       ? Colors.white
-                                                      : Color(0xFF666666),
+                                                      : const Color(0xFF666666),
                                                   fontSize: 13.0,
                                                   fontWeight: FontWeight.w600,
                                                   letterSpacing: 0.0,
@@ -1310,7 +1305,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                               safeSetState(() {});
                                             },
                                             child: Container(
-                                              padding: EdgeInsets.symmetric(vertical: 10.0),
+                                              padding: const EdgeInsets.symmetric(vertical: 10.0),
                                               decoration: BoxDecoration(
                                                 color: _model.recipeSourceTab == 'templates'
                                                     ? FlutterFlowTheme.of(context).primary
@@ -1321,10 +1316,10 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                                 'Templates',
                                                 textAlign: TextAlign.center,
                                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                  fontFamily: 'Andika New Basic',
+                                                  fontFamily: FFAppState().currentFontFamily,
                                                   color: _model.recipeSourceTab == 'templates'
                                                       ? Colors.white
-                                                      : Color(0xFF666666),
+                                                      : const Color(0xFF666666),
                                                   fontSize: 13.0,
                                                   fontWeight: FontWeight.w600,
                                                   letterSpacing: 0.0,
@@ -1343,7 +1338,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                               safeSetState(() {});
                                             },
                                             child: Container(
-                                              padding: EdgeInsets.symmetric(vertical: 10.0),
+                                              padding: const EdgeInsets.symmetric(vertical: 10.0),
                                               decoration: BoxDecoration(
                                                 color: _model.recipeSourceTab == 'savedDays'
                                                     ? FlutterFlowTheme.of(context).primary
@@ -1354,10 +1349,10 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                                 'Saved Days',
                                                 textAlign: TextAlign.center,
                                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                  fontFamily: 'Andika New Basic',
+                                                  fontFamily: FFAppState().currentFontFamily,
                                                   color: _model.recipeSourceTab == 'savedDays'
                                                       ? Colors.white
-                                                      : Color(0xFF666666),
+                                                      : const Color(0xFF666666),
                                                   fontSize: 13.0,
                                                   fontWeight: FontWeight.w600,
                                                   letterSpacing: 0.0,
@@ -1372,10 +1367,10 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                 ),
                                 // Search bar
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 8.0, 12.0),
+                                  padding: const EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 8.0, 12.0),
                                   child: Container(
                                     decoration: BoxDecoration(
-                                      color: Color(0xFFF5F5F5),
+                                      color: const Color(0xFFF5F5F5),
                                       borderRadius: BorderRadius.circular(10.0),
                                     ),
                                     child: TextField(
@@ -1387,12 +1382,12 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                       decoration: InputDecoration(
                                         hintText: 'Search recipes...',
                                         hintStyle: FlutterFlowTheme.of(context).bodyMedium.override(
-                                          fontFamily: 'Andika New Basic',
-                                          color: Color(0xFF999999),
+                                          fontFamily: FFAppState().currentFontFamily,
+                                          color: const Color(0xFF999999),
                                           fontSize: 14.0,
                                           letterSpacing: 0.0,
                                         ),
-                                        prefixIcon: Icon(
+                                        prefixIcon: const Icon(
                                           Icons.search,
                                           color: Color(0xFF999999),
                                           size: 20.0,
@@ -1404,7 +1399,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                                   _model.searchQuery = '';
                                                   safeSetState(() {});
                                                 },
-                                                child: Icon(
+                                                child: const Icon(
                                                   Icons.clear,
                                                   color: Color(0xFF999999),
                                                   size: 20.0,
@@ -1412,10 +1407,10 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                               )
                                             : null,
                                         border: InputBorder.none,
-                                        contentPadding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                                        contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
                                       ),
                                       style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         fontSize: 14.0,
                                         letterSpacing: 0.0,
                                       ),
@@ -1425,37 +1420,37 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                 // Filter chips - grouped by category (show for My Recipes and Templates, not Saved Days)
                                 if (_model.recipeSourceTab != 'savedDays')
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       8.0, 0.0, 8.0, 8.0),
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       // Section 1: Meal Types
                                       Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(0.0, 4.0, 0.0, 8.0),
+                                        padding: const EdgeInsetsDirectional.fromSTEB(0.0, 4.0, 0.0, 8.0),
                                         child: Row(
                                           children: [
                                             Text(
                                               'Meal Times',
                                               style: FlutterFlowTheme.of(context).bodySmall.override(
-                                                fontFamily: 'Andika New Basic',
-                                                color: Color(0xFF666666),
+                                                fontFamily: FFAppState().currentFontFamily,
+                                                color: const Color(0xFF666666),
                                                 fontSize: 11.0,
                                                 fontWeight: FontWeight.w600,
                                                 letterSpacing: 0.0,
                                               ),
                                             ),
-                                            SizedBox(width: 4.0),
+                                            const SizedBox(width: 4.0),
                                             InkWell(
                                               onTap: () {
                                                 ScaffoldMessenger.of(context).showSnackBar(
-                                                  SnackBar(
+                                                  const SnackBar(
                                                     content: Text('🍳 Filter recipes by when they are typically eaten'),
                                                     duration: Duration(seconds: 3),
                                                   ),
                                                 );
                                               },
-                                              child: Icon(Icons.help_outline, size: 14.0, color: Color(0xFF999999)),
+                                              child: const Icon(Icons.help_outline, size: 14.0, color: Color(0xFF999999)),
                                             ),
                                           ],
                                         ),
@@ -1474,7 +1469,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                             final emoji = mealType['emoji']!;
                                             final isSelected = _model.categoryFilter == label;
                                             return Padding(
-                                              padding: EdgeInsets.only(right: 8.0),
+                                              padding: const EdgeInsets.only(right: 8.0),
                                               child: InkWell(
                                                 splashColor: Colors.transparent,
                                                 focusColor: Colors.transparent,
@@ -1485,7 +1480,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                                   safeSetState(() {});
                                                 },
                                                 child: Container(
-                                                  padding: EdgeInsets.symmetric(horizontal: 14.0, vertical: 6.0),
+                                                  padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 6.0),
                                                   decoration: BoxDecoration(
                                                     color: isSelected
                                                         ? FlutterFlowTheme.of(context).primary
@@ -1498,7 +1493,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                                   child: Text(
                                                     emoji.isNotEmpty ? '$emoji $label' : label,
                                                     style: FlutterFlowTheme.of(context).bodySmall.override(
-                                                      fontFamily: 'Andika New Basic',
+                                                      fontFamily: FFAppState().currentFontFamily,
                                                       color: isSelected
                                                           ? Colors.white
                                                           : FlutterFlowTheme.of(context).primary,
@@ -1514,12 +1509,12 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                       // Recipe Types (only for My Recipes tab)
                                       if (_model.recipeSourceTab == 'my') ...[
                                       Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(0.0, 12.0, 0.0, 8.0),
+                                        padding: const EdgeInsetsDirectional.fromSTEB(0.0, 12.0, 0.0, 8.0),
                                         child: Text(
                                           'Recipe Types',
                                           style: FlutterFlowTheme.of(context).bodySmall.override(
-                                            fontFamily: 'Andika New Basic',
-                                            color: Color(0xFF666666),
+                                            fontFamily: FFAppState().currentFontFamily,
+                                            color: const Color(0xFF666666),
                                             fontSize: 11.0,
                                             fontWeight: FontWeight.w600,
                                             letterSpacing: 0.0,
@@ -1538,7 +1533,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                             final emoji = recipeType['emoji']!;
                                             final isSelected = _model.categoryFilter == label;
                                             return Padding(
-                                              padding: EdgeInsets.only(right: 8.0),
+                                              padding: const EdgeInsets.only(right: 8.0),
                                               child: InkWell(
                                                 splashColor: Colors.transparent,
                                                 focusColor: Colors.transparent,
@@ -1549,23 +1544,23 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                                   safeSetState(() {});
                                                 },
                                                 child: Container(
-                                                  padding: EdgeInsets.symmetric(horizontal: 14.0, vertical: 6.0),
+                                                  padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 6.0),
                                                   decoration: BoxDecoration(
                                                     color: isSelected
-                                                        ? Color(0xFF9B8AA0)
+                                                        ? const Color(0xFF9B8AA0)
                                                         : Colors.transparent,
                                                     borderRadius: BorderRadius.circular(16.0),
                                                     border: Border.all(
-                                                      color: Color(0xFF9B8AA0),
+                                                      color: const Color(0xFF9B8AA0),
                                                     ),
                                                   ),
                                                   child: Text(
                                                     '$emoji $label',
                                                     style: FlutterFlowTheme.of(context).bodySmall.override(
-                                                      fontFamily: 'Andika New Basic',
+                                                      fontFamily: FFAppState().currentFontFamily,
                                                       color: isSelected
                                                           ? Colors.white
-                                                          : Color(0xFF9B8AA0),
+                                                          : const Color(0xFF9B8AA0),
                                                       letterSpacing: 0.0,
                                                     ),
                                                   ),
@@ -1578,30 +1573,30 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                       ],
                                       // Dietary & Allergen Info
                                       Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(0.0, 12.0, 0.0, 8.0),
+                                        padding: const EdgeInsetsDirectional.fromSTEB(0.0, 12.0, 0.0, 8.0),
                                         child: Row(
                                           children: [
                                             Text(
                                               'Dietary & Allergen Info',
                                               style: FlutterFlowTheme.of(context).bodySmall.override(
-                                                fontFamily: 'Andika New Basic',
-                                                color: Color(0xFF666666),
+                                                fontFamily: FFAppState().currentFontFamily,
+                                                color: const Color(0xFF666666),
                                                 fontSize: 11.0,
                                                 fontWeight: FontWeight.w600,
                                                 letterSpacing: 0.0,
                                               ),
                                             ),
-                                            SizedBox(width: 4.0),
+                                            const SizedBox(width: 4.0),
                                             InkWell(
                                               onTap: () {
                                                 ScaffoldMessenger.of(context).showSnackBar(
-                                                  SnackBar(
+                                                  const SnackBar(
                                                     content: Text('🌾 Filter recipes by dietary restrictions or allergen information'),
                                                     duration: Duration(seconds: 3),
                                                   ),
                                                 );
                                               },
-                                              child: Icon(Icons.help_outline, size: 14.0, color: Color(0xFF999999)),
+                                              child: const Icon(Icons.help_outline, size: 14.0, color: Color(0xFF999999)),
                                             ),
                                           ],
                                         ),
@@ -1620,7 +1615,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                             final emoji = dietary['emoji']!;
                                             final isSelected = _model.categoryFilter == label;
                                             return Padding(
-                                              padding: EdgeInsets.only(right: 8.0),
+                                              padding: const EdgeInsets.only(right: 8.0),
                                               child: InkWell(
                                                 splashColor: Colors.transparent,
                                                 focusColor: Colors.transparent,
@@ -1631,23 +1626,23 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                                   safeSetState(() {});
                                                 },
                                                 child: Container(
-                                                  padding: EdgeInsets.symmetric(horizontal: 14.0, vertical: 6.0),
+                                                  padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 6.0),
                                                   decoration: BoxDecoration(
                                                     color: isSelected
-                                                        ? Color(0xFF52A097)
+                                                        ? const Color(0xFF52A097)
                                                         : Colors.transparent,
                                                     borderRadius: BorderRadius.circular(16.0),
                                                     border: Border.all(
-                                                      color: Color(0xFF52A097),
+                                                      color: const Color(0xFF52A097),
                                                     ),
                                                   ),
                                                   child: Text(
                                                     '$emoji $label',
                                                     style: FlutterFlowTheme.of(context).bodySmall.override(
-                                                      fontFamily: 'Andika New Basic',
+                                                      fontFamily: FFAppState().currentFontFamily,
                                                       color: isSelected
                                                           ? Colors.white
-                                                          : Color(0xFF52A097),
+                                                          : const Color(0xFF52A097),
                                                       letterSpacing: 0.0,
                                                     ),
                                                   ),
@@ -1703,7 +1698,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                               Text(
                                                 'No recipes yet',
                                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                      fontFamily: 'Andika New Basic',
+                                                      fontFamily: FFAppState().currentFontFamily,
                                                       fontSize: 18.0,
                                                       fontWeight: FontWeight.w600,
                                                       letterSpacing: 0.0,
@@ -1714,7 +1709,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                                 'To add recipes, share from Pinterest or the web:',
                                                 textAlign: TextAlign.center,
                                                 style: FlutterFlowTheme.of(context).bodySmall.override(
-                                                      fontFamily: 'Andika New Basic',
+                                                      fontFamily: FFAppState().currentFontFamily,
                                                       color: const Color(0x991B1F26),
                                                       letterSpacing: 0.0,
                                                     ),
@@ -1798,7 +1793,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                               Text(
                                                 'No recipes available',
                                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                      fontFamily: 'Andika New Basic',
+                                                      fontFamily: FFAppState().currentFontFamily,
                                                       fontSize: 18.0,
                                                       fontWeight: FontWeight.w600,
                                                       letterSpacing: 0.0,
@@ -1812,7 +1807,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
 
                                     return Align(
                                       alignment:
-                                          AlignmentDirectional(0.0, -1.0),
+                                          const AlignmentDirectional(0.0, -1.0),
                                       child: Builder(
                                         builder: (context) {
                                           final containerVar = () {
@@ -1882,7 +1877,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                           if (containerVar.isEmpty) {
                                             return Center(
                                               child: Padding(
-                                                padding: EdgeInsets.all(40.0),
+                                                padding: const EdgeInsets.all(40.0),
                                                 child: Text(
                                                   'No recipes match the current filter',
                                                   style: FlutterFlowTheme.of(context).bodyMedium,
@@ -1963,10 +1958,10 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                                     return Container(
                                                   width: cardWidth,
                                                   height: 210.0,
-                                                  decoration: BoxDecoration(),
+                                                  decoration: const BoxDecoration(),
                                                   child: Align(
                                                     alignment:
-                                                        AlignmentDirectional(
+                                                        const AlignmentDirectional(
                                                             1.0, -1.0),
                                                     child: Stack(
                                                       children: [
@@ -2006,10 +2001,10 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                                         ),
                                                         Align(
                                                           alignment:
-                                                              AlignmentDirectional(
+                                                              const AlignmentDirectional(
                                                                   0.0, 1.0),
                                                           child: ClipRRect(
-                                                            borderRadius: BorderRadius.only(
+                                                            borderRadius: const BorderRadius.only(
                                                               bottomLeft: Radius.circular(5.0),
                                                               bottomRight: Radius.circular(5.0),
                                                             ),
@@ -2017,11 +2012,11 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                                               width: double
                                                                   .infinity,
                                                               decoration:
-                                                                  BoxDecoration(
+                                                                  const BoxDecoration(
                                                                 color: Color(
                                                                     0xCCFFFFFF),
                                                               ),
-                                                              padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 4.0),
+                                                              padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 4.0),
                                                               child: Column(
                                                                 mainAxisSize: MainAxisSize.min,
                                                                 children: [
@@ -2053,14 +2048,14 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                                                   if (FFAppState().showMealCosts && containerVarItem.hasEstimatedCost())
                                                                     Text(
                                                                       '\$${containerVarItem.estimatedCost.round()}',
-                                                                      style: const TextStyle(
-                                                                        fontFamily: 'Andika New Basic',
+                                                                      style: TextStyle(
+                                                                        fontFamily: FFAppState().currentFontFamily,
                                                                         fontSize: 11.0,
                                                                         color: Color(0xFF2E7D32),
                                                                         fontWeight: FontWeight.w600,
                                                                       ),
                                                                     ),
-                                                                  SizedBox(height: 3.0),
+                                                                  const SizedBox(height: 3.0),
                                                                   Builder(
                                                                     builder: (context) {
                                                                       final mealTypeChips = <Widget>[];
@@ -2079,26 +2074,26 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                                                             foundMealTypes.add(t);
                                                                           } else {
                                                                             final abbr = t.replaceAll('-Free', '-F');
-                                                                            dietaryChips.add(_buildRecipeChip(abbr, Color(0xFFEE8B60)));
+                                                                            dietaryChips.add(_buildRecipeChip(abbr, const Color(0xFFEE8B60)));
                                                                           }
                                                                         }
                                                                         // Sort meal types in canonical order
                                                                         foundMealTypes.sort((a, b) => mealTypeOrder.indexOf(a).compareTo(mealTypeOrder.indexOf(b)));
                                                                         for (final mt in foundMealTypes) {
-                                                                          mealTypeChips.add(_buildRecipeChip(mt, Color(0xFF52A097)));
+                                                                          mealTypeChips.add(_buildRecipeChip(mt, const Color(0xFF52A097)));
                                                                         }
                                                                       }
 
                                                                       // Recipe type chip
                                                                       if (containerVarItem.recipeType == RecipeType.Side || containerVarItem.mainOrSides == 'Side') {
-                                                                        recipeTypeChips.add(_buildRecipeChip('Side', Color(0xFF4A90D9)));
+                                                                        recipeTypeChips.add(_buildRecipeChip('Side', const Color(0xFF4A90D9)));
                                                                       } else if (containerVarItem.recipeType == RecipeType.Dessert || containerVarItem.mainOrSides == 'Dessert') {
-                                                                        recipeTypeChips.add(_buildRecipeChip('Dessert', Color(0xFFE91E63)));
+                                                                        recipeTypeChips.add(_buildRecipeChip('Dessert', const Color(0xFFE91E63)));
                                                                       }
 
                                                                       // Order: meal type → recipe type → dietary
                                                                       final chips = [...mealTypeChips, ...recipeTypeChips, ...dietaryChips];
-                                                                      if (chips.isEmpty) return SizedBox.shrink();
+                                                                      if (chips.isEmpty) return const SizedBox.shrink();
                                                                       return Wrap(
                                                                         spacing: 3.0,
                                                                         runSpacing: 2.0,
@@ -2114,11 +2109,11 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                                         ),
                                                         Align(
                                                           alignment:
-                                                              AlignmentDirectional(
+                                                              const AlignmentDirectional(
                                                                   1.0, -1.0),
                                                           child: Padding(
                                                             padding:
-                                                                EdgeInsetsDirectional
+                                                                const EdgeInsetsDirectional
                                                                     .fromSTEB(
                                                                         0.0,
                                                                         16.0,
@@ -2179,7 +2174,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
 
                                                                 return Container(
                                                                   decoration:
-                                                                      BoxDecoration(
+                                                                      const BoxDecoration(
                                                                     shape: BoxShape
                                                                         .circle,
                                                                   ),
@@ -2269,7 +2264,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                 ),
                                 ),
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       0.0, 8.0, 0.0, 0.0),
                                   child: Container(
                                     width: double.infinity,
@@ -2311,7 +2306,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                         'editTemplateId': 'new', // Special value to indicate creating new template
                       },
                       extra: <String, dynamic>{
-                        kTransitionInfoKey: TransitionInfo(
+                        kTransitionInfoKey: const TransitionInfo(
                           hasTransition: true,
                           transitionType: PageTransitionType.bottomToTop,
                         ),
@@ -2322,7 +2317,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                     context.pushNamed(
                       'EditeAddMeal',
                       extra: <String, dynamic>{
-                        kTransitionInfoKey: TransitionInfo(
+                        kTransitionInfoKey: const TransitionInfo(
                           hasTransition: true,
                           transitionType: PageTransitionType.bottomToTop,
                         ),
@@ -2331,8 +2326,8 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                   }
                 },
                 backgroundColor: FlutterFlowTheme.of(context).primary,
-                child: Icon(Icons.add, color: Colors.white, size: 28.0),
                 elevation: 4.0,
+                child: const Icon(Icons.add, color: Colors.white, size: 28.0),
               ),
           ],
         ),
@@ -2355,7 +2350,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
           title: Text(
             'Create Day Template',
             style: dialogTheme.titleMedium.override(
-              fontFamily: 'Andika New Basic',
+              fontFamily: FFAppState().currentFontFamily,
               letterSpacing: 0.0,
             ),
           ),
@@ -2366,22 +2361,22 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
               Text(
                 'Give your day a name, then build each meal:',
                 style: dialogTheme.bodySmall.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   color: dialogTheme.secondaryText,
                   letterSpacing: 0.0,
                 ),
               ),
-              SizedBox(height: 12.0),
+              const SizedBox(height: 12.0),
               TextField(
                 controller: nameController,
                 autofocus: true,
                 decoration: InputDecoration(
                   hintText: 'e.g., Taco Tuesday, Lazy Sunday',
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.0)),
-                  contentPadding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
                 ),
                 style: dialogTheme.bodyMedium.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   letterSpacing: 0.0,
                 ),
               ),
@@ -2390,7 +2385,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx, null),
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
             ElevatedButton(
               onPressed: () {
@@ -2399,7 +2394,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                 Navigator.pop(ctx, name);
               },
               style: ElevatedButton.styleFrom(backgroundColor: dialogTheme.primary),
-              child: Text('Next'),
+              child: const Text('Next'),
             ),
           ],
         );
@@ -2489,7 +2484,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
     List<MealPlanRecord> allPlans = [];
     try {
       final earliest = DateTime(dates.first.year, dates.first.month, dates.first.day);
-      final latest = DateTime(dates.last.year, dates.last.month, dates.last.day).add(Duration(days: 1));
+      final latest = DateTime(dates.last.year, dates.last.month, dates.last.day).add(const Duration(days: 1));
       allPlans = await queryMealPlanRecordOnce(
         queryBuilder: (q) => q
             .where('user_ref', isEqualTo: currentUserReference)
@@ -2515,7 +2510,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
       builder: (sheetContext) {
         final theme = FlutterFlowTheme.of(sheetContext);
         return Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(20.0),
@@ -2533,32 +2528,32 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                   width: 40.0,
                   height: 4.0,
                   decoration: BoxDecoration(
-                    color: Color(0xFFDDDDDD),
+                    color: const Color(0xFFDDDDDD),
                     borderRadius: BorderRadius.circular(2.0),
                   ),
                 ),
               ),
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
               Text(
                 'Apply "$groupName" to:',
                 style: theme.titleSmall.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   fontSize: 16.0,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 0.0,
                 ),
               ),
-              SizedBox(height: 4.0),
+              const SizedBox(height: 4.0),
               Text(
                 '${templates.length} meal${templates.length > 1 ? 's' : ''} will be added',
                 style: theme.bodySmall.override(
-                  fontFamily: 'Andika New Basic',
-                  color: Color(0xFF999999),
+                  fontFamily: FFAppState().currentFontFamily,
+                  color: const Color(0xFF999999),
                   fontSize: 12.0,
                   letterSpacing: 0.0,
                 ),
               ),
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
               // Day chips
               Wrap(
                 spacing: 8.0,
@@ -2575,16 +2570,16 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                     onTap: () => Navigator.pop(sheetContext, normalized),
                     borderRadius: BorderRadius.circular(12.0),
                     child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 14.0, vertical: 10.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 10.0),
                       decoration: BoxDecoration(
                         color: isToday
                             ? theme.primary.withOpacity(0.1)
-                            : Color(0xFFF5F5F5),
+                            : const Color(0xFFF5F5F5),
                         borderRadius: BorderRadius.circular(12.0),
                         border: Border.all(
                           color: isToday
                               ? theme.primary.withOpacity(0.4)
-                              : Color(0xFFE0E0E0),
+                              : const Color(0xFFE0E0E0),
                         ),
                       ),
                       child: Column(
@@ -2592,37 +2587,37 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                           Text(
                             dateTimeFormat('E', normalized),
                             style: theme.bodySmall.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               fontSize: 11.0,
                               fontWeight: FontWeight.w600,
                               letterSpacing: 0.0,
-                              color: isToday ? theme.primary : Color(0xFF666666),
+                              color: isToday ? theme.primary : const Color(0xFF666666),
                             ),
                           ),
-                          SizedBox(height: 2.0),
+                          const SizedBox(height: 2.0),
                           Text(
                             dateTimeFormat('MMMd', normalized),
                             style: theme.bodySmall.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               fontSize: 12.0,
                               fontWeight: FontWeight.w500,
                               letterSpacing: 0.0,
                             ),
                           ),
                           if (hasPlans) ...[
-                            SizedBox(height: 4.0),
+                            const SizedBox(height: 4.0),
                             Container(
-                              padding: EdgeInsets.symmetric(horizontal: 6.0, vertical: 1.0),
+                              padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 1.0),
                               decoration: BoxDecoration(
-                                color: Color(0xFFFF9800).withOpacity(0.15),
+                                color: const Color(0xFFFF9800).withOpacity(0.15),
                                 borderRadius: BorderRadius.circular(4.0),
                               ),
                               child: Text(
                                 'planned',
                                 style: theme.bodySmall.override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   fontSize: 9.0,
-                                  color: Color(0xFFFF9800),
+                                  color: const Color(0xFFFF9800),
                                   fontWeight: FontWeight.w600,
                                   letterSpacing: 0.0,
                                 ),
@@ -2660,25 +2655,25 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
         context: context,
         builder: (ctx) => AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
-          title: Text('Day Already Has Meals'),
+          title: const Text('Day Already Has Meals'),
           content: Text(
             '${dateTimeFormat('EEEE, MMMd', targetDate)} already has ${existingPlans.length} meal${existingPlans.length > 1 ? 's' : ''} planned. What would you like to do?',
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx, 'cancel'),
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () => Navigator.pop(ctx, 'skip'),
-              child: Text('Keep Existing'),
+              child: const Text('Keep Existing'),
             ),
             ElevatedButton(
               onPressed: () => Navigator.pop(ctx, 'replace'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: FlutterFlowTheme.of(ctx).primary,
               ),
-              child: Text('Replace All'),
+              child: const Text('Replace All'),
             ),
           ],
         ),
@@ -2690,7 +2685,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
 
     // Show loading
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Row(children: [
+      const SnackBar(content: Row(children: [
         SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)),
         SizedBox(width: 12), Text('Applying meals...'),
       ]), duration: Duration(seconds: 10)),
@@ -2739,14 +2734,14 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('No new meals to add'), backgroundColor: Colors.orange),
+          const SnackBar(content: Text('No new meals to add'), backgroundColor: Colors.orange),
         );
       }
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error applying meal template'), backgroundColor: Colors.red),
+        const SnackBar(content: Text('Error applying meal template'), backgroundColor: Colors.red),
       );
     }
   }
@@ -2807,7 +2802,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
             Text(
               'No Saved Days Yet',
               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     fontSize: 18.0,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 0.0,
@@ -2818,7 +2813,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
               'Save an entire day\'s meals from your meal planner using the "Save Day" button. They\'ll show up here for easy reuse!',
               textAlign: TextAlign.center,
               style: FlutterFlowTheme.of(context).bodySmall.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     color: const Color(0xFF666666),
                     letterSpacing: 0.0,
                   ),
@@ -2845,7 +2840,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
             Text(
               'No Results Found',
               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     fontSize: 18.0,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 0.0,
@@ -2898,7 +2893,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                     padding: const EdgeInsets.all(14.0),
                     decoration: BoxDecoration(
                       color: FlutterFlowTheme.of(context).primary.withOpacity(0.08),
-                      borderRadius: BorderRadius.only(
+                      borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(14.0),
                         topRight: Radius.circular(14.0),
                       ),
@@ -2910,7 +2905,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                           size: 18.0,
                           color: FlutterFlowTheme.of(context).primary,
                         ),
-                        SizedBox(width: 8.0),
+                        const SizedBox(width: 8.0),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -2918,7 +2913,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                               Text(
                                 groupName,
                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       fontSize: 15.0,
                                       fontWeight: FontWeight.w600,
                                       letterSpacing: 0.0,
@@ -2928,7 +2923,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                 Text(
                                   'Saved ${dateTimeFormat('MMMd', createdDate)}',
                                   style: FlutterFlowTheme.of(context).bodySmall.override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         color: const Color(0xFF999999),
                                         fontSize: 11.0,
                                         letterSpacing: 0.0,
@@ -2943,7 +2938,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                             Text(
                               '${templates.length} meal${templates.length > 1 ? 's' : ''}',
                               style: FlutterFlowTheme.of(context).bodySmall.override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     color: FlutterFlowTheme.of(context).primary,
                                     fontWeight: FontWeight.w600,
                                     letterSpacing: 0.0,
@@ -2958,8 +2953,8 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                   padding: const EdgeInsets.only(top: 2.0),
                                   child: Text(
                                     '\$${total.round()}',
-                                    style: const TextStyle(
-                                      fontFamily: 'Andika New Basic',
+                                    style: TextStyle(
+                                      fontFamily: FFAppState().currentFontFamily,
                                       fontSize: 12.0,
                                       color: Color(0xFF2E7D32),
                                       fontWeight: FontWeight.w600,
@@ -3030,25 +3025,25 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                   child: Container(
                                     width: 44.0,
                                     height: 44.0,
-                                    color: Color(0xFFE0E0E0),
+                                    color: const Color(0xFFE0E0E0),
                                     child: entree != null && entree.imageUrl.isNotEmpty
                                         ? Image.network(
                                             _upgradePinterestImageUrl(entree.imageUrl),
                                             fit: BoxFit.cover,
-                                            errorBuilder: (_, __, ___) => Icon(
+                                            errorBuilder: (_, __, ___) => const Icon(
                                               Icons.restaurant,
                                               color: Color(0xFF999999),
                                               size: 22.0,
                                             ),
                                           )
-                                        : Icon(
+                                        : const Icon(
                                             Icons.restaurant,
                                             color: Color(0xFF999999),
                                             size: 22.0,
                                           ),
                                   ),
                                 ),
-                                SizedBox(width: 10.0),
+                                const SizedBox(width: 10.0),
                                 // Meal info
                                 Expanded(
                                   child: Column(
@@ -3057,7 +3052,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                       Text(
                                         entree?.recipeName ?? template.name,
                                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                              fontFamily: 'Andika New Basic',
+                                              fontFamily: FFAppState().currentFontFamily,
                                               fontSize: 13.0,
                                               fontWeight: FontWeight.w500,
                                               letterSpacing: 0.0,
@@ -3069,7 +3064,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                         children: [
                                           if (mealTypeName.isNotEmpty)
                                             Container(
-                                              padding: EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
+                                              padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
                                               decoration: BoxDecoration(
                                                 color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
                                                 borderRadius: BorderRadius.circular(4.0),
@@ -3077,7 +3072,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                               child: Text(
                                                 mealTypeName,
                                                 style: FlutterFlowTheme.of(context).bodySmall.override(
-                                                      fontFamily: 'Andika New Basic',
+                                                      fontFamily: FFAppState().currentFontFamily,
                                                       fontSize: 10.0,
                                                       color: FlutterFlowTheme.of(context).primary,
                                                       fontWeight: FontWeight.w600,
@@ -3086,53 +3081,53 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                               ),
                                             ),
                                           if (hasLeftover) ...[
-                                            SizedBox(width: 5.0),
+                                            const SizedBox(width: 5.0),
                                             Container(
-                                              padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 1.0),
+                                              padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 1.0),
                                               decoration: BoxDecoration(
-                                                color: Color(0xFFFF9800).withOpacity(0.15),
+                                                color: const Color(0xFFFF9800).withOpacity(0.15),
                                                 borderRadius: BorderRadius.circular(4.0),
                                               ),
                                               child: Text(
                                                 'L',
                                                 style: TextStyle(
-                                                  fontFamily: 'Andika New Basic',
+                                                  fontFamily: FFAppState().currentFontFamily,
                                                   fontSize: 9.0,
                                                   fontWeight: FontWeight.w700,
-                                                  color: Color(0xFFFF9800),
+                                                  color: const Color(0xFFFF9800),
                                                 ),
                                               ),
                                             ),
                                           ],
                                           if (isSnackType && snackRefs != null && snackRefs.length > 1) ...[
-                                            SizedBox(width: 6.0),
+                                            const SizedBox(width: 6.0),
                                             Text(
                                               '+${snackRefs.length - 1} more',
                                               style: FlutterFlowTheme.of(context).bodySmall.override(
-                                                    fontFamily: 'Andika New Basic',
+                                                    fontFamily: FFAppState().currentFontFamily,
                                                     fontSize: 10.0,
-                                                    color: Color(0xFF999999),
+                                                    color: const Color(0xFF999999),
                                                     letterSpacing: 0.0,
                                                   ),
                                             ),
                                           ] else if (!isSnackType && template.sideRefs.isNotEmpty) ...[
-                                            SizedBox(width: 6.0),
+                                            const SizedBox(width: 6.0),
                                             Text(
                                               '+${template.sideRefs.length} side${template.sideRefs.length > 1 ? 's' : ''}',
                                               style: FlutterFlowTheme.of(context).bodySmall.override(
-                                                    fontFamily: 'Andika New Basic',
+                                                    fontFamily: FFAppState().currentFontFamily,
                                                     fontSize: 10.0,
-                                                    color: Color(0xFF999999),
+                                                    color: const Color(0xFF999999),
                                                     letterSpacing: 0.0,
                                                   ),
                                             ),
                                           ],
                                           if (FFAppState().showMealCosts && entree != null && entree.hasEstimatedCost()) ...[
-                                            const Spacer(),
+                                            Spacer(),
                                             Text(
                                               '\$${entree.estimatedCost.round()}',
-                                              style: const TextStyle(
-                                                fontFamily: 'Andika New Basic',
+                                              style: TextStyle(
+                                                fontFamily: FFAppState().currentFontFamily,
                                                 fontSize: 11.0,
                                                 color: Color(0xFF2E7D32),
                                                 fontWeight: FontWeight.w600,
@@ -3144,7 +3139,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                     ],
                                   ),
                                 ),
-                                Icon(
+                                const Icon(
                                   Icons.chevron_right,
                                   size: 20.0,
                                   color: Color(0xFFCCCCCC),
@@ -3156,7 +3151,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                       },
                     );
                   }),
-                  SizedBox(height: 6.0),
+                  const SizedBox(height: 6.0),
                   // Action buttons row
                   Padding(
                     padding: const EdgeInsets.only(left: 14.0, right: 14.0, bottom: 10.0),
@@ -3168,7 +3163,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                             onTap: () => _applyDayTemplateToDate(context, templates, groupName),
                             borderRadius: BorderRadius.circular(8.0),
                             child: Container(
-                              padding: EdgeInsets.symmetric(vertical: 8.0),
+                              padding: const EdgeInsets.symmetric(vertical: 8.0),
                               decoration: BoxDecoration(
                                 color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
                                 borderRadius: BorderRadius.circular(8.0),
@@ -3177,11 +3172,11 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Icon(Icons.add_circle_outline, size: 15.0, color: FlutterFlowTheme.of(context).primary),
-                                  SizedBox(width: 4.0),
+                                  const SizedBox(width: 4.0),
                                   Text(
                                     'Apply to Day',
                                     style: FlutterFlowTheme.of(context).bodySmall.override(
-                                          fontFamily: 'Andika New Basic',
+                                          fontFamily: FFAppState().currentFontFamily,
                                           color: FlutterFlowTheme.of(context).primary,
                                           fontSize: 12.0,
                                           fontWeight: FontWeight.w600,
@@ -3193,7 +3188,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                             ),
                           ),
                         ),
-                        SizedBox(width: 8.0),
+                        const SizedBox(width: 8.0),
                         // Share meal template button
                         InkWell(
                           onTap: () async {
@@ -3201,8 +3196,12 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                             final mealRefs = <DocumentReference>{};
                             for (final t in templates) {
                               if (t.entreeRef != null) mealRefs.add(t.entreeRef!);
-                              for (final ref in t.sideRefs) mealRefs.add(ref);
-                              for (final ref in t.dessertRefs) mealRefs.add(ref);
+                              for (final ref in t.sideRefs) {
+                                mealRefs.add(ref);
+                              }
+                              for (final ref in t.dessertRefs) {
+                                mealRefs.add(ref);
+                              }
                               final snackRefs = t.snapshotData['snack_refs'] as List<dynamic>?;
                               if (snackRefs != null) {
                                 for (final ref in snackRefs) {
@@ -3229,7 +3228,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                           },
                           borderRadius: BorderRadius.circular(8.0),
                           child: Container(
-                            padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
                             decoration: BoxDecoration(
                               color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(8.0),
@@ -3237,13 +3236,13 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                             child: Icon(Icons.share_outlined, size: 16.0, color: FlutterFlowTheme.of(context).primary),
                           ),
                         ),
-                        SizedBox(width: 8.0),
+                        const SizedBox(width: 8.0),
                         // Edit meal template button
                         InkWell(
                           onTap: () => _showEditDayTemplateSheet(context, entry.key, groupName),
                           borderRadius: BorderRadius.circular(8.0),
                           child: Container(
-                            padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
                             decoration: BoxDecoration(
                               color: FlutterFlowTheme.of(context).secondary.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(8.0),
@@ -3251,7 +3250,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                             child: Icon(Icons.edit_outlined, size: 16.0, color: FlutterFlowTheme.of(context).secondary),
                           ),
                         ),
-                        SizedBox(width: 8.0),
+                        const SizedBox(width: 8.0),
                         // Delete meal template button
                         InkWell(
                           onTap: () async {
@@ -3262,10 +3261,10 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                 title: Text('Delete "$groupName"?'),
                                 content: Text('This will delete all ${templates.length} templates in this meal template.'),
                                 actions: [
-                                  TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text('Cancel')),
+                                  TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
                                   TextButton(
                                     onPressed: () => Navigator.pop(ctx, true),
-                                    child: Text('Delete', style: TextStyle(color: Colors.red)),
+                                    child: const Text('Delete', style: TextStyle(color: Colors.red)),
                                   ),
                                 ],
                               ),
@@ -3280,7 +3279,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                           },
                           borderRadius: BorderRadius.circular(8.0),
                           child: Container(
-                            padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
                             decoration: BoxDecoration(
                               color: Colors.red.withOpacity(0.08),
                               borderRadius: BorderRadius.circular(8.0),
@@ -3361,7 +3360,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
             Text(
               'No Templates Yet',
               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     fontSize: 18.0,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 0.0,
@@ -3372,7 +3371,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
               'Templates are reusable combinations of entrée, sides, and drinks that you can save from the meal planner and quickly add to your meal plan.',
               textAlign: TextAlign.center,
               style: FlutterFlowTheme.of(context).bodySmall.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     color: const Color(0xFF666666),
                     letterSpacing: 0.0,
                   ),
@@ -3382,7 +3381,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
               'Save your favorite meal combinations from the calendar to create templates!',
               textAlign: TextAlign.center,
               style: FlutterFlowTheme.of(context).bodySmall.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     color: const Color(0xFF999999),
                     fontSize: 12.0,
                     fontStyle: FontStyle.italic,
@@ -3410,7 +3409,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
             Text(
               'No Templates Found',
               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     fontSize: 18.0,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 0.0,
@@ -3423,7 +3422,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                   : 'No templates match your search',
               textAlign: TextAlign.center,
               style: FlutterFlowTheme.of(context).bodySmall.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     color: const Color(0xFF666666),
                     letterSpacing: 0.0,
                   ),
@@ -3499,7 +3498,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                         child: Container(
                           width: 72.0,
                           height: 72.0,
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             color: Color(0xFFE0E0E0),
                           ),
                           child: entree != null && _isValidImageUrl(entree.imageUrl)
@@ -3537,13 +3536,13 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                   borderRadius: BorderRadius.circular(4.0),
                                   border: Border.all(color: const Color(0xFFFF9800), width: 1.0),
                                 ),
-                                child: const Text(
+                                child: Text(
                                   'Leftover',
                                   style: TextStyle(
                                     fontSize: 10.0,
                                     fontWeight: FontWeight.w600,
                                     color: Color(0xFFFF9800),
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                   ),
                                 ),
                               ),
@@ -3551,7 +3550,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                               child: Text(
                                 template.name.isNotEmpty ? template.name : (entree?.recipeName ?? 'Meal Template'),
                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       fontSize: 14.0,
                                       fontWeight: FontWeight.w600,
                                       letterSpacing: 0.0,
@@ -3573,7 +3572,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                   style: TextStyle(
                                     fontSize: 10.0,
                                     color: FlutterFlowTheme.of(context).primary,
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
@@ -3592,7 +3591,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                               child: Text(
                                 entree?.recipeName ?? 'Entrée',
                                 style: FlutterFlowTheme.of(context).bodySmall.override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       color: const Color(0xFF666666),
                                       fontSize: 11.0,
                                       letterSpacing: 0.0,
@@ -3640,8 +3639,8 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                         padding: const EdgeInsets.only(right: 4.0),
                         child: Text(
                           '\$${cost.round()}',
-                          style: const TextStyle(
-                            fontFamily: 'Andika New Basic',
+                          style: TextStyle(
+                            fontFamily: FFAppState().currentFontFamily,
                             fontSize: 12.0,
                             color: Color(0xFF2E7D32),
                             fontWeight: FontWeight.w600,
@@ -3720,7 +3719,7 @@ class _DayTemplateBuilderSheetState extends State<_DayTemplateBuilderSheet> {
     final filledTypes = _dayMeals.map((t) => t.mealTyp).whereType<MealTyp>().toSet();
 
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(20.0),
@@ -3738,12 +3737,12 @@ class _DayTemplateBuilderSheetState extends State<_DayTemplateBuilderSheet> {
               width: 40.0,
               height: 4.0,
               decoration: BoxDecoration(
-                color: Color(0xFFDDDDDD),
+                color: const Color(0xFFDDDDDD),
                 borderRadius: BorderRadius.circular(2.0),
               ),
             ),
           ),
-          SizedBox(height: 16.0),
+          const SizedBox(height: 16.0),
           Row(
             children: [
               Expanded(
@@ -3753,7 +3752,7 @@ class _DayTemplateBuilderSheetState extends State<_DayTemplateBuilderSheet> {
                     Text(
                       widget.dayName,
                       style: theme.titleSmall.override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         fontSize: 18.0,
                         fontWeight: FontWeight.w600,
                         letterSpacing: 0.0,
@@ -3762,8 +3761,8 @@ class _DayTemplateBuilderSheetState extends State<_DayTemplateBuilderSheet> {
                     Text(
                       'Tap a meal to add it',
                       style: theme.bodySmall.override(
-                        fontFamily: 'Andika New Basic',
-                        color: Color(0xFF999999),
+                        fontFamily: FFAppState().currentFontFamily,
+                        color: const Color(0xFF999999),
                         fontSize: 12.0,
                         letterSpacing: 0.0,
                       ),
@@ -3775,7 +3774,7 @@ class _DayTemplateBuilderSheetState extends State<_DayTemplateBuilderSheet> {
                 Text(
                   '${filledTypes.length}/4 meals',
                   style: theme.bodySmall.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     color: theme.primary,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 0.0,
@@ -3783,9 +3782,9 @@ class _DayTemplateBuilderSheetState extends State<_DayTemplateBuilderSheet> {
                 ),
             ],
           ),
-          SizedBox(height: 16.0),
+          const SizedBox(height: 16.0),
           if (_isLoading)
-            Center(child: Padding(
+            const Center(child: Padding(
               padding: EdgeInsets.symmetric(vertical: 16.0),
               child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)),
             )),
@@ -3804,7 +3803,7 @@ class _DayTemplateBuilderSheetState extends State<_DayTemplateBuilderSheet> {
               );
 
               return Padding(
-                padding: EdgeInsets.only(bottom: 10.0),
+                padding: const EdgeInsets.only(bottom: 10.0),
                 child: InkWell(
                   onTap: () async {
                     await widget.onNavigateToComposer(mealType, meal?.reference.id);
@@ -3813,16 +3812,16 @@ class _DayTemplateBuilderSheetState extends State<_DayTemplateBuilderSheet> {
                   },
                   borderRadius: BorderRadius.circular(12.0),
                   child: Container(
-                    padding: EdgeInsets.all(12.0),
+                    padding: const EdgeInsets.all(12.0),
                     decoration: BoxDecoration(
                       color: isFilled
                           ? theme.primary.withOpacity(0.05)
-                          : Color(0xFFF5F5F5),
+                          : const Color(0xFFF5F5F5),
                       borderRadius: BorderRadius.circular(12.0),
                       border: Border.all(
                         color: isFilled
                             ? theme.primary.withOpacity(0.3)
-                            : Color(0xFFE0E0E0),
+                            : const Color(0xFFE0E0E0),
                       ),
                     ),
                     child: Row(
@@ -3895,16 +3894,16 @@ class _DayTemplateBuilderSheetState extends State<_DayTemplateBuilderSheet> {
                             decoration: BoxDecoration(
                               color: isFilled
                                   ? theme.primary.withOpacity(0.15)
-                                  : Color(0xFFE0E0E0),
+                                  : const Color(0xFFE0E0E0),
                               borderRadius: BorderRadius.circular(8.0),
                             ),
                             child: Icon(
                               isFilled ? Icons.restaurant : Icons.add,
                               size: 18.0,
-                              color: isFilled ? theme.primary : Color(0xFF999999),
+                              color: isFilled ? theme.primary : const Color(0xFF999999),
                             ),
                           ),
-                        SizedBox(width: 10.0),
+                        const SizedBox(width: 10.0),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -3914,27 +3913,27 @@ class _DayTemplateBuilderSheetState extends State<_DayTemplateBuilderSheet> {
                                   Text(
                                     mealType.name,
                                     style: theme.bodyMedium.override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       fontSize: 13.0,
                                       fontWeight: FontWeight.w600,
                                       letterSpacing: 0.0,
                                     ),
                                   ),
                                   if (hasLeftover) ...[
-                                    SizedBox(width: 6.0),
+                                    const SizedBox(width: 6.0),
                                     Container(
-                                      padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 1.0),
+                                      padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 1.0),
                                       decoration: BoxDecoration(
-                                        color: Color(0xFFFF9800).withOpacity(0.15),
+                                        color: const Color(0xFFFF9800).withOpacity(0.15),
                                         borderRadius: BorderRadius.circular(4.0),
                                       ),
                                       child: Text(
                                         'L',
                                         style: TextStyle(
-                                          fontFamily: 'Andika New Basic',
+                                          fontFamily: FFAppState().currentFontFamily,
                                           fontSize: 10.0,
                                           fontWeight: FontWeight.w700,
-                                          color: Color(0xFFFF9800),
+                                          color: const Color(0xFFFF9800),
                                         ),
                                       ),
                                     ),
@@ -3946,16 +3945,16 @@ class _DayTemplateBuilderSheetState extends State<_DayTemplateBuilderSheet> {
                                     ? meal?.name ?? 'Meal added'
                                     : 'Tap to add',
                                 style: theme.bodySmall.override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   fontSize: 11.0,
-                                  color: isFilled ? theme.primary : Color(0xFF999999),
+                                  color: isFilled ? theme.primary : const Color(0xFF999999),
                                   letterSpacing: 0.0,
                                 ),
                               ),
                             ],
                           ),
                         ),
-                        Icon(
+                        const Icon(
                           Icons.chevron_right,
                           size: 20.0,
                           color: Color(0xFFCCCCCC),
@@ -3966,7 +3965,7 @@ class _DayTemplateBuilderSheetState extends State<_DayTemplateBuilderSheet> {
                 ),
               );
             }),
-          SizedBox(height: 8.0),
+          const SizedBox(height: 8.0),
           // Done button
           SizedBox(
             width: double.infinity,
@@ -3975,8 +3974,8 @@ class _DayTemplateBuilderSheetState extends State<_DayTemplateBuilderSheet> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: theme.primary,
                 foregroundColor: Colors.white,
-                disabledBackgroundColor: Color(0xFFE0E0E0),
-                padding: EdgeInsets.symmetric(vertical: 14.0),
+                disabledBackgroundColor: const Color(0xFFE0E0E0),
+                padding: const EdgeInsets.symmetric(vertical: 14.0),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.0)),
               ),
               child: Text(
@@ -3984,7 +3983,7 @@ class _DayTemplateBuilderSheetState extends State<_DayTemplateBuilderSheet> {
                     ? 'Add at least one meal'
                     : 'Done',
                 style: TextStyle(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   fontSize: 15.0,
                   fontWeight: FontWeight.w600,
                 ),
@@ -4025,7 +4024,7 @@ class _TemplateDetailsSheet extends StatelessWidget {
         final sides = recipes.length > 1 ? recipes.sublist(1) : <MealRecord>[];
 
         return Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
           ),
@@ -4039,10 +4038,10 @@ class _TemplateDetailsSheet extends StatelessWidget {
                   // Drag handle
                   Center(
                     child: Container(
-                      margin: EdgeInsets.only(bottom: 12.0),
+                      margin: const EdgeInsets.only(bottom: 12.0),
                       width: 40.0,
                       height: 4.0,
-                      decoration: BoxDecoration(color: Color(0xFFE0E0E0), borderRadius: BorderRadius.circular(2.0)),
+                      decoration: BoxDecoration(color: const Color(0xFFE0E0E0), borderRadius: BorderRadius.circular(2.0)),
                     ),
                   ),
                   // Header — show template name or fallback
@@ -4053,7 +4052,7 @@ class _TemplateDetailsSheet extends StatelessWidget {
                             ? entree.recipeName ?? 'Meal Template'
                             : 'Meal Template'),
                     style: FlutterFlowTheme.of(context).headlineSmall.override(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           fontSize: 18.0,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 0.0,
@@ -4065,7 +4064,7 @@ class _TemplateDetailsSheet extends StatelessWidget {
                     Text(
                       'Entrée:',
                       style: FlutterFlowTheme.of(context).bodySmall.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: const Color(0xFF666666),
                             letterSpacing: 0.0,
                           ),
@@ -4074,7 +4073,7 @@ class _TemplateDetailsSheet extends StatelessWidget {
                     Text(
                       entree.recipeName ?? 'Unknown',
                       style: FlutterFlowTheme.of(context).bodyMedium.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             fontWeight: FontWeight.w600,
                             letterSpacing: 0.0,
                           ),
@@ -4085,7 +4084,7 @@ class _TemplateDetailsSheet extends StatelessWidget {
                     Text(
                       'Sides:',
                       style: FlutterFlowTheme.of(context).bodySmall.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: const Color(0xFF666666),
                             letterSpacing: 0.0,
                           ),
@@ -4096,27 +4095,27 @@ class _TemplateDetailsSheet extends StatelessWidget {
                           child: Text(
                             '• ${side.recipeName ?? 'Unknown'}',
                             style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   letterSpacing: 0.0,
                                 ),
                           ),
                         )),
                     const SizedBox(height: 12.0),
                   ],
-                  if (template.drinkType != null || (template.drinkCustom?.isNotEmpty ?? false)) ...[
+                  if (template.drinkType != null || (template.drinkCustom.isNotEmpty ?? false)) ...[
                     Text(
                       'Drink:',
                       style: FlutterFlowTheme.of(context).bodySmall.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: const Color(0xFF666666),
                             letterSpacing: 0.0,
                           ),
                     ),
                     const SizedBox(height: 4.0),
                     Text(
-                      template.drinkCustom?.isNotEmpty ?? false ? template.drinkCustom! : template.drinkType!.name,
+                      template.drinkCustom.isNotEmpty ?? false ? template.drinkCustom : template.drinkType!.name,
                       style: FlutterFlowTheme.of(context).bodyMedium.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             letterSpacing: 0.0,
                           ),
                     ),
@@ -4142,34 +4141,34 @@ class _TemplateDetailsSheet extends StatelessWidget {
                   // Edit actions
                   if (onEdit != null || onRename != null || onShare != null || onDelete != null) ...[
                     const SizedBox(height: 12.0),
-                    Divider(height: 1),
+                    const Divider(height: 1),
                     const SizedBox(height: 4.0),
                     if (onEdit != null)
                       ListTile(
                         dense: true,
                         leading: Icon(Icons.edit, color: FlutterFlowTheme.of(context).primary, size: 20.0),
-                        title: Text('Edit Meal Template', style: TextStyle(fontSize: 14.0)),
+                        title: const Text('Edit Meal Template', style: TextStyle(fontSize: 14.0)),
                         onTap: onEdit,
                       ),
                     if (onRename != null)
                       ListTile(
                         dense: true,
                         leading: Icon(Icons.edit_note, color: FlutterFlowTheme.of(context).primary, size: 20.0),
-                        title: Text('Rename', style: TextStyle(fontSize: 14.0)),
+                        title: const Text('Rename', style: TextStyle(fontSize: 14.0)),
                         onTap: onRename,
                       ),
                     if (onShare != null)
                       ListTile(
                         dense: true,
                         leading: Icon(Icons.ios_share, color: FlutterFlowTheme.of(context).primary, size: 20.0),
-                        title: Text('Share', style: TextStyle(fontSize: 14.0)),
+                        title: const Text('Share', style: TextStyle(fontSize: 14.0)),
                         onTap: onShare,
                       ),
                     if (onDelete != null)
                       ListTile(
                         dense: true,
-                        leading: Icon(Icons.delete, color: Colors.red, size: 20.0),
-                        title: Text('Delete', style: TextStyle(color: Colors.red, fontSize: 14.0)),
+                        leading: const Icon(Icons.delete, color: Colors.red, size: 20.0),
+                        title: const Text('Delete', style: TextStyle(color: Colors.red, fontSize: 14.0)),
                         onTap: onDelete,
                       ),
                   ],

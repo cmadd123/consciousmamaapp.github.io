@@ -68,7 +68,7 @@ class _ArticleDetailWidgetState extends State<ArticleDetailWidget> {
           title: Text(
             'Article',
             style: FlutterFlowTheme.of(context).headlineMedium.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   fontSize: 20.0,
                   letterSpacing: 0.0,
                   fontWeight: FontWeight.w600,
@@ -104,7 +104,7 @@ class _ArticleDetailWidgetState extends State<ArticleDetailWidget> {
           Text(
             'Article not found',
             style: FlutterFlowTheme.of(context).bodyLarge.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   letterSpacing: 0.0,
                 ),
           ),
@@ -135,7 +135,7 @@ class _ArticleDetailWidgetState extends State<ArticleDetailWidget> {
                     child: Text(
                       ArticleCategory.displayNames[_article!.category] ?? _article!.category!,
                       style: FlutterFlowTheme.of(context).bodySmall.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: FlutterFlowTheme.of(context).primary,
                             letterSpacing: 0.0,
                             fontWeight: FontWeight.w500,
@@ -148,7 +148,7 @@ class _ArticleDetailWidgetState extends State<ArticleDetailWidget> {
                 Text(
                   _article!.title ?? 'Untitled',
                   style: FlutterFlowTheme.of(context).headlineMedium.override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         fontSize: 24.0,
                         letterSpacing: 0.0,
                         fontWeight: FontWeight.bold,
@@ -161,7 +161,7 @@ class _ArticleDetailWidgetState extends State<ArticleDetailWidget> {
                   Text(
                     _article!.subtitle!,
                     style: FlutterFlowTheme.of(context).bodyLarge.override(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           color: FlutterFlowTheme.of(context).secondaryText,
                           letterSpacing: 0.0,
                         ),
@@ -182,7 +182,7 @@ class _ArticleDetailWidgetState extends State<ArticleDetailWidget> {
                     Text(
                       '${_article!.readTimeMinutes ?? 3} min read',
                       style: FlutterFlowTheme.of(context).bodySmall.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: FlutterFlowTheme.of(context).secondaryText,
                             letterSpacing: 0.0,
                           ),
@@ -207,35 +207,35 @@ class _ArticleDetailWidgetState extends State<ArticleDetailWidget> {
               data: _article!.content ?? '_No content available._',
               styleSheet: MarkdownStyleSheet(
                 p: FlutterFlowTheme.of(context).bodyMedium.override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       fontSize: 16.0,
                       letterSpacing: 0.0,
                     ),
                 h1: FlutterFlowTheme.of(context).headlineMedium.override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       fontSize: 22.0,
                       letterSpacing: 0.0,
                       fontWeight: FontWeight.bold,
                     ),
                 h2: FlutterFlowTheme.of(context).headlineSmall.override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       fontSize: 20.0,
                       letterSpacing: 0.0,
                       fontWeight: FontWeight.w600,
                     ),
                 h3: FlutterFlowTheme.of(context).titleLarge.override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       fontSize: 18.0,
                       letterSpacing: 0.0,
                       fontWeight: FontWeight.w600,
                     ),
                 listBullet: FlutterFlowTheme.of(context).bodyMedium.override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       fontSize: 16.0,
                       letterSpacing: 0.0,
                     ),
                 blockquote: FlutterFlowTheme.of(context).bodyMedium.override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       fontSize: 16.0,
                       letterSpacing: 0.0,
                       fontStyle: FontStyle.italic,

@@ -684,7 +684,7 @@ class _MealPlanDemoWidgetState extends State<MealPlanDemoWidget> with TickerProv
                                                   Text(
                                                     'Meal Plan',
                                                     style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                      fontFamily: 'Andika New Basic',
+                                                      fontFamily: FFAppState().currentFontFamily,
                                                       fontSize: 20.0,
                                                       letterSpacing: 0.0,
                                                       fontWeight: FontWeight.w600,
@@ -719,7 +719,7 @@ class _MealPlanDemoWidgetState extends State<MealPlanDemoWidget> with TickerProv
                                                       child: Text(
                                                         _tooltipText(context, hasCompletedPlan),
                                                         style: FlutterFlowTheme.of(context).bodySmall.override(
-                                                          fontFamily: 'Andika New Basic',
+                                                          fontFamily: FFAppState().currentFontFamily,
                                                           fontSize: 13.0,
                                                           letterSpacing: 0.0,
                                                           color: FlutterFlowTheme.of(context).primaryText,
@@ -744,7 +744,7 @@ class _MealPlanDemoWidgetState extends State<MealPlanDemoWidget> with TickerProv
                                                       Text(
                                                         '$_filledSlots of $_totalSlots meals planned',
                                                         style: FlutterFlowTheme.of(context).bodySmall.override(
-                                                          fontFamily: 'Andika New Basic',
+                                                          fontFamily: FFAppState().currentFontFamily,
                                                           fontSize: 11.0,
                                                           letterSpacing: 0.0,
                                                           color: FlutterFlowTheme.of(context).secondaryText,
@@ -753,7 +753,7 @@ class _MealPlanDemoWidgetState extends State<MealPlanDemoWidget> with TickerProv
                                                       Text(
                                                         '${(progressFraction * 100).round()}%',
                                                         style: FlutterFlowTheme.of(context).bodySmall.override(
-                                                          fontFamily: 'Andika New Basic',
+                                                          fontFamily: FFAppState().currentFontFamily,
                                                           fontSize: 11.0,
                                                           fontWeight: FontWeight.w600,
                                                           letterSpacing: 0.0,
@@ -927,7 +927,7 @@ class _MealPlanDemoWidgetState extends State<MealPlanDemoWidget> with TickerProv
                                                           child: Text(
                                                             _formatDayHeader(day, listIndex),
                                                             style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                              fontFamily: 'Andika New Basic',
+                                                              fontFamily: FFAppState().currentFontFamily,
                                                               fontSize: listIndex == 0 ? 15.0 : 14.0,
                                                               fontWeight: listIndex == 0 ? FontWeight.w600 : FontWeight.normal,
                                                               letterSpacing: 0.0,
@@ -972,7 +972,7 @@ class _MealPlanDemoWidgetState extends State<MealPlanDemoWidget> with TickerProv
                                                           Text(
                                                             '$plannedCount/4',
                                                             style: FlutterFlowTheme.of(context).bodySmall.override(
-                                                              fontFamily: 'Andika New Basic',
+                                                              fontFamily: FFAppState().currentFontFamily,
                                                               color: const Color(0xFF888888),
                                                               fontSize: 12.0,
                                                               letterSpacing: 0.0,
@@ -1089,7 +1089,7 @@ class _MealPlanDemoWidgetState extends State<MealPlanDemoWidget> with TickerProv
                                     ? FlutterFlowTheme.of(context).primary
                                     : FlutterFlowTheme.of(context).secondaryText,
                                 textStyle: FlutterFlowTheme.of(context).titleMedium.override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   color: Colors.white,
                                   fontSize: 18.0,
                                   fontWeight: FontWeight.w600,
@@ -1113,7 +1113,7 @@ class _MealPlanDemoWidgetState extends State<MealPlanDemoWidget> with TickerProv
               ),
               // Confetti overlay
               if (_showConfetti)
-                Positioned.fill(
+                const Positioned.fill(
                   child: IgnorePointer(
                     child: CelebrationAnimation(),
                   ),
@@ -1142,7 +1142,7 @@ class _MealPlanDemoWidgetState extends State<MealPlanDemoWidget> with TickerProv
         Text(
           mealName,
           style: FlutterFlowTheme.of(context).bodyMedium.override(
-            fontFamily: 'Andika New Basic',
+            fontFamily: FFAppState().currentFontFamily,
             fontSize: 14.0,
             fontWeight: FontWeight.w600,
             letterSpacing: 0.0,
@@ -1292,7 +1292,7 @@ class _MealPlanDemoWidgetState extends State<MealPlanDemoWidget> with TickerProv
               ? 'Tap here to add ${mealName.toLowerCase()}'
               : 'Tap to add ${mealName.toLowerCase()}',
           style: FlutterFlowTheme.of(context).bodySmall.override(
-            fontFamily: 'Andika New Basic',
+            fontFamily: FFAppState().currentFontFamily,
             color: isHighlighted
                 ? FlutterFlowTheme.of(context).primary
                 : const Color(0xFF888888),
@@ -1345,7 +1345,7 @@ class _MealPlanDemoWidgetState extends State<MealPlanDemoWidget> with TickerProv
                 Text(
                   entree,
                   style: FlutterFlowTheme.of(context).bodyMedium.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     fontSize: 14.0,
                     fontWeight: FontWeight.w500,
                     letterSpacing: 0.0,
@@ -1364,7 +1364,7 @@ class _MealPlanDemoWidgetState extends State<MealPlanDemoWidget> with TickerProv
                     child: Text(
                       entree ?? '',
                       style: FlutterFlowTheme.of(context).bodySmall.override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         color: const Color(0xFF666666),
                         fontSize: 11.0,
                         letterSpacing: 0.0,

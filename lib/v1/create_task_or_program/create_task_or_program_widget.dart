@@ -1,12 +1,8 @@
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import '/flutter_flow/flutter_flow_widgets.dart';
 import '/v1/tasks/add_new_r_task_copy/add_new_r_task_copy_widget.dart';
-import 'dart:ui';
 import '/index.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'create_task_or_program_model.dart';
 export 'create_task_or_program_model.dart';
 
@@ -47,7 +43,7 @@ class _CreateTaskOrProgramWidgetState extends State<CreateTaskOrProgramWidget> {
       height: 149.21,
       decoration: BoxDecoration(
         color: FlutterFlowTheme.of(context).secondaryBackground,
-        borderRadius: BorderRadius.only(
+        borderRadius: const BorderRadius.only(
           bottomLeft: Radius.circular(0.0),
           bottomRight: Radius.circular(0.0),
           topLeft: Radius.circular(12.0),
@@ -59,7 +55,7 @@ class _CreateTaskOrProgramWidgetState extends State<CreateTaskOrProgramWidget> {
         children: [
           Builder(
             builder: (context) => Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(20.0, 20.0, 20.0, 0.0),
+              padding: const EdgeInsetsDirectional.fromSTEB(20.0, 20.0, 20.0, 0.0),
               child: InkWell(
                 splashColor: Colors.transparent,
                 focusColor: Colors.transparent,
@@ -73,9 +69,9 @@ class _CreateTaskOrProgramWidgetState extends State<CreateTaskOrProgramWidget> {
                         elevation: 0,
                         insetPadding: EdgeInsets.zero,
                         backgroundColor: Colors.transparent,
-                        alignment: AlignmentDirectional(0.0, 0.0)
+                        alignment: const AlignmentDirectional(0.0, 0.0)
                             .resolve(Directionality.of(context)),
-                        child: Container(
+                        child: const SizedBox(
                           height: 500.0,
                           width: 500.0,
                           child: AddNewRTaskCopyWidget(),
@@ -97,7 +93,7 @@ class _CreateTaskOrProgramWidgetState extends State<CreateTaskOrProgramWidget> {
                         Container(
                           width: 40.0,
                           height: 40.0,
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             color: Color(0xCDE7DFDF),
                             shape: BoxShape.circle,
                           ),
@@ -108,14 +104,14 @@ class _CreateTaskOrProgramWidgetState extends State<CreateTaskOrProgramWidget> {
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               16.0, 0.0, 0.0, 0.0),
                           child: Text(
                             'Create a task',
                             style: FlutterFlowTheme.of(context)
                                 .bodyMedium
                                 .override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   fontSize: 18.0,
                                   letterSpacing: 0.0,
                                   fontWeight: FontWeight.bold,
@@ -135,7 +131,7 @@ class _CreateTaskOrProgramWidgetState extends State<CreateTaskOrProgramWidget> {
             ),
           ),
           Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(20.0, 20.0, 20.0, 0.0),
+            padding: const EdgeInsetsDirectional.fromSTEB(20.0, 20.0, 20.0, 0.0),
             child: InkWell(
               splashColor: Colors.transparent,
               focusColor: Colors.transparent,
@@ -157,7 +153,7 @@ class _CreateTaskOrProgramWidgetState extends State<CreateTaskOrProgramWidget> {
                       Container(
                         width: 40.0,
                         height: 40.0,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           color: Color(0xCDE7DFDF),
                           shape: BoxShape.circle,
                         ),
@@ -169,12 +165,12 @@ class _CreateTaskOrProgramWidgetState extends State<CreateTaskOrProgramWidget> {
                       ),
                       Padding(
                         padding:
-                            EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 0.0, 0.0),
+                            const EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 0.0, 0.0),
                         child: Text(
                           'Create a program',
                           style:
                               FlutterFlowTheme.of(context).bodyMedium.override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     fontSize: 18.0,
                                     letterSpacing: 0.0,
                                     fontWeight: FontWeight.bold,

@@ -1,4 +1,5 @@
 import 'dart:math';
+import '/app_state.dart';
 import 'package:flutter/material.dart';
 
 /// Beautiful animated splash screen with floating leaves
@@ -212,7 +213,7 @@ class _AnimatedSplashScreenState extends State<AnimatedSplashScreen>
                                   Text(
                                     'MomRise',
                                     style: TextStyle(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       fontSize: 28,
                                       fontWeight: FontWeight.bold,
                                       color: const Color(0xFF52A097),
@@ -223,7 +224,7 @@ class _AnimatedSplashScreenState extends State<AnimatedSplashScreen>
                                   Text(
                                     'Mom life, simplified',
                                     style: TextStyle(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       fontSize: 14,
                                       color: const Color(0xFF5D4E60).withOpacity(0.8),
                                       letterSpacing: 0.3,

@@ -6,12 +6,8 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/components/momrise_confirmation.dart';
-import 'dart:ui';
 import '/index.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'add_event_model.dart';
 export 'add_event_model.dart';
 
@@ -96,22 +92,22 @@ class _AddEventWidgetState extends State<AddEventWidget> {
                 key: _model.formKey,
                 autovalidateMode: AutovalidateMode.disabled,
                 child: Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(12.0, 0.0, 12.0, 0.0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(12.0, 0.0, 12.0, 0.0),
                   child: SingleChildScrollView(
                     child: Column(
                       mainAxisSize: MainAxisSize.max,
                       children: [
                         Align(
-                          alignment: AlignmentDirectional(0.0, -1.0),
+                          alignment: const AlignmentDirectional(0.0, -1.0),
                           child: Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 50.0, 0.0, 0.0),
                             child: Text(
                               'Add Event',
                               style: FlutterFlowTheme.of(context)
                                   .bodyMedium
                                   .override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     fontSize: 24.0,
                                     letterSpacing: 0.0,
                                   ),
@@ -119,17 +115,17 @@ class _AddEventWidgetState extends State<AddEventWidget> {
                           ),
                         ),
                         Align(
-                          alignment: AlignmentDirectional(0.0, -1.0),
+                          alignment: const AlignmentDirectional(0.0, -1.0),
                           child: Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 20.0, 0.0, 0.0),
                             child: Text(
                               'Edit your event details below',
                               style: FlutterFlowTheme.of(context)
                                   .bodyMedium
                                   .override(
-                                    fontFamily: 'Andika New Basic',
-                                    color: Color(0xC6000000),
+                                    fontFamily: FFAppState().currentFontFamily,
+                                    color: const Color(0xC6000000),
                                     fontSize: 16.0,
                                     letterSpacing: 0.0,
                                   ),
@@ -138,7 +134,7 @@ class _AddEventWidgetState extends State<AddEventWidget> {
                         ),
                         if (false)
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 52.0, 0.0, 0.0),
                             child: StreamBuilder<List<ChildernRecord>>(
                               stream: queryChildernRecord(
@@ -182,7 +178,7 @@ class _AddEventWidgetState extends State<AddEventWidget> {
                                             .contains(rowChildernRecord.reference);
                                         return Align(
                                           alignment:
-                                              AlignmentDirectional(-1.0, 0.0),
+                                              const AlignmentDirectional(-1.0, 0.0),
                                           child: InkWell(
                                             splashColor: Colors.transparent,
                                             focusColor: Colors.transparent,
@@ -206,7 +202,7 @@ class _AddEventWidgetState extends State<AddEventWidget> {
                                               height: 134.0,
                                               decoration: BoxDecoration(
                                                 color: isSelected
-                                                    ? Color(0x1D52A097)
+                                                    ? const Color(0x1D52A097)
                                                     : Colors.transparent,
                                                 borderRadius:
                                                     BorderRadius.circular(14.0),
@@ -289,7 +285,7 @@ class _AddEventWidgetState extends State<AddEventWidget> {
                                       const SizedBox(width: 16.0),
                                       // Mom selection
                                       Align(
-                                        alignment: AlignmentDirectional(-1.0, 0.0),
+                                        alignment: const AlignmentDirectional(-1.0, 0.0),
                                         child: InkWell(
                                           splashColor: Colors.transparent,
                                           focusColor: Colors.transparent,
@@ -343,7 +339,7 @@ class _AddEventWidgetState extends State<AddEventWidget> {
                                                       style: FlutterFlowTheme.of(context)
                                                           .bodyMedium
                                                           .override(
-                                                            fontFamily: 'Andika New Basic',
+                                                            fontFamily: FFAppState().currentFontFamily,
                                                             letterSpacing: 0.0,
                                                           ),
                                                     ),
@@ -375,7 +371,7 @@ class _AddEventWidgetState extends State<AddEventWidget> {
                                       const SizedBox(width: 16.0),
                                       // Dad selection
                                       Align(
-                                        alignment: AlignmentDirectional(-1.0, 0.0),
+                                        alignment: const AlignmentDirectional(-1.0, 0.0),
                                         child: InkWell(
                                           splashColor: Colors.transparent,
                                           focusColor: Colors.transparent,
@@ -429,7 +425,7 @@ class _AddEventWidgetState extends State<AddEventWidget> {
                                                       style: FlutterFlowTheme.of(context)
                                                           .bodyMedium
                                                           .override(
-                                                            fontFamily: 'Andika New Basic',
+                                                            fontFamily: FFAppState().currentFontFamily,
                                                             letterSpacing: 0.0,
                                                           ),
                                                     ),
@@ -465,7 +461,7 @@ class _AddEventWidgetState extends State<AddEventWidget> {
                             ),
                           ),
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 30.0, 0.0, 0.0),
                           child: Container(
                             height: 52.0,
@@ -473,11 +469,11 @@ class _AddEventWidgetState extends State<AddEventWidget> {
                               color: FlutterFlowTheme.of(context).prim30,
                               borderRadius: BorderRadius.circular(14.0),
                               border: Border.all(
-                                color: Color(0xFFCBE3E0),
+                                color: const Color(0xFFCBE3E0),
                                 width: 1.0,
                               ),
                             ),
-                            child: Container(
+                            child: SizedBox(
                               width: double.infinity,
                               child: TextFormField(
                                 controller: _model.textController1,
@@ -489,7 +485,7 @@ class _AddEventWidgetState extends State<AddEventWidget> {
                                   labelStyle: FlutterFlowTheme.of(context)
                                       .labelMedium
                                       .override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         color: FlutterFlowTheme.of(context)
                                             .primaryText,
                                         fontSize: 16.0,
@@ -499,21 +495,21 @@ class _AddEventWidgetState extends State<AddEventWidget> {
                                   hintStyle: FlutterFlowTheme.of(context)
                                       .labelMedium
                                       .override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         color: FlutterFlowTheme.of(context)
                                             .primaryText,
                                         fontSize: 16.0,
                                         letterSpacing: 0.0,
                                       ),
                                   enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
+                                    borderSide: const BorderSide(
                                       color: Color(0x00000000),
                                       width: 1.0,
                                     ),
                                     borderRadius: BorderRadius.circular(14.0),
                                   ),
                                   focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
+                                    borderSide: const BorderSide(
                                       color: Color(0x00000000),
                                       width: 1.0,
                                     ),
@@ -537,7 +533,7 @@ class _AddEventWidgetState extends State<AddEventWidget> {
                                 style: FlutterFlowTheme.of(context)
                                     .bodyMedium
                                     .override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       fontSize: 16.0,
                                       letterSpacing: 0.0,
                                     ),
@@ -551,7 +547,7 @@ class _AddEventWidgetState extends State<AddEventWidget> {
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 30.0, 0.0, 0.0),
                           child: Row(
                             mainAxisSize: MainAxisSize.max,
@@ -573,12 +569,12 @@ class _AddEventWidgetState extends State<AddEventWidget> {
                                           FlutterFlowTheme.of(context).prim30,
                                       borderRadius: BorderRadius.circular(14.0),
                                       border: Border.all(
-                                        color: Color(0xFFCBE3E0),
+                                        color: const Color(0xFFCBE3E0),
                                         width: 1.0,
                                       ),
                                     ),
                                     child: Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(
                                           0.0, 0.0, 16.0, 0.0),
                                       child: Row(
                                         mainAxisSize: MainAxisSize.max,
@@ -587,9 +583,9 @@ class _AddEventWidgetState extends State<AddEventWidget> {
                                         children: [
                                           Align(
                                             alignment:
-                                                AlignmentDirectional(-1.0, 0.0),
+                                                const AlignmentDirectional(-1.0, 0.0),
                                             child: Padding(
-                                              padding: EdgeInsetsDirectional
+                                              padding: const EdgeInsetsDirectional
                                                   .fromSTEB(
                                                       16.0, 0.0, 0.0, 0.0),
                                               child: Text(
@@ -621,21 +617,21 @@ class _AddEventWidgetState extends State<AddEventWidget> {
                                   ),
                                 ),
                               ),
-                            ].divide(SizedBox(width: 11.0)),
+                            ].divide(const SizedBox(width: 11.0)),
                           ),
                         ),
                         if (_model.isSelecedDate)
                           Align(
-                            alignment: AlignmentDirectional(-1.0, 0.0),
+                            alignment: const AlignmentDirectional(-1.0, 0.0),
                             child: Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   2.0, 7.0, 0.0, 0.0),
                               child: Text(
                                 'please selecte a data',
                                 style: FlutterFlowTheme.of(context)
                                     .bodyMedium
                                     .override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       color: FlutterFlowTheme.of(context).error,
                                       fontSize: 12.0,
                                       letterSpacing: 0.0,
@@ -644,18 +640,18 @@ class _AddEventWidgetState extends State<AddEventWidget> {
                             ),
                           ),
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 30.0, 0.0, 0.0),
                           child: Container(
                             decoration: BoxDecoration(
                               color: FlutterFlowTheme.of(context).prim30,
                               borderRadius: BorderRadius.circular(14.0),
                               border: Border.all(
-                                color: Color(0xFFCBE3E0),
+                                color: const Color(0xFFCBE3E0),
                                 width: 1.0,
                               ),
                             ),
-                            child: Container(
+                            child: SizedBox(
                               width: double.infinity,
                               child: TextFormField(
                                 controller: _model.textController2,
@@ -667,7 +663,7 @@ class _AddEventWidgetState extends State<AddEventWidget> {
                                   labelStyle: FlutterFlowTheme.of(context)
                                       .labelMedium
                                       .override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         color: FlutterFlowTheme.of(context)
                                             .primaryText,
                                         fontSize: 16.0,
@@ -677,21 +673,21 @@ class _AddEventWidgetState extends State<AddEventWidget> {
                                   hintStyle: FlutterFlowTheme.of(context)
                                       .labelMedium
                                       .override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         color: FlutterFlowTheme.of(context)
                                             .primaryText,
                                         fontSize: 16.0,
                                         letterSpacing: 0.0,
                                       ),
                                   enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
+                                    borderSide: const BorderSide(
                                       color: Color(0x00000000),
                                       width: 1.0,
                                     ),
                                     borderRadius: BorderRadius.circular(14.0),
                                   ),
                                   focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
+                                    borderSide: const BorderSide(
                                       color: Color(0x00000000),
                                       width: 1.0,
                                     ),
@@ -715,7 +711,7 @@ class _AddEventWidgetState extends State<AddEventWidget> {
                                 style: FlutterFlowTheme.of(context)
                                     .bodyMedium
                                     .override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       fontSize: 16.0,
                                       letterSpacing: 0.0,
                                     ),
@@ -735,10 +731,10 @@ class _AddEventWidgetState extends State<AddEventWidget> {
                 ),
               ),
               Align(
-                alignment: AlignmentDirectional(0.0, 1.0),
+                alignment: const AlignmentDirectional(0.0, 1.0),
                 child: Padding(
                   padding:
-                      EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 20.0),
+                      const EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 20.0),
                   child: Row(
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -751,16 +747,16 @@ class _AddEventWidgetState extends State<AddEventWidget> {
                           text: 'Cancel',
                           options: FFButtonOptions(
                             height: 40.0,
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 16.0, 0.0, 16.0, 0.0),
-                            iconPadding: EdgeInsetsDirectional.fromSTEB(
+                            iconPadding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 0.0, 0.0, 0.0),
                             color: FlutterFlowTheme.of(context)
                                 .secondaryBackground,
                             textStyle: FlutterFlowTheme.of(context)
                                 .titleSmall
                                 .override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   color: FlutterFlowTheme.of(context).primary,
                                   letterSpacing: 0.0,
                                 ),
@@ -779,7 +775,7 @@ class _AddEventWidgetState extends State<AddEventWidget> {
                             // Validate event name is not empty
                             if (_model.textController1.text.trim().isEmpty) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
+                                const SnackBar(
                                   content: Text('Please enter an event name'),
                                   duration: Duration(seconds: 2),
                                 ),
@@ -819,15 +815,15 @@ class _AddEventWidgetState extends State<AddEventWidget> {
                           text: 'Create',
                           options: FFButtonOptions(
                             height: 40.0,
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 16.0, 0.0, 16.0, 0.0),
-                            iconPadding: EdgeInsetsDirectional.fromSTEB(
+                            iconPadding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 0.0, 0.0, 0.0),
                             color: FlutterFlowTheme.of(context).primary,
                             textStyle: FlutterFlowTheme.of(context)
                                 .titleSmall
                                 .override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   color: Colors.white,
                                   letterSpacing: 0.0,
                                 ),
@@ -836,7 +832,7 @@ class _AddEventWidgetState extends State<AddEventWidget> {
                           ),
                         ),
                       ),
-                    ].divide(SizedBox(width: 16.0)),
+                    ].divide(const SizedBox(width: 16.0)),
                   ),
                 ),
               ),

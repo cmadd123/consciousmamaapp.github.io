@@ -3,13 +3,8 @@ import '/backend/schema/enums/enums.dart';
 import '/components/home_nav_bar_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import '/flutter_flow/flutter_flow_widgets.dart';
-import '/flutter_flow/custom_icons.dart';
-import 'dart:ui';
 import '/index.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'week_plan_item_box_tab_model.dart';
 export 'week_plan_item_box_tab_model.dart';
 
@@ -100,7 +95,7 @@ class _WeekPlanItemBoxTabWidgetState extends State<WeekPlanItemBoxTabWidget> {
           child: Center(
             child: SingleChildScrollView(
               child: Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(12.0, 20.0, 12.0, 20.0),
+                padding: const EdgeInsetsDirectional.fromSTEB(12.0, 20.0, 12.0, 20.0),
                 child: Material(
                   color: Colors.transparent,
                   elevation: 1.0,
@@ -121,7 +116,7 @@ class _WeekPlanItemBoxTabWidgetState extends State<WeekPlanItemBoxTabWidget> {
                       children: [
                         // Back button row
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(16.0, 16.0, 16.0, 0.0),
+                          padding: const EdgeInsetsDirectional.fromSTEB(16.0, 16.0, 16.0, 0.0),
                           child: Row(
                             mainAxisSize: MainAxisSize.max,
                             children: [
@@ -143,32 +138,32 @@ class _WeekPlanItemBoxTabWidgetState extends State<WeekPlanItemBoxTabWidget> {
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(24.0, 10.0, 24.0, 0.0),
+                          padding: const EdgeInsetsDirectional.fromSTEB(24.0, 10.0, 24.0, 0.0),
                           child: Text(
                             _getTitle(),
                             textAlign: TextAlign.center,
                             style: FlutterFlowTheme.of(context).bodyMedium.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               fontSize: 24.0,
                               letterSpacing: 0.0,
                             ),
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(20.0, 18.0, 20.0, 0.0),
+                          padding: const EdgeInsetsDirectional.fromSTEB(20.0, 18.0, 20.0, 0.0),
                           child: Text(
                             'Choose how to add your meal',
                             textAlign: TextAlign.center,
                             style: FlutterFlowTheme.of(context).bodyMedium.override(
-                              fontFamily: 'Andika New Basic',
-                              color: Color(0xB71B1F26),
+                              fontFamily: FFAppState().currentFontFamily,
+                              color: const Color(0xB71B1F26),
                               letterSpacing: 0.0,
                             ),
                           ),
                         ),
                         // Option 1: From Cookbook
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(12.0, 24.0, 12.0, 12.0),
+                          padding: const EdgeInsetsDirectional.fromSTEB(12.0, 24.0, 12.0, 12.0),
                           child: InkWell(
                             splashColor: Colors.transparent,
                             focusColor: Colors.transparent,
@@ -205,11 +200,11 @@ class _WeekPlanItemBoxTabWidgetState extends State<WeekPlanItemBoxTabWidget> {
                                     size: 44.0,
                                   ),
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(0.0, 10.0, 0.0, 0.0),
+                                    padding: const EdgeInsetsDirectional.fromSTEB(0.0, 10.0, 0.0, 0.0),
                                     child: Text(
                                       'From my Cookbook',
                                       style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         fontSize: 18.0,
                                         letterSpacing: 0.0,
                                       ),
@@ -222,7 +217,7 @@ class _WeekPlanItemBoxTabWidgetState extends State<WeekPlanItemBoxTabWidget> {
                         ),
                         // Option 2: Import Recipe
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(12.0, 0.0, 12.0, 12.0),
+                          padding: const EdgeInsetsDirectional.fromSTEB(12.0, 0.0, 12.0, 12.0),
                           child: InkWell(
                             splashColor: Colors.transparent,
                             focusColor: Colors.transparent,
@@ -258,11 +253,11 @@ class _WeekPlanItemBoxTabWidgetState extends State<WeekPlanItemBoxTabWidget> {
                                     size: 44.0,
                                   ),
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(0.0, 10.0, 0.0, 0.0),
+                                    padding: const EdgeInsetsDirectional.fromSTEB(0.0, 10.0, 0.0, 0.0),
                                     child: Text(
                                       'Import Recipe',
                                       style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         fontSize: 18.0,
                                         letterSpacing: 0.0,
                                       ),
@@ -275,7 +270,7 @@ class _WeekPlanItemBoxTabWidgetState extends State<WeekPlanItemBoxTabWidget> {
                         ),
                         // Option 3: Create New Recipe
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(12.0, 0.0, 12.0, 24.0),
+                          padding: const EdgeInsetsDirectional.fromSTEB(12.0, 0.0, 12.0, 24.0),
                           child: InkWell(
                             splashColor: Colors.transparent,
                             focusColor: Colors.transparent,
@@ -313,11 +308,11 @@ class _WeekPlanItemBoxTabWidgetState extends State<WeekPlanItemBoxTabWidget> {
                                     size: 44.0,
                                   ),
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(0.0, 10.0, 0.0, 0.0),
+                                    padding: const EdgeInsetsDirectional.fromSTEB(0.0, 10.0, 0.0, 0.0),
                                     child: Text(
                                       'Create New Recipe',
                                       style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         fontSize: 18.0,
                                         letterSpacing: 0.0,
                                       ),

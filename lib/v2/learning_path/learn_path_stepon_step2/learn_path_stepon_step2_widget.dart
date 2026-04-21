@@ -3,12 +3,8 @@ import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
-import 'dart:ui';
 import '/index.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'learn_path_stepon_step2_model.dart';
 export 'learn_path_stepon_step2_model.dart';
 
@@ -16,7 +12,7 @@ class LearnPathSteponStep2Widget extends StatefulWidget {
   const LearnPathSteponStep2Widget({
     super.key,
     String? aiTextField,
-  }) : this.aiTextField = aiTextField ?? 'recipeName';
+  }) : aiTextField = aiTextField ?? 'recipeName';
 
   final String aiTextField;
 
@@ -56,18 +52,18 @@ class _LearnPathSteponStep2WidgetState
       },
       child: Scaffold(
         key: scaffoldKey,
-        backgroundColor: Color(0xFFEDFFFD),
+        backgroundColor: const Color(0xFFEDFFFD),
         body: SafeArea(
           top: true,
           child: Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
+            padding: const EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
             child: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 children: [
                   Padding(
                     padding:
-                        EdgeInsetsDirectional.fromSTEB(12.0, 20.0, 12.0, 0.0),
+                        const EdgeInsetsDirectional.fromSTEB(12.0, 20.0, 12.0, 0.0),
                     child: Material(
                       color: Colors.transparent,
                       elevation: 1.0,
@@ -96,19 +92,19 @@ class _LearnPathSteponStep2WidgetState
                                   mainAxisSize: MainAxisSize.max,
                                   children: [
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(
                                           18.0, 9.0, 0.0, 0.0),
                                       child: Container(
                                         width: 5.0,
                                         height: 5.0,
-                                        decoration: BoxDecoration(
+                                        decoration: const BoxDecoration(
                                           color: Color(0x6652A097),
                                           shape: BoxShape.circle,
                                         ),
                                       ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(
                                           3.0, 9.0, 0.0, 0.0),
                                       child: Container(
                                         width: 33.0,
@@ -122,24 +118,24 @@ class _LearnPathSteponStep2WidgetState
                                       ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(
                                           3.0, 9.0, 0.0, 0.0),
                                       child: Container(
                                         width: 5.0,
                                         height: 5.0,
-                                        decoration: BoxDecoration(
+                                        decoration: const BoxDecoration(
                                           color: Color(0x6652A097),
                                           shape: BoxShape.circle,
                                         ),
                                       ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(
                                           3.0, 9.0, 0.0, 0.0),
                                       child: Container(
                                         width: 5.0,
                                         height: 5.0,
-                                        decoration: BoxDecoration(
+                                        decoration: const BoxDecoration(
                                           color: Color(0x6652A097),
                                           shape: BoxShape.circle,
                                         ),
@@ -148,14 +144,14 @@ class _LearnPathSteponStep2WidgetState
                                   ],
                                 ),
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       0.0, 5.0, 16.0, 0.0),
                                   child: Text(
                                     'Step 2/4',
                                     style: FlutterFlowTheme.of(context)
                                         .bodyMedium
                                         .override(
-                                          fontFamily: 'Andika New Basic',
+                                          fontFamily: FFAppState().currentFontFamily,
                                           color: FlutterFlowTheme.of(context)
                                               .primary,
                                           letterSpacing: 0.0,
@@ -170,9 +166,9 @@ class _LearnPathSteponStep2WidgetState
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Align(
-                                  alignment: AlignmentDirectional(-1.0, 0.0),
+                                  alignment: const AlignmentDirectional(-1.0, 0.0),
                                   child: Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(
                                         15.0, 120.0, 0.0, 0.0),
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(14.0),
@@ -186,7 +182,7 @@ class _LearnPathSteponStep2WidgetState
                                   ),
                                 ),
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       24.0, 0.0, 24.0, 0.0),
                                   child: Text(
                                     'Which child is experiencing this challenge? ',
@@ -194,32 +190,32 @@ class _LearnPathSteponStep2WidgetState
                                     style: FlutterFlowTheme.of(context)
                                         .bodyMedium
                                         .override(
-                                          fontFamily: 'Andika New Basic',
+                                          fontFamily: FFAppState().currentFontFamily,
                                           fontSize: 24.0,
                                           letterSpacing: 0.0,
                                         ),
                                   ),
                                 ),
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       24.0, 18.0, 0.0, 0.0),
                                   child: Text(
                                     'Select a child',
                                     style: FlutterFlowTheme.of(context)
                                         .bodyMedium
                                         .override(
-                                          fontFamily: 'Andika New Basic',
-                                          color: Color(0xC0000000),
+                                          fontFamily: FFAppState().currentFontFamily,
+                                          color: const Color(0xC0000000),
                                           letterSpacing: 0.0,
                                         ),
                                   ),
                                 ),
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       0.0, 40.0, 0.0, 0.0),
                                   child: Container(
                                     width: double.infinity,
-                                    decoration: BoxDecoration(),
+                                    decoration: const BoxDecoration(),
                                     child: StreamBuilder<List<ChildernRecord>>(
                                       stream: queryChildernRecord(
                                         queryBuilder: (childernRecord) =>
@@ -268,7 +264,7 @@ class _LearnPathSteponStep2WidgetState
                                                 wrapChildernRecordList[
                                                     wrapIndex];
                                             return Padding(
-                                              padding: EdgeInsetsDirectional
+                                              padding: const EdgeInsetsDirectional
                                                   .fromSTEB(
                                                       20.0, 0.0, 0.0, 0.0),
                                               child: InkWell(
@@ -287,7 +283,7 @@ class _LearnPathSteponStep2WidgetState
                                                   width: 150.0,
                                                   height: 134.0,
                                                   decoration: BoxDecoration(
-                                                    color: Color(0x1D52A097),
+                                                    color: const Color(0x1D52A097),
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                             14.0),
@@ -362,14 +358,14 @@ class _LearnPathSteponStep2WidgetState
                                     ),
                                   ),
                                 ),
-                              ].addToStart(SizedBox(height: 2.0)),
+                              ].addToStart(const SizedBox(height: 2.0)),
                             ),
                             Row(
                               mainAxisSize: MainAxisSize.max,
                               children: [
                                 Expanded(
                                   child: Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(
                                         20.0, 35.0, 20.0, 20.0),
                                     child: FFButtonWidget(
                                       onPressed: () async {
@@ -379,17 +375,17 @@ class _LearnPathSteponStep2WidgetState
                                       options: FFButtonOptions(
                                         width: 112.0,
                                         height: 40.0,
-                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                        padding: const EdgeInsetsDirectional.fromSTEB(
                                             16.0, 0.0, 16.0, 0.0),
                                         iconPadding:
-                                            EdgeInsetsDirectional.fromSTEB(
+                                            const EdgeInsetsDirectional.fromSTEB(
                                                 0.0, 0.0, 0.0, 0.0),
                                         color: FlutterFlowTheme.of(context)
                                             .primary,
                                         textStyle: FlutterFlowTheme.of(context)
                                             .titleSmall
                                             .override(
-                                              fontFamily: 'Andika New Basic',
+                                              fontFamily: FFAppState().currentFontFamily,
                                               color: Colors.white,
                                               letterSpacing: 0.0,
                                             ),
@@ -402,7 +398,7 @@ class _LearnPathSteponStep2WidgetState
                                 ),
                                 Expanded(
                                   child: Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(
                                         20.0, 35.0, 20.0, 20.0),
                                     child: FFButtonWidget(
                                       onPressed: () async {
@@ -412,7 +408,7 @@ class _LearnPathSteponStep2WidgetState
                                                 .routeName,
                                             queryParameters: {
                                               'aiTextFiled': serializeParam(
-                                                widget!.aiTextField,
+                                                widget.aiTextField,
                                                 ParamType.String,
                                               ),
                                               'selectedChild': serializeParam(
@@ -434,7 +430,7 @@ class _LearnPathSteponStep2WidgetState
                                                 ),
                                               ),
                                               duration:
-                                                  Duration(milliseconds: 4000),
+                                                  const Duration(milliseconds: 4000),
                                               backgroundColor:
                                                   FlutterFlowTheme.of(context)
                                                       .secondary,
@@ -446,17 +442,17 @@ class _LearnPathSteponStep2WidgetState
                                       options: FFButtonOptions(
                                         width: 112.0,
                                         height: 40.0,
-                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                        padding: const EdgeInsetsDirectional.fromSTEB(
                                             16.0, 0.0, 16.0, 0.0),
                                         iconPadding:
-                                            EdgeInsetsDirectional.fromSTEB(
+                                            const EdgeInsetsDirectional.fromSTEB(
                                                 0.0, 0.0, 0.0, 0.0),
                                         color: FlutterFlowTheme.of(context)
                                             .primary,
                                         textStyle: FlutterFlowTheme.of(context)
                                             .titleSmall
                                             .override(
-                                              fontFamily: 'Andika New Basic',
+                                              fontFamily: FFAppState().currentFontFamily,
                                               color: Colors.white,
                                               letterSpacing: 0.0,
                                             ),

@@ -81,7 +81,7 @@ class _ParentSetupWidgetState extends State<ParentSetupWidget> {
                       children: [
                         // Back arrow
                         Align(
-                          alignment: AlignmentDirectional(-1.0, 0.0),
+                          alignment: const AlignmentDirectional(-1.0, 0.0),
                           child: InkWell(
                             splashColor: Colors.transparent,
                             focusColor: Colors.transparent,
@@ -130,7 +130,7 @@ class _ParentSetupWidgetState extends State<ParentSetupWidget> {
                         Text(
                           'Now, let\'s set up your family!',
                           style: FlutterFlowTheme.of(context).headlineMedium.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             fontSize: 28.0,
                             fontWeight: FontWeight.w600,
                             letterSpacing: 0.0,
@@ -140,7 +140,7 @@ class _ParentSetupWidgetState extends State<ParentSetupWidget> {
                         Text(
                           'Choose names and colors for you and your partner. These will appear throughout the app.',
                           style: FlutterFlowTheme.of(context).bodyMedium.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: FlutterFlowTheme.of(context).secondaryText,
                             letterSpacing: 0.0,
                           ),
@@ -217,7 +217,7 @@ class _ParentSetupWidgetState extends State<ParentSetupWidget> {
                               height: 56.0,
                               color: FlutterFlowTheme.of(context).primary,
                               textStyle: FlutterFlowTheme.of(context).titleSmall.override(
-                                fontFamily: 'Andika New Basic',
+                                fontFamily: FFAppState().currentFontFamily,
                                 color: Colors.white,
                                 fontSize: 18.0,
                                 letterSpacing: 0.0,
@@ -291,11 +291,11 @@ class _ParentSetupWidgetState extends State<ParentSetupWidget> {
                 child: Center(
                   child: Text(
                     initial,
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: Colors.white,
                       fontSize: 20.0,
                       fontWeight: FontWeight.bold,
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                     ),
                   ),
                 ),
@@ -308,7 +308,7 @@ class _ParentSetupWidgetState extends State<ParentSetupWidget> {
                     Text(
                       title,
                       style: FlutterFlowTheme.of(context).titleMedium.override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         fontWeight: FontWeight.w600,
                         letterSpacing: 0.0,
                       ),
@@ -316,7 +316,7 @@ class _ParentSetupWidgetState extends State<ParentSetupWidget> {
                     Text(
                       subtitle,
                       style: FlutterFlowTheme.of(context).bodySmall.override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         color: FlutterFlowTheme.of(context).secondaryText,
                         letterSpacing: 0.0,
                       ),
@@ -338,7 +338,7 @@ class _ParentSetupWidgetState extends State<ParentSetupWidget> {
               isDense: true,
               hintText: nameHint,
               hintStyle: FlutterFlowTheme.of(context).labelMedium.override(
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
                 letterSpacing: 0.0,
               ),
               enabledBorder: OutlineInputBorder(
@@ -374,7 +374,7 @@ class _ParentSetupWidgetState extends State<ParentSetupWidget> {
               contentPadding: const EdgeInsetsDirectional.fromSTEB(16.0, 16.0, 16.0, 16.0),
             ),
             style: FlutterFlowTheme.of(context).bodyMedium.override(
-              fontFamily: 'Andika New Basic',
+              fontFamily: FFAppState().currentFontFamily,
               letterSpacing: 0.0,
             ),
             validator: (val) => nameValidator(context, val),
@@ -385,7 +385,7 @@ class _ParentSetupWidgetState extends State<ParentSetupWidget> {
           Text(
             'Pick a color',
             style: FlutterFlowTheme.of(context).bodyMedium.override(
-              fontFamily: 'Andika New Basic',
+              fontFamily: FFAppState().currentFontFamily,
               letterSpacing: 0.0,
             ),
           ),

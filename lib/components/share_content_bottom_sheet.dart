@@ -1,9 +1,9 @@
 import 'dart:io' show Platform;
+import '/app_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:collection/collection.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/custom_code/actions/sharing_service.dart';
@@ -301,7 +301,7 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
                         Text(
                           'Share $_shareTypeLabel',
                           style: FlutterFlowTheme.of(context).titleMedium.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 0.0,
                           ),
@@ -309,7 +309,7 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
                         Text(
                           widget.title,
                           style: FlutterFlowTheme.of(context).bodySmall.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: FlutterFlowTheme.of(context).secondaryText,
                             letterSpacing: 0.0,
                           ),
@@ -343,7 +343,7 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
                       child: Text(
                         _shareDescription,
                         style: FlutterFlowTheme.of(context).bodySmall.override(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           color: FlutterFlowTheme.of(context).secondaryText,
                           letterSpacing: 0.0,
                         ),
@@ -368,7 +368,7 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
                   decoration: InputDecoration(
                     hintText: 'Add a personal note (optional)',
                     hintStyle: TextStyle(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       color: Colors.grey[400],
                     ),
                     filled: true,
@@ -379,8 +379,8 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
                     ),
                     contentPadding: const EdgeInsets.all(16),
                   ),
-                  style: const TextStyle(
-                    fontFamily: 'Andika New Basic',
+                  style: TextStyle(
+                    fontFamily: FFAppState().currentFontFamily,
                   ),
                   maxLines: 2,
                 ),
@@ -403,7 +403,7 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
                     height: 56,
                     color: FlutterFlowTheme.of(context).primary,
                     textStyle: FlutterFlowTheme.of(context).titleMedium.override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       color: Colors.white,
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
@@ -424,7 +424,7 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
                     height: 56,
                     color: FlutterFlowTheme.of(context).primary,
                     textStyle: FlutterFlowTheme.of(context).titleMedium.override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       color: Colors.white,
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
@@ -444,7 +444,7 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
                 child: Text(
                   _shareCode != null ? 'Done' : 'Cancel',
                   style: FlutterFlowTheme.of(context).bodyMedium.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     color: FlutterFlowTheme.of(context).secondaryText,
                     letterSpacing: 0.0,
                   ),
@@ -591,7 +591,7 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
 
     if (code != null) {
       _shareCode = code;
-      _shareUrl = SharingService.getShareUrl(code!);
+      _shareUrl = SharingService.getShareUrl(code);
 
       _updateDebugData('SUCCESS - Share link created', {
         'share_code': code,
@@ -788,7 +788,7 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
             Text(
               'What you\'re sharing:',
               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
                 fontWeight: FontWeight.w600,
                 letterSpacing: 0.0,
               ),
@@ -819,7 +819,7 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
                       Text(
                         widget.activity!.title,
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 0.0,
                         ),
@@ -832,7 +832,7 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
                           style: TextStyle(
                             fontSize: 12,
                             color: Colors.grey[600],
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                           ),
                         ),
                     ],
@@ -847,7 +847,7 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
                 style: TextStyle(
                   fontSize: 13,
                   color: Colors.grey[600],
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
@@ -912,7 +912,7 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
                       Text(
                         widget.dayTemplateName ?? 'Saved Day',
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           fontWeight: FontWeight.w600,
                           fontSize: 15,
                           letterSpacing: 0.0,
@@ -925,7 +925,7 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
                         style: TextStyle(
                           fontSize: 12,
                           color: Colors.grey[500],
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                         ),
                       ),
                     ],
@@ -953,17 +953,17 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
                               )
                             : _buildInitialBox(item.name, primary),
                       ),
-                      const SizedBox(width: 10),
+                      SizedBox(width: 10),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               item.name,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w500,
-                                fontFamily: 'Andika New Basic',
+                                fontFamily: FFAppState().currentFontFamily,
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -974,7 +974,7 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
                                 style: TextStyle(
                                   fontSize: 11,
                                   color: Colors.grey[500],
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                 ),
                               ),
                           ],
@@ -1029,7 +1029,7 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
             Text(
               'What you\'re sharing:',
               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
                 fontWeight: FontWeight.w600,
                 letterSpacing: 0.0,
               ),
@@ -1060,7 +1060,7 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
                       Text(
                         '$activityCount activities',
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 0.0,
                         ),
@@ -1070,7 +1070,7 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
                         style: TextStyle(
                           fontSize: 12,
                           color: Colors.grey[600],
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                         ),
                       ),
                     ],
@@ -1104,7 +1104,7 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
                             color: count > 0
                                 ? FlutterFlowTheme.of(context).primary
                                 : Colors.grey[400],
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                           ),
                         ),
                       ),
@@ -1116,7 +1116,7 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
                         fontSize: 10,
                         color: index == 0 ? FlutterFlowTheme.of(context).primary : Colors.grey[600],
                         fontWeight: index == 0 ? FontWeight.w600 : FontWeight.normal,
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                       ),
                     ),
                   ],
@@ -1344,7 +1344,7 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
                     Text(
                       widget.title,
                       style: FlutterFlowTheme.of(context).bodyMedium.override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         fontWeight: FontWeight.w600,
                         fontSize: 15,
                         letterSpacing: 0.0,
@@ -1357,7 +1357,7 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.grey[500],
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                       ),
                     ),
                   ],
@@ -1393,7 +1393,7 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
                             )
                           : _buildInitialBox(item.name, primary),
                     ),
-                    const SizedBox(width: 10),
+                    SizedBox(width: 10),
                     // Name, role, date
                     Expanded(
                       child: Column(
@@ -1401,10 +1401,10 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
                         children: [
                           Text(
                             item.name,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.w500,
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -1415,7 +1415,7 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
                               style: TextStyle(
                                 fontSize: 11,
                                 color: Colors.grey[500],
-                                fontFamily: 'Andika New Basic',
+                                fontFamily: FFAppState().currentFontFamily,
                               ),
                             ),
                         ],
@@ -1433,7 +1433,7 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
                   style: TextStyle(
                     fontSize: 12,
                     color: Colors.grey[500],
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     fontStyle: FontStyle.italic,
                   ),
                 ),
@@ -1456,7 +1456,7 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
                   style: TextStyle(
                     fontSize: 12,
                     color: primary,
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                   ),
                 ),
               )).toList(),
@@ -1496,7 +1496,7 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
             fontSize: 16,
             fontWeight: FontWeight.w600,
             color: color,
-            fontFamily: 'Andika New Basic',
+            fontFamily: FFAppState().currentFontFamily,
           ),
         ),
       ),
@@ -1544,7 +1544,7 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
             Text(
               value,
               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 0.0,
               ),
@@ -1554,7 +1554,7 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
               style: TextStyle(
                 fontSize: 10,
                 color: Colors.grey[600],
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
               ),
             ),
           ],

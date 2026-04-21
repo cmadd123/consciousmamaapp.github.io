@@ -1,18 +1,13 @@
 import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
-import '/backend/schema/enums/enums.dart';
 import '/components/home_nav_bar_widget.dart';
 import '/flutter_flow/flutter_flow_button_tabbar.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
-import 'dart:ui';
 import '/flutter_flow/custom_functions.dart' as functions;
 import '/index.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'tasks_model.dart';
 export 'tasks_model.dart';
 
@@ -100,20 +95,20 @@ class _TasksWidgetState extends State<TasksWidget>
                         return Column(
                           children: [
                             Align(
-                              alignment: Alignment(0.0, 0),
+                              alignment: const Alignment(0.0, 0),
                               child: FlutterFlowButtonTabBar(
                                 useToggleButtonStyle: false,
                                 labelStyle: FlutterFlowTheme.of(context)
                                     .titleMedium
                                     .override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       letterSpacing: 0.0,
                                     ),
                                 unselectedLabelStyle:
                                     FlutterFlowTheme.of(context)
                                         .titleMedium
                                         .override(
-                                          fontFamily: 'Andika New Basic',
+                                          fontFamily: FFAppState().currentFontFamily,
                                           letterSpacing: 0.0,
                                         ),
                                 labelColor: FlutterFlowTheme.of(context).info,
@@ -130,11 +125,11 @@ class _TasksWidgetState extends State<TasksWidget>
                                 borderWidth: 2.0,
                                 borderRadius: 8.0,
                                 elevation: 0.0,
-                                buttonMargin: EdgeInsetsDirectional.fromSTEB(
+                                buttonMargin: const EdgeInsetsDirectional.fromSTEB(
                                     8.0, 0.0, 8.0, 0.0),
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     12.0, 20.0, 12.0, 0.0),
-                                tabs: [
+                                tabs: const [
                                   Tab(
                                     text: 'Today',
                                   ),
@@ -161,7 +156,7 @@ class _TasksWidgetState extends State<TasksWidget>
                                       children: [
                                         Padding(
                                           padding:
-                                              EdgeInsetsDirectional.fromSTEB(
+                                              const EdgeInsetsDirectional.fromSTEB(
                                                   20.0, 0.0, 20.0, 0.0),
                                           child: Container(
                                             width: double.infinity,
@@ -180,7 +175,7 @@ class _TasksWidgetState extends State<TasksWidget>
                                               mainAxisSize: MainAxisSize.max,
                                               children: [
                                                 Padding(
-                                                  padding: EdgeInsetsDirectional
+                                                  padding: const EdgeInsetsDirectional
                                                       .fromSTEB(
                                                           0.0, 10.0, 0.0, 0.0),
                                                   child: Text(
@@ -234,7 +229,7 @@ class _TasksWidgetState extends State<TasksWidget>
                                                                 upcomingTasksIndex];
                                                         return Padding(
                                                           padding:
-                                                              EdgeInsetsDirectional
+                                                              const EdgeInsetsDirectional
                                                                   .fromSTEB(
                                                                       16.0,
                                                                       20.0,
@@ -254,13 +249,13 @@ class _TasksWidgetState extends State<TasksWidget>
                                                                           5.0),
                                                               border:
                                                                   Border.all(
-                                                                color: Color(
+                                                                color: const Color(
                                                                     0x19000000),
                                                               ),
                                                             ),
                                                             child: Padding(
                                                               padding:
-                                                                  EdgeInsetsDirectional
+                                                                  const EdgeInsetsDirectional
                                                                       .fromSTEB(
                                                                           16.0,
                                                                           10.0,
@@ -292,8 +287,8 @@ class _TasksWidgetState extends State<TasksWidget>
                                                                         style: FlutterFlowTheme.of(context)
                                                                             .bodyMedium
                                                                             .override(
-                                                                              fontFamily: 'Andika New Basic',
-                                                                              color: Color(0xFF515151),
+                                                                              fontFamily: FFAppState().currentFontFamily,
+                                                                              color: const Color(0xFF515151),
                                                                               fontSize: 11.0,
                                                                               letterSpacing: 0.0,
                                                                             ),
@@ -308,8 +303,8 @@ class _TasksWidgetState extends State<TasksWidget>
                                                                         style: FlutterFlowTheme.of(context)
                                                                             .bodyMedium
                                                                             .override(
-                                                                              fontFamily: 'Andika New Basic',
-                                                                              color: Color(0xFF515151),
+                                                                              fontFamily: FFAppState().currentFontFamily,
+                                                                              color: const Color(0xFF515151),
                                                                               fontSize: 11.0,
                                                                               letterSpacing: 0.0,
                                                                             ),
@@ -325,7 +320,7 @@ class _TasksWidgetState extends State<TasksWidget>
                                                                             .spaceBetween,
                                                                     children: [
                                                                       Padding(
-                                                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                                                        padding: const EdgeInsetsDirectional.fromSTEB(
                                                                             0.0,
                                                                             0.0,
                                                                             8.0,
@@ -344,14 +339,14 @@ class _TasksWidgetState extends State<TasksWidget>
                                                                           style: FlutterFlowTheme.of(context)
                                                                               .bodyMedium
                                                                               .override(
-                                                                                fontFamily: 'Andika New Basic',
-                                                                                color: Color(0xFF515151),
+                                                                                fontFamily: FFAppState().currentFontFamily,
+                                                                                color: const Color(0xFF515151),
                                                                                 fontSize: 10.0,
                                                                                 letterSpacing: 0.0,
                                                                               ),
                                                                         ),
                                                                       ),
-                                                                      Icon(
+                                                                      const Icon(
                                                                         FFIcons
                                                                             .kcheckicon,
                                                                         color: Color(
@@ -408,7 +403,7 @@ class _TasksWidgetState extends State<TasksWidget>
                                                                 todaytaskIndex];
                                                         return Padding(
                                                           padding:
-                                                              EdgeInsetsDirectional
+                                                              const EdgeInsetsDirectional
                                                                   .fromSTEB(
                                                                       16.0,
                                                                       0.0,
@@ -428,13 +423,13 @@ class _TasksWidgetState extends State<TasksWidget>
                                                                           5.0),
                                                               border:
                                                                   Border.all(
-                                                                color: Color(
+                                                                color: const Color(
                                                                     0x19000000),
                                                               ),
                                                             ),
                                                             child: Padding(
                                                               padding:
-                                                                  EdgeInsetsDirectional
+                                                                  const EdgeInsetsDirectional
                                                                       .fromSTEB(
                                                                           16.0,
                                                                           10.0,
@@ -460,7 +455,7 @@ class _TasksWidgetState extends State<TasksWidget>
                                                                             .start,
                                                                     children: [
                                                                       Padding(
-                                                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                                                        padding: const EdgeInsetsDirectional.fromSTEB(
                                                                             0.0,
                                                                             6.0,
                                                                             9.0,
@@ -491,7 +486,7 @@ class _TasksWidgetState extends State<TasksWidget>
                                                                                 BoxDecoration(
                                                                               color: FlutterFlowTheme.of(context).secondaryBackground,
                                                                               border: Border.all(
-                                                                                color: Color(0xFF999999),
+                                                                                color: const Color(0xFF999999),
                                                                                 width: 1.0,
                                                                               ),
                                                                             ),
@@ -508,8 +503,8 @@ class _TasksWidgetState extends State<TasksWidget>
                                                                               'title',
                                                                             ),
                                                                             style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                  fontFamily: 'Andika New Basic',
-                                                                                  color: Color(0xFF515151),
+                                                                                  fontFamily: FFAppState().currentFontFamily,
+                                                                                  color: const Color(0xFF515151),
                                                                                   fontSize: 11.0,
                                                                                   letterSpacing: 0.0,
                                                                                 ),
@@ -527,7 +522,7 @@ class _TasksWidgetState extends State<TasksWidget>
                                                                             .spaceBetween,
                                                                     children: [
                                                                       Padding(
-                                                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                                                        padding: const EdgeInsetsDirectional.fromSTEB(
                                                                             0.0,
                                                                             0.0,
                                                                             8.0,
@@ -546,8 +541,8 @@ class _TasksWidgetState extends State<TasksWidget>
                                                                           style: FlutterFlowTheme.of(context)
                                                                               .bodyMedium
                                                                               .override(
-                                                                                fontFamily: 'Andika New Basic',
-                                                                                color: Color(0xFF515151),
+                                                                                fontFamily: FFAppState().currentFontFamily,
+                                                                                color: const Color(0xFF515151),
                                                                                 fontSize: 10.0,
                                                                                 letterSpacing: 0.0,
                                                                               ),
@@ -568,7 +563,7 @@ class _TasksWidgetState extends State<TasksWidget>
                                             ),
                                           ),
                                         ),
-                                      ].addToEnd(SizedBox(height: 81.0)),
+                                      ].addToEnd(const SizedBox(height: 81.0)),
                                     ),
                                   ),
                                   SingleChildScrollView(
@@ -577,7 +572,7 @@ class _TasksWidgetState extends State<TasksWidget>
                                       children: [
                                         Padding(
                                           padding:
-                                              EdgeInsetsDirectional.fromSTEB(
+                                              const EdgeInsetsDirectional.fromSTEB(
                                                   20.0, 0.0, 20.0, 0.0),
                                           child: Container(
                                             width: double.infinity,
@@ -596,7 +591,7 @@ class _TasksWidgetState extends State<TasksWidget>
                                               mainAxisSize: MainAxisSize.max,
                                               children: [
                                                 Padding(
-                                                  padding: EdgeInsetsDirectional
+                                                  padding: const EdgeInsetsDirectional
                                                       .fromSTEB(
                                                           0.0, 10.0, 0.0, 0.0),
                                                   child: Text(
@@ -658,7 +653,7 @@ class _TasksWidgetState extends State<TasksWidget>
                                                                   upcomingTasks[
                                                                       upcomingTasksIndex];
                                                               return Padding(
-                                                                padding: EdgeInsetsDirectional
+                                                                padding: const EdgeInsetsDirectional
                                                                     .fromSTEB(
                                                                         16.0,
                                                                         20.0,
@@ -679,13 +674,13 @@ class _TasksWidgetState extends State<TasksWidget>
                                                                     border:
                                                                         Border
                                                                             .all(
-                                                                      color: Color(
+                                                                      color: const Color(
                                                                           0x19000000),
                                                                     ),
                                                                   ),
                                                                   child:
                                                                       Padding(
-                                                                    padding: EdgeInsetsDirectional
+                                                                    padding: const EdgeInsetsDirectional
                                                                         .fromSTEB(
                                                                             16.0,
                                                                             10.0,
@@ -711,8 +706,8 @@ class _TasksWidgetState extends State<TasksWidget>
                                                                                 'title',
                                                                               ),
                                                                               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                    fontFamily: 'Andika New Basic',
-                                                                                    color: Color(0xFF515151),
+                                                                                    fontFamily: FFAppState().currentFontFamily,
+                                                                                    color: const Color(0xFF515151),
                                                                                     fontSize: 11.0,
                                                                                     letterSpacing: 0.0,
                                                                                   ),
@@ -723,8 +718,8 @@ class _TasksWidgetState extends State<TasksWidget>
                                                                                 'des',
                                                                               ),
                                                                               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                    fontFamily: 'Andika New Basic',
-                                                                                    color: Color(0xFF515151),
+                                                                                    fontFamily: FFAppState().currentFontFamily,
+                                                                                    color: const Color(0xFF515151),
                                                                                     fontSize: 11.0,
                                                                                     letterSpacing: 0.0,
                                                                                   ),
@@ -738,7 +733,7 @@ class _TasksWidgetState extends State<TasksWidget>
                                                                               MainAxisAlignment.spaceBetween,
                                                                           children: [
                                                                             Padding(
-                                                                              padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 8.0, 0.0),
+                                                                              padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 8.0, 0.0),
                                                                               child: Text(
                                                                                 valueOrDefault<String>(
                                                                                   dateTimeFormat(
@@ -749,14 +744,14 @@ class _TasksWidgetState extends State<TasksWidget>
                                                                                   '3:27 AM',
                                                                                 ),
                                                                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                      fontFamily: 'Andika New Basic',
-                                                                                      color: Color(0xFF515151),
+                                                                                      fontFamily: FFAppState().currentFontFamily,
+                                                                                      color: const Color(0xFF515151),
                                                                                       fontSize: 10.0,
                                                                                       letterSpacing: 0.0,
                                                                                     ),
                                                                               ),
                                                                             ),
-                                                                            Icon(
+                                                                            const Icon(
                                                                               FFIcons.kcheckicon,
                                                                               color: Color(0xFF32DD8D),
                                                                               size: 24.0,
@@ -799,7 +794,7 @@ class _TasksWidgetState extends State<TasksWidget>
                                                                   listView[
                                                                       listViewIndex];
                                                               return Padding(
-                                                                padding: EdgeInsetsDirectional
+                                                                padding: const EdgeInsetsDirectional
                                                                     .fromSTEB(
                                                                         16.0,
                                                                         0.0,
@@ -820,13 +815,13 @@ class _TasksWidgetState extends State<TasksWidget>
                                                                     border:
                                                                         Border
                                                                             .all(
-                                                                      color: Color(
+                                                                      color: const Color(
                                                                           0x19000000),
                                                                     ),
                                                                   ),
                                                                   child:
                                                                       Padding(
-                                                                    padding: EdgeInsetsDirectional
+                                                                    padding: const EdgeInsetsDirectional
                                                                         .fromSTEB(
                                                                             16.0,
                                                                             10.0,
@@ -850,7 +845,7 @@ class _TasksWidgetState extends State<TasksWidget>
                                                                               CrossAxisAlignment.start,
                                                                           children: [
                                                                             Padding(
-                                                                              padding: EdgeInsetsDirectional.fromSTEB(0.0, 6.0, 9.0, 0.0),
+                                                                              padding: const EdgeInsetsDirectional.fromSTEB(0.0, 6.0, 9.0, 0.0),
                                                                               child: InkWell(
                                                                                 splashColor: Colors.transparent,
                                                                                 focusColor: Colors.transparent,
@@ -867,7 +862,7 @@ class _TasksWidgetState extends State<TasksWidget>
                                                                                   decoration: BoxDecoration(
                                                                                     color: FlutterFlowTheme.of(context).secondaryBackground,
                                                                                     border: Border.all(
-                                                                                      color: Color(0xFF999999),
+                                                                                      color: const Color(0xFF999999),
                                                                                       width: 1.0,
                                                                                     ),
                                                                                   ),
@@ -883,8 +878,8 @@ class _TasksWidgetState extends State<TasksWidget>
                                                                                     '- -',
                                                                                   ),
                                                                                   style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                        fontFamily: 'Andika New Basic',
-                                                                                        color: Color(0xFF515151),
+                                                                                        fontFamily: FFAppState().currentFontFamily,
+                                                                                        color: const Color(0xFF515151),
                                                                                         fontSize: 11.0,
                                                                                         letterSpacing: 0.0,
                                                                                       ),
@@ -900,7 +895,7 @@ class _TasksWidgetState extends State<TasksWidget>
                                                                               MainAxisAlignment.spaceBetween,
                                                                           children: [
                                                                             Padding(
-                                                                              padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 8.0, 0.0),
+                                                                              padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 8.0, 0.0),
                                                                               child: Text(
                                                                                 valueOrDefault<String>(
                                                                                   dateTimeFormat(
@@ -911,8 +906,8 @@ class _TasksWidgetState extends State<TasksWidget>
                                                                                   '3:27 AM',
                                                                                 ),
                                                                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                      fontFamily: 'Andika New Basic',
-                                                                                      color: Color(0xFF515151),
+                                                                                      fontFamily: FFAppState().currentFontFamily,
+                                                                                      color: const Color(0xFF515151),
                                                                                       fontSize: 10.0,
                                                                                       letterSpacing: 0.0,
                                                                                     ),
@@ -936,7 +931,7 @@ class _TasksWidgetState extends State<TasksWidget>
                                             ),
                                           ),
                                         ),
-                                      ].addToEnd(SizedBox(height: 82.0)),
+                                      ].addToEnd(const SizedBox(height: 82.0)),
                                     ),
                                   ),
                                   SingleChildScrollView(
@@ -945,7 +940,7 @@ class _TasksWidgetState extends State<TasksWidget>
                                       children: [
                                         Padding(
                                           padding:
-                                              EdgeInsetsDirectional.fromSTEB(
+                                              const EdgeInsetsDirectional.fromSTEB(
                                                   20.0, 0.0, 20.0, 0.0),
                                           child: Container(
                                             width: double.infinity,
@@ -964,7 +959,7 @@ class _TasksWidgetState extends State<TasksWidget>
                                               mainAxisSize: MainAxisSize.max,
                                               children: [
                                                 Padding(
-                                                  padding: EdgeInsetsDirectional
+                                                  padding: const EdgeInsetsDirectional
                                                       .fromSTEB(
                                                           0.0, 10.0, 0.0, 0.0),
                                                   child: Text(
@@ -1004,7 +999,7 @@ class _TasksWidgetState extends State<TasksWidget>
                                                                 upcomingTasksIndex];
                                                         return Padding(
                                                           padding:
-                                                              EdgeInsetsDirectional
+                                                              const EdgeInsetsDirectional
                                                                   .fromSTEB(
                                                                       16.0,
                                                                       20.0,
@@ -1024,13 +1019,13 @@ class _TasksWidgetState extends State<TasksWidget>
                                                                           5.0),
                                                               border:
                                                                   Border.all(
-                                                                color: Color(
+                                                                color: const Color(
                                                                     0x19000000),
                                                               ),
                                                             ),
                                                             child: Padding(
                                                               padding:
-                                                                  EdgeInsetsDirectional
+                                                                  const EdgeInsetsDirectional
                                                                       .fromSTEB(
                                                                           16.0,
                                                                           10.0,
@@ -1062,8 +1057,8 @@ class _TasksWidgetState extends State<TasksWidget>
                                                                         style: FlutterFlowTheme.of(context)
                                                                             .bodyMedium
                                                                             .override(
-                                                                              fontFamily: 'Andika New Basic',
-                                                                              color: Color(0xFF515151),
+                                                                              fontFamily: FFAppState().currentFontFamily,
+                                                                              color: const Color(0xFF515151),
                                                                               fontSize: 11.0,
                                                                               letterSpacing: 0.0,
                                                                             ),
@@ -1078,8 +1073,8 @@ class _TasksWidgetState extends State<TasksWidget>
                                                                         style: FlutterFlowTheme.of(context)
                                                                             .bodyMedium
                                                                             .override(
-                                                                              fontFamily: 'Andika New Basic',
-                                                                              color: Color(0xFF515151),
+                                                                              fontFamily: FFAppState().currentFontFamily,
+                                                                              color: const Color(0xFF515151),
                                                                               fontSize: 11.0,
                                                                               letterSpacing: 0.0,
                                                                             ),
@@ -1095,7 +1090,7 @@ class _TasksWidgetState extends State<TasksWidget>
                                                                             .spaceBetween,
                                                                     children: [
                                                                       Padding(
-                                                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                                                        padding: const EdgeInsetsDirectional.fromSTEB(
                                                                             0.0,
                                                                             0.0,
                                                                             8.0,
@@ -1114,14 +1109,14 @@ class _TasksWidgetState extends State<TasksWidget>
                                                                           style: FlutterFlowTheme.of(context)
                                                                               .bodyMedium
                                                                               .override(
-                                                                                fontFamily: 'Andika New Basic',
-                                                                                color: Color(0xFF515151),
+                                                                                fontFamily: FFAppState().currentFontFamily,
+                                                                                color: const Color(0xFF515151),
                                                                                 fontSize: 10.0,
                                                                                 letterSpacing: 0.0,
                                                                               ),
                                                                         ),
                                                                       ),
-                                                                      Icon(
+                                                                      const Icon(
                                                                         FFIcons
                                                                             .kcheckicon,
                                                                         color: Color(
@@ -1144,7 +1139,7 @@ class _TasksWidgetState extends State<TasksWidget>
                                             ),
                                           ),
                                         ),
-                                      ].addToEnd(SizedBox(height: 81.0)),
+                                      ].addToEnd(const SizedBox(height: 81.0)),
                                     ),
                                   ),
                                 ],
@@ -1158,10 +1153,10 @@ class _TasksWidgetState extends State<TasksWidget>
                 ],
               ),
               Align(
-                alignment: AlignmentDirectional(1.0, 1.0),
+                alignment: const AlignmentDirectional(1.0, 1.0),
                 child: Padding(
                   padding:
-                      EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 20.0, 100.0),
+                      const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 20.0, 100.0),
                   child: FFButtonWidget(
                     onPressed: () async {
                       context.pushNamed(
@@ -1175,20 +1170,20 @@ class _TasksWidgetState extends State<TasksWidget>
                       );
                     },
                     text: 'Add Task',
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.add,
                       size: 25.0,
                     ),
                     options: FFButtonOptions(
                       height: 40.0,
                       padding:
-                          EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
+                          const EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
                       iconPadding:
-                          EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
+                          const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
                       color: FlutterFlowTheme.of(context).primary,
                       textStyle:
                           FlutterFlowTheme.of(context).titleSmall.override(
-                                fontFamily: 'Andika New Basic',
+                                fontFamily: FFAppState().currentFontFamily,
                                 color: Colors.white,
                                 fontSize: 20.0,
                                 letterSpacing: 0.0,

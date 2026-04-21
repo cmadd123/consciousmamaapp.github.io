@@ -3,7 +3,6 @@ import 'package:app_links/app_links.dart';
 import 'package:flutter/foundation.dart';
 import '/index.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import '/flutter_flow/nav/nav.dart';
 import '/custom_code/actions/analytics_service.dart';
 
 /// Handles deep links for the app (e.g., momrise://shared/CODE, https://momrise.app/s/CODE)

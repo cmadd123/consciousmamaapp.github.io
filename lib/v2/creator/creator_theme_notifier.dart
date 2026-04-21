@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import '/app_state.dart';
 import '/backend/backend.dart';
 import '/custom_code/actions/creator_service.dart';
+
+const String _kDefaultFontFamily = 'Andika New Basic';
 
 /// Manages the active creator theme state.
 ///
@@ -49,6 +52,13 @@ class CreatorThemeNotifier extends ChangeNotifier {
           ? parseHexColor(_activeCreator!.themeBackgroundGradientEnd)
           : null;
 
+  /// Push the resolved font family to FFAppState so every widget that reads
+  /// FFAppState().currentFontFamily repaints with the new font. Called after
+  /// any state change that could affect the active font.
+  void _syncFontToAppState() {
+    FFAppState().currentFontFamily = fontFamily ?? _kDefaultFontFamily;
+  }
+
   /// Load the active creator from the user's profile.
   /// Call this on app startup after auth.
   Future<void> loadActiveCreator() async {
@@ -63,6 +73,7 @@ class CreatorThemeNotifier extends ChangeNotifier {
     }
 
     _isLoading = false;
+    _syncFontToAppState();
     notifyListeners();
   }
 
@@ -70,18 +81,21 @@ class CreatorThemeNotifier extends ChangeNotifier {
   void setActiveCreator(CreatorsRecord? creator) {
     _activeCreator = creator;
     _useCreatorTheme = creator != null; // Auto-enable when activating
+    _syncFontToAppState();
     notifyListeners();
   }
 
   /// Toggle the global/creator visual switch.
   void toggleCreatorTheme() {
     _useCreatorTheme = !_useCreatorTheme;
+    _syncFontToAppState();
     notifyListeners();
   }
 
   /// Explicitly set the toggle state.
   void setUseCreatorTheme(bool value) {
     _useCreatorTheme = value;
+    _syncFontToAppState();
     notifyListeners();
   }
 
@@ -89,6 +103,7 @@ class CreatorThemeNotifier extends ChangeNotifier {
   void clearActiveCreator() {
     _activeCreator = null;
     _useCreatorTheme = false;
+    _syncFontToAppState();
     notifyListeners();
   }
 }

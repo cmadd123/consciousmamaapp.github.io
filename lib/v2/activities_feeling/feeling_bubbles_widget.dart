@@ -8,9 +8,7 @@ import '/index.dart';
 import '/backend/backend.dart';
 import '/auth/firebase_auth/auth_util.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import '/app_state.dart';
 import 'feeling_bubbles_model.dart';
 export 'feeling_bubbles_model.dart';
 
@@ -78,19 +76,19 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
         behavior: HitTestBehavior.translucent,
         child: Scaffold(
         key: scaffoldKey,
-        backgroundColor: isComfortMode ? Color(0xFF2C3E50) : Color(0xFFFFE9E1),
+        backgroundColor: isComfortMode ? const Color(0xFF2C3E50) : const Color(0xFFFFE9E1),
         body: Stack(
           children: [
             Container(
               decoration: BoxDecoration(
                 gradient: isComfortMode
-                  ? LinearGradient(
+                  ? const LinearGradient(
                       colors: [Color(0xFF2C3E50), Color(0xFF34495E)],
                       stops: [0.0, 1.0],
                       begin: AlignmentDirectional(0.0, -1.0),
                       end: AlignmentDirectional(0, 1.0),
                     )
-                  : LinearGradient(
+                  : const LinearGradient(
                       colors: [Color(0xFFD7F2EB), Color(0xFFFFE9E1)],
                       stops: [0.0, 1.0],
                       begin: AlignmentDirectional(0.0, -1.0),
@@ -102,7 +100,7 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
                   children: [
                     // Page title
                     CascadeItem(index: 0, staggerMs: 150, child: Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(24.0, 24.0, 24.0, 0.0),
+                      padding: const EdgeInsetsDirectional.fromSTEB(24.0, 24.0, 24.0, 0.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -111,14 +109,14 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
                             style: FlutterFlowTheme.of(context)
                                 .headlineLarge
                                 .override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   color: isComfortMode ? Colors.white : null,
                                   fontSize: 28.0,
                                   letterSpacing: isComfortMode ? 0.5 : 0.0,
                                   fontWeight: isComfortMode ? FontWeight.w300 : FontWeight.bold,
                                 ),
                           ),
-                          SizedBox(height: 16.0),
+                          const SizedBox(height: 16.0),
                           // Tab Bar
                           Container(
                             decoration: BoxDecoration(
@@ -143,19 +141,19 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
                               labelStyle: FlutterFlowTheme.of(context)
                                   .bodyMedium
                                   .override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     fontWeight: FontWeight.w600,
                                     fontSize: 14.0,
                                   ),
                               unselectedLabelStyle: FlutterFlowTheme.of(context)
                                   .bodyMedium
                                   .override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     fontWeight: FontWeight.w500,
                                     fontSize: 14.0,
                                   ),
                               dividerColor: Colors.transparent,
-                              tabs: [
+                              tabs: const [
                                 Tab(text: 'Categories'),
                                 Tab(text: 'My Week'),
                               ],
@@ -164,7 +162,7 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
                         ],
                       ),
                     )),
-                    SizedBox(height: 16.0),
+                    const SizedBox(height: 16.0),
                     // Tab content
                     Expanded(
                       child: CascadeItem(index: 1, staggerMs: 150, child: TabBarView(
@@ -198,7 +196,7 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
   Widget _buildCategoriesTab(BuildContext context, bool isComfortMode) {
     return SingleChildScrollView(
       child: Padding(
-        padding: EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 100.0),
+        padding: const EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 100.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -208,7 +206,7 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
               style: FlutterFlowTheme.of(context)
                   .bodyMedium
                   .override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     color: isComfortMode ? Colors.white70 : FlutterFlowTheme.of(context).secondaryText,
                     fontSize: 16.0,
                     letterSpacing: isComfortMode ? 0.5 : 0.0,
@@ -216,7 +214,7 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
                   ),
             ),
 
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
 
             // Favorites, Custom Activities, and Browse All buttons
             Row(
@@ -228,7 +226,7 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
                       context.pushNamed('FavoriteActivities');
                     },
                     child: Container(
-                      padding: EdgeInsets.symmetric(vertical: 14.0, horizontal: 8.0),
+                      padding: const EdgeInsets.symmetric(vertical: 14.0, horizontal: 8.0),
                       decoration: BoxDecoration(
                         color: isComfortMode ? Colors.transparent : FlutterFlowTheme.of(context).secondaryBackground,
                         borderRadius: BorderRadius.circular(14.0),
@@ -236,7 +234,7 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
                           ? Border.all(color: Colors.white.withValues(alpha: 0.3), width: 1.0)
                           : null,
                         boxShadow: isComfortMode ? null : [
-                          BoxShadow(
+                          const BoxShadow(
                             blurRadius: 4.0,
                             color: Color(0x1A000000),
                             offset: Offset(0, 2),
@@ -251,13 +249,13 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
                             color: isComfortMode ? Colors.red.shade300 : Colors.red,
                             size: 22.0,
                           ),
-                          SizedBox(height: 6.0),
+                          const SizedBox(height: 6.0),
                           Text(
                             'Favorites',
                             style: FlutterFlowTheme.of(context)
                                 .bodyLarge
                                 .override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   color: isComfortMode ? Colors.white : null,
                                   fontSize: 12.0,
                                   letterSpacing: isComfortMode ? 0.5 : 0.0,
@@ -269,7 +267,7 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
                     ),
                   ),
                 ),
-                SizedBox(width: 10.0),
+                const SizedBox(width: 10.0),
                 // Custom Activities button
                 Expanded(
                   child: InkWell(
@@ -281,7 +279,7 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
                       );
                     },
                     child: Container(
-                      padding: EdgeInsets.symmetric(vertical: 14.0, horizontal: 8.0),
+                      padding: const EdgeInsets.symmetric(vertical: 14.0, horizontal: 8.0),
                       decoration: BoxDecoration(
                         color: isComfortMode ? Colors.transparent : FlutterFlowTheme.of(context).secondaryBackground,
                         borderRadius: BorderRadius.circular(14.0),
@@ -289,7 +287,7 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
                           ? Border.all(color: Colors.white.withValues(alpha: 0.3), width: 1.0)
                           : null,
                         boxShadow: isComfortMode ? null : [
-                          BoxShadow(
+                          const BoxShadow(
                             blurRadius: 4.0,
                             color: Color(0x1A000000),
                             offset: Offset(0, 2),
@@ -304,13 +302,13 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
                             color: isComfortMode ? FlutterFlowTheme.of(context).primary.withValues(alpha: 0.8) : FlutterFlowTheme.of(context).primary,
                             size: 22.0,
                           ),
-                          SizedBox(height: 6.0),
+                          const SizedBox(height: 6.0),
                           Text(
                             'Custom',
                             style: FlutterFlowTheme.of(context)
                                 .bodyLarge
                                 .override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   color: isComfortMode ? Colors.white : null,
                                   fontSize: 12.0,
                                   letterSpacing: isComfortMode ? 0.5 : 0.0,
@@ -322,7 +320,7 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
                     ),
                   ),
                 ),
-                SizedBox(width: 10.0),
+                const SizedBox(width: 10.0),
                 // Browse All button
                 Expanded(
                   child: InkWell(
@@ -335,7 +333,7 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
                       );
                     },
                     child: Container(
-                      padding: EdgeInsets.symmetric(vertical: 14.0, horizontal: 8.0),
+                      padding: const EdgeInsets.symmetric(vertical: 14.0, horizontal: 8.0),
                       decoration: BoxDecoration(
                         color: isComfortMode ? Colors.transparent : FlutterFlowTheme.of(context).secondaryBackground,
                         borderRadius: BorderRadius.circular(14.0),
@@ -343,7 +341,7 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
                           ? Border.all(color: Colors.white.withValues(alpha: 0.3), width: 1.0)
                           : null,
                         boxShadow: isComfortMode ? null : [
-                          BoxShadow(
+                          const BoxShadow(
                             blurRadius: 4.0,
                             color: Color(0x1A000000),
                             offset: Offset(0, 2),
@@ -355,16 +353,16 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
                         children: [
                           Icon(
                             Icons.list_alt,
-                            color: isComfortMode ? Color(0xFF9B8AA0) : Color(0xFF9B8AA0),
+                            color: isComfortMode ? const Color(0xFF9B8AA0) : const Color(0xFF9B8AA0),
                             size: 22.0,
                           ),
-                          SizedBox(height: 6.0),
+                          const SizedBox(height: 6.0),
                           Text(
                             'Browse',
                             style: FlutterFlowTheme.of(context)
                                 .bodyLarge
                                 .override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   color: isComfortMode ? Colors.white : null,
                                   fontSize: 12.0,
                                   letterSpacing: isComfortMode ? 0.5 : 0.0,
@@ -379,7 +377,7 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
               ],
             ),
 
-            SizedBox(height: 24.0),
+            const SizedBox(height: 24.0),
 
             // Category cards - 10 practical situations
             _buildCategoryCard(
@@ -389,9 +387,9 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
               'Sibling Peacekeepers',
               'Activities that help siblings play together without fighting',
               'sibling',
-              Color(0xFFE91E63), // Pink
+              const Color(0xFFE91E63), // Pink
             ),
-            SizedBox(height: 12.0),
+            const SizedBox(height: 12.0),
             _buildCategoryCard(
               context,
               isComfortMode,
@@ -399,9 +397,9 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
               'Transition & Waiting',
               'For appointments, errands, or between activities',
               'transition',
-              Color(0xFF9C27B0), // Purple
+              const Color(0xFF9C27B0), // Purple
             ),
-            SizedBox(height: 12.0),
+            const SizedBox(height: 12.0),
             _buildCategoryCard(
               context,
               isComfortMode,
@@ -409,9 +407,9 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
               'Energy Burners',
               'When they need to move their bodies NOW',
               'energy',
-              Color(0xFFFF9800), // Orange
+              const Color(0xFFFF9800), // Orange
             ),
-            SizedBox(height: 12.0),
+            const SizedBox(height: 12.0),
             _buildCategoryCard(
               context,
               isComfortMode,
@@ -419,9 +417,9 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
               'Quick Wins',
               'Under 10 minutes, minimal setup',
               'quick',
-              Color(0xFF4CAF50), // Green
+              const Color(0xFF4CAF50), // Green
             ),
-            SizedBox(height: 12.0),
+            const SizedBox(height: 12.0),
             _buildCategoryCard(
               context,
               isComfortMode,
@@ -429,9 +427,9 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
               'Independent Play',
               'So you can get something done',
               'independent',
-              Color(0xFF2196F3), // Blue
+              const Color(0xFF2196F3), // Blue
             ),
-            SizedBox(height: 12.0),
+            const SizedBox(height: 12.0),
             _buildCategoryCard(
               context,
               isComfortMode,
@@ -439,9 +437,9 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
               'Calm Down',
               'When emotions are running high',
               'calm',
-              Color(0xFF00BCD4), // Cyan
+              const Color(0xFF00BCD4), // Cyan
             ),
-            SizedBox(height: 12.0),
+            const SizedBox(height: 12.0),
             _buildCategoryCard(
               context,
               isComfortMode,
@@ -449,9 +447,9 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
               'Cooking Together',
               'Kitchen activities they can help with',
               'cooking',
-              Color(0xFFFF5722), // Deep Orange
+              const Color(0xFFFF5722), // Deep Orange
             ),
-            SizedBox(height: 12.0),
+            const SizedBox(height: 12.0),
             _buildCategoryCard(
               context,
               isComfortMode,
@@ -459,9 +457,9 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
               'Bath Time Fun',
               'Make bath time easier',
               'bath',
-              Color(0xFF3F51B5), // Indigo
+              const Color(0xFF3F51B5), // Indigo
             ),
-            SizedBox(height: 12.0),
+            const SizedBox(height: 12.0),
             _buildCategoryCard(
               context,
               isComfortMode,
@@ -469,9 +467,9 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
               'Messy Play',
               'When you\'re ready for cleanup',
               'messy',
-              Color(0xFF795548), // Brown
+              const Color(0xFF795548), // Brown
             ),
-            SizedBox(height: 12.0),
+            const SizedBox(height: 12.0),
             _buildCategoryCard(
               context,
               isComfortMode,
@@ -479,10 +477,10 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
               'Weather Days',
               'Stuck inside or outdoor adventures',
               'weather',
-              Color(0xFF607D8B), // Blue Grey
+              const Color(0xFF607D8B), // Blue Grey
             ),
 
-            SizedBox(height: 32.0),
+            const SizedBox(height: 32.0),
           ],
         ),
       ),
@@ -510,7 +508,7 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
         );
       },
       child: Container(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         decoration: BoxDecoration(
           color: isComfortMode ? Colors.transparent : FlutterFlowTheme.of(context).secondaryBackground,
           borderRadius: BorderRadius.circular(14.0),
@@ -518,7 +516,7 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
             ? Border.all(color: Colors.white.withValues(alpha: 0.3), width: 1.0)
             : Border.all(color: accentColor.withValues(alpha: 0.3), width: 1.5),
           boxShadow: isComfortMode ? null : [
-            BoxShadow(
+            const BoxShadow(
               blurRadius: 4.0,
               color: Color(0x1A000000),
               offset: Offset(0, 2),
@@ -538,11 +536,11 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
               child: Center(
                 child: Text(
                   emoji,
-                  style: TextStyle(fontSize: 28.0),
+                  style: const TextStyle(fontSize: 28.0),
                 ),
               ),
             ),
-            SizedBox(width: 14.0),
+            const SizedBox(width: 14.0),
             // Title and description
             Expanded(
               child: Column(
@@ -553,20 +551,20 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
                     style: FlutterFlowTheme.of(context)
                         .bodyLarge
                         .override(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           color: isComfortMode ? Colors.white : FlutterFlowTheme.of(context).primaryText,
                           fontSize: 16.0,
                           fontWeight: FontWeight.w600,
                           letterSpacing: isComfortMode ? 0.5 : 0.0,
                         ),
                   ),
-                  SizedBox(height: 4.0),
+                  const SizedBox(height: 4.0),
                   Text(
                     description,
                     style: FlutterFlowTheme.of(context)
                         .bodySmall
                         .override(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           color: isComfortMode ? Colors.white70 : FlutterFlowTheme.of(context).secondaryText,
                           fontSize: 13.0,
                           letterSpacing: isComfortMode ? 0.5 : 0.0,
@@ -592,7 +590,7 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
     // Get next 7 days starting from today
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
-    final endDate = today.add(Duration(days: 6, hours: 23, minutes: 59, seconds: 59));
+    final endDate = today.add(const Duration(days: 6, hours: 23, minutes: 59, seconds: 59));
 
     return StreamBuilder<List<EventAndTaskRecord>>(
       stream: queryEventAndTaskRecord(
@@ -651,13 +649,13 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
 
         return SingleChildScrollView(
           child: Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 100.0),
+            padding: const EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 100.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Quick add hint
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
                   decoration: BoxDecoration(
                     color: isComfortMode
                       ? Colors.white.withValues(alpha: 0.08)
@@ -671,14 +669,14 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
                         size: 16.0,
                         color: isComfortMode ? Colors.white54 : FlutterFlowTheme.of(context).primary,
                       ),
-                      SizedBox(width: 8.0),
+                      const SizedBox(width: 8.0),
                       Expanded(
                         child: Text(
                           'Tip: Quick Add activities from Custom or Browse to your week!',
                           style: FlutterFlowTheme.of(context)
                               .bodySmall
                               .override(
-                                fontFamily: 'Andika New Basic',
+                                fontFamily: FFAppState().currentFontFamily,
                                 color: isComfortMode ? Colors.white54 : FlutterFlowTheme.of(context).secondaryText,
                                 fontSize: 12.0,
                               ),
@@ -687,7 +685,7 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
                     ],
                   ),
                 ),
-                SizedBox(height: 12.0),
+                const SizedBox(height: 12.0),
                 // Week header
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -697,7 +695,7 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
                       style: FlutterFlowTheme.of(context)
                           .bodyLarge
                           .override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: isComfortMode ? Colors.white70 : FlutterFlowTheme.of(context).secondaryText,
                             fontSize: 14.0,
                           ),
@@ -709,12 +707,12 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
                           style: FlutterFlowTheme.of(context)
                               .bodyMedium
                               .override(
-                                fontFamily: 'Andika New Basic',
+                                fontFamily: FFAppState().currentFontFamily,
                                 color: isComfortMode ? Colors.white54 : FlutterFlowTheme.of(context).secondaryText,
                                 fontSize: 12.0,
                               ),
                         ),
-                        SizedBox(width: 12.0),
+                        const SizedBox(width: 12.0),
                         // Share week button
                         GestureDetector(
                           onTap: () {
@@ -726,7 +724,7 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
                             );
                           },
                           child: Container(
-                            padding: EdgeInsets.all(8.0),
+                            padding: const EdgeInsets.all(8.0),
                             decoration: BoxDecoration(
                               color: isComfortMode
                                   ? Colors.white.withValues(alpha: 0.1)
@@ -746,7 +744,7 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
                     ),
                   ],
                 ),
-                SizedBox(height: 16.0),
+                const SizedBox(height: 16.0),
 
                 // Days - next 7 days starting from today
                 ...List.generate(7, (dayOffset) {
@@ -776,7 +774,7 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
   Widget _buildEmptyWeekView(BuildContext context, bool isComfortMode) {
     return Center(
       child: Padding(
-        padding: EdgeInsets.all(32.0),
+        padding: const EdgeInsets.all(32.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -785,31 +783,31 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
               size: 64.0,
               color: isComfortMode ? Colors.white38 : FlutterFlowTheme.of(context).secondaryText.withValues(alpha: 0.5),
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             Text(
               'No activities planned this week',
               textAlign: TextAlign.center,
               style: FlutterFlowTheme.of(context)
                   .bodyLarge
                   .override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     color: isComfortMode ? Colors.white70 : FlutterFlowTheme.of(context).secondaryText,
                     fontSize: 16.0,
                   ),
             ),
-            SizedBox(height: 8.0),
+            const SizedBox(height: 8.0),
             Text(
               'Add activities from your custom activities\nor find new ones to try!',
               textAlign: TextAlign.center,
               style: FlutterFlowTheme.of(context)
                   .bodyMedium
                   .override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     color: isComfortMode ? Colors.white54 : FlutterFlowTheme.of(context).secondaryText.withValues(alpha: 0.7),
                     fontSize: 14.0,
                   ),
             ),
-            SizedBox(height: 24.0),
+            const SizedBox(height: 24.0),
             ElevatedButton.icon(
               onPressed: () {
                 Navigator.of(context).push(
@@ -818,14 +816,14 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
                   ),
                 );
               },
-              icon: Icon(Icons.add),
-              label: Text('My Activities'),
+              icon: const Icon(Icons.add),
+              label: const Text('My Activities'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: isComfortMode
                   ? Colors.white.withValues(alpha: 0.2)
                   : FlutterFlowTheme.of(context).primary,
                 foregroundColor: Colors.white,
-                padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+                padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20.0),
                 ),
@@ -847,7 +845,7 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
     bool isToday,
   ) {
     return Padding(
-      padding: EdgeInsets.only(bottom: 16.0),
+      padding: const EdgeInsets.only(bottom: 16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -855,7 +853,7 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
           Row(
             children: [
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
+                padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
                 decoration: BoxDecoration(
                   color: isToday
                     ? (isComfortMode ? FlutterFlowTheme.of(context).primary.withValues(alpha: 0.3) : FlutterFlowTheme.of(context).primary)
@@ -870,7 +868,7 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
                       style: FlutterFlowTheme.of(context)
                           .bodyMedium
                           .override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: isToday
                               ? Colors.white
                               : (isComfortMode ? Colors.white : FlutterFlowTheme.of(context).primaryText),
@@ -878,13 +876,13 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
                             fontWeight: FontWeight.w600,
                           ),
                     ),
-                    SizedBox(width: 8.0),
+                    const SizedBox(width: 8.0),
                     Text(
                       DateFormat('d').format(date),
                       style: FlutterFlowTheme.of(context)
                           .bodyMedium
                           .override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: isToday
                               ? Colors.white70
                               : (isComfortMode ? Colors.white70 : FlutterFlowTheme.of(context).secondaryText),
@@ -895,13 +893,13 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
                 ),
               ),
               if (isToday) ...[
-                SizedBox(width: 8.0),
+                const SizedBox(width: 8.0),
                 Text(
                   'Today',
                   style: FlutterFlowTheme.of(context)
                       .bodySmall
                       .override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         color: isComfortMode ? FlutterFlowTheme.of(context).primary : FlutterFlowTheme.of(context).primary,
                         fontWeight: FontWeight.w600,
                       ),
@@ -909,17 +907,17 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
               ],
             ],
           ),
-          SizedBox(height: 8.0),
+          const SizedBox(height: 8.0),
           // Activities for this day
           if (activities.isEmpty)
             Padding(
-              padding: EdgeInsets.only(left: 12.0),
+              padding: const EdgeInsets.only(left: 12.0),
               child: Text(
                 'No activities',
                 style: FlutterFlowTheme.of(context)
                     .bodySmall
                     .override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       color: isComfortMode ? Colors.white38 : FlutterFlowTheme.of(context).secondaryText.withValues(alpha: 0.5),
                       fontStyle: FontStyle.italic,
                     ),
@@ -938,8 +936,8 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
       onTap: () => _showActivityDetails(context, isComfortMode, activity),
       borderRadius: BorderRadius.circular(12.0),
       child: Container(
-        margin: EdgeInsets.only(bottom: 8.0),
-        padding: EdgeInsets.all(12.0),
+        margin: const EdgeInsets.only(bottom: 8.0),
+        padding: const EdgeInsets.all(12.0),
         decoration: BoxDecoration(
           color: isComfortMode
             ? Colors.white.withValues(alpha: 0.1)
@@ -949,7 +947,7 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
             ? Border.all(color: Colors.white.withValues(alpha: 0.2), width: 1.0)
             : null,
           boxShadow: isComfortMode ? null : [
-            BoxShadow(
+            const BoxShadow(
               blurRadius: 2.0,
               color: Color(0x1A000000),
               offset: Offset(0, 1),
@@ -967,7 +965,7 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
               borderRadius: BorderRadius.circular(2.0),
             ),
           ),
-          SizedBox(width: 12.0),
+          const SizedBox(width: 12.0),
           // Activity details
           Expanded(
             child: Column(
@@ -978,14 +976,14 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
                   style: FlutterFlowTheme.of(context)
                       .bodyMedium
                       .override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         color: isComfortMode ? Colors.white : null,
                         fontWeight: FontWeight.w600,
                       ),
                 ),
                 // Activity tags (duration, setup, cleanup, parent proximity)
                 if (activity.timeDuration.isNotEmpty || activity.setupTime.isNotEmpty || activity.cleanupDifficulty.isNotEmpty || activity.parentProximity.isNotEmpty) ...[
-                  SizedBox(height: 6.0),
+                  const SizedBox(height: 6.0),
                   Wrap(
                     spacing: 6.0,
                     runSpacing: 4.0,
@@ -1027,7 +1025,7 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
                   ),
                 ] else if (activity.description.isNotEmpty) ...[
                   // Only show description if no tags
-                  SizedBox(height: 2.0),
+                  const SizedBox(height: 2.0),
                   Text(
                     activity.description,
                     maxLines: 1,
@@ -1035,7 +1033,7 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
                     style: FlutterFlowTheme.of(context)
                         .bodySmall
                         .override(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           color: isComfortMode ? Colors.white60 : FlutterFlowTheme.of(context).secondaryText,
                         ),
                   ),
@@ -1160,7 +1158,7 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
             },
           ),
           // Spacer between assignment circles and checkbox
-          SizedBox(width: 8.0),
+          const SizedBox(width: 8.0),
           InkWell(
             onTap: () async {
               await activity.reference.update({
@@ -1183,7 +1181,7 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
                 ),
               ),
               child: activity.isCompleted
-                ? Icon(Icons.check, color: Colors.white, size: 18.0)
+                ? const Icon(Icons.check, color: Colors.white, size: 18.0)
                 : null,
             ),
           ),
@@ -1204,15 +1202,15 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
           maxHeight: MediaQuery.of(context).size.height * 0.85,
         ),
         decoration: BoxDecoration(
-          color: isComfortMode ? Color(0xFF2C3E50) : Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          color: isComfortMode ? const Color(0xFF2C3E50) : Colors.white,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             // Handle bar
             Container(
-              margin: EdgeInsets.only(top: 12),
+              margin: const EdgeInsets.only(top: 12),
               width: 40,
               height: 4,
               decoration: BoxDecoration(
@@ -1223,21 +1221,21 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
             // Content - Activity card style
             Flexible(
               child: SingleChildScrollView(
-                padding: EdgeInsets.all(20.0),
+                padding: const EdgeInsets.all(20.0),
                 child: Container(
-                  padding: EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(16.0),
                   decoration: BoxDecoration(
-                    color: isComfortMode ? Color(0xFF34495E) : Colors.white,
+                    color: isComfortMode ? const Color(0xFF34495E) : Colors.white,
                     borderRadius: BorderRadius.circular(14.0),
                     boxShadow: isComfortMode ? null : [
                       BoxShadow(
                         color: Colors.black.withValues(alpha: 0.05),
                         blurRadius: 8.0,
-                        offset: Offset(0, 2),
+                        offset: const Offset(0, 2),
                       ),
                     ],
                     border: Border.all(
-                      color: isComfortMode ? Color(0xFF7F8C8D) : Colors.grey.withValues(alpha: 0.15),
+                      color: isComfortMode ? const Color(0xFF7F8C8D) : Colors.grey.withValues(alpha: 0.15),
                     ),
                   ),
                   child: Column(
@@ -1262,7 +1260,7 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
                               ),
                             ),
                           ),
-                          SizedBox(width: 12.0),
+                          const SizedBox(width: 12.0),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -1270,29 +1268,29 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
                                 Text(
                                   activity.name,
                                   style: FlutterFlowTheme.of(context).titleMedium.override(
-                                    fontFamily: 'Andika New Basic',
-                                    color: isComfortMode ? Color(0xFFECF0F1) : FlutterFlowTheme.of(context).primaryText,
+                                    fontFamily: FFAppState().currentFontFamily,
+                                    color: isComfortMode ? const Color(0xFFECF0F1) : FlutterFlowTheme.of(context).primaryText,
                                     fontSize: 18.0,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
-                                SizedBox(height: 4.0),
+                                const SizedBox(height: 4.0),
                                 // Date
                                 Row(
                                   children: [
                                     Icon(
                                       Icons.calendar_today,
                                       size: 14,
-                                      color: isComfortMode ? Color(0xFF95A5A6) : FlutterFlowTheme.of(context).secondaryText,
+                                      color: isComfortMode ? const Color(0xFF95A5A6) : FlutterFlowTheme.of(context).secondaryText,
                                     ),
-                                    SizedBox(width: 4.0),
+                                    const SizedBox(width: 4.0),
                                     Text(
                                       activity.date != null
                                         ? DateFormat('EEE, MMM d').format(activity.date!)
                                         : 'No date',
                                       style: FlutterFlowTheme.of(context).bodySmall.override(
-                                        fontFamily: 'Andika New Basic',
-                                        color: isComfortMode ? Color(0xFF95A5A6) : FlutterFlowTheme.of(context).secondaryText,
+                                        fontFamily: FFAppState().currentFontFamily,
+                                        color: isComfortMode ? const Color(0xFF95A5A6) : FlutterFlowTheme.of(context).secondaryText,
                                         fontSize: 13.0,
                                       ),
                                     ),
@@ -1305,19 +1303,19 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
                       ),
                       // Description
                       if (activity.description.isNotEmpty) ...[
-                        SizedBox(height: 12.0),
+                        const SizedBox(height: 12.0),
                         Text(
                           activity.description,
                           style: FlutterFlowTheme.of(context).bodyMedium.override(
-                            fontFamily: 'Andika New Basic',
-                            color: isComfortMode ? Color(0xFF95A5A6) : FlutterFlowTheme.of(context).secondaryText,
+                            fontFamily: FFAppState().currentFontFamily,
+                            color: isComfortMode ? const Color(0xFF95A5A6) : FlutterFlowTheme.of(context).secondaryText,
                             fontSize: 15.0,
                           ),
                         ),
                       ],
                       // Activity details (duration, parent involvement, etc.)
                       if (activity.timeDuration.isNotEmpty || activity.parentProximity.isNotEmpty || activity.setupTime.isNotEmpty || activity.cleanupDifficulty.isNotEmpty) ...[
-                        SizedBox(height: 12.0),
+                        const SizedBox(height: 12.0),
                         Wrap(
                           spacing: 8.0,
                           runSpacing: 8.0,
@@ -1367,34 +1365,34 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
                       ],
                       // Things needed
                       if (activity.thingsNeeded.isNotEmpty) ...[
-                        SizedBox(height: 12.0),
+                        const SizedBox(height: 12.0),
                         Container(
-                          padding: EdgeInsets.all(12.0),
+                          padding: const EdgeInsets.all(12.0),
                           decoration: BoxDecoration(
-                            color: isComfortMode ? Color(0xFF2C3E50) : Color(0xFFF8F9FA),
+                            color: isComfortMode ? const Color(0xFF2C3E50) : const Color(0xFFF8F9FA),
                             borderRadius: BorderRadius.circular(10.0),
                             border: Border.all(
-                              color: isComfortMode ? Color(0xFF7F8C8D) : Colors.grey.withValues(alpha: 0.2),
+                              color: isComfortMode ? const Color(0xFF7F8C8D) : Colors.grey.withValues(alpha: 0.2),
                             ),
                           ),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Padding(
-                                padding: EdgeInsets.only(top: 2.0),
+                                padding: const EdgeInsets.only(top: 2.0),
                                 child: Icon(
                                   Icons.list_alt,
                                   size: 18.0,
-                                  color: isComfortMode ? Color(0xFF95A5A6) : FlutterFlowTheme.of(context).secondaryText,
+                                  color: isComfortMode ? const Color(0xFF95A5A6) : FlutterFlowTheme.of(context).secondaryText,
                                 ),
                               ),
-                              SizedBox(width: 8.0),
+                              const SizedBox(width: 8.0),
                               Expanded(
                                 child: Text(
                                   activity.thingsNeeded,
                                   style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                    fontFamily: 'Andika New Basic',
-                                    color: isComfortMode ? Color(0xFFECF0F1) : FlutterFlowTheme.of(context).primaryText,
+                                    fontFamily: FFAppState().currentFontFamily,
+                                    color: isComfortMode ? const Color(0xFFECF0F1) : FlutterFlowTheme.of(context).primaryText,
                                   ),
                                 ),
                               ),
@@ -1404,10 +1402,10 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
                       ],
                       // Safety notes
                       if (activity.safetyNote.isNotEmpty) ...[
-                        SizedBox(height: 12.0),
+                        const SizedBox(height: 12.0),
                         Container(
                           width: double.infinity,
-                          padding: EdgeInsets.all(12.0),
+                          padding: const EdgeInsets.all(12.0),
                           decoration: BoxDecoration(
                             color: const Color(0xFFFF9800).withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(10.0),
@@ -1418,21 +1416,21 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Padding(
+                              const Padding(
                                 padding: EdgeInsets.only(top: 2.0),
                                 child: Icon(
                                   Icons.warning_amber_rounded,
                                   size: 18.0,
-                                  color: const Color(0xFFFF9800),
+                                  color: Color(0xFFFF9800),
                                 ),
                               ),
-                              SizedBox(width: 8.0),
+                              const SizedBox(width: 8.0),
                               Expanded(
                                 child: Text(
                                   activity.safetyNote,
                                   style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                    fontFamily: 'Andika New Basic',
-                                    color: isComfortMode ? Color(0xFFECF0F1) : FlutterFlowTheme.of(context).primaryText,
+                                    fontFamily: FFAppState().currentFontFamily,
+                                    color: isComfortMode ? const Color(0xFFECF0F1) : FlutterFlowTheme.of(context).primaryText,
                                   ),
                                 ),
                               ),
@@ -1442,7 +1440,7 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
                       ],
                       // Assignees row
                       if (activity.assignedToMom || activity.assignedToDad || activity.selectedChildren.isNotEmpty) ...[
-                        SizedBox(height: 12.0),
+                        const SizedBox(height: 12.0),
                         Wrap(
                           spacing: 8.0,
                           runSpacing: 8.0,
@@ -1459,7 +1457,7 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
                                       .where('userRef', isEqualTo: currentUserReference),
                                 ),
                                 builder: (context, snapshot) {
-                                  if (!snapshot.hasData) return SizedBox();
+                                  if (!snapshot.hasData) return const SizedBox();
                                   final children = snapshot.data!;
                                   final assignedChildren = children.where(
                                     (c) => activity.selectedChildren.contains(c.reference)
@@ -1483,7 +1481,7 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
                         ),
                       ],
                       // Action buttons
-                      SizedBox(height: 16.0),
+                      const SizedBox(height: 16.0),
                       Row(
                         children: [
                           // Mark complete/incomplete button
@@ -1496,11 +1494,11 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
                                 Navigator.of(sheetContext).pop();
                               },
                               child: Container(
-                                padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
+                                padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
                                 decoration: BoxDecoration(
                                   color: activity.isCompleted
                                     ? (isComfortMode ? Colors.white.withValues(alpha: 0.1) : Colors.grey.withValues(alpha: 0.1))
-                                    : (isComfortMode ? Color(0xFF27AE60).withValues(alpha: 0.2) : Color(0xFF4CAF50).withValues(alpha: 0.1)),
+                                    : (isComfortMode ? const Color(0xFF27AE60).withValues(alpha: 0.2) : const Color(0xFF4CAF50).withValues(alpha: 0.1)),
                                   borderRadius: BorderRadius.circular(14.0),
                                   border: isComfortMode ? Border.all(color: Colors.white.withValues(alpha: 0.2)) : null,
                                 ),
@@ -1512,17 +1510,17 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
                                       size: 18.0,
                                       color: activity.isCompleted
                                         ? (isComfortMode ? Colors.white70 : Colors.grey[600])
-                                        : (isComfortMode ? Color(0xFF27AE60) : Color(0xFF4CAF50)),
+                                        : (isComfortMode ? const Color(0xFF27AE60) : const Color(0xFF4CAF50)),
                                     ),
-                                    SizedBox(width: 6.0),
+                                    const SizedBox(width: 6.0),
                                     Text(
                                       activity.isCompleted ? 'Undo' : 'Complete',
                                       style: TextStyle(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         fontSize: 14.0,
                                         color: activity.isCompleted
                                           ? (isComfortMode ? Colors.white70 : Colors.grey[600])
-                                          : (isComfortMode ? Color(0xFF27AE60) : Color(0xFF4CAF50)),
+                                          : (isComfortMode ? const Color(0xFF27AE60) : const Color(0xFF4CAF50)),
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
@@ -1531,7 +1529,7 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
                               ),
                             ),
                           ),
-                          SizedBox(width: 10.0),
+                          const SizedBox(width: 10.0),
                           // Remove button
                           InkWell(
                             onTap: () async {
@@ -1539,17 +1537,17 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
                               final confirm = await showDialog<bool>(
                                 context: sheetContext,
                                 builder: (dialogContext) => AlertDialog(
-                                  title: Text('Remove Activity'),
+                                  title: const Text('Remove Activity'),
                                   content: Text('Are you sure you want to remove "${activity.name}" from your schedule?'),
                                   actions: [
                                     TextButton(
                                       onPressed: () => Navigator.of(dialogContext).pop(false),
-                                      child: Text('Cancel'),
+                                      child: const Text('Cancel'),
                                     ),
                                     TextButton(
                                       onPressed: () => Navigator.of(dialogContext).pop(true),
                                       style: TextButton.styleFrom(foregroundColor: Colors.red),
-                                      child: Text('Remove'),
+                                      child: const Text('Remove'),
                                     ),
                                   ],
                                 ),
@@ -1560,7 +1558,7 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
                               }
                             },
                             child: Container(
-                              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+                              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
                               decoration: BoxDecoration(
                                 color: isComfortMode ? Colors.red.withValues(alpha: 0.2) : Colors.red.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(14.0),
@@ -1572,15 +1570,15 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
                                   Icon(
                                     Icons.delete_outline,
                                     size: 18.0,
-                                    color: isComfortMode ? Color(0xFFE74C3C) : Colors.red,
+                                    color: isComfortMode ? const Color(0xFFE74C3C) : Colors.red,
                                   ),
-                                  SizedBox(width: 4.0),
+                                  const SizedBox(width: 4.0),
                                   Text(
                                     'Remove',
                                     style: TextStyle(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       fontSize: 14.0,
-                                      color: isComfortMode ? Color(0xFFE74C3C) : Colors.red,
+                                      color: isComfortMode ? const Color(0xFFE74C3C) : Colors.red,
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),
@@ -1596,7 +1594,7 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
               ),
             ),
             // Bottom safe area
-            SafeArea(top: false, child: SizedBox(height: 8.0)),
+            const SafeArea(top: false, child: SizedBox(height: 8.0)),
           ],
         ),
       ),
@@ -1625,7 +1623,7 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
           Text(
             label,
             style: TextStyle(
-              fontFamily: 'Andika New Basic',
+              fontFamily: FFAppState().currentFontFamily,
               fontSize: 10.0,
               fontWeight: FontWeight.w500,
               color: isComfortMode ? color.withValues(alpha: 0.9) : color,
@@ -1662,7 +1660,7 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
           Text(
             label,
             style: TextStyle(
-              fontFamily: 'Andika New Basic',
+              fontFamily: FFAppState().currentFontFamily,
               fontSize: 12.0,
               fontWeight: FontWeight.w500,
               color: isComfortMode ? const Color(0xFFECF0F1) : color.withValues(alpha: 0.9),
@@ -1676,7 +1674,7 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
   /// Build an assignee chip (used in activity details)
   Widget _buildAssigneeChip(String name, Color color, String initial, bool isComfortMode) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+      padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(14.0),
@@ -1694,15 +1692,15 @@ class _FeelingBubblesWidgetState extends State<FeelingBubblesWidget>
             child: Center(
               child: Text(
                 initial,
-                style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+                style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
               ),
             ),
           ),
-          SizedBox(width: 5.0),
+          const SizedBox(width: 5.0),
           Text(
             name,
             style: TextStyle(
-              fontFamily: 'Andika New Basic',
+              fontFamily: FFAppState().currentFontFamily,
               fontSize: 12.0,
               color: isComfortMode ? Colors.white : Colors.black87,
             ),

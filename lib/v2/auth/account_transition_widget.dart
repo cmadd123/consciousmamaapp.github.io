@@ -143,7 +143,7 @@ class _AccountTransitionWidgetState extends State<AccountTransitionWidget>
                       'One last step',
                       textAlign: TextAlign.center,
                       style: FlutterFlowTheme.of(context).headlineLarge.override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         fontSize: 28.0,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 0.0,
@@ -163,7 +163,7 @@ class _AccountTransitionWidgetState extends State<AccountTransitionWidget>
                       "Create your account to save\neverything and get started.",
                       textAlign: TextAlign.center,
                       style: FlutterFlowTheme.of(context).bodyLarge.override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         color: FlutterFlowTheme.of(context).secondaryText,
                         fontSize: 17.0,
                         letterSpacing: 0.0,
@@ -205,7 +205,7 @@ class _AccountTransitionWidgetState extends State<AccountTransitionWidget>
                           padding: EdgeInsetsDirectional.zero,
                           color: FlutterFlowTheme.of(context).primary,
                           textStyle: FlutterFlowTheme.of(context).titleMedium.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: Colors.white,
                             fontSize: 18.0,
                             letterSpacing: 0.0,

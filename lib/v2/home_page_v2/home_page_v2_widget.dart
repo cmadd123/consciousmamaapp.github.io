@@ -6,13 +6,10 @@ import '/components/home_nav_bar_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
-import 'dart:ui';
 import '/index.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:provider/provider.dart';
 import '/components/page_animations.dart';
@@ -223,17 +220,17 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
       },
       child: Scaffold(
         key: scaffoldKey,
-        backgroundColor: FFAppState().isComfortMode ? Color(0xFF2C3E50) : Color(0xFFFFE9E1),
+        backgroundColor: FFAppState().isComfortMode ? const Color(0xFF2C3E50) : const Color(0xFFFFE9E1),
         body: Container(
           decoration: BoxDecoration(
             gradient: FFAppState().isComfortMode
-              ? LinearGradient(
+              ? const LinearGradient(
                   colors: [Color(0xFF2C3E50), Color(0xFF34495E)],
                   stops: [0.0, 1.0],
                   begin: AlignmentDirectional(0.0, -1.0),
                   end: AlignmentDirectional(0, 1.0),
                 )
-              : LinearGradient(
+              : const LinearGradient(
                   colors: [Color(0xFFD7F2EB), Color(0xFFFFE9E1)],
                   stops: [0.0, 1.0],
                   begin: AlignmentDirectional(0.0, -1.0),
@@ -279,7 +276,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
 
             return SafeArea(
               child: Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(32.0, 40.0, 32.0, 40.0),
+                padding: const EdgeInsetsDirectional.fromSTEB(32.0, 40.0, 32.0, 40.0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -293,7 +290,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                             _buildModeToggle(),
                           ],
                         ),
-                        SizedBox(height: 60.0),
+                        const SizedBox(height: 60.0),
                         // Simple greeting
                         AuthUserStreamWidget(
                           builder: (context) => Text(
@@ -302,7 +299,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                               'there',
                             )}',
                             style: TextStyle(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               color: Colors.white,
                               fontSize: 32.0,
                               fontWeight: FontWeight.w300,
@@ -310,11 +307,11 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                             ),
                           ),
                         ),
-                        SizedBox(height: 16.0),
+                        const SizedBox(height: 16.0),
                         Text(
                           'What do you need?',
                           style: TextStyle(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: Colors.white70,
                             fontSize: 18.0,
                             fontWeight: FontWeight.w300,
@@ -333,7 +330,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                             context.pushNamed(FeelingBubblesWidget.routeName);
                           },
                         ),
-                        SizedBox(height: 24.0),
+                        const SizedBox(height: 24.0),
                         _buildComfortButton(
                           'Meal Plan',
                           Icons.restaurant_menu_outlined,
@@ -342,7 +339,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                           },
                           badgeCount: mealCount,
                         ),
-                        SizedBox(height: 24.0),
+                        const SizedBox(height: 24.0),
                         _buildComfortButton(
                           'To-Do List',
                           Icons.checklist_outlined,
@@ -353,7 +350,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                         ),
                       ],
                     ),
-                    SizedBox(height: 40.0),
+                    const SizedBox(height: 40.0),
                   ],
                 ),
               ),
@@ -369,7 +366,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
       onTap: onTap,
       child: Container(
         width: double.infinity,
-        padding: EdgeInsets.symmetric(vertical: 24.0, horizontal: 24.0),
+        padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 24.0),
         decoration: BoxDecoration(
           color: Colors.transparent,
           borderRadius: BorderRadius.circular(14.0),
@@ -394,12 +391,12 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                     top: -6.0,
                     right: -8.0,
                     child: Container(
-                      padding: EdgeInsets.all(4.0),
+                      padding: const EdgeInsets.all(4.0),
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.3),
                         shape: BoxShape.circle,
                       ),
-                      constraints: BoxConstraints(
+                      constraints: const BoxConstraints(
                         minWidth: 18.0,
                         minHeight: 18.0,
                       ),
@@ -407,7 +404,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                         child: Text(
                           badgeCount > 99 ? '99+' : '$badgeCount',
                           style: TextStyle(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: Colors.white,
                             fontSize: 10.0,
                             fontWeight: FontWeight.w400,
@@ -419,11 +416,11 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                   ),
               ],
             ),
-            SizedBox(width: 16.0),
+            const SizedBox(width: 16.0),
             Text(
               label,
               style: TextStyle(
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
                 color: Colors.white,
                 fontSize: 22.0,
                 fontWeight: FontWeight.w300,
@@ -444,7 +441,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
         });
       },
       child: Container(
-        padding: EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(8.0),
         decoration: BoxDecoration(
           color: FFAppState().isComfortMode
             ? Colors.transparent
@@ -462,11 +459,11 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
               color: FFAppState().isComfortMode ? Colors.white : Colors.grey[700],
               size: 16.0,
             ),
-            SizedBox(width: 4.0),
+            const SizedBox(width: 4.0),
             Text(
               FFAppState().isComfortMode ? 'Comfort' : 'Standard',
               style: TextStyle(
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
                 color: FFAppState().isComfortMode ? Colors.white : Colors.grey[700],
                 fontSize: 12.0,
               ),
@@ -480,7 +477,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
   // Standard Mode - Full feature layout
   Widget _buildStandardModeLayout() {
     return Padding(
-      padding: EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
+      padding: const EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
       child: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.max,
@@ -489,11 +486,11 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                       animateItem(0, Align(
                         alignment: Alignment.topRight,
                         child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(0.0, 8.0, 0.0, 0.0),
+                          padding: const EdgeInsetsDirectional.fromSTEB(0.0, 8.0, 0.0, 0.0),
                           child: Text(
                             _appVersion,
                             style: FlutterFlowTheme.of(context).bodySmall.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               color: FlutterFlowTheme.of(context).secondaryText.withOpacity(0.5),
                               fontSize: 10.0,
                             ),
@@ -502,7 +499,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                       )),
                       animateItem(1, Padding(
                         padding:
-                            EdgeInsetsDirectional.fromSTEB(0.0, 12.0, 0.0, 0.0),
+                            const EdgeInsetsDirectional.fromSTEB(0.0, 12.0, 0.0, 0.0),
                         child: Row(
                           mainAxisSize: MainAxisSize.max,
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -514,13 +511,12 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                 children: [
                                   Builder(
                                     builder: (context) {
-                                      if (currentUserPhoto != null &&
-                                          currentUserPhoto != '') {
+                                      if (currentUserPhoto != '') {
                                         return Container(
                                           width: 40.0,
                                           height: 40.0,
                                           clipBehavior: Clip.antiAlias,
-                                          decoration: BoxDecoration(
+                                          decoration: const BoxDecoration(
                                             shape: BoxShape.circle,
                                           ),
                                           child: Image.network(
@@ -533,7 +529,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                           width: 40.0,
                                           height: 40.0,
                                           clipBehavior: Clip.antiAlias,
-                                          decoration: BoxDecoration(
+                                          decoration: const BoxDecoration(
                                             shape: BoxShape.circle,
                                           ),
                                           child: Image.asset(
@@ -545,7 +541,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                     },
                                   ),
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(
                                         0.0, 5.0, 0.0, 0.0),
                                     child: Text(
                                       valueOrDefault<String>(
@@ -560,7 +556,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                       style: FlutterFlowTheme.of(context)
                                           .bodyMedium
                                           .override(
-                                            fontFamily: 'Andika New Basic',
+                                            fontFamily: FFAppState().currentFontFamily,
                                             color: FlutterFlowTheme.of(context)
                                                 .secondaryText,
                                             fontSize: 12.0,
@@ -569,7 +565,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                     ),
                                   ),
                                   Container(
-                                    decoration: BoxDecoration(),
+                                    decoration: const BoxDecoration(),
                                     child: AuthUserStreamWidget(
                                       builder: (context) => Text(
                                         'Hi, ${valueOrDefault<String>(
@@ -579,7 +575,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                         style: FlutterFlowTheme.of(context)
                                             .bodyMedium
                                             .override(
-                                              fontFamily: 'Andika New Basic',
+                                              fontFamily: FFAppState().currentFontFamily,
                                               fontSize: 20.0,
                                               letterSpacing: 0.0,
                                             ),
@@ -593,11 +589,11 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 _buildModeToggle(),
-                                SizedBox(height: 8.0),
+                                const SizedBox(height: 8.0),
                                 breathingWidget(Container(
                                   width: 140.0,
                                   height: 132.0,
-                                  decoration: BoxDecoration(),
+                                  decoration: const BoxDecoration(),
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(14.0),
                                     child: Image.asset(
@@ -615,7 +611,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                       )),
                       Padding(
                         padding:
-                            EdgeInsetsDirectional.fromSTEB(0.0, 30.0, 0.0, 0.0),
+                            const EdgeInsetsDirectional.fromSTEB(0.0, 30.0, 0.0, 0.0),
                         child: Stack(
                           children: [
                             Container(
@@ -629,7 +625,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                 mainAxisSize: MainAxisSize.max,
                                 children: [
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(
                                         16.0, 16.0, 0.0, 0.0),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.max,
@@ -637,7 +633,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                         Container(
                                           width: 32.0,
                                           height: 32.0,
-                                          decoration: BoxDecoration(
+                                          decoration: const BoxDecoration(
                                             gradient: LinearGradient(
                                               colors: [
                                                 Color(0xFFFFE9E1),
@@ -653,7 +649,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                           ),
                                           child: Padding(
                                             padding:
-                                                EdgeInsetsDirectional.fromSTEB(
+                                                const EdgeInsetsDirectional.fromSTEB(
                                                     5.0, 5.0, 5.0, 5.0),
                                             child: ClipRRect(
                                               borderRadius:
@@ -669,7 +665,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                         ),
                                         Padding(
                                           padding:
-                                              EdgeInsetsDirectional.fromSTEB(
+                                              const EdgeInsetsDirectional.fromSTEB(
                                                   8.0, 0.0, 0.0, 0.0),
                                           child: Text(
                                             'Today\'s Meals',
@@ -687,7 +683,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(
                                         0.0, 8.0, 0.0, 10.0),
                                     child: SingleChildScrollView(
                                       scrollDirection: Axis.horizontal,
@@ -746,12 +742,12 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                       BorderRadius.circular(
                                                           5.0),
                                                   border: Border.all(
-                                                    color: Color(0xFFDADADA),
+                                                    color: const Color(0xFFDADADA),
                                                     width: 1.0,
                                                   ),
                                                 ),
                                                 child: Padding(
-                                                  padding: EdgeInsetsDirectional
+                                                  padding: const EdgeInsetsDirectional
                                                       .fromSTEB(
                                                           12.0, 6.0, 12.0, 0.0),
                                                   child: SingleChildScrollView(
@@ -802,7 +798,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                             return ListView
                                                                 .builder(
                                                               padding:
-                                                                  EdgeInsets
+                                                                  const EdgeInsets
                                                                       .fromLTRB(
                                                                 0,
                                                                 0,
@@ -831,7 +827,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                             .userFirebasemeal !=
                                                                         null)
                                                                       Padding(
-                                                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                                                        padding: const EdgeInsetsDirectional.fromSTEB(
                                                                             0.0,
                                                                             9.0,
                                                                             0.0,
@@ -843,13 +839,13 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                           decoration:
                                                                               BoxDecoration(
                                                                             color:
-                                                                                Color(0xFFD7F2EB),
+                                                                                const Color(0xFFD7F2EB),
                                                                             borderRadius:
                                                                                 BorderRadius.circular(5.0),
                                                                           ),
                                                                           child:
                                                                               Padding(
-                                                                            padding: EdgeInsetsDirectional.fromSTEB(
+                                                                            padding: const EdgeInsetsDirectional.fromSTEB(
                                                                                 8.0,
                                                                                 3.0,
                                                                                 8.0,
@@ -886,7 +882,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                                           'meal name',
                                                                                         ),
                                                                                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                              fontFamily: 'Andika New Basic',
+                                                                                              fontFamily: FFAppState().currentFontFamily,
                                                                                               fontSize: 12.0,
                                                                                               letterSpacing: 0.0,
                                                                                             ),
@@ -898,7 +894,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                                         'side',
                                                                                       ),
                                                                                       style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                            fontFamily: 'Andika New Basic',
+                                                                                            fontFamily: FFAppState().currentFontFamily,
                                                                                             fontSize: 12.0,
                                                                                             letterSpacing: 0.0,
                                                                                           ),
@@ -914,7 +910,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                     if (breakFastMealPlanItem.userFirebasemeal == null &&
                                                                         breakFastMealPlanItem.mealComboRef != null)
                                                                       Padding(
-                                                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                                                        padding: const EdgeInsetsDirectional.fromSTEB(
                                                                             0.0,
                                                                             9.0,
                                                                             0.0,
@@ -926,10 +922,10 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                               return Container(
                                                                                 width: double.infinity,
                                                                                 decoration: BoxDecoration(
-                                                                                  color: Color(0xFFD7F2EB),
+                                                                                  color: const Color(0xFFD7F2EB),
                                                                                   borderRadius: BorderRadius.circular(5.0),
                                                                                 ),
-                                                                                padding: EdgeInsets.all(8.0),
+                                                                                padding: const EdgeInsets.all(8.0),
                                                                                 child: Text('Loading...', style: FlutterFlowTheme.of(context).bodySmall),
                                                                               );
                                                                             }
@@ -943,11 +939,11 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                                   return Container(
                                                                                     width: double.infinity,
                                                                                     decoration: BoxDecoration(
-                                                                                      color: Color(0xFFD7F2EB),
+                                                                                      color: const Color(0xFFD7F2EB),
                                                                                       borderRadius: BorderRadius.circular(5.0),
                                                                                     ),
                                                                                     child: Padding(
-                                                                                      padding: EdgeInsetsDirectional.fromSTEB(8.0, 3.0, 8.0, 3.0),
+                                                                                      padding: const EdgeInsetsDirectional.fromSTEB(8.0, 3.0, 8.0, 3.0),
                                                                                       child: Row(
                                                                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                                                         children: [
@@ -955,7 +951,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                                             child: Text(
                                                                                               entreeName.isNotEmpty ? entreeName : 'Meal',
                                                                                               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                                fontFamily: 'Andika New Basic',
+                                                                                                fontFamily: FFAppState().currentFontFamily,
                                                                                                 fontSize: 12.0,
                                                                                                 letterSpacing: 0.0,
                                                                                               ),
@@ -964,7 +960,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                                           Text(
                                                                                             'Entree',
                                                                                             style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                              fontFamily: 'Andika New Basic',
+                                                                                              fontFamily: FFAppState().currentFontFamily,
                                                                                               fontSize: 12.0,
                                                                                               letterSpacing: 0.0,
                                                                                             ),
@@ -980,11 +976,11 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                             return Container(
                                                                               width: double.infinity,
                                                                               decoration: BoxDecoration(
-                                                                                color: Color(0xFFD7F2EB),
+                                                                                color: const Color(0xFFD7F2EB),
                                                                                 borderRadius: BorderRadius.circular(5.0),
                                                                               ),
                                                                               child: Padding(
-                                                                                padding: EdgeInsetsDirectional.fromSTEB(8.0, 3.0, 8.0, 3.0),
+                                                                                padding: const EdgeInsetsDirectional.fromSTEB(8.0, 3.0, 8.0, 3.0),
                                                                                 child: Row(
                                                                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                                                   children: [
@@ -992,7 +988,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                                       child: Text(
                                                                                         combo.name.isNotEmpty ? combo.name : 'Meal',
                                                                                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                          fontFamily: 'Andika New Basic',
+                                                                                          fontFamily: FFAppState().currentFontFamily,
                                                                                           fontSize: 12.0,
                                                                                           letterSpacing: 0.0,
                                                                                         ),
@@ -1001,7 +997,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                                     Text(
                                                                                       'Entree',
                                                                                       style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                        fontFamily: 'Andika New Basic',
+                                                                                        fontFamily: FFAppState().currentFontFamily,
                                                                                         fontSize: 12.0,
                                                                                         letterSpacing: 0.0,
                                                                                       ),
@@ -1077,12 +1073,12 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                       BorderRadius.circular(
                                                           5.0),
                                                   border: Border.all(
-                                                    color: Color(0xFFDADADA),
+                                                    color: const Color(0xFFDADADA),
                                                     width: 1.0,
                                                   ),
                                                 ),
                                                 child: Padding(
-                                                  padding: EdgeInsetsDirectional
+                                                  padding: const EdgeInsetsDirectional
                                                       .fromSTEB(
                                                           12.0, 6.0, 12.0, 0.0),
                                                   child: SingleChildScrollView(
@@ -1102,7 +1098,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                               .override(
                                                                 fontFamily:
                                                                     'Andika New Basic',
-                                                                color: Color(
+                                                                color: const Color(
                                                                     0xFFF27676),
                                                                 letterSpacing:
                                                                     0.0,
@@ -1132,7 +1128,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                             return ListView
                                                                 .builder(
                                                               padding:
-                                                                  EdgeInsets
+                                                                  const EdgeInsets
                                                                       .fromLTRB(
                                                                 0,
                                                                 0,
@@ -1161,7 +1157,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                             .userFirebasemeal !=
                                                                         null)
                                                                       Padding(
-                                                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                                                        padding: const EdgeInsetsDirectional.fromSTEB(
                                                                             0.0,
                                                                             9.0,
                                                                             0.0,
@@ -1173,13 +1169,13 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                           decoration:
                                                                               BoxDecoration(
                                                                             color:
-                                                                                Color(0x85F9BBBB),
+                                                                                const Color(0x85F9BBBB),
                                                                             borderRadius:
                                                                                 BorderRadius.circular(5.0),
                                                                           ),
                                                                           child:
                                                                               Padding(
-                                                                            padding: EdgeInsetsDirectional.fromSTEB(
+                                                                            padding: const EdgeInsetsDirectional.fromSTEB(
                                                                                 8.0,
                                                                                 3.0,
                                                                                 8.0,
@@ -1216,7 +1212,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                                           'recipe name',
                                                                                         ),
                                                                                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                              fontFamily: 'Andika New Basic',
+                                                                                              fontFamily: FFAppState().currentFontFamily,
                                                                                               fontSize: 12.0,
                                                                                               letterSpacing: 0.0,
                                                                                             ),
@@ -1228,7 +1224,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                                         'side',
                                                                                       ),
                                                                                       style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                            fontFamily: 'Andika New Basic',
+                                                                                            fontFamily: FFAppState().currentFontFamily,
                                                                                             fontSize: 12.0,
                                                                                             letterSpacing: 0.0,
                                                                                           ),
@@ -1244,7 +1240,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                     if (breakFastMealPlanItem.userFirebasemeal == null &&
                                                                         breakFastMealPlanItem.mealComboRef != null)
                                                                       Padding(
-                                                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                                                        padding: const EdgeInsetsDirectional.fromSTEB(
                                                                             0.0,
                                                                             9.0,
                                                                             0.0,
@@ -1256,10 +1252,10 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                               return Container(
                                                                                 width: double.infinity,
                                                                                 decoration: BoxDecoration(
-                                                                                  color: Color(0x85F9BBBB),
+                                                                                  color: const Color(0x85F9BBBB),
                                                                                   borderRadius: BorderRadius.circular(5.0),
                                                                                 ),
-                                                                                padding: EdgeInsets.all(8.0),
+                                                                                padding: const EdgeInsets.all(8.0),
                                                                                 child: Text('Loading...', style: FlutterFlowTheme.of(context).bodySmall),
                                                                               );
                                                                             }
@@ -1272,11 +1268,11 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                                   return Container(
                                                                                     width: double.infinity,
                                                                                     decoration: BoxDecoration(
-                                                                                      color: Color(0x85F9BBBB),
+                                                                                      color: const Color(0x85F9BBBB),
                                                                                       borderRadius: BorderRadius.circular(5.0),
                                                                                     ),
                                                                                     child: Padding(
-                                                                                      padding: EdgeInsetsDirectional.fromSTEB(8.0, 3.0, 8.0, 3.0),
+                                                                                      padding: const EdgeInsetsDirectional.fromSTEB(8.0, 3.0, 8.0, 3.0),
                                                                                       child: Row(
                                                                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                                                         children: [
@@ -1284,7 +1280,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                                             child: Text(
                                                                                               entreeName.isNotEmpty ? entreeName : 'Meal',
                                                                                               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                                fontFamily: 'Andika New Basic',
+                                                                                                fontFamily: FFAppState().currentFontFamily,
                                                                                                 fontSize: 12.0,
                                                                                                 letterSpacing: 0.0,
                                                                                               ),
@@ -1293,7 +1289,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                                           Text(
                                                                                             'Entree',
                                                                                             style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                              fontFamily: 'Andika New Basic',
+                                                                                              fontFamily: FFAppState().currentFontFamily,
                                                                                               fontSize: 12.0,
                                                                                               letterSpacing: 0.0,
                                                                                             ),
@@ -1308,11 +1304,11 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                             return Container(
                                                                               width: double.infinity,
                                                                               decoration: BoxDecoration(
-                                                                                color: Color(0x85F9BBBB),
+                                                                                color: const Color(0x85F9BBBB),
                                                                                 borderRadius: BorderRadius.circular(5.0),
                                                                               ),
                                                                               child: Padding(
-                                                                                padding: EdgeInsetsDirectional.fromSTEB(8.0, 3.0, 8.0, 3.0),
+                                                                                padding: const EdgeInsetsDirectional.fromSTEB(8.0, 3.0, 8.0, 3.0),
                                                                                 child: Row(
                                                                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                                                   children: [
@@ -1320,7 +1316,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                                       child: Text(
                                                                                         combo.name.isNotEmpty ? combo.name : 'Meal',
                                                                                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                          fontFamily: 'Andika New Basic',
+                                                                                          fontFamily: FFAppState().currentFontFamily,
                                                                                           fontSize: 12.0,
                                                                                           letterSpacing: 0.0,
                                                                                         ),
@@ -1329,7 +1325,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                                     Text(
                                                                                       'Entree',
                                                                                       style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                        fontFamily: 'Andika New Basic',
+                                                                                        fontFamily: FFAppState().currentFontFamily,
                                                                                         fontSize: 12.0,
                                                                                         letterSpacing: 0.0,
                                                                                       ),
@@ -1405,12 +1401,12 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                       BorderRadius.circular(
                                                           5.0),
                                                   border: Border.all(
-                                                    color: Color(0xFFDADADA),
+                                                    color: const Color(0xFFDADADA),
                                                     width: 1.0,
                                                   ),
                                                 ),
                                                 child: Padding(
-                                                  padding: EdgeInsetsDirectional
+                                                  padding: const EdgeInsetsDirectional
                                                       .fromSTEB(
                                                           12.0, 6.0, 12.0, 0.0),
                                                   child: SingleChildScrollView(
@@ -1430,7 +1426,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                               .override(
                                                                 fontFamily:
                                                                     'Andika New Basic',
-                                                                color: Color(
+                                                                color: const Color(
                                                                     0xFF506FBC),
                                                                 letterSpacing:
                                                                     0.0,
@@ -1460,7 +1456,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                             return ListView
                                                                 .builder(
                                                               padding:
-                                                                  EdgeInsets
+                                                                  const EdgeInsets
                                                                       .fromLTRB(
                                                                 0,
                                                                 0,
@@ -1489,7 +1485,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                             .userFirebasemeal !=
                                                                         null)
                                                                       Padding(
-                                                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                                                        padding: const EdgeInsetsDirectional.fromSTEB(
                                                                             0.0,
                                                                             9.0,
                                                                             0.0,
@@ -1501,13 +1497,13 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                           decoration:
                                                                               BoxDecoration(
                                                                             color:
-                                                                                Color(0x70506FBC),
+                                                                                const Color(0x70506FBC),
                                                                             borderRadius:
                                                                                 BorderRadius.circular(5.0),
                                                                           ),
                                                                           child:
                                                                               Padding(
-                                                                            padding: EdgeInsetsDirectional.fromSTEB(
+                                                                            padding: const EdgeInsetsDirectional.fromSTEB(
                                                                                 8.0,
                                                                                 3.0,
                                                                                 8.0,
@@ -1544,7 +1540,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                                           'Meal Name',
                                                                                         ),
                                                                                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                              fontFamily: 'Andika New Basic',
+                                                                                              fontFamily: FFAppState().currentFontFamily,
                                                                                               fontSize: 12.0,
                                                                                               letterSpacing: 0.0,
                                                                                             ),
@@ -1556,7 +1552,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                                         'side',
                                                                                       ),
                                                                                       style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                            fontFamily: 'Andika New Basic',
+                                                                                            fontFamily: FFAppState().currentFontFamily,
                                                                                             fontSize: 12.0,
                                                                                             letterSpacing: 0.0,
                                                                                           ),
@@ -1572,7 +1568,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                     if (breakFastMealPlanItem.userFirebasemeal == null &&
                                                                         breakFastMealPlanItem.mealComboRef != null)
                                                                       Padding(
-                                                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                                                        padding: const EdgeInsetsDirectional.fromSTEB(
                                                                             0.0,
                                                                             9.0,
                                                                             0.0,
@@ -1584,10 +1580,10 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                               return Container(
                                                                                 width: double.infinity,
                                                                                 decoration: BoxDecoration(
-                                                                                  color: Color(0x70506FBC),
+                                                                                  color: const Color(0x70506FBC),
                                                                                   borderRadius: BorderRadius.circular(5.0),
                                                                                 ),
-                                                                                padding: EdgeInsets.all(8.0),
+                                                                                padding: const EdgeInsets.all(8.0),
                                                                                 child: Text('Loading...', style: FlutterFlowTheme.of(context).bodySmall),
                                                                               );
                                                                             }
@@ -1600,11 +1596,11 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                                   return Container(
                                                                                     width: double.infinity,
                                                                                     decoration: BoxDecoration(
-                                                                                      color: Color(0x70506FBC),
+                                                                                      color: const Color(0x70506FBC),
                                                                                       borderRadius: BorderRadius.circular(5.0),
                                                                                     ),
                                                                                     child: Padding(
-                                                                                      padding: EdgeInsetsDirectional.fromSTEB(8.0, 3.0, 8.0, 3.0),
+                                                                                      padding: const EdgeInsetsDirectional.fromSTEB(8.0, 3.0, 8.0, 3.0),
                                                                                       child: Row(
                                                                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                                                         children: [
@@ -1612,7 +1608,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                                             child: Text(
                                                                                               entreeName.isNotEmpty ? entreeName : 'Meal',
                                                                                               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                                fontFamily: 'Andika New Basic',
+                                                                                                fontFamily: FFAppState().currentFontFamily,
                                                                                                 fontSize: 12.0,
                                                                                                 letterSpacing: 0.0,
                                                                                               ),
@@ -1621,7 +1617,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                                           Text(
                                                                                             'Entree',
                                                                                             style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                              fontFamily: 'Andika New Basic',
+                                                                                              fontFamily: FFAppState().currentFontFamily,
                                                                                               fontSize: 12.0,
                                                                                               letterSpacing: 0.0,
                                                                                             ),
@@ -1636,11 +1632,11 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                             return Container(
                                                                               width: double.infinity,
                                                                               decoration: BoxDecoration(
-                                                                                color: Color(0x70506FBC),
+                                                                                color: const Color(0x70506FBC),
                                                                                 borderRadius: BorderRadius.circular(5.0),
                                                                               ),
                                                                               child: Padding(
-                                                                                padding: EdgeInsetsDirectional.fromSTEB(8.0, 3.0, 8.0, 3.0),
+                                                                                padding: const EdgeInsetsDirectional.fromSTEB(8.0, 3.0, 8.0, 3.0),
                                                                                 child: Row(
                                                                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                                                   children: [
@@ -1648,7 +1644,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                                       child: Text(
                                                                                         combo.name.isNotEmpty ? combo.name : 'Meal',
                                                                                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                          fontFamily: 'Andika New Basic',
+                                                                                          fontFamily: FFAppState().currentFontFamily,
                                                                                           fontSize: 12.0,
                                                                                           letterSpacing: 0.0,
                                                                                         ),
@@ -1657,7 +1653,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                                     Text(
                                                                                       'Entree',
                                                                                       style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                        fontFamily: 'Andika New Basic',
+                                                                                        fontFamily: FFAppState().currentFontFamily,
                                                                                         fontSize: 12.0,
                                                                                         letterSpacing: 0.0,
                                                                                       ),
@@ -1733,12 +1729,12 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                       BorderRadius.circular(
                                                           5.0),
                                                   border: Border.all(
-                                                    color: Color(0xFFDADADA),
+                                                    color: const Color(0xFFDADADA),
                                                     width: 1.0,
                                                   ),
                                                 ),
                                                 child: Padding(
-                                                  padding: EdgeInsetsDirectional
+                                                  padding: const EdgeInsetsDirectional
                                                       .fromSTEB(
                                                           12.0, 6.0, 12.0, 0.0),
                                                   child: SingleChildScrollView(
@@ -1758,7 +1754,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                               .override(
                                                                 fontFamily:
                                                                     'Andika New Basic',
-                                                                color: Color(
+                                                                color: const Color(
                                                                     0xFFE39072),
                                                                 letterSpacing:
                                                                     0.0,
@@ -1788,7 +1784,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                             return ListView
                                                                 .builder(
                                                               padding:
-                                                                  EdgeInsets
+                                                                  const EdgeInsets
                                                                       .fromLTRB(
                                                                 0,
                                                                 0,
@@ -1817,7 +1813,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                             .userFirebasemeal !=
                                                                         null)
                                                                       Padding(
-                                                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                                                        padding: const EdgeInsetsDirectional.fromSTEB(
                                                                             0.0,
                                                                             9.0,
                                                                             0.0,
@@ -1849,11 +1845,11 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                             return Container(
                                                                               width: double.infinity,
                                                                               decoration: BoxDecoration(
-                                                                                color: Color(0x84FFAD8F),
+                                                                                color: const Color(0x84FFAD8F),
                                                                                 borderRadius: BorderRadius.circular(5.0),
                                                                               ),
                                                                               child: Padding(
-                                                                                padding: EdgeInsetsDirectional.fromSTEB(8.0, 3.0, 8.0, 3.0),
+                                                                                padding: const EdgeInsetsDirectional.fromSTEB(8.0, 3.0, 8.0, 3.0),
                                                                                 child: Row(
                                                                                   mainAxisSize: MainAxisSize.max,
                                                                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1865,7 +1861,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                                           'meal_name',
                                                                                         ),
                                                                                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                              fontFamily: 'Andika New Basic',
+                                                                                              fontFamily: FFAppState().currentFontFamily,
                                                                                               fontSize: 12.0,
                                                                                               letterSpacing: 0.0,
                                                                                             ),
@@ -1877,7 +1873,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                                         'side',
                                                                                       ),
                                                                                       style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                            fontFamily: 'Andika New Basic',
+                                                                                            fontFamily: FFAppState().currentFontFamily,
                                                                                             fontSize: 12.0,
                                                                                             letterSpacing: 0.0,
                                                                                           ),
@@ -1893,7 +1889,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                     if (breakFastMealPlanItem.userFirebasemeal == null &&
                                                                         breakFastMealPlanItem.mealComboRef != null)
                                                                       Padding(
-                                                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                                                        padding: const EdgeInsetsDirectional.fromSTEB(
                                                                             0.0,
                                                                             9.0,
                                                                             0.0,
@@ -1905,10 +1901,10 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                               return Container(
                                                                                 width: double.infinity,
                                                                                 decoration: BoxDecoration(
-                                                                                  color: Color(0x84FFAD8F),
+                                                                                  color: const Color(0x84FFAD8F),
                                                                                   borderRadius: BorderRadius.circular(5.0),
                                                                                 ),
-                                                                                padding: EdgeInsets.all(8.0),
+                                                                                padding: const EdgeInsets.all(8.0),
                                                                                 child: Text('Loading...', style: FlutterFlowTheme.of(context).bodySmall),
                                                                               );
                                                                             }
@@ -1921,11 +1917,11 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                                   return Container(
                                                                                     width: double.infinity,
                                                                                     decoration: BoxDecoration(
-                                                                                      color: Color(0x84FFAD8F),
+                                                                                      color: const Color(0x84FFAD8F),
                                                                                       borderRadius: BorderRadius.circular(5.0),
                                                                                     ),
                                                                                     child: Padding(
-                                                                                      padding: EdgeInsetsDirectional.fromSTEB(8.0, 3.0, 8.0, 3.0),
+                                                                                      padding: const EdgeInsetsDirectional.fromSTEB(8.0, 3.0, 8.0, 3.0),
                                                                                       child: Row(
                                                                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                                                         children: [
@@ -1933,7 +1929,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                                             child: Text(
                                                                                               entreeName.isNotEmpty ? entreeName : 'Meal',
                                                                                               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                                fontFamily: 'Andika New Basic',
+                                                                                                fontFamily: FFAppState().currentFontFamily,
                                                                                                 fontSize: 12.0,
                                                                                                 letterSpacing: 0.0,
                                                                                               ),
@@ -1942,7 +1938,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                                           Text(
                                                                                             'Entree',
                                                                                             style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                              fontFamily: 'Andika New Basic',
+                                                                                              fontFamily: FFAppState().currentFontFamily,
                                                                                               fontSize: 12.0,
                                                                                               letterSpacing: 0.0,
                                                                                             ),
@@ -1957,11 +1953,11 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                             return Container(
                                                                               width: double.infinity,
                                                                               decoration: BoxDecoration(
-                                                                                color: Color(0x84FFAD8F),
+                                                                                color: const Color(0x84FFAD8F),
                                                                                 borderRadius: BorderRadius.circular(5.0),
                                                                               ),
                                                                               child: Padding(
-                                                                                padding: EdgeInsetsDirectional.fromSTEB(8.0, 3.0, 8.0, 3.0),
+                                                                                padding: const EdgeInsetsDirectional.fromSTEB(8.0, 3.0, 8.0, 3.0),
                                                                                 child: Row(
                                                                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                                                   children: [
@@ -1969,7 +1965,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                                       child: Text(
                                                                                         combo.name.isNotEmpty ? combo.name : 'Meal',
                                                                                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                          fontFamily: 'Andika New Basic',
+                                                                                          fontFamily: FFAppState().currentFontFamily,
                                                                                           fontSize: 12.0,
                                                                                           letterSpacing: 0.0,
                                                                                         ),
@@ -1978,7 +1974,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                                     Text(
                                                                                       'Entree',
                                                                                       style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                        fontFamily: 'Andika New Basic',
+                                                                                        fontFamily: FFAppState().currentFontFamily,
                                                                                         fontSize: 12.0,
                                                                                         letterSpacing: 0.0,
                                                                                       ),
@@ -2004,9 +2000,9 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                             },
                                           ),
                                         ]
-                                            .divide(SizedBox(width: 20.0))
-                                            .addToStart(SizedBox(width: 16.0))
-                                            .addToEnd(SizedBox(width: 16.0)),
+                                            .divide(const SizedBox(width: 20.0))
+                                            .addToStart(const SizedBox(width: 16.0))
+                                            .addToEnd(const SizedBox(width: 16.0)),
                                       ),
                                     ),
                                   ),
@@ -2018,9 +2014,9 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Align(
-                                  alignment: AlignmentDirectional(1.0, -1.0),
+                                  alignment: const AlignmentDirectional(1.0, -1.0),
                                   child: Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(
                                         0.0, 10.0, 10.0, 0.0),
                                     child: InkWell(
                                       splashColor: Colors.transparent,
@@ -2041,10 +2037,10 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                         ),
                                         child: Align(
                                           alignment:
-                                              AlignmentDirectional(0.0, 0.0),
+                                              const AlignmentDirectional(0.0, 0.0),
                                           child: Padding(
                                             padding:
-                                                EdgeInsetsDirectional.fromSTEB(
+                                                const EdgeInsetsDirectional.fromSTEB(
                                                     8.0, 0.0, 8.0, 0.0),
                                             child: Text(
                                               'Meal Planner',
@@ -2076,7 +2072,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                       ),
                       Padding(
                         padding:
-                            EdgeInsetsDirectional.fromSTEB(0.0, 30.0, 0.0, 0.0),
+                            const EdgeInsetsDirectional.fromSTEB(0.0, 30.0, 0.0, 0.0),
                         child: Stack(
                           children: [
                             Container(
@@ -2087,13 +2083,13 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                 borderRadius: BorderRadius.circular(14.0),
                               ),
                               child: Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     16.0, 0.0, 16.0, 0.0),
                                 child: Column(
                                   mainAxisSize: MainAxisSize.max,
                                   children: [
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(
                                           0.0, 16.0, 0.0, 0.0),
                                       child: Row(
                                         mainAxisSize: MainAxisSize.max,
@@ -2101,7 +2097,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                           Container(
                                             width: 32.0,
                                             height: 32.0,
-                                            decoration: BoxDecoration(
+                                            decoration: const BoxDecoration(
                                               gradient: LinearGradient(
                                                 colors: [
                                                   Color(0xFFF5B778),
@@ -2118,7 +2114,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                           ),
                                           Padding(
                                             padding:
-                                                EdgeInsetsDirectional.fromSTEB(
+                                                const EdgeInsetsDirectional.fromSTEB(
                                                     8.0, 0.0, 0.0, 0.0),
                                             child: Text(
                                               'Today\'s To-Do List',
@@ -2139,7 +2135,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                     StreamBuilder<List<EventAndTaskRecord>>(
                                       stream: FFAppState().toList(
                                         uniqueQueryKey:
-                                            'todo_all::${currentUserUid}',
+                                            'todo_all::$currentUserUid',
                                         overrideCache: FFAppState().todocash,
                                         requestFn: () =>
                                             queryEventAndTaskRecord(
@@ -2157,7 +2153,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                         if (!snapshot.hasData) {
                                           return Center(
                                             child: Padding(
-                                              padding: EdgeInsetsDirectional
+                                              padding: const EdgeInsetsDirectional
                                                   .fromSTEB(
                                                       0.0, 20.0, 0.0, 20.0),
                                               child: SizedBox(
@@ -2181,7 +2177,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                             snapshot.data!;
 
                                         return Container(
-                                          decoration: BoxDecoration(),
+                                          decoration: const BoxDecoration(),
                                           child: Builder(
                                             builder: (context) {
                                               final containerVar =
@@ -2236,7 +2232,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                             containerVarIndex];
                                                     return Padding(
                                                       padding:
-                                                          EdgeInsetsDirectional
+                                                          const EdgeInsetsDirectional
                                                               .fromSTEB(
                                                                   0.0,
                                                                   10.0,
@@ -2254,14 +2250,14 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                   .circular(
                                                                       5.0),
                                                           border: Border.all(
-                                                            color: Color(
+                                                            color: const Color(
                                                                 0xFFDADADA),
                                                             width: 1.0,
                                                           ),
                                                         ),
                                                         child: Padding(
                                                           padding:
-                                                              EdgeInsetsDirectional
+                                                              const EdgeInsetsDirectional
                                                                   .fromSTEB(
                                                                       12.0,
                                                                       16.0,
@@ -2279,7 +2275,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                       .start,
                                                               children: [
                                                                 Padding(
-                                                                  padding: EdgeInsetsDirectional
+                                                                  padding: const EdgeInsetsDirectional
                                                                       .fromSTEB(
                                                                           0.0,
                                                                           0.0,
@@ -2300,7 +2296,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                           // Assigned people circles using helper method
                                                                           _buildAssignedPeopleCircles(context, containerVarItem),
                                                                           Padding(
-                                                                            padding: EdgeInsetsDirectional.fromSTEB(
+                                                                            padding: const EdgeInsetsDirectional.fromSTEB(
                                                                                 12.0,
                                                                                 0.0,
                                                                                 0.0,
@@ -2316,21 +2312,21 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                                     '- - ',
                                                                                   ),
                                                                                   style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                        fontFamily: 'Andika New Basic',
+                                                                                        fontFamily: FFAppState().currentFontFamily,
                                                                                         fontSize: 12.0,
                                                                                         letterSpacing: 0.0,
                                                                                       ),
                                                                                 ),
                                                                                 Padding(
-                                                                                  padding: EdgeInsetsDirectional.fromSTEB(0.0, 2.0, 0.0, 0.0),
+                                                                                  padding: const EdgeInsetsDirectional.fromSTEB(0.0, 2.0, 0.0, 0.0),
                                                                                   child: Text(
                                                                                     valueOrDefault<String>(
                                                                                       containerVarItem.description,
                                                                                       '- -',
                                                                                     ),
                                                                                     style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                          fontFamily: 'Andika New Basic',
-                                                                                          color: Color(0xFF515151),
+                                                                                          fontFamily: FFAppState().currentFontFamily,
+                                                                                          color: const Color(0xFF515151),
                                                                                           fontSize: 11.0,
                                                                                           letterSpacing: 0.0,
                                                                                         ),
@@ -2355,8 +2351,8 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                         style: FlutterFlowTheme.of(context)
                                                                             .bodyMedium
                                                                             .override(
-                                                                              fontFamily: 'Andika New Basic',
-                                                                              color: Color(0xFF515151),
+                                                                              fontFamily: FFAppState().currentFontFamily,
+                                                                              color: const Color(0xFF515151),
                                                                               fontSize: 10.0,
                                                                               letterSpacing: 0.0,
                                                                             ),
@@ -2371,7 +2367,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                       ),
                                                     );
                                                   }).divide(
-                                                      SizedBox(width: 16.0)),
+                                                      const SizedBox(width: 16.0)),
                                                 ),
                                               );
                                             },
@@ -2388,9 +2384,9 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Align(
-                                  alignment: AlignmentDirectional(1.0, -1.0),
+                                  alignment: const AlignmentDirectional(1.0, -1.0),
                                   child: Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(
                                         0.0, 10.0, 10.0, 0.0),
                                     child: InkWell(
                                       splashColor: Colors.transparent,
@@ -2411,10 +2407,10 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                         ),
                                         child: Align(
                                           alignment:
-                                              AlignmentDirectional(0.0, 0.0),
+                                              const AlignmentDirectional(0.0, 0.0),
                                           child: Padding(
                                             padding:
-                                                EdgeInsetsDirectional.fromSTEB(
+                                                const EdgeInsetsDirectional.fromSTEB(
                                                     8.0, 0.0, 8.0, 0.0),
                                             child: Text(
                                               'See all',
@@ -2446,12 +2442,12 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                       ),
                       Padding(
                         padding:
-                            EdgeInsetsDirectional.fromSTEB(0.0, 30.0, 0.0, 0.0),
+                            const EdgeInsetsDirectional.fromSTEB(0.0, 30.0, 0.0, 0.0),
                         child: Stack(
                           children: [
                             StreamBuilder<List<ActivityRecord>>(
                               stream: FFAppState().axtivitypath(
-                                uniqueQueryKey: 'activity${currentUserUid}',
+                                uniqueQueryKey: 'activity$currentUserUid',
                                 overrideCache: FFAppState().activityCash,
                                 requestFn: () => queryActivityRecord(
                                   queryBuilder: (activityRecord) =>
@@ -2491,14 +2487,14 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                     borderRadius: BorderRadius.circular(14.0),
                                   ),
                                   child: Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(
                                         16.0, 0.0, 16.0, 0.0),
                                     child: Column(
                                       mainAxisSize: MainAxisSize.max,
                                       children: [
                                         Padding(
                                           padding:
-                                              EdgeInsetsDirectional.fromSTEB(
+                                              const EdgeInsetsDirectional.fromSTEB(
                                                   0.0, 16.0, 0.0, 0.0),
                                           child: Row(
                                             mainAxisSize: MainAxisSize.max,
@@ -2506,7 +2502,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                               Container(
                                                 width: 32.0,
                                                 height: 32.0,
-                                                decoration: BoxDecoration(
+                                                decoration: const BoxDecoration(
                                                   gradient: LinearGradient(
                                                     colors: [
                                                       Color(0xFF90ABEE),
@@ -2522,7 +2518,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                 ),
                                               ),
                                               Padding(
-                                                padding: EdgeInsetsDirectional
+                                                padding: const EdgeInsetsDirectional
                                                     .fromSTEB(
                                                         8.0, 0.0, 0.0, 0.0),
                                                 child: Text(
@@ -2543,7 +2539,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                         ),
                                         Align(
                                           alignment:
-                                              AlignmentDirectional(-1.0, 0.0),
+                                              const AlignmentDirectional(-1.0, 0.0),
                                           child: Builder(
                                             builder: (context) {
                                               final activtyOfToday =
@@ -2578,7 +2574,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                             activtyOfTodayIndex];
                                                     return Padding(
                                                       padding:
-                                                          EdgeInsetsDirectional
+                                                          const EdgeInsetsDirectional
                                                               .fromSTEB(
                                                                   0.0,
                                                                   10.0,
@@ -2600,7 +2596,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                         },
                                                         child: Container(
                                                           constraints:
-                                                              BoxConstraints(
+                                                              const BoxConstraints(
                                                             minWidth: 64.0,
                                                           ),
                                                           decoration:
@@ -2613,14 +2609,14 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                     .circular(
                                                                         5.0),
                                                             border: Border.all(
-                                                              color: Color(
+                                                              color: const Color(
                                                                   0xFFDADADA),
                                                               width: 1.0,
                                                             ),
                                                           ),
                                                           child: Padding(
                                                             padding:
-                                                                EdgeInsetsDirectional
+                                                                const EdgeInsetsDirectional
                                                                     .fromSTEB(
                                                                         0.0,
                                                                         8.0,
@@ -2640,7 +2636,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                           .max,
                                                                   children: [
                                                                     Padding(
-                                                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                                                      padding: const EdgeInsetsDirectional.fromSTEB(
                                                                           12.0,
                                                                           0.0,
                                                                           24.0,
@@ -2658,13 +2654,13 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                               'Title',
                                                                             ),
                                                                             style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                  fontFamily: 'Andika New Basic',
+                                                                                  fontFamily: FFAppState().currentFontFamily,
                                                                                   fontSize: 12.0,
                                                                                   letterSpacing: 0.0,
                                                                                 ),
                                                                           ),
                                                                           Padding(
-                                                                            padding: EdgeInsetsDirectional.fromSTEB(
+                                                                            padding: const EdgeInsetsDirectional.fromSTEB(
                                                                                 0.0,
                                                                                 2.0,
                                                                                 0.0,
@@ -2676,8 +2672,8 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                                 'indoor',
                                                                               ),
                                                                               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                    fontFamily: 'Andika New Basic',
-                                                                                    color: Color(0xFF515151),
+                                                                                    fontFamily: FFAppState().currentFontFamily,
+                                                                                    color: const Color(0xFF515151),
                                                                                     fontSize: 11.0,
                                                                                     letterSpacing: 0.0,
                                                                                   ),
@@ -2696,9 +2692,9 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                     );
                                                   })
                                                       .divide(
-                                                          SizedBox(width: 8.0))
+                                                          const SizedBox(width: 8.0))
                                                       .around(
-                                                          SizedBox(width: 8.0)),
+                                                          const SizedBox(width: 8.0)),
                                                 ),
                                               );
                                             },
@@ -2715,9 +2711,9 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Align(
-                                  alignment: AlignmentDirectional(1.0, -1.0),
+                                  alignment: const AlignmentDirectional(1.0, -1.0),
                                   child: Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(
                                         0.0, 10.0, 10.0, 0.0),
                                     child: InkWell(
                                       splashColor: Colors.transparent,
@@ -2738,10 +2734,10 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                         ),
                                         child: Align(
                                           alignment:
-                                              AlignmentDirectional(0.0, 0.0),
+                                              const AlignmentDirectional(0.0, 0.0),
                                           child: Padding(
                                             padding:
-                                                EdgeInsetsDirectional.fromSTEB(
+                                                const EdgeInsetsDirectional.fromSTEB(
                                                     8.0, 0.0, 8.0, 0.0),
                                             child: Text(
                                               'See all',
@@ -2773,12 +2769,12 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                       ),
                       Padding(
                         padding:
-                            EdgeInsetsDirectional.fromSTEB(0.0, 30.0, 0.0, 0.0),
+                            const EdgeInsetsDirectional.fromSTEB(0.0, 30.0, 0.0, 0.0),
                         child: Stack(
                           children: [
                             StreamBuilder<List<LearningPathTasksRecord>>(
                               stream: FFAppState().todaylearningpath(
-                                uniqueQueryKey: 'today${currentUserUid}',
+                                uniqueQueryKey: 'today$currentUserUid',
                                 overrideCache:
                                     FFAppState().leariningpathchashBool,
                                 requestFn: () => queryLearningPathTasksRecord(
@@ -2817,14 +2813,14 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                     borderRadius: BorderRadius.circular(14.0),
                                   ),
                                   child: Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(
                                         16.0, 0.0, 16.0, 0.0),
                                     child: Column(
                                       mainAxisSize: MainAxisSize.max,
                                       children: [
                                         Padding(
                                           padding:
-                                              EdgeInsetsDirectional.fromSTEB(
+                                              const EdgeInsetsDirectional.fromSTEB(
                                                   0.0, 16.0, 0.0, 0.0),
                                           child: Row(
                                             mainAxisSize: MainAxisSize.max,
@@ -2832,7 +2828,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                               Container(
                                                 width: 32.0,
                                                 height: 32.0,
-                                                decoration: BoxDecoration(
+                                                decoration: const BoxDecoration(
                                                   gradient: LinearGradient(
                                                     colors: [
                                                       Color(0xFF78F581),
@@ -2847,7 +2843,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                   shape: BoxShape.circle,
                                                 ),
                                                 child: Padding(
-                                                  padding: EdgeInsetsDirectional
+                                                  padding: const EdgeInsetsDirectional
                                                       .fromSTEB(
                                                           5.0, 5.0, 5.0, 5.0),
                                                   child: ClipRRect(
@@ -2864,7 +2860,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                 ),
                                               ),
                                               Padding(
-                                                padding: EdgeInsetsDirectional
+                                                padding: const EdgeInsetsDirectional
                                                     .fromSTEB(
                                                         8.0, 0.0, 0.0, 0.0),
                                                 child: Text(
@@ -2885,7 +2881,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                         ),
                                         Align(
                                           alignment:
-                                              AlignmentDirectional(-1.0, 0.0),
+                                              const AlignmentDirectional(-1.0, 0.0),
                                           child: Builder(
                                             builder: (context) {
                                               final todayPath =
@@ -2932,7 +2928,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                             todayPathIndex];
                                                     return Padding(
                                                       padding:
-                                                          EdgeInsetsDirectional
+                                                          const EdgeInsetsDirectional
                                                               .fromSTEB(
                                                                   0.0,
                                                                   10.0,
@@ -3008,14 +3004,14 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                             5.0),
                                                                 border:
                                                                     Border.all(
-                                                                  color: Color(
+                                                                  color: const Color(
                                                                       0xFFDADADA),
                                                                   width: 1.0,
                                                                 ),
                                                               ),
                                                               child: Padding(
                                                                 padding:
-                                                                    EdgeInsetsDirectional
+                                                                    const EdgeInsetsDirectional
                                                                         .fromSTEB(
                                                                             0.0,
                                                                             8.0,
@@ -3035,7 +3031,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                               .max,
                                                                       children: [
                                                                         Padding(
-                                                                          padding: EdgeInsetsDirectional.fromSTEB(
+                                                                          padding: const EdgeInsetsDirectional.fromSTEB(
                                                                               12.0,
                                                                               0.0,
                                                                               15.0,
@@ -3048,21 +3044,21 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                                 CrossAxisAlignment.start,
                                                                             children: [
                                                                               Padding(
-                                                                                padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 8.0, 0.0),
+                                                                                padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 8.0, 0.0),
                                                                                 child: Text(
                                                                                   valueOrDefault<String>(
                                                                                     todayPathItem.title,
                                                                                     'taskTitle',
                                                                                   ),
                                                                                   style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                        fontFamily: 'Andika New Basic',
+                                                                                        fontFamily: FFAppState().currentFontFamily,
                                                                                         fontSize: 11.0,
                                                                                         letterSpacing: 0.0,
                                                                                       ),
                                                                                 ),
                                                                               ),
                                                                               Padding(
-                                                                                padding: EdgeInsetsDirectional.fromSTEB(0.0, 6.0, 0.0, 0.0),
+                                                                                padding: const EdgeInsetsDirectional.fromSTEB(0.0, 6.0, 0.0, 0.0),
                                                                                 child: Container(
                                                                                   width: 20.0,
                                                                                   height: 20.0,
@@ -3091,10 +3087,10 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                     ),
                                                                     Container(
                                                                       decoration:
-                                                                          BoxDecoration(),
+                                                                          const BoxDecoration(),
                                                                       child:
                                                                           Padding(
-                                                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                                                        padding: const EdgeInsetsDirectional.fromSTEB(
                                                                             0.0,
                                                                             0.0,
                                                                             14.0,
@@ -3122,7 +3118,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                                           animateFromLastPercent:
                                                                               true,
                                                                           progressColor:
-                                                                              Color(0xFF45DB6D),
+                                                                              const Color(0xFF45DB6D),
                                                                           backgroundColor:
                                                                               FlutterFlowTheme.of(context).accent4,
                                                                           startAngle:
@@ -3139,7 +3135,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                                       ),
                                                     );
                                                   }).divide(
-                                                      SizedBox(width: 8.0)),
+                                                      const SizedBox(width: 8.0)),
                                                 ),
                                               );
                                             },
@@ -3156,9 +3152,9 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Align(
-                                  alignment: AlignmentDirectional(1.0, -1.0),
+                                  alignment: const AlignmentDirectional(1.0, -1.0),
                                   child: Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(
                                         0.0, 10.0, 10.0, 0.0),
                                     child: InkWell(
                                       splashColor: Colors.transparent,
@@ -3179,10 +3175,10 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                                         ),
                                         child: Align(
                                           alignment:
-                                              AlignmentDirectional(0.0, 0.0),
+                                              const AlignmentDirectional(0.0, 0.0),
                                           child: Padding(
                                             padding:
-                                                EdgeInsetsDirectional.fromSTEB(
+                                                const EdgeInsetsDirectional.fromSTEB(
                                                     8.0, 0.0, 8.0, 0.0),
                                             child: Text(
                                               'More',
@@ -3214,7 +3210,7 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                       ),
                       // TEMPORARY: Skills Preview Button
                       Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
+                        padding: const EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
                         child: FFButtonWidget(
                           onPressed: () async {
                             context.pushNamed('/skillsPreview');
@@ -3223,17 +3219,17 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                           options: FFButtonOptions(
                             width: double.infinity,
                             height: 50.0,
-                            padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
-                            iconPadding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
+                            padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
+                            iconPadding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
                             color: FlutterFlowTheme.of(context).primary,
                             textStyle: FlutterFlowTheme.of(context).titleSmall.override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   color: Colors.white,
                                   fontSize: 16.0,
                                   letterSpacing: 0.0,
                                 ),
                             elevation: 3.0,
-                            borderSide: BorderSide(
+                            borderSide: const BorderSide(
                               color: Colors.transparent,
                               width: 1.0,
                             ),
@@ -3242,8 +3238,8 @@ class _HomePageV2WidgetState extends State<HomePageV2Widget> with TickerProvider
                         ),
                       ),
                     ]
-                        .addToStart(SizedBox(height: 45.0))
-                        .addToEnd(SizedBox(height: 79.0)),
+                        .addToStart(const SizedBox(height: 45.0))
+                        .addToEnd(const SizedBox(height: 79.0)),
         ),
       ),
     );

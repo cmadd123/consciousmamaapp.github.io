@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'screenshot_home.dart';
 import 'screenshot_feelings.dart';
 import 'screenshot_meal_plan.dart';
@@ -26,7 +25,7 @@ class ScreenshotApp extends StatelessWidget {
       title: 'MomRise Screenshots',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        fontFamily: 'Andika New Basic',
+        fontFamily: FFAppState().currentFontFamily,
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF52A097)),
         useMaterial3: true,
       ),

@@ -72,7 +72,7 @@ Future<void> clearAndReuploadActivities() async {
     }
 
     print('\n--- Upload Complete ---');
-    print('Deleted: ${deleteCount}');
+    print('Deleted: $deleteCount');
     print('Successfully uploaded: $successCount');
     print('Errors: $errorCount');
     print('Total: ${activities.length}');

@@ -61,59 +61,59 @@ class _FeatureWalkthroughWidgetState extends State<FeatureWalkthroughWidget>
     // 8 pages, momentum-optimized order, honest copy
     _pages = [
       // 1. Meal Planning - the core hook, biggest daily pain point
-      _PageData(
+      const _PageData(
         title: 'Plan your meals in minutes',
         subtitle: 'Pick your days, fill in breakfast, lunch, and dinner — done for the week',
-        preview: const MealPlanPreview(),
-        accentColor: const Color(0xFFFF6B6B),
+        preview: MealPlanPreview(),
+        accentColor: Color(0xFFFF6B6B),
         icon: Icons.restaurant_menu,
       ),
       // 2. Grocery List - immediate payoff from meal planning
-      _PageData(
+      const _PageData(
         title: 'Your grocery list writes itself',
         subtitle: 'Every ingredient from your meal plan, sorted by aisle and ready to shop',
-        preview: const GroceryListPreview(),
-        accentColor: const Color(0xFF9B8AA0),
+        preview: GroceryListPreview(),
+        accentColor: Color(0xFF9B8AA0),
         icon: Icons.shopping_cart,
       ),
       // 3. Cookbook - complete the meal ecosystem
-      _PageData(
+      const _PageData(
         title: 'All your recipes in one place',
         subtitle: 'Save favorites, import from any website, or create your own — ready when you need them',
-        preview: const CookbookPreview(),
-        accentColor: const Color(0xFFE67E22),
+        preview: CookbookPreview(),
+        accentColor: Color(0xFFE67E22),
         icon: Icons.menu_book,
       ),
       // 4. Learning Paths - the differentiator, emotional hook
-      _PageData(
+      const _PageData(
         title: 'Potty training? Sleep struggles? We\'ll walk you through it',
         subtitle: 'Tell us the challenge and we create a day-by-day plan with tips for every step',
-        preview: const LearningPathPreview(),
-        accentColor: const Color(0xFFEC407A),
+        preview: LearningPathPreview(),
+        accentColor: Color(0xFFEC407A),
         icon: Icons.route,
       ),
       // 5. Calendar - ties it all together
-      _PageData(
+      const _PageData(
         title: 'Your whole family in one calendar',
         subtitle: 'Meals, appointments, and learning tasks — all at a glance',
-        preview: const CalendarPreview(),
-        accentColor: const Color(0xFF52A097),
+        preview: CalendarPreview(),
+        accentColor: Color(0xFF52A097),
         icon: Icons.calendar_month,
       ),
       // 6. Todo List - planning companion
-      _PageData(
+      const _PageData(
         title: 'Never forget the little things',
         subtitle: 'Keep track of everything on your plate — from appointments to party planning',
-        preview: const TodoListPreview(),
-        accentColor: const Color(0xFF5C6BC0),
+        preview: TodoListPreview(),
+        accentColor: Color(0xFF5C6BC0),
         icon: Icons.checklist_rounded,
       ),
       // 7. Milestones - emotional close
-      _PageData(
+      const _PageData(
         title: 'Track every milestone as it happens',
         subtitle: 'From rolling over to first words — see how far they\'ve come',
-        preview: const MilestonesPreview(),
-        accentColor: const Color(0xFF4CAF50),
+        preview: MilestonesPreview(),
+        accentColor: Color(0xFF4CAF50),
         icon: Icons.star,
       ),
     ];
@@ -196,7 +196,7 @@ class _FeatureWalkthroughWidgetState extends State<FeatureWalkthroughWidget>
                         style: FlutterFlowTheme.of(context)
                             .bodyMedium
                             .override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               color: FlutterFlowTheme.of(context)
                                   .secondaryText,
                               fontSize: 14.0,
@@ -214,7 +214,7 @@ class _FeatureWalkthroughWidgetState extends State<FeatureWalkthroughWidget>
                             style: FlutterFlowTheme.of(context)
                                 .bodyMedium
                                 .override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   color: FlutterFlowTheme.of(context)
                                       .secondaryText,
                                   fontSize: 15.0,
@@ -266,7 +266,7 @@ class _FeatureWalkthroughWidgetState extends State<FeatureWalkthroughWidget>
                               style: FlutterFlowTheme.of(context)
                                   .headlineMedium
                                   .override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     fontSize: 26.0,
                                     fontWeight: FontWeight.bold,
                                     letterSpacing: 0.0,
@@ -285,7 +285,7 @@ class _FeatureWalkthroughWidgetState extends State<FeatureWalkthroughWidget>
                                 style: FlutterFlowTheme.of(context)
                                     .bodyLarge
                                     .override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       fontSize: 16.0,
                                       letterSpacing: 0.0,
                                       color: FlutterFlowTheme.of(context)
@@ -371,7 +371,7 @@ class _FeatureWalkthroughWidgetState extends State<FeatureWalkthroughWidget>
                       textStyle: FlutterFlowTheme.of(context)
                           .titleMedium
                           .override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: Colors.white,
                             fontSize: 18.0,
                             fontWeight: FontWeight.w600,

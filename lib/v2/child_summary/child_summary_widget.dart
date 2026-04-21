@@ -144,7 +144,7 @@ class _ChildSummaryWidgetState extends State<ChildSummaryWidget> {
                 child: Text(
                   "${child.name}'s Summary",
                   style: theme.titleLarge.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     fontWeight: FontWeight.bold,
                   ),
                   textAlign: TextAlign.center,
@@ -224,7 +224,7 @@ class _ChildSummaryWidgetState extends State<ChildSummaryWidget> {
                     Text(
                       child.name,
                       style: theme.headlineSmall.override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -236,7 +236,7 @@ class _ChildSummaryWidgetState extends State<ChildSummaryWidget> {
                         Text(
                           age,
                           style: theme.bodyMedium.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: theme.secondaryText,
                           ),
                         ),
@@ -308,7 +308,7 @@ class _ChildSummaryWidgetState extends State<ChildSummaryWidget> {
                           Text(
                             "Today's Lesson",
                             style: theme.bodySmall.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
                             ),
@@ -320,7 +320,7 @@ class _ChildSummaryWidgetState extends State<ChildSummaryWidget> {
                     Text(
                       '${task.duration} min',
                       style: theme.bodySmall.override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         color: Colors.white70,
                       ),
                     ),
@@ -330,7 +330,7 @@ class _ChildSummaryWidgetState extends State<ChildSummaryWidget> {
                 Text(
                   task.title,
                   style: theme.titleMedium.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                   ),
@@ -341,7 +341,7 @@ class _ChildSummaryWidgetState extends State<ChildSummaryWidget> {
                       ? '${task.description.substring(0, 100)}...'
                       : task.description,
                   style: theme.bodySmall.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     color: Colors.white70,
                   ),
                   maxLines: 2,
@@ -396,7 +396,7 @@ class _ChildSummaryWidgetState extends State<ChildSummaryWidget> {
               Text(
                 'Learning Paths',
                 style: theme.titleMedium.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -405,7 +405,7 @@ class _ChildSummaryWidgetState extends State<ChildSummaryWidget> {
                 child: Text(
                   'See All',
                   style: theme.bodySmall.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     color: theme.primary,
                   ),
                 ),
@@ -438,7 +438,7 @@ class _ChildSummaryWidgetState extends State<ChildSummaryWidget> {
                         Text(
                           'No active learning paths',
                           style: theme.bodyMedium.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: theme.secondaryText,
                           ),
                         ),
@@ -513,7 +513,7 @@ class _ChildSummaryWidgetState extends State<ChildSummaryWidget> {
                     Text(
                       path.title,
                       style: theme.bodyLarge.override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         fontWeight: FontWeight.bold,
                       ),
                       maxLines: 1,
@@ -523,7 +523,7 @@ class _ChildSummaryWidgetState extends State<ChildSummaryWidget> {
                     Text(
                       '$completedCount of ${path.tasksCount} tasks',
                       style: theme.bodySmall.override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         color: theme.secondaryText,
                       ),
                     ),
@@ -560,7 +560,7 @@ class _ChildSummaryWidgetState extends State<ChildSummaryWidget> {
           Text(
             'Upcoming Events',
             style: theme.titleMedium.override(
-              fontFamily: 'Andika New Basic',
+              fontFamily: FFAppState().currentFontFamily,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -591,7 +591,7 @@ class _ChildSummaryWidgetState extends State<ChildSummaryWidget> {
                     child: Text(
                       'No upcoming events',
                       style: theme.bodyMedium.override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         color: theme.secondaryText,
                       ),
                     ),
@@ -623,7 +623,7 @@ class _ChildSummaryWidgetState extends State<ChildSummaryWidget> {
                                   ? '${event.date!.day}'
                                   : '-',
                               style: theme.bodyLarge.override(
-                                fontFamily: 'Andika New Basic',
+                                fontFamily: FFAppState().currentFontFamily,
                                 color: theme.primary,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -638,7 +638,7 @@ class _ChildSummaryWidgetState extends State<ChildSummaryWidget> {
                               Text(
                                 event.name,
                                 style: theme.bodyMedium.override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -646,7 +646,7 @@ class _ChildSummaryWidgetState extends State<ChildSummaryWidget> {
                                 Text(
                                   DateFormat('EEEE, MMM d').format(event.date!),
                                   style: theme.bodySmall.override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     color: theme.secondaryText,
                                   ),
                                 ),
@@ -675,7 +675,7 @@ class _ChildSummaryWidgetState extends State<ChildSummaryWidget> {
           Text(
             'This Week',
             style: theme.titleMedium.override(
-              fontFamily: 'Andika New Basic',
+              fontFamily: FFAppState().currentFontFamily,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -740,7 +740,7 @@ class _ChildSummaryWidgetState extends State<ChildSummaryWidget> {
         Text(
           value,
           style: theme.headlineSmall.override(
-            fontFamily: 'Andika New Basic',
+            fontFamily: FFAppState().currentFontFamily,
             fontWeight: FontWeight.bold,
             color: color,
           ),
@@ -748,7 +748,7 @@ class _ChildSummaryWidgetState extends State<ChildSummaryWidget> {
         Text(
           label,
           style: theme.bodySmall.override(
-            fontFamily: 'Andika New Basic',
+            fontFamily: FFAppState().currentFontFamily,
             color: theme.secondaryText,
           ),
         ),

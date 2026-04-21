@@ -6,13 +6,8 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/components/momrise_confirmation.dart';
-import 'dart:ui';
 import '/index.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'add_childx_model.dart';
 export 'add_childx_model.dart';
 
@@ -20,7 +15,7 @@ class AddChildxWidget extends StatefulWidget {
   const AddChildxWidget({
     super.key,
     bool? isFirst,
-  }) : this.isFirst = isFirst ?? true;
+  }) : isFirst = isFirst ?? true;
 
   final bool isFirst;
 
@@ -89,7 +84,7 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
           backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
           body: Container(
             width: double.infinity,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               gradient: LinearGradient(
                 colors: [Color(0xFFD7F2EB), Color(0xFFFFE9E1)],
                 stops: [0.0, 1.0],
@@ -98,7 +93,7 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
             ),
           ),
           child: Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(20.0, 50.0, 20.0, 50.0),
+            padding: const EdgeInsetsDirectional.fromSTEB(20.0, 50.0, 20.0, 50.0),
             child: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.max,
@@ -109,7 +104,7 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
                     Padding(
                       padding: const EdgeInsetsDirectional.fromSTEB(0.0, 8.0, 0.0, 0.0),
                       child: Align(
-                        alignment: AlignmentDirectional(-1.0, 0.0),
+                        alignment: const AlignmentDirectional(-1.0, 0.0),
                         child: InkWell(
                           splashColor: Colors.transparent,
                           focusColor: Colors.transparent,
@@ -140,13 +135,13 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
                     ),
                   ),
                   Align(
-                    alignment: AlignmentDirectional(0.0, 0.0),
+                    alignment: const AlignmentDirectional(0.0, 0.0),
                     child: Container(
                       width: 182.0,
                       height: 156.0,
-                      decoration: BoxDecoration(),
+                      decoration: const BoxDecoration(),
                       child: Align(
-                        alignment: AlignmentDirectional(-1.0, 0.0),
+                        alignment: const AlignmentDirectional(-1.0, 0.0),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(14.0),
                           child: Image.asset(
@@ -162,21 +157,21 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
                   Text(
                     'Please add your child’s details.',
                     style: FlutterFlowTheme.of(context).bodyMedium.override(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           fontSize: 32.0,
                           letterSpacing: 0.0,
                           fontWeight: FontWeight.w600,
                         ),
                   ),
                   Align(
-                    alignment: AlignmentDirectional(-1.0, 0.0),
+                    alignment: const AlignmentDirectional(-1.0, 0.0),
                     child: Padding(
                       padding:
-                          EdgeInsetsDirectional.fromSTEB(0.0, 22.0, 0.0, 40.0),
+                          const EdgeInsetsDirectional.fromSTEB(0.0, 22.0, 0.0, 40.0),
                       child: Text(
                         'Have more than one child? Don’t worry! \nYou can add them in a moment. ',
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               color: FlutterFlowTheme.of(context).secondaryText,
                               letterSpacing: 0.0,
                             ),
@@ -190,7 +185,7 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
                       mainAxisSize: MainAxisSize.max,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Container(
+                        SizedBox(
                           width: double.infinity,
                           child: TextFormField(
                             controller: _model.textController,
@@ -202,18 +197,18 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
                               labelStyle: FlutterFlowTheme.of(context)
                                   .labelMedium
                                   .override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     letterSpacing: 0.0,
                                   ),
                               hintText: 'Name or nickname',
                               hintStyle: FlutterFlowTheme.of(context)
                                   .labelMedium
                                   .override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     letterSpacing: 0.0,
                                   ),
                               enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
+                                borderSide: const BorderSide(
                                   color: Color(0xFFCBE3E0), // Teal border
                                   width: 1.0,
                                 ),
@@ -243,13 +238,13 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
                               filled: true,
                               fillColor: FlutterFlowTheme.of(context)
                                   .prim30, // Teal background
-                              contentPadding: EdgeInsetsDirectional.fromSTEB(
+                              contentPadding: const EdgeInsetsDirectional.fromSTEB(
                                   20.0, 20.0, 20.0, 20.0),
                             ),
                             style: FlutterFlowTheme.of(context)
                                 .bodyMedium
                                 .override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   letterSpacing: 0.0,
                                 ),
                             cursorColor:
@@ -259,7 +254,7 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 4.0, 0.0, 0.0),
                           child: Row(
                             mainAxisSize: MainAxisSize.max,
@@ -296,7 +291,7 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
                                             child: Text(
                                               'Male',
                                               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                fontFamily: 'Andika New Basic',
+                                                fontFamily: FFAppState().currentFontFamily,
                                                 color: FlutterFlowTheme.of(context).secondaryText,
                                                 letterSpacing: 0.0,
                                                 fontWeight: _model.gender == 'Male'
@@ -337,7 +332,7 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
                                             child: Text(
                                               'Female',
                                               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                fontFamily: 'Andika New Basic',
+                                                fontFamily: FFAppState().currentFontFamily,
                                                 color: FlutterFlowTheme.of(context).secondaryText,
                                                 letterSpacing: 0.0,
                                                 fontWeight: _model.gender == 'Female'
@@ -375,7 +370,7 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
                                       ),
                                     ),
                                     child: Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(
                                           20.0, 0.0, 12.0, 0.0),
                                       child: Row(
                                         mainAxisSize: MainAxisSize.max,
@@ -421,18 +416,18 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
                                   ),
                                 ),
                               ),
-                            ].divide(SizedBox(width: 12.0)),
+                            ].divide(const SizedBox(width: 12.0)),
                           ),
                         ),
                         if (_model.isBirthDaySelected == false)
                           Align(
-                            alignment: AlignmentDirectional(-1.0, 0.0),
+                            alignment: const AlignmentDirectional(-1.0, 0.0),
                             child: Text(
                               'Please select your child birth date and gender',
                               style: FlutterFlowTheme.of(context)
                                   .bodyMedium
                                   .override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     color: FlutterFlowTheme.of(context).error,
                                     letterSpacing: 0.0,
                                   ),
@@ -447,7 +442,7 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
                             borderRadius: BorderRadius.circular(32.0),
                           ),
                           child: Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 20.0, 20.0, 20.0, 20.0),
                             child: Column(
                               mainAxisSize: MainAxisSize.max,
@@ -458,12 +453,12 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
                                   style: FlutterFlowTheme.of(context)
                                       .bodyMedium
                                       .override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         letterSpacing: 0.0,
                                       ),
                                 ),
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       0.0, 12.0, 0.0, 0.0),
                                   // Child color palette - distinct from Mom (pink) and Dad (blue)
                                   child: SingleChildScrollView(
@@ -481,19 +476,19 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
                                           highlightColor: Colors.transparent,
                                           onTap: () async {
                                             _model.selectedCOolor =
-                                                Color(0xFF81C784);
+                                                const Color(0xFF81C784);
                                             safeSetState(() {});
                                           },
                                           child: Container(
                                             width: 48.0,
                                             height: 48.0,
                                             decoration: BoxDecoration(
-                                              color: Color(0xFF81C784),
+                                              color: const Color(0xFF81C784),
                                               borderRadius:
                                                   BorderRadius.circular(14.0),
                                               border: Border.all(
                                                 color: _model.selectedCOolor ==
-                                                        Color(0xFF81C784)
+                                                        const Color(0xFF81C784)
                                                     ? FlutterFlowTheme.of(
                                                             context)
                                                         .primary
@@ -511,19 +506,19 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
                                           highlightColor: Colors.transparent,
                                           onTap: () async {
                                             _model.selectedCOolor =
-                                                Color(0xFFB39DDB);
+                                                const Color(0xFFB39DDB);
                                             safeSetState(() {});
                                           },
                                           child: Container(
                                             width: 48.0,
                                             height: 48.0,
                                             decoration: BoxDecoration(
-                                              color: Color(0xFFB39DDB),
+                                              color: const Color(0xFFB39DDB),
                                               borderRadius:
                                                   BorderRadius.circular(14.0),
                                               border: Border.all(
                                                 color: _model.selectedCOolor ==
-                                                        Color(0xFFB39DDB)
+                                                        const Color(0xFFB39DDB)
                                                     ? FlutterFlowTheme.of(
                                                             context)
                                                         .primary
@@ -541,19 +536,19 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
                                           highlightColor: Colors.transparent,
                                           onTap: () async {
                                             _model.selectedCOolor =
-                                                Color(0xFFFFB74D);
+                                                const Color(0xFFFFB74D);
                                             safeSetState(() {});
                                           },
                                           child: Container(
                                             width: 48.0,
                                             height: 48.0,
                                             decoration: BoxDecoration(
-                                              color: Color(0xFFFFB74D),
+                                              color: const Color(0xFFFFB74D),
                                               borderRadius:
                                                   BorderRadius.circular(14.0),
                                               border: Border.all(
                                                 color: _model.selectedCOolor ==
-                                                        Color(0xFFFFB74D)
+                                                        const Color(0xFFFFB74D)
                                                     ? FlutterFlowTheme.of(
                                                             context)
                                                         .primary
@@ -571,19 +566,19 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
                                           highlightColor: Colors.transparent,
                                           onTap: () async {
                                             _model.selectedCOolor =
-                                                Color(0xFF4DB6AC);
+                                                const Color(0xFF4DB6AC);
                                             safeSetState(() {});
                                           },
                                           child: Container(
                                             width: 48.0,
                                             height: 48.0,
                                             decoration: BoxDecoration(
-                                              color: Color(0xFF4DB6AC),
+                                              color: const Color(0xFF4DB6AC),
                                               borderRadius:
                                                   BorderRadius.circular(14.0),
                                               border: Border.all(
                                                 color: _model.selectedCOolor ==
-                                                        Color(0xFF4DB6AC)
+                                                        const Color(0xFF4DB6AC)
                                                     ? FlutterFlowTheme.of(
                                                             context)
                                                         .primary
@@ -601,19 +596,19 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
                                           highlightColor: Colors.transparent,
                                           onTap: () async {
                                             _model.selectedCOolor =
-                                                Color(0xFFFFD54F);
+                                                const Color(0xFFFFD54F);
                                             safeSetState(() {});
                                           },
                                           child: Container(
                                             width: 48.0,
                                             height: 48.0,
                                             decoration: BoxDecoration(
-                                              color: Color(0xFFFFD54F),
+                                              color: const Color(0xFFFFD54F),
                                               borderRadius:
                                                   BorderRadius.circular(14.0),
                                               border: Border.all(
                                                 color: _model.selectedCOolor ==
-                                                        Color(0xFFFFD54F)
+                                                        const Color(0xFFFFD54F)
                                                     ? FlutterFlowTheme.of(
                                                             context)
                                                         .primary
@@ -631,19 +626,19 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
                                           highlightColor: Colors.transparent,
                                           onTap: () async {
                                             _model.selectedCOolor =
-                                                Color(0xFFFF8A65);
+                                                const Color(0xFFFF8A65);
                                             safeSetState(() {});
                                           },
                                           child: Container(
                                             width: 48.0,
                                             height: 48.0,
                                             decoration: BoxDecoration(
-                                              color: Color(0xFFFF8A65),
+                                              color: const Color(0xFFFF8A65),
                                               borderRadius:
                                                   BorderRadius.circular(14.0),
                                               border: Border.all(
                                                 color: _model.selectedCOolor ==
-                                                        Color(0xFFFF8A65)
+                                                        const Color(0xFFFF8A65)
                                                     ? FlutterFlowTheme.of(
                                                             context)
                                                         .primary
@@ -661,19 +656,19 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
                                           highlightColor: Colors.transparent,
                                           onTap: () async {
                                             _model.selectedCOolor =
-                                                Color(0xFFFF6B6B);
+                                                const Color(0xFFFF6B6B);
                                             safeSetState(() {});
                                           },
                                           child: Container(
                                             width: 48.0,
                                             height: 48.0,
                                             decoration: BoxDecoration(
-                                              color: Color(0xFFFF6B6B),
+                                              color: const Color(0xFFFF6B6B),
                                               borderRadius:
                                                   BorderRadius.circular(14.0),
                                               border: Border.all(
                                                 color: _model.selectedCOolor ==
-                                                        Color(0xFFFF6B6B)
+                                                        const Color(0xFFFF6B6B)
                                                     ? FlutterFlowTheme.of(
                                                             context)
                                                         .primary
@@ -691,19 +686,19 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
                                           highlightColor: Colors.transparent,
                                           onTap: () async {
                                             _model.selectedCOolor =
-                                                Color(0xFFFFA07A);
+                                                const Color(0xFFFFA07A);
                                             safeSetState(() {});
                                           },
                                           child: Container(
                                             width: 48.0,
                                             height: 48.0,
                                             decoration: BoxDecoration(
-                                              color: Color(0xFFFFA07A),
+                                              color: const Color(0xFFFFA07A),
                                               borderRadius:
                                                   BorderRadius.circular(14.0),
                                               border: Border.all(
                                                 color: _model.selectedCOolor ==
-                                                        Color(0xFFFFA07A)
+                                                        const Color(0xFFFFA07A)
                                                     ? FlutterFlowTheme.of(
                                                             context)
                                                         .primary
@@ -721,19 +716,19 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
                                           highlightColor: Colors.transparent,
                                           onTap: () async {
                                             _model.selectedCOolor =
-                                                Color(0xFF52A097);
+                                                const Color(0xFF52A097);
                                             safeSetState(() {});
                                           },
                                           child: Container(
                                             width: 48.0,
                                             height: 48.0,
                                             decoration: BoxDecoration(
-                                              color: Color(0xFF52A097),
+                                              color: const Color(0xFF52A097),
                                               borderRadius:
                                                   BorderRadius.circular(14.0),
                                               border: Border.all(
                                                 color: _model.selectedCOolor ==
-                                                        Color(0xFF52A097)
+                                                        const Color(0xFF52A097)
                                                     ? FlutterFlowTheme.of(
                                                             context)
                                                         .primary
@@ -751,19 +746,19 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
                                           highlightColor: Colors.transparent,
                                           onTap: () async {
                                             _model.selectedCOolor =
-                                                Color(0xFF95E1D3);
+                                                const Color(0xFF95E1D3);
                                             safeSetState(() {});
                                           },
                                           child: Container(
                                             width: 48.0,
                                             height: 48.0,
                                             decoration: BoxDecoration(
-                                              color: Color(0xFF95E1D3),
+                                              color: const Color(0xFF95E1D3),
                                               borderRadius:
                                                   BorderRadius.circular(14.0),
                                               border: Border.all(
                                                 color: _model.selectedCOolor ==
-                                                        Color(0xFF95E1D3)
+                                                        const Color(0xFF95E1D3)
                                                     ? FlutterFlowTheme.of(
                                                             context)
                                                         .primary
@@ -781,19 +776,19 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
                                           highlightColor: Colors.transparent,
                                           onTap: () async {
                                             _model.selectedCOolor =
-                                                Color(0xFF5DADE2);
+                                                const Color(0xFF5DADE2);
                                             safeSetState(() {});
                                           },
                                           child: Container(
                                             width: 48.0,
                                             height: 48.0,
                                             decoration: BoxDecoration(
-                                              color: Color(0xFF5DADE2),
+                                              color: const Color(0xFF5DADE2),
                                               borderRadius:
                                                   BorderRadius.circular(14.0),
                                               border: Border.all(
                                                 color: _model.selectedCOolor ==
-                                                        Color(0xFF5DADE2)
+                                                        const Color(0xFF5DADE2)
                                                     ? FlutterFlowTheme.of(
                                                             context)
                                                         .primary
@@ -811,19 +806,19 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
                                           highlightColor: Colors.transparent,
                                           onTap: () async {
                                             _model.selectedCOolor =
-                                                Color(0xFFEE82EE);
+                                                const Color(0xFFEE82EE);
                                             safeSetState(() {});
                                           },
                                           child: Container(
                                             width: 48.0,
                                             height: 48.0,
                                             decoration: BoxDecoration(
-                                              color: Color(0xFFEE82EE),
+                                              color: const Color(0xFFEE82EE),
                                               borderRadius:
                                                   BorderRadius.circular(14.0),
                                               border: Border.all(
                                                 color: _model.selectedCOolor ==
-                                                        Color(0xFFEE82EE)
+                                                        const Color(0xFFEE82EE)
                                                     ? FlutterFlowTheme.of(
                                                             context)
                                                         .primary
@@ -833,7 +828,7 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
                                             ),
                                           ),
                                         ),
-                                      ].divide(SizedBox(width: 5.0)),
+                                      ].divide(const SizedBox(width: 5.0)),
                                     ),
                                   ),
                                 ),
@@ -842,7 +837,7 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
                           ),
                         ),
                         // Spacer before buttons
-                        SizedBox(height: 24.0),
+                        const SizedBox(height: 24.0),
                         // Primary button - Add child and continue
                         FFButtonWidget(
                           onPressed: () async {
@@ -907,15 +902,15 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
                           options: FFButtonOptions(
                             width: double.infinity,
                             height: 56.0,
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 16.0, 0.0, 16.0, 0.0),
-                            iconPadding: EdgeInsetsDirectional.fromSTEB(
+                            iconPadding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 0.0, 0.0, 0.0),
                             color: FlutterFlowTheme.of(context).primary,
                             textStyle: FlutterFlowTheme.of(context)
                                 .titleSmall
                                 .override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   color: Colors.white,
                                   letterSpacing: 0.0,
                                   fontWeight: FontWeight.normal,
@@ -925,7 +920,7 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
                           ),
                         ),
                         // Spacing between buttons
-                        SizedBox(height: 12.0),
+                        const SizedBox(height: 12.0),
                         // Secondary button - Add another child (outlined style)
                         FFButtonWidget(
                             onPressed: () async {
@@ -989,15 +984,15 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
                             options: FFButtonOptions(
                               width: double.infinity,
                               height: 56.0,
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   16.0, 0.0, 16.0, 0.0),
-                              iconPadding: EdgeInsetsDirectional.fromSTEB(
+                              iconPadding: const EdgeInsetsDirectional.fromSTEB(
                                   0.0, 0.0, 0.0, 0.0),
                               color: FlutterFlowTheme.of(context).primary,
                               textStyle: FlutterFlowTheme.of(context)
                                   .titleSmall
                                   .override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     color: Colors.white,
                                     letterSpacing: 0.0,
                                     fontWeight: FontWeight.normal,
@@ -1007,7 +1002,7 @@ class _AddChildxWidgetState extends State<AddChildxWidget> {
                             ),
                         ),
                         // Bottom padding
-                        SizedBox(height: 24.0),
+                        const SizedBox(height: 24.0),
                       ].divide(const SizedBox(height: 16.0)),
                     ),
                   ),

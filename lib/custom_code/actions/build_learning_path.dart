@@ -1,19 +1,13 @@
 // Automatic FlutterFlow imports
 import '/backend/backend.dart';
-import '/backend/schema/structs/index.dart';
-import '/backend/schema/enums/enums.dart';
-import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import 'index.dart'; // Imports other custom actions
-import '/flutter_flow/custom_functions.dart'; // Imports custom functions
-import 'package:flutter/material.dart';
+// Imports other custom actions
+// Imports custom functions
 // Begin custom action code
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
-import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '/app_state.dart';
 
 Future buildLearningPath(
   String? challengeDescription,
@@ -149,8 +143,8 @@ Example format:
 
     if (createdAt == null || docChildRef == null || docChallenge == null) return false;
 
-    return docChildRef.path == childId!.path &&
-           docChallenge.toLowerCase().trim() == challengeDescription!.toLowerCase().trim() &&
+    return docChildRef.path == childId.path &&
+           docChallenge.toLowerCase().trim() == challengeDescription.toLowerCase().trim() &&
            createdAt.isAfter(sevenDaysAgo);
   }).toList();
 

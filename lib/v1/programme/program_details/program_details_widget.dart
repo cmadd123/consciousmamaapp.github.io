@@ -1,16 +1,10 @@
 import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import '/flutter_flow/flutter_flow_widgets.dart';
 import '/v1/empty_list_view_component/empty_list_view_component_widget.dart';
 import '/v1/tasks/task_details_pop_up/task_details_pop_up_widget.dart';
-import 'dart:ui';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:percent_indicator/percent_indicator.dart';
-import 'package:provider/provider.dart';
 import 'program_details_model.dart';
 export 'program_details_model.dart';
 
@@ -58,12 +52,12 @@ class _ProgramDetailsWidgetState extends State<ProgramDetailsWidget> {
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
         body: Padding(
-          padding: EdgeInsetsDirectional.fromSTEB(20.0, 0.0, 20.0, 0.0),
+          padding: const EdgeInsetsDirectional.fromSTEB(20.0, 0.0, 20.0, 0.0),
           child: Column(
             mainAxisSize: MainAxisSize.max,
             children: [
               Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(0.0, 50.0, 0.0, 20.0),
+                padding: const EdgeInsetsDirectional.fromSTEB(0.0, 50.0, 0.0, 20.0),
                 child: Row(
                   mainAxisSize: MainAxisSize.max,
                   children: [
@@ -92,7 +86,7 @@ class _ProgramDetailsWidgetState extends State<ProgramDetailsWidget> {
                             style: FlutterFlowTheme.of(context)
                                 .bodyMedium
                                 .override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   fontSize: 20.0,
                                   letterSpacing: 0.0,
                                   fontWeight: FontWeight.bold,
@@ -110,17 +104,17 @@ class _ProgramDetailsWidgetState extends State<ProgramDetailsWidget> {
                 ),
               ),
               Align(
-                alignment: AlignmentDirectional(-1.0, -1.0),
+                alignment: const AlignmentDirectional(-1.0, -1.0),
                 child: Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(0.0, 16.0, 0.0, 0.0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(0.0, 16.0, 0.0, 0.0),
                   child: Text(
                     valueOrDefault<String>(
-                      widget!.programs?.title,
+                      widget.programs?.title,
                       'Programme Name',
                     ),
                     textAlign: TextAlign.start,
                     style: FlutterFlowTheme.of(context).bodyMedium.override(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           fontSize: 20.0,
                           letterSpacing: 0.0,
                           fontWeight: FontWeight.bold,
@@ -134,14 +128,14 @@ class _ProgramDetailsWidgetState extends State<ProgramDetailsWidget> {
                   Flexible(
                     child: Padding(
                       padding:
-                          EdgeInsetsDirectional.fromSTEB(0.0, 10.0, 0.0, 0.0),
+                          const EdgeInsetsDirectional.fromSTEB(0.0, 10.0, 0.0, 0.0),
                       child: Text(
                         valueOrDefault<String>(
-                          widget!.programs?.description,
+                          widget.programs?.description,
                           '- -',
                         ),
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               color: FlutterFlowTheme.of(context).secondaryText,
                               letterSpacing: 0.0,
                             ),
@@ -153,14 +147,14 @@ class _ProgramDetailsWidgetState extends State<ProgramDetailsWidget> {
                       return taskNumber == 0 ? 0.0 : taskPassed / taskNumber;
                     }(
                         valueOrDefault<int>(
-                          widget!.programs?.taskDates?.length,
+                          widget.programs?.taskDates.length,
                           0,
                         ),
                         valueOrDefault<int>(
-                          widget!.programs?.taskDates
-                              ?.where((e) => e < getCurrentTimestamp)
+                          widget.programs?.taskDates
+                              .where((e) => e < getCurrentTimestamp)
                               .toList()
-                              ?.length,
+                              .length,
                           0,
                         )),
                     radius: 40.0,
@@ -168,25 +162,25 @@ class _ProgramDetailsWidgetState extends State<ProgramDetailsWidget> {
                     animation: true,
                     animateFromLastPercent: true,
                     progressColor: FlutterFlowTheme.of(context).primary,
-                    backgroundColor: Color(0x6552A097),
+                    backgroundColor: const Color(0x6552A097),
                     center: Text(
                       '${((int taskNumber, int taskPassed) {
                         return (taskNumber == 0)
                             ? 0
                             : ((taskPassed / taskNumber) * 100).toInt();
                       }(valueOrDefault<int>(
-                            widget!.programs?.taskDates?.length,
+                            widget.programs?.taskDates.length,
                             0,
                           ), valueOrDefault<int>(
-                            widget!.programs?.taskDates
-                                ?.where((e) => e < getCurrentTimestamp)
+                            widget.programs?.taskDates
+                                .where((e) => e < getCurrentTimestamp)
                                 .toList()
-                                ?.length,
+                                .length,
                             0,
                           ))).toString()}%',
                       style:
                           FlutterFlowTheme.of(context).headlineSmall.override(
-                                fontFamily: 'Andika New Basic',
+                                fontFamily: FFAppState().currentFontFamily,
                                 color: FlutterFlowTheme.of(context).primary,
                                 fontSize: 18.0,
                                 letterSpacing: 0.0,
@@ -197,13 +191,13 @@ class _ProgramDetailsWidgetState extends State<ProgramDetailsWidget> {
               ),
               Expanded(
                 child: Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(0.0, 20.0, 0.0, 0.0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(0.0, 20.0, 0.0, 0.0),
                   child: Builder(
                     builder: (context) {
                       final programTasks =
-                          widget!.programs?.tasks?.toList() ?? [];
+                          widget.programs?.tasks.toList() ?? [];
                       if (programTasks.isEmpty) {
-                        return EmptyListViewComponentWidget(
+                        return const EmptyListViewComponentWidget(
                           icon: Icon(
                             Icons.task_outlined,
                             size: 32.0,
@@ -213,7 +207,7 @@ class _ProgramDetailsWidgetState extends State<ProgramDetailsWidget> {
                       }
 
                       return ListView.separated(
-                        padding: EdgeInsets.fromLTRB(
+                        padding: const EdgeInsets.fromLTRB(
                           0,
                           0,
                           0,
@@ -222,12 +216,12 @@ class _ProgramDetailsWidgetState extends State<ProgramDetailsWidget> {
                         shrinkWrap: true,
                         scrollDirection: Axis.vertical,
                         itemCount: programTasks.length,
-                        separatorBuilder: (_, __) => SizedBox(height: 10.0),
+                        separatorBuilder: (_, __) => const SizedBox(height: 10.0),
                         itemBuilder: (context, programTasksIndex) {
                           final programTasksItem =
                               programTasks[programTasksIndex];
                           return Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 2.0, 0.0, 0.0),
                             child: StreamBuilder<TasksRecord>(
                               stream: TasksRecord.getDocument(programTasksItem),
@@ -256,15 +250,15 @@ class _ProgramDetailsWidgetState extends State<ProgramDetailsWidget> {
                                   children: [
                                     Container(
                                       width: 100.0,
-                                      decoration: BoxDecoration(),
+                                      decoration: const BoxDecoration(),
                                       child: Column(
                                         mainAxisSize: MainAxisSize.max,
                                         children: [
                                           Align(
                                             alignment:
-                                                AlignmentDirectional(1.0, 0.0),
+                                                const AlignmentDirectional(1.0, 0.0),
                                             child: Padding(
-                                              padding: EdgeInsetsDirectional
+                                              padding: const EdgeInsetsDirectional
                                                   .fromSTEB(
                                                       0.0, 16.0, 0.0, 0.0),
                                               child: RichText(
@@ -294,7 +288,7 @@ class _ProgramDetailsWidgetState extends State<ProgramDetailsWidget> {
                                                                 FontWeight.w600,
                                                           ),
                                                     ),
-                                                    TextSpan(
+                                                    const TextSpan(
                                                       text: '',
                                                       style: TextStyle(),
                                                     )
@@ -306,7 +300,7 @@ class _ProgramDetailsWidgetState extends State<ProgramDetailsWidget> {
                                                         fontFamily:
                                                             'Andika New Basic',
                                                         color:
-                                                            Color(0xFF595959),
+                                                            const Color(0xFF595959),
                                                         letterSpacing: 0.0,
                                                         fontWeight:
                                                             FontWeight.w600,
@@ -317,7 +311,7 @@ class _ProgramDetailsWidgetState extends State<ProgramDetailsWidget> {
                                           ),
                                           Align(
                                             alignment:
-                                                AlignmentDirectional(1.0, 0.0),
+                                                const AlignmentDirectional(1.0, 0.0),
                                             child: RichText(
                                               textScaler: MediaQuery.of(context)
                                                   .textScaler,
@@ -344,7 +338,7 @@ class _ProgramDetailsWidgetState extends State<ProgramDetailsWidget> {
                                                               FontWeight.w600,
                                                         ),
                                                   ),
-                                                  TextSpan(
+                                                  const TextSpan(
                                                     text: '',
                                                     style: TextStyle(),
                                                   )
@@ -356,7 +350,7 @@ class _ProgramDetailsWidgetState extends State<ProgramDetailsWidget> {
                                                           fontFamily:
                                                               'Andika New Basic',
                                                           color:
-                                                              Color(0xFF595959),
+                                                              const Color(0xFF595959),
                                                           letterSpacing: 0.0,
                                                           fontWeight:
                                                               FontWeight.w600,
@@ -380,7 +374,7 @@ class _ProgramDetailsWidgetState extends State<ProgramDetailsWidget> {
                                       child: Builder(
                                         builder: (context) => Padding(
                                           padding:
-                                              EdgeInsetsDirectional.fromSTEB(
+                                              const EdgeInsetsDirectional.fromSTEB(
                                                   0.0, 0.0, 24.0, 0.0),
                                           child: InkWell(
                                             splashColor: Colors.transparent,
@@ -398,7 +392,7 @@ class _ProgramDetailsWidgetState extends State<ProgramDetailsWidget> {
                                                     backgroundColor:
                                                         Colors.transparent,
                                                     alignment:
-                                                        AlignmentDirectional(
+                                                        const AlignmentDirectional(
                                                                 0.0, 0.0)
                                                             .resolve(
                                                                 Directionality.of(
@@ -426,7 +420,7 @@ class _ProgramDetailsWidgetState extends State<ProgramDetailsWidget> {
                                               width: double.infinity,
                                               height: 70.0,
                                               decoration: BoxDecoration(
-                                                color: Color(0xFFE6F1D9),
+                                                color: const Color(0xFFE6F1D9),
                                                 borderRadius:
                                                     BorderRadius.circular(16.0),
                                               ),
@@ -436,7 +430,7 @@ class _ProgramDetailsWidgetState extends State<ProgramDetailsWidget> {
                                                   Expanded(
                                                     child: Padding(
                                                       padding:
-                                                          EdgeInsetsDirectional
+                                                          const EdgeInsetsDirectional
                                                               .fromSTEB(
                                                                   16.0,
                                                                   16.0,
@@ -451,7 +445,7 @@ class _ProgramDetailsWidgetState extends State<ProgramDetailsWidget> {
                                                         children: [
                                                           Padding(
                                                             padding:
-                                                                EdgeInsetsDirectional
+                                                                const EdgeInsetsDirectional
                                                                     .fromSTEB(
                                                                         0.0,
                                                                         0.0,

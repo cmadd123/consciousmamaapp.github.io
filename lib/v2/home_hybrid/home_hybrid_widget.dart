@@ -6,11 +6,8 @@ import '/v2/creator/creator_theme_wrapper.dart';
 import '/components/parent_circle_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import '/flutter_flow/custom_functions.dart' as functions;
 import '/index.dart';
-import '/v2/skills_preview/skill_detail_preview_widget.dart';
 import 'dart:math';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import '/v2/routines/routines_page_widget.dart';
@@ -277,7 +274,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
             child: Text(
               _appVersion,
               style: FlutterFlowTheme.of(context).bodySmall.override(
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
                 color: const Color(0xFF9B8A9E),
                 fontSize: 10.0,
                 letterSpacing: 0.0,
@@ -320,7 +317,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
             return Text(
               '$greeting, $firstName',
               style: FlutterFlowTheme.of(context).headlineMedium.override(
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
                 color: const Color(0xFF5D4E60),
                 fontSize: 26.0,
                 fontWeight: FontWeight.w600,
@@ -333,7 +330,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
         Text(
           dateTimeFormat('EEEE, MMMM d', DateTime.now()),
           style: FlutterFlowTheme.of(context).bodyMedium.override(
-            fontFamily: 'Andika New Basic',
+            fontFamily: FFAppState().currentFontFamily,
             color: const Color(0xFF9B8A9E),
             fontSize: 14.0,
             letterSpacing: 0.0,
@@ -398,7 +395,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
           .get();
 
       if (!userSnapshot.exists) return;
-      final userData = userSnapshot.data() as Map<String, dynamic>?;
+      final userData = userSnapshot.data();
       if (userData == null) return;
 
       // Check if user has active subscription
@@ -440,7 +437,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                   '"God never withholds from His child that which His love and wisdom call good."',
                   textAlign: TextAlign.center,
                   style: FlutterFlowTheme.of(context).bodyMedium.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     color: const Color(0xFF5D4E60),
                     fontSize: 13.0,
                     fontStyle: FontStyle.italic,
@@ -451,7 +448,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                 Text(
                   '— Elisabeth Elliot',
                   style: FlutterFlowTheme.of(context).bodySmall.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     color: const Color(0xFF9B8A9E),
                     fontSize: 11.0,
                     letterSpacing: 0.0,
@@ -463,11 +460,11 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
           // Dismiss button
           GestureDetector(
             onTap: _dismissQuote,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 8.0),
+            child: const Padding(
+              padding: EdgeInsets.only(left: 8.0),
               child: Icon(
                 Icons.close,
-                color: const Color(0xFF9B8A9E),
+                color: Color(0xFF9B8A9E),
                 size: 16.0,
               ),
             ),
@@ -486,7 +483,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
           child: Text(
             'Your children',
             style: FlutterFlowTheme.of(context).bodyMedium.override(
-              fontFamily: 'Andika New Basic',
+              fontFamily: FFAppState().currentFontFamily,
               color: const Color(0xFF9B8A9E),
               fontSize: 12.0,
               letterSpacing: 0.0,
@@ -561,7 +558,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                       Text(
                         child.name.length > 8 ? '${child.name.substring(0, 8)}...' : child.name,
                         style: FlutterFlowTheme.of(context).bodySmall.override(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           color: const Color(0xFF5D4E60),
                           fontSize: 12.0,
                           letterSpacing: 0.0,
@@ -677,7 +674,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                         Text(
                           headerLabel,
                           style: FlutterFlowTheme.of(context).bodyLarge.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: const Color(0xFF5D4E60),
                             fontSize: 18.0,
                             fontWeight: FontWeight.w600,
@@ -815,7 +812,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                 Text(
                   mealType,
                   style: FlutterFlowTheme.of(context).bodySmall.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     color: const Color(0xFF9B8A9E),
                     fontSize: 12.0,
                     letterSpacing: 0.0,
@@ -825,7 +822,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                 Text(
                   hasRecipe ? mealName : 'Plan ${mealType.toLowerCase()}',
                   style: FlutterFlowTheme.of(context).bodyMedium.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     color: hasRecipe
                         ? const Color(0xFF5D4E60)
                         : const Color(0xFF9B8A9E),
@@ -893,7 +890,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
               onTap: () => Navigator.of(context).push(
                 PageRouteBuilder(
                   pageBuilder: (context, animation, secondaryAnimation) =>
-                      CalendarpageWidget(),
+                      const CalendarpageWidget(),
                   transitionDuration: const Duration(milliseconds: 500),
                   reverseTransitionDuration: const Duration(milliseconds: 300),
                   transitionsBuilder: (context, animation, secondaryAnimation, child) {
@@ -940,7 +937,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                               ? "Today's Events"
                               : 'No events today',
                           style: FlutterFlowTheme.of(context).bodyLarge.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: const Color(0xFF5D4E60),
                             fontSize: 18.0,
                             fontWeight: FontWeight.w600,
@@ -958,7 +955,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                             child: Text(
                               '$totalItems',
                               style: FlutterFlowTheme.of(context).bodySmall.override(
-                                fontFamily: 'Andika New Basic',
+                                fontFamily: FFAppState().currentFontFamily,
                                 color: FlutterFlowTheme.of(context).primary,
                                 fontSize: 12.0,
                                 fontWeight: FontWeight.w600,
@@ -1006,7 +1003,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                           child: Text(
                             '+${totalItems - 3} more',
                             style: FlutterFlowTheme.of(context).bodySmall.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               color: const Color(0xFF9B8A9E),
                               fontSize: 12.0,
                               fontStyle: FontStyle.italic,
@@ -1046,7 +1043,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
               child: Text(
                 event.name,
                 style: FlutterFlowTheme.of(context).bodyMedium.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   color: const Color(0xFF5D4E60),
                   fontSize: 14.0,
                   fontWeight: FontWeight.w500,
@@ -1058,16 +1055,16 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
             ),
             if (event.date != null) ...[
               const SizedBox(width: 8.0),
-              Icon(
+              const Icon(
                 Icons.access_time_rounded,
                 size: 14.0,
-                color: const Color(0xFF9B8A9E),
+                color: Color(0xFF9B8A9E),
               ),
               const SizedBox(width: 4.0),
               Text(
                 dateTimeFormat('jm', event.date!),
                 style: FlutterFlowTheme.of(context).bodySmall.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   color: const Color(0xFF9B8A9E),
                   fontSize: 12.0,
                   letterSpacing: 0.0,
@@ -1125,7 +1122,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
   //                 child: Text(
   //                   activityName,
   //                   style: FlutterFlowTheme.of(context).bodyMedium.override(
-  //                     fontFamily: 'Andika New Basic',
+  //                     fontFamily: FFAppState().currentFontFamily,
   //                     color: const Color(0xFF5D4E60),
   //                     fontSize: 14.0,
   //                     fontWeight: FontWeight.w500,
@@ -1360,7 +1357,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
             Text(
               'Helpful Docs',
               style: FlutterFlowTheme.of(context).bodyLarge.override(
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
                 color: const Color(0xFF5D4E60),
                 fontSize: 18.0,
                 fontWeight: FontWeight.w600,
@@ -1415,7 +1412,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                         Text(
                           routines.isEmpty ? 'Create a Routine' : 'Routines',
                           style: FlutterFlowTheme.of(context).bodyLarge.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: const Color(0xFF5D4E60),
                             fontSize: 18.0,
                             fontWeight: FontWeight.w600,
@@ -1453,7 +1450,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                           child: Text(
                             routine.name,
                             style: FlutterFlowTheme.of(context).bodyMedium.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               color: const Color(0xFF5D4E60),
                               fontSize: 14.0,
                               fontWeight: FontWeight.w500,
@@ -1466,7 +1463,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                         Text(
                           '${routine.steps.length} steps',
                           style: FlutterFlowTheme.of(context).bodySmall.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: const Color(0xFF9B8A9E),
                             fontSize: 12.0,
                             letterSpacing: 0.0,
@@ -1484,7 +1481,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                           fontSize: 12,
                           color: FlutterFlowTheme.of(context).primary,
                           fontWeight: FontWeight.w500,
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                         ),
                       ),
                     ),
@@ -1544,7 +1541,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                     Text(
                       incompleteTodos.isEmpty ? "Add a To-do" : "To-Do List",
                       style: FlutterFlowTheme.of(context).bodyLarge.override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         color: const Color(0xFF5D4E60),
                         fontSize: 18.0,
                         fontWeight: FontWeight.w600,
@@ -1562,7 +1559,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                         child: Text(
                           '${incompleteTodos.length}',
                           style: FlutterFlowTheme.of(context).bodySmall.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: FlutterFlowTheme.of(context).primary,
                             fontSize: 12.0,
                             fontWeight: FontWeight.w600,
@@ -1599,7 +1596,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                       child: Text(
                         '+$remainingCount more',
                         style: FlutterFlowTheme.of(context).bodySmall.override(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           color: const Color(0xFF9B8A9E),
                           fontSize: 12.0,
                           fontStyle: FontStyle.italic,
@@ -1670,7 +1667,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                 child: Text(
                   todo.title,
                   style: FlutterFlowTheme.of(context).bodyMedium.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     color: isCompleting ? const Color(0xFF9B8A9E) : const Color(0xFF5D4E60),
                     fontSize: 14.0,
                     fontWeight: FontWeight.w500,
@@ -1786,7 +1783,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
   //                   Text(
   //                     hasActivities ? "Today's Activities" : 'Find an activity',
   //                     style: FlutterFlowTheme.of(context).bodyLarge.override(
-  //                       fontFamily: 'Andika New Basic',
+  //                       fontFamily: FFAppState().currentFontFamily,
   //                       color: const Color(0xFF5D4E60),
   //                       fontSize: 18.0,
   //                       fontWeight: FontWeight.w600,
@@ -1804,7 +1801,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
   //                       child: Text(
   //                         '${todaysActivities.length}',
   //                         style: FlutterFlowTheme.of(context).bodySmall.override(
-  //                           fontFamily: 'Andika New Basic',
+  //                           fontFamily: FFAppState().currentFontFamily,
   //                           color: FlutterFlowTheme.of(context).primary,
   //                           fontSize: 12.0,
   //                           fontWeight: FontWeight.w600,
@@ -1843,7 +1840,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
   //                     child: Text(
   //                       '+$remainingCount more',
   //                       style: FlutterFlowTheme.of(context).bodySmall.override(
-  //                         fontFamily: 'Andika New Basic',
+  //                         fontFamily: FFAppState().currentFontFamily,
   //                         color: const Color(0xFF9B8A9E),
   //                         fontSize: 12.0,
   //                         fontStyle: FontStyle.italic,
@@ -1869,7 +1866,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
   //           child: Text(
   //             activity.name,
   //             style: FlutterFlowTheme.of(context).bodyMedium.override(
-  //               fontFamily: 'Andika New Basic',
+  //               fontFamily: FFAppState().currentFontFamily,
   //               color: const Color(0xFF5D4E60),
   //               fontSize: 14.0,
   //               fontWeight: FontWeight.w500,
@@ -1940,7 +1937,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                     Text(
                       todaysTasks.isEmpty ? "Create a Learning Path" : "Today's Learning",
                       style: FlutterFlowTheme.of(context).bodyLarge.override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         color: const Color(0xFF5D4E60),
                         fontSize: 18.0,
                         fontWeight: FontWeight.w600,
@@ -1958,7 +1955,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                         child: Text(
                           '${todaysTasks.length}',
                           style: FlutterFlowTheme.of(context).bodySmall.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: FlutterFlowTheme.of(context).primary,
                             fontSize: 12.0,
                             fontWeight: FontWeight.w600,
@@ -1995,7 +1992,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                       child: Text(
                         '+$remainingCount more',
                         style: FlutterFlowTheme.of(context).bodySmall.override(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           color: const Color(0xFF9B8A9E),
                           fontSize: 12.0,
                           fontStyle: FontStyle.italic,
@@ -2040,7 +2037,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                 child: Text(
                   task.title,
                   style: FlutterFlowTheme.of(context).bodyMedium.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     color: const Color(0xFF5D4E60),
                     fontSize: 14.0,
                     fontWeight: FontWeight.w500,
@@ -2163,7 +2160,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
               Text(
                 child.name,
                 style: FlutterFlowTheme.of(context).bodySmall.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   color: const Color(0xFF5D4E60),
                   fontSize: 12.0,
                   fontWeight: FontWeight.w500,
@@ -2200,16 +2197,16 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
             // Header row
             Row(
               children: [
-                Icon(
+                const Icon(
                   Icons.emoji_events_outlined,
-                  color: const Color(0xFFFF9800),
+                  color: Color(0xFFFF9800),
                   size: 26.0,
                 ),
                 const SizedBox(width: 8.0),
                 Text(
                   'Milestones',
                   style: FlutterFlowTheme.of(context).bodyLarge.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     color: const Color(0xFF5D4E60),
                     fontSize: 18.0,
                     fontWeight: FontWeight.w600,
@@ -2217,9 +2214,9 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                   ),
                 ),
                 const Spacer(),
-                Icon(
+                const Icon(
                   Icons.arrow_forward_ios,
-                  color: const Color(0xFF9B8A9E),
+                  color: Color(0xFF9B8A9E),
                   size: 16.0,
                 ),
               ],
@@ -2237,16 +2234,16 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
             else
               Row(
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.add_circle_outline,
-                    color: const Color(0xFF9B8A9E),
+                    color: Color(0xFF9B8A9E),
                     size: 18.0,
                   ),
                   const SizedBox(width: 8.0),
                   Text(
                     'Add a child to track milestones',
                     style: FlutterFlowTheme.of(context).bodySmall.override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       color: const Color(0xFF9B8A9E),
                       fontSize: 12.0,
                       fontStyle: FontStyle.italic,
@@ -2305,7 +2302,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                     Text(
                       hasSkills ? 'Skill Paths' : 'Create a Skill Path',
                       style: FlutterFlowTheme.of(context).bodyLarge.override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         color: const Color(0xFF5D4E60),
                         fontSize: 18.0,
                         fontWeight: FontWeight.w600,
@@ -2323,7 +2320,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                         child: Text(
                           '${skillPaths.length}',
                           style: FlutterFlowTheme.of(context).bodySmall.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: FlutterFlowTheme.of(context).primary,
                             fontSize: 12.0,
                             fontWeight: FontWeight.w600,
@@ -2357,7 +2354,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                       child: Text(
                         '+${skillPaths.length - 3} more',
                         style: FlutterFlowTheme.of(context).bodySmall.override(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           color: const Color(0xFF9B8A9E),
                           fontSize: 12.0,
                           fontStyle: FontStyle.italic,
@@ -2402,7 +2399,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                 Text(
                   skill.skillName,
                   style: FlutterFlowTheme.of(context).bodyMedium.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     color: const Color(0xFF5D4E60),
                     fontSize: 14.0,
                     fontWeight: FontWeight.w500,
@@ -2415,7 +2412,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                 Text(
                   '${skill.completedMilestones} of ${skill.totalMilestones} milestones',
                   style: FlutterFlowTheme.of(context).bodySmall.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     color: const Color(0xFF9B8A9E),
                     fontSize: 12.0,
                     letterSpacing: 0.0,
@@ -2428,7 +2425,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
           Text(
             '${skill.progressPercentage.toInt()}%',
             style: FlutterFlowTheme.of(context).bodySmall.override(
-              fontFamily: 'Andika New Basic',
+              fontFamily: FFAppState().currentFontFamily,
               color: FlutterFlowTheme.of(context).primary,
               fontSize: 12.0,
               fontWeight: FontWeight.w600,

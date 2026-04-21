@@ -284,7 +284,7 @@ class _CreatorMealPlanCardState extends State<CreatorMealPlanCard> {
                           Text(
                             'This Week from ${creator.name}',
                             style: FlutterFlowTheme.of(context).bodyMedium.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               fontSize: 15.0,
                               fontWeight: FontWeight.w600,
                               letterSpacing: 0.0,
@@ -297,7 +297,7 @@ class _CreatorMealPlanCardState extends State<CreatorMealPlanCard> {
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: FlutterFlowTheme.of(context).bodySmall.override(
-                                fontFamily: 'Andika New Basic',
+                                fontFamily: FFAppState().currentFontFamily,
                                 color: FlutterFlowTheme.of(context).secondaryText,
                                 fontSize: 12.0,
                                 letterSpacing: 0.0,
@@ -314,7 +314,7 @@ class _CreatorMealPlanCardState extends State<CreatorMealPlanCard> {
                 Text(
                   _mealPlan!.title,
                   style: FlutterFlowTheme.of(context).bodyLarge.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     fontSize: 16.0,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 0.0,
@@ -389,7 +389,7 @@ class _CreatorMealPlanCardState extends State<CreatorMealPlanCard> {
                     height: 44.0,
                     color: _imported ? Colors.green : primary,
                     textStyle: FlutterFlowTheme.of(context).bodyMedium.override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       color: Colors.white,
                       fontSize: 14.0,
                       fontWeight: FontWeight.w600,
@@ -406,7 +406,7 @@ class _CreatorMealPlanCardState extends State<CreatorMealPlanCard> {
                   child: Text(
                     'Created by ${creator.name}',
                     style: FlutterFlowTheme.of(context).bodySmall.override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       color: FlutterFlowTheme.of(context).secondaryText,
                       fontSize: 11.0,
                       fontStyle: FontStyle.italic,
@@ -445,7 +445,7 @@ class _CreatorMealPlanCardState extends State<CreatorMealPlanCard> {
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
       style: FlutterFlowTheme.of(context).bodySmall.override(
-        fontFamily: 'Andika New Basic',
+        fontFamily: FFAppState().currentFontFamily,
         color: FlutterFlowTheme.of(context).secondaryText,
         fontSize: 13.0,
         letterSpacing: 0.0,

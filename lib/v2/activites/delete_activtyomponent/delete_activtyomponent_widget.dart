@@ -1,11 +1,7 @@
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
-import 'dart:ui';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'delete_activtyomponent_model.dart';
 export 'delete_activtyomponent_model.dart';
 
@@ -51,16 +47,16 @@ class _DeleteActivtyomponentWidgetState
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Colors.transparent,
       ),
       child: Padding(
-        padding: EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
+        padding: const EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
         child: Container(
           width: 320.0,
           decoration: BoxDecoration(
             color: FlutterFlowTheme.of(context).secondaryBackground,
-            boxShadow: [
+            boxShadow: const [
               BoxShadow(
                 blurRadius: 12.0,
                 color: Color(0x33000000),
@@ -74,7 +70,7 @@ class _DeleteActivtyomponentWidgetState
             borderRadius: BorderRadius.circular(14.0),
           ),
           child: Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(24.0, 24.0, 24.0, 24.0),
+            padding: const EdgeInsetsDirectional.fromSTEB(24.0, 24.0, 24.0, 24.0),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -86,7 +82,7 @@ class _DeleteActivtyomponentWidgetState
                       width: 60.0,
                       height: 60.0,
                       decoration: BoxDecoration(
-                        color: Color(0xFFFFEBEE),
+                        color: const Color(0xFFFFEBEE),
                         borderRadius: BorderRadius.circular(30.0),
                       ),
                       child: Icon(
@@ -100,7 +96,7 @@ class _DeleteActivtyomponentWidgetState
                       textAlign: TextAlign.center,
                       style:
                           FlutterFlowTheme.of(context).headlineSmall.override(
-                                fontFamily: 'Andika New Basic',
+                                fontFamily: FFAppState().currentFontFamily,
                                 letterSpacing: 0.0,
                               ),
                     ),
@@ -108,12 +104,12 @@ class _DeleteActivtyomponentWidgetState
                       'Are you sure you want to delete this activity? This action cannot be undone.',
                       textAlign: TextAlign.center,
                       style: FlutterFlowTheme.of(context).bodyMedium.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: FlutterFlowTheme.of(context).secondaryText,
                             letterSpacing: 0.0,
                           ),
                     ),
-                  ].divide(SizedBox(height: 12.0)),
+                  ].divide(const SizedBox(height: 12.0)),
                 ),
                 Row(
                   mainAxisSize: MainAxisSize.max,
@@ -127,13 +123,13 @@ class _DeleteActivtyomponentWidgetState
                       options: FFButtonOptions(
                         width: 130.0,
                         height: 44.0,
-                        padding: EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(8.0),
                         iconPadding:
-                            EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
+                            const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
                         color: FlutterFlowTheme.of(context).secondaryBackground,
                         textStyle:
                             FlutterFlowTheme.of(context).titleSmall.override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   letterSpacing: 0.0,
                                 ),
                         elevation: 0.0,
@@ -146,34 +142,34 @@ class _DeleteActivtyomponentWidgetState
                     ),
                     FFButtonWidget(
                       onPressed: () async {
-                        await widget!.activty!.delete();
+                        await widget.activty!.delete();
                         Navigator.pop(context);
                       },
                       text: 'Delete',
                       options: FFButtonOptions(
                         width: 130.0,
                         height: 44.0,
-                        padding: EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(8.0),
                         iconPadding:
-                            EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
+                            const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
                         color: FlutterFlowTheme.of(context).error,
                         textStyle:
                             FlutterFlowTheme.of(context).titleSmall.override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   color: FlutterFlowTheme.of(context).info,
                                   letterSpacing: 0.0,
                                 ),
                         elevation: 0.0,
-                        borderSide: BorderSide(
+                        borderSide: const BorderSide(
                           color: Colors.transparent,
                           width: 1.0,
                         ),
                         borderRadius: BorderRadius.circular(14.0),
                       ),
                     ),
-                  ].divide(SizedBox(width: 12.0)),
+                  ].divide(const SizedBox(width: 12.0)),
                 ),
-              ].divide(SizedBox(height: 20.0)),
+              ].divide(const SizedBox(height: 20.0)),
             ),
           ),
         ),

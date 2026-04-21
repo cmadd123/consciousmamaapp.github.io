@@ -1,4 +1,5 @@
 import 'dart:ui';
+import '/app_state.dart';
 import 'package:flutter/material.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 
@@ -153,7 +154,7 @@ class _CustomDateTimePickerState extends State<CustomDateTimePicker> {
                     itemBuilder(index),
                     textAlign: centerText ? TextAlign.center : TextAlign.left,
                     style: FlutterFlowTheme.of(context).bodyLarge.override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       fontSize: isSelected ? 20 : 15,
                       fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                       color: isSelected
@@ -223,7 +224,7 @@ class _CustomDateTimePickerState extends State<CustomDateTimePicker> {
                 Text(
                   widget.title,
                   style: FlutterFlowTheme.of(context).titleMedium.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 0.0,
                   ),
@@ -253,7 +254,7 @@ class _CustomDateTimePickerState extends State<CustomDateTimePicker> {
               child: Text(
                 'Date',
                 style: FlutterFlowTheme.of(context).labelMedium.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   color: FlutterFlowTheme.of(context).secondaryText,
                   letterSpacing: 0.0,
                 ),
@@ -329,7 +330,7 @@ class _CustomDateTimePickerState extends State<CustomDateTimePicker> {
               child: Text(
                 'Time',
                 style: FlutterFlowTheme.of(context).labelMedium.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   color: FlutterFlowTheme.of(context).secondaryText,
                   letterSpacing: 0.0,
                 ),
@@ -359,7 +360,7 @@ class _CustomDateTimePickerState extends State<CustomDateTimePicker> {
                     child: Text(
                       ':',
                       style: FlutterFlowTheme.of(context).headlineMedium.override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         color: FlutterFlowTheme.of(context).primary,
                         letterSpacing: 0.0,
                       ),

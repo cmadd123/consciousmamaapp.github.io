@@ -53,7 +53,7 @@ class _CreateSkillPathPreviewWidgetState
         title: Text(
           'Create Skill Path - Step ${_currentStep + 1} of 4',
           style: FlutterFlowTheme.of(context).headlineSmall.override(
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
                 color: const Color(0xFF5D4E60),
                 fontSize: 18.0,
                 fontWeight: FontWeight.w600,
@@ -98,7 +98,7 @@ class _CreateSkillPathPreviewWidgetState
           Text(
             'What skill do you want your child to learn?',
             style: FlutterFlowTheme.of(context).headlineMedium.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   color: const Color(0xFF5D4E60),
                   fontSize: 24.0,
                   fontWeight: FontWeight.w600,
@@ -123,7 +123,7 @@ class _CreateSkillPathPreviewWidgetState
               decoration: InputDecoration(
                 hintText: 'Search or type...',
                 hintStyle: TextStyle(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   color: const Color(0xFF9B8A9E),
                   fontSize: 16.0,
                 ),
@@ -147,7 +147,7 @@ class _CreateSkillPathPreviewWidgetState
           Text(
             'Popular Skills:',
             style: FlutterFlowTheme.of(context).bodyLarge.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   color: const Color(0xFF5D4E60),
                   fontSize: 18.0,
                   fontWeight: FontWeight.w600,
@@ -194,7 +194,7 @@ class _CreateSkillPathPreviewWidgetState
                     Text(
                       skill['name']!,
                       style: FlutterFlowTheme.of(context).bodyLarge.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: const Color(0xFF5D4E60),
                             fontSize: 18.0,
                             fontWeight: FontWeight.w600,
@@ -237,7 +237,7 @@ class _CreateSkillPathPreviewWidgetState
               child: Text(
                 'Continue',
                 style: FlutterFlowTheme.of(context).bodyLarge.override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       color: Colors.white,
                       fontSize: 18.0,
                       fontWeight: FontWeight.w600,
@@ -260,7 +260,7 @@ class _CreateSkillPathPreviewWidgetState
           Text(
             '$_selectedSkill Skill Path',
             style: FlutterFlowTheme.of(context).headlineMedium.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   color: const Color(0xFF5D4E60),
                   fontSize: 24.0,
                   fontWeight: FontWeight.w600,
@@ -270,7 +270,7 @@ class _CreateSkillPathPreviewWidgetState
           Text(
             'Customize the learning experience',
             style: FlutterFlowTheme.of(context).bodyMedium.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   color: const Color(0xFF9B8A9E),
                   fontSize: 16.0,
                 ),
@@ -374,7 +374,7 @@ class _CreateSkillPathPreviewWidgetState
               decoration: InputDecoration(
                 hintText: 'e.g., "furniture building" or "toys & gifts"',
                 hintStyle: TextStyle(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   color: const Color(0xFF9B8A9E),
                   fontSize: 14.0,
                 ),
@@ -430,7 +430,7 @@ class _CreateSkillPathPreviewWidgetState
               child: Text(
                 'Continue',
                 style: FlutterFlowTheme.of(context).bodyLarge.override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       color: Colors.white,
                       fontSize: 18.0,
                       fontWeight: FontWeight.w600,
@@ -488,7 +488,7 @@ class _CreateSkillPathPreviewWidgetState
           Text(
             'Choose teaching approach:',
             style: FlutterFlowTheme.of(context).headlineMedium.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   color: const Color(0xFF5D4E60),
                   fontSize: 24.0,
                   fontWeight: FontWeight.w600,
@@ -532,7 +532,7 @@ class _CreateSkillPathPreviewWidgetState
                         Text(
                           expert['name'] as String,
                           style: FlutterFlowTheme.of(context).bodyLarge.override(
-                                fontFamily: 'Andika New Basic',
+                                fontFamily: FFAppState().currentFontFamily,
                                 color: const Color(0xFF5D4E60),
                                 fontSize: 18.0,
                                 fontWeight: FontWeight.w600,
@@ -552,7 +552,7 @@ class _CreateSkillPathPreviewWidgetState
                             child: const Text(
                               'Recommended',
                               style: TextStyle(
-                                fontFamily: 'Andika New Basic',
+                                fontFamily: FFAppState().currentFontFamily,
                                 color: Color(0xFF9B8A9E),
                                 fontSize: 12.0,
                                 fontWeight: FontWeight.w600,
@@ -577,7 +577,7 @@ class _CreateSkillPathPreviewWidgetState
                     Text(
                       expert['subtitle'] as String,
                       style: FlutterFlowTheme.of(context).bodyMedium.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: const Color(0xFF5D4E60),
                             fontSize: 14.0,
                             fontStyle: FontStyle.italic,
@@ -592,7 +592,7 @@ class _CreateSkillPathPreviewWidgetState
                           const Text(
                             '• ',
                             style: TextStyle(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               color: Color(0xFF9B8A9E),
                               fontSize: 14.0,
                             ),
@@ -601,7 +601,7 @@ class _CreateSkillPathPreviewWidgetState
                             child: Text(
                               credential,
                               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     color: const Color(0xFF9B8A9E),
                                     fontSize: 14.0,
                                   ),
@@ -638,7 +638,7 @@ class _CreateSkillPathPreviewWidgetState
               child: Text(
                 'Generate Skill Path',
                 style: FlutterFlowTheme.of(context).bodyLarge.override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       color: Colors.white,
                       fontSize: 18.0,
                       fontWeight: FontWeight.w600,
@@ -662,7 +662,7 @@ class _CreateSkillPathPreviewWidgetState
             Text(
               'Creating Your Skill Path',
               style: FlutterFlowTheme.of(context).headlineMedium.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     color: const Color(0xFF5D4E60),
                     fontSize: 24.0,
                     fontWeight: FontWeight.w600,
@@ -691,7 +691,7 @@ class _CreateSkillPathPreviewWidgetState
             Text(
               _generationStatus,
               style: FlutterFlowTheme.of(context).bodyLarge.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     color: const Color(0xFF5D4E60),
                     fontSize: 16.0,
                   ),
@@ -725,7 +725,7 @@ class _CreateSkillPathPreviewWidgetState
             Text(
               '${(_generationProgress * 100).toInt()}%',
               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     color: const Color(0xFF9B8A9E),
                     fontSize: 14.0,
                   ),
@@ -736,7 +736,7 @@ class _CreateSkillPathPreviewWidgetState
             Text(
               'This takes about 30 seconds',
               style: FlutterFlowTheme.of(context).bodySmall.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     color: const Color(0xFF9B8A9E),
                     fontSize: 12.0,
                     fontStyle: FontStyle.italic,
@@ -753,7 +753,7 @@ class _CreateSkillPathPreviewWidgetState
     return Text(
       title,
       style: FlutterFlowTheme.of(context).bodyLarge.override(
-            fontFamily: 'Andika New Basic',
+            fontFamily: FFAppState().currentFontFamily,
             color: const Color(0xFF5D4E60),
             fontSize: 16.0,
             fontWeight: FontWeight.w600,
@@ -808,7 +808,7 @@ class _CreateSkillPathPreviewWidgetState
                     Text(
                       title,
                       style: FlutterFlowTheme.of(context).bodyLarge.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: const Color(0xFF5D4E60),
                             fontSize: 16.0,
                             fontWeight: FontWeight.w600,
@@ -818,7 +818,7 @@ class _CreateSkillPathPreviewWidgetState
                     Text(
                       description,
                       style: FlutterFlowTheme.of(context).bodySmall.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: const Color(0xFF9B8A9E),
                             fontSize: 13.0,
                           ),
@@ -878,7 +878,7 @@ class _CreateSkillPathPreviewWidgetState
                     Text(
                       title,
                       style: FlutterFlowTheme.of(context).bodyLarge.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: const Color(0xFF5D4E60),
                             fontSize: 16.0,
                             fontWeight: FontWeight.w600,
@@ -888,7 +888,7 @@ class _CreateSkillPathPreviewWidgetState
                     Text(
                       description,
                       style: FlutterFlowTheme.of(context).bodySmall.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: const Color(0xFF9B8A9E),
                             fontSize: 13.0,
                           ),
@@ -1033,7 +1033,7 @@ class _CreateSkillPathPreviewWidgetState
               Text(
                 'Skill Path Created!',
                 style: FlutterFlowTheme.of(context).headlineMedium.override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       color: const Color(0xFF5D4E60),
                       fontSize: 24.0,
                       fontWeight: FontWeight.w600,
@@ -1044,7 +1044,7 @@ class _CreateSkillPathPreviewWidgetState
               Text(
                 '$_selectedSkill Journey\nBased on ${_getExpertName()}',
                 style: FlutterFlowTheme.of(context).bodyLarge.override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       color: const Color(0xFF5D4E60),
                       fontSize: 16.0,
                     ),
@@ -1062,7 +1062,7 @@ class _CreateSkillPathPreviewWidgetState
                     Text(
                       '15 Progressive Milestones',
                       style: FlutterFlowTheme.of(context).bodyLarge.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: const Color(0xFF5D4E60),
                             fontSize: 16.0,
                             fontWeight: FontWeight.w600,
@@ -1072,7 +1072,7 @@ class _CreateSkillPathPreviewWidgetState
                     Text(
                       'Estimated: 3-6 months at your pace',
                       style: FlutterFlowTheme.of(context).bodySmall.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: const Color(0xFF9B8A9E),
                             fontSize: 13.0,
                           ),
@@ -1098,7 +1098,7 @@ class _CreateSkillPathPreviewWidgetState
                   child: Text(
                     'Start Learning',
                     style: FlutterFlowTheme.of(context).bodyLarge.override(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           color: Colors.white,
                           fontSize: 16.0,
                           fontWeight: FontWeight.w600,

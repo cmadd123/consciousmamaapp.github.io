@@ -103,7 +103,7 @@ class HomeNavBarWidget extends StatelessWidget {
             Text(
               label,
               style: FlutterFlowTheme.of(context).bodySmall.override(
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
                 color: isSelected
                     ? FlutterFlowTheme.of(context).primary
                     : const Color(0xFF9B8A9E),
@@ -146,7 +146,7 @@ class HomeNavBarWidget extends StatelessWidget {
             Text(
               'Settings',
               style: FlutterFlowTheme.of(context).bodySmall.override(
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
                 color: isSelected
                     ? FlutterFlowTheme.of(context).primary
                     : const Color(0xFF9B8A9E),

@@ -2,14 +2,10 @@ import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
-import 'dart:ui';
 import '/custom_code/actions/index.dart' as actions;
 import '/index.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'create_programm_step4_day_time_model.dart';
 export 'create_programm_step4_day_time_model.dart';
 
@@ -65,14 +61,14 @@ class _CreateProgrammStep4DayTimeWidgetState
         body: Container(
           width: double.infinity,
           height: double.infinity,
-          decoration: BoxDecoration(),
+          decoration: const BoxDecoration(),
           child: Column(
             mainAxisSize: MainAxisSize.max,
             children: [
               Expanded(
                 child: Padding(
                   padding:
-                      EdgeInsetsDirectional.fromSTEB(13.0, 50.0, 13.0, 0.0),
+                      const EdgeInsetsDirectional.fromSTEB(13.0, 50.0, 13.0, 0.0),
                   child: SingleChildScrollView(
                     child: Column(
                       mainAxisSize: MainAxisSize.max,
@@ -89,7 +85,7 @@ class _CreateProgrammStep4DayTimeWidgetState
                                   width: 6.0,
                                   height: 4.0,
                                   decoration: BoxDecoration(
-                                    color: Color(0x6652A097),
+                                    color: const Color(0x6652A097),
                                     borderRadius: BorderRadius.circular(12.0),
                                   ),
                                 ),
@@ -97,14 +93,14 @@ class _CreateProgrammStep4DayTimeWidgetState
                                   width: 6.0,
                                   height: 4.0,
                                   decoration: BoxDecoration(
-                                    color: Color(0x6652A097),
+                                    color: const Color(0x6652A097),
                                     borderRadius: BorderRadius.circular(12.0),
                                   ),
                                   child: Container(
                                     width: 6.0,
                                     height: 4.0,
                                     decoration: BoxDecoration(
-                                      color: Color(0x6652A097),
+                                      color: const Color(0x6652A097),
                                       borderRadius: BorderRadius.circular(12.0),
                                     ),
                                   ),
@@ -117,14 +113,14 @@ class _CreateProgrammStep4DayTimeWidgetState
                                     borderRadius: BorderRadius.circular(12.0),
                                   ),
                                 ),
-                              ].divide(SizedBox(width: 2.0)),
+                              ].divide(const SizedBox(width: 2.0)),
                             ),
                             Text(
                               'Step 4/4',
                               style: FlutterFlowTheme.of(context)
                                   .bodyMedium
                                   .override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     color: FlutterFlowTheme.of(context).primary,
                                     letterSpacing: 0.0,
                                     fontWeight: FontWeight.w600,
@@ -133,9 +129,9 @@ class _CreateProgrammStep4DayTimeWidgetState
                           ],
                         ),
                         Align(
-                          alignment: AlignmentDirectional(-1.0, 0.0),
+                          alignment: const AlignmentDirectional(-1.0, 0.0),
                           child: Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 100.0, 0.0, 0.0),
                             child: ClipOval(
                               child: Container(
@@ -159,14 +155,14 @@ class _CreateProgrammStep4DayTimeWidgetState
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 32.0, 0.0, 0.0),
                           child: Text(
                             'What time works best for these activities?',
                             style: FlutterFlowTheme.of(context)
                                 .bodyMedium
                                 .override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   fontSize: 32.0,
                                   letterSpacing: 0.0,
                                   fontWeight: FontWeight.bold,
@@ -174,14 +170,14 @@ class _CreateProgrammStep4DayTimeWidgetState
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 32.0, 0.0, 32.0),
                           child: Text(
                             'Select a frequency .',
                             style: FlutterFlowTheme.of(context)
                                 .bodyMedium
                                 .override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   color: FlutterFlowTheme.of(context)
                                       .secondaryText,
                                   letterSpacing: 0.0,
@@ -191,7 +187,7 @@ class _CreateProgrammStep4DayTimeWidgetState
                         Container(
                           width: double.infinity,
                           height: 300.0,
-                          decoration: BoxDecoration(),
+                          decoration: const BoxDecoration(),
                           child: Builder(
                             builder: (context) {
                               final items =
@@ -199,7 +195,7 @@ class _CreateProgrammStep4DayTimeWidgetState
 
                               return MasonryGridView.builder(
                                 gridDelegate:
-                                    SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                                    const SliverSimpleGridDelegateWithFixedCrossAxisCount(
                                   crossAxisCount: 3,
                                 ),
                                 crossAxisSpacing: 10.0,
@@ -234,9 +230,9 @@ class _CreateProgrammStep4DayTimeWidgetState
                                           width: 1.0,
                                         ),
                                       ),
-                                      alignment: AlignmentDirectional(0.0, 0.0),
+                                      alignment: const AlignmentDirectional(0.0, 0.0),
                                       child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                        padding: const EdgeInsetsDirectional.fromSTEB(
                                             10.0, 0.0, 10.0, 0.0),
                                         child: RichText(
                                           textScaler:
@@ -285,14 +281,14 @@ class _CreateProgrammStep4DayTimeWidgetState
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 0.0, 0.0, 30.0),
                           child: Row(
                             mainAxisSize: MainAxisSize.max,
                             children: [
                               Expanded(
                                 child: Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       0.0, 60.0, 0.0, 20.0),
                                   child: FFButtonWidget(
                                     onPressed: () async {
@@ -301,17 +297,17 @@ class _CreateProgrammStep4DayTimeWidgetState
                                     text: 'Back',
                                     options: FFButtonOptions(
                                       height: 47.0,
-                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(
                                           16.0, 0.0, 16.0, 0.0),
                                       iconPadding:
-                                          EdgeInsetsDirectional.fromSTEB(
+                                          const EdgeInsetsDirectional.fromSTEB(
                                               0.0, 0.0, 0.0, 0.0),
                                       color:
                                           FlutterFlowTheme.of(context).primary,
                                       textStyle: FlutterFlowTheme.of(context)
                                           .titleSmall
                                           .override(
-                                            fontFamily: 'Andika New Basic',
+                                            fontFamily: FFAppState().currentFontFamily,
                                             color: Colors.white,
                                             letterSpacing: 0.0,
                                           ),
@@ -323,7 +319,7 @@ class _CreateProgrammStep4DayTimeWidgetState
                               ),
                               Expanded(
                                 child: Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       0.0, 60.0, 0.0, 20.0),
                                   child: FFButtonWidget(
                                     onPressed: () async {
@@ -335,7 +331,7 @@ class _CreateProgrammStep4DayTimeWidgetState
                                           CreateAProgramLoadingWidget.routeName,
                                           queryParameters: {
                                             'child': serializeParam(
-                                              widget!.selectedChild,
+                                              widget.selectedChild,
                                               ParamType.Document,
                                             ),
                                             'preferedTime': serializeParam(
@@ -343,11 +339,11 @@ class _CreateProgrammStep4DayTimeWidgetState
                                               ParamType.String,
                                             ),
                                             'challenge': serializeParam(
-                                              widget!.description,
+                                              widget.description,
                                               ParamType.String,
                                             ),
                                             'frequency': serializeParam(
-                                              widget!.frequencyText,
+                                              widget.frequencyText,
                                               ParamType.int,
                                             ),
                                             'timezone': serializeParam(
@@ -356,7 +352,7 @@ class _CreateProgrammStep4DayTimeWidgetState
                                             ),
                                           }.withoutNulls,
                                           extra: <String, dynamic>{
-                                            'child': widget!.selectedChild,
+                                            'child': widget.selectedChild,
                                           },
                                         );
                                       } else {
@@ -372,7 +368,7 @@ class _CreateProgrammStep4DayTimeWidgetState
                                               ),
                                             ),
                                             duration:
-                                                Duration(milliseconds: 4000),
+                                                const Duration(milliseconds: 4000),
                                             backgroundColor:
                                                 FlutterFlowTheme.of(context)
                                                     .error,
@@ -385,17 +381,17 @@ class _CreateProgrammStep4DayTimeWidgetState
                                     text: 'Next',
                                     options: FFButtonOptions(
                                       height: 47.0,
-                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(
                                           16.0, 0.0, 16.0, 0.0),
                                       iconPadding:
-                                          EdgeInsetsDirectional.fromSTEB(
+                                          const EdgeInsetsDirectional.fromSTEB(
                                               0.0, 0.0, 0.0, 0.0),
                                       color:
                                           FlutterFlowTheme.of(context).primary,
                                       textStyle: FlutterFlowTheme.of(context)
                                           .titleSmall
                                           .override(
-                                            fontFamily: 'Andika New Basic',
+                                            fontFamily: FFAppState().currentFontFamily,
                                             color: Colors.white,
                                             letterSpacing: 0.0,
                                           ),
@@ -405,7 +401,7 @@ class _CreateProgrammStep4DayTimeWidgetState
                                   ),
                                 ),
                               ),
-                            ].divide(SizedBox(width: 20.0)),
+                            ].divide(const SizedBox(width: 20.0)),
                           ),
                         ),
                       ],

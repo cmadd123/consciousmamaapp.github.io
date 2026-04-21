@@ -65,10 +65,10 @@ class ScreenshotNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final items = [
-      _NavItem(icon: Icons.home_outlined, activeIcon: Icons.home, label: 'Home'),
-      _NavItem(icon: Icons.restaurant_menu_outlined, activeIcon: Icons.restaurant_menu, label: 'Meals'),
-      _NavItem(icon: Icons.calendar_month_outlined, activeIcon: Icons.calendar_month, label: 'Calendar'),
-      _NavItem(icon: Icons.palette_outlined, activeIcon: Icons.palette, label: 'Activities'),
+      const _NavItem(icon: Icons.home_outlined, activeIcon: Icons.home, label: 'Home'),
+      const _NavItem(icon: Icons.restaurant_menu_outlined, activeIcon: Icons.restaurant_menu, label: 'Meals'),
+      const _NavItem(icon: Icons.calendar_month_outlined, activeIcon: Icons.calendar_month, label: 'Calendar'),
+      const _NavItem(icon: Icons.palette_outlined, activeIcon: Icons.palette, label: 'Activities'),
     ];
 
     return Container(

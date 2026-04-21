@@ -1,4 +1,5 @@
 import 'dart:async';
+import '/app_state.dart';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -218,8 +219,8 @@ class _ConfirmationOverlayState extends State<_ConfirmationOverlay>
                 const SizedBox(height: 12.0),
                 Text(
                   widget.message,
-                  style: const TextStyle(
-                    fontFamily: 'Andika New Basic',
+                  style: TextStyle(
+                    fontFamily: FFAppState().currentFontFamily,
                     fontSize: 17.0,
                     fontWeight: FontWeight.w600,
                     color: Color(0xFF2D3436),

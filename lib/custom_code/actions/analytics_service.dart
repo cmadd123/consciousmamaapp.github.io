@@ -1,5 +1,4 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:flutter/foundation.dart';
 
 /// Analytics Service for MomRise
 /// Tracks user events, traffic sources, and conversions

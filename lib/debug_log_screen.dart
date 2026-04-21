@@ -20,7 +20,7 @@ class _DebugLogScreenState extends State<DebugLogScreen> {
 
   void _startLogging() {
     // Override print to capture logs
-    final originalPrint = print;
+    const originalPrint = print;
     print = (Object? object) {
       if (mounted) {
         setState(() {

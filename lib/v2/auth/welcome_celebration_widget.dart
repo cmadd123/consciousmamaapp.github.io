@@ -219,7 +219,7 @@ class _WelcomeCelebrationWidgetState extends State<WelcomeCelebrationWidget>
                             style: FlutterFlowTheme.of(context)
                                 .headlineLarge
                                 .override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   fontSize: 36.0,
                                   fontWeight: FontWeight.bold,
                                   letterSpacing: 0.0,
@@ -241,7 +241,7 @@ class _WelcomeCelebrationWidgetState extends State<WelcomeCelebrationWidget>
                               style: FlutterFlowTheme.of(context)
                                   .bodyLarge
                                   .override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     fontSize: 18.0,
                                     letterSpacing: 0.0,
                                     color: FlutterFlowTheme.of(context)

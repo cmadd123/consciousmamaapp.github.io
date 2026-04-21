@@ -3,10 +3,8 @@ import '/backend/backend.dart';
 import '/backend/schema/enums/enums.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import '/flutter_flow/flutter_flow_widgets.dart';
 import '/index.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import '/components/page_animations.dart';
 import 'home_simple_model.dart';
 export 'home_simple_model.dart';
@@ -62,7 +60,7 @@ class _HomeSimpleWidgetState extends State<HomeSimpleWidget> with TickerProvider
             body: Container(
               width: double.infinity,
               height: double.infinity,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   colors: [Color(0xFF2C3E50), Color(0xFF34495E)],
                   stops: [0.0, 1.0],
@@ -104,7 +102,7 @@ class _HomeSimpleWidgetState extends State<HomeSimpleWidget> with TickerProvider
               child: Container(
                 width: double.infinity,
                 height: double.infinity,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   gradient: LinearGradient(
                     colors: [Color(0xFF2C3E50), Color(0xFF34495E)],
                     stops: [0.0, 1.0],
@@ -114,7 +112,7 @@ class _HomeSimpleWidgetState extends State<HomeSimpleWidget> with TickerProvider
                 ),
                 child: SingleChildScrollView(
                   child: Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 24.0),
+                    padding: const EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 24.0),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -126,7 +124,7 @@ class _HomeSimpleWidgetState extends State<HomeSimpleWidget> with TickerProvider
                               child: Text(
                                 _appVersion,
                                 style: FlutterFlowTheme.of(context).bodySmall.override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   color: const Color(0xFF7F8C8D),
                                   fontSize: 10.0,
                                 ),
@@ -156,7 +154,7 @@ class _HomeSimpleWidgetState extends State<HomeSimpleWidget> with TickerProvider
                                 style: FlutterFlowTheme.of(context)
                                     .bodyMedium
                                     .override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       color: const Color(0xFFECF0F1),
                                       fontSize: 18.0,
                                     ),
@@ -170,7 +168,7 @@ class _HomeSimpleWidgetState extends State<HomeSimpleWidget> with TickerProvider
                                 style: FlutterFlowTheme.of(context)
                                     .bodySmall
                                     .override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       color: const Color(0xFF95A5A6),
                                       fontSize: 14.0,
                                       letterSpacing: 1.0,
@@ -339,7 +337,7 @@ class _HomeSimpleWidgetState extends State<HomeSimpleWidget> with TickerProvider
                             child: Text(
                               'More',
                               style: FlutterFlowTheme.of(context).bodySmall.override(
-                                fontFamily: 'Andika New Basic',
+                                fontFamily: FFAppState().currentFontFamily,
                                 color: const Color(0xFF7F8C8D),
                                 fontSize: 14.0,
                                 letterSpacing: 0.5,
@@ -432,7 +430,7 @@ class _HomeSimpleWidgetState extends State<HomeSimpleWidget> with TickerProvider
                   Text(
                     'Settings',
                     style: FlutterFlowTheme.of(context).bodySmall.override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       color: const Color(0xFF95A5A6),
                       fontSize: 12.0,
                       letterSpacing: 1.0,
@@ -447,7 +445,7 @@ class _HomeSimpleWidgetState extends State<HomeSimpleWidget> with TickerProvider
                   //     Text(
                   //       'Comfort Mode',
                   //       style: FlutterFlowTheme.of(context).bodyMedium.override(
-                  //         fontFamily: 'Andika New Basic',
+                  //         fontFamily: FFAppState().currentFontFamily,
                   //         color: const Color(0xFFECF0F1),
                   //         fontSize: 15.0,
                   //       ),
@@ -490,7 +488,7 @@ class _HomeSimpleWidgetState extends State<HomeSimpleWidget> with TickerProvider
                           Text(
                             'Sign out',
                             style: FlutterFlowTheme.of(context).bodyMedium.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               color: const Color(0xFF95A5A6),
                               fontSize: 14.0,
                             ),
@@ -525,7 +523,7 @@ class _HomeSimpleWidgetState extends State<HomeSimpleWidget> with TickerProvider
             Text(
               label,
               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
                 color: const Color(0xFFECF0F1),
                 fontSize: 16.0,
               ),
@@ -563,7 +561,7 @@ class _HomeSimpleWidgetState extends State<HomeSimpleWidget> with TickerProvider
                   text,
                   textAlign: TextAlign.center,
                   style: FlutterFlowTheme.of(context).bodyMedium.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     color: const Color(0xFFECF0F1),
                     fontSize: 16.0,
                     letterSpacing: 0.5,
@@ -668,7 +666,7 @@ class _HomeSimpleWidgetState extends State<HomeSimpleWidget> with TickerProvider
                       text,
                       textAlign: TextAlign.center,
                       style: FlutterFlowTheme.of(context).bodyMedium.override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         color: const Color(0xFFECF0F1),
                         fontSize: 16.0,
                         letterSpacing: 0.5,

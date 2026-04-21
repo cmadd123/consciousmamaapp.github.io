@@ -4,14 +4,9 @@ import '/backend/schema/enums/enums.dart';
 import '/components/home_nav_bar_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import '/flutter_flow/flutter_flow_widgets.dart';
-import 'dart:ui';
 import 'dart:async';
 import '/index.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
 import 'create_book_category_model.dart';
 export 'create_book_category_model.dart';
@@ -60,7 +55,7 @@ class CreateBookCategoryWidget extends StatefulWidget {
     this.mealplan,
     bool? isGenrateFrom,
     this.mealFirbae,
-  }) : this.isGenrateFrom = isGenrateFrom ?? false;
+  }) : isGenrateFrom = isGenrateFrom ?? false;
 
   final MealTyp? mealTyp;
   final DateTime? date;
@@ -135,14 +130,14 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
         body: SafeArea(
           top: true,
           child: Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
+            padding: const EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
             child: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 children: [
                   Padding(
                     padding:
-                        EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
+                        const EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
                     child: Material(
                       color: Colors.transparent,
                       elevation: 2.0,
@@ -156,7 +151,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                           decoration: BoxDecoration(
                             color: FlutterFlowTheme.of(context)
                                 .secondaryBackground,
-                            boxShadow: [
+                            boxShadow: const [
                               BoxShadow(
                                 blurRadius: 4.0,
                                 color: Color(0x33000000),
@@ -168,18 +163,18 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                             ],
                             borderRadius: BorderRadius.circular(14.0),
                             border: Border.all(
-                              color: Color(0xFF999999),
+                              color: const Color(0xFF999999),
                               width: 1.0,
                             ),
                           ),
                           child: Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 0.0, 0.0, 20.0),
                             child: Column(
                               mainAxisSize: MainAxisSize.max,
                               children: [
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       11.0, 16.0, 0.0, 20.0),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.max,
@@ -188,7 +183,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                     children: [
                                       Align(
                                         alignment:
-                                            AlignmentDirectional(-1.0, -1.0),
+                                            const AlignmentDirectional(-1.0, -1.0),
                                         child: InkWell(
                                           splashColor: Colors.transparent,
                                           focusColor: Colors.transparent,
@@ -213,7 +208,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                             style: FlutterFlowTheme.of(context)
                                                 .bodyMedium
                                                 .override(
-                                                  fontFamily: 'Andika New Basic',
+                                                  fontFamily: FFAppState().currentFontFamily,
                                                   fontSize: 20.0,
                                                   letterSpacing: 0.0,
                                                 ),
@@ -223,8 +218,8 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                             style: FlutterFlowTheme.of(context)
                                                 .bodySmall
                                                 .override(
-                                                  fontFamily: 'Andika New Basic',
-                                                  color: Color(0xB71B1F26),
+                                                  fontFamily: FFAppState().currentFontFamily,
+                                                  color: const Color(0xB71B1F26),
                                                   fontSize: 12.0,
                                                   letterSpacing: 0.0,
                                                 ),
@@ -232,7 +227,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                         ],
                                       ),
                                       Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                        padding: const EdgeInsetsDirectional.fromSTEB(
                                             0.0, 0.0, 24.0, 0.0),
                                         child: Row(
                                           mainAxisSize: MainAxisSize.max,
@@ -240,7 +235,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                             Container(
                                               width: 27.0,
                                               height: 27.0,
-                                              decoration: BoxDecoration(
+                                              decoration: const BoxDecoration(
                                                 color: Color(0x90E19393),
                                                 shape: BoxShape.circle,
                                               ),
@@ -255,26 +250,26 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                     FavMealPageWidget.routeName,
                                                     queryParameters: {
                                                       'mealTyp': serializeParam(
-                                                        widget!.mealTyp,
+                                                        widget.mealTyp,
                                                         ParamType.Enum,
                                                       ),
                                                       'date': serializeParam(
-                                                        widget!.date,
+                                                        widget.date,
                                                         ParamType.DateTime,
                                                       ),
                                                       'mealPlan':
                                                           serializeParam(
-                                                        widget!.mealplan,
+                                                        widget.mealplan,
                                                         ParamType
                                                             .DocumentReference,
                                                       ),
                                                       'isFromGenrate':
                                                           serializeParam(
-                                                        widget!.isGenrateFrom,
+                                                        widget.isGenrateFrom,
                                                         ParamType.bool,
                                                       ),
                                                       'mealRef': serializeParam(
-                                                        widget!.mealFirbae,
+                                                        widget.mealFirbae,
                                                         ParamType
                                                             .DocumentReference,
                                                       ),
@@ -304,11 +299,11 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                               child: Container(
                                                 width: 27.0,
                                                 height: 27.0,
-                                                decoration: BoxDecoration(
+                                                decoration: const BoxDecoration(
                                                   color: Color(0xFFD9D9D9),
                                                   shape: BoxShape.circle,
                                                 ),
-                                                child: Icon(
+                                                child: const Icon(
                                                   Icons.search_sharp,
                                                   color: Color(0x980D0D0D),
                                                   size: 24.0,
@@ -318,7 +313,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                             Container(
                                               width: 27.0,
                                               height: 27.0,
-                                              decoration: BoxDecoration(
+                                              decoration: const BoxDecoration(
                                                 color: Color(0x5452A097),
                                                 shape: BoxShape.circle,
                                               ),
@@ -342,7 +337,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                 ),
                                               ),
                                             ),
-                                          ].divide(SizedBox(width: 16.0)),
+                                          ].divide(const SizedBox(width: 16.0)),
                                         ),
                                       ),
                                     ],
@@ -379,7 +374,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                             BorderRadius.circular(5.0),
                                       ),
                                       child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                        padding: const EdgeInsetsDirectional.fromSTEB(
                                             6.0, 0.0, 2.0, 0.0),
                                         child: Wrap(
                                           spacing: 3.0,
@@ -410,25 +405,25 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                       ParamType.String,
                                                     ),
                                                     'mealTyp': serializeParam(
-                                                      widget!.mealTyp,
+                                                      widget.mealTyp,
                                                       ParamType.Enum,
                                                     ),
                                                     'date': serializeParam(
-                                                      widget!.date,
+                                                      widget.date,
                                                       ParamType.DateTime,
                                                     ),
                                                     'mealPlan': serializeParam(
-                                                      widget!.mealplan,
+                                                      widget.mealplan,
                                                       ParamType
                                                           .DocumentReference,
                                                     ),
                                                     'isFromGenrate':
                                                         serializeParam(
-                                                      widget!.isGenrateFrom,
+                                                      widget.isGenrateFrom,
                                                       ParamType.bool,
                                                     ),
                                                     'mealRef': serializeParam(
-                                                      widget!.mealFirbae,
+                                                      widget.mealFirbae,
                                                       ParamType
                                                           .DocumentReference,
                                                     ),
@@ -457,7 +452,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                       children: [
                                                         ClipRRect(
                                                           borderRadius:
-                                                              BorderRadius.only(
+                                                              const BorderRadius.only(
                                                             bottomLeft:
                                                                 Radius.circular(
                                                                     5.0),
@@ -480,7 +475,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                                       .of(context)
                                                                   .secondaryBackground,
                                                               borderRadius:
-                                                                  BorderRadius
+                                                                  const BorderRadius
                                                                       .only(
                                                                 bottomLeft: Radius
                                                                     .circular(
@@ -514,7 +509,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                         ),
                                                         Padding(
                                                           padding:
-                                                              EdgeInsetsDirectional
+                                                              const EdgeInsetsDirectional
                                                                   .fromSTEB(
                                                                       4.0,
                                                                       0.0,
@@ -527,7 +522,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                             children: [
                                                               ClipRRect(
                                                                 borderRadius:
-                                                                    BorderRadius
+                                                                    const BorderRadius
                                                                         .only(
                                                                   bottomLeft: Radius
                                                                       .circular(
@@ -552,7 +547,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                                             context)
                                                                         .secondaryBackground,
                                                                     borderRadius:
-                                                                        BorderRadius
+                                                                        const BorderRadius
                                                                             .only(
                                                                       bottomLeft:
                                                                           Radius.circular(
@@ -588,7 +583,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                               ),
                                                               Padding(
                                                                 padding:
-                                                                    EdgeInsetsDirectional
+                                                                    const EdgeInsetsDirectional
                                                                         .fromSTEB(
                                                                             0.0,
                                                                             7.0,
@@ -597,7 +592,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                                 child:
                                                                     ClipRRect(
                                                                   borderRadius:
-                                                                      BorderRadius
+                                                                      const BorderRadius
                                                                           .only(
                                                                     bottomLeft:
                                                                         Radius.circular(
@@ -623,7 +618,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                                               context)
                                                                           .secondaryBackground,
                                                                       borderRadius:
-                                                                          BorderRadius
+                                                                          const BorderRadius
                                                                               .only(
                                                                         bottomLeft:
                                                                             Radius.circular(0.0),
@@ -661,7 +656,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                     ),
                                                     Padding(
                                                       padding:
-                                                          EdgeInsetsDirectional
+                                                          const EdgeInsetsDirectional
                                                               .fromSTEB(
                                                                   0.0,
                                                                   7.0,
@@ -683,7 +678,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                     ),
                                                     Padding(
                                                       padding:
-                                                          EdgeInsetsDirectional
+                                                          const EdgeInsetsDirectional
                                                               .fromSTEB(
                                                                   0.0,
                                                                   3.0,
@@ -727,25 +722,25 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                       ParamType.String,
                                                     ),
                                                     'mealTyp': serializeParam(
-                                                      widget!.mealTyp,
+                                                      widget.mealTyp,
                                                       ParamType.Enum,
                                                     ),
                                                     'date': serializeParam(
-                                                      widget!.date,
+                                                      widget.date,
                                                       ParamType.DateTime,
                                                     ),
                                                     'mealPlan': serializeParam(
-                                                      widget!.mealplan,
+                                                      widget.mealplan,
                                                       ParamType
                                                           .DocumentReference,
                                                     ),
                                                     'isFromGenrate':
                                                         serializeParam(
-                                                      widget!.isGenrateFrom,
+                                                      widget.isGenrateFrom,
                                                       ParamType.bool,
                                                     ),
                                                     'mealRef': serializeParam(
-                                                      widget!.mealFirbae,
+                                                      widget.mealFirbae,
                                                       ParamType
                                                           .DocumentReference,
                                                     ),
@@ -774,7 +769,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                       children: [
                                                         ClipRRect(
                                                           borderRadius:
-                                                              BorderRadius.only(
+                                                              const BorderRadius.only(
                                                             bottomLeft:
                                                                 Radius.circular(
                                                                     5.0),
@@ -797,7 +792,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                                       .of(context)
                                                                   .secondaryBackground,
                                                               borderRadius:
-                                                                  BorderRadius
+                                                                  const BorderRadius
                                                                       .only(
                                                                 bottomLeft: Radius
                                                                     .circular(
@@ -831,7 +826,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                         ),
                                                         Padding(
                                                           padding:
-                                                              EdgeInsetsDirectional
+                                                              const EdgeInsetsDirectional
                                                                   .fromSTEB(
                                                                       4.0,
                                                                       0.0,
@@ -844,7 +839,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                             children: [
                                                               ClipRRect(
                                                                 borderRadius:
-                                                                    BorderRadius
+                                                                    const BorderRadius
                                                                         .only(
                                                                   bottomLeft: Radius
                                                                       .circular(
@@ -869,7 +864,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                                             context)
                                                                         .secondaryBackground,
                                                                     borderRadius:
-                                                                        BorderRadius
+                                                                        const BorderRadius
                                                                             .only(
                                                                       bottomLeft:
                                                                           Radius.circular(
@@ -905,7 +900,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                               ),
                                                               Padding(
                                                                 padding:
-                                                                    EdgeInsetsDirectional
+                                                                    const EdgeInsetsDirectional
                                                                         .fromSTEB(
                                                                             0.0,
                                                                             7.0,
@@ -914,7 +909,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                                 child:
                                                                     ClipRRect(
                                                                   borderRadius:
-                                                                      BorderRadius
+                                                                      const BorderRadius
                                                                           .only(
                                                                     bottomLeft:
                                                                         Radius.circular(
@@ -940,7 +935,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                                               context)
                                                                           .secondaryBackground,
                                                                       borderRadius:
-                                                                          BorderRadius
+                                                                          const BorderRadius
                                                                               .only(
                                                                         bottomLeft:
                                                                             Radius.circular(0.0),
@@ -978,7 +973,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                     ),
                                                     Padding(
                                                       padding:
-                                                          EdgeInsetsDirectional
+                                                          const EdgeInsetsDirectional
                                                               .fromSTEB(
                                                                   0.0,
                                                                   7.0,
@@ -1000,7 +995,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                     ),
                                                     Padding(
                                                       padding:
-                                                          EdgeInsetsDirectional
+                                                          const EdgeInsetsDirectional
                                                               .fromSTEB(
                                                                   0.0,
                                                                   3.0,
@@ -1053,25 +1048,25 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                       ParamType.String,
                                                     ),
                                                     'mealTyp': serializeParam(
-                                                      widget!.mealTyp,
+                                                      widget.mealTyp,
                                                       ParamType.Enum,
                                                     ),
                                                     'date': serializeParam(
-                                                      widget!.date,
+                                                      widget.date,
                                                       ParamType.DateTime,
                                                     ),
                                                     'mealPlan': serializeParam(
-                                                      widget!.mealplan,
+                                                      widget.mealplan,
                                                       ParamType
                                                           .DocumentReference,
                                                     ),
                                                     'isFromGenrate':
                                                         serializeParam(
-                                                      widget!.isGenrateFrom,
+                                                      widget.isGenrateFrom,
                                                       ParamType.bool,
                                                     ),
                                                     'mealRef': serializeParam(
-                                                      widget!.mealFirbae,
+                                                      widget.mealFirbae,
                                                       ParamType
                                                           .DocumentReference,
                                                     ),
@@ -1100,7 +1095,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                       children: [
                                                         ClipRRect(
                                                           borderRadius:
-                                                              BorderRadius.only(
+                                                              const BorderRadius.only(
                                                             bottomLeft:
                                                                 Radius.circular(
                                                                     5.0),
@@ -1123,7 +1118,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                                       .of(context)
                                                                   .secondaryBackground,
                                                               borderRadius:
-                                                                  BorderRadius
+                                                                  const BorderRadius
                                                                       .only(
                                                                 bottomLeft: Radius
                                                                     .circular(
@@ -1157,7 +1152,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                         ),
                                                         Padding(
                                                           padding:
-                                                              EdgeInsetsDirectional
+                                                              const EdgeInsetsDirectional
                                                                   .fromSTEB(
                                                                       4.0,
                                                                       0.0,
@@ -1170,7 +1165,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                             children: [
                                                               ClipRRect(
                                                                 borderRadius:
-                                                                    BorderRadius
+                                                                    const BorderRadius
                                                                         .only(
                                                                   bottomLeft: Radius
                                                                       .circular(
@@ -1195,7 +1190,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                                             context)
                                                                         .secondaryBackground,
                                                                     borderRadius:
-                                                                        BorderRadius
+                                                                        const BorderRadius
                                                                             .only(
                                                                       bottomLeft:
                                                                           Radius.circular(
@@ -1231,7 +1226,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                               ),
                                                               Padding(
                                                                 padding:
-                                                                    EdgeInsetsDirectional
+                                                                    const EdgeInsetsDirectional
                                                                         .fromSTEB(
                                                                             0.0,
                                                                             7.0,
@@ -1240,7 +1235,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                                 child:
                                                                     ClipRRect(
                                                                   borderRadius:
-                                                                      BorderRadius
+                                                                      const BorderRadius
                                                                           .only(
                                                                     bottomLeft:
                                                                         Radius.circular(
@@ -1266,7 +1261,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                                               context)
                                                                           .secondaryBackground,
                                                                       borderRadius:
-                                                                          BorderRadius
+                                                                          const BorderRadius
                                                                               .only(
                                                                         bottomLeft:
                                                                             Radius.circular(0.0),
@@ -1304,7 +1299,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                     ),
                                                     Padding(
                                                       padding:
-                                                          EdgeInsetsDirectional
+                                                          const EdgeInsetsDirectional
                                                               .fromSTEB(
                                                                   0.0,
                                                                   7.0,
@@ -1326,7 +1321,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                     ),
                                                     Padding(
                                                       padding:
-                                                          EdgeInsetsDirectional
+                                                          const EdgeInsetsDirectional
                                                               .fromSTEB(
                                                                   0.0,
                                                                   3.0,
@@ -1379,25 +1374,25 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                       ParamType.String,
                                                     ),
                                                     'mealTyp': serializeParam(
-                                                      widget!.mealTyp,
+                                                      widget.mealTyp,
                                                       ParamType.Enum,
                                                     ),
                                                     'date': serializeParam(
-                                                      widget!.date,
+                                                      widget.date,
                                                       ParamType.DateTime,
                                                     ),
                                                     'mealPlan': serializeParam(
-                                                      widget!.mealplan,
+                                                      widget.mealplan,
                                                       ParamType
                                                           .DocumentReference,
                                                     ),
                                                     'isFromGenrate':
                                                         serializeParam(
-                                                      widget!.isGenrateFrom,
+                                                      widget.isGenrateFrom,
                                                       ParamType.bool,
                                                     ),
                                                     'mealRef': serializeParam(
-                                                      widget!.mealFirbae,
+                                                      widget.mealFirbae,
                                                       ParamType
                                                           .DocumentReference,
                                                     ),
@@ -1426,7 +1421,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                       children: [
                                                         ClipRRect(
                                                           borderRadius:
-                                                              BorderRadius.only(
+                                                              const BorderRadius.only(
                                                             bottomLeft:
                                                                 Radius.circular(
                                                                     5.0),
@@ -1449,7 +1444,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                                       .of(context)
                                                                   .secondaryBackground,
                                                               borderRadius:
-                                                                  BorderRadius
+                                                                  const BorderRadius
                                                                       .only(
                                                                 bottomLeft: Radius
                                                                     .circular(
@@ -1483,7 +1478,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                         ),
                                                         Padding(
                                                           padding:
-                                                              EdgeInsetsDirectional
+                                                              const EdgeInsetsDirectional
                                                                   .fromSTEB(
                                                                       4.0,
                                                                       0.0,
@@ -1496,7 +1491,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                             children: [
                                                               ClipRRect(
                                                                 borderRadius:
-                                                                    BorderRadius
+                                                                    const BorderRadius
                                                                         .only(
                                                                   bottomLeft: Radius
                                                                       .circular(
@@ -1521,7 +1516,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                                             context)
                                                                         .secondaryBackground,
                                                                     borderRadius:
-                                                                        BorderRadius
+                                                                        const BorderRadius
                                                                             .only(
                                                                       bottomLeft:
                                                                           Radius.circular(
@@ -1557,7 +1552,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                               ),
                                                               Padding(
                                                                 padding:
-                                                                    EdgeInsetsDirectional
+                                                                    const EdgeInsetsDirectional
                                                                         .fromSTEB(
                                                                             0.0,
                                                                             7.0,
@@ -1566,7 +1561,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                                 child:
                                                                     ClipRRect(
                                                                   borderRadius:
-                                                                      BorderRadius
+                                                                      const BorderRadius
                                                                           .only(
                                                                     bottomLeft:
                                                                         Radius.circular(
@@ -1592,7 +1587,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                                               context)
                                                                           .secondaryBackground,
                                                                       borderRadius:
-                                                                          BorderRadius
+                                                                          const BorderRadius
                                                                               .only(
                                                                         bottomLeft:
                                                                             Radius.circular(0.0),
@@ -1630,7 +1625,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                     ),
                                                     Padding(
                                                       padding:
-                                                          EdgeInsetsDirectional
+                                                          const EdgeInsetsDirectional
                                                               .fromSTEB(
                                                                   0.0,
                                                                   7.0,
@@ -1652,7 +1647,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                     ),
                                                     Padding(
                                                       padding:
-                                                          EdgeInsetsDirectional
+                                                          const EdgeInsetsDirectional
                                                               .fromSTEB(
                                                                   0.0,
                                                                   3.0,
@@ -1705,25 +1700,25 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                       ParamType.String,
                                                     ),
                                                     'mealTyp': serializeParam(
-                                                      widget!.mealTyp,
+                                                      widget.mealTyp,
                                                       ParamType.Enum,
                                                     ),
                                                     'date': serializeParam(
-                                                      widget!.date,
+                                                      widget.date,
                                                       ParamType.DateTime,
                                                     ),
                                                     'mealPlan': serializeParam(
-                                                      widget!.mealplan,
+                                                      widget.mealplan,
                                                       ParamType
                                                           .DocumentReference,
                                                     ),
                                                     'isFromGenrate':
                                                         serializeParam(
-                                                      widget!.isGenrateFrom,
+                                                      widget.isGenrateFrom,
                                                       ParamType.bool,
                                                     ),
                                                     'mealRef': serializeParam(
-                                                      widget!.mealFirbae,
+                                                      widget.mealFirbae,
                                                       ParamType
                                                           .DocumentReference,
                                                     ),
@@ -1752,7 +1747,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                       children: [
                                                         ClipRRect(
                                                           borderRadius:
-                                                              BorderRadius.only(
+                                                              const BorderRadius.only(
                                                             bottomLeft:
                                                                 Radius.circular(
                                                                     5.0),
@@ -1775,7 +1770,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                                       .of(context)
                                                                   .secondaryBackground,
                                                               borderRadius:
-                                                                  BorderRadius
+                                                                  const BorderRadius
                                                                       .only(
                                                                 bottomLeft: Radius
                                                                     .circular(
@@ -1809,7 +1804,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                         ),
                                                         Padding(
                                                           padding:
-                                                              EdgeInsetsDirectional
+                                                              const EdgeInsetsDirectional
                                                                   .fromSTEB(
                                                                       4.0,
                                                                       0.0,
@@ -1822,7 +1817,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                             children: [
                                                               ClipRRect(
                                                                 borderRadius:
-                                                                    BorderRadius
+                                                                    const BorderRadius
                                                                         .only(
                                                                   bottomLeft: Radius
                                                                       .circular(
@@ -1847,7 +1842,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                                             context)
                                                                         .secondaryBackground,
                                                                     borderRadius:
-                                                                        BorderRadius
+                                                                        const BorderRadius
                                                                             .only(
                                                                       bottomLeft:
                                                                           Radius.circular(
@@ -1883,7 +1878,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                               ),
                                                               Padding(
                                                                 padding:
-                                                                    EdgeInsetsDirectional
+                                                                    const EdgeInsetsDirectional
                                                                         .fromSTEB(
                                                                             0.0,
                                                                             7.0,
@@ -1892,7 +1887,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                                 child:
                                                                     ClipRRect(
                                                                   borderRadius:
-                                                                      BorderRadius
+                                                                      const BorderRadius
                                                                           .only(
                                                                     bottomLeft:
                                                                         Radius.circular(
@@ -1918,7 +1913,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                                               context)
                                                                           .secondaryBackground,
                                                                       borderRadius:
-                                                                          BorderRadius
+                                                                          const BorderRadius
                                                                               .only(
                                                                         bottomLeft:
                                                                             Radius.circular(0.0),
@@ -1956,7 +1951,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                     ),
                                                     Padding(
                                                       padding:
-                                                          EdgeInsetsDirectional
+                                                          const EdgeInsetsDirectional
                                                               .fromSTEB(
                                                                   0.0,
                                                                   7.0,
@@ -1978,7 +1973,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                     ),
                                                     Padding(
                                                       padding:
-                                                          EdgeInsetsDirectional
+                                                          const EdgeInsetsDirectional
                                                               .fromSTEB(
                                                                   0.0,
                                                                   3.0,
@@ -2031,25 +2026,25 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                       ParamType.String,
                                                     ),
                                                     'mealTyp': serializeParam(
-                                                      widget!.mealTyp,
+                                                      widget.mealTyp,
                                                       ParamType.Enum,
                                                     ),
                                                     'date': serializeParam(
-                                                      widget!.date,
+                                                      widget.date,
                                                       ParamType.DateTime,
                                                     ),
                                                     'mealPlan': serializeParam(
-                                                      widget!.mealplan,
+                                                      widget.mealplan,
                                                       ParamType
                                                           .DocumentReference,
                                                     ),
                                                     'isFromGenrate':
                                                         serializeParam(
-                                                      widget!.isGenrateFrom,
+                                                      widget.isGenrateFrom,
                                                       ParamType.bool,
                                                     ),
                                                     'mealRef': serializeParam(
-                                                      widget!.mealFirbae,
+                                                      widget.mealFirbae,
                                                       ParamType
                                                           .DocumentReference,
                                                     ),
@@ -2078,7 +2073,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                       children: [
                                                         ClipRRect(
                                                           borderRadius:
-                                                              BorderRadius.only(
+                                                              const BorderRadius.only(
                                                             bottomLeft:
                                                                 Radius.circular(
                                                                     5.0),
@@ -2101,7 +2096,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                                       .of(context)
                                                                   .secondaryBackground,
                                                               borderRadius:
-                                                                  BorderRadius
+                                                                  const BorderRadius
                                                                       .only(
                                                                 bottomLeft: Radius
                                                                     .circular(
@@ -2135,7 +2130,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                         ),
                                                         Padding(
                                                           padding:
-                                                              EdgeInsetsDirectional
+                                                              const EdgeInsetsDirectional
                                                                   .fromSTEB(
                                                                       4.0,
                                                                       0.0,
@@ -2148,7 +2143,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                             children: [
                                                               ClipRRect(
                                                                 borderRadius:
-                                                                    BorderRadius
+                                                                    const BorderRadius
                                                                         .only(
                                                                   bottomLeft: Radius
                                                                       .circular(
@@ -2173,7 +2168,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                                             context)
                                                                         .secondaryBackground,
                                                                     borderRadius:
-                                                                        BorderRadius
+                                                                        const BorderRadius
                                                                             .only(
                                                                       bottomLeft:
                                                                           Radius.circular(
@@ -2209,7 +2204,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                               ),
                                                               Padding(
                                                                 padding:
-                                                                    EdgeInsetsDirectional
+                                                                    const EdgeInsetsDirectional
                                                                         .fromSTEB(
                                                                             0.0,
                                                                             7.0,
@@ -2218,7 +2213,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                                 child:
                                                                     ClipRRect(
                                                                   borderRadius:
-                                                                      BorderRadius
+                                                                      const BorderRadius
                                                                           .only(
                                                                     bottomLeft:
                                                                         Radius.circular(
@@ -2244,7 +2239,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                                               context)
                                                                           .secondaryBackground,
                                                                       borderRadius:
-                                                                          BorderRadius
+                                                                          const BorderRadius
                                                                               .only(
                                                                         bottomLeft:
                                                                             Radius.circular(0.0),
@@ -2282,7 +2277,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                     ),
                                                     Padding(
                                                       padding:
-                                                          EdgeInsetsDirectional
+                                                          const EdgeInsetsDirectional
                                                               .fromSTEB(
                                                                   0.0,
                                                                   7.0,
@@ -2304,7 +2299,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                     ),
                                                     Padding(
                                                       padding:
-                                                          EdgeInsetsDirectional
+                                                          const EdgeInsetsDirectional
                                                               .fromSTEB(
                                                                   0.0,
                                                                   3.0,
@@ -2357,25 +2352,25 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                       ParamType.String,
                                                     ),
                                                     'mealTyp': serializeParam(
-                                                      widget!.mealTyp,
+                                                      widget.mealTyp,
                                                       ParamType.Enum,
                                                     ),
                                                     'date': serializeParam(
-                                                      widget!.date,
+                                                      widget.date,
                                                       ParamType.DateTime,
                                                     ),
                                                     'mealPlan': serializeParam(
-                                                      widget!.mealplan,
+                                                      widget.mealplan,
                                                       ParamType
                                                           .DocumentReference,
                                                     ),
                                                     'isFromGenrate':
                                                         serializeParam(
-                                                      widget!.isGenrateFrom,
+                                                      widget.isGenrateFrom,
                                                       ParamType.bool,
                                                     ),
                                                     'mealRef': serializeParam(
-                                                      widget!.mealFirbae,
+                                                      widget.mealFirbae,
                                                       ParamType
                                                           .DocumentReference,
                                                     ),
@@ -2404,7 +2399,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                       children: [
                                                         ClipRRect(
                                                           borderRadius:
-                                                              BorderRadius.only(
+                                                              const BorderRadius.only(
                                                             bottomLeft:
                                                                 Radius.circular(
                                                                     5.0),
@@ -2427,7 +2422,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                                       .of(context)
                                                                   .secondaryBackground,
                                                               borderRadius:
-                                                                  BorderRadius
+                                                                  const BorderRadius
                                                                       .only(
                                                                 bottomLeft: Radius
                                                                     .circular(
@@ -2461,7 +2456,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                         ),
                                                         Padding(
                                                           padding:
-                                                              EdgeInsetsDirectional
+                                                              const EdgeInsetsDirectional
                                                                   .fromSTEB(
                                                                       4.0,
                                                                       0.0,
@@ -2474,7 +2469,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                             children: [
                                                               ClipRRect(
                                                                 borderRadius:
-                                                                    BorderRadius
+                                                                    const BorderRadius
                                                                         .only(
                                                                   bottomLeft: Radius
                                                                       .circular(
@@ -2499,7 +2494,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                                             context)
                                                                         .secondaryBackground,
                                                                     borderRadius:
-                                                                        BorderRadius
+                                                                        const BorderRadius
                                                                             .only(
                                                                       bottomLeft:
                                                                           Radius.circular(
@@ -2535,7 +2530,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                               ),
                                                               Padding(
                                                                 padding:
-                                                                    EdgeInsetsDirectional
+                                                                    const EdgeInsetsDirectional
                                                                         .fromSTEB(
                                                                             0.0,
                                                                             7.0,
@@ -2544,7 +2539,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                                 child:
                                                                     ClipRRect(
                                                                   borderRadius:
-                                                                      BorderRadius
+                                                                      const BorderRadius
                                                                           .only(
                                                                     bottomLeft:
                                                                         Radius.circular(
@@ -2570,7 +2565,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                                               context)
                                                                           .secondaryBackground,
                                                                       borderRadius:
-                                                                          BorderRadius
+                                                                          const BorderRadius
                                                                               .only(
                                                                         bottomLeft:
                                                                             Radius.circular(0.0),
@@ -2608,7 +2603,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                     ),
                                                     Padding(
                                                       padding:
-                                                          EdgeInsetsDirectional
+                                                          const EdgeInsetsDirectional
                                                               .fromSTEB(
                                                                   0.0,
                                                                   7.0,
@@ -2630,7 +2625,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                     ),
                                                     Padding(
                                                       padding:
-                                                          EdgeInsetsDirectional
+                                                          const EdgeInsetsDirectional
                                                               .fromSTEB(
                                                                   0.0,
                                                                   3.0,
@@ -2683,25 +2678,25 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                       ParamType.String,
                                                     ),
                                                     'mealTyp': serializeParam(
-                                                      widget!.mealTyp,
+                                                      widget.mealTyp,
                                                       ParamType.Enum,
                                                     ),
                                                     'date': serializeParam(
-                                                      widget!.date,
+                                                      widget.date,
                                                       ParamType.DateTime,
                                                     ),
                                                     'mealPlan': serializeParam(
-                                                      widget!.mealplan,
+                                                      widget.mealplan,
                                                       ParamType
                                                           .DocumentReference,
                                                     ),
                                                     'isFromGenrate':
                                                         serializeParam(
-                                                      widget!.isGenrateFrom,
+                                                      widget.isGenrateFrom,
                                                       ParamType.bool,
                                                     ),
                                                     'mealRef': serializeParam(
-                                                      widget!.mealFirbae,
+                                                      widget.mealFirbae,
                                                       ParamType
                                                           .DocumentReference,
                                                     ),
@@ -2730,7 +2725,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                       children: [
                                                         ClipRRect(
                                                           borderRadius:
-                                                              BorderRadius.only(
+                                                              const BorderRadius.only(
                                                             bottomLeft:
                                                                 Radius.circular(
                                                                     5.0),
@@ -2753,7 +2748,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                                       .of(context)
                                                                   .secondaryBackground,
                                                               borderRadius:
-                                                                  BorderRadius
+                                                                  const BorderRadius
                                                                       .only(
                                                                 bottomLeft: Radius
                                                                     .circular(
@@ -2787,7 +2782,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                         ),
                                                         Padding(
                                                           padding:
-                                                              EdgeInsetsDirectional
+                                                              const EdgeInsetsDirectional
                                                                   .fromSTEB(
                                                                       4.0,
                                                                       0.0,
@@ -2800,7 +2795,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                             children: [
                                                               ClipRRect(
                                                                 borderRadius:
-                                                                    BorderRadius
+                                                                    const BorderRadius
                                                                         .only(
                                                                   bottomLeft: Radius
                                                                       .circular(
@@ -2825,7 +2820,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                                             context)
                                                                         .secondaryBackground,
                                                                     borderRadius:
-                                                                        BorderRadius
+                                                                        const BorderRadius
                                                                             .only(
                                                                       bottomLeft:
                                                                           Radius.circular(
@@ -2861,7 +2856,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                               ),
                                                               Padding(
                                                                 padding:
-                                                                    EdgeInsetsDirectional
+                                                                    const EdgeInsetsDirectional
                                                                         .fromSTEB(
                                                                             0.0,
                                                                             7.0,
@@ -2870,7 +2865,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                                 child:
                                                                     ClipRRect(
                                                                   borderRadius:
-                                                                      BorderRadius
+                                                                      const BorderRadius
                                                                           .only(
                                                                     bottomLeft:
                                                                         Radius.circular(
@@ -2896,7 +2891,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                                               context)
                                                                           .secondaryBackground,
                                                                       borderRadius:
-                                                                          BorderRadius
+                                                                          const BorderRadius
                                                                               .only(
                                                                         bottomLeft:
                                                                             Radius.circular(0.0),
@@ -2934,7 +2929,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                     ),
                                                     Padding(
                                                       padding:
-                                                          EdgeInsetsDirectional
+                                                          const EdgeInsetsDirectional
                                                               .fromSTEB(
                                                                   0.0,
                                                                   7.0,
@@ -2956,7 +2951,7 @@ class _CreateBookCategoryWidgetState extends State<CreateBookCategoryWidget> {
                                                     ),
                                                     Padding(
                                                       padding:
-                                                          EdgeInsetsDirectional
+                                                          const EdgeInsetsDirectional
                                                               .fromSTEB(
                                                                   0.0,
                                                                   3.0,

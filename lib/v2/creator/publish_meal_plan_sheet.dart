@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '/app_state.dart';
 import 'package:flutter/services.dart';
 import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
@@ -111,7 +112,7 @@ class _PublishMealPlanSheetState extends State<PublishMealPlanSheet> {
           Text(
             'Publish to Followers',
             style: FlutterFlowTheme.of(context).titleLarge.override(
-              fontFamily: 'Andika New Basic',
+              fontFamily: FFAppState().currentFontFamily,
               fontSize: 22.0,
               fontWeight: FontWeight.w600,
               letterSpacing: 0.0,
@@ -122,7 +123,7 @@ class _PublishMealPlanSheetState extends State<PublishMealPlanSheet> {
             'Share this week\'s meal plan with everyone using your code',
             textAlign: TextAlign.center,
             style: FlutterFlowTheme.of(context).bodySmall.override(
-              fontFamily: 'Andika New Basic',
+              fontFamily: FFAppState().currentFontFamily,
               color: FlutterFlowTheme.of(context).secondaryText,
               fontSize: 13.0,
               letterSpacing: 0.0,
@@ -134,7 +135,7 @@ class _PublishMealPlanSheetState extends State<PublishMealPlanSheet> {
           TextField(
             controller: _titleController,
             style: FlutterFlowTheme.of(context).bodyLarge.override(
-              fontFamily: 'Andika New Basic',
+              fontFamily: FFAppState().currentFontFamily,
               fontSize: 16.0,
               fontWeight: FontWeight.w500,
               letterSpacing: 0.0,
@@ -161,7 +162,7 @@ class _PublishMealPlanSheetState extends State<PublishMealPlanSheet> {
             controller: _descController,
             maxLines: 2,
             style: FlutterFlowTheme.of(context).bodyMedium.override(
-              fontFamily: 'Andika New Basic',
+              fontFamily: FFAppState().currentFontFamily,
               fontSize: 14.0,
               letterSpacing: 0.0,
             ),
@@ -196,7 +197,7 @@ class _PublishMealPlanSheetState extends State<PublishMealPlanSheet> {
                 child: Text(
                   'Your current week\'s meals will be packaged and shared. Followers can load them with one tap.',
                   style: FlutterFlowTheme.of(context).bodySmall.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     color: FlutterFlowTheme.of(context).secondaryText,
                     fontSize: 11.0,
                     letterSpacing: 0.0,
@@ -216,7 +217,7 @@ class _PublishMealPlanSheetState extends State<PublishMealPlanSheet> {
               height: 52.0,
               color: FlutterFlowTheme.of(context).primary,
               textStyle: FlutterFlowTheme.of(context).titleSmall.override(
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
                 color: Colors.white,
                 fontSize: 16.0,
                 fontWeight: FontWeight.w600,
@@ -232,7 +233,7 @@ class _PublishMealPlanSheetState extends State<PublishMealPlanSheet> {
           Text(
             'Published as ${widget.creator.name} · Code: ${widget.creator.code}',
             style: FlutterFlowTheme.of(context).bodySmall.override(
-              fontFamily: 'Andika New Basic',
+              fontFamily: FFAppState().currentFontFamily,
               color: FlutterFlowTheme.of(context).secondaryText,
               fontSize: 11.0,
               fontStyle: FontStyle.italic,

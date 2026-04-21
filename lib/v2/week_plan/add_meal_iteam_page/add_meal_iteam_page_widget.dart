@@ -1,13 +1,9 @@
 import '/components/home_nav_bar_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import '/flutter_flow/flutter_flow_widgets.dart';
 import '/backend/schema/enums/enums.dart';
-import 'dart:ui';
 import '/index.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'add_meal_iteam_page_model.dart';
 export 'add_meal_iteam_page_model.dart';
 
@@ -58,7 +54,7 @@ class _AddMealIteamPageWidgetState extends State<AddMealIteamPageWidget> {
               children: [
                 Padding(
                   padding:
-                      EdgeInsetsDirectional.fromSTEB(12.0, 20.0, 12.0, 0.0),
+                      const EdgeInsetsDirectional.fromSTEB(12.0, 20.0, 12.0, 0.0),
                   child: Material(
                     color: Colors.transparent,
                     elevation: 1.0,
@@ -78,7 +74,7 @@ class _AddMealIteamPageWidgetState extends State<AddMealIteamPageWidget> {
                         mainAxisSize: MainAxisSize.max,
                         children: [
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 24.0, 24.0, 0.0, 0.0),
                             child: Row(
                               mainAxisSize: MainAxisSize.max,
@@ -100,7 +96,7 @@ class _AddMealIteamPageWidgetState extends State<AddMealIteamPageWidget> {
                                   ),
                                 ),
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       0.0, 0.0, 44.0, 0.0),
                                   child: Text(
                                     'Replace Meal Item',
@@ -108,7 +104,7 @@ class _AddMealIteamPageWidgetState extends State<AddMealIteamPageWidget> {
                                     style: FlutterFlowTheme.of(context)
                                         .bodyMedium
                                         .override(
-                                          fontFamily: 'Andika New Basic',
+                                          fontFamily: FFAppState().currentFontFamily,
                                           fontSize: 24.0,
                                           letterSpacing: 0.0,
                                         ),
@@ -126,7 +122,7 @@ class _AddMealIteamPageWidgetState extends State<AddMealIteamPageWidget> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 20.0, 18.0, 0.0, 0.0),
                             child: Text(
                               'How would you like to replace [item clicked]?',
@@ -134,14 +130,14 @@ class _AddMealIteamPageWidgetState extends State<AddMealIteamPageWidget> {
                               style: FlutterFlowTheme.of(context)
                                   .bodyMedium
                                   .override(
-                                    fontFamily: 'Andika New Basic',
-                                    color: Color(0xB71B1F26),
+                                    fontFamily: FFAppState().currentFontFamily,
+                                    color: const Color(0xB71B1F26),
                                     letterSpacing: 0.0,
                                   ),
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 12.0, 40.0, 12.0, 40.0),
                             child: InkWell(
                               splashColor: Colors.transparent,
@@ -167,7 +163,7 @@ class _AddMealIteamPageWidgetState extends State<AddMealIteamPageWidget> {
                                   children: [
                                     Container(
                                       height: 86.0,
-                                      decoration: BoxDecoration(),
+                                      decoration: const BoxDecoration(),
                                       child: ClipRRect(
                                         borderRadius: BorderRadius.circular(14.0),
                                         child: Image.asset(
@@ -179,14 +175,14 @@ class _AddMealIteamPageWidgetState extends State<AddMealIteamPageWidget> {
                                       ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(
                                           0.0, 31.0, 0.0, 0.0),
                                       child: Text(
                                         'Add from cookbook',
                                         style: FlutterFlowTheme.of(context)
                                             .bodyMedium
                                             .override(
-                                              fontFamily: 'Andika New Basic',
+                                              fontFamily: FFAppState().currentFontFamily,
                                               fontSize: 24.0,
                                               letterSpacing: 0.0,
                                             ),
@@ -198,7 +194,7 @@ class _AddMealIteamPageWidgetState extends State<AddMealIteamPageWidget> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 12.0, 0.0, 12.0, 60.0),
                             child: InkWell(
                               splashColor: Colors.transparent,
@@ -232,7 +228,7 @@ class _AddMealIteamPageWidgetState extends State<AddMealIteamPageWidget> {
                                   children: [
                                     Container(
                                       height: 86.0,
-                                      decoration: BoxDecoration(),
+                                      decoration: const BoxDecoration(),
                                       child: ClipRRect(
                                         borderRadius: BorderRadius.circular(14.0),
                                         child: Image.asset(
@@ -244,14 +240,14 @@ class _AddMealIteamPageWidgetState extends State<AddMealIteamPageWidget> {
                                       ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(
                                           0.0, 31.0, 0.0, 0.0),
                                       child: Text(
                                         'Add New Recipe',
                                         style: FlutterFlowTheme.of(context)
                                             .bodyMedium
                                             .override(
-                                              fontFamily: 'Andika New Basic',
+                                              fontFamily: FFAppState().currentFontFamily,
                                               fontSize: 24.0,
                                               letterSpacing: 0.0,
                                             ),

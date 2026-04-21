@@ -2,10 +2,7 @@ import '/components/congratulations_p_o_p_up_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
-import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'compele_taskpopup_model.dart';
 export 'compele_taskpopup_model.dart';
 
@@ -69,8 +66,8 @@ class _CompeleTaskpopupWidgetState extends State<CompeleTaskpopupWidget> {
           });
         },
         child: AnimatedContainer(
-          duration: Duration(milliseconds: 200),
-          padding: EdgeInsets.symmetric(vertical: 14.0),
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(vertical: 14.0),
           decoration: BoxDecoration(
             color: isSelected ? color.withOpacity(0.12) : Colors.transparent,
             borderRadius: BorderRadius.circular(14.0),
@@ -95,11 +92,11 @@ class _CompeleTaskpopupWidgetState extends State<CompeleTaskpopupWidget> {
                   size: 24.0,
                 ),
               ),
-              SizedBox(height: 8.0),
+              const SizedBox(height: 8.0),
               Text(
                 label,
                 style: FlutterFlowTheme.of(context).bodySmall.override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       color: isSelected ? color : FlutterFlowTheme.of(context).secondaryText,
                       fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                     ),
@@ -114,12 +111,12 @@ class _CompeleTaskpopupWidgetState extends State<CompeleTaskpopupWidget> {
   @override
   Widget build(BuildContext context) {
     return Align(
-      alignment: AlignmentDirectional(0.0, 0.0),
+      alignment: const AlignmentDirectional(0.0, 0.0),
       child: Container(
         width: 340.0,
         decoration: BoxDecoration(
           color: FlutterFlowTheme.of(context).secondaryBackground,
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
               blurRadius: 20.0,
               color: Color(0x33000000),
@@ -129,7 +126,7 @@ class _CompeleTaskpopupWidgetState extends State<CompeleTaskpopupWidget> {
           borderRadius: BorderRadius.circular(14.0),
         ),
         child: SingleChildScrollView(
-          padding: EdgeInsets.all(24.0),
+          padding: const EdgeInsets.all(24.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -147,28 +144,28 @@ class _CompeleTaskpopupWidgetState extends State<CompeleTaskpopupWidget> {
                   size: 32.0,
                 ),
               ),
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
               Text(
                 'How did it go?',
                 textAlign: TextAlign.center,
                 style: FlutterFlowTheme.of(context).titleLarge.override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       color: FlutterFlowTheme.of(context).primaryText,
                       fontSize: 22.0,
                       fontWeight: FontWeight.w600,
                     ),
               ),
-              SizedBox(height: 8.0),
+              const SizedBox(height: 8.0),
               Text(
                 'Your feedback helps track progress',
                 textAlign: TextAlign.center,
                 style: FlutterFlowTheme.of(context).bodyMedium.override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       color: FlutterFlowTheme.of(context).secondaryText,
                       fontSize: 14.0,
                     ),
               ),
-              SizedBox(height: 20.0),
+              const SizedBox(height: 20.0),
               // Feedback options
               Row(
                 children: [
@@ -177,27 +174,27 @@ class _CompeleTaskpopupWidgetState extends State<CompeleTaskpopupWidget> {
                     'great',
                     Icons.sentiment_very_satisfied_outlined,
                     'Great!',
-                    Color(0xFF4CAF50),
+                    const Color(0xFF4CAF50),
                   ),
-                  SizedBox(width: 8.0),
+                  const SizedBox(width: 8.0),
                   _buildFeedbackOption(
                     context,
                     'okay',
                     Icons.sentiment_satisfied_outlined,
                     'Okay',
-                    Color(0xFFFF9800),
+                    const Color(0xFFFF9800),
                   ),
-                  SizedBox(width: 8.0),
+                  const SizedBox(width: 8.0),
                   _buildFeedbackOption(
                     context,
                     'struggled',
                     Icons.sentiment_dissatisfied_outlined,
                     'Struggled',
-                    Color(0xFFF44336),
+                    const Color(0xFFF44336),
                   ),
                 ],
               ),
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
               // Optional note field
               Container(
                 decoration: BoxDecoration(
@@ -213,18 +210,18 @@ class _CompeleTaskpopupWidgetState extends State<CompeleTaskpopupWidget> {
                   decoration: InputDecoration(
                     hintText: 'Add a note (optional)',
                     hintStyle: FlutterFlowTheme.of(context).bodyMedium.override(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           color: FlutterFlowTheme.of(context).secondaryText,
                         ),
-                    contentPadding: EdgeInsets.all(12.0),
+                    contentPadding: const EdgeInsets.all(12.0),
                     border: InputBorder.none,
                   ),
                   style: FlutterFlowTheme.of(context).bodyMedium.override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                       ),
                 ),
               ),
-              SizedBox(height: 20.0),
+              const SizedBox(height: 20.0),
               // Action buttons
               Row(
                 children: [
@@ -239,10 +236,10 @@ class _CompeleTaskpopupWidgetState extends State<CompeleTaskpopupWidget> {
                       text: 'Cancel',
                       options: FFButtonOptions(
                         height: 44.0,
-                        padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
+                        padding: const EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
                         color: FlutterFlowTheme.of(context).primaryBackground,
                         textStyle: FlutterFlowTheme.of(context).titleSmall.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               color: FlutterFlowTheme.of(context).secondaryText,
                             ),
                         elevation: 0.0,
@@ -254,7 +251,7 @@ class _CompeleTaskpopupWidgetState extends State<CompeleTaskpopupWidget> {
                       ),
                     ),
                   ),
-                  SizedBox(width: 12.0),
+                  const SizedBox(width: 12.0),
                   Expanded(
                     child: Builder(
                       builder: (context) => FFButtonWidget(
@@ -267,9 +264,9 @@ class _CompeleTaskpopupWidgetState extends State<CompeleTaskpopupWidget> {
                                 elevation: 0,
                                 insetPadding: EdgeInsets.zero,
                                 backgroundColor: Colors.transparent,
-                                alignment: AlignmentDirectional(0.0, 0.0)
+                                alignment: const AlignmentDirectional(0.0, 0.0)
                                     .resolve(Directionality.of(context)),
-                                child: CongratulationsPOPUpWidget(),
+                                child: const CongratulationsPOPUpWidget(),
                               );
                             },
                           );
@@ -286,16 +283,16 @@ class _CompeleTaskpopupWidgetState extends State<CompeleTaskpopupWidget> {
                           );
                         },
                         text: 'Complete',
-                        icon: Icon(
+                        icon: const Icon(
                           Icons.check_circle_outline,
                           size: 18.0,
                         ),
                         options: FFButtonOptions(
                           height: 44.0,
-                          padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
+                          padding: const EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
                           color: FlutterFlowTheme.of(context).primary,
                           textStyle: FlutterFlowTheme.of(context).titleSmall.override(
-                                fontFamily: 'Andika New Basic',
+                                fontFamily: FFAppState().currentFontFamily,
                                 color: Colors.white,
                               ),
                           elevation: 0.0,

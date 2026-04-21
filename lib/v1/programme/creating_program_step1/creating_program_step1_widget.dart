@@ -1,11 +1,8 @@
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
-import 'dart:ui';
 import '/index.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'creating_program_step1_model.dart';
 export 'creating_program_step1_model.dart';
 
@@ -55,14 +52,14 @@ class _CreatingProgramStep1WidgetState
         body: Container(
           width: double.infinity,
           height: double.infinity,
-          decoration: BoxDecoration(),
+          decoration: const BoxDecoration(),
           child: Column(
             mainAxisSize: MainAxisSize.max,
             children: [
               Expanded(
                 child: Padding(
                   padding:
-                      EdgeInsetsDirectional.fromSTEB(13.0, 50.0, 13.0, 0.0),
+                      const EdgeInsetsDirectional.fromSTEB(13.0, 50.0, 13.0, 0.0),
                   child: SingleChildScrollView(
                     child: Column(
                       mainAxisSize: MainAxisSize.max,
@@ -87,7 +84,7 @@ class _CreatingProgramStep1WidgetState
                                   width: 6.0,
                                   height: 4.0,
                                   decoration: BoxDecoration(
-                                    color: Color(0x6652A097),
+                                    color: const Color(0x6652A097),
                                     borderRadius: BorderRadius.circular(12.0),
                                   ),
                                 ),
@@ -95,7 +92,7 @@ class _CreatingProgramStep1WidgetState
                                   width: 6.0,
                                   height: 4.0,
                                   decoration: BoxDecoration(
-                                    color: Color(0x6652A097),
+                                    color: const Color(0x6652A097),
                                     borderRadius: BorderRadius.circular(12.0),
                                   ),
                                 ),
@@ -103,18 +100,18 @@ class _CreatingProgramStep1WidgetState
                                   width: 6.0,
                                   height: 4.0,
                                   decoration: BoxDecoration(
-                                    color: Color(0x6652A097),
+                                    color: const Color(0x6652A097),
                                     borderRadius: BorderRadius.circular(12.0),
                                   ),
                                 ),
-                              ].divide(SizedBox(width: 2.0)),
+                              ].divide(const SizedBox(width: 2.0)),
                             ),
                             Text(
                               'Step 1/4',
                               style: FlutterFlowTheme.of(context)
                                   .bodyMedium
                                   .override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     color: FlutterFlowTheme.of(context).primary,
                                     letterSpacing: 0.0,
                                     fontWeight: FontWeight.w600,
@@ -123,9 +120,9 @@ class _CreatingProgramStep1WidgetState
                           ],
                         ),
                         Align(
-                          alignment: AlignmentDirectional(-1.0, 0.0),
+                          alignment: const AlignmentDirectional(-1.0, 0.0),
                           child: Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 100.0, 0.0, 0.0),
                             child: ClipOval(
                               child: Container(
@@ -149,14 +146,14 @@ class _CreatingProgramStep1WidgetState
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 32.0, 0.0, 0.0),
                           child: Text(
                             'Let’s kick off the creation of a program with the support of our AI expert!',
                             style: FlutterFlowTheme.of(context)
                                 .bodyMedium
                                 .override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   fontSize: 30.0,
                                   letterSpacing: 0.0,
                                   fontWeight: FontWeight.bold,
@@ -164,14 +161,14 @@ class _CreatingProgramStep1WidgetState
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 32.0, 0.0, 64.0),
                           child: Text(
                             'A program consists of repetitive activities you do with your child to help overcome a specific challenge. For example, if your child is struggling to read their first words or hasn\'t started walking yet, we provide a list of structured, repetitive tasks designed to support their progress.',
                             style: FlutterFlowTheme.of(context)
                                 .bodyMedium
                                 .override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   color: FlutterFlowTheme.of(context)
                                       .secondaryText,
                                   letterSpacing: 0.0,
@@ -181,7 +178,7 @@ class _CreatingProgramStep1WidgetState
                         Form(
                           key: _model.formKey,
                           autovalidateMode: AutovalidateMode.disabled,
-                          child: Container(
+                          child: SizedBox(
                             width: double.infinity,
                             child: TextFormField(
                               controller: _model.textController,
@@ -193,7 +190,7 @@ class _CreatingProgramStep1WidgetState
                                 labelStyle: FlutterFlowTheme.of(context)
                                     .labelMedium
                                     .override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       letterSpacing: 0.0,
                                     ),
                                 hintText:
@@ -201,18 +198,18 @@ class _CreatingProgramStep1WidgetState
                                 hintStyle: FlutterFlowTheme.of(context)
                                     .labelMedium
                                     .override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       letterSpacing: 0.0,
                                     ),
                                 enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color(0x00000000),
                                     width: 1.0,
                                   ),
                                   borderRadius: BorderRadius.circular(27.0),
                                 ),
                                 focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color(0x00000000),
                                     width: 1.0,
                                   ),
@@ -239,7 +236,7 @@ class _CreatingProgramStep1WidgetState
                               style: FlutterFlowTheme.of(context)
                                   .bodyMedium
                                   .override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     letterSpacing: 0.0,
                                   ),
                               maxLines: 6,
@@ -251,7 +248,7 @@ class _CreatingProgramStep1WidgetState
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 60.0, 0.0, 60.0),
                           child: FFButtonWidget(
                             onPressed: () async {
@@ -275,15 +272,15 @@ class _CreatingProgramStep1WidgetState
                             options: FFButtonOptions(
                               width: double.infinity,
                               height: 47.0,
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   16.0, 0.0, 16.0, 0.0),
-                              iconPadding: EdgeInsetsDirectional.fromSTEB(
+                              iconPadding: const EdgeInsetsDirectional.fromSTEB(
                                   0.0, 0.0, 0.0, 0.0),
                               color: FlutterFlowTheme.of(context).primary,
                               textStyle: FlutterFlowTheme.of(context)
                                   .titleSmall
                                   .override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     color: Colors.white,
                                     letterSpacing: 0.0,
                                   ),

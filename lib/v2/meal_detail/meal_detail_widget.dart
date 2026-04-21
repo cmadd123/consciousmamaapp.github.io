@@ -5,7 +5,6 @@ import '/components/home_nav_bar_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/index.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 /// Meal Detail View Page
@@ -29,7 +28,7 @@ class MealDetailWidget extends StatefulWidget {
 class _MealDetailWidgetState extends State<MealDetailWidget> {
   MealRecord? _entree;
   List<MealRecord> _sides = [];
-  List<MealRecord> _desserts = [];
+  final List<MealRecord> _desserts = [];
   MealComboRecord? _mealCombo;
   bool _isLoading = true;
 
@@ -118,7 +117,7 @@ class _MealDetailWidgetState extends State<MealDetailWidget> {
       bottomNavigationBar: const HomeNavBarWidget(currentPage: HomeNavPage.meals),
       body: SafeArea(
         child: _isLoading
-            ? Center(child: CircularProgressIndicator())
+            ? const Center(child: CircularProgressIndicator())
             : Column(
                 children: [
                   // Header
@@ -127,21 +126,21 @@ class _MealDetailWidgetState extends State<MealDetailWidget> {
                   // Content
                   Expanded(
                     child: SingleChildScrollView(
-                      padding: EdgeInsets.all(16.0),
+                      padding: const EdgeInsets.all(16.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           // Main dish card
                           _buildMainDishCard(context),
-                          SizedBox(height: 20.0),
+                          const SizedBox(height: 20.0),
 
                           // Sides section
                           _buildSidesSection(context),
-                          SizedBox(height: 20.0),
+                          const SizedBox(height: 20.0),
 
                           // Drink section
                           _buildDrinkSection(context),
-                          SizedBox(height: 24.0),
+                          const SizedBox(height: 24.0),
 
                           // Action buttons
                           _buildActionButtons(context),
@@ -157,14 +156,14 @@ class _MealDetailWidgetState extends State<MealDetailWidget> {
 
   Widget _buildHeader(BuildContext context, String mealTypeName) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
       decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
             blurRadius: 4,
-            offset: Offset(0, 2),
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -174,11 +173,11 @@ class _MealDetailWidgetState extends State<MealDetailWidget> {
             onTap: () => Navigator.pop(context),
             borderRadius: BorderRadius.circular(20),
             child: Container(
-              padding: EdgeInsets.all(8.0),
-              child: Icon(Icons.arrow_back, size: 24.0),
+              padding: const EdgeInsets.all(8.0),
+              child: const Icon(Icons.arrow_back, size: 24.0),
             ),
           ),
-          SizedBox(width: 12.0),
+          const SizedBox(width: 12.0),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -186,7 +185,7 @@ class _MealDetailWidgetState extends State<MealDetailWidget> {
                 Text(
                   mealTypeName,
                   style: FlutterFlowTheme.of(context).headlineSmall.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     fontSize: 20.0,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 0.0,
@@ -195,8 +194,8 @@ class _MealDetailWidgetState extends State<MealDetailWidget> {
                 Text(
                   dateTimeFormat('MMMMEEEEd', widget.mealPlan.date),
                   style: FlutterFlowTheme.of(context).bodySmall.override(
-                    fontFamily: 'Andika New Basic',
-                    color: Color(0xFF888888),
+                    fontFamily: FFAppState().currentFontFamily,
+                    color: const Color(0xFF888888),
                     fontSize: 13.0,
                     letterSpacing: 0.0,
                   ),
@@ -207,12 +206,12 @@ class _MealDetailWidgetState extends State<MealDetailWidget> {
           // Meal combo badge if applicable
           if (_mealCombo != null)
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 4.0),
+              padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 4.0),
               decoration: BoxDecoration(
-                color: Color(0xFFFF9800),
+                color: const Color(0xFFFF9800),
                 borderRadius: BorderRadius.circular(14.0),
               ),
-              child: Row(
+              child: const Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(Icons.restaurant_menu, color: Colors.white, size: 14.0),
@@ -245,7 +244,7 @@ class _MealDetailWidgetState extends State<MealDetailWidget> {
           BoxShadow(
             color: Colors.black.withOpacity(0.08),
             blurRadius: 12,
-            offset: Offset(0, 4),
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -254,8 +253,8 @@ class _MealDetailWidgetState extends State<MealDetailWidget> {
         children: [
           // Image
           ClipRRect(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
-            child: Container(
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(16.0)),
+            child: SizedBox(
               height: 180.0,
               width: double.infinity,
               child: hasImage
@@ -269,11 +268,11 @@ class _MealDetailWidgetState extends State<MealDetailWidget> {
           ),
           // Info
           Padding(
-            padding: EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
+                const Row(
                   children: [
                     Icon(Icons.restaurant, color: Color(0xFFE57373), size: 20.0),
                     SizedBox(width: 8.0),
@@ -287,30 +286,30 @@ class _MealDetailWidgetState extends State<MealDetailWidget> {
                     ),
                   ],
                 ),
-                SizedBox(height: 8.0),
+                const SizedBox(height: 8.0),
                 Text(
                   recipeName,
                   style: FlutterFlowTheme.of(context).titleMedium.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     fontSize: 18.0,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 0.0,
                   ),
                 ),
                 if (_entree != null) ...[
-                  SizedBox(height: 8.0),
+                  const SizedBox(height: 8.0),
                   Row(
                     children: [
                       if (_entree!.prepareTime > 0 || _entree!.cookingTime > 0)
                         _buildInfoChip(
                           Icons.schedule,
                           '${(_entree!.prepareTime + _entree!.cookingTime).toInt()} min',
-                          Color(0xFF64B5F6),
+                          const Color(0xFF64B5F6),
                         ),
                     ],
                   ),
                 ],
-                SizedBox(height: 12.0),
+                const SizedBox(height: 12.0),
                 Row(
                   children: [
                     // View Recipe button
@@ -327,7 +326,7 @@ class _MealDetailWidgetState extends State<MealDetailWidget> {
                               )
                           : null,
                       child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 14.0, vertical: 10.0),
+                        padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 10.0),
                         decoration: BoxDecoration(
                           color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(14.0),
@@ -340,7 +339,7 @@ class _MealDetailWidgetState extends State<MealDetailWidget> {
                               color: FlutterFlowTheme.of(context).primary,
                               size: 18.0,
                             ),
-                            SizedBox(width: 6.0),
+                            const SizedBox(width: 6.0),
                             Text(
                               'View',
                               style: TextStyle(
@@ -353,17 +352,17 @@ class _MealDetailWidgetState extends State<MealDetailWidget> {
                         ),
                       ),
                     ),
-                    SizedBox(width: 10.0),
+                    const SizedBox(width: 10.0),
                     // Replace button
                     InkWell(
                       onTap: _navigateToEditMealCombo,
                       child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 14.0, vertical: 10.0),
+                        padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 10.0),
                         decoration: BoxDecoration(
-                          color: Color(0xFFFF9800).withOpacity(0.1),
+                          color: const Color(0xFFFF9800).withOpacity(0.1),
                           borderRadius: BorderRadius.circular(14.0),
                         ),
-                        child: Row(
+                        child: const Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Icon(
@@ -384,7 +383,7 @@ class _MealDetailWidgetState extends State<MealDetailWidget> {
                         ),
                       ),
                     ),
-                    SizedBox(width: 10.0),
+                    const SizedBox(width: 10.0),
                     // Create New Entree button
                     InkWell(
                       onTap: () => context.pushNamed(
@@ -395,12 +394,12 @@ class _MealDetailWidgetState extends State<MealDetailWidget> {
                         }.withoutNulls,
                       ),
                       child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 14.0, vertical: 10.0),
+                        padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 10.0),
                         decoration: BoxDecoration(
-                          color: Color(0xFF4CAF50).withOpacity(0.1),
+                          color: const Color(0xFF4CAF50).withOpacity(0.1),
                           borderRadius: BorderRadius.circular(14.0),
                         ),
-                        child: Row(
+                        child: const Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Icon(
@@ -437,12 +436,12 @@ class _MealDetailWidgetState extends State<MealDetailWidget> {
       children: [
         Row(
           children: [
-            Icon(Icons.add_circle_outline, color: Color(0xFF81C784), size: 22.0),
-            SizedBox(width: 8.0),
+            const Icon(Icons.add_circle_outline, color: Color(0xFF81C784), size: 22.0),
+            const SizedBox(width: 8.0),
             Text(
               'Sides',
               style: FlutterFlowTheme.of(context).titleSmall.override(
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
                 fontSize: 16.0,
                 fontWeight: FontWeight.w600,
                 letterSpacing: 0.0,
@@ -450,9 +449,9 @@ class _MealDetailWidgetState extends State<MealDetailWidget> {
             ),
           ],
         ),
-        SizedBox(height: 12.0),
+        const SizedBox(height: 12.0),
         if (_sides.isEmpty)
-          _buildEmptySlot('No sides added', Icons.add_circle_outline, Color(0xFF81C784), onTap: _showSidePicker)
+          _buildEmptySlot('No sides added', Icons.add_circle_outline, const Color(0xFF81C784), onTap: _showSidePicker)
         else
           Row(
             children: _sides.map((side) => Expanded(
@@ -478,32 +477,32 @@ class _MealDetailWidgetState extends State<MealDetailWidget> {
       ),
       borderRadius: BorderRadius.circular(14.0),
       child: Container(
-        padding: EdgeInsets.all(12.0),
+        padding: const EdgeInsets.all(12.0),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(14.0),
-          border: Border.all(color: Color(0xFFE0E0E0)),
+          border: Border.all(color: const Color(0xFFE0E0E0)),
         ),
         child: Row(
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(14.0),
-              child: Container(
+              child: SizedBox(
                 width: 50.0,
                 height: 50.0,
                 child: hasImage
                     ? Image.network(side.imageUrl, fit: BoxFit.cover)
                     : Container(
-                        color: Color(0xFF81C784).withOpacity(0.2),
-                        child: Icon(Icons.eco, color: Color(0xFF81C784), size: 24.0),
+                        color: const Color(0xFF81C784).withOpacity(0.2),
+                        child: const Icon(Icons.eco, color: Color(0xFF81C784), size: 24.0),
                       ),
               ),
             ),
-            SizedBox(width: 12.0),
+            const SizedBox(width: 12.0),
             Expanded(
               child: Text(
                 side.recipeName,
-                style: TextStyle(
+                style: const TextStyle(
                   fontWeight: FontWeight.w500,
                   fontSize: 14.0,
                 ),
@@ -530,12 +529,12 @@ class _MealDetailWidgetState extends State<MealDetailWidget> {
       children: [
         Row(
           children: [
-            Icon(Icons.local_cafe, color: Color(0xFF64B5F6), size: 22.0),
-            SizedBox(width: 8.0),
+            const Icon(Icons.local_cafe, color: Color(0xFF64B5F6), size: 22.0),
+            const SizedBox(width: 8.0),
             Text(
               'Drink',
               style: FlutterFlowTheme.of(context).titleSmall.override(
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
                 fontSize: 16.0,
                 fontWeight: FontWeight.w600,
                 letterSpacing: 0.0,
@@ -543,16 +542,16 @@ class _MealDetailWidgetState extends State<MealDetailWidget> {
             ),
           ],
         ),
-        SizedBox(height: 12.0),
+        const SizedBox(height: 12.0),
         if (!hasDrink)
-          _buildEmptySlot('No drink added', Icons.local_cafe, Color(0xFF64B5F6), onTap: _showDrinkPicker)
+          _buildEmptySlot('No drink added', Icons.local_cafe, const Color(0xFF64B5F6), onTap: _showDrinkPicker)
         else
           Container(
-            padding: EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(16.0),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(14.0),
-              border: Border.all(color: Color(0xFFE0E0E0)),
+              border: Border.all(color: const Color(0xFFE0E0E0)),
             ),
             child: Row(
               children: [
@@ -560,15 +559,15 @@ class _MealDetailWidgetState extends State<MealDetailWidget> {
                   width: 50.0,
                   height: 50.0,
                   decoration: BoxDecoration(
-                    color: Color(0xFF64B5F6).withOpacity(0.2),
+                    color: const Color(0xFF64B5F6).withOpacity(0.2),
                     borderRadius: BorderRadius.circular(14.0),
                   ),
-                  child: Icon(Icons.local_cafe, color: Color(0xFF64B5F6), size: 24.0),
+                  child: const Icon(Icons.local_cafe, color: Color(0xFF64B5F6), size: 24.0),
                 ),
-                SizedBox(width: 12.0),
+                const SizedBox(width: 12.0),
                 Text(
                   drinkName!,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontWeight: FontWeight.w500,
                     fontSize: 15.0,
                   ),
@@ -586,7 +585,7 @@ class _MealDetailWidgetState extends State<MealDetailWidget> {
       borderRadius: BorderRadius.circular(14.0),
       child: Container(
         width: double.infinity,
-        padding: EdgeInsets.all(20.0),
+        padding: const EdgeInsets.all(20.0),
         decoration: BoxDecoration(
           color: color.withOpacity(0.05),
           borderRadius: BorderRadius.circular(14.0),
@@ -596,7 +595,7 @@ class _MealDetailWidgetState extends State<MealDetailWidget> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(icon, color: color.withOpacity(0.6), size: 20.0),
-            SizedBox(width: 8.0),
+            const SizedBox(width: 8.0),
             Text(
               'Tap to add',
               style: TextStyle(
@@ -658,7 +657,7 @@ class _MealDetailWidgetState extends State<MealDetailWidget> {
         if (currentSides.length >= 2) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Maximum 2 sides allowed'),
+              content: const Text('Maximum 2 sides allowed'),
               backgroundColor: Colors.orange,
               behavior: SnackBarBehavior.floating,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -720,7 +719,7 @@ class _MealDetailWidgetState extends State<MealDetailWidget> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error adding side'),
+            content: const Text('Error adding side'),
             backgroundColor: Colors.red,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -813,7 +812,7 @@ class _MealDetailWidgetState extends State<MealDetailWidget> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error adding drink'),
+            content: const Text('Error adding drink'),
             backgroundColor: Colors.red,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -828,10 +827,10 @@ class _MealDetailWidgetState extends State<MealDetailWidget> {
     final result = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Custom Drink'),
+        title: const Text('Custom Drink'),
         content: TextField(
           controller: controller,
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             hintText: 'Enter drink name',
             border: OutlineInputBorder(),
           ),
@@ -840,11 +839,11 @@ class _MealDetailWidgetState extends State<MealDetailWidget> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Cancel'),
+            child: const Text('Cancel'),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, controller.text),
-            child: Text('Save'),
+            child: const Text('Save'),
           ),
         ],
       ),
@@ -865,10 +864,10 @@ class _MealDetailWidgetState extends State<MealDetailWidget> {
             width: double.infinity,
             child: ElevatedButton.icon(
               onPressed: _saveAsMeal,
-              icon: Icon(Icons.bookmark_add, size: 20.0),
-              label: Text('Save as Meal'),
+              icon: const Icon(Icons.bookmark_add, size: 20.0),
+              label: const Text('Save as Meal'),
               style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(vertical: 14.0),
+                padding: const EdgeInsets.symmetric(vertical: 14.0),
                 backgroundColor: FlutterFlowTheme.of(context).primary,
                 foregroundColor: Colors.white,
                 elevation: 0,
@@ -878,16 +877,16 @@ class _MealDetailWidgetState extends State<MealDetailWidget> {
               ),
             ),
           ),
-        if (canSaveAsMeal) SizedBox(height: 12.0),
+        if (canSaveAsMeal) const SizedBox(height: 12.0),
         // Remove from plan button
         SizedBox(
           width: double.infinity,
           child: OutlinedButton.icon(
             onPressed: _deleteMealPlan,
-            icon: Icon(Icons.delete_outline),
-            label: Text('Remove from Plan'),
+            icon: const Icon(Icons.delete_outline),
+            label: const Text('Remove from Plan'),
             style: OutlinedButton.styleFrom(
-              padding: EdgeInsets.symmetric(vertical: 14.0),
+              padding: const EdgeInsets.symmetric(vertical: 14.0),
               foregroundColor: Colors.red,
               side: BorderSide(color: Colors.red.withOpacity(0.5)),
               shape: RoundedRectangleBorder(
@@ -912,16 +911,16 @@ class _MealDetailWidgetState extends State<MealDetailWidget> {
     final mealName = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Save as Meal'),
+        title: const Text('Save as Meal'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               'Give your meal a name:',
               style: TextStyle(color: Color(0xFF666666), fontSize: 14.0),
             ),
-            SizedBox(height: 12.0),
+            const SizedBox(height: 12.0),
             TextField(
               controller: controller,
               decoration: InputDecoration(
@@ -929,7 +928,7 @@ class _MealDetailWidgetState extends State<MealDetailWidget> {
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(14.0),
                 ),
-                contentPadding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 12.0),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 12.0),
               ),
               autofocus: true,
             ),
@@ -938,14 +937,14 @@ class _MealDetailWidgetState extends State<MealDetailWidget> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Cancel'),
+            child: const Text('Cancel'),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, controller.text),
             style: ElevatedButton.styleFrom(
               backgroundColor: FlutterFlowTheme.of(context).primary,
             ),
-            child: Text('Save', style: TextStyle(color: Colors.white)),
+            child: const Text('Save', style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -973,15 +972,15 @@ class _MealDetailWidgetState extends State<MealDetailWidget> {
           SnackBar(
             content: Row(
               children: [
-                Icon(Icons.check_circle, color: Colors.white, size: 20.0),
-                SizedBox(width: 8.0),
+                const Icon(Icons.check_circle, color: Colors.white, size: 20.0),
+                const SizedBox(width: 8.0),
                 Expanded(child: Text('$mealName saved to your cookbook!')),
               ],
             ),
             backgroundColor: FlutterFlowTheme.of(context).primary,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            duration: Duration(seconds: 3),
+            duration: const Duration(seconds: 3),
           ),
         );
       }
@@ -990,7 +989,7 @@ class _MealDetailWidgetState extends State<MealDetailWidget> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error saving meal'),
+            content: const Text('Error saving meal'),
             backgroundColor: Colors.red,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -1002,7 +1001,7 @@ class _MealDetailWidgetState extends State<MealDetailWidget> {
 
   Widget _buildInfoChip(IconData icon, String text, Color color) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+      padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
         borderRadius: BorderRadius.circular(14.0),
@@ -1011,7 +1010,7 @@ class _MealDetailWidgetState extends State<MealDetailWidget> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icon, size: 14.0, color: color),
-          SizedBox(width: 4.0),
+          const SizedBox(width: 4.0),
           Text(
             text,
             style: TextStyle(
@@ -1028,12 +1027,12 @@ class _MealDetailWidgetState extends State<MealDetailWidget> {
   Widget _buildPlaceholder(String name) {
     // Generate a color based on the name
     final colors = [
-      Color(0xFFE57373), // Red
-      Color(0xFF81C784), // Green
-      Color(0xFF64B5F6), // Blue
-      Color(0xFFFFB74D), // Orange
-      Color(0xFFBA68C8), // Purple
-      Color(0xFF4DB6AC), // Teal
+      const Color(0xFFE57373), // Red
+      const Color(0xFF81C784), // Green
+      const Color(0xFF64B5F6), // Blue
+      const Color(0xFFFFB74D), // Orange
+      const Color(0xFFBA68C8), // Purple
+      const Color(0xFF4DB6AC), // Teal
     ];
     final colorIndex = name.hashCode.abs() % colors.length;
 
@@ -1062,7 +1061,7 @@ class _SidePickerSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: MediaQuery.of(context).size.height * 0.7,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
       ),
@@ -1070,24 +1069,24 @@ class _SidePickerSheet extends StatelessWidget {
         children: [
           // Handle
           Container(
-            margin: EdgeInsets.only(top: 12.0),
+            margin: const EdgeInsets.only(top: 12.0),
             width: 40.0,
             height: 4.0,
             decoration: BoxDecoration(
-              color: Color(0xFFE0E0E0),
+              color: const Color(0xFFE0E0E0),
               borderRadius: BorderRadius.circular(2.0),
             ),
           ),
           // Title with Create New button
           Padding(
-            padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 8.0),
+            padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 8.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   'Select Side',
                   style: FlutterFlowTheme.of(context).titleMedium.override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         fontWeight: FontWeight.w600,
                         letterSpacing: 0.0,
                       ),
@@ -1105,12 +1104,12 @@ class _SidePickerSheet extends StatelessWidget {
                   },
                   borderRadius: BorderRadius.circular(14.0),
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
                     decoration: BoxDecoration(
-                      color: Color(0xFF81C784).withOpacity(0.15),
+                      color: const Color(0xFF81C784).withOpacity(0.15),
                       borderRadius: BorderRadius.circular(14.0),
                     ),
-                    child: Row(
+                    child: const Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(Icons.add, color: Color(0xFF81C784), size: 18.0),
@@ -1138,7 +1137,7 @@ class _SidePickerSheet extends StatelessWidget {
               ),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
-                  return Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator());
                 }
 
                 // Filter to show only sides
@@ -1157,7 +1156,7 @@ class _SidePickerSheet extends StatelessWidget {
                 }).toList();
 
                 if (recipes.isEmpty) {
-                  return Center(
+                  return const Center(
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -1178,34 +1177,34 @@ class _SidePickerSheet extends StatelessWidget {
                 }
 
                 return ListView.builder(
-                  padding: EdgeInsets.symmetric(horizontal: 16.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   itemCount: recipes.length,
                   itemBuilder: (context, index) {
                     final recipe = recipes[index];
                     return InkWell(
                       onTap: () => Navigator.pop(context, recipe),
                       child: Container(
-                        margin: EdgeInsets.only(bottom: 8.0),
-                        padding: EdgeInsets.all(12.0),
+                        margin: const EdgeInsets.only(bottom: 8.0),
+                        padding: const EdgeInsets.all(12.0),
                         decoration: BoxDecoration(
-                          color: Color(0xFFFAFAFA),
+                          color: const Color(0xFFFAFAFA),
                           borderRadius: BorderRadius.circular(14.0),
                         ),
                         child: Row(
                           children: [
-                            Icon(Icons.eco, color: Color(0xFF81C784)),
-                            SizedBox(width: 12.0),
+                            const Icon(Icons.eco, color: Color(0xFF81C784)),
+                            const SizedBox(width: 12.0),
                             Expanded(
                               child: Text(
                                 recipe.recipeName,
                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       fontWeight: FontWeight.w600,
                                       letterSpacing: 0.0,
                                     ),
                               ),
                             ),
-                            Icon(Icons.add_circle_outline, color: Color(0xFF999999)),
+                            const Icon(Icons.add_circle_outline, color: Color(0xFF999999)),
                           ],
                         ),
                       ),
@@ -1230,7 +1229,7 @@ class _DrinkPickerSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
       ),
@@ -1239,21 +1238,21 @@ class _DrinkPickerSheet extends StatelessWidget {
         children: [
           // Handle
           Container(
-            margin: EdgeInsets.only(top: 12.0),
+            margin: const EdgeInsets.only(top: 12.0),
             width: 40.0,
             height: 4.0,
             decoration: BoxDecoration(
-              color: Color(0xFFE0E0E0),
+              color: const Color(0xFFE0E0E0),
               borderRadius: BorderRadius.circular(2.0),
             ),
           ),
           // Title
           Padding(
-            padding: EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(16.0),
             child: Text(
               'Select Drink',
               style: FlutterFlowTheme.of(context).titleMedium.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 0.0,
                   ),
@@ -1261,7 +1260,7 @@ class _DrinkPickerSheet extends StatelessWidget {
           ),
           // Drink options
           Padding(
-            padding: EdgeInsets.fromLTRB(16.0, 0, 16.0, 24.0),
+            padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 24.0),
             child: Wrap(
               spacing: 8.0,
               runSpacing: 8.0,
@@ -1270,12 +1269,12 @@ class _DrinkPickerSheet extends StatelessWidget {
                 return InkWell(
                   onTap: () => Navigator.pop(context, drink),
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
                     decoration: BoxDecoration(
-                      color: isSelected ? FlutterFlowTheme.of(context).primary : Color(0xFFFAFAFA),
+                      color: isSelected ? FlutterFlowTheme.of(context).primary : const Color(0xFFFAFAFA),
                       borderRadius: BorderRadius.circular(14.0),
                       border: Border.all(
-                        color: isSelected ? FlutterFlowTheme.of(context).primary : Color(0xFFE0E0E0),
+                        color: isSelected ? FlutterFlowTheme.of(context).primary : const Color(0xFFE0E0E0),
                       ),
                     ),
                     child: Row(
@@ -1283,14 +1282,14 @@ class _DrinkPickerSheet extends StatelessWidget {
                       children: [
                         Icon(
                           _getDrinkIcon(drink),
-                          color: isSelected ? Colors.white : Color(0xFF666666),
+                          color: isSelected ? Colors.white : const Color(0xFF666666),
                           size: 20,
                         ),
-                        SizedBox(width: 8.0),
+                        const SizedBox(width: 8.0),
                         Text(
                           drink.name,
                           style: TextStyle(
-                            color: isSelected ? Colors.white : Color(0xFF666666),
+                            color: isSelected ? Colors.white : const Color(0xFF666666),
                             fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                           ),
                         ),

@@ -1,19 +1,7 @@
 import '/backend/api_requests/api_calls.dart';
-import '/backend/api_requests/api_streaming.dart';
-import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import '/flutter_flow/flutter_flow_widgets.dart';
-import '/v1/empty_list_view_component/empty_list_view_component_widget.dart';
-import '/v1/programmes/milestones/meals/advanced_search_meals/advanced_search_meals_widget.dart';
-import 'dart:convert';
-import 'dart:ui';
 import 'meals_widget.dart' show MealsWidget;
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 
 class MealsModel extends FlutterFlowModel<MealsWidget> {
   ///  Local state fields for this page.

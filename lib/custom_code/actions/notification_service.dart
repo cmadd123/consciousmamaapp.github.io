@@ -279,7 +279,7 @@ class NotificationService {
       '📚 Learning Time for $childName!',
       taskName,
       tz.TZDateTime.from(scheduledTime, tz.local),
-      NotificationDetails(
+      const NotificationDetails(
         android: AndroidNotificationDetails(
           learningChannelId,
           'Learning Reminders',
@@ -288,7 +288,7 @@ class NotificationService {
           priority: Priority.high,
           icon: '@mipmap/ic_launcher',
         ),
-        iOS: const DarwinNotificationDetails(
+        iOS: DarwinNotificationDetails(
           presentAlert: true,
           presentBadge: true,
           presentSound: true,
@@ -335,7 +335,7 @@ class NotificationService {
       '📅 Coming Up',
       '$eventName in $minutesBefore minutes',
       tz.TZDateTime.from(reminderTime, tz.local),
-      NotificationDetails(
+      const NotificationDetails(
         android: AndroidNotificationDetails(
           calendarChannelId,
           'Calendar Reminders',
@@ -344,7 +344,7 @@ class NotificationService {
           priority: Priority.high,
           icon: '@mipmap/ic_launcher',
         ),
-        iOS: const DarwinNotificationDetails(
+        iOS: DarwinNotificationDetails(
           presentAlert: true,
           presentBadge: true,
           presentSound: true,
@@ -415,7 +415,7 @@ class NotificationService {
       '💝 Daily Encouragement',
       randomMessage,
       _nextInstanceOfTime(hour, minute),
-      NotificationDetails(
+      const NotificationDetails(
         android: AndroidNotificationDetails(
           encouragementChannelId,
           'Daily Encouragement',
@@ -424,7 +424,7 @@ class NotificationService {
           priority: Priority.defaultPriority,
           icon: '@mipmap/ic_launcher',
         ),
-        iOS: const DarwinNotificationDetails(
+        iOS: DarwinNotificationDetails(
           presentAlert: true,
           presentBadge: false,
           presentSound: true,
@@ -552,7 +552,7 @@ class NotificationService {
       0,
       '🎉 Notifications Working!',
       'MomRise can now send you reminders.',
-      NotificationDetails(
+      const NotificationDetails(
         android: AndroidNotificationDetails(
           mealChannelId,
           'Meal Reminders',
@@ -561,7 +561,7 @@ class NotificationService {
           priority: Priority.high,
           icon: '@mipmap/ic_launcher',
         ),
-        iOS: const DarwinNotificationDetails(
+        iOS: DarwinNotificationDetails(
           presentAlert: true,
           presentBadge: true,
           presentSound: true,

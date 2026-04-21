@@ -164,7 +164,7 @@ class _CelebrationWidgetState extends State<CelebrationWidget>
                                 style: FlutterFlowTheme.of(context)
                                     .headlineLarge
                                     .override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       fontSize: 36.0,
                                       fontWeight: FontWeight.bold,
                                       letterSpacing: 0.0,
@@ -182,7 +182,7 @@ class _CelebrationWidgetState extends State<CelebrationWidget>
                                   style: FlutterFlowTheme.of(context)
                                       .headlineSmall
                                       .override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         fontSize: 20.0,
                                         fontWeight: FontWeight.w600,
                                         letterSpacing: 0.0,
@@ -226,7 +226,7 @@ class _CelebrationWidgetState extends State<CelebrationWidget>
                                           style: FlutterFlowTheme.of(context)
                                               .bodySmall
                                               .override(
-                                                fontFamily: 'Andika New Basic',
+                                                fontFamily: FFAppState().currentFontFamily,
                                                 fontSize: 12.0,
                                                 fontWeight: FontWeight.w500,
                                                 letterSpacing: 0.5,
@@ -240,7 +240,7 @@ class _CelebrationWidgetState extends State<CelebrationWidget>
                                           style: FlutterFlowTheme.of(context)
                                               .bodyLarge
                                               .override(
-                                                fontFamily: 'Andika New Basic',
+                                                fontFamily: FFAppState().currentFontFamily,
                                                 fontSize: 16.0,
                                                 fontWeight: FontWeight.w600,
                                                 letterSpacing: 0.0,
@@ -281,7 +281,7 @@ class _CelebrationWidgetState extends State<CelebrationWidget>
                                   textStyle: FlutterFlowTheme.of(context)
                                       .titleMedium
                                       .override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         color: Colors.white,
                                         fontSize: 18.0,
                                         fontWeight: FontWeight.w600,

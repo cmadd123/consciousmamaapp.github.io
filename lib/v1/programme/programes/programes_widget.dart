@@ -2,15 +2,10 @@ import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import '/flutter_flow/flutter_flow_widgets.dart';
 import '/v1/empty_list_view_component/empty_list_view_component_widget.dart';
-import 'dart:ui';
 import '/index.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:percent_indicator/percent_indicator.dart';
-import 'package:provider/provider.dart';
 import 'programes_model.dart';
 export 'programes_model.dart';
 
@@ -60,7 +55,7 @@ class _ProgramesWidgetState extends State<ProgramesWidget>
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
         floatingActionButton: Padding(
-          padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 70.0),
+          padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 70.0),
           child: FloatingActionButton(
             onPressed: () async {
               context.pushNamed(CreatingProgramStep1Widget.routeName);
@@ -83,19 +78,19 @@ class _ProgramesWidgetState extends State<ProgramesWidget>
           child: Stack(
             children: [
               Align(
-                alignment: AlignmentDirectional(0.0, 0.0),
+                alignment: const AlignmentDirectional(0.0, 0.0),
                 child: Container(
                   width: double.infinity,
                   height: double.infinity,
-                  decoration: BoxDecoration(),
+                  decoration: const BoxDecoration(),
                   child: Padding(
                     padding:
-                        EdgeInsetsDirectional.fromSTEB(20.0, 0.0, 20.0, 0.0),
+                        const EdgeInsetsDirectional.fromSTEB(20.0, 0.0, 20.0, 0.0),
                     child: Column(
                       mainAxisSize: MainAxisSize.max,
                       children: [
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 50.0, 0.0, 0.0),
                           child: Row(
                             mainAxisSize: MainAxisSize.max,
@@ -117,14 +112,14 @@ class _ProgramesWidgetState extends State<ProgramesWidget>
                               ),
                               Expanded(
                                 child: Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       0.0, 0.0, 10.0, 0.0),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.max,
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                        padding: const EdgeInsetsDirectional.fromSTEB(
                                             0.0, 0.0, 20.0, 0.0),
                                         child: Text(
                                           'Programme',
@@ -132,7 +127,7 @@ class _ProgramesWidgetState extends State<ProgramesWidget>
                                           style: FlutterFlowTheme.of(context)
                                               .bodyMedium
                                               .override(
-                                                fontFamily: 'Andika New Basic',
+                                                fontFamily: FFAppState().currentFontFamily,
                                                 fontSize: 20.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.bold,
@@ -147,7 +142,7 @@ class _ProgramesWidgetState extends State<ProgramesWidget>
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 16.0, 0.0, 8.0),
                           child: Row(
                             mainAxisSize: MainAxisSize.max,
@@ -158,7 +153,7 @@ class _ProgramesWidgetState extends State<ProgramesWidget>
                                   style: FlutterFlowTheme.of(context)
                                       .bodyMedium
                                       .override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         color: FlutterFlowTheme.of(context)
                                             .secondaryText,
                                         letterSpacing: 0.0,
@@ -172,7 +167,7 @@ class _ProgramesWidgetState extends State<ProgramesWidget>
                           child: Column(
                             children: [
                               Align(
-                                alignment: Alignment(0.0, 0),
+                                alignment: const Alignment(0.0, 0),
                                 child: TabBar(
                                   labelColor:
                                       FlutterFlowTheme.of(context).primary,
@@ -182,19 +177,19 @@ class _ProgramesWidgetState extends State<ProgramesWidget>
                                   labelStyle: FlutterFlowTheme.of(context)
                                       .titleMedium
                                       .override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         letterSpacing: 0.0,
                                       ),
                                   unselectedLabelStyle:
                                       FlutterFlowTheme.of(context)
                                           .titleMedium
                                           .override(
-                                            fontFamily: 'Andika New Basic',
+                                            fontFamily: FFAppState().currentFontFamily,
                                             letterSpacing: 0.0,
                                           ),
                                   indicatorColor:
                                       FlutterFlowTheme.of(context).primary,
-                                  tabs: [
+                                  tabs: const [
                                     Tab(
                                       text: 'All Programme',
                                     ),
@@ -250,7 +245,7 @@ class _ProgramesWidgetState extends State<ProgramesWidget>
                                             snapshot.data!;
                                         if (listViewProgramsRecordList
                                             .isEmpty) {
-                                          return EmptyListViewComponentWidget(
+                                          return const EmptyListViewComponentWidget(
                                             icon: Icon(
                                               FFIcons.kionSchoolOutline,
                                             ),
@@ -260,7 +255,7 @@ class _ProgramesWidgetState extends State<ProgramesWidget>
                                         }
 
                                         return ListView.builder(
-                                          padding: EdgeInsets.fromLTRB(
+                                          padding: const EdgeInsets.fromLTRB(
                                             0,
                                             0,
                                             0,
@@ -276,7 +271,7 @@ class _ProgramesWidgetState extends State<ProgramesWidget>
                                                 listViewProgramsRecordList[
                                                     listViewIndex];
                                             return Padding(
-                                              padding: EdgeInsetsDirectional
+                                              padding: const EdgeInsetsDirectional
                                                   .fromSTEB(
                                                       0.0, 20.0, 0.0, 0.0),
                                               child: InkWell(
@@ -314,7 +309,7 @@ class _ProgramesWidgetState extends State<ProgramesWidget>
                                                   ),
                                                   child: Padding(
                                                     padding:
-                                                        EdgeInsetsDirectional
+                                                        const EdgeInsetsDirectional
                                                             .fromSTEB(
                                                                 14.0,
                                                                 14.0,
@@ -340,7 +335,7 @@ class _ProgramesWidgetState extends State<ProgramesWidget>
                                                             Expanded(
                                                               child: Padding(
                                                                 padding:
-                                                                    EdgeInsetsDirectional
+                                                                    const EdgeInsetsDirectional
                                                                         .fromSTEB(
                                                                             8.0,
                                                                             0.0,
@@ -363,7 +358,7 @@ class _ProgramesWidgetState extends State<ProgramesWidget>
                                                                               .spaceBetween,
                                                                       children: [
                                                                         Padding(
-                                                                          padding: EdgeInsetsDirectional.fromSTEB(
+                                                                          padding: const EdgeInsetsDirectional.fromSTEB(
                                                                               0.0,
                                                                               0.0,
                                                                               0.0,
@@ -375,7 +370,7 @@ class _ProgramesWidgetState extends State<ProgramesWidget>
                                                                               '- -',
                                                                             ),
                                                                             style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                  fontFamily: 'Andika New Basic',
+                                                                                  fontFamily: FFAppState().currentFontFamily,
                                                                                   color: Colors.black,
                                                                                   fontSize: 16.0,
                                                                                   letterSpacing: 0.0,
@@ -384,7 +379,7 @@ class _ProgramesWidgetState extends State<ProgramesWidget>
                                                                           ),
                                                                         ),
                                                                         Padding(
-                                                                          padding: EdgeInsetsDirectional.fromSTEB(
+                                                                          padding: const EdgeInsetsDirectional.fromSTEB(
                                                                               0.0,
                                                                               0.0,
                                                                               0.0,
@@ -394,7 +389,7 @@ class _ProgramesWidgetState extends State<ProgramesWidget>
                                                                             mainAxisSize:
                                                                                 MainAxisSize.max,
                                                                             children: [
-                                                                              Padding(
+                                                                              const Padding(
                                                                                 padding: EdgeInsetsDirectional.fromSTEB(6.0, 0.0, 0.0, 0.0),
                                                                                 child: Icon(
                                                                                   Icons.content_paste_rounded,
@@ -403,7 +398,7 @@ class _ProgramesWidgetState extends State<ProgramesWidget>
                                                                                 ),
                                                                               ),
                                                                               Padding(
-                                                                                padding: EdgeInsetsDirectional.fromSTEB(6.0, 0.0, 0.0, 0.0),
+                                                                                padding: const EdgeInsetsDirectional.fromSTEB(6.0, 0.0, 0.0, 0.0),
                                                                                 child: RichText(
                                                                                   textScaler: MediaQuery.of(context).textScaler,
                                                                                   text: TextSpan(
@@ -414,19 +409,19 @@ class _ProgramesWidgetState extends State<ProgramesWidget>
                                                                                           '0',
                                                                                         ),
                                                                                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                              fontFamily: 'Andika New Basic',
-                                                                                              color: Color(0xFF595959),
+                                                                                              fontFamily: FFAppState().currentFontFamily,
+                                                                                              color: const Color(0xFF595959),
                                                                                               letterSpacing: 0.0,
                                                                                             ),
                                                                                       ),
-                                                                                      TextSpan(
+                                                                                      const TextSpan(
                                                                                         text: ' sessions',
                                                                                         style: TextStyle(),
                                                                                       )
                                                                                     ],
                                                                                     style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                          fontFamily: 'Andika New Basic',
-                                                                                          color: Color(0xFF595959),
+                                                                                          fontFamily: FFAppState().currentFontFamily,
+                                                                                          color: const Color(0xFF595959),
                                                                                           letterSpacing: 0.0,
                                                                                         ),
                                                                                   ),
@@ -446,13 +441,13 @@ class _ProgramesWidgetState extends State<ProgramesWidget>
                                                                           mainAxisSize:
                                                                               MainAxisSize.max,
                                                                           children: [
-                                                                            Icon(
+                                                                            const Icon(
                                                                               Icons.calendar_today_outlined,
                                                                               color: Color(0xFF1F2631),
                                                                               size: 14.0,
                                                                             ),
                                                                             Padding(
-                                                                              padding: EdgeInsetsDirectional.fromSTEB(6.0, 0.0, 0.0, 0.0),
+                                                                              padding: const EdgeInsetsDirectional.fromSTEB(6.0, 0.0, 0.0, 0.0),
                                                                               child: RichText(
                                                                                 textScaler: MediaQuery.of(context).textScaler,
                                                                                 text: TextSpan(
@@ -460,8 +455,8 @@ class _ProgramesWidgetState extends State<ProgramesWidget>
                                                                                     TextSpan(
                                                                                       text: 'Start: ',
                                                                                       style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                            fontFamily: 'Andika New Basic',
-                                                                                            color: Color(0xFF595959),
+                                                                                            fontFamily: FFAppState().currentFontFamily,
+                                                                                            color: const Color(0xFF595959),
                                                                                             fontSize: 12.0,
                                                                                             letterSpacing: 0.0,
                                                                                           ),
@@ -472,14 +467,14 @@ class _ProgramesWidgetState extends State<ProgramesWidget>
                                                                                         listViewProgramsRecord.startDate!,
                                                                                         locale: FFLocalizations.of(context).languageCode,
                                                                                       ),
-                                                                                      style: TextStyle(
+                                                                                      style: const TextStyle(
                                                                                         fontWeight: FontWeight.bold,
                                                                                       ),
                                                                                     )
                                                                                   ],
                                                                                   style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                        fontFamily: 'Andika New Basic',
-                                                                                        color: Color(0xFF595959),
+                                                                                        fontFamily: FFAppState().currentFontFamily,
+                                                                                        color: const Color(0xFF595959),
                                                                                         fontSize: 12.0,
                                                                                         letterSpacing: 0.0,
                                                                                       ),
@@ -492,7 +487,7 @@ class _ProgramesWidgetState extends State<ProgramesWidget>
                                                                           mainAxisSize:
                                                                               MainAxisSize.max,
                                                                           children: [
-                                                                            Padding(
+                                                                            const Padding(
                                                                               padding: EdgeInsetsDirectional.fromSTEB(6.0, 0.0, 0.0, 0.0),
                                                                               child: Icon(
                                                                                 Icons.calendar_today_outlined,
@@ -501,7 +496,7 @@ class _ProgramesWidgetState extends State<ProgramesWidget>
                                                                               ),
                                                                             ),
                                                                             Padding(
-                                                                              padding: EdgeInsetsDirectional.fromSTEB(6.0, 0.0, 0.0, 0.0),
+                                                                              padding: const EdgeInsetsDirectional.fromSTEB(6.0, 0.0, 0.0, 0.0),
                                                                               child: RichText(
                                                                                 textScaler: MediaQuery.of(context).textScaler,
                                                                                 text: TextSpan(
@@ -509,8 +504,8 @@ class _ProgramesWidgetState extends State<ProgramesWidget>
                                                                                     TextSpan(
                                                                                       text: 'Ends: ',
                                                                                       style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                            fontFamily: 'Andika New Basic',
-                                                                                            color: Color(0xFF595959),
+                                                                                            fontFamily: FFAppState().currentFontFamily,
+                                                                                            color: const Color(0xFF595959),
                                                                                             fontSize: 12.0,
                                                                                             letterSpacing: 0.0,
                                                                                           ),
@@ -521,14 +516,14 @@ class _ProgramesWidgetState extends State<ProgramesWidget>
                                                                                         listViewProgramsRecord.endDate!,
                                                                                         locale: FFLocalizations.of(context).languageCode,
                                                                                       ),
-                                                                                      style: TextStyle(
+                                                                                      style: const TextStyle(
                                                                                         fontWeight: FontWeight.bold,
                                                                                       ),
                                                                                     )
                                                                                   ],
                                                                                   style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                        fontFamily: 'Andika New Basic',
-                                                                                        color: Color(0xFF595959),
+                                                                                        fontFamily: FFAppState().currentFontFamily,
+                                                                                        color: const Color(0xFF595959),
                                                                                         fontSize: 12.0,
                                                                                         letterSpacing: 0.0,
                                                                                       ),
@@ -547,7 +542,7 @@ class _ProgramesWidgetState extends State<ProgramesWidget>
                                                         ),
                                                         Padding(
                                                           padding:
-                                                              EdgeInsetsDirectional
+                                                              const EdgeInsetsDirectional
                                                                   .fromSTEB(
                                                                       0.0,
                                                                       8.0,
@@ -618,7 +613,7 @@ class _ProgramesWidgetState extends State<ProgramesWidget>
                                                                             context)
                                                                         .primary,
                                                                 backgroundColor:
-                                                                    Color(
+                                                                    const Color(
                                                                         0x6552A097),
                                                                 center: Text(
                                                                   '${((int taskNumber, int taskPassed) {
@@ -709,7 +704,7 @@ class _ProgramesWidgetState extends State<ProgramesWidget>
                                             snapshot.data!;
                                         if (listViewProgramsRecordList
                                             .isEmpty) {
-                                          return EmptyListViewComponentWidget(
+                                          return const EmptyListViewComponentWidget(
                                             icon: Icon(
                                               FFIcons.kionSchoolOutline,
                                             ),
@@ -718,7 +713,7 @@ class _ProgramesWidgetState extends State<ProgramesWidget>
                                         }
 
                                         return ListView.builder(
-                                          padding: EdgeInsets.fromLTRB(
+                                          padding: const EdgeInsets.fromLTRB(
                                             0,
                                             0,
                                             0,
@@ -734,7 +729,7 @@ class _ProgramesWidgetState extends State<ProgramesWidget>
                                                 listViewProgramsRecordList[
                                                     listViewIndex];
                                             return Padding(
-                                              padding: EdgeInsetsDirectional
+                                              padding: const EdgeInsetsDirectional
                                                   .fromSTEB(
                                                       0.0, 20.0, 0.0, 0.0),
                                               child: Container(
@@ -748,7 +743,7 @@ class _ProgramesWidgetState extends State<ProgramesWidget>
                                                           32.0),
                                                 ),
                                                 child: Padding(
-                                                  padding: EdgeInsetsDirectional
+                                                  padding: const EdgeInsetsDirectional
                                                       .fromSTEB(14.0, 14.0,
                                                           14.0, 0.0),
                                                   child: Column(
@@ -771,7 +766,7 @@ class _ProgramesWidgetState extends State<ProgramesWidget>
                                                           Expanded(
                                                             child: Padding(
                                                               padding:
-                                                                  EdgeInsetsDirectional
+                                                                  const EdgeInsetsDirectional
                                                                       .fromSTEB(
                                                                           8.0,
                                                                           0.0,
@@ -794,7 +789,7 @@ class _ProgramesWidgetState extends State<ProgramesWidget>
                                                                             .spaceBetween,
                                                                     children: [
                                                                       Padding(
-                                                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                                                        padding: const EdgeInsetsDirectional.fromSTEB(
                                                                             0.0,
                                                                             0.0,
                                                                             0.0,
@@ -809,7 +804,7 @@ class _ProgramesWidgetState extends State<ProgramesWidget>
                                                                           style: FlutterFlowTheme.of(context)
                                                                               .bodyMedium
                                                                               .override(
-                                                                                fontFamily: 'Andika New Basic',
+                                                                                fontFamily: FFAppState().currentFontFamily,
                                                                                 color: Colors.black,
                                                                                 fontSize: 16.0,
                                                                                 letterSpacing: 0.0,
@@ -818,7 +813,7 @@ class _ProgramesWidgetState extends State<ProgramesWidget>
                                                                         ),
                                                                       ),
                                                                       Padding(
-                                                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                                                        padding: const EdgeInsetsDirectional.fromSTEB(
                                                                             0.0,
                                                                             0.0,
                                                                             0.0,
@@ -828,7 +823,7 @@ class _ProgramesWidgetState extends State<ProgramesWidget>
                                                                           mainAxisSize:
                                                                               MainAxisSize.max,
                                                                           children: [
-                                                                            Padding(
+                                                                            const Padding(
                                                                               padding: EdgeInsetsDirectional.fromSTEB(6.0, 0.0, 0.0, 0.0),
                                                                               child: Icon(
                                                                                 Icons.content_paste_rounded,
@@ -837,7 +832,7 @@ class _ProgramesWidgetState extends State<ProgramesWidget>
                                                                               ),
                                                                             ),
                                                                             Padding(
-                                                                              padding: EdgeInsetsDirectional.fromSTEB(6.0, 0.0, 0.0, 0.0),
+                                                                              padding: const EdgeInsetsDirectional.fromSTEB(6.0, 0.0, 0.0, 0.0),
                                                                               child: RichText(
                                                                                 textScaler: MediaQuery.of(context).textScaler,
                                                                                 text: TextSpan(
@@ -848,19 +843,19 @@ class _ProgramesWidgetState extends State<ProgramesWidget>
                                                                                         '0',
                                                                                       ),
                                                                                       style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                            fontFamily: 'Andika New Basic',
-                                                                                            color: Color(0xFF595959),
+                                                                                            fontFamily: FFAppState().currentFontFamily,
+                                                                                            color: const Color(0xFF595959),
                                                                                             letterSpacing: 0.0,
                                                                                           ),
                                                                                     ),
-                                                                                    TextSpan(
+                                                                                    const TextSpan(
                                                                                       text: ' sessions',
                                                                                       style: TextStyle(),
                                                                                     )
                                                                                   ],
                                                                                   style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                        fontFamily: 'Andika New Basic',
-                                                                                        color: Color(0xFF595959),
+                                                                                        fontFamily: FFAppState().currentFontFamily,
+                                                                                        color: const Color(0xFF595959),
                                                                                         letterSpacing: 0.0,
                                                                                       ),
                                                                                 ),
@@ -880,7 +875,7 @@ class _ProgramesWidgetState extends State<ProgramesWidget>
                                                                         mainAxisSize:
                                                                             MainAxisSize.max,
                                                                         children: [
-                                                                          Icon(
+                                                                          const Icon(
                                                                             Icons.calendar_today_outlined,
                                                                             color:
                                                                                 Color(0xFF1F2631),
@@ -888,7 +883,7 @@ class _ProgramesWidgetState extends State<ProgramesWidget>
                                                                                 14.0,
                                                                           ),
                                                                           Padding(
-                                                                            padding: EdgeInsetsDirectional.fromSTEB(
+                                                                            padding: const EdgeInsetsDirectional.fromSTEB(
                                                                                 6.0,
                                                                                 0.0,
                                                                                 0.0,
@@ -901,8 +896,8 @@ class _ProgramesWidgetState extends State<ProgramesWidget>
                                                                                   TextSpan(
                                                                                     text: 'Start: ',
                                                                                     style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                          fontFamily: 'Andika New Basic',
-                                                                                          color: Color(0xFF595959),
+                                                                                          fontFamily: FFAppState().currentFontFamily,
+                                                                                          color: const Color(0xFF595959),
                                                                                           fontSize: 12.0,
                                                                                           letterSpacing: 0.0,
                                                                                         ),
@@ -913,14 +908,14 @@ class _ProgramesWidgetState extends State<ProgramesWidget>
                                                                                       listViewProgramsRecord.startDate!,
                                                                                       locale: FFLocalizations.of(context).languageCode,
                                                                                     ),
-                                                                                    style: TextStyle(
+                                                                                    style: const TextStyle(
                                                                                       fontWeight: FontWeight.bold,
                                                                                     ),
                                                                                   )
                                                                                 ],
                                                                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                      fontFamily: 'Andika New Basic',
-                                                                                      color: Color(0xFF595959),
+                                                                                      fontFamily: FFAppState().currentFontFamily,
+                                                                                      color: const Color(0xFF595959),
                                                                                       fontSize: 12.0,
                                                                                       letterSpacing: 0.0,
                                                                                     ),
@@ -933,7 +928,7 @@ class _ProgramesWidgetState extends State<ProgramesWidget>
                                                                         mainAxisSize:
                                                                             MainAxisSize.max,
                                                                         children: [
-                                                                          Padding(
+                                                                          const Padding(
                                                                             padding: EdgeInsetsDirectional.fromSTEB(
                                                                                 6.0,
                                                                                 0.0,
@@ -947,7 +942,7 @@ class _ProgramesWidgetState extends State<ProgramesWidget>
                                                                             ),
                                                                           ),
                                                                           Padding(
-                                                                            padding: EdgeInsetsDirectional.fromSTEB(
+                                                                            padding: const EdgeInsetsDirectional.fromSTEB(
                                                                                 6.0,
                                                                                 0.0,
                                                                                 0.0,
@@ -960,8 +955,8 @@ class _ProgramesWidgetState extends State<ProgramesWidget>
                                                                                   TextSpan(
                                                                                     text: 'Ends: ',
                                                                                     style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                          fontFamily: 'Andika New Basic',
-                                                                                          color: Color(0xFF595959),
+                                                                                          fontFamily: FFAppState().currentFontFamily,
+                                                                                          color: const Color(0xFF595959),
                                                                                           fontSize: 12.0,
                                                                                           letterSpacing: 0.0,
                                                                                         ),
@@ -972,14 +967,14 @@ class _ProgramesWidgetState extends State<ProgramesWidget>
                                                                                       listViewProgramsRecord.endDate!,
                                                                                       locale: FFLocalizations.of(context).languageCode,
                                                                                     ),
-                                                                                    style: TextStyle(
+                                                                                    style: const TextStyle(
                                                                                       fontWeight: FontWeight.bold,
                                                                                     ),
                                                                                   )
                                                                                 ],
                                                                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                      fontFamily: 'Andika New Basic',
-                                                                                      color: Color(0xFF595959),
+                                                                                      fontFamily: FFAppState().currentFontFamily,
+                                                                                      color: const Color(0xFF595959),
                                                                                       fontSize: 12.0,
                                                                                       letterSpacing: 0.0,
                                                                                     ),
@@ -998,7 +993,7 @@ class _ProgramesWidgetState extends State<ProgramesWidget>
                                                       ),
                                                       Padding(
                                                         padding:
-                                                            EdgeInsetsDirectional
+                                                            const EdgeInsetsDirectional
                                                                 .fromSTEB(
                                                                     0.0,
                                                                     8.0,
@@ -1069,7 +1064,7 @@ class _ProgramesWidgetState extends State<ProgramesWidget>
                                                                           context)
                                                                       .primary,
                                                               backgroundColor:
-                                                                  Color(
+                                                                  const Color(
                                                                       0x6552A097),
                                                               center: Text(
                                                                 '${((int taskNumber, int taskPassed) {

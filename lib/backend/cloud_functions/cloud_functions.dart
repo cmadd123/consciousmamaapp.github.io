@@ -61,7 +61,7 @@ Future<Map<String, dynamic>> makeCloudCall(
         : {};
   } on FirebaseFunctionsException catch (e) {
     print(
-      'Cloud call error!\n ${callName}'
+      'Cloud call error!\n $callName'
       'Code: ${e.code}\n'
       'Details: ${e.details}\n'
       'Message: ${e.message}',
@@ -69,7 +69,7 @@ Future<Map<String, dynamic>> makeCloudCall(
     // Re-throw with the actual error message from the cloud function
     throw Exception(e.message ?? 'Cloud function error');
   } catch (e) {
-    print('Cloud call error:${callName} $e');
+    print('Cloud call error:$callName $e');
     rethrow;
   }
 }

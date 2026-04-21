@@ -5,7 +5,6 @@ import '/components/home_nav_bar_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/index.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 /// Create/Edit Meal Combo Widget
@@ -42,7 +41,7 @@ class _CreateMealComboWidgetState extends State<CreateMealComboWidget> {
   DocumentReference? _selectedEntree;
   String? _selectedEntreeName;
   List<DocumentReference> _selectedSides = [];
-  List<String> _selectedSideNames = [];
+  final List<String> _selectedSideNames = [];
   DrinkType? _selectedDrink;
   String? _customDrinkName;
   MealTyp _selectedMealType = MealTyp.Dinner;
@@ -119,7 +118,7 @@ class _CreateMealComboWidgetState extends State<CreateMealComboWidget> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => _RecipePickerSheet(
+      builder: (context) => const _RecipePickerSheet(
         title: 'Select Entrée',
         filterType: RecipeType.Entree,
         excludeRefs: [],
@@ -138,7 +137,7 @@ class _CreateMealComboWidgetState extends State<CreateMealComboWidget> {
     if (_selectedSides.length >= 2) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Maximum 2 sides allowed'),
+          content: const Text('Maximum 2 sides allowed'),
           backgroundColor: Colors.orange,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -199,10 +198,10 @@ class _CreateMealComboWidgetState extends State<CreateMealComboWidget> {
     final result = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Custom Drink'),
+        title: const Text('Custom Drink'),
         content: TextField(
           controller: controller,
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             hintText: 'Enter drink name',
             border: OutlineInputBorder(),
           ),
@@ -211,11 +210,11 @@ class _CreateMealComboWidgetState extends State<CreateMealComboWidget> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Cancel'),
+            child: const Text('Cancel'),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, controller.text),
-            child: Text('Save'),
+            child: const Text('Save'),
           ),
         ],
       ),
@@ -240,7 +239,7 @@ class _CreateMealComboWidgetState extends State<CreateMealComboWidget> {
     if (_selectedEntree == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Please select an entrée'),
+          content: const Text('Please select an entrée'),
           backgroundColor: Colors.red,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -253,7 +252,7 @@ class _CreateMealComboWidgetState extends State<CreateMealComboWidget> {
     if (currentUserReference == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Please log in to save meals'),
+          content: const Text('Please log in to save meals'),
           backgroundColor: Colors.red,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -363,19 +362,19 @@ class _CreateMealComboWidgetState extends State<CreateMealComboWidget> {
                 children: [
                   // Header
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
                     child: Row(
                       children: [
                         InkWell(
                           onTap: () => context.pop(),
-                          child: Icon(Icons.arrow_back, size: 24.0),
+                          child: const Icon(Icons.arrow_back, size: 24.0),
                         ),
-                        SizedBox(width: 16.0),
+                        const SizedBox(width: 16.0),
                         Expanded(
                           child: Text(
                             _isEditMode ? 'Edit Meal' : 'Create Meal',
                             style: FlutterFlowTheme.of(context).headlineSmall.override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   fontSize: 20.0,
                                   fontWeight: FontWeight.w600,
                                   letterSpacing: 0.0,
@@ -388,9 +387,9 @@ class _CreateMealComboWidgetState extends State<CreateMealComboWidget> {
 
                   // Explanatory note
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: Container(
-                      padding: EdgeInsets.all(12.0),
+                      padding: const EdgeInsets.all(12.0),
                       decoration: BoxDecoration(
                         color: FlutterFlowTheme.of(context).primary.withOpacity(0.08),
                         borderRadius: BorderRadius.circular(14.0),
@@ -402,13 +401,13 @@ class _CreateMealComboWidgetState extends State<CreateMealComboWidget> {
                             color: FlutterFlowTheme.of(context).primary,
                             size: 20.0,
                           ),
-                          SizedBox(width: 10.0),
+                          const SizedBox(width: 10.0),
                           Expanded(
                             child: Text(
                               'Combine an entrée with sides and a drink to create a complete meal. Save your favorites for quick meal planning.',
                               style: FlutterFlowTheme.of(context).bodySmall.override(
-                                    fontFamily: 'Andika New Basic',
-                                    color: Color(0xFF666666),
+                                    fontFamily: FFAppState().currentFontFamily,
+                                    color: const Color(0xFF666666),
                                     fontSize: 13.0,
                                     letterSpacing: 0.0,
                                   ),
@@ -418,18 +417,18 @@ class _CreateMealComboWidgetState extends State<CreateMealComboWidget> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 16.0),
+                  const SizedBox(height: 16.0),
 
                   // Content
                   Expanded(
                     child: SingleChildScrollView(
-                      padding: EdgeInsets.fromLTRB(16.0, 0, 16.0, 100.0),
+                      padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 100.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           // Meal Name (optional)
                           _buildSectionLabel('Meal Name (optional)'),
-                          SizedBox(height: 8.0),
+                          const SizedBox(height: 8.0),
                           TextField(
                             controller: _nameController,
                             textInputAction: TextInputAction.done,
@@ -442,11 +441,11 @@ class _CreateMealComboWidgetState extends State<CreateMealComboWidget> {
                               fillColor: FlutterFlowTheme.of(context).prim30, // Teal
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(14.0),
-                                borderSide: BorderSide(color: Color(0xFFCBE3E0)), // Teal border
+                                borderSide: const BorderSide(color: Color(0xFFCBE3E0)), // Teal border
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(14.0),
-                                borderSide: BorderSide(color: Color(0xFFCBE3E0)),
+                                borderSide: const BorderSide(color: Color(0xFFCBE3E0)),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(14.0),
@@ -454,17 +453,17 @@ class _CreateMealComboWidgetState extends State<CreateMealComboWidget> {
                               ),
                             ),
                           ),
-                          SizedBox(height: 24.0),
+                          const SizedBox(height: 24.0),
 
                           // Meal Type
                           _buildSectionLabel('Meal Type'),
-                          SizedBox(height: 8.0),
+                          const SizedBox(height: 8.0),
                           _buildMealTypePicker(),
-                          SizedBox(height: 24.0),
+                          const SizedBox(height: 24.0),
 
                           // Entrée (required)
                           _buildSectionLabel('Entrée', isRequired: true),
-                          SizedBox(height: 8.0),
+                          const SizedBox(height: 8.0),
                           _buildSelectionCard(
                             icon: Icons.restaurant,
                             label: _selectedEntreeName ?? 'Select entrée',
@@ -477,14 +476,14 @@ class _CreateMealComboWidgetState extends State<CreateMealComboWidget> {
                                     })
                                 : null,
                           ),
-                          SizedBox(height: 24.0),
+                          const SizedBox(height: 24.0),
 
                           // Sides (optional, 0-2)
                           _buildSectionLabel('Sides (optional, up to 2)'),
-                          SizedBox(height: 8.0),
+                          const SizedBox(height: 8.0),
                           ..._selectedSideNames.asMap().entries.map((entry) {
                             return Padding(
-                              padding: EdgeInsets.only(bottom: 8.0),
+                              padding: const EdgeInsets.only(bottom: 8.0),
                               child: _buildSelectionCard(
                                 icon: Icons.lunch_dining,
                                 label: entry.value,
@@ -501,11 +500,11 @@ class _CreateMealComboWidgetState extends State<CreateMealComboWidget> {
                               isSelected: false,
                               onTap: _selectSide,
                             ),
-                          SizedBox(height: 24.0),
+                          const SizedBox(height: 24.0),
 
                           // Drink (optional)
                           _buildSectionLabel('Drink (optional)'),
-                          SizedBox(height: 8.0),
+                          const SizedBox(height: 8.0),
                           _buildSelectionCard(
                             icon: Icons.local_drink,
                             label: _getDrinkDisplayName(),
@@ -518,20 +517,20 @@ class _CreateMealComboWidgetState extends State<CreateMealComboWidget> {
                                     })
                                 : null,
                           ),
-                          SizedBox(height: 24.0),
+                          const SizedBox(height: 24.0),
 
                           // Rating
                           _buildSectionLabel('Rating (optional)'),
-                          SizedBox(height: 8.0),
+                          const SizedBox(height: 8.0),
                           _buildRatingRow(),
-                          SizedBox(height: 32.0),
+                          const SizedBox(height: 32.0),
 
                           // Save Button
                           InkWell(
                             onTap: _isLoading ? null : _saveMealCombo,
                             child: Container(
                               width: double.infinity,
-                              padding: EdgeInsets.symmetric(vertical: 16.0),
+                              padding: const EdgeInsets.symmetric(vertical: 16.0),
                               decoration: BoxDecoration(
                                 color: _isLoading
                                     ? Colors.grey
@@ -540,7 +539,7 @@ class _CreateMealComboWidgetState extends State<CreateMealComboWidget> {
                               ),
                               child: Center(
                                 child: _isLoading
-                                    ? SizedBox(
+                                    ? const SizedBox(
                                         width: 24,
                                         height: 24,
                                         child: CircularProgressIndicator(
@@ -551,7 +550,7 @@ class _CreateMealComboWidgetState extends State<CreateMealComboWidget> {
                                     : Text(
                                         _isEditMode ? 'Update Meal' : 'Save Meal',
                                         style: FlutterFlowTheme.of(context).titleMedium.override(
-                                              fontFamily: 'Andika New Basic',
+                                              fontFamily: FFAppState().currentFontFamily,
                                               color: Colors.white,
                                               fontWeight: FontWeight.w600,
                                               letterSpacing: 0.0,
@@ -585,14 +584,14 @@ class _CreateMealComboWidgetState extends State<CreateMealComboWidget> {
         Text(
           label,
           style: FlutterFlowTheme.of(context).bodyMedium.override(
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
                 fontWeight: FontWeight.w600,
                 fontSize: 15.0,
                 letterSpacing: 0.0,
               ),
         ),
         if (isRequired)
-          Text(
+          const Text(
             ' *',
             style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
           ),
@@ -609,19 +608,19 @@ class _CreateMealComboWidgetState extends State<CreateMealComboWidget> {
         return InkWell(
           onTap: () => setState(() => _selectedMealType = type),
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
             decoration: BoxDecoration(
               color: isSelected ? FlutterFlowTheme.of(context).primary : Colors.white,
               borderRadius: BorderRadius.circular(20.0),
               border: Border.all(
-                color: isSelected ? FlutterFlowTheme.of(context).primary : Color(0xFFE0E0E0),
+                color: isSelected ? FlutterFlowTheme.of(context).primary : const Color(0xFFE0E0E0),
               ),
             ),
             child: Text(
               type.name,
               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                    fontFamily: 'Andika New Basic',
-                    color: isSelected ? Colors.white : Color(0xFF666666),
+                    fontFamily: FFAppState().currentFontFamily,
+                    color: isSelected ? Colors.white : const Color(0xFF666666),
                     fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                     letterSpacing: 0.0,
                   ),
@@ -643,12 +642,12 @@ class _CreateMealComboWidgetState extends State<CreateMealComboWidget> {
       onTap: onTap,
       borderRadius: BorderRadius.circular(14.0),
       child: Container(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(14.0),
           border: Border.all(
-            color: isSelected ? FlutterFlowTheme.of(context).primary : Color(0xFFE0E0E0),
+            color: isSelected ? FlutterFlowTheme.of(context).primary : const Color(0xFFE0E0E0),
             width: isSelected ? 2.0 : 1.0,
           ),
         ),
@@ -656,16 +655,16 @@ class _CreateMealComboWidgetState extends State<CreateMealComboWidget> {
           children: [
             Icon(
               icon,
-              color: isSelected ? FlutterFlowTheme.of(context).primary : Color(0xFF999999),
+              color: isSelected ? FlutterFlowTheme.of(context).primary : const Color(0xFF999999),
               size: 24.0,
             ),
-            SizedBox(width: 12.0),
+            const SizedBox(width: 12.0),
             Expanded(
               child: Text(
                 label,
                 style: FlutterFlowTheme.of(context).bodyMedium.override(
-                      fontFamily: 'Andika New Basic',
-                      color: isSelected ? Colors.black : Color(0xFF999999),
+                      fontFamily: FFAppState().currentFontFamily,
+                      color: isSelected ? Colors.black : const Color(0xFF999999),
                       letterSpacing: 0.0,
                     ),
               ),
@@ -673,10 +672,10 @@ class _CreateMealComboWidgetState extends State<CreateMealComboWidget> {
             if (onClear != null)
               InkWell(
                 onTap: onClear,
-                child: Icon(Icons.close, color: Color(0xFF999999), size: 20.0),
+                child: const Icon(Icons.close, color: Color(0xFF999999), size: 20.0),
               )
             else
-              Icon(Icons.chevron_right, color: Color(0xFF999999), size: 24.0),
+              const Icon(Icons.chevron_right, color: Color(0xFF999999), size: 24.0),
           ],
         ),
       ),
@@ -694,21 +693,21 @@ class _CreateMealComboWidgetState extends State<CreateMealComboWidget> {
               _rating = starNumber == _rating ? 0 : starNumber;
             }),
             child: Padding(
-              padding: EdgeInsets.only(right: 8.0),
+              padding: const EdgeInsets.only(right: 8.0),
               child: Icon(
                 isFilled ? Icons.star : Icons.star_border,
-                color: isFilled ? Color(0xFFFFB800) : Color(0xFFCCCCCC),
+                color: isFilled ? const Color(0xFFFFB800) : const Color(0xFFCCCCCC),
                 size: 32.0,
               ),
             ),
           );
         }),
-        SizedBox(width: 8.0),
+        const SizedBox(width: 8.0),
         Text(
           _rating > 0 ? '$_rating/5' : 'Tap to rate',
           style: FlutterFlowTheme.of(context).bodySmall.override(
-                fontFamily: 'Andika New Basic',
-                color: _rating > 0 ? Color(0xFF666666) : Color(0xFF999999),
+                fontFamily: FFAppState().currentFontFamily,
+                color: _rating > 0 ? const Color(0xFF666666) : const Color(0xFF999999),
                 fontSize: 13.0,
                 letterSpacing: 0.0,
               ),
@@ -738,7 +737,7 @@ class _RecipePickerSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: MediaQuery.of(context).size.height * 0.7,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
       ),
@@ -746,24 +745,24 @@ class _RecipePickerSheet extends StatelessWidget {
         children: [
           // Handle
           Container(
-            margin: EdgeInsets.only(top: 12.0),
+            margin: const EdgeInsets.only(top: 12.0),
             width: 40.0,
             height: 4.0,
             decoration: BoxDecoration(
-              color: Color(0xFFE0E0E0),
+              color: const Color(0xFFE0E0E0),
               borderRadius: BorderRadius.circular(2.0),
             ),
           ),
           // Title row with Create button
           Padding(
-            padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 8.0),
+            padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 8.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   title,
                   style: FlutterFlowTheme.of(context).titleMedium.override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         fontWeight: FontWeight.w600,
                         letterSpacing: 0.0,
                       ),
@@ -781,7 +780,7 @@ class _RecipePickerSheet extends StatelessWidget {
                     );
                   },
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
                     decoration: BoxDecoration(
                       color: FlutterFlowTheme.of(context).primary,
                       borderRadius: BorderRadius.circular(20.0),
@@ -789,12 +788,12 @@ class _RecipePickerSheet extends StatelessWidget {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.add, color: Colors.white, size: 18),
-                        SizedBox(width: 4.0),
+                        const Icon(Icons.add, color: Colors.white, size: 18),
+                        const SizedBox(width: 4.0),
                         Text(
                           _createButtonLabel,
                           style: FlutterFlowTheme.of(context).bodySmall.override(
-                                fontFamily: 'Andika New Basic',
+                                fontFamily: FFAppState().currentFontFamily,
                                 color: Colors.white,
                                 fontWeight: FontWeight.w600,
                                 letterSpacing: 0.0,
@@ -815,7 +814,7 @@ class _RecipePickerSheet extends StatelessWidget {
               ),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
-                  return Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator());
                 }
 
                 // Filter recipes - show all by default since most recipes won't have recipe_type set
@@ -839,7 +838,7 @@ class _RecipePickerSheet extends StatelessWidget {
                 }).toList();
 
                 if (recipes.isEmpty) {
-                  return Center(
+                  return const Center(
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -860,23 +859,23 @@ class _RecipePickerSheet extends StatelessWidget {
                 }
 
                 return ListView.builder(
-                  padding: EdgeInsets.symmetric(horizontal: 16.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   itemCount: recipes.length,
                   itemBuilder: (context, index) {
                     final recipe = recipes[index];
                     return InkWell(
                       onTap: () => Navigator.pop(context, recipe),
                       child: Container(
-                        margin: EdgeInsets.only(bottom: 8.0),
-                        padding: EdgeInsets.all(12.0),
+                        margin: const EdgeInsets.only(bottom: 8.0),
+                        padding: const EdgeInsets.all(12.0),
                         decoration: BoxDecoration(
-                          color: Color(0xFFFAFAFA),
+                          color: const Color(0xFFFAFAFA),
                           borderRadius: BorderRadius.circular(14.0),
                         ),
                         child: Row(
                           children: [
                             Icon(Icons.restaurant, color: FlutterFlowTheme.of(context).primary),
-                            SizedBox(width: 12.0),
+                            const SizedBox(width: 12.0),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -884,7 +883,7 @@ class _RecipePickerSheet extends StatelessWidget {
                                   Text(
                                     recipe.recipeName,
                                     style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                          fontFamily: 'Andika New Basic',
+                                          fontFamily: FFAppState().currentFontFamily,
                                           fontWeight: FontWeight.w600,
                                           letterSpacing: 0.0,
                                         ),
@@ -894,7 +893,7 @@ class _RecipePickerSheet extends StatelessWidget {
                                       children: List.generate(5, (i) {
                                         return Icon(
                                           i < recipe.rating ? Icons.star : Icons.star_border,
-                                          color: Color(0xFFFFB800),
+                                          color: const Color(0xFFFFB800),
                                           size: 14,
                                         );
                                       }),
@@ -902,7 +901,7 @@ class _RecipePickerSheet extends StatelessWidget {
                                 ],
                               ),
                             ),
-                            Icon(Icons.add_circle_outline, color: Color(0xFF999999)),
+                            const Icon(Icons.add_circle_outline, color: Color(0xFF999999)),
                           ],
                         ),
                       ),
@@ -927,7 +926,7 @@ class _DrinkPickerSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
       ),
@@ -936,21 +935,21 @@ class _DrinkPickerSheet extends StatelessWidget {
         children: [
           // Handle
           Container(
-            margin: EdgeInsets.only(top: 12.0),
+            margin: const EdgeInsets.only(top: 12.0),
             width: 40.0,
             height: 4.0,
             decoration: BoxDecoration(
-              color: Color(0xFFE0E0E0),
+              color: const Color(0xFFE0E0E0),
               borderRadius: BorderRadius.circular(2.0),
             ),
           ),
           // Title
           Padding(
-            padding: EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(16.0),
             child: Text(
               'Select Drink',
               style: FlutterFlowTheme.of(context).titleMedium.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 0.0,
                   ),
@@ -958,7 +957,7 @@ class _DrinkPickerSheet extends StatelessWidget {
           ),
           // Drink options
           Padding(
-            padding: EdgeInsets.fromLTRB(16.0, 0, 16.0, 24.0),
+            padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 24.0),
             child: Wrap(
               spacing: 8.0,
               runSpacing: 8.0,
@@ -967,12 +966,12 @@ class _DrinkPickerSheet extends StatelessWidget {
                 return InkWell(
                   onTap: () => Navigator.pop(context, drink),
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
                     decoration: BoxDecoration(
-                      color: isSelected ? FlutterFlowTheme.of(context).primary : Color(0xFFFAFAFA),
+                      color: isSelected ? FlutterFlowTheme.of(context).primary : const Color(0xFFFAFAFA),
                       borderRadius: BorderRadius.circular(14.0),
                       border: Border.all(
-                        color: isSelected ? FlutterFlowTheme.of(context).primary : Color(0xFFE0E0E0),
+                        color: isSelected ? FlutterFlowTheme.of(context).primary : const Color(0xFFE0E0E0),
                       ),
                     ),
                     child: Row(
@@ -980,14 +979,14 @@ class _DrinkPickerSheet extends StatelessWidget {
                       children: [
                         Icon(
                           _getDrinkIcon(drink),
-                          color: isSelected ? Colors.white : Color(0xFF666666),
+                          color: isSelected ? Colors.white : const Color(0xFF666666),
                           size: 20,
                         ),
-                        SizedBox(width: 8.0),
+                        const SizedBox(width: 8.0),
                         Text(
                           drink.name,
                           style: TextStyle(
-                            color: isSelected ? Colors.white : Color(0xFF666666),
+                            color: isSelected ? Colors.white : const Color(0xFF666666),
                             fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                           ),
                         ),

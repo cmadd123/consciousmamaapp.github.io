@@ -2,12 +2,8 @@ import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
-import 'dart:ui';
 import '/index.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'create_programm_step3_frequency_model.dart';
 export 'create_programm_step3_frequency_model.dart';
 
@@ -63,11 +59,11 @@ class _CreateProgrammStep3FrequencyWidgetState
       },
       child: Scaffold(
         key: scaffoldKey,
-        backgroundColor: Color(0xFFFFF5F2),
+        backgroundColor: const Color(0xFFFFF5F2),
         body: SafeArea(
           top: true,
           child: Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(16.0, 24.0, 16.0, 0.0),
+            padding: const EdgeInsetsDirectional.fromSTEB(16.0, 24.0, 16.0, 0.0),
             child: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.max,
@@ -89,7 +85,7 @@ class _CreateProgrammStep3FrequencyWidgetState
                         ),
                       ),
                       child: Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(16.0, 20.0, 16.0, 20.0),
+                        padding: const EdgeInsetsDirectional.fromSTEB(16.0, 20.0, 16.0, 20.0),
                         child: Column(
                           mainAxisSize: MainAxisSize.max,
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -105,21 +101,21 @@ class _CreateProgrammStep3FrequencyWidgetState
                                     Container(
                                       width: 5.0,
                                       height: 5.0,
-                                      decoration: BoxDecoration(
+                                      decoration: const BoxDecoration(
                                         color: Color(0x6652A097),
                                         shape: BoxShape.circle,
                                       ),
                                     ),
-                                    SizedBox(width: 3.0),
+                                    const SizedBox(width: 3.0),
                                     Container(
                                       width: 5.0,
                                       height: 5.0,
-                                      decoration: BoxDecoration(
+                                      decoration: const BoxDecoration(
                                         color: Color(0x6652A097),
                                         shape: BoxShape.circle,
                                       ),
                                     ),
-                                    SizedBox(width: 3.0),
+                                    const SizedBox(width: 3.0),
                                     Container(
                                       width: 33.0,
                                       height: 5.0,
@@ -128,11 +124,11 @@ class _CreateProgrammStep3FrequencyWidgetState
                                         borderRadius: BorderRadius.circular(3.0),
                                       ),
                                     ),
-                                    SizedBox(width: 3.0),
+                                    const SizedBox(width: 3.0),
                                     Container(
                                       width: 5.0,
                                       height: 5.0,
-                                      decoration: BoxDecoration(
+                                      decoration: const BoxDecoration(
                                         color: Color(0x6652A097),
                                         shape: BoxShape.circle,
                                       ),
@@ -144,7 +140,7 @@ class _CreateProgrammStep3FrequencyWidgetState
                                   style: FlutterFlowTheme.of(context)
                                       .bodyMedium
                                       .override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         color: FlutterFlowTheme.of(context).primary,
                                         letterSpacing: 0.0,
                                       ),
@@ -153,9 +149,9 @@ class _CreateProgrammStep3FrequencyWidgetState
                             ),
                             // Decorative image
                             Align(
-                              alignment: AlignmentDirectional(-1.0, 0.0),
+                              alignment: const AlignmentDirectional(-1.0, 0.0),
                               child: Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(0.0, 40.0, 0.0, 0.0),
+                                padding: const EdgeInsetsDirectional.fromSTEB(0.0, 40.0, 0.0, 0.0),
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(8.0),
                                   child: Image.asset(
@@ -169,13 +165,13 @@ class _CreateProgrammStep3FrequencyWidgetState
                             ),
                             // Title
                             Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(0.0, 16.0, 0.0, 0.0),
+                              padding: const EdgeInsetsDirectional.fromSTEB(0.0, 16.0, 0.0, 0.0),
                               child: Text(
                                 'How often should we do activities?',
                                 style: FlutterFlowTheme.of(context)
                                     .bodyMedium
                                     .override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       fontSize: 24.0,
                                       letterSpacing: 0.0,
                                     ),
@@ -183,13 +179,13 @@ class _CreateProgrammStep3FrequencyWidgetState
                             ),
                             // Subtitle
                             Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(0.0, 8.0, 0.0, 20.0),
+                              padding: const EdgeInsetsDirectional.fromSTEB(0.0, 8.0, 0.0, 20.0),
                               child: Text(
                                 'Pick a frequency that works for your family',
                                 style: FlutterFlowTheme.of(context)
                                     .bodyMedium
                                     .override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       color: FlutterFlowTheme.of(context).secondaryText,
                                       letterSpacing: 0.0,
                                     ),
@@ -216,16 +212,16 @@ class _CreateProgrammStep3FrequencyWidgetState
                                       borderRadius: BorderRadius.circular(16.0),
                                       child: Container(
                                         width: (MediaQuery.of(context).size.width - 74) / 2,
-                                        padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 12.0),
+                                        padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 12.0),
                                         decoration: BoxDecoration(
                                           color: isSelected
                                               ? FlutterFlowTheme.of(context).primary.withOpacity(0.15)
-                                              : Color(0xFFFFF5F2),
+                                              : const Color(0xFFFFF5F2),
                                           borderRadius: BorderRadius.circular(16.0),
                                           border: Border.all(
                                             color: isSelected
                                                 ? FlutterFlowTheme.of(context).primary
-                                                : Color(0x3352A097),
+                                                : const Color(0x3352A097),
                                             width: isSelected ? 2.5 : 1.5,
                                           ),
                                           boxShadow: isSelected
@@ -233,7 +229,7 @@ class _CreateProgrammStep3FrequencyWidgetState
                                                   BoxShadow(
                                                     color: FlutterFlowTheme.of(context).primary.withOpacity(0.2),
                                                     blurRadius: 8.0,
-                                                    offset: Offset(0, 2),
+                                                    offset: const Offset(0, 2),
                                                   ),
                                                 ]
                                               : [],
@@ -243,14 +239,14 @@ class _CreateProgrammStep3FrequencyWidgetState
                                           children: [
                                             Text(
                                               _getFrequencyEmoji(frequencyIndex),
-                                              style: TextStyle(fontSize: 28.0),
+                                              style: const TextStyle(fontSize: 28.0),
                                             ),
-                                            SizedBox(height: 8.0),
+                                            const SizedBox(height: 8.0),
                                             Text(
                                               frequencyItem,
                                               textAlign: TextAlign.center,
                                               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                fontFamily: 'Andika New Basic',
+                                                fontFamily: FFAppState().currentFontFamily,
                                                 fontSize: 13.0,
                                                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                                                 color: isSelected
@@ -260,7 +256,7 @@ class _CreateProgrammStep3FrequencyWidgetState
                                               ),
                                             ),
                                             if (isSelected) ...[
-                                              SizedBox(height: 4.0),
+                                              const SizedBox(height: 4.0),
                                               Icon(
                                                 Icons.check_circle,
                                                 color: FlutterFlowTheme.of(context).primary,
@@ -277,13 +273,13 @@ class _CreateProgrammStep3FrequencyWidgetState
                             ),
                             // Buttons row
                             Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
+                              padding: const EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
                               child: Row(
                                 mainAxisSize: MainAxisSize.max,
                                 children: [
                                   Expanded(
                                     child: Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(0.0, 10.0, 10.0, 0.0),
+                                      padding: const EdgeInsetsDirectional.fromSTEB(0.0, 10.0, 10.0, 0.0),
                                       child: FFButtonWidget(
                                         onPressed: () async {
                                           context.safePop();
@@ -292,13 +288,13 @@ class _CreateProgrammStep3FrequencyWidgetState
                                         options: FFButtonOptions(
                                           width: 112.0,
                                           height: 40.0,
-                                          padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
-                                          iconPadding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
+                                          padding: const EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
+                                          iconPadding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
                                           color: FlutterFlowTheme.of(context).primary,
                                           textStyle: FlutterFlowTheme.of(context)
                                               .titleSmall
                                               .override(
-                                                fontFamily: 'Andika New Basic',
+                                                fontFamily: FFAppState().currentFontFamily,
                                                 color: Colors.white,
                                                 letterSpacing: 0.0,
                                               ),
@@ -310,7 +306,7 @@ class _CreateProgrammStep3FrequencyWidgetState
                                   ),
                                   Expanded(
                                     child: Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(10.0, 10.0, 0.0, 0.0),
+                                      padding: const EdgeInsetsDirectional.fromSTEB(10.0, 10.0, 0.0, 0.0),
                                       child: FFButtonWidget(
                                         onPressed: () async {
                                           if (_model.frequencyItem != null) {
@@ -318,11 +314,11 @@ class _CreateProgrammStep3FrequencyWidgetState
                                               CreateProgrammStep4DayTimeWidget.routeName,
                                               queryParameters: {
                                                 'description': serializeParam(
-                                                  widget!.description,
+                                                  widget.description,
                                                   ParamType.String,
                                                 ),
                                                 'selectedChild': serializeParam(
-                                                  widget!.child,
+                                                  widget.child,
                                                   ParamType.Document,
                                                 ),
                                                 'frequencyText': serializeParam(
@@ -335,7 +331,7 @@ class _CreateProgrammStep3FrequencyWidgetState
                                                 ),
                                               }.withoutNulls,
                                               extra: <String, dynamic>{
-                                                'selectedChild': widget!.child,
+                                                'selectedChild': widget.child,
                                               },
                                             );
                                           } else {
@@ -347,7 +343,7 @@ class _CreateProgrammStep3FrequencyWidgetState
                                                     color: FlutterFlowTheme.of(context).secondaryBackground,
                                                   ),
                                                 ),
-                                                duration: Duration(milliseconds: 4000),
+                                                duration: const Duration(milliseconds: 4000),
                                                 backgroundColor: FlutterFlowTheme.of(context).error,
                                               ),
                                             );
@@ -357,13 +353,13 @@ class _CreateProgrammStep3FrequencyWidgetState
                                         options: FFButtonOptions(
                                           width: 112.0,
                                           height: 40.0,
-                                          padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
-                                          iconPadding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
+                                          padding: const EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
+                                          iconPadding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
                                           color: FlutterFlowTheme.of(context).primary,
                                           textStyle: FlutterFlowTheme.of(context)
                                               .titleSmall
                                               .override(
-                                                fontFamily: 'Andika New Basic',
+                                                fontFamily: FFAppState().currentFontFamily,
                                                 color: Colors.white,
                                                 letterSpacing: 0.0,
                                               ),

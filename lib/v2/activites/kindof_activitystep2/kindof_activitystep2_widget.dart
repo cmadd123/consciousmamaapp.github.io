@@ -1,12 +1,8 @@
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
-import 'dart:ui';
 import '/index.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'kindof_activitystep2_model.dart';
 export 'kindof_activitystep2_model.dart';
 
@@ -62,7 +58,7 @@ class _KindofActivitystep2WidgetState extends State<KindofActivitystep2Widget> {
               children: [
                 Padding(
                   padding:
-                      EdgeInsetsDirectional.fromSTEB(12.0, 20.0, 12.0, 0.0),
+                      const EdgeInsetsDirectional.fromSTEB(12.0, 20.0, 12.0, 0.0),
                   child: Material(
                     color: Colors.transparent,
                     elevation: 1.0,
@@ -82,7 +78,7 @@ class _KindofActivitystep2WidgetState extends State<KindofActivitystep2Widget> {
                         mainAxisSize: MainAxisSize.max,
                         children: [
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 24.0, 26.0, 24.0, 0.0),
                             child: Text(
                               'What kind of activity are you looking for?',
@@ -90,14 +86,14 @@ class _KindofActivitystep2WidgetState extends State<KindofActivitystep2Widget> {
                               style: FlutterFlowTheme.of(context)
                                   .bodyMedium
                                   .override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     fontSize: 24.0,
                                     letterSpacing: 0.0,
                                   ),
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 12.0, 40.0, 12.0, 40.0),
                             child: InkWell(
                               splashColor: Colors.transparent,
@@ -125,7 +121,7 @@ class _KindofActivitystep2WidgetState extends State<KindofActivitystep2Widget> {
                                   children: [
                                     Container(
                                       height: 86.0,
-                                      decoration: BoxDecoration(),
+                                      decoration: const BoxDecoration(),
                                       child: ClipRRect(
                                         borderRadius:
                                             BorderRadius.circular(14.0),
@@ -138,14 +134,14 @@ class _KindofActivitystep2WidgetState extends State<KindofActivitystep2Widget> {
                                       ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(
                                           0.0, 31.0, 0.0, 0.0),
                                       child: Text(
                                         'Indoor',
                                         style: FlutterFlowTheme.of(context)
                                             .bodyMedium
                                             .override(
-                                              fontFamily: 'Andika New Basic',
+                                              fontFamily: FFAppState().currentFontFamily,
                                               fontSize: 24.0,
                                               letterSpacing: 0.0,
                                             ),
@@ -157,7 +153,7 @@ class _KindofActivitystep2WidgetState extends State<KindofActivitystep2Widget> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 12.0, 0.0, 12.0, 0.0),
                             child: InkWell(
                               splashColor: Colors.transparent,
@@ -185,7 +181,7 @@ class _KindofActivitystep2WidgetState extends State<KindofActivitystep2Widget> {
                                   children: [
                                     Container(
                                       height: 86.0,
-                                      decoration: BoxDecoration(),
+                                      decoration: const BoxDecoration(),
                                       child: ClipRRect(
                                         borderRadius:
                                             BorderRadius.circular(14.0),
@@ -198,14 +194,14 @@ class _KindofActivitystep2WidgetState extends State<KindofActivitystep2Widget> {
                                       ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(
                                           0.0, 31.0, 0.0, 0.0),
                                       child: Text(
                                         'Outdoor',
                                         style: FlutterFlowTheme.of(context)
                                             .bodyMedium
                                             .override(
-                                              fontFamily: 'Andika New Basic',
+                                              fontFamily: FFAppState().currentFontFamily,
                                               fontSize: 24.0,
                                               letterSpacing: 0.0,
                                             ),
@@ -221,7 +217,7 @@ class _KindofActivitystep2WidgetState extends State<KindofActivitystep2Widget> {
                             children: [
                               Expanded(
                                 child: Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       20.0, 35.0, 20.0, 20.0),
                                   child: FFButtonWidget(
                                     onPressed: () async {
@@ -231,17 +227,17 @@ class _KindofActivitystep2WidgetState extends State<KindofActivitystep2Widget> {
                                     options: FFButtonOptions(
                                       width: 112.0,
                                       height: 40.0,
-                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(
                                           16.0, 0.0, 16.0, 0.0),
                                       iconPadding:
-                                          EdgeInsetsDirectional.fromSTEB(
+                                          const EdgeInsetsDirectional.fromSTEB(
                                               0.0, 0.0, 0.0, 0.0),
                                       color:
                                           FlutterFlowTheme.of(context).primary,
                                       textStyle: FlutterFlowTheme.of(context)
                                           .titleSmall
                                           .override(
-                                            fontFamily: 'Andika New Basic',
+                                            fontFamily: FFAppState().currentFontFamily,
                                             color: Colors.white,
                                             letterSpacing: 0.0,
                                           ),
@@ -253,7 +249,7 @@ class _KindofActivitystep2WidgetState extends State<KindofActivitystep2Widget> {
                               ),
                               Expanded(
                                 child: Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       20.0, 35.0, 20.0, 20.0),
                                   child: FFButtonWidget(
                                     onPressed: () async {
@@ -261,7 +257,7 @@ class _KindofActivitystep2WidgetState extends State<KindofActivitystep2Widget> {
                                         KindofActivitystep3Widget.routeName,
                                         queryParameters: {
                                           'selectedchild': serializeParam(
-                                            widget!.selectedChild,
+                                            widget.selectedChild,
                                             ParamType.DocumentReference,
                                           ),
                                           'kindOfActivity': serializeParam(
@@ -275,17 +271,17 @@ class _KindofActivitystep2WidgetState extends State<KindofActivitystep2Widget> {
                                     options: FFButtonOptions(
                                       width: 112.0,
                                       height: 40.0,
-                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(
                                           16.0, 0.0, 16.0, 0.0),
                                       iconPadding:
-                                          EdgeInsetsDirectional.fromSTEB(
+                                          const EdgeInsetsDirectional.fromSTEB(
                                               0.0, 0.0, 0.0, 0.0),
                                       color:
                                           FlutterFlowTheme.of(context).primary,
                                       textStyle: FlutterFlowTheme.of(context)
                                           .titleSmall
                                           .override(
-                                            fontFamily: 'Andika New Basic',
+                                            fontFamily: FFAppState().currentFontFamily,
                                             color: Colors.white,
                                             letterSpacing: 0.0,
                                           ),

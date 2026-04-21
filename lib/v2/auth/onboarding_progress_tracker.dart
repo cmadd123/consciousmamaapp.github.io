@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '/app_state.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 
 /// Progress tracker for enhanced onboarding flow
@@ -148,7 +149,7 @@ class _OnboardingProgressTrackerState extends State<OnboardingProgressTracker>
         Text(
           label,
           style: FlutterFlowTheme.of(context).bodySmall.override(
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
                 fontSize: 12.0,
                 fontWeight: isComplete || isCurrent ? FontWeight.w600 : FontWeight.normal,
                 letterSpacing: 0.0,

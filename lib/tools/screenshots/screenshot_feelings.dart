@@ -54,7 +54,7 @@ class ScreenshotFeelings extends StatelessWidget {
                             color: Colors.white.withValues(alpha: 0.5),
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          child: Row(
+                          child: const Row(
                             children: [
                               _Tab(label: 'Feelings', selected: true),
                               _Tab(label: 'Situations', selected: false),
@@ -82,15 +82,15 @@ class ScreenshotFeelings extends StatelessWidget {
                       const SizedBox(height: 12),
 
                       // Action buttons row
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 24),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 24),
                         child: Row(
                           children: [
                             _ActionButton(icon: Icons.favorite, color: Colors.red, label: 'Favorites'),
-                            const SizedBox(width: 10),
+                            SizedBox(width: 10),
                             _ActionButton(icon: Icons.add_circle_outline, color: kPrimary, label: 'Custom'),
-                            const SizedBox(width: 10),
-                            _ActionButton(icon: Icons.list_alt, color: const Color(0xFF9C27B0), label: 'Browse'),
+                            SizedBox(width: 10),
+                            _ActionButton(icon: Icons.list_alt, color: Color(0xFF9C27B0), label: 'Browse'),
                           ],
                         ),
                       ),

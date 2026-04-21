@@ -1,12 +1,12 @@
 import 'dart:io';  // For File picker
 import 'package:flutter/material.dart';
+import '/app_state.dart';
 import 'package:flutter/services.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
@@ -43,7 +43,7 @@ class _HelpfulDocsPageState extends State<HelpfulDocsPage> {
                     Text(
                       'Helpful Docs',
                       style: FlutterFlowTheme.of(context).titleLarge.override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         fontSize: 22,
                         fontWeight: FontWeight.w600,
                         letterSpacing: 0,
@@ -94,7 +94,7 @@ class _HelpfulDocsPageState extends State<HelpfulDocsPage> {
                               Text(
                                 'No docs yet',
                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   fontSize: 18,
                                   fontWeight: FontWeight.w600,
                                   letterSpacing: 0,
@@ -105,7 +105,7 @@ class _HelpfulDocsPageState extends State<HelpfulDocsPage> {
                                 'Helpful articles and guides will appear here.',
                                 textAlign: TextAlign.center,
                                 style: FlutterFlowTheme.of(context).bodySmall.override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   color: const Color(0xFF999999),
                                   fontSize: 13,
                                   letterSpacing: 0,
@@ -206,7 +206,7 @@ class _HelpfulDocsPageState extends State<HelpfulDocsPage> {
                     Text(
                       doc.title,
                       style: FlutterFlowTheme.of(context).bodyMedium.override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
                         letterSpacing: 0,
@@ -218,7 +218,7 @@ class _HelpfulDocsPageState extends State<HelpfulDocsPage> {
                     Text(
                       'by ${doc.author}',
                       style: FlutterFlowTheme.of(context).bodySmall.override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         color: FlutterFlowTheme.of(context).primary,
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
@@ -238,7 +238,7 @@ class _HelpfulDocsPageState extends State<HelpfulDocsPage> {
                   ),
                   child: Text(
                     doc.category,
-                    style: TextStyle(fontSize: 10, color: Colors.grey.shade600, fontWeight: FontWeight.w500, fontFamily: 'Andika New Basic'),
+                    style: TextStyle(fontSize: 10, color: Colors.grey.shade600, fontWeight: FontWeight.w500, fontFamily: FFAppState().currentFontFamily),
                   ),
                 ),
               const SizedBox(width: 6),
@@ -288,7 +288,7 @@ class _HelpfulDocsPageState extends State<HelpfulDocsPage> {
                           child: Text(
                             doc.title,
                             style: FlutterFlowTheme.of(context).titleMedium.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               fontWeight: FontWeight.w600,
                               letterSpacing: 0,
                             ),
@@ -324,7 +324,7 @@ class _HelpfulDocsPageState extends State<HelpfulDocsPage> {
                                   child: Text(
                                     doc.title,
                                     style: FlutterFlowTheme.of(context).headlineSmall.override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       fontSize: 22,
                                       fontWeight: FontWeight.w600,
                                       letterSpacing: 0,
@@ -343,7 +343,7 @@ class _HelpfulDocsPageState extends State<HelpfulDocsPage> {
                                     fontSize: 13,
                                     color: FlutterFlowTheme.of(context).primary,
                                     fontWeight: FontWeight.w500,
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                   ),
                                 ),
                                 if (doc.hasCategory()) ...[
@@ -354,12 +354,12 @@ class _HelpfulDocsPageState extends State<HelpfulDocsPage> {
                                       color: Colors.grey.shade100,
                                       borderRadius: BorderRadius.circular(6),
                                     ),
-                                    child: Text(doc.category, style: TextStyle(fontSize: 11, color: Colors.grey.shade600, fontFamily: 'Andika New Basic')),
+                                    child: Text(doc.category, style: TextStyle(fontSize: 11, color: Colors.grey.shade600, fontFamily: FFAppState().currentFontFamily)),
                                   ),
                                 ],
                                 if (doc.readTimeMinutes > 0) ...[
                                   const SizedBox(width: 12),
-                                  Text('${doc.readTimeMinutes} min read', style: TextStyle(fontSize: 11, color: Colors.grey.shade500, fontFamily: 'Andika New Basic')),
+                                  Text('${doc.readTimeMinutes} min read', style: TextStyle(fontSize: 11, color: Colors.grey.shade500, fontFamily: FFAppState().currentFontFamily)),
                                 ],
                               ],
                             ),
@@ -370,7 +370,7 @@ class _HelpfulDocsPageState extends State<HelpfulDocsPage> {
                             Text(
                               doc.body,
                               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                fontFamily: 'Andika New Basic',
+                                fontFamily: FFAppState().currentFontFamily,
                                 fontSize: 15,
                                 letterSpacing: 0,
                                 lineHeight: 1.7,
@@ -424,7 +424,7 @@ class _HelpfulDocsPageState extends State<HelpfulDocsPage> {
                 const SizedBox(height: 20),
                 Center(
                   child: Text('Upload Doc', style: FlutterFlowTheme.of(context).titleLarge.override(
-                    fontFamily: 'Andika New Basic', fontSize: 22, fontWeight: FontWeight.w600, letterSpacing: 0,
+                    fontFamily: FFAppState().currentFontFamily, fontSize: 22, fontWeight: FontWeight.w600, letterSpacing: 0,
                   )),
                 ),
                 const SizedBox(height: 20),
@@ -503,7 +503,7 @@ class _HelpfulDocsPageState extends State<HelpfulDocsPage> {
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
                                   color: selectedFile != null ? Colors.black : Colors.grey.shade600,
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                 ),
                               ),
                               if (selectedFile != null)
@@ -578,7 +578,7 @@ class _HelpfulDocsPageState extends State<HelpfulDocsPage> {
                     width: double.infinity, height: 52,
                     color: FlutterFlowTheme.of(context).primary,
                     textStyle: FlutterFlowTheme.of(context).titleSmall.override(
-                      fontFamily: 'Andika New Basic', color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600, letterSpacing: 0,
+                      fontFamily: FFAppState().currentFontFamily, color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600, letterSpacing: 0,
                     ),
                     borderRadius: BorderRadius.circular(14),
                     disabledColor: Colors.grey,
@@ -607,10 +607,10 @@ class _HelpfulDocsPageState extends State<HelpfulDocsPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.grey[600])),
-        const SizedBox(height: 6),
+        SizedBox(height: 6),
         TextField(
           controller: controller,
-          style: const TextStyle(fontSize: 14, fontFamily: 'Andika New Basic'),
+          style: TextStyle(fontSize: 14, fontFamily: FFAppState().currentFontFamily),
           decoration: InputDecoration(
             hintText: hint,
             filled: true, fillColor: Colors.grey.shade100,
@@ -666,8 +666,8 @@ class _InAppPdfScreenState extends State<_InAppPdfScreen> {
         elevation: 0,
         title: Text(
           widget.doc.title,
-          style: const TextStyle(
-            fontFamily: 'Andika New Basic',
+          style: TextStyle(
+            fontFamily: FFAppState().currentFontFamily,
             fontSize: 17,
             fontWeight: FontWeight.w600,
           ),

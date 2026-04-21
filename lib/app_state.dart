@@ -1,12 +1,8 @@
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'flutter_flow/request_manager.dart';
 import '/backend/backend.dart';
-import '/backend/schema/structs/index.dart';
-import '/backend/schema/enums/enums.dart';
-import '/backend/api_requests/api_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'flutter_flow/flutter_flow_util.dart';
 import '/custom_code/actions/index.dart';
@@ -22,6 +18,18 @@ class FFAppState extends ChangeNotifier {
 
   static void reset() {
     _instance = FFAppState._internal();
+  }
+
+  /// App-wide font family. Defaults to the brand font ('Andika New Basic').
+  /// When a follower toggles a creator theme on, CreatorThemeNotifier pushes
+  /// the creator's font here and notifies listeners so every text widget
+  /// reading FFAppState().currentFontFamily picks it up on next rebuild.
+  String _currentFontFamily = 'Andika New Basic';
+  String get currentFontFamily => _currentFontFamily;
+  set currentFontFamily(String value) {
+    if (_currentFontFamily == value) return;
+    _currentFontFamily = value;
+    notifyListeners();
   }
 
   Future initializePersistedState() async {
@@ -447,13 +455,13 @@ class FFAppState extends ChangeNotifier {
       int aiMatchIndex = -1;
 
       // Helper: extract significant words (3+ chars, skip common words)
-      Set<String> _significantWords(String name) {
+      Set<String> significantWords(String name) {
         const skip = {'the', 'and', 'for', 'with', 'fresh', 'dried', 'chopped', 'sliced', 'diced', 'minced', 'large', 'small', 'medium', 'whole', 'half', 'cup', 'cups', 'tbsp', 'tsp', 'oz', 'lb'};
         return name.toLowerCase().split(RegExp(r'[\s,]+'))
             .where((w) => w.length >= 3 && !skip.contains(w))
             .toSet();
       }
-      final newWords = _significantWords(newItem.name);
+      final newWords = significantWords(newItem.name);
 
       for (int i = 0; i < _groceryItems.length; i++) {
         final existing = _groceryItems[i];
@@ -461,7 +469,7 @@ class FFAppState extends ChangeNotifier {
           continue;
         }
         // Pre-filter: only call AI if names share at least one significant word
-        final existingWords = _significantWords(existing.name);
+        final existingWords = significantWords(existing.name);
         if (newWords.intersection(existingWords).isEmpty) {
           continue; // Clearly different ingredients, skip AI call
         }

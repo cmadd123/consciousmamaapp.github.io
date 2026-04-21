@@ -1,12 +1,8 @@
 import '/backend/schema/structs/index.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import '/flutter_flow/flutter_flow_widgets.dart';
-import 'dart:ui';
 import '/index.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'category_details_copy_model.dart';
 export 'category_details_copy_model.dart';
 
@@ -57,16 +53,16 @@ class _CategoryDetailsCopyWidgetState extends State<CategoryDetailsCopyWidget> {
         body: SafeArea(
           top: true,
           child: Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
+            padding: const EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
             child: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 children: [
                   Align(
-                    alignment: AlignmentDirectional(-1.0, 0.0),
+                    alignment: const AlignmentDirectional(-1.0, 0.0),
                     child: Padding(
                       padding:
-                          EdgeInsetsDirectional.fromSTEB(0.0, 32.0, 0.0, 0.0),
+                          const EdgeInsetsDirectional.fromSTEB(0.0, 32.0, 0.0, 0.0),
                       child: InkWell(
                         splashColor: Colors.transparent,
                         focusColor: Colors.transparent,
@@ -85,7 +81,7 @@ class _CategoryDetailsCopyWidgetState extends State<CategoryDetailsCopyWidget> {
                   ),
                   Padding(
                     padding:
-                        EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
+                        const EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
                     child: Material(
                       color: Colors.transparent,
                       elevation: 2.0,
@@ -99,7 +95,7 @@ class _CategoryDetailsCopyWidgetState extends State<CategoryDetailsCopyWidget> {
                           decoration: BoxDecoration(
                             color: FlutterFlowTheme.of(context)
                                 .secondaryBackground,
-                            boxShadow: [
+                            boxShadow: const [
                               BoxShadow(
                                 blurRadius: 4.0,
                                 color: Color(0x33000000),
@@ -111,12 +107,12 @@ class _CategoryDetailsCopyWidgetState extends State<CategoryDetailsCopyWidget> {
                             ],
                             borderRadius: BorderRadius.circular(14.0),
                             border: Border.all(
-                              color: Color(0xFF999999),
+                              color: const Color(0xFF999999),
                               width: 1.0,
                             ),
                           ),
                           child: Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 0.0, 0.0, 20.0),
                             child: Column(
                               mainAxisSize: MainAxisSize.max,
@@ -134,16 +130,16 @@ class _CategoryDetailsCopyWidgetState extends State<CategoryDetailsCopyWidget> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                        padding: const EdgeInsetsDirectional.fromSTEB(
                                             16.0, 16.0, 16.0, 0.0),
                                         child: Container(
                                           width: double.infinity,
                                           height: 326.0,
-                                          decoration: BoxDecoration(),
+                                          decoration: const BoxDecoration(),
                                           child: Stack(
                                             children: [
                                               ClipRRect(
-                                                borderRadius: BorderRadius.only(
+                                                borderRadius: const BorderRadius.only(
                                                   bottomLeft:
                                                       Radius.circular(5.0),
                                                   bottomRight:
@@ -160,7 +156,7 @@ class _CategoryDetailsCopyWidgetState extends State<CategoryDetailsCopyWidget> {
                                                             context)
                                                         .secondaryBackground,
                                                     borderRadius:
-                                                        BorderRadius.only(
+                                                        const BorderRadius.only(
                                                       bottomLeft:
                                                           Radius.circular(5.0),
                                                       bottomRight:
@@ -185,12 +181,12 @@ class _CategoryDetailsCopyWidgetState extends State<CategoryDetailsCopyWidget> {
                                                 ),
                                               ),
                                               Padding(
-                                                padding: EdgeInsetsDirectional
+                                                padding: const EdgeInsetsDirectional
                                                     .fromSTEB(
                                                         8.0, 8.0, 0.0, 0.0),
                                                 child: Text(
                                                   valueOrDefault<String>(
-                                                    widget!.itemDetails?.title,
+                                                    widget.itemDetails?.title,
                                                     '- - ',
                                                   ),
                                                   style: FlutterFlowTheme.of(
@@ -213,7 +209,7 @@ class _CategoryDetailsCopyWidgetState extends State<CategoryDetailsCopyWidget> {
                                         ),
                                       ),
                                       Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                        padding: const EdgeInsetsDirectional.fromSTEB(
                                             0.0, 20.0, 0.0, 0.0),
                                         child: Row(
                                           mainAxisSize: MainAxisSize.max,
@@ -223,7 +219,7 @@ class _CategoryDetailsCopyWidgetState extends State<CategoryDetailsCopyWidget> {
                                             Container(
                                               width: 42.0,
                                               height: 42.0,
-                                              decoration: BoxDecoration(
+                                              decoration: const BoxDecoration(
                                                 color: Color(0x4E52A097),
                                                 shape: BoxShape.circle,
                                               ),
@@ -244,14 +240,14 @@ class _CategoryDetailsCopyWidgetState extends State<CategoryDetailsCopyWidget> {
                                               onTap: () async {
                                                 final navigator = Navigator.of(context);
 
-                                                final ingredientCount = widget!
+                                                final ingredientCount = widget
                                                             .itemDetails!
                                                             .extendedIngredients
                                                             .length;
                                                 for (int loop1Index = 0;
                                                     loop1Index < ingredientCount;
                                                     loop1Index++) {
-                                                  final currentLoop1Item = widget!
+                                                  final currentLoop1Item = widget
                                                           .itemDetails!
                                                           .extendedIngredients[
                                                       loop1Index];
@@ -284,7 +280,7 @@ class _CategoryDetailsCopyWidgetState extends State<CategoryDetailsCopyWidget> {
                                               child: Container(
                                                 width: 42.0,
                                                 height: 42.0,
-                                                decoration: BoxDecoration(
+                                                decoration: const BoxDecoration(
                                                   color: Color(0x9EDADADA),
                                                   shape: BoxShape.circle,
                                                 ),
@@ -300,7 +296,7 @@ class _CategoryDetailsCopyWidgetState extends State<CategoryDetailsCopyWidget> {
                                             Container(
                                               width: 42.0,
                                               height: 42.0,
-                                              decoration: BoxDecoration(
+                                              decoration: const BoxDecoration(
                                                 color: Color(0x9DDADADA),
                                                 shape: BoxShape.circle,
                                               ),
@@ -315,12 +311,12 @@ class _CategoryDetailsCopyWidgetState extends State<CategoryDetailsCopyWidget> {
                                             Container(
                                               width: 42.0,
                                               height: 42.0,
-                                              decoration: BoxDecoration(
+                                              decoration: const BoxDecoration(
                                                 color: Color(0xFFFFE9E1),
                                                 shape: BoxShape.circle,
                                               ),
                                               child: Padding(
-                                                padding: EdgeInsetsDirectional
+                                                padding: const EdgeInsetsDirectional
                                                     .fromSTEB(
                                                         6.0, 6.0, 6.0, 6.0),
                                                 child: ClipRRect(
@@ -337,9 +333,9 @@ class _CategoryDetailsCopyWidgetState extends State<CategoryDetailsCopyWidget> {
                                               ),
                                             ),
                                           ]
-                                              .divide(SizedBox(width: 8.0))
-                                              .addToStart(SizedBox(width: 16.0))
-                                              .addToEnd(SizedBox(width: 16.0)),
+                                              .divide(const SizedBox(width: 8.0))
+                                              .addToStart(const SizedBox(width: 16.0))
+                                              .addToEnd(const SizedBox(width: 16.0)),
                                         ),
                                       ),
                                     ],
@@ -354,13 +350,13 @@ class _CategoryDetailsCopyWidgetState extends State<CategoryDetailsCopyWidget> {
                   ),
                   Padding(
                     padding:
-                        EdgeInsetsDirectional.fromSTEB(0.0, 27.0, 0.0, 0.0),
+                        const EdgeInsetsDirectional.fromSTEB(0.0, 27.0, 0.0, 0.0),
                     child: Container(
                       width: double.infinity,
                       height: 103.0,
                       decoration: BoxDecoration(
                         color: FlutterFlowTheme.of(context).secondaryBackground,
-                        boxShadow: [
+                        boxShadow: const [
                           BoxShadow(
                             blurRadius: 4.0,
                             color: Color(0x33000000),
@@ -378,7 +374,7 @@ class _CategoryDetailsCopyWidgetState extends State<CategoryDetailsCopyWidget> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 16.0, 16.0, 16.0, 0.0),
                             child: Row(
                               mainAxisSize: MainAxisSize.max,
@@ -390,17 +386,17 @@ class _CategoryDetailsCopyWidgetState extends State<CategoryDetailsCopyWidget> {
                                   size: 24.0,
                                 ),
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       8.0, 0.0, 0.0, 0.0),
                                   child: Text(
                                     'Prep:  ${valueOrDefault<String>(
-                                      widget!.itemDetails?.preparationMinutes,
+                                      widget.itemDetails?.preparationMinutes,
                                       '0',
-                                    )} min  |  Cook: ${widget!.itemDetails?.cookingMinutes} min',
+                                    )} min  |  Cook: ${widget.itemDetails?.cookingMinutes} min',
                                     style: FlutterFlowTheme.of(context)
                                         .bodyMedium
                                         .override(
-                                          fontFamily: 'Andika New Basic',
+                                          fontFamily: FFAppState().currentFontFamily,
                                           fontSize: 18.0,
                                           letterSpacing: 0.0,
                                         ),
@@ -410,15 +406,15 @@ class _CategoryDetailsCopyWidgetState extends State<CategoryDetailsCopyWidget> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 48.0, 0.0, 0.0, 10.0),
                             child: Text(
                               'recipesite.com',
                               style: FlutterFlowTheme.of(context)
                                   .bodyMedium
                                   .override(
-                                    fontFamily: 'Andika New Basic',
-                                    color: Color(0xFF2D30F0),
+                                    fontFamily: FFAppState().currentFontFamily,
+                                    color: const Color(0xFF2D30F0),
                                     fontSize: 18.0,
                                     letterSpacing: 0.0,
                                     fontWeight: FontWeight.w500,
@@ -430,14 +426,14 @@ class _CategoryDetailsCopyWidgetState extends State<CategoryDetailsCopyWidget> {
                     ),
                   ),
                   Align(
-                    alignment: AlignmentDirectional(-1.0, 0.0),
+                    alignment: const AlignmentDirectional(-1.0, 0.0),
                     child: Padding(
                       padding:
-                          EdgeInsetsDirectional.fromSTEB(0.0, 20.0, 0.0, 0.0),
+                          const EdgeInsetsDirectional.fromSTEB(0.0, 20.0, 0.0, 0.0),
                       child: Text(
                         'Ingredients:',
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               fontSize: 20.0,
                               letterSpacing: 0.0,
                             ),
@@ -446,12 +442,12 @@ class _CategoryDetailsCopyWidgetState extends State<CategoryDetailsCopyWidget> {
                   ),
                   Padding(
                     padding:
-                        EdgeInsetsDirectional.fromSTEB(0.0, 27.0, 0.0, 0.0),
+                        const EdgeInsetsDirectional.fromSTEB(0.0, 27.0, 0.0, 0.0),
                     child: Container(
                       width: double.infinity,
                       decoration: BoxDecoration(
                         color: FlutterFlowTheme.of(context).secondaryBackground,
-                        boxShadow: [
+                        boxShadow: const [
                           BoxShadow(
                             blurRadius: 4.0,
                             color: Color(0x33000000),
@@ -464,13 +460,13 @@ class _CategoryDetailsCopyWidgetState extends State<CategoryDetailsCopyWidget> {
                         borderRadius: BorderRadius.circular(5.0),
                       ),
                       child: Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(
+                        padding: const EdgeInsetsDirectional.fromSTEB(
                             0.0, 16.0, 0.0, 20.0),
                         child: Builder(
                           builder: (context) {
-                            final ingredients = widget!
+                            final ingredients = widget
                                     .itemDetails?.extendedIngredients
-                                    ?.toList() ??
+                                    .toList() ??
                                 [];
 
                             return ListView.builder(
@@ -482,7 +478,7 @@ class _CategoryDetailsCopyWidgetState extends State<CategoryDetailsCopyWidget> {
                                 final ingredientsItem =
                                     ingredients[ingredientsIndex];
                                 return Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       16.0, 0.0, 0.0, 0.0),
                                   child: Text(
                                     valueOrDefault<String>(
@@ -492,7 +488,7 @@ class _CategoryDetailsCopyWidgetState extends State<CategoryDetailsCopyWidget> {
                                     style: FlutterFlowTheme.of(context)
                                         .bodyMedium
                                         .override(
-                                          fontFamily: 'Andika New Basic',
+                                          fontFamily: FFAppState().currentFontFamily,
                                           fontSize: 18.0,
                                           letterSpacing: 0.0,
                                         ),

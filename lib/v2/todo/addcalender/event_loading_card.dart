@@ -11,7 +11,7 @@ class EventLoadingCard extends StatelessWidget {
   final List<String>? childInitials;
 
   const EventLoadingCard({
-    Key? key,
+    super.key,
     required this.eventName,
     required this.eventType,
     required this.eventDate,
@@ -19,7 +19,7 @@ class EventLoadingCard extends StatelessWidget {
     required this.total,
     required this.isExpanded,
     this.childInitials,
-  }) : super(key: key);
+  });
 
   String _formatTime(DateTime date) {
     final hour = date.hour > 12 ? date.hour - 12 : (date.hour == 0 ? 12 : date.hour);
@@ -116,7 +116,7 @@ class EventLoadingCard extends StatelessWidget {
                             Text(
                               eventType,
                               style: theme.bodyMedium.override(
-                                fontFamily: 'Andika New Basic',
+                                fontFamily: FFAppState().currentFontFamily,
                                 fontSize: 11,
                                 fontWeight: FontWeight.w600,
                                 color: Colors.white,
@@ -143,7 +143,7 @@ class EventLoadingCard extends StatelessWidget {
                       child: Text(
                         eventName,
                         style: theme.bodyMedium.override(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           fontSize: 20,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 0,
@@ -173,7 +173,7 @@ class EventLoadingCard extends StatelessWidget {
                         Text(
                           _formatTime(eventDate),
                           style: theme.bodyMedium.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             fontSize: 14,
                             color: theme.secondaryText,
                             letterSpacing: 0,
@@ -200,7 +200,7 @@ class EventLoadingCard extends StatelessWidget {
                             child: Text(
                               initial,
                               style: theme.bodySmall.override(
-                                fontFamily: 'Andika New Basic',
+                                fontFamily: FFAppState().currentFontFamily,
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
                                 color: theme.primary,
@@ -242,7 +242,7 @@ class EventLoadingCard extends StatelessWidget {
                         Text(
                           'Creating event $progress of $total...',
                           style: theme.bodySmall.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             fontSize: 12,
                             color: theme.secondaryText,
                             letterSpacing: 0,

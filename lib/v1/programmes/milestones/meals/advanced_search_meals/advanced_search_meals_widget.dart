@@ -1,13 +1,8 @@
 import '/backend/api_requests/api_calls.dart';
-import '/backend/api_requests/api_streaming.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
-import 'dart:convert';
-import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'advanced_search_meals_model.dart';
 export 'advanced_search_meals_model.dart';
 
@@ -52,7 +47,7 @@ class _AdvancedSearchMealsWidgetState extends State<AdvancedSearchMealsWidget> {
     return Container(
       width: double.infinity,
       height: 700.0,
-      constraints: BoxConstraints(
+      constraints: const BoxConstraints(
         minWidth: 374.0,
       ),
       decoration: BoxDecoration(
@@ -62,34 +57,34 @@ class _AdvancedSearchMealsWidgetState extends State<AdvancedSearchMealsWidget> {
       child: Stack(
         children: [
           Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
+            padding: const EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
             child: Column(
               mainAxisSize: MainAxisSize.max,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Align(
-                  alignment: AlignmentDirectional(0.0, -1.0),
+                  alignment: const AlignmentDirectional(0.0, -1.0),
                   child: Padding(
                     padding:
-                        EdgeInsetsDirectional.fromSTEB(16.0, 20.0, 16.0, 0.0),
+                        const EdgeInsetsDirectional.fromSTEB(16.0, 20.0, 16.0, 0.0),
                     child: Text(
                       'Advanced Search',
                       textAlign: TextAlign.center,
                       style:
                           FlutterFlowTheme.of(context).headlineSmall.override(
-                                fontFamily: 'Andika New Basic',
+                                fontFamily: FFAppState().currentFontFamily,
                                 letterSpacing: 0.0,
                               ),
                     ),
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
                   child: Container(
                     width: double.infinity,
                     height: 50.0,
                     decoration: BoxDecoration(
-                      color: Color(0xFFF4F4F4),
+                      color: const Color(0xFFF4F4F4),
                       borderRadius: BorderRadius.circular(24.0),
                     ),
                     child: Row(
@@ -97,7 +92,7 @@ class _AdvancedSearchMealsWidgetState extends State<AdvancedSearchMealsWidget> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               10.0, 5.0, 0.0, 0.0),
                           child: Icon(
                             Icons.search_rounded,
@@ -116,7 +111,7 @@ class _AdvancedSearchMealsWidgetState extends State<AdvancedSearchMealsWidget> {
                               hintStyle: FlutterFlowTheme.of(context)
                                   .bodyMedium
                                   .override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     letterSpacing: 0.0,
                                   ),
                               enabledBorder: InputBorder.none,
@@ -127,7 +122,7 @@ class _AdvancedSearchMealsWidgetState extends State<AdvancedSearchMealsWidget> {
                             style: FlutterFlowTheme.of(context)
                                 .bodyMedium
                                 .override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   letterSpacing: 0.0,
                                 ),
                             validator: _model.textController1Validator
@@ -135,7 +130,7 @@ class _AdvancedSearchMealsWidgetState extends State<AdvancedSearchMealsWidget> {
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 8.0, 20.0, 8.0),
                           child: InkWell(
                             splashColor: Colors.transparent,
@@ -153,13 +148,13 @@ class _AdvancedSearchMealsWidgetState extends State<AdvancedSearchMealsWidget> {
                                 borderRadius: BorderRadius.circular(27.0),
                               ),
                               child: Align(
-                                alignment: AlignmentDirectional(0.0, 0.0),
+                                alignment: const AlignmentDirectional(0.0, 0.0),
                                 child: Text(
                                   'Close',
                                   style: FlutterFlowTheme.of(context)
                                       .bodyMedium
                                       .override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         color: FlutterFlowTheme.of(context)
                                             .secondary,
                                         letterSpacing: 0.0,
@@ -169,16 +164,16 @@ class _AdvancedSearchMealsWidgetState extends State<AdvancedSearchMealsWidget> {
                             ),
                           ),
                         ),
-                      ].divide(SizedBox(width: 12.0)),
+                      ].divide(const SizedBox(width: 12.0)),
                     ),
                   ),
                 ),
                 Container(
                   height: 450.0,
-                  decoration: BoxDecoration(),
+                  decoration: const BoxDecoration(),
                   child: Padding(
                     padding:
-                        EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
+                        const EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
                     child: SingleChildScrollView(
                       child: Column(
                         mainAxisSize: MainAxisSize.max,
@@ -189,13 +184,13 @@ class _AdvancedSearchMealsWidgetState extends State<AdvancedSearchMealsWidget> {
                             style: FlutterFlowTheme.of(context)
                                 .bodyMedium
                                 .override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   letterSpacing: 0.0,
                                 ),
                           ),
                           Container(
                             width: double.infinity,
-                            decoration: BoxDecoration(),
+                            decoration: const BoxDecoration(),
                             child: Builder(
                               builder: (context) {
                                 final cookingListType = FFAppConstants
@@ -236,7 +231,7 @@ class _AdvancedSearchMealsWidgetState extends State<AdvancedSearchMealsWidget> {
                                                     .primary
                                                 : FlutterFlowTheme.of(context)
                                                     .formTextFiledBackGround,
-                                            Color(0xFFF4F4F4),
+                                            const Color(0xFFF4F4F4),
                                           ),
                                           borderRadius:
                                               BorderRadius.circular(8.0),
@@ -247,7 +242,7 @@ class _AdvancedSearchMealsWidgetState extends State<AdvancedSearchMealsWidget> {
                                               MainAxisAlignment.start,
                                           children: [
                                             Padding(
-                                              padding: EdgeInsetsDirectional
+                                              padding: const EdgeInsetsDirectional
                                                   .fromSTEB(5.0, 0.0, 0.0, 0.0),
                                               child: Icon(
                                                 FFIcons.kgameIconsHotMeal,
@@ -268,7 +263,7 @@ class _AdvancedSearchMealsWidgetState extends State<AdvancedSearchMealsWidget> {
                                               ),
                                             ),
                                             Padding(
-                                              padding: EdgeInsetsDirectional
+                                              padding: const EdgeInsetsDirectional
                                                   .fromSTEB(
                                                       8.0, 0.0, 10.0, 0.0),
                                               child: Text(
@@ -313,11 +308,11 @@ class _AdvancedSearchMealsWidgetState extends State<AdvancedSearchMealsWidget> {
                             style: FlutterFlowTheme.of(context)
                                 .bodyMedium
                                 .override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   letterSpacing: 0.0,
                                 ),
                           ),
-                          Container(
+                          SizedBox(
                             width: double.infinity,
                             child: TextFormField(
                               controller: _model.textController2,
@@ -329,18 +324,18 @@ class _AdvancedSearchMealsWidgetState extends State<AdvancedSearchMealsWidget> {
                                 labelStyle: FlutterFlowTheme.of(context)
                                     .labelMedium
                                     .override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       letterSpacing: 0.0,
                                     ),
                                 hintText: 'chives,soy....',
                                 hintStyle: FlutterFlowTheme.of(context)
                                     .labelMedium
                                     .override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       letterSpacing: 0.0,
                                     ),
                                 enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color(0xFFF4F4F4),
                                     width: 2.0,
                                   ),
@@ -374,7 +369,7 @@ class _AdvancedSearchMealsWidgetState extends State<AdvancedSearchMealsWidget> {
                               style: FlutterFlowTheme.of(context)
                                   .bodyMedium
                                   .override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     letterSpacing: 0.0,
                                   ),
                               cursorColor:
@@ -388,13 +383,13 @@ class _AdvancedSearchMealsWidgetState extends State<AdvancedSearchMealsWidget> {
                             style: FlutterFlowTheme.of(context)
                                 .bodyMedium
                                 .override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   letterSpacing: 0.0,
                                 ),
                           ),
                           Container(
                             width: double.infinity,
-                            decoration: BoxDecoration(),
+                            decoration: const BoxDecoration(),
                             child: Builder(
                               builder: (context) {
                                 final cookingListType =
@@ -436,7 +431,7 @@ class _AdvancedSearchMealsWidgetState extends State<AdvancedSearchMealsWidget> {
                                                     .primary
                                                 : FlutterFlowTheme.of(context)
                                                     .formTextFiledBackGround,
-                                            Color(0xFFF4F4F4),
+                                            const Color(0xFFF4F4F4),
                                           ),
                                           borderRadius:
                                               BorderRadius.circular(8.0),
@@ -447,7 +442,7 @@ class _AdvancedSearchMealsWidgetState extends State<AdvancedSearchMealsWidget> {
                                               MainAxisAlignment.start,
                                           children: [
                                             Padding(
-                                              padding: EdgeInsetsDirectional
+                                              padding: const EdgeInsetsDirectional
                                                   .fromSTEB(5.0, 0.0, 0.0, 0.0),
                                               child: Icon(
                                                 Icons.close,
@@ -468,7 +463,7 @@ class _AdvancedSearchMealsWidgetState extends State<AdvancedSearchMealsWidget> {
                                               ),
                                             ),
                                             Padding(
-                                              padding: EdgeInsetsDirectional
+                                              padding: const EdgeInsetsDirectional
                                                   .fromSTEB(
                                                       8.0, 0.0, 10.0, 0.0),
                                               child: Text(
@@ -513,13 +508,13 @@ class _AdvancedSearchMealsWidgetState extends State<AdvancedSearchMealsWidget> {
                             style: FlutterFlowTheme.of(context)
                                 .bodyMedium
                                 .override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   letterSpacing: 0.0,
                                 ),
                           ),
                           Container(
                             width: double.infinity,
-                            decoration: BoxDecoration(),
+                            decoration: const BoxDecoration(),
                             child: Builder(
                               builder: (context) {
                                 final cookingListType =
@@ -560,7 +555,7 @@ class _AdvancedSearchMealsWidgetState extends State<AdvancedSearchMealsWidget> {
                                                     .primary
                                                 : FlutterFlowTheme.of(context)
                                                     .formTextFiledBackGround,
-                                            Color(0xFFF4F4F4),
+                                            const Color(0xFFF4F4F4),
                                           ),
                                           borderRadius:
                                               BorderRadius.circular(8.0),
@@ -571,7 +566,7 @@ class _AdvancedSearchMealsWidgetState extends State<AdvancedSearchMealsWidget> {
                                               MainAxisAlignment.start,
                                           children: [
                                             Padding(
-                                              padding: EdgeInsetsDirectional
+                                              padding: const EdgeInsetsDirectional
                                                   .fromSTEB(5.0, 0.0, 0.0, 0.0),
                                               child: ClipRRect(
                                                 borderRadius:
@@ -585,7 +580,7 @@ class _AdvancedSearchMealsWidgetState extends State<AdvancedSearchMealsWidget> {
                                               ),
                                             ),
                                             Padding(
-                                              padding: EdgeInsetsDirectional
+                                              padding: const EdgeInsetsDirectional
                                                   .fromSTEB(
                                                       8.0, 0.0, 10.0, 0.0),
                                               child: Text(
@@ -627,16 +622,16 @@ class _AdvancedSearchMealsWidgetState extends State<AdvancedSearchMealsWidget> {
                           ),
                           Container(
                             width: double.infinity,
-                            decoration: BoxDecoration(),
+                            decoration: const BoxDecoration(),
                           ),
-                        ].divide(SizedBox(height: 16.0)),
+                        ].divide(const SizedBox(height: 16.0)),
                       ),
                     ),
                   ),
                 ),
                 Padding(
                   padding:
-                      EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 20.0),
+                      const EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 20.0),
                   child: Row(
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -649,15 +644,15 @@ class _AdvancedSearchMealsWidgetState extends State<AdvancedSearchMealsWidget> {
                           text: 'Cancel',
                           options: FFButtonOptions(
                             height: 50.0,
-                            padding: EdgeInsets.all(8.0),
-                            iconPadding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsets.all(8.0),
+                            iconPadding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 0.0, 0.0, 0.0),
                             color:
                                 FlutterFlowTheme.of(context).primaryBackground,
                             textStyle: FlutterFlowTheme.of(context)
                                 .bodyMedium
                                 .override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   letterSpacing: 0.0,
                                 ),
                             elevation: 0.0,
@@ -693,14 +688,14 @@ class _AdvancedSearchMealsWidgetState extends State<AdvancedSearchMealsWidget> {
                           text: 'Search',
                           options: FFButtonOptions(
                             height: 50.0,
-                            padding: EdgeInsets.all(8.0),
-                            iconPadding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsets.all(8.0),
+                            iconPadding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 0.0, 0.0, 0.0),
                             color: FlutterFlowTheme.of(context).primary,
                             textStyle: FlutterFlowTheme.of(context)
                                 .bodyMedium
                                 .override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   color: FlutterFlowTheme.of(context).info,
                                   letterSpacing: 0.0,
                                 ),
@@ -709,10 +704,10 @@ class _AdvancedSearchMealsWidgetState extends State<AdvancedSearchMealsWidget> {
                           ),
                         ),
                       ),
-                    ].divide(SizedBox(width: 16.0)),
+                    ].divide(const SizedBox(width: 16.0)),
                   ),
                 ),
-              ].divide(SizedBox(height: 24.0)),
+              ].divide(const SizedBox(height: 24.0)),
             ),
           ),
         ],

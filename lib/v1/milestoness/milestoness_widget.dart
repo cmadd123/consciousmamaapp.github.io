@@ -3,16 +3,10 @@ import '/backend/backend.dart';
 import '/backend/schema/enums/enums.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import '/flutter_flow/flutter_flow_widgets.dart';
 import '/v1/empty_list_view_component/empty_list_view_component_widget.dart';
-import '/v1/nav_bar/nav_bar_widget.dart';
 import '/components/home_nav_bar_widget.dart';
-import 'dart:ui';
 import '/flutter_flow/custom_functions.dart' as functions;
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:provider/provider.dart';
 import 'milestoness_model.dart';
@@ -64,7 +58,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
           decoration: BoxDecoration(
             color: FlutterFlowTheme.of(context).primaryBackground,
           ),
-          child: Container(
+          child: SizedBox(
             width: double.infinity,
             height: double.infinity,
             child: Stack(
@@ -72,14 +66,14 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                 Container(
                   width: double.infinity,
                   height: double.infinity,
-                  decoration: BoxDecoration(),
+                  decoration: const BoxDecoration(),
                   child: Container(
-                    decoration: BoxDecoration(),
+                    decoration: const BoxDecoration(),
                     child: Column(
                       mainAxisSize: MainAxisSize.max,
                       children: [
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               20.0, 50.0, 20.0, 0.0),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -90,7 +84,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                 style: FlutterFlowTheme.of(context)
                                     .bodyMedium
                                     .override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       fontSize: 20.0,
                                       letterSpacing: 0.0,
                                       fontWeight: FontWeight.bold,
@@ -102,7 +96,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                 style: FlutterFlowTheme.of(context)
                                     .bodySmall
                                     .override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       fontSize: 13.0,
                                       color: const Color(0xFF9B8A9E),
                                       letterSpacing: 0.0,
@@ -112,13 +106,13 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                           ),
                         ),
                         Align(
-                          alignment: AlignmentDirectional(-1.0, 0.0),
+                          alignment: const AlignmentDirectional(-1.0, 0.0),
                           child: Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 24.0, 0.0, 0.0),
                             child: StreamBuilder<List<ChildernRecord>>(
                               stream: FFAppState().children(
-                                uniqueQueryKey: 'children_${currentUserUid}',
+                                uniqueQueryKey: 'children_$currentUserUid',
                                 requestFn: () => queryChildernRecord(
                                   queryBuilder: (childernRecord) =>
                                       childernRecord
@@ -180,7 +174,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                           safeSetState(() {});
                                         },
                                         child: Container(
-                                          decoration: BoxDecoration(
+                                          decoration: const BoxDecoration(
                                             shape: BoxShape.circle,
                                           ),
                                           child: Column(
@@ -209,7 +203,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                   shape: BoxShape.rectangle,
                                                 ),
                                                 child: Padding(
-                                                  padding: EdgeInsets.all(4.0),
+                                                  padding: const EdgeInsets.all(4.0),
                                                   child: ClipRRect(
                                                     borderRadius:
                                                         BorderRadius.circular(
@@ -224,10 +218,10 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                 ),
                                               ),
                                               Align(
-                                                alignment: AlignmentDirectional(
+                                                alignment: const AlignmentDirectional(
                                                     0.0, 0.0),
                                                 child: Padding(
-                                                  padding: EdgeInsetsDirectional
+                                                  padding: const EdgeInsetsDirectional
                                                       .fromSTEB(
                                                           20.0, 0.0, 20.0, 0.0),
                                                   child: Text(
@@ -257,8 +251,8 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                         ),
                                       );
                                     })
-                                        .divide(SizedBox(width: 20.0))
-                                        .addToStart(SizedBox(width: 20.0)),
+                                        .divide(const SizedBox(width: 20.0))
+                                        .addToStart(const SizedBox(width: 20.0)),
                                   ),
                                 );
                               },
@@ -296,7 +290,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                               final containerChildernRecord = snapshot.data!;
 
                               return Container(
-                                decoration: BoxDecoration(),
+                                decoration: const BoxDecoration(),
                                 child: StreamBuilder<
                                     List<ChildrenAccomlishedMilestonesRecord>>(
                                   stream:
@@ -342,19 +336,19 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                     return Container(
                                       width: double.infinity,
                                       height: double.infinity,
-                                      decoration: BoxDecoration(),
+                                      decoration: const BoxDecoration(),
                                       child: Column(
                                         mainAxisSize: MainAxisSize.max,
                                         children: [
                                           Padding(
                                             padding:
-                                                EdgeInsetsDirectional.fromSTEB(
+                                                const EdgeInsetsDirectional.fromSTEB(
                                                     20.0, 0.0, 20.0, 0.0),
                                             child: Column(
                                               mainAxisSize: MainAxisSize.max,
                                               children: [
                                                 Padding(
-                                                  padding: EdgeInsetsDirectional
+                                                  padding: const EdgeInsetsDirectional
                                                       .fromSTEB(
                                                           0.0, 32.0, 0.0, 0.0),
                                                   child: Row(
@@ -371,7 +365,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                           if (false)
                                                             Padding(
                                                               padding:
-                                                                  EdgeInsetsDirectional
+                                                                  const EdgeInsetsDirectional
                                                                       .fromSTEB(
                                                                           20.0,
                                                                           0.0,
@@ -399,11 +393,11 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                         ],
                                                       ),
                                                     ].divide(
-                                                        SizedBox(width: 10.0)),
+                                                        const SizedBox(width: 10.0)),
                                                   ),
                                                 ),
                                                 Padding(
-                                                  padding: EdgeInsetsDirectional
+                                                  padding: const EdgeInsetsDirectional
                                                       .fromSTEB(
                                                           0.0, 16.0, 0.0, 0.0),
                                                   child: Row(
@@ -451,7 +445,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                                     context)
                                                                 .primary,
                                                         backgroundColor:
-                                                            Color(0x6552A097),
+                                                            const Color(0x6552A097),
                                                         center: Text(
                                                           '${valueOrDefault<String>(
                                                             ((100 *
@@ -497,18 +491,18 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                           ),
                                           Expanded(
                                             child: Padding(
-                                              padding: EdgeInsetsDirectional
+                                              padding: const EdgeInsetsDirectional
                                                   .fromSTEB(
                                                       20.0, 0.0, 20.0, 0.0),
                                               child: Container(
-                                                decoration: BoxDecoration(),
+                                                decoration: const BoxDecoration(),
                                                 child: Padding(
-                                                  padding: EdgeInsetsDirectional
+                                                  padding: const EdgeInsetsDirectional
                                                       .fromSTEB(
                                                           0.0, 16.0, 0.0, 0.0),
                                                   child: ListView(
                                                     padding:
-                                                        EdgeInsets.fromLTRB(
+                                                        const EdgeInsets.fromLTRB(
                                                       0,
                                                       0,
                                                       0,
@@ -565,7 +559,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
 
                                                           return Container(
                                                             decoration:
-                                                                BoxDecoration(),
+                                                                const BoxDecoration(),
                                                             child: Visibility(
                                                               visible:
                                                                   containerPhysicalSaticMilestonesRecordList
@@ -584,7 +578,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                                               32.0),
                                                                 ),
                                                                 child: Padding(
-                                                                  padding: EdgeInsetsDirectional
+                                                                  padding: const EdgeInsetsDirectional
                                                                       .fromSTEB(
                                                                           14.0,
                                                                           14.0,
@@ -629,7 +623,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                                           Expanded(
                                                                             child:
                                                                                 Padding(
-                                                                              padding: EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 0.0, 0.0),
+                                                                              padding: const EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 0.0, 0.0),
                                                                               child: Column(
                                                                                 mainAxisSize: MainAxisSize.max,
                                                                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -637,7 +631,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                                                   Text(
                                                                                     'Physical Milestones',
                                                                                     style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                          fontFamily: 'Andika New Basic',
+                                                                                          fontFamily: FFAppState().currentFontFamily,
                                                                                           color: Colors.black,
                                                                                           fontSize: 16.0,
                                                                                           letterSpacing: 0.0,
@@ -645,7 +639,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                                                         ),
                                                                                   ),
                                                                                   Padding(
-                                                                                    padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 8.0),
+                                                                                    padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 8.0),
                                                                                     child: RichText(
                                                                                       textScaler: MediaQuery.of(context).textScaler,
                                                                                       text: TextSpan(
@@ -653,7 +647,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                                                           TextSpan(
                                                                                             text: 'For ',
                                                                                             style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                                  fontFamily: 'Andika New Basic',
+                                                                                                  fontFamily: FFAppState().currentFontFamily,
                                                                                                   color: FlutterFlowTheme.of(context).primaryText,
                                                                                                   fontSize: 10.0,
                                                                                                   letterSpacing: 0.0,
@@ -668,23 +662,23 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                                                                   .toString(),
                                                                                               '0',
                                                                                             ),
-                                                                                            style: TextStyle(),
+                                                                                            style: const TextStyle(),
                                                                                           ),
-                                                                                          TextSpan(
+                                                                                          const TextSpan(
                                                                                             text: ' to ',
                                                                                             style: TextStyle(),
                                                                                           ),
                                                                                           TextSpan(
                                                                                             text: functions.newCobverBirthdayToAGe(containerChildernRecord.birthDay!).toString(),
-                                                                                            style: TextStyle(),
+                                                                                            style: const TextStyle(),
                                                                                           ),
-                                                                                          TextSpan(
+                                                                                          const TextSpan(
                                                                                             text: ' yo',
                                                                                             style: TextStyle(),
                                                                                           )
                                                                                         ],
                                                                                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                              fontFamily: 'Andika New Basic',
+                                                                                              fontFamily: FFAppState().currentFontFamily,
                                                                                               color: FlutterFlowTheme.of(context).primaryText,
                                                                                               fontSize: 10.0,
                                                                                               letterSpacing: 0.0,
@@ -700,7 +694,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                                         ],
                                                                       ),
                                                                       Padding(
-                                                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                                                        padding: const EdgeInsetsDirectional.fromSTEB(
                                                                             0.0,
                                                                             8.0,
                                                                             0.0,
@@ -727,15 +721,15 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                                           progressColor:
                                                                               FlutterFlowTheme.of(context).primary,
                                                                           backgroundColor:
-                                                                              Color(0xFFE0E0E0),
+                                                                              const Color(0xFFE0E0E0),
                                                                           barRadius:
-                                                                              Radius.circular(8.0),
+                                                                              const Radius.circular(8.0),
                                                                           padding:
                                                                               EdgeInsets.zero,
                                                                         ),
                                                                       ),
                                                                       Padding(
-                                                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                                                        padding: const EdgeInsetsDirectional.fromSTEB(
                                                                             0.0,
                                                                             12.0,
                                                                             0.0,
@@ -747,8 +741,8 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                                             final milestones =
                                                                                 containerPhysicalSaticMilestonesRecordList.toList();
                                                                             if (milestones.isEmpty) {
-                                                                              return Center(
-                                                                                child: Container(
+                                                                              return const Center(
+                                                                                child: SizedBox(
                                                                                   width: double.infinity,
                                                                                   height: 200.0,
                                                                                   child: EmptyListViewComponentWidget(
@@ -767,7 +761,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                                               shrinkWrap: true,
                                                                               scrollDirection: Axis.vertical,
                                                                               itemCount: milestones.length,
-                                                                              separatorBuilder: (_, __) => SizedBox(height: 6.0),
+                                                                              separatorBuilder: (_, __) => const SizedBox(height: 6.0),
                                                                               itemBuilder: (context, milestonesIndex) {
                                                                                 final milestonesItem = milestones[milestonesIndex];
                                                                                 return Row(
@@ -835,7 +829,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                                                         child: Text(
                                                                                           milestonesItem.title,
                                                                                           style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                                fontFamily: 'Andika New Basic',
+                                                                                                fontFamily: FFAppState().currentFontFamily,
                                                                                                 color: FlutterFlowTheme.of(context).secondaryText,
                                                                                                 fontSize: 12.0,
                                                                                                 letterSpacing: 0.0,
@@ -844,7 +838,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                                                         ),
                                                                                       ),
                                                                                     ),
-                                                                                  ].divide(SizedBox(width: 2.0)),
+                                                                                  ].divide(const SizedBox(width: 2.0)),
                                                                                 );
                                                                               },
                                                                             );
@@ -906,7 +900,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
 
                                                           return Container(
                                                             decoration:
-                                                                BoxDecoration(),
+                                                                const BoxDecoration(),
                                                             child: Visibility(
                                                               visible:
                                                                   containerCognitiveSaticMilestonesRecordList
@@ -925,7 +919,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                                               32.0),
                                                                 ),
                                                                 child: Padding(
-                                                                  padding: EdgeInsetsDirectional
+                                                                  padding: const EdgeInsetsDirectional
                                                                       .fromSTEB(
                                                                           14.0,
                                                                           14.0,
@@ -970,7 +964,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                                           Expanded(
                                                                             child:
                                                                                 Padding(
-                                                                              padding: EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 0.0, 0.0),
+                                                                              padding: const EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 0.0, 0.0),
                                                                               child: Column(
                                                                                 mainAxisSize: MainAxisSize.max,
                                                                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -978,7 +972,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                                                   Text(
                                                                                     'Cognitive Milestones',
                                                                                     style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                          fontFamily: 'Andika New Basic',
+                                                                                          fontFamily: FFAppState().currentFontFamily,
                                                                                           color: Colors.black,
                                                                                           fontSize: 16.0,
                                                                                           letterSpacing: 0.0,
@@ -986,7 +980,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                                                         ),
                                                                                   ),
                                                                                   Padding(
-                                                                                    padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 8.0),
+                                                                                    padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 8.0),
                                                                                     child: RichText(
                                                                                       textScaler: MediaQuery.of(context).textScaler,
                                                                                       text: TextSpan(
@@ -994,7 +988,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                                                           TextSpan(
                                                                                             text: 'For ',
                                                                                             style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                                  fontFamily: 'Andika New Basic',
+                                                                                                  fontFamily: FFAppState().currentFontFamily,
                                                                                                   color: FlutterFlowTheme.of(context).primaryText,
                                                                                                   fontSize: 10.0,
                                                                                                   letterSpacing: 0.0,
@@ -1009,23 +1003,23 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                                                                   .toString(),
                                                                                               '0',
                                                                                             ),
-                                                                                            style: TextStyle(),
+                                                                                            style: const TextStyle(),
                                                                                           ),
-                                                                                          TextSpan(
+                                                                                          const TextSpan(
                                                                                             text: ' to ',
                                                                                             style: TextStyle(),
                                                                                           ),
                                                                                           TextSpan(
                                                                                             text: functions.newCobverBirthdayToAGe(containerChildernRecord.birthDay!).toString(),
-                                                                                            style: TextStyle(),
+                                                                                            style: const TextStyle(),
                                                                                           ),
-                                                                                          TextSpan(
+                                                                                          const TextSpan(
                                                                                             text: ' yo',
                                                                                             style: TextStyle(),
                                                                                           )
                                                                                         ],
                                                                                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                              fontFamily: 'Andika New Basic',
+                                                                                              fontFamily: FFAppState().currentFontFamily,
                                                                                               color: FlutterFlowTheme.of(context).primaryText,
                                                                                               fontSize: 10.0,
                                                                                               letterSpacing: 0.0,
@@ -1041,7 +1035,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                                         ],
                                                                       ),
                                                                       Padding(
-                                                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                                                        padding: const EdgeInsetsDirectional.fromSTEB(
                                                                             0.0,
                                                                             8.0,
                                                                             0.0,
@@ -1068,15 +1062,15 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                                           progressColor:
                                                                               FlutterFlowTheme.of(context).primary,
                                                                           backgroundColor:
-                                                                              Color(0xFFE0E0E0),
+                                                                              const Color(0xFFE0E0E0),
                                                                           barRadius:
-                                                                              Radius.circular(8.0),
+                                                                              const Radius.circular(8.0),
                                                                           padding:
                                                                               EdgeInsets.zero,
                                                                         ),
                                                                       ),
                                                                       Padding(
-                                                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                                                        padding: const EdgeInsetsDirectional.fromSTEB(
                                                                             0.0,
                                                                             12.0,
                                                                             0.0,
@@ -1088,7 +1082,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                                             final milestones =
                                                                                 containerCognitiveSaticMilestonesRecordList.toList();
                                                                             if (milestones.isEmpty) {
-                                                                              return Container(
+                                                                              return const SizedBox(
                                                                                 width: double.infinity,
                                                                                 height: 200.0,
                                                                                 child: EmptyListViewComponentWidget(
@@ -1106,7 +1100,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                                               shrinkWrap: true,
                                                                               scrollDirection: Axis.vertical,
                                                                               itemCount: milestones.length,
-                                                                              separatorBuilder: (_, __) => SizedBox(height: 6.0),
+                                                                              separatorBuilder: (_, __) => const SizedBox(height: 6.0),
                                                                               itemBuilder: (context, milestonesIndex) {
                                                                                 final milestonesItem = milestones[milestonesIndex];
                                                                                 return Row(
@@ -1157,7 +1151,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                                                       child: Text(
                                                                                         milestonesItem.title,
                                                                                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                              fontFamily: 'Andika New Basic',
+                                                                                              fontFamily: FFAppState().currentFontFamily,
                                                                                               color: FlutterFlowTheme.of(context).secondaryText,
                                                                                               fontSize: 12.0,
                                                                                               letterSpacing: 0.0,
@@ -1227,7 +1221,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
 
                                                           return Container(
                                                             decoration:
-                                                                BoxDecoration(),
+                                                                const BoxDecoration(),
                                                             child: Visibility(
                                                               visible:
                                                                   containerSelfcareSaticMilestonesRecordList
@@ -1246,7 +1240,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                                               32.0),
                                                                 ),
                                                                 child: Padding(
-                                                                  padding: EdgeInsetsDirectional
+                                                                  padding: const EdgeInsetsDirectional
                                                                       .fromSTEB(
                                                                           14.0,
                                                                           14.0,
@@ -1291,7 +1285,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                                           Expanded(
                                                                             child:
                                                                                 Padding(
-                                                                              padding: EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 0.0, 0.0),
+                                                                              padding: const EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 0.0, 0.0),
                                                                               child: Column(
                                                                                 mainAxisSize: MainAxisSize.max,
                                                                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1299,7 +1293,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                                                   Text(
                                                                                     'Sel-fcare Milestones',
                                                                                     style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                          fontFamily: 'Andika New Basic',
+                                                                                          fontFamily: FFAppState().currentFontFamily,
                                                                                           color: Colors.black,
                                                                                           fontSize: 16.0,
                                                                                           letterSpacing: 0.0,
@@ -1307,7 +1301,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                                                         ),
                                                                                   ),
                                                                                   Padding(
-                                                                                    padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 8.0),
+                                                                                    padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 8.0),
                                                                                     child: RichText(
                                                                                       textScaler: MediaQuery.of(context).textScaler,
                                                                                       text: TextSpan(
@@ -1315,7 +1309,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                                                           TextSpan(
                                                                                             text: 'For ',
                                                                                             style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                                  fontFamily: 'Andika New Basic',
+                                                                                                  fontFamily: FFAppState().currentFontFamily,
                                                                                                   color: FlutterFlowTheme.of(context).primaryText,
                                                                                                   fontSize: 10.0,
                                                                                                   letterSpacing: 0.0,
@@ -1330,23 +1324,23 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                                                                   .toString(),
                                                                                               '0',
                                                                                             ),
-                                                                                            style: TextStyle(),
+                                                                                            style: const TextStyle(),
                                                                                           ),
-                                                                                          TextSpan(
+                                                                                          const TextSpan(
                                                                                             text: ' to ',
                                                                                             style: TextStyle(),
                                                                                           ),
                                                                                           TextSpan(
                                                                                             text: functions.newCobverBirthdayToAGe(containerChildernRecord.birthDay!).toString(),
-                                                                                            style: TextStyle(),
+                                                                                            style: const TextStyle(),
                                                                                           ),
-                                                                                          TextSpan(
+                                                                                          const TextSpan(
                                                                                             text: ' yo',
                                                                                             style: TextStyle(),
                                                                                           )
                                                                                         ],
                                                                                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                              fontFamily: 'Andika New Basic',
+                                                                                              fontFamily: FFAppState().currentFontFamily,
                                                                                               color: FlutterFlowTheme.of(context).primaryText,
                                                                                               fontSize: 10.0,
                                                                                               letterSpacing: 0.0,
@@ -1362,7 +1356,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                                         ],
                                                                       ),
                                                                       Padding(
-                                                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                                                        padding: const EdgeInsetsDirectional.fromSTEB(
                                                                             0.0,
                                                                             8.0,
                                                                             0.0,
@@ -1389,15 +1383,15 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                                           progressColor:
                                                                               FlutterFlowTheme.of(context).primary,
                                                                           backgroundColor:
-                                                                              Color(0xFFE0E0E0),
+                                                                              const Color(0xFFE0E0E0),
                                                                           barRadius:
-                                                                              Radius.circular(8.0),
+                                                                              const Radius.circular(8.0),
                                                                           padding:
                                                                               EdgeInsets.zero,
                                                                         ),
                                                                       ),
                                                                       Padding(
-                                                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                                                        padding: const EdgeInsetsDirectional.fromSTEB(
                                                                             0.0,
                                                                             12.0,
                                                                             0.0,
@@ -1409,7 +1403,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                                             final milestones =
                                                                                 containerSelfcareSaticMilestonesRecordList.toList();
                                                                             if (milestones.isEmpty) {
-                                                                              return Container(
+                                                                              return const SizedBox(
                                                                                 width: double.infinity,
                                                                                 height: 200.0,
                                                                                 child: EmptyListViewComponentWidget(
@@ -1427,7 +1421,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                                               shrinkWrap: true,
                                                                               scrollDirection: Axis.vertical,
                                                                               itemCount: milestones.length,
-                                                                              separatorBuilder: (_, __) => SizedBox(height: 6.0),
+                                                                              separatorBuilder: (_, __) => const SizedBox(height: 6.0),
                                                                               itemBuilder: (context, milestonesIndex) {
                                                                                 final milestonesItem = milestones[milestonesIndex];
                                                                                 return Row(
@@ -1478,7 +1472,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                                                       child: Text(
                                                                                         milestonesItem.title,
                                                                                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                              fontFamily: 'Andika New Basic',
+                                                                                              fontFamily: FFAppState().currentFontFamily,
                                                                                               color: FlutterFlowTheme.of(context).secondaryText,
                                                                                               fontSize: 12.0,
                                                                                               letterSpacing: 0.0,
@@ -1548,7 +1542,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
 
                                                           return Container(
                                                             decoration:
-                                                                BoxDecoration(),
+                                                                const BoxDecoration(),
                                                             child: Visibility(
                                                               visible:
                                                                   containerCommunicationSaticMilestonesRecordList
@@ -1567,7 +1561,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                                               32.0),
                                                                 ),
                                                                 child: Padding(
-                                                                  padding: EdgeInsetsDirectional
+                                                                  padding: const EdgeInsetsDirectional
                                                                       .fromSTEB(
                                                                           14.0,
                                                                           14.0,
@@ -1612,7 +1606,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                                           Expanded(
                                                                             child:
                                                                                 Padding(
-                                                                              padding: EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 0.0, 0.0),
+                                                                              padding: const EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 0.0, 0.0),
                                                                               child: Column(
                                                                                 mainAxisSize: MainAxisSize.max,
                                                                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1620,7 +1614,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                                                   Text(
                                                                                     'Communication Milestones',
                                                                                     style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                          fontFamily: 'Andika New Basic',
+                                                                                          fontFamily: FFAppState().currentFontFamily,
                                                                                           color: Colors.black,
                                                                                           fontSize: 16.0,
                                                                                           letterSpacing: 0.0,
@@ -1628,7 +1622,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                                                         ),
                                                                                   ),
                                                                                   Padding(
-                                                                                    padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 8.0),
+                                                                                    padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 8.0),
                                                                                     child: RichText(
                                                                                       textScaler: MediaQuery.of(context).textScaler,
                                                                                       text: TextSpan(
@@ -1636,7 +1630,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                                                           TextSpan(
                                                                                             text: 'For ',
                                                                                             style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                                  fontFamily: 'Andika New Basic',
+                                                                                                  fontFamily: FFAppState().currentFontFamily,
                                                                                                   color: FlutterFlowTheme.of(context).primaryText,
                                                                                                   fontSize: 10.0,
                                                                                                   letterSpacing: 0.0,
@@ -1651,23 +1645,23 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                                                                   .toString(),
                                                                                               '0',
                                                                                             ),
-                                                                                            style: TextStyle(),
+                                                                                            style: const TextStyle(),
                                                                                           ),
-                                                                                          TextSpan(
+                                                                                          const TextSpan(
                                                                                             text: ' to ',
                                                                                             style: TextStyle(),
                                                                                           ),
                                                                                           TextSpan(
                                                                                             text: functions.newCobverBirthdayToAGe(containerChildernRecord.birthDay!).toString(),
-                                                                                            style: TextStyle(),
+                                                                                            style: const TextStyle(),
                                                                                           ),
-                                                                                          TextSpan(
+                                                                                          const TextSpan(
                                                                                             text: ' yo',
                                                                                             style: TextStyle(),
                                                                                           )
                                                                                         ],
                                                                                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                              fontFamily: 'Andika New Basic',
+                                                                                              fontFamily: FFAppState().currentFontFamily,
                                                                                               color: FlutterFlowTheme.of(context).primaryText,
                                                                                               fontSize: 10.0,
                                                                                               letterSpacing: 0.0,
@@ -1683,7 +1677,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                                         ],
                                                                       ),
                                                                       Padding(
-                                                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                                                        padding: const EdgeInsetsDirectional.fromSTEB(
                                                                             0.0,
                                                                             8.0,
                                                                             0.0,
@@ -1710,15 +1704,15 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                                           progressColor:
                                                                               FlutterFlowTheme.of(context).primary,
                                                                           backgroundColor:
-                                                                              Color(0xFFE0E0E0),
+                                                                              const Color(0xFFE0E0E0),
                                                                           barRadius:
-                                                                              Radius.circular(8.0),
+                                                                              const Radius.circular(8.0),
                                                                           padding:
                                                                               EdgeInsets.zero,
                                                                         ),
                                                                       ),
                                                                       Padding(
-                                                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                                                        padding: const EdgeInsetsDirectional.fromSTEB(
                                                                             0.0,
                                                                             12.0,
                                                                             0.0,
@@ -1730,7 +1724,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                                             final milestones =
                                                                                 containerCommunicationSaticMilestonesRecordList.toList();
                                                                             if (milestones.isEmpty) {
-                                                                              return Container(
+                                                                              return const SizedBox(
                                                                                 height: 200.0,
                                                                                 child: EmptyListViewComponentWidget(
                                                                                   icon: Icon(
@@ -1747,7 +1741,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                                               shrinkWrap: true,
                                                                               scrollDirection: Axis.vertical,
                                                                               itemCount: milestones.length,
-                                                                              separatorBuilder: (_, __) => SizedBox(height: 6.0),
+                                                                              separatorBuilder: (_, __) => const SizedBox(height: 6.0),
                                                                               itemBuilder: (context, milestonesIndex) {
                                                                                 final milestonesItem = milestones[milestonesIndex];
                                                                                 return Row(
@@ -1798,7 +1792,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                                                       child: Text(
                                                                                         milestonesItem.title,
                                                                                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                              fontFamily: 'Andika New Basic',
+                                                                                              fontFamily: FFAppState().currentFontFamily,
                                                                                               color: FlutterFlowTheme.of(context).secondaryText,
                                                                                               fontSize: 12.0,
                                                                                               letterSpacing: 0.0,
@@ -1868,7 +1862,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
 
                                                           return Container(
                                                             decoration:
-                                                                BoxDecoration(),
+                                                                const BoxDecoration(),
                                                             child: Visibility(
                                                               visible:
                                                                   containerSocialEmotionalSaticMilestonesRecordList
@@ -1887,7 +1881,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                                               32.0),
                                                                 ),
                                                                 child: Padding(
-                                                                  padding: EdgeInsetsDirectional
+                                                                  padding: const EdgeInsetsDirectional
                                                                       .fromSTEB(
                                                                           14.0,
                                                                           14.0,
@@ -1932,7 +1926,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                                           Expanded(
                                                                             child:
                                                                                 Padding(
-                                                                              padding: EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 0.0, 0.0),
+                                                                              padding: const EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 0.0, 0.0),
                                                                               child: Column(
                                                                                 mainAxisSize: MainAxisSize.max,
                                                                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1940,7 +1934,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                                                   Text(
                                                                                     'Social/Emotional Milestones',
                                                                                     style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                          fontFamily: 'Andika New Basic',
+                                                                                          fontFamily: FFAppState().currentFontFamily,
                                                                                           color: Colors.black,
                                                                                           fontSize: 16.0,
                                                                                           letterSpacing: 0.0,
@@ -1948,7 +1942,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                                                         ),
                                                                                   ),
                                                                                   Padding(
-                                                                                    padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 8.0),
+                                                                                    padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 8.0),
                                                                                     child: RichText(
                                                                                       textScaler: MediaQuery.of(context).textScaler,
                                                                                       text: TextSpan(
@@ -1956,7 +1950,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                                                           TextSpan(
                                                                                             text: 'For ',
                                                                                             style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                                  fontFamily: 'Andika New Basic',
+                                                                                                  fontFamily: FFAppState().currentFontFamily,
                                                                                                   color: FlutterFlowTheme.of(context).primaryText,
                                                                                                   fontSize: 10.0,
                                                                                                   letterSpacing: 0.0,
@@ -1971,23 +1965,23 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                                                                   .toString(),
                                                                                               '0',
                                                                                             ),
-                                                                                            style: TextStyle(),
+                                                                                            style: const TextStyle(),
                                                                                           ),
-                                                                                          TextSpan(
+                                                                                          const TextSpan(
                                                                                             text: ' to ',
                                                                                             style: TextStyle(),
                                                                                           ),
                                                                                           TextSpan(
                                                                                             text: functions.newCobverBirthdayToAGe(containerChildernRecord.birthDay!).toString(),
-                                                                                            style: TextStyle(),
+                                                                                            style: const TextStyle(),
                                                                                           ),
-                                                                                          TextSpan(
+                                                                                          const TextSpan(
                                                                                             text: ' yo',
                                                                                             style: TextStyle(),
                                                                                           )
                                                                                         ],
                                                                                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                              fontFamily: 'Andika New Basic',
+                                                                                              fontFamily: FFAppState().currentFontFamily,
                                                                                               color: FlutterFlowTheme.of(context).primaryText,
                                                                                               fontSize: 10.0,
                                                                                               letterSpacing: 0.0,
@@ -2003,7 +1997,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                                         ],
                                                                       ),
                                                                       Padding(
-                                                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                                                        padding: const EdgeInsetsDirectional.fromSTEB(
                                                                             0.0,
                                                                             8.0,
                                                                             0.0,
@@ -2030,15 +2024,15 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                                           progressColor:
                                                                               FlutterFlowTheme.of(context).primary,
                                                                           backgroundColor:
-                                                                              Color(0xFFE0E0E0),
+                                                                              const Color(0xFFE0E0E0),
                                                                           barRadius:
-                                                                              Radius.circular(8.0),
+                                                                              const Radius.circular(8.0),
                                                                           padding:
                                                                               EdgeInsets.zero,
                                                                         ),
                                                                       ),
                                                                       Padding(
-                                                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                                                        padding: const EdgeInsetsDirectional.fromSTEB(
                                                                             0.0,
                                                                             12.0,
                                                                             0.0,
@@ -2050,7 +2044,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                                             final milestones =
                                                                                 containerSocialEmotionalSaticMilestonesRecordList.toList();
                                                                             if (milestones.isEmpty) {
-                                                                              return Container(
+                                                                              return const SizedBox(
                                                                                 height: 200.0,
                                                                                 child: EmptyListViewComponentWidget(
                                                                                   icon: Icon(
@@ -2067,7 +2061,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                                               shrinkWrap: true,
                                                                               scrollDirection: Axis.vertical,
                                                                               itemCount: milestones.length,
-                                                                              separatorBuilder: (_, __) => SizedBox(height: 6.0),
+                                                                              separatorBuilder: (_, __) => const SizedBox(height: 6.0),
                                                                               itemBuilder: (context, milestonesIndex) {
                                                                                 final milestonesItem = milestones[milestonesIndex];
                                                                                 return Row(
@@ -2118,7 +2112,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                                                       child: Text(
                                                                                         milestonesItem.title,
                                                                                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                              fontFamily: 'Andika New Basic',
+                                                                                              fontFamily: FFAppState().currentFontFamily,
                                                                                               color: FlutterFlowTheme.of(context).secondaryText,
                                                                                               fontSize: 12.0,
                                                                                               letterSpacing: 0.0,
@@ -2142,7 +2136,7 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                                                         },
                                                       ),
                                                     ].divide(
-                                                        SizedBox(height: 20.0)),
+                                                        const SizedBox(height: 20.0)),
                                                   ),
                                                 ),
                                               ),
@@ -2162,12 +2156,12 @@ class _MilestonessWidgetState extends State<MilestonessWidget> {
                   ),
                 ),
                 Align(
-                  alignment: AlignmentDirectional(0.0, 1.0),
+                  alignment: const AlignmentDirectional(0.0, 1.0),
                   child: Container(
-                    constraints: BoxConstraints(
+                    constraints: const BoxConstraints(
                       minHeight: 50.0,
                     ),
-                    decoration: BoxDecoration(),
+                    decoration: const BoxDecoration(),
                     child: const HomeNavBarWidget(
                       currentPage: HomeNavPage.home,
                     ),

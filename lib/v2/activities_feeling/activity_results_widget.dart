@@ -5,10 +5,8 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/v2/todo/addcalender/addcalender_widget.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '/app_state.dart';
 import 'activity_results_model.dart';
 export 'activity_results_model.dart';
 
@@ -381,17 +379,17 @@ class _ActivityResultsWidgetState extends State<ActivityResultsWidget> {
       },
       child: Scaffold(
         key: scaffoldKey,
-        backgroundColor: isComfortMode ? Color(0xFF2C3E50) : Color(0xFFFFE9E1),
+        backgroundColor: isComfortMode ? const Color(0xFF2C3E50) : const Color(0xFFFFE9E1),
         body: Container(
           decoration: BoxDecoration(
             gradient: isComfortMode
-              ? LinearGradient(
+              ? const LinearGradient(
                   colors: [Color(0xFF2C3E50), Color(0xFF34495E)],
                   stops: [0.0, 1.0],
                   begin: AlignmentDirectional(0.0, -1.0),
                   end: AlignmentDirectional(0, 1.0),
                 )
-              : LinearGradient(
+              : const LinearGradient(
                   colors: [Color(0xFFD7F2EB), Color(0xFFFFE9E1)],
                   stops: [0.0, 1.0],
                   begin: AlignmentDirectional(0.0, -1.0),
@@ -483,7 +481,7 @@ class _ActivityResultsWidgetState extends State<ActivityResultsWidget> {
                 return SingleChildScrollView(
                   child: Padding(
                     padding:
-                        EdgeInsetsDirectional.fromSTEB(24.0, 40.0, 24.0, 24.0),
+                        const EdgeInsetsDirectional.fromSTEB(24.0, 40.0, 24.0, 24.0),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -499,19 +497,19 @@ class _ActivityResultsWidgetState extends State<ActivityResultsWidget> {
                               Icon(
                                 Icons.arrow_back,
                                 color: isComfortMode
-                                  ? Color(0xFF95A5A6)
+                                  ? const Color(0xFF95A5A6)
                                   : FlutterFlowTheme.of(context).secondaryText,
                                 size: 20.0,
                               ),
-                              SizedBox(width: 8.0),
+                              const SizedBox(width: 8.0),
                               Text(
                                 'Back',
                                 style: FlutterFlowTheme.of(context)
                                     .bodySmall
                                     .override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       color: isComfortMode
-                                        ? Color(0xFF95A5A6)
+                                        ? const Color(0xFF95A5A6)
                                         : FlutterFlowTheme.of(context).secondaryText,
                                       fontSize: 14.0,
                                       letterSpacing: 0.0,
@@ -521,7 +519,7 @@ class _ActivityResultsWidgetState extends State<ActivityResultsWidget> {
                           ),
                         ),
 
-                        SizedBox(height: 32.0),
+                        const SizedBox(height: 32.0),
 
                         // Page title
                         Text(
@@ -529,7 +527,7 @@ class _ActivityResultsWidgetState extends State<ActivityResultsWidget> {
                           style: FlutterFlowTheme.of(context)
                               .headlineLarge
                               .override(
-                                fontFamily: 'Andika New Basic',
+                                fontFamily: FFAppState().currentFontFamily,
                                 color: isComfortMode ? Colors.white : null,
                                 fontSize: 28.0,
                                 letterSpacing: isComfortMode ? 0.5 : 0.0,
@@ -537,14 +535,14 @@ class _ActivityResultsWidgetState extends State<ActivityResultsWidget> {
                               ),
                         ),
 
-                        SizedBox(height: 8.0),
+                        const SizedBox(height: 8.0),
 
                         Text(
                           _getBubbleSubtitle(widget.bubbleType),
                           style: FlutterFlowTheme.of(context)
                               .bodyMedium
                               .override(
-                                fontFamily: 'Andika New Basic',
+                                fontFamily: FFAppState().currentFontFamily,
                                 color: isComfortMode
                                   ? Colors.white.withOpacity(0.7)
                                   : FlutterFlowTheme.of(context).secondaryText,
@@ -556,7 +554,7 @@ class _ActivityResultsWidgetState extends State<ActivityResultsWidget> {
 
                         // Search and Filter chips for Browse All mode
                         if (widget.bubbleType == 'all') ...[
-                          SizedBox(height: 16.0),
+                          const SizedBox(height: 16.0),
                           // Search field
                           Container(
                             decoration: BoxDecoration(
@@ -576,14 +574,14 @@ class _ActivityResultsWidgetState extends State<ActivityResultsWidget> {
                                 });
                               },
                               style: TextStyle(
-                                fontFamily: 'Andika New Basic',
+                                fontFamily: FFAppState().currentFontFamily,
                                 fontSize: 15.0,
                                 color: isComfortMode ? Colors.white : const Color(0xFF5D4E60),
                               ),
                               decoration: InputDecoration(
                                 hintText: 'Search activities...',
                                 hintStyle: TextStyle(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   fontSize: 15.0,
                                   color: isComfortMode
                                       ? Colors.white.withValues(alpha: 0.5)
@@ -621,7 +619,7 @@ class _ActivityResultsWidgetState extends State<ActivityResultsWidget> {
                               ),
                             ),
                           ),
-                          SizedBox(height: 12.0),
+                          const SizedBox(height: 12.0),
                           SingleChildScrollView(
                             scrollDirection: Axis.horizontal,
                             child: Row(
@@ -640,7 +638,7 @@ class _ActivityResultsWidgetState extends State<ActivityResultsWidget> {
                                   isComfortMode: isComfortMode,
                                   filterType: 'duration',
                                 ),
-                                SizedBox(width: 8.0),
+                                const SizedBox(width: 8.0),
                                 _buildFilterChip(
                                   label: _filterSetup != null ? 'Setup: $_filterSetup' : 'Setup',
                                   isActive: _filterSetup != null,
@@ -655,7 +653,7 @@ class _ActivityResultsWidgetState extends State<ActivityResultsWidget> {
                                   isComfortMode: isComfortMode,
                                   filterType: 'setup',
                                 ),
-                                SizedBox(width: 8.0),
+                                const SizedBox(width: 8.0),
                                 _buildFilterChip(
                                   label: _filterCleanup != null ? 'Cleanup: $_filterCleanup' : 'Cleanup',
                                   isActive: _filterCleanup != null,
@@ -670,7 +668,7 @@ class _ActivityResultsWidgetState extends State<ActivityResultsWidget> {
                                   isComfortMode: isComfortMode,
                                   filterType: 'cleanup',
                                 ),
-                                SizedBox(width: 8.0),
+                                const SizedBox(width: 8.0),
                                 _buildFilterChip(
                                   label: _filterParentProximity != null
                                       ? (_filterParentProximity == 'free' ? 'Independent'
@@ -692,7 +690,7 @@ class _ActivityResultsWidgetState extends State<ActivityResultsWidget> {
                                 // Clear all filters button
                                 if (_filterDuration != null || _filterSetup != null ||
                                     _filterCleanup != null || _filterParentProximity != null) ...[
-                                  SizedBox(width: 8.0),
+                                  const SizedBox(width: 8.0),
                                   InkWell(
                                     onTap: () {
                                       setState(() {
@@ -703,7 +701,7 @@ class _ActivityResultsWidgetState extends State<ActivityResultsWidget> {
                                       });
                                     },
                                     child: Container(
-                                      padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+                                      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
                                       decoration: BoxDecoration(
                                         color: Colors.red.withOpacity(0.1),
                                         borderRadius: BorderRadius.circular(20.0),
@@ -711,12 +709,12 @@ class _ActivityResultsWidgetState extends State<ActivityResultsWidget> {
                                       child: Row(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
-                                          Icon(Icons.clear, size: 16.0, color: Colors.red),
-                                          SizedBox(width: 4.0),
+                                          const Icon(Icons.clear, size: 16.0, color: Colors.red),
+                                          const SizedBox(width: 4.0),
                                           Text(
                                             'Clear',
                                             style: TextStyle(
-                                              fontFamily: 'Andika New Basic',
+                                              fontFamily: FFAppState().currentFontFamily,
                                               fontSize: 13.0,
                                               color: Colors.red,
                                               fontWeight: FontWeight.w500,
@@ -730,12 +728,12 @@ class _ActivityResultsWidgetState extends State<ActivityResultsWidget> {
                               ],
                             ),
                           ),
-                          SizedBox(height: 8.0),
+                          const SizedBox(height: 8.0),
                           // Results count
                           Text(
                             '${allActivities.length} activities',
                             style: FlutterFlowTheme.of(context).bodySmall.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               color: isComfortMode
                                   ? Colors.white.withOpacity(0.5)
                                   : FlutterFlowTheme.of(context).secondaryText,
@@ -744,7 +742,7 @@ class _ActivityResultsWidgetState extends State<ActivityResultsWidget> {
                           ),
                         ],
 
-                        SizedBox(height: 24.0),
+                        const SizedBox(height: 24.0),
 
                         // Empty state when no activities match
                         if (allActivities.isEmpty && widget.bubbleType == 'all')
@@ -755,10 +753,10 @@ class _ActivityResultsWidgetState extends State<ActivityResultsWidget> {
                             return Column(
                               children: [
                                 _buildActivityCard(activity),
-                                SizedBox(height: 16.0),
+                                const SizedBox(height: 16.0),
                               ],
                             );
-                          }).toList(),
+                          }),
 
                         // Show more button
                         if (moreActivities.isNotEmpty && !_showMore)
@@ -770,7 +768,7 @@ class _ActivityResultsWidgetState extends State<ActivityResultsWidget> {
                                 });
                               },
                               child: Container(
-                                padding: EdgeInsets.symmetric(
+                                padding: const EdgeInsets.symmetric(
                                   horizontal: 24.0,
                                   vertical: 12.0,
                                 ),
@@ -788,7 +786,7 @@ class _ActivityResultsWidgetState extends State<ActivityResultsWidget> {
                                   style: FlutterFlowTheme.of(context)
                                       .bodyMedium
                                       .override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         color: isComfortMode
                                           ? Colors.white
                                           : FlutterFlowTheme.of(context).primary,
@@ -807,12 +805,12 @@ class _ActivityResultsWidgetState extends State<ActivityResultsWidget> {
                             return Column(
                               children: [
                                 _buildActivityCard(activity),
-                                SizedBox(height: 16.0),
+                                const SizedBox(height: 16.0),
                               ],
                             );
-                          }).toList(),
+                          }),
 
-                        SizedBox(height: 32.0),
+                        const SizedBox(height: 32.0),
                       ],
                     ),
                   ),
@@ -853,7 +851,7 @@ class _ActivityResultsWidgetState extends State<ActivityResultsWidget> {
                   : 'No activities match these filters',
               textAlign: TextAlign.center,
               style: FlutterFlowTheme.of(context).titleMedium.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     color: isComfortMode
                         ? Colors.white.withValues(alpha: 0.7)
                         : const Color(0xFF5D4E60),
@@ -868,7 +866,7 @@ class _ActivityResultsWidgetState extends State<ActivityResultsWidget> {
                   : 'No activities available',
               textAlign: TextAlign.center,
               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     color: isComfortMode
                         ? Colors.white.withValues(alpha: 0.5)
                         : Colors.grey,
@@ -902,7 +900,7 @@ class _ActivityResultsWidgetState extends State<ActivityResultsWidget> {
                   child: Text(
                     'Clear All',
                     style: TextStyle(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       fontSize: 14.0,
                       color: isComfortMode
                           ? Colors.white
@@ -1010,7 +1008,7 @@ class _ActivityResultsWidgetState extends State<ActivityResultsWidget> {
           Text(
             label,
             style: TextStyle(
-              fontFamily: 'Andika New Basic',
+              fontFamily: FFAppState().currentFontFamily,
               fontSize: 12.0,
               color: isComfortMode ? color.withOpacity(0.9) : color,
               fontWeight: FontWeight.w500,
@@ -1028,7 +1026,7 @@ class _ActivityResultsWidgetState extends State<ActivityResultsWidget> {
       onTap: () => _showActivityDetailsSheet(context, activity),
       child: Container(
       width: double.infinity,
-      padding: EdgeInsets.all(20.0),
+      padding: const EdgeInsets.all(20.0),
       decoration: BoxDecoration(
         color: isComfortMode ? Colors.transparent : FlutterFlowTheme.of(context).secondaryBackground,
         borderRadius: BorderRadius.circular(14.0),
@@ -1036,7 +1034,7 @@ class _ActivityResultsWidgetState extends State<ActivityResultsWidget> {
           ? Border.all(color: Colors.white.withOpacity(0.3), width: 1.0)
           : null,
         boxShadow: isComfortMode ? null : [
-          BoxShadow(
+          const BoxShadow(
             blurRadius: 4.0,
             color: Color(0x1A000000),
             offset: Offset(0, 2),
@@ -1074,7 +1072,7 @@ class _ActivityResultsWidgetState extends State<ActivityResultsWidget> {
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: FlutterFlowTheme.of(context).titleLarge.override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         color: isComfortMode ? Colors.white : null,
                         fontSize: 18.0,
                         letterSpacing: isComfortMode ? 0.5 : 0.0,
@@ -1107,20 +1105,20 @@ class _ActivityResultsWidgetState extends State<ActivityResultsWidget> {
             ],
           ),
 
-          SizedBox(height: 12.0),
+          const SizedBox(height: 12.0),
 
           // Description
           Text(
             activity.description,
             style: FlutterFlowTheme.of(context).bodyMedium.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   color: isComfortMode ? Colors.white.withOpacity(0.9) : null,
                   fontSize: 15.0,
                   letterSpacing: 0.0,
                 ),
           ),
 
-          SizedBox(height: 16.0),
+          const SizedBox(height: 16.0),
 
           // Metadata - colored chips matching bottom sheet style
           Wrap(
@@ -1194,7 +1192,7 @@ class _ActivityResultsWidgetState extends State<ActivityResultsWidget> {
                       child: Text(
                         activity.thingsNeeded,
                         style: FlutterFlowTheme.of(context).bodySmall.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               color: isComfortMode ? const Color(0xFFECF0F1) : FlutterFlowTheme.of(context).primaryText,
                               fontSize: 13.0,
                               letterSpacing: 0.0,
@@ -1236,7 +1234,7 @@ class _ActivityResultsWidgetState extends State<ActivityResultsWidget> {
                       child: Text(
                         activity.activitySafetyConcerns,
                         style: FlutterFlowTheme.of(context).bodySmall.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               color: isComfortMode ? const Color(0xFFECF0F1) : FlutterFlowTheme.of(context).primaryText,
                               fontSize: 13.0,
                               letterSpacing: 0.0,
@@ -1250,7 +1248,7 @@ class _ActivityResultsWidgetState extends State<ActivityResultsWidget> {
 
           // Quick Add buttons
           Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(0, 16.0, 0, 0),
+            padding: const EdgeInsetsDirectional.fromSTEB(0, 16.0, 0, 0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -1282,7 +1280,7 @@ class _ActivityResultsWidgetState extends State<ActivityResultsWidget> {
                         Text(
                           'Quick Add',
                           style: TextStyle(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             fontSize: 14.0,
                             color: isComfortMode ? Colors.white : const Color(0xFF4CAF50),
                             fontWeight: FontWeight.w600,
@@ -1329,7 +1327,7 @@ class _ActivityResultsWidgetState extends State<ActivityResultsWidget> {
                         Text(
                           'Schedule',
                           style: TextStyle(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             fontSize: 14.0,
                             color: isComfortMode ? Colors.white : FlutterFlowTheme.of(context).primary,
                             fontWeight: FontWeight.w600,
@@ -1415,7 +1413,7 @@ class _ActivityResultsWidgetState extends State<ActivityResultsWidget> {
                           Text(
                             activity.title,
                             style: FlutterFlowTheme.of(context).titleLarge.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               color: isComfortMode ? Colors.white : const Color(0xFF5D4E60),
                               fontSize: 20.0,
                               fontWeight: FontWeight.w600,
@@ -1434,7 +1432,7 @@ class _ActivityResultsWidgetState extends State<ActivityResultsWidget> {
                                 Text(
                                   activity.location == 'outdoor' ? 'Outdoor' : 'Indoor',
                                   style: TextStyle(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     fontSize: 14.0,
                                     color: isComfortMode ? const Color(0xFF95A5A6) : Colors.grey,
                                   ),
@@ -1454,7 +1452,7 @@ class _ActivityResultsWidgetState extends State<ActivityResultsWidget> {
                 Text(
                   activity.description,
                   style: FlutterFlowTheme.of(context).bodyMedium.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     color: isComfortMode ? Colors.white.withOpacity(0.9) : const Color(0xFF5D4E60),
                     fontSize: 15.0,
                   ),
@@ -1535,7 +1533,7 @@ class _ActivityResultsWidgetState extends State<ActivityResultsWidget> {
                           child: Text(
                             activity.thingsNeeded,
                             style: FlutterFlowTheme.of(context).bodyMedium.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               color: isComfortMode ? const Color(0xFFECF0F1) : FlutterFlowTheme.of(context).primaryText,
                             ),
                           ),
@@ -1574,7 +1572,7 @@ class _ActivityResultsWidgetState extends State<ActivityResultsWidget> {
                           child: Text(
                             activity.activitySafetyConcerns,
                             style: FlutterFlowTheme.of(context).bodyMedium.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               color: isComfortMode ? const Color(0xFFECF0F1) : FlutterFlowTheme.of(context).primaryText,
                             ),
                           ),
@@ -1614,7 +1612,7 @@ class _ActivityResultsWidgetState extends State<ActivityResultsWidget> {
                               Text(
                                 'Quick Add',
                                 style: TextStyle(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   fontSize: 16.0,
                                   color: Colors.white,
                                   fontWeight: FontWeight.w600,
@@ -1666,7 +1664,7 @@ class _ActivityResultsWidgetState extends State<ActivityResultsWidget> {
                               Text(
                                 'Schedule',
                                 style: TextStyle(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   fontSize: 16.0,
                                   color: isComfortMode ? Colors.white : FlutterFlowTheme.of(context).primary,
                                   fontWeight: FontWeight.w600,
@@ -1715,7 +1713,7 @@ class _ActivityResultsWidgetState extends State<ActivityResultsWidget> {
           Text(
             label,
             style: TextStyle(
-              fontFamily: 'Andika New Basic',
+              fontFamily: FFAppState().currentFontFamily,
               fontSize: 13.0,
               color: isComfortMode ? color.withOpacity(0.9) : color,
               fontWeight: FontWeight.w500,
@@ -1793,7 +1791,7 @@ class _ActivityResultsWidgetState extends State<ActivityResultsWidget> {
             Text(
               label,
               style: TextStyle(
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
                 fontSize: 13.0,
                 color: activeTextColor,
                 fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
@@ -1865,7 +1863,7 @@ class _ActivityResultsWidgetState extends State<ActivityResultsWidget> {
                     Text(
                       title,
                       style: FlutterFlowTheme.of(context).titleMedium.override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         color: headerTextColor,
                         fontWeight: FontWeight.w600,
                       ),
@@ -1879,7 +1877,7 @@ class _ActivityResultsWidgetState extends State<ActivityResultsWidget> {
                         child: Text(
                           'Clear',
                           style: TextStyle(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: headerTextColor,
                             fontWeight: FontWeight.w500,
                           ),
@@ -1916,7 +1914,7 @@ class _ActivityResultsWidgetState extends State<ActivityResultsWidget> {
                         Text(
                           displayLabel,
                           style: TextStyle(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             fontSize: 16.0,
                             color: isSelected
                                 ? (filterType != null
@@ -1960,7 +1958,7 @@ class _ActivityQuickAddSheet extends StatefulWidget {
 
 class _ActivityQuickAddSheetState extends State<_ActivityQuickAddSheet> {
   List<ChildernRecord>? _userChildren;
-  Set<DocumentReference> _selectedChildren = {};
+  final Set<DocumentReference> _selectedChildren = {};
   bool _assignToMom = false;
   bool _assignToDad = false;
   bool _isLoading = false;
@@ -2046,7 +2044,7 @@ class _ActivityQuickAddSheetState extends State<_ActivityQuickAddSheet> {
               Text(
                 'Add Activity',
                 style: FlutterFlowTheme.of(context).titleLarge.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   color: isComfortMode ? const Color(0xFFECF0F1) : const Color(0xFF5D4E60),
                   fontWeight: FontWeight.w600,
                 ),
@@ -2055,7 +2053,7 @@ class _ActivityQuickAddSheetState extends State<_ActivityQuickAddSheet> {
               Text(
                 widget.activity.title,
                 style: FlutterFlowTheme.of(context).bodyMedium.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   color: isComfortMode ? const Color(0xFF95A5A6) : FlutterFlowTheme.of(context).secondaryText,
                 ),
               ),
@@ -2065,7 +2063,7 @@ class _ActivityQuickAddSheetState extends State<_ActivityQuickAddSheet> {
               Text(
                 'When',
                 style: FlutterFlowTheme.of(context).bodyMedium.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   color: isComfortMode ? const Color(0xFFECF0F1) : const Color(0xFF5D4E60),
                   fontWeight: FontWeight.w600,
                 ),
@@ -2093,7 +2091,7 @@ class _ActivityQuickAddSheetState extends State<_ActivityQuickAddSheet> {
               Text(
                 'Assign to',
                 style: FlutterFlowTheme.of(context).bodyMedium.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   color: isComfortMode ? const Color(0xFFECF0F1) : const Color(0xFF5D4E60),
                   fontWeight: FontWeight.w600,
                 ),
@@ -2136,7 +2134,7 @@ class _ActivityQuickAddSheetState extends State<_ActivityQuickAddSheet> {
                           Text(
                             _parentInfo.myName,
                             style: TextStyle(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               color: isComfortMode ? const Color(0xFFECF0F1) : const Color(0xFF5D4E60),
                               fontSize: 15.0,
                               fontWeight: FontWeight.w500,
@@ -2183,7 +2181,7 @@ class _ActivityQuickAddSheetState extends State<_ActivityQuickAddSheet> {
                           Text(
                             _parentInfo.partnerName,
                             style: TextStyle(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               color: isComfortMode ? const Color(0xFFECF0F1) : const Color(0xFF5D4E60),
                               fontSize: 15.0,
                               fontWeight: FontWeight.w500,
@@ -2206,7 +2204,7 @@ class _ActivityQuickAddSheetState extends State<_ActivityQuickAddSheet> {
                 Text(
                   'For children',
                   style: FlutterFlowTheme.of(context).bodyMedium.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     color: isComfortMode ? const Color(0xFFECF0F1) : const Color(0xFF5D4E60),
                     fontWeight: FontWeight.w600,
                   ),
@@ -2261,7 +2259,7 @@ class _ActivityQuickAddSheetState extends State<_ActivityQuickAddSheet> {
                             Text(
                               child.name,
                               style: TextStyle(
-                                fontFamily: 'Andika New Basic',
+                                fontFamily: FFAppState().currentFontFamily,
                                 color: isComfortMode ? const Color(0xFFECF0F1) : const Color(0xFF5D4E60),
                                 fontSize: 15.0,
                                 fontWeight: FontWeight.w500,
@@ -2342,7 +2340,7 @@ class _ActivityQuickAddSheetState extends State<_ActivityQuickAddSheet> {
                     height: 50.0,
                     color: const Color(0xFF4CAF50),
                     textStyle: FlutterFlowTheme.of(context).titleSmall.override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       color: Colors.white,
                       fontWeight: FontWeight.w600,
                     ),
@@ -2390,7 +2388,7 @@ class _ActivityQuickAddSheetState extends State<_ActivityQuickAddSheet> {
         child: Text(
           label,
           style: TextStyle(
-            fontFamily: 'Andika New Basic',
+            fontFamily: FFAppState().currentFontFamily,
             color: isSelected
                 ? const Color(0xFF4CAF50)
                 : (isComfortMode ? const Color(0xFFECF0F1) : const Color(0xFF5D4E60)),

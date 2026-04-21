@@ -40,14 +40,14 @@ class ScreenshotMealPlan extends StatelessWidget {
                             ),
                           ],
                         ),
-                        child: Column(
+                        child: const Column(
                           children: [
                             // Title row
                             Row(
                               children: [
-                                const Icon(Icons.arrow_back_ios, size: 20, color: kPrimary),
-                                const SizedBox(width: 12),
-                                const Text(
+                                Icon(Icons.arrow_back_ios, size: 20, color: kPrimary),
+                                SizedBox(width: 12),
+                                Text(
                                   'Meal Plan',
                                   style: TextStyle(
                                     fontFamily: kFontFamily,
@@ -55,20 +55,20 @@ class ScreenshotMealPlan extends StatelessWidget {
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                const Spacer(),
+                                Spacer(),
                               ],
                             ),
-                            const SizedBox(height: 12),
+                            SizedBox(height: 12),
                             // Action icons row
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
-                                _ActionIcon(Icons.notifications_active, const Color(0xFFFFA726)),
+                                _ActionIcon(Icons.notifications_active, Color(0xFFFFA726)),
                                 _ActionIcon(Icons.share, kSecondary),
-                                _ActionIcon(Icons.auto_awesome, const Color(0xFF9C27B0)),
+                                _ActionIcon(Icons.auto_awesome, Color(0xFF9C27B0)),
                                 _ActionIcon(Icons.menu_book, kPrimary),
-                                _ActionIcon(Icons.shopping_cart, const Color(0xFF9B8AA0)),
-                                _ActionIcon(Icons.calendar_month, const Color(0xFF4CAF50)),
+                                _ActionIcon(Icons.shopping_cart, Color(0xFF9B8AA0)),
+                                _ActionIcon(Icons.calendar_month, Color(0xFF4CAF50)),
                               ],
                             ),
                           ],
@@ -76,15 +76,15 @@ class ScreenshotMealPlan extends StatelessWidget {
                       ),
 
                       // Days list
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16),
                         child: Column(
                           children: [
                             _DaySection(
                               day: 'Monday, Feb 17',
                               isToday: true,
                               expanded: true,
-                              meals: const [
+                              meals: [
                                 _DemoMeal('\u{1F305}', 'Breakfast', 'Scrambled Eggs & Toast'),
                                 _DemoMeal('\u{1F31E}', 'Lunch', 'Turkey & Cheese Wraps'),
                                 _DemoMeal('\u{1F319}', 'Dinner', 'Chicken Stir Fry'),
@@ -95,7 +95,7 @@ class ScreenshotMealPlan extends StatelessWidget {
                               day: 'Tuesday, Feb 18',
                               isToday: false,
                               expanded: false,
-                              meals: const [
+                              meals: [
                                 _DemoMeal('\u{1F305}', 'Breakfast', 'Pancakes'),
                                 _DemoMeal('\u{1F31E}', 'Lunch', ''),
                                 _DemoMeal('\u{1F319}', 'Dinner', 'Pasta Bolognese'),
@@ -106,7 +106,7 @@ class ScreenshotMealPlan extends StatelessWidget {
                               day: 'Wednesday, Feb 19',
                               isToday: false,
                               expanded: false,
-                              meals: const [
+                              meals: [
                                 _DemoMeal('\u{1F305}', 'Breakfast', 'Oatmeal'),
                                 _DemoMeal('\u{1F31E}', 'Lunch', 'Grilled Cheese'),
                                 _DemoMeal('\u{1F319}', 'Dinner', ''),
@@ -117,14 +117,14 @@ class ScreenshotMealPlan extends StatelessWidget {
                               day: 'Thursday, Feb 20',
                               isToday: false,
                               expanded: false,
-                              meals: const [
+                              meals: [
                                 _DemoMeal('\u{1F305}', 'Breakfast', ''),
                                 _DemoMeal('\u{1F31E}', 'Lunch', ''),
                                 _DemoMeal('\u{1F319}', 'Dinner', 'Taco Night'),
                                 _DemoMeal('\u{1F36A}', 'Snacks', ''),
                               ],
                             ),
-                            const SizedBox(height: 100),
+                            SizedBox(height: 100),
                           ],
                         ),
                       ),
@@ -298,7 +298,7 @@ class _MealSlot extends StatelessWidget {
               ],
             ),
           ),
-          if (!hasData) Icon(Icons.add_circle_outline, size: 20, color: kPrimary),
+          if (!hasData) const Icon(Icons.add_circle_outline, size: 20, color: kPrimary),
         ],
       ),
     );

@@ -139,7 +139,7 @@ class _MyActivitiesWidgetState extends State<MyActivitiesWidget> {
                         Text(
                           'Custom Activities',
                           style: FlutterFlowTheme.of(context).headlineMedium.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: FFAppState().isComfortMode
                                 ? const Color(0xFFECF0F1)
                                 : FlutterFlowTheme.of(context).primaryText,
@@ -158,7 +158,7 @@ class _MyActivitiesWidgetState extends State<MyActivitiesWidget> {
                     child: Text(
                       'Activities you created. Tap to edit, or add to your calendar!',
                       style: FlutterFlowTheme.of(context).bodyMedium.override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         color: FFAppState().isComfortMode
                             ? const Color(0xFF95A5A6)
                             : FlutterFlowTheme.of(context).secondaryText,
@@ -256,7 +256,7 @@ class _MyActivitiesWidgetState extends State<MyActivitiesWidget> {
               'No activities yet',
               textAlign: TextAlign.center,
               style: FlutterFlowTheme.of(context).titleMedium.override(
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
                 color: FFAppState().isComfortMode
                     ? const Color(0xFFECF0F1)
                     : FlutterFlowTheme.of(context).primaryText,
@@ -270,7 +270,7 @@ class _MyActivitiesWidgetState extends State<MyActivitiesWidget> {
               'Tap the + button to create your first activity!',
               textAlign: TextAlign.center,
               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
                 color: FFAppState().isComfortMode
                     ? const Color(0xFF95A5A6)
                     : FlutterFlowTheme.of(context).secondaryText,
@@ -345,7 +345,7 @@ class _MyActivitiesWidgetState extends State<MyActivitiesWidget> {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: FlutterFlowTheme.of(context).titleMedium.override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         color: FFAppState().isComfortMode
                             ? const Color(0xFFECF0F1)
                             : FlutterFlowTheme.of(context).primaryText,
@@ -400,7 +400,7 @@ class _MyActivitiesWidgetState extends State<MyActivitiesWidget> {
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: FlutterFlowTheme.of(context).bodyMedium.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     color: FFAppState().isComfortMode
                         ? const Color(0xFF95A5A6)
                         : FlutterFlowTheme.of(context).secondaryText,
@@ -489,7 +489,7 @@ class _MyActivitiesWidgetState extends State<MyActivitiesWidget> {
                         child: Text(
                           activity.thingsNeeded,
                           style: FlutterFlowTheme.of(context).bodySmall.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: FFAppState().isComfortMode
                                 ? const Color(0xFFECF0F1)
                                 : FlutterFlowTheme.of(context).primaryText,
@@ -532,7 +532,7 @@ class _MyActivitiesWidgetState extends State<MyActivitiesWidget> {
                         child: Text(
                           activity.safetyNote,
                           style: FlutterFlowTheme.of(context).bodySmall.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: FFAppState().isComfortMode
                                 ? const Color(0xFFECF0F1)
                                 : FlutterFlowTheme.of(context).primaryText,
@@ -580,7 +580,7 @@ class _MyActivitiesWidgetState extends State<MyActivitiesWidget> {
                           Text(
                             'Quick Add',
                             style: TextStyle(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               fontSize: 12.0,
                               color: FFAppState().isComfortMode
                                   ? Colors.white
@@ -623,7 +623,7 @@ class _MyActivitiesWidgetState extends State<MyActivitiesWidget> {
                           Text(
                             'Schedule',
                             style: TextStyle(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               fontSize: 13.0,
                               color: FFAppState().isComfortMode
                                   ? Colors.white
@@ -676,7 +676,7 @@ class _MyActivitiesWidgetState extends State<MyActivitiesWidget> {
           Text(
             text,
             style: TextStyle(
-              fontFamily: 'Andika New Basic',
+              fontFamily: FFAppState().currentFontFamily,
               fontSize: 12.0,
               color: isComfortMode ? chipColor.withValues(alpha: 0.9) : chipColor,
               fontWeight: FontWeight.w500,
@@ -945,7 +945,7 @@ class _CreateActivityBottomSheetState extends State<CreateActivityBottomSheet> {
                   Text(
                     _isEditing ? 'Edit Activity' : 'Create Activity',
                     style: FlutterFlowTheme.of(context).titleLarge.override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       color: FFAppState().isComfortMode
                           ? const Color(0xFFECF0F1)
                           : FlutterFlowTheme.of(context).primaryText,
@@ -1089,7 +1089,7 @@ class _CreateActivityBottomSheetState extends State<CreateActivityBottomSheet> {
                       runSpacing: 8.0,
                       children: _parentProximityOptions.map((prox) {
                         final isSelected = _selectedParentProximity == prox;
-                        final chipColor = const Color(0xFFFF9800); // Orange
+                        const chipColor = Color(0xFFFF9800); // Orange
                         return _buildAnimatedChip(
                           label: prox,
                           isSelected: isSelected,
@@ -1107,7 +1107,7 @@ class _CreateActivityBottomSheetState extends State<CreateActivityBottomSheet> {
                       runSpacing: 8.0,
                       children: _setupTimeOptions.map((setup) {
                         final isSelected = _selectedSetupTime == setup;
-                        final chipColor = const Color(0xFF9C27B0); // Purple
+                        const chipColor = Color(0xFF9C27B0); // Purple
                         return _buildAnimatedChip(
                           label: setup,
                           isSelected: isSelected,
@@ -1199,7 +1199,7 @@ class _CreateActivityBottomSheetState extends State<CreateActivityBottomSheet> {
                                 Text(
                                   _parentInfo.myName,
                                   style: TextStyle(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     color: FFAppState().isComfortMode
                                         ? const Color(0xFFECF0F1)
                                         : const Color(0xFF5D4E60),
@@ -1273,7 +1273,7 @@ class _CreateActivityBottomSheetState extends State<CreateActivityBottomSheet> {
                                 Text(
                                   _parentInfo.partnerName,
                                   style: TextStyle(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     color: FFAppState().isComfortMode
                                         ? const Color(0xFFECF0F1)
                                         : const Color(0xFF5D4E60),
@@ -1363,7 +1363,7 @@ class _CreateActivityBottomSheetState extends State<CreateActivityBottomSheet> {
                                   Text(
                                     child.name,
                                     style: TextStyle(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       color: FFAppState().isComfortMode
                                           ? const Color(0xFFECF0F1)
                                           : const Color(0xFF5D4E60),
@@ -1420,7 +1420,7 @@ class _CreateActivityBottomSheetState extends State<CreateActivityBottomSheet> {
                           height: 50.0,
                           color: FlutterFlowTheme.of(context).primary,
                           textStyle: FlutterFlowTheme.of(context).titleSmall.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: Colors.white,
                             fontWeight: FontWeight.w600,
                             letterSpacing: 0.0,
@@ -1442,7 +1442,7 @@ class _CreateActivityBottomSheetState extends State<CreateActivityBottomSheet> {
                           child: Text(
                             'Delete Activity',
                             style: TextStyle(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               fontSize: 16.0,
                               color: Colors.red,
                               fontWeight: FontWeight.w500,
@@ -1469,7 +1469,7 @@ class _CreateActivityBottomSheetState extends State<CreateActivityBottomSheet> {
       child: Text(
         text,
         style: FlutterFlowTheme.of(context).bodyMedium.override(
-          fontFamily: 'Andika New Basic',
+          fontFamily: FFAppState().currentFontFamily,
           color: FFAppState().isComfortMode
               ? const Color(0xFFECF0F1)
               : FlutterFlowTheme.of(context).primaryText,
@@ -1496,7 +1496,7 @@ class _CreateActivityBottomSheetState extends State<CreateActivityBottomSheet> {
           Text(
             text,
             style: FlutterFlowTheme.of(context).bodyMedium.override(
-              fontFamily: 'Andika New Basic',
+              fontFamily: FFAppState().currentFontFamily,
               color: FFAppState().isComfortMode
                   ? const Color(0xFFECF0F1)
                   : FlutterFlowTheme.of(context).primaryText,
@@ -1513,7 +1513,7 @@ class _CreateActivityBottomSheetState extends State<CreateActivityBottomSheet> {
     return InputDecoration(
       hintText: hint,
       hintStyle: TextStyle(
-        fontFamily: 'Andika New Basic',
+        fontFamily: FFAppState().currentFontFamily,
         color: FFAppState().isComfortMode
             ? const Color(0xFF7F8C8D)
             : FlutterFlowTheme.of(context).secondaryText.withValues(alpha:0.6),
@@ -1547,7 +1547,7 @@ class _CreateActivityBottomSheetState extends State<CreateActivityBottomSheet> {
 
   TextStyle _inputTextStyle() {
     return TextStyle(
-      fontFamily: 'Andika New Basic',
+      fontFamily: FFAppState().currentFontFamily,
       color: FFAppState().isComfortMode
           ? const Color(0xFFECF0F1)
           : FlutterFlowTheme.of(context).primaryText,
@@ -1626,7 +1626,7 @@ class _CreateActivityBottomSheetState extends State<CreateActivityBottomSheet> {
         title: Text(
           'Delete Activity?',
           style: TextStyle(
-            fontFamily: 'Andika New Basic',
+            fontFamily: FFAppState().currentFontFamily,
             color: FFAppState().isComfortMode
                 ? const Color(0xFFECF0F1)
                 : const Color(0xFF5D4E60),
@@ -1636,7 +1636,7 @@ class _CreateActivityBottomSheetState extends State<CreateActivityBottomSheet> {
         content: Text(
           'Are you sure you want to delete "${_titleController.text}"? This cannot be undone.',
           style: TextStyle(
-            fontFamily: 'Andika New Basic',
+            fontFamily: FFAppState().currentFontFamily,
             color: FFAppState().isComfortMode
                 ? const Color(0xFF95A5A6)
                 : const Color(0xFF5D4E60),
@@ -1648,7 +1648,7 @@ class _CreateActivityBottomSheetState extends State<CreateActivityBottomSheet> {
             child: Text(
               'Cancel',
               style: TextStyle(
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
                 color: FFAppState().isComfortMode
                     ? const Color(0xFF95A5A6)
                     : Colors.grey,
@@ -1657,10 +1657,10 @@ class _CreateActivityBottomSheetState extends State<CreateActivityBottomSheet> {
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text(
+            child: Text(
               'Delete',
               style: TextStyle(
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
                 color: Colors.red,
                 fontWeight: FontWeight.w600,
               ),
@@ -1742,7 +1742,7 @@ class _CreateActivityBottomSheetState extends State<CreateActivityBottomSheet> {
         child: Text(
           label,
           style: TextStyle(
-            fontFamily: 'Andika New Basic',
+            fontFamily: FFAppState().currentFontFamily,
             color: isSelected
                 ? Colors.white
                 : (FFAppState().isComfortMode
@@ -1866,7 +1866,7 @@ class _QuickAddAssignmentSheetState extends State<QuickAddAssignmentSheet> {
         child: Text(
           option['label'] as String,
           style: TextStyle(
-            fontFamily: 'Andika New Basic',
+            fontFamily: FFAppState().currentFontFamily,
             color: isSelected
                 ? FlutterFlowTheme.of(context).primary
                 : (isComfortMode ? const Color(0xFFECF0F1) : const Color(0xFF5D4E60)),
@@ -1912,7 +1912,7 @@ class _QuickAddAssignmentSheetState extends State<QuickAddAssignmentSheet> {
               Text(
                 'Add Activity',
                 style: FlutterFlowTheme.of(context).titleLarge.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   color: isComfortMode ? const Color(0xFFECF0F1) : const Color(0xFF5D4E60),
                   fontWeight: FontWeight.w600,
                 ),
@@ -1921,7 +1921,7 @@ class _QuickAddAssignmentSheetState extends State<QuickAddAssignmentSheet> {
               Text(
                 widget.activity.title,
                 style: FlutterFlowTheme.of(context).bodyMedium.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   color: isComfortMode ? const Color(0xFF95A5A6) : FlutterFlowTheme.of(context).secondaryText,
                 ),
               ),
@@ -1931,7 +1931,7 @@ class _QuickAddAssignmentSheetState extends State<QuickAddAssignmentSheet> {
               Text(
                 'When',
                 style: FlutterFlowTheme.of(context).bodyMedium.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   color: isComfortMode ? const Color(0xFFECF0F1) : const Color(0xFF5D4E60),
                   fontWeight: FontWeight.w600,
                 ),
@@ -1959,7 +1959,7 @@ class _QuickAddAssignmentSheetState extends State<QuickAddAssignmentSheet> {
               Text(
                 'Assign to',
                 style: FlutterFlowTheme.of(context).bodyMedium.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   color: isComfortMode ? const Color(0xFFECF0F1) : const Color(0xFF5D4E60),
                   fontWeight: FontWeight.w600,
                 ),
@@ -2002,7 +2002,7 @@ class _QuickAddAssignmentSheetState extends State<QuickAddAssignmentSheet> {
                           Text(
                             _parentInfo.myName,
                             style: TextStyle(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               color: isComfortMode ? const Color(0xFFECF0F1) : const Color(0xFF5D4E60),
                               fontSize: 15.0,
                               fontWeight: FontWeight.w500,
@@ -2049,7 +2049,7 @@ class _QuickAddAssignmentSheetState extends State<QuickAddAssignmentSheet> {
                           Text(
                             _parentInfo.partnerName,
                             style: TextStyle(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               color: isComfortMode ? const Color(0xFFECF0F1) : const Color(0xFF5D4E60),
                               fontSize: 15.0,
                               fontWeight: FontWeight.w500,
@@ -2072,7 +2072,7 @@ class _QuickAddAssignmentSheetState extends State<QuickAddAssignmentSheet> {
                 Text(
                   'For children',
                   style: FlutterFlowTheme.of(context).bodyMedium.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     color: isComfortMode ? const Color(0xFFECF0F1) : const Color(0xFF5D4E60),
                     fontWeight: FontWeight.w600,
                   ),
@@ -2127,7 +2127,7 @@ class _QuickAddAssignmentSheetState extends State<QuickAddAssignmentSheet> {
                             Text(
                               child.name,
                               style: TextStyle(
-                                fontFamily: 'Andika New Basic',
+                                fontFamily: FFAppState().currentFontFamily,
                                 color: isComfortMode ? const Color(0xFFECF0F1) : const Color(0xFF5D4E60),
                                 fontSize: 15.0,
                                 fontWeight: FontWeight.w500,
@@ -2168,7 +2168,7 @@ class _QuickAddAssignmentSheetState extends State<QuickAddAssignmentSheet> {
                     height: 50.0,
                     color: const Color(0xFF4CAF50),
                     textStyle: FlutterFlowTheme.of(context).titleSmall.override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       color: Colors.white,
                       fontWeight: FontWeight.w600,
                     ),

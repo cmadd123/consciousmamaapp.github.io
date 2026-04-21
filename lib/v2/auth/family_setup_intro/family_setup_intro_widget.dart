@@ -85,7 +85,7 @@ class _FamilySetupIntroWidgetState extends State<FamilySetupIntroWidget>
                     children: [
                       // Back arrow
                       Align(
-                        alignment: AlignmentDirectional(-1.0, 0.0),
+                        alignment: const AlignmentDirectional(-1.0, 0.0),
                         child: InkWell(
                           splashColor: Colors.transparent,
                           focusColor: Colors.transparent,
@@ -136,14 +136,14 @@ class _FamilySetupIntroWidgetState extends State<FamilySetupIntroWidget>
                             Container(
                               width: 80.0,
                               height: 80.0,
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFF3E5F5), // Light lavender background
+                              decoration: const BoxDecoration(
+                                color: Color(0xFFF3E5F5), // Light lavender background
                                 shape: BoxShape.circle,
                               ),
-                              child: Icon(
+                              child: const Icon(
                                 Icons.family_restroom,
                                 size: 48.0,
-                                color: const Color(0xFF9B8AA0), // Lavender color
+                                color: Color(0xFF9B8AA0), // Lavender color
                               ),
                             ),
                             const SizedBox(height: 16.0),
@@ -151,7 +151,7 @@ class _FamilySetupIntroWidgetState extends State<FamilySetupIntroWidget>
                               'Let\'s Set Up Your Family!',
                               textAlign: TextAlign.center,
                               style: FlutterFlowTheme.of(context).headlineMedium.override(
-                                fontFamily: 'Andika New Basic',
+                                fontFamily: FFAppState().currentFontFamily,
                                 fontSize: 32.0,
                                 letterSpacing: 0.0,
                                 fontWeight: FontWeight.w600,
@@ -168,7 +168,7 @@ class _FamilySetupIntroWidgetState extends State<FamilySetupIntroWidget>
                           'We\'ll start by adding your child\'s information, then set up parent details.\n\nThis helps us personalize MomRise just for your family.',
                           textAlign: TextAlign.center,
                           style: FlutterFlowTheme.of(context).bodyLarge.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             fontSize: 18.0,
                             letterSpacing: 0.0,
                             color: FlutterFlowTheme.of(context).secondaryText,
@@ -190,7 +190,7 @@ class _FamilySetupIntroWidgetState extends State<FamilySetupIntroWidget>
                               Text(
                                 'You\'ll add:',
                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   fontSize: 16.0,
                                   fontWeight: FontWeight.w600,
                                   letterSpacing: 0.0,
@@ -225,7 +225,7 @@ class _FamilySetupIntroWidgetState extends State<FamilySetupIntroWidget>
                             iconPadding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
                             color: FlutterFlowTheme.of(context).primary,
                             textStyle: FlutterFlowTheme.of(context).titleSmall.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               color: Colors.white,
                               fontSize: 18.0,
                               letterSpacing: 0.0,
@@ -243,7 +243,7 @@ class _FamilySetupIntroWidgetState extends State<FamilySetupIntroWidget>
                       Text(
                         'Takes about 2 minutes',
                         style: FlutterFlowTheme.of(context).bodySmall.override(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           fontSize: 14.0,
                           color: FlutterFlowTheme.of(context).secondaryText,
                           letterSpacing: 0.0,
@@ -266,8 +266,8 @@ class _FamilySetupIntroWidgetState extends State<FamilySetupIntroWidget>
         Container(
           width: 32.0,
           height: 32.0,
-          decoration: BoxDecoration(
-            color: const Color(0xFFF3E5F5), // Light lavender background
+          decoration: const BoxDecoration(
+            color: Color(0xFFF3E5F5), // Light lavender background
             shape: BoxShape.circle,
           ),
           child: Icon(
@@ -281,7 +281,7 @@ class _FamilySetupIntroWidgetState extends State<FamilySetupIntroWidget>
           child: Text(
             text,
             style: FlutterFlowTheme.of(context).bodyMedium.override(
-              fontFamily: 'Andika New Basic',
+              fontFamily: FFAppState().currentFontFamily,
               fontSize: 15.0,
               letterSpacing: 0.0,
               color: FlutterFlowTheme.of(context).primaryText,

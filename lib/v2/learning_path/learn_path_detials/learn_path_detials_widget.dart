@@ -1,4 +1,3 @@
-import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
 import '/components/home_nav_bar_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
@@ -6,14 +5,8 @@ import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/v2/learning_path/compele_taskpopup/compele_taskpopup_widget.dart';
 import '/v2/learning_path/learn_path_details_component/learn_path_details_component_widget.dart';
-import 'dart:ui';
-import '/flutter_flow/custom_functions.dart' as functions;
 import '/index.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:percent_indicator/percent_indicator.dart';
-import 'package:provider/provider.dart';
 import 'learn_path_detials_model.dart';
 export 'learn_path_detials_model.dart';
 
@@ -123,7 +116,7 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget>
         title: Text(
           'Edit Learning Path',
           style: FlutterFlowTheme.of(context).titleMedium.override(
-            fontFamily: 'Andika New Basic',
+            fontFamily: FFAppState().currentFontFamily,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -136,7 +129,7 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget>
                 decoration: InputDecoration(
                   labelText: 'Title',
                   labelStyle: FlutterFlowTheme.of(context).bodyMedium.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     color: FlutterFlowTheme.of(context).secondaryText,
                   ),
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
@@ -146,16 +139,16 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget>
                   ),
                 ),
                 style: FlutterFlowTheme.of(context).bodyMedium.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                 ),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               TextField(
                 controller: descriptionController,
                 decoration: InputDecoration(
                   labelText: 'Description',
                   labelStyle: FlutterFlowTheme.of(context).bodyMedium.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     color: FlutterFlowTheme.of(context).secondaryText,
                   ),
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
@@ -165,7 +158,7 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget>
                   ),
                 ),
                 style: FlutterFlowTheme.of(context).bodyMedium.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                 ),
                 maxLines: 3,
               ),
@@ -178,7 +171,7 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget>
             child: Text(
               'Cancel',
               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
                 color: FlutterFlowTheme.of(context).secondaryText,
               ),
             ),
@@ -194,7 +187,7 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget>
               if (context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text('Learning path updated'),
+                    content: const Text('Learning path updated'),
                     backgroundColor: FlutterFlowTheme.of(context).primary,
                   ),
                 );
@@ -203,7 +196,7 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget>
             child: Text(
               'Save',
               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
                 color: FlutterFlowTheme.of(context).primary,
                 fontWeight: FontWeight.w600,
               ),
@@ -282,7 +275,7 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget>
                         builder: (context, scale, child) {
                           return Transform.scale(
                             scale: scale,
-                            child: Text(
+                            child: const Text(
                               '🏆',
                               style: TextStyle(fontSize: 72),
                             ),
@@ -293,7 +286,7 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget>
                       Text(
                         'Congratulations!',
                         style: FlutterFlowTheme.of(context).headlineMedium.override(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           color: FlutterFlowTheme.of(context).primary,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 0.0,
@@ -304,7 +297,7 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget>
                         'You completed all lessons\nin this learning path!',
                         textAlign: TextAlign.center,
                         style: FlutterFlowTheme.of(context).bodyLarge.override(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           color: FlutterFlowTheme.of(context).secondaryText,
                           letterSpacing: 0.0,
                         ),
@@ -313,7 +306,7 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget>
                       Text(
                         'Amazing job! 🎉',
                         style: FlutterFlowTheme.of(context).titleMedium.override(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           color: const Color(0xFF4CAF50),
                           fontWeight: FontWeight.w600,
                           letterSpacing: 0.0,
@@ -328,7 +321,7 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget>
                           height: 48,
                           color: FlutterFlowTheme.of(context).primary,
                           textStyle: FlutterFlowTheme.of(context).titleSmall.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: Colors.white,
                             fontWeight: FontWeight.w600,
                           ),
@@ -355,7 +348,7 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget>
       },
       child: Scaffold(
         key: scaffoldKey,
-        backgroundColor: Color(0xFFEDFFFD),
+        backgroundColor: const Color(0xFFEDFFFD),
         bottomNavigationBar: const HomeNavBarWidget(currentPage: HomeNavPage.homeSubpage),
         body: SafeArea(
           top: true,
@@ -427,7 +420,7 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget>
                     children: [
                       // Header card with puzzle
                       Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(12.0, 12.0, 12.0, 0.0),
+                        padding: const EdgeInsetsDirectional.fromSTEB(12.0, 12.0, 12.0, 0.0),
                         child: Material(
                           color: Colors.transparent,
                           elevation: 1.0,
@@ -448,7 +441,7 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget>
                               children: [
                                 // Back button and title
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(9.0, 8.0, 9.0, 0.0),
+                                  padding: const EdgeInsetsDirectional.fromSTEB(9.0, 8.0, 9.0, 0.0),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.max,
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -468,12 +461,12 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget>
                                         ),
                                       ),
                                       Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 37.0, 0.0),
+                                        padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 37.0, 0.0),
                                         child: Text(
                                           'Learning Path',
                                           textAlign: TextAlign.center,
                                           style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                fontFamily: 'Andika New Basic',
+                                                fontFamily: FFAppState().currentFontFamily,
                                                 fontSize: 24.0,
                                                 letterSpacing: 0.0,
                                               ),
@@ -491,7 +484,7 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget>
                                               _showEditLearningPathDialog(context, learningPath);
                                             },
                                             child: Padding(
-                                              padding: EdgeInsets.only(right: 12.0),
+                                              padding: const EdgeInsets.only(right: 12.0),
                                               child: Icon(
                                                 Icons.edit_outlined,
                                                 color: FlutterFlowTheme.of(context).primary,
@@ -562,16 +555,16 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget>
                                 ),
                                 // Title
                                 Align(
-                                  alignment: AlignmentDirectional(-1.0, 0.0),
+                                  alignment: const AlignmentDirectional(-1.0, 0.0),
                                   child: Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
+                                    padding: const EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
                                     child: Text(
                                       learningPath.title.isNotEmpty
                                           ? learningPath.title
                                           : 'Learning Path',
                                       textAlign: TextAlign.start,
                                       style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                            fontFamily: 'Andika New Basic',
+                                            fontFamily: FFAppState().currentFontFamily,
                                             fontSize: 20.0,
                                             letterSpacing: 0.0,
                                           ),
@@ -580,22 +573,22 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget>
                                 ),
                                 // Description
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(20.0, 8.0, 20.0, 12.0),
+                                  padding: const EdgeInsetsDirectional.fromSTEB(20.0, 8.0, 20.0, 12.0),
                                   child: Text(
                                     learningPath.description.isNotEmpty
                                         ? learningPath.description
                                         : 'A personalized program designed to help your child develop new skills.',
                                     textAlign: TextAlign.start,
                                     style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                          fontFamily: 'Andika New Basic',
-                                          color: Color(0xBD000000),
+                                          fontFamily: FFAppState().currentFontFamily,
+                                          color: const Color(0xBD000000),
                                           letterSpacing: 0.0,
                                         ),
                                   ),
                                 ),
                                 // Progress indicator
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(20.0, 0.0, 20.0, 16.0),
+                                  padding: const EdgeInsetsDirectional.fromSTEB(20.0, 0.0, 20.0, 16.0),
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
@@ -605,25 +598,25 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget>
                                           Text(
                                             '$completedCount of ${tasksList.length} lessons complete',
                                             style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                              fontFamily: 'Andika New Basic',
+                                              fontFamily: FFAppState().currentFontFamily,
                                               color: FlutterFlowTheme.of(context).primary,
                                               fontWeight: FontWeight.w600,
                                               letterSpacing: 0.0,
                                             ),
                                           ),
                                           if (completedCount == tasksList.length)
-                                            Icon(
+                                            const Icon(
                                               Icons.check_circle,
                                               color: Color(0xFF4CAF50),
                                               size: 20.0,
                                             ),
                                         ],
                                       ),
-                                      SizedBox(height: 8.0),
+                                      const SizedBox(height: 8.0),
                                       ClipRRect(
                                         borderRadius: BorderRadius.circular(8.0),
                                         child: LinearProgressIndicator(
-                                          value: tasksList.length > 0 ? completedCount / tasksList.length : 0,
+                                          value: tasksList.isNotEmpty ? completedCount / tasksList.length : 0,
                                           minHeight: 8.0,
                                           backgroundColor: FlutterFlowTheme.of(context).primary.withOpacity(0.15),
                                           valueColor: AlwaysStoppedAnimation<Color>(
@@ -642,7 +635,7 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget>
                       // Task list - scrollable
                       Expanded(
                         child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(12.0, 12.0, 12.0, 0.0),
+                          padding: const EdgeInsetsDirectional.fromSTEB(12.0, 12.0, 12.0, 0.0),
                           child: Material(
                             color: Colors.transparent,
                             elevation: 1.0,
@@ -660,13 +653,13 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget>
                               ),
                               child: ListView.builder(
                                 key: ValueKey('tasks_${tasksList.map((t) => '${t.reference.id}_${t.isCompleted}_${t.wasSkipped}').join('_')}'),
-                                padding: EdgeInsets.symmetric(vertical: 12.0),
+                                padding: const EdgeInsets.symmetric(vertical: 12.0),
                                 itemCount: tasksList.length,
                                 itemBuilder: (context, index) {
                                   final task = tasksList[index];
                                   return Padding(
                                     key: ValueKey('task_${task.reference.id}_${task.isCompleted}_${task.wasSkipped}'),
-                                    padding: EdgeInsetsDirectional.fromSTEB(24.0, 8.0, 20.0, 8.0),
+                                    padding: const EdgeInsetsDirectional.fromSTEB(24.0, 8.0, 20.0, 8.0),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.max,
                                       children: [
@@ -683,7 +676,7 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget>
                                                   locale: FFLocalizations.of(context).languageCode,
                                                 ),
                                                 style: FlutterFlowTheme.of(context).bodySmall.override(
-                                                      fontFamily: 'Andika New Basic',
+                                                      fontFamily: FFAppState().currentFontFamily,
                                                       letterSpacing: 0.0,
                                                     ),
                                                 textAlign: TextAlign.end,
@@ -695,7 +688,7 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget>
                                                   locale: FFLocalizations.of(context).languageCode,
                                                 ),
                                                 style: FlutterFlowTheme.of(context).bodySmall.override(
-                                                      fontFamily: 'Andika New Basic',
+                                                      fontFamily: FFAppState().currentFontFamily,
                                                       letterSpacing: 0.0,
                                                     ),
                                                 textAlign: TextAlign.end,
@@ -703,9 +696,9 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget>
                                             ],
                                           ),
                                         ),
-                                        SizedBox(width: 7.0),
+                                        const SizedBox(width: 7.0),
                                         Padding(
-                                          padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 8.0, 0.0),
+                                          padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 8.0, 0.0),
                                           child: Container(
                                             width: 1.0,
                                             height: 60.0,
@@ -750,16 +743,16 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget>
                                               child: Container(
                                                 decoration: BoxDecoration(
                                                   color: task.isCompleted
-                                                      ? Color(0xFF4CAF50).withOpacity(0.1)
+                                                      ? const Color(0xFF4CAF50).withOpacity(0.1)
                                                       : task.wasSkipped
-                                                          ? Color(0xFFFF9800).withOpacity(0.1)
-                                                          : Color(0x5AFFD8E4),
+                                                          ? const Color(0xFFFF9800).withOpacity(0.1)
+                                                          : const Color(0x5AFFD8E4),
                                                   borderRadius: BorderRadius.circular(14.0),
                                                   border: Border.all(
                                                     color: task.isCompleted
-                                                        ? Color(0xFF4CAF50)
+                                                        ? const Color(0xFF4CAF50)
                                                         : task.wasSkipped
-                                                            ? Color(0xFFFF9800)
+                                                            ? const Color(0xFFFF9800)
                                                             : FlutterFlowTheme.of(context).primary,
                                                     width: 1.0,
                                                   ),
@@ -770,7 +763,7 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget>
                                                   children: [
                                                     Expanded(
                                                       child: Padding(
-                                                        padding: EdgeInsetsDirectional.fromSTEB(15.0, 12.0, 8.0, 12.0),
+                                                        padding: const EdgeInsetsDirectional.fromSTEB(15.0, 12.0, 8.0, 12.0),
                                                         child: Column(
                                                           mainAxisSize: MainAxisSize.max,
                                                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -778,7 +771,7 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget>
                                                             Text(
                                                               task.title ?? 'Lesson',
                                                               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                    fontFamily: 'Andika New Basic',
+                                                                    fontFamily: FFAppState().currentFontFamily,
                                                                     color: Colors.black,
                                                                     letterSpacing: 0.0,
                                                                   ),
@@ -788,11 +781,11 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget>
                                                             Text(
                                                               task.isCompleted ? 'View Notes' : 'View Details',
                                                               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                    fontFamily: 'Andika New Basic',
+                                                                    fontFamily: FFAppState().currentFontFamily,
                                                                     color: task.isCompleted
-                                                                        ? Color(0xFF4CAF50)
+                                                                        ? const Color(0xFF4CAF50)
                                                                         : task.wasSkipped
-                                                                            ? Color(0xFFFF9800)
+                                                                            ? const Color(0xFFFF9800)
                                                                             : Colors.black,
                                                                     letterSpacing: 0.0,
                                                                     decoration: TextDecoration.underline,
@@ -804,15 +797,15 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget>
                                                     ),
                                                     // Checkbox / Completed / Skipped icon
                                                     Padding(
-                                                      padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 9.0, 0.0),
+                                                      padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 9.0, 0.0),
                                                       child: task.isCompleted
-                                                          ? Icon(
+                                                          ? const Icon(
                                                               FFIcons.kcheckicon,
                                                               color: Color(0xFF32DD8D),
                                                               size: 24.0,
                                                             )
                                                           : task.wasSkipped
-                                                          ? Icon(
+                                                          ? const Icon(
                                                               Icons.skip_next,
                                                               color: Color(0xFFFF9800),
                                                               size: 24.0,
@@ -831,14 +824,14 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget>
                                                                         elevation: 0,
                                                                         insetPadding: EdgeInsets.zero,
                                                                         backgroundColor: Colors.transparent,
-                                                                        alignment: AlignmentDirectional(0.0, 0.0)
+                                                                        alignment: const AlignmentDirectional(0.0, 0.0)
                                                                             .resolve(Directionality.of(context)),
                                                                         child: GestureDetector(
                                                                           onTap: () {
                                                                             FocusScope.of(dialogContext).unfocus();
                                                                             FocusManager.instance.primaryFocus?.unfocus();
                                                                           },
-                                                                          child: CompeleTaskpopupWidget(),
+                                                                          child: const CompeleTaskpopupWidget(),
                                                                         ),
                                                                       );
                                                                     },
@@ -872,7 +865,7 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget>
                                                                   decoration: BoxDecoration(
                                                                     color: FlutterFlowTheme.of(context).secondaryBackground,
                                                                     border: Border.all(
-                                                                      color: Color(0xFF999999),
+                                                                      color: const Color(0xFF999999),
                                                                       width: 1.0,
                                                                     ),
                                                                   ),
@@ -896,7 +889,7 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget>
                         ),
                       ),
                       // Bottom padding
-                      SizedBox(height: 12.0),
+                      const SizedBox(height: 12.0),
                     ],
                   );
                 },

@@ -1,13 +1,9 @@
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
-import 'dart:ui';
 import '/index.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'learn_path_stepon_step3_model.dart';
 export 'learn_path_stepon_step3_model.dart';
 
@@ -57,18 +53,18 @@ class _LearnPathSteponStep3WidgetState
       },
       child: Scaffold(
         key: scaffoldKey,
-        backgroundColor: Color(0xFFEDFFFD),
+        backgroundColor: const Color(0xFFEDFFFD),
         body: SafeArea(
           top: true,
           child: Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
+            padding: const EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
             child: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 children: [
                   Padding(
                     padding:
-                        EdgeInsetsDirectional.fromSTEB(12.0, 20.0, 12.0, 0.0),
+                        const EdgeInsetsDirectional.fromSTEB(12.0, 20.0, 12.0, 0.0),
                     child: Material(
                       color: Colors.transparent,
                       elevation: 1.0,
@@ -97,31 +93,31 @@ class _LearnPathSteponStep3WidgetState
                                   mainAxisSize: MainAxisSize.max,
                                   children: [
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(
                                           18.0, 9.0, 0.0, 0.0),
                                       child: Container(
                                         width: 5.0,
                                         height: 5.0,
-                                        decoration: BoxDecoration(
+                                        decoration: const BoxDecoration(
                                           color: Color(0x6652A097),
                                           shape: BoxShape.circle,
                                         ),
                                       ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(
                                           3.0, 9.0, 0.0, 0.0),
                                       child: Container(
                                         width: 5.0,
                                         height: 5.0,
-                                        decoration: BoxDecoration(
+                                        decoration: const BoxDecoration(
                                           color: Color(0x6652A097),
                                           shape: BoxShape.circle,
                                         ),
                                       ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(
                                           3.0, 9.0, 0.0, 0.0),
                                       child: Container(
                                         width: 33.0,
@@ -135,12 +131,12 @@ class _LearnPathSteponStep3WidgetState
                                       ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(
                                           3.0, 9.0, 0.0, 0.0),
                                       child: Container(
                                         width: 5.0,
                                         height: 5.0,
-                                        decoration: BoxDecoration(
+                                        decoration: const BoxDecoration(
                                           color: Color(0x6652A097),
                                           shape: BoxShape.circle,
                                         ),
@@ -149,14 +145,14 @@ class _LearnPathSteponStep3WidgetState
                                   ],
                                 ),
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       0.0, 5.0, 16.0, 0.0),
                                   child: Text(
                                     'Step 3/4',
                                     style: FlutterFlowTheme.of(context)
                                         .bodyMedium
                                         .override(
-                                          fontFamily: 'Andika New Basic',
+                                          fontFamily: FFAppState().currentFontFamily,
                                           color: FlutterFlowTheme.of(context)
                                               .primary,
                                           letterSpacing: 0.0,
@@ -171,9 +167,9 @@ class _LearnPathSteponStep3WidgetState
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Align(
-                                  alignment: AlignmentDirectional(-1.0, 0.0),
+                                  alignment: const AlignmentDirectional(-1.0, 0.0),
                                   child: Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(
                                         15.0, 0.0, 0.0, 0.0),
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(14.0),
@@ -187,7 +183,7 @@ class _LearnPathSteponStep3WidgetState
                                   ),
                                 ),
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       24.0, 0.0, 24.0, 0.0),
                                   child: Text(
                                     'What frequency would you prefer for this program?',
@@ -195,30 +191,30 @@ class _LearnPathSteponStep3WidgetState
                                     style: FlutterFlowTheme.of(context)
                                         .bodyMedium
                                         .override(
-                                          fontFamily: 'Andika New Basic',
+                                          fontFamily: FFAppState().currentFontFamily,
                                           fontSize: 24.0,
                                           letterSpacing: 0.0,
                                         ),
                                   ),
                                 ),
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       24.0, 18.0, 0.0, 0.0),
                                   child: Text(
                                     'Select a frequency',
                                     style: FlutterFlowTheme.of(context)
                                         .bodyMedium
                                         .override(
-                                          fontFamily: 'Andika New Basic',
-                                          color: Color(0xC0000000),
+                                          fontFamily: FFAppState().currentFontFamily,
+                                          color: const Color(0xC0000000),
                                           letterSpacing: 0.0,
                                         ),
                                   ),
                                 ),
                                 Align(
-                                  alignment: AlignmentDirectional(0.0, 0.0),
+                                  alignment: const AlignmentDirectional(0.0, 0.0),
                                   child: Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(
                                         0.0, 16.0, 0.0, 16.0),
                                     child: Wrap(
                                       spacing: 22.0,
@@ -245,7 +241,7 @@ class _LearnPathSteponStep3WidgetState
                                             width: 150.0,
                                             height: 106.0,
                                             decoration: BoxDecoration(
-                                              color: Color(0x58FFD8E4),
+                                              color: const Color(0x58FFD8E4),
                                               borderRadius:
                                                   BorderRadius.circular(14.0),
                                               border: Border.all(
@@ -267,11 +263,11 @@ class _LearnPathSteponStep3WidgetState
                                                 Container(
                                                   width: 45.0,
                                                   height: 45.0,
-                                                  decoration: BoxDecoration(
+                                                  decoration: const BoxDecoration(
                                                     color: Color(0x5652A097),
                                                     shape: BoxShape.circle,
                                                   ),
-                                                  child: Align(
+                                                  child: const Align(
                                                     alignment:
                                                         AlignmentDirectional(
                                                             0.0, 0.0),
@@ -283,7 +279,7 @@ class _LearnPathSteponStep3WidgetState
                                                   ),
                                                 ),
                                                 Padding(
-                                                  padding: EdgeInsetsDirectional
+                                                  padding: const EdgeInsetsDirectional
                                                       .fromSTEB(
                                                           0.0, 7.0, 0.0, 0.0),
                                                   child: Text(
@@ -295,7 +291,7 @@ class _LearnPathSteponStep3WidgetState
                                                           fontFamily:
                                                               'Andika New Basic',
                                                           color:
-                                                              Color(0xC0000000),
+                                                              const Color(0xC0000000),
                                                           letterSpacing: 0.0,
                                                         ),
                                                   ),
@@ -318,7 +314,7 @@ class _LearnPathSteponStep3WidgetState
                                             width: 150.0,
                                             height: 106.0,
                                             decoration: BoxDecoration(
-                                              color: Color(0x58FFD8E4),
+                                              color: const Color(0x58FFD8E4),
                                               borderRadius:
                                                   BorderRadius.circular(14.0),
                                               border: Border.all(
@@ -340,11 +336,11 @@ class _LearnPathSteponStep3WidgetState
                                                 Container(
                                                   width: 45.0,
                                                   height: 45.0,
-                                                  decoration: BoxDecoration(
+                                                  decoration: const BoxDecoration(
                                                     color: Color(0x5652A097),
                                                     shape: BoxShape.circle,
                                                   ),
-                                                  child: Align(
+                                                  child: const Align(
                                                     alignment:
                                                         AlignmentDirectional(
                                                             0.0, 0.0),
@@ -356,7 +352,7 @@ class _LearnPathSteponStep3WidgetState
                                                   ),
                                                 ),
                                                 Padding(
-                                                  padding: EdgeInsetsDirectional
+                                                  padding: const EdgeInsetsDirectional
                                                       .fromSTEB(
                                                           0.0, 7.0, 0.0, 0.0),
                                                   child: Text(
@@ -368,7 +364,7 @@ class _LearnPathSteponStep3WidgetState
                                                           fontFamily:
                                                               'Andika New Basic',
                                                           color:
-                                                              Color(0xC0000000),
+                                                              const Color(0xC0000000),
                                                           letterSpacing: 0.0,
                                                         ),
                                                   ),
@@ -391,7 +387,7 @@ class _LearnPathSteponStep3WidgetState
                                             width: 150.0,
                                             height: 106.0,
                                             decoration: BoxDecoration(
-                                              color: Color(0x58FFD8E4),
+                                              color: const Color(0x58FFD8E4),
                                               borderRadius:
                                                   BorderRadius.circular(14.0),
                                               border: Border.all(
@@ -413,11 +409,11 @@ class _LearnPathSteponStep3WidgetState
                                                 Container(
                                                   width: 45.0,
                                                   height: 45.0,
-                                                  decoration: BoxDecoration(
+                                                  decoration: const BoxDecoration(
                                                     color: Color(0x5652A097),
                                                     shape: BoxShape.circle,
                                                   ),
-                                                  child: Align(
+                                                  child: const Align(
                                                     alignment:
                                                         AlignmentDirectional(
                                                             0.0, 0.0),
@@ -429,7 +425,7 @@ class _LearnPathSteponStep3WidgetState
                                                   ),
                                                 ),
                                                 Padding(
-                                                  padding: EdgeInsetsDirectional
+                                                  padding: const EdgeInsetsDirectional
                                                       .fromSTEB(
                                                           0.0, 7.0, 0.0, 0.0),
                                                   child: Text(
@@ -441,7 +437,7 @@ class _LearnPathSteponStep3WidgetState
                                                           fontFamily:
                                                               'Andika New Basic',
                                                           color:
-                                                              Color(0xC0000000),
+                                                              const Color(0xC0000000),
                                                           letterSpacing: 0.0,
                                                         ),
                                                   ),
@@ -464,7 +460,7 @@ class _LearnPathSteponStep3WidgetState
                                             width: 150.0,
                                             height: 106.0,
                                             decoration: BoxDecoration(
-                                              color: Color(0x58FFD8E4),
+                                              color: const Color(0x58FFD8E4),
                                               borderRadius:
                                                   BorderRadius.circular(14.0),
                                               border: Border.all(
@@ -486,11 +482,11 @@ class _LearnPathSteponStep3WidgetState
                                                 Container(
                                                   width: 45.0,
                                                   height: 45.0,
-                                                  decoration: BoxDecoration(
+                                                  decoration: const BoxDecoration(
                                                     color: Color(0x5652A097),
                                                     shape: BoxShape.circle,
                                                   ),
-                                                  child: Align(
+                                                  child: const Align(
                                                     alignment:
                                                         AlignmentDirectional(
                                                             0.0, 0.0),
@@ -502,7 +498,7 @@ class _LearnPathSteponStep3WidgetState
                                                   ),
                                                 ),
                                                 Padding(
-                                                  padding: EdgeInsetsDirectional
+                                                  padding: const EdgeInsetsDirectional
                                                       .fromSTEB(
                                                           0.0, 7.0, 0.0, 0.0),
                                                   child: Text(
@@ -514,7 +510,7 @@ class _LearnPathSteponStep3WidgetState
                                                           fontFamily:
                                                               'Andika New Basic',
                                                           color:
-                                                              Color(0xC0000000),
+                                                              const Color(0xC0000000),
                                                           letterSpacing: 0.0,
                                                         ),
                                                   ),
@@ -537,7 +533,7 @@ class _LearnPathSteponStep3WidgetState
                                             width: 150.0,
                                             height: 106.0,
                                             decoration: BoxDecoration(
-                                              color: Color(0x58FFD8E4),
+                                              color: const Color(0x58FFD8E4),
                                               borderRadius:
                                                   BorderRadius.circular(14.0),
                                               border: Border.all(
@@ -559,11 +555,11 @@ class _LearnPathSteponStep3WidgetState
                                                 Container(
                                                   width: 45.0,
                                                   height: 45.0,
-                                                  decoration: BoxDecoration(
+                                                  decoration: const BoxDecoration(
                                                     color: Color(0x5652A097),
                                                     shape: BoxShape.circle,
                                                   ),
-                                                  child: Align(
+                                                  child: const Align(
                                                     alignment:
                                                         AlignmentDirectional(
                                                             0.0, 0.0),
@@ -575,7 +571,7 @@ class _LearnPathSteponStep3WidgetState
                                                   ),
                                                 ),
                                                 Padding(
-                                                  padding: EdgeInsetsDirectional
+                                                  padding: const EdgeInsetsDirectional
                                                       .fromSTEB(
                                                           0.0, 7.0, 0.0, 0.0),
                                                   child: Text(
@@ -587,7 +583,7 @@ class _LearnPathSteponStep3WidgetState
                                                           fontFamily:
                                                               'Andika New Basic',
                                                           color:
-                                                              Color(0xC0000000),
+                                                              const Color(0xC0000000),
                                                           letterSpacing: 0.0,
                                                         ),
                                                   ),
@@ -610,7 +606,7 @@ class _LearnPathSteponStep3WidgetState
                                             width: 150.0,
                                             height: 106.0,
                                             decoration: BoxDecoration(
-                                              color: Color(0x58FFD8E4),
+                                              color: const Color(0x58FFD8E4),
                                               borderRadius:
                                                   BorderRadius.circular(14.0),
                                               border: Border.all(
@@ -632,11 +628,11 @@ class _LearnPathSteponStep3WidgetState
                                                 Container(
                                                   width: 45.0,
                                                   height: 45.0,
-                                                  decoration: BoxDecoration(
+                                                  decoration: const BoxDecoration(
                                                     color: Color(0x5652A097),
                                                     shape: BoxShape.circle,
                                                   ),
-                                                  child: Align(
+                                                  child: const Align(
                                                     alignment:
                                                         AlignmentDirectional(
                                                             0.0, 0.0),
@@ -648,7 +644,7 @@ class _LearnPathSteponStep3WidgetState
                                                   ),
                                                 ),
                                                 Padding(
-                                                  padding: EdgeInsetsDirectional
+                                                  padding: const EdgeInsetsDirectional
                                                       .fromSTEB(
                                                           0.0, 7.0, 0.0, 0.0),
                                                   child: Text(
@@ -660,7 +656,7 @@ class _LearnPathSteponStep3WidgetState
                                                           fontFamily:
                                                               'Andika New Basic',
                                                           color:
-                                                              Color(0xC0000000),
+                                                              const Color(0xC0000000),
                                                           letterSpacing: 0.0,
                                                         ),
                                                   ),
@@ -683,7 +679,7 @@ class _LearnPathSteponStep3WidgetState
                                             width: 150.0,
                                             height: 106.0,
                                             decoration: BoxDecoration(
-                                              color: Color(0x58FFD8E4),
+                                              color: const Color(0x58FFD8E4),
                                               borderRadius:
                                                   BorderRadius.circular(14.0),
                                               border: Border.all(
@@ -705,11 +701,11 @@ class _LearnPathSteponStep3WidgetState
                                                 Container(
                                                   width: 45.0,
                                                   height: 45.0,
-                                                  decoration: BoxDecoration(
+                                                  decoration: const BoxDecoration(
                                                     color: Color(0x5652A097),
                                                     shape: BoxShape.circle,
                                                   ),
-                                                  child: Align(
+                                                  child: const Align(
                                                     alignment:
                                                         AlignmentDirectional(
                                                             0.0, 0.0),
@@ -721,7 +717,7 @@ class _LearnPathSteponStep3WidgetState
                                                   ),
                                                 ),
                                                 Padding(
-                                                  padding: EdgeInsetsDirectional
+                                                  padding: const EdgeInsetsDirectional
                                                       .fromSTEB(
                                                           0.0, 7.0, 0.0, 0.0),
                                                   child: Text(
@@ -733,7 +729,7 @@ class _LearnPathSteponStep3WidgetState
                                                           fontFamily:
                                                               'Andika New Basic',
                                                           color:
-                                                              Color(0xC0000000),
+                                                              const Color(0xC0000000),
                                                           letterSpacing: 0.0,
                                                         ),
                                                   ),
@@ -756,7 +752,7 @@ class _LearnPathSteponStep3WidgetState
                                             width: 150.0,
                                             height: 106.0,
                                             decoration: BoxDecoration(
-                                              color: Color(0x58FFD8E4),
+                                              color: const Color(0x58FFD8E4),
                                               borderRadius:
                                                   BorderRadius.circular(14.0),
                                               border: Border.all(
@@ -778,11 +774,11 @@ class _LearnPathSteponStep3WidgetState
                                                 Container(
                                                   width: 45.0,
                                                   height: 45.0,
-                                                  decoration: BoxDecoration(
+                                                  decoration: const BoxDecoration(
                                                     color: Color(0x5652A097),
                                                     shape: BoxShape.circle,
                                                   ),
-                                                  child: Align(
+                                                  child: const Align(
                                                     alignment:
                                                         AlignmentDirectional(
                                                             0.0, 0.0),
@@ -794,7 +790,7 @@ class _LearnPathSteponStep3WidgetState
                                                   ),
                                                 ),
                                                 Padding(
-                                                  padding: EdgeInsetsDirectional
+                                                  padding: const EdgeInsetsDirectional
                                                       .fromSTEB(
                                                           0.0, 7.0, 0.0, 0.0),
                                                   child: Text(
@@ -806,7 +802,7 @@ class _LearnPathSteponStep3WidgetState
                                                           fontFamily:
                                                               'Andika New Basic',
                                                           color:
-                                                              Color(0xC0000000),
+                                                              const Color(0xC0000000),
                                                           letterSpacing: 0.0,
                                                         ),
                                                   ),
@@ -819,14 +815,14 @@ class _LearnPathSteponStep3WidgetState
                                     ),
                                   ),
                                 ),
-                              ].addToStart(SizedBox(height: 2.0)),
+                              ].addToStart(const SizedBox(height: 2.0)),
                             ),
                             Row(
                               mainAxisSize: MainAxisSize.max,
                               children: [
                                 Expanded(
                                   child: Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(
                                         20.0, 10.0, 20.0, 20.0),
                                     child: FFButtonWidget(
                                       onPressed: () async {
@@ -836,17 +832,17 @@ class _LearnPathSteponStep3WidgetState
                                       options: FFButtonOptions(
                                         width: 112.0,
                                         height: 40.0,
-                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                        padding: const EdgeInsetsDirectional.fromSTEB(
                                             16.0, 0.0, 16.0, 0.0),
                                         iconPadding:
-                                            EdgeInsetsDirectional.fromSTEB(
+                                            const EdgeInsetsDirectional.fromSTEB(
                                                 0.0, 0.0, 0.0, 0.0),
                                         color: FlutterFlowTheme.of(context)
                                             .primary,
                                         textStyle: FlutterFlowTheme.of(context)
                                             .titleSmall
                                             .override(
-                                              fontFamily: 'Andika New Basic',
+                                              fontFamily: FFAppState().currentFontFamily,
                                               color: Colors.white,
                                               letterSpacing: 0.0,
                                             ),
@@ -859,7 +855,7 @@ class _LearnPathSteponStep3WidgetState
                                 ),
                                 Expanded(
                                   child: Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(
                                         20.0, 10.0, 20.0, 20.0),
                                     child: FFButtonWidget(
                                       onPressed: () async {
@@ -867,11 +863,11 @@ class _LearnPathSteponStep3WidgetState
                                           LearnPathSteponStep4Widget.routeName,
                                           queryParameters: {
                                             'childerRef': serializeParam(
-                                              widget!.selectedChild,
+                                              widget.selectedChild,
                                               ParamType.DocumentReference,
                                             ),
                                             'aiTextField': serializeParam(
-                                              widget!.aiTextFiled,
+                                              widget.aiTextFiled,
                                               ParamType.String,
                                             ),
                                             'frequanceTime': serializeParam(
@@ -885,17 +881,17 @@ class _LearnPathSteponStep3WidgetState
                                       options: FFButtonOptions(
                                         width: 112.0,
                                         height: 40.0,
-                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                        padding: const EdgeInsetsDirectional.fromSTEB(
                                             16.0, 0.0, 16.0, 0.0),
                                         iconPadding:
-                                            EdgeInsetsDirectional.fromSTEB(
+                                            const EdgeInsetsDirectional.fromSTEB(
                                                 0.0, 0.0, 0.0, 0.0),
                                         color: FlutterFlowTheme.of(context)
                                             .primary,
                                         textStyle: FlutterFlowTheme.of(context)
                                             .titleSmall
                                             .override(
-                                              fontFamily: 'Andika New Basic',
+                                              fontFamily: FFAppState().currentFontFamily,
                                               color: Colors.white,
                                               letterSpacing: 0.0,
                                             ),

@@ -77,21 +77,21 @@ class _CreateLearningPathBottomSheetState
     {
       'label': 'Morning',
       'icon': Icons.wb_sunny_outlined,
-      'color': Color(0xFFFFB74D),
+      'color': const Color(0xFFFFB74D),
       'times': ['07:00 AM', '07:15 AM', '07:30 AM', '07:45 AM', '08:00 AM', '08:15 AM', '08:30 AM', '08:45 AM', '09:00 AM', '09:15 AM', '09:30 AM', '09:45 AM', '10:00 AM', '10:15 AM', '10:30 AM', '10:45 AM', '11:00 AM', '11:15 AM', '11:30 AM', '11:45 AM'],
       'description': '7 AM - 12 PM',
     },
     {
       'label': 'Afternoon',
       'icon': Icons.wb_cloudy_outlined,
-      'color': Color(0xFF4FC3F7),
+      'color': const Color(0xFF4FC3F7),
       'times': ['12:00 PM', '12:15 PM', '12:30 PM', '12:45 PM', '01:00 PM', '01:15 PM', '01:30 PM', '01:45 PM', '02:00 PM', '02:15 PM', '02:30 PM', '02:45 PM', '03:00 PM', '03:15 PM', '03:30 PM', '03:45 PM', '04:00 PM', '04:15 PM', '04:30 PM', '04:45 PM'],
       'description': '12 PM - 5 PM',
     },
     {
       'label': 'Evening',
       'icon': Icons.nights_stay_outlined,
-      'color': Color(0xFF7E57C2),
+      'color': const Color(0xFF7E57C2),
       'times': ['05:00 PM', '05:15 PM', '05:30 PM', '05:45 PM', '06:00 PM', '06:15 PM', '06:30 PM', '06:45 PM', '07:00 PM', '07:15 PM', '07:30 PM', '07:45 PM', '08:00 PM', '08:15 PM', '08:30 PM', '08:45 PM'],
       'description': '5 PM - 9 PM',
     },
@@ -258,7 +258,7 @@ class _CreateLearningPathBottomSheetState
                       Text(
                         'Create Learning Path',
                         style: theme.titleMedium.override(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -312,7 +312,7 @@ class _CreateLearningPathBottomSheetState
                 height: 50,
                 color: _canProceed() ? theme.primary : Colors.grey[300],
                 textStyle: theme.titleSmall.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   color: Colors.white,
                 ),
                 borderRadius: BorderRadius.circular(14),
@@ -495,7 +495,7 @@ class _CreateLearningPathBottomSheetState
             Text(
               label,
               style: theme.bodySmall.override(
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
                 color: theme.primary,
                 fontSize: 11,
                 fontWeight: FontWeight.w500,
@@ -544,7 +544,7 @@ class _CreateLearningPathBottomSheetState
               child: Text(
                 "What would you like to work on with your child?",
                 style: theme.titleMedium.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   fontSize: 18,
                 ),
               ),
@@ -555,7 +555,7 @@ class _CreateLearningPathBottomSheetState
         Text(
           'Choose a common challenge or describe your own:',
           style: theme.bodyMedium.override(
-            fontFamily: 'Andika New Basic',
+            fontFamily: FFAppState().currentFontFamily,
             color: theme.secondaryText,
           ),
         ),
@@ -596,7 +596,7 @@ class _CreateLearningPathBottomSheetState
                 child: Text(
                   challenge,
                   style: theme.bodySmall.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     color: isSelected ? Colors.white : theme.primary,
                     fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
                   ),
@@ -621,14 +621,14 @@ class _CreateLearningPathBottomSheetState
             decoration: InputDecoration(
               hintText: 'Example: My child is struggling with counting numbers',
               hintStyle: theme.bodyMedium.override(
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
                 color: theme.secondaryText,
               ),
               border: InputBorder.none,
               contentPadding: const EdgeInsets.all(16),
             ),
             style: theme.bodyMedium.override(
-              fontFamily: 'Andika New Basic',
+              fontFamily: FFAppState().currentFontFamily,
             ),
             maxLines: 3,
           ),
@@ -659,7 +659,7 @@ class _CreateLearningPathBottomSheetState
               child: Text(
                 "Which child is experiencing this challenge?",
                 style: theme.titleMedium.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   fontSize: 18,
                 ),
               ),
@@ -747,7 +747,7 @@ class _CreateLearningPathBottomSheetState
                         Text(
                           child.name.isNotEmpty ? child.name : 'Child',
                           style: theme.bodyMedium.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             fontWeight:
                                 isSelected ? FontWeight.bold : FontWeight.normal,
                           ),
@@ -788,7 +788,7 @@ class _CreateLearningPathBottomSheetState
               child: Text(
                 "How often would you like lessons?",
                 style: theme.titleMedium.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   fontSize: 18,
                 ),
               ),
@@ -838,7 +838,7 @@ class _CreateLearningPathBottomSheetState
                       child: Text(
                         option,
                         style: theme.bodyLarge.override(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           fontWeight:
                               isSelected ? FontWeight.bold : FontWeight.normal,
                         ),
@@ -885,7 +885,7 @@ class _CreateLearningPathBottomSheetState
               child: Text(
                 "What time works best for lessons?",
                 style: theme.titleMedium.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   fontSize: 18,
                 ),
               ),
@@ -898,7 +898,7 @@ class _CreateLearningPathBottomSheetState
         Text(
           'Choose a time of day:',
           style: theme.bodyMedium.override(
-            fontFamily: 'Andika New Basic',
+            fontFamily: FFAppState().currentFontFamily,
             color: theme.secondaryText,
           ),
         ),
@@ -946,7 +946,7 @@ class _CreateLearningPathBottomSheetState
                         Text(
                           option['label'] as String,
                           style: theme.bodyMedium.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             fontWeight: isSelected
                                 ? FontWeight.bold
                                 : FontWeight.normal,
@@ -956,7 +956,7 @@ class _CreateLearningPathBottomSheetState
                         Text(
                           option['description'] as String,
                           style: theme.bodySmall.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: theme.secondaryText,
                             fontSize: 10,
                           ),
@@ -975,7 +975,7 @@ class _CreateLearningPathBottomSheetState
         Text(
           'Pick a specific time:',
           style: theme.bodyMedium.override(
-            fontFamily: 'Andika New Basic',
+            fontFamily: FFAppState().currentFontFamily,
             color: theme.secondaryText,
           ),
         ),
@@ -1009,7 +1009,7 @@ class _CreateLearningPathBottomSheetState
                 child: Text(
                   time,
                   style: theme.bodyMedium.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     color: isSelected ? Colors.white : theme.primary,
                     fontWeight: FontWeight.w600,
                   ),
@@ -1037,7 +1037,7 @@ class _CreateLearningPathBottomSheetState
                 child: Text(
                   'Lessons will be scheduled for $_selectedTime, $_selectedFrequency',
                   style: theme.bodyMedium.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     color: theme.primary,
                   ),
                 ),

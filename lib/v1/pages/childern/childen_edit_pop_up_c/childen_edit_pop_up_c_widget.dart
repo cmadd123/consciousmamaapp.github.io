@@ -1,17 +1,10 @@
-import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
-import '/backend/schema/structs/index.dart';
 import '/components/custom_date_time_picker.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
-import 'dart:ui';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'childen_edit_pop_up_c_model.dart';
 export 'childen_edit_pop_up_c_model.dart';
 
@@ -34,18 +27,18 @@ class _ChildenEditPopUpCWidgetState extends State<ChildenEditPopUpCWidget> {
 
   // Available color options (same as add child page)
   final List<Color> _colorOptions = [
-    Color(0xFF81C784), // Green
-    Color(0xFFB39DDB), // Purple
-    Color(0xFFFFB74D), // Orange
-    Color(0xFF4DB6AC), // Teal
-    Color(0xFFFFD54F), // Yellow
-    Color(0xFFFF8A65), // Coral
-    Color(0xFFFF6B6B), // Red
-    Color(0xFFFFA07A), // Light Orange
-    Color(0xFF52A097), // Primary Teal
-    Color(0xFF95E1D3), // Light Teal
-    Color(0xFF5DADE2), // Blue
-    Color(0xFFEE82EE), // Violet
+    const Color(0xFF81C784), // Green
+    const Color(0xFFB39DDB), // Purple
+    const Color(0xFFFFB74D), // Orange
+    const Color(0xFF4DB6AC), // Teal
+    const Color(0xFFFFD54F), // Yellow
+    const Color(0xFFFF8A65), // Coral
+    const Color(0xFFFF6B6B), // Red
+    const Color(0xFFFFA07A), // Light Orange
+    const Color(0xFF52A097), // Primary Teal
+    const Color(0xFF95E1D3), // Light Teal
+    const Color(0xFF5DADE2), // Blue
+    const Color(0xFFEE82EE), // Violet
   ];
 
   @override
@@ -61,12 +54,12 @@ class _ChildenEditPopUpCWidgetState extends State<ChildenEditPopUpCWidget> {
 
     // On component load action.
     SchedulerBinding.instance.addPostFrameCallback((_) async {
-      _selectedColor = widget!.childRow?.selectedColor ?? FlutterFlowTheme.of(context).primary;
+      _selectedColor = widget.childRow?.selectedColor ?? FlutterFlowTheme.of(context).primary;
       safeSetState(() {});
     });
 
     _model.textController ??=
-        TextEditingController(text: widget!.childRow?.name);
+        TextEditingController(text: widget.childRow?.name);
     _model.textFieldFocusNode ??= FocusNode();
   }
 
@@ -92,9 +85,9 @@ class _ChildenEditPopUpCWidgetState extends State<ChildenEditPopUpCWidget> {
         return Container(
           decoration: BoxDecoration(
             color: FlutterFlowTheme.of(context).secondaryBackground,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
           ),
-          padding: EdgeInsets.all(20),
+          padding: const EdgeInsets.all(20),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -110,12 +103,12 @@ class _ChildenEditPopUpCWidgetState extends State<ChildenEditPopUpCWidget> {
               Text(
                 'Choose Color',
                 style: FlutterFlowTheme.of(context).titleMedium.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 0.0,
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Wrap(
                 spacing: 16,
                 runSpacing: 16,
@@ -140,18 +133,18 @@ class _ChildenEditPopUpCWidgetState extends State<ChildenEditPopUpCWidget> {
                           BoxShadow(
                             color: Colors.black.withOpacity(0.1),
                             blurRadius: 4,
-                            offset: Offset(0, 2),
+                            offset: const Offset(0, 2),
                           ),
                         ],
                       ),
                       child: isSelected
-                          ? Icon(Icons.check, color: Colors.white, size: 30)
+                          ? const Icon(Icons.check, color: Colors.white, size: 30)
                           : null,
                     ),
                   );
                 }).toList(),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
             ],
           ),
         );
@@ -182,42 +175,42 @@ class _ChildenEditPopUpCWidgetState extends State<ChildenEditPopUpCWidget> {
         key: _model.formKey,
         autovalidateMode: AutovalidateMode.disabled,
         child: Padding(
-          padding: EdgeInsetsDirectional.fromSTEB(16.0, 20.0, 16.0, 20.0),
+          padding: const EdgeInsetsDirectional.fromSTEB(16.0, 20.0, 16.0, 20.0),
           child: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.max,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Align(
-                  alignment: AlignmentDirectional(0.0, -1.0),
+                  alignment: const AlignmentDirectional(0.0, -1.0),
                   child: Padding(
                     padding:
-                        EdgeInsetsDirectional.fromSTEB(16.0, 20.0, 16.0, 0.0),
+                        const EdgeInsetsDirectional.fromSTEB(16.0, 20.0, 16.0, 0.0),
                     child: Text(
                       'Edit Child Details',
                       textAlign: TextAlign.center,
                       style:
                           FlutterFlowTheme.of(context).headlineSmall.override(
-                                fontFamily: 'Andika New Basic',
+                                fontFamily: FFAppState().currentFontFamily,
                                 letterSpacing: 0.0,
                               ),
                     ),
                   ),
                 ),
                 Align(
-                  alignment: AlignmentDirectional(0.0, -1.0),
+                  alignment: const AlignmentDirectional(0.0, -1.0),
                   child: Text(
                     'Enter your child details below to update.',
                     textAlign: TextAlign.center,
                     style: FlutterFlowTheme.of(context).bodyMedium.override(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           letterSpacing: 0.0,
                         ),
                   ),
                 ),
                 // Color picker
                 Align(
-                  alignment: AlignmentDirectional(0.0, 0.0),
+                  alignment: const AlignmentDirectional(0.0, 0.0),
                   child: InkWell(
                     onTap: _showColorPicker,
                     borderRadius: BorderRadius.circular(50.0),
@@ -241,7 +234,7 @@ class _ChildenEditPopUpCWidgetState extends State<ChildenEditPopUpCWidget> {
                           bottom: 0,
                           right: 0,
                           child: Container(
-                            padding: EdgeInsets.all(6.0),
+                            padding: const EdgeInsets.all(6.0),
                             decoration: BoxDecoration(
                               color: FlutterFlowTheme.of(context).primary,
                               shape: BoxShape.circle,
@@ -251,7 +244,7 @@ class _ChildenEditPopUpCWidgetState extends State<ChildenEditPopUpCWidget> {
                                 width: 2.0,
                               ),
                             ),
-                            child: Icon(
+                            child: const Icon(
                               Icons.palette,
                               color: Colors.white,
                               size: 16.0,
@@ -265,14 +258,14 @@ class _ChildenEditPopUpCWidgetState extends State<ChildenEditPopUpCWidget> {
                 Text(
                   'Tap to change color',
                   style: FlutterFlowTheme.of(context).bodySmall.override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         color: FlutterFlowTheme.of(context).secondaryText,
                       ),
                   textAlign: TextAlign.center,
                 ),
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 10.0),
-                  child: Container(
+                  padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 10.0),
+                  child: SizedBox(
                     width: double.infinity,
                     child: TextFormField(
                       controller: _model.textController,
@@ -284,7 +277,7 @@ class _ChildenEditPopUpCWidgetState extends State<ChildenEditPopUpCWidget> {
                         labelStyle: FlutterFlowTheme.of(context)
                             .labelMedium
                             .override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               color: FlutterFlowTheme.of(context).primaryText,
                               letterSpacing: 0.0,
                             ),
@@ -292,19 +285,19 @@ class _ChildenEditPopUpCWidgetState extends State<ChildenEditPopUpCWidget> {
                         hintStyle: FlutterFlowTheme.of(context)
                             .labelMedium
                             .override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               color: FlutterFlowTheme.of(context).primaryText,
                               letterSpacing: 0.0,
                             ),
                         enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
+                          borderSide: const BorderSide(
                             color: Color(0x00000000),
                             width: 1.0,
                           ),
                           borderRadius: BorderRadius.circular(27.0),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
+                          borderSide: const BorderSide(
                             color: Color(0x00000000),
                             width: 1.0,
                           ),
@@ -325,11 +318,11 @@ class _ChildenEditPopUpCWidgetState extends State<ChildenEditPopUpCWidget> {
                           borderRadius: BorderRadius.circular(27.0),
                         ),
                         filled: true,
-                        contentPadding: EdgeInsetsDirectional.fromSTEB(
+                        contentPadding: const EdgeInsetsDirectional.fromSTEB(
                             20.0, 25.0, 0.0, 25.0),
                       ),
                       style: FlutterFlowTheme.of(context).bodyMedium.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: FlutterFlowTheme.of(context).primaryText,
                             letterSpacing: 0.0,
                           ),
@@ -348,7 +341,7 @@ class _ChildenEditPopUpCWidgetState extends State<ChildenEditPopUpCWidget> {
                     // Custom wheel date picker
                     final selectedDate = await showCustomDateTimePicker(
                       context: context,
-                      initialDateTime: widget!.childRow?.birthDay ?? DateTime.now(),
+                      initialDateTime: widget.childRow?.birthDay ?? DateTime.now(),
                       minimumDate: DateTime(1950),
                       maximumDate: DateTime.now(),
                       showTime: false, // Birthday doesn't need time
@@ -374,7 +367,7 @@ class _ChildenEditPopUpCWidgetState extends State<ChildenEditPopUpCWidget> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               20.0, 16.0, 20.0, 16.0),
                           child: Row(
                             mainAxisSize: MainAxisSize.max,
@@ -383,11 +376,11 @@ class _ChildenEditPopUpCWidgetState extends State<ChildenEditPopUpCWidget> {
                               Text(
                                 valueOrDefault<String>(
                                   () {
-                                    if ((widget!.childRow?.birthDay != null) &&
+                                    if ((widget.childRow?.birthDay != null) &&
                                         (_model.datepickerValue == null)) {
                                       return dateTimeFormat(
                                         "yMMMd",
-                                        widget!.childRow?.birthDay,
+                                        widget.childRow?.birthDay,
                                         locale: FFLocalizations.of(context)
                                             .languageCode,
                                       );
@@ -407,7 +400,7 @@ class _ChildenEditPopUpCWidgetState extends State<ChildenEditPopUpCWidget> {
                                 style: FlutterFlowTheme.of(context)
                                     .bodyMedium
                                     .override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       color:
                                           FlutterFlowTheme.of(context).black60,
                                       letterSpacing: 0.0,
@@ -426,7 +419,7 @@ class _ChildenEditPopUpCWidgetState extends State<ChildenEditPopUpCWidget> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(0.0, 40.0, 0.0, 0.0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(0.0, 40.0, 0.0, 0.0),
                   child: Row(
                     mainAxisSize: MainAxisSize.max,
                     children: [
@@ -438,15 +431,15 @@ class _ChildenEditPopUpCWidgetState extends State<ChildenEditPopUpCWidget> {
                           text: 'Cancel',
                           options: FFButtonOptions(
                             height: 49.0,
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 16.0, 0.0, 16.0, 0.0),
-                            iconPadding: EdgeInsetsDirectional.fromSTEB(
+                            iconPadding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 0.0, 0.0, 0.0),
-                            color: Color(0x0052A097),
+                            color: const Color(0x0052A097),
                             textStyle: FlutterFlowTheme.of(context)
                                 .titleSmall
                                 .override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   color: FlutterFlowTheme.of(context).primary,
                                   letterSpacing: 0.0,
                                 ),
@@ -467,12 +460,10 @@ class _ChildenEditPopUpCWidgetState extends State<ChildenEditPopUpCWidget> {
                               return;
                             }
 
-                            await widget!.childRow!.reference
+                            await widget.childRow!.reference
                                 .update(createChildernRecordData(
                               name: _model.textController.text,
-                              birthDay: _model.datePicked != null
-                                  ? _model.datePicked
-                                  : widget!.childRow?.birthDay,
+                              birthDay: _model.datePicked ?? widget.childRow?.birthDay,
                               selectedColor: _selectedColor,
                             ));
                             FFAppState().editing =
@@ -486,15 +477,15 @@ class _ChildenEditPopUpCWidgetState extends State<ChildenEditPopUpCWidget> {
                           text: 'Update',
                           options: FFButtonOptions(
                             height: 49.0,
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 16.0, 0.0, 16.0, 0.0),
-                            iconPadding: EdgeInsetsDirectional.fromSTEB(
+                            iconPadding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 0.0, 0.0, 0.0),
                             color: FlutterFlowTheme.of(context).primary,
                             textStyle: FlutterFlowTheme.of(context)
                                 .titleSmall
                                 .override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   color: Colors.white,
                                   letterSpacing: 0.0,
                                 ),
@@ -503,10 +494,10 @@ class _ChildenEditPopUpCWidgetState extends State<ChildenEditPopUpCWidget> {
                           ),
                         ),
                       ),
-                    ].divide(SizedBox(width: 20.0)),
+                    ].divide(const SizedBox(width: 20.0)),
                   ),
                 ),
-              ].divide(SizedBox(height: 24.0)),
+              ].divide(const SizedBox(height: 24.0)),
             ),
           ),
         ),

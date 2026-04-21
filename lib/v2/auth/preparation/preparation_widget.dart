@@ -29,21 +29,21 @@ class _PreparationWidgetState extends State<PreparationWidget>
 
   // Steps showing what's coming next (not what's done)
   final List<_PrepStep> _upcomingSteps = [
-    _PrepStep(
+    const _PrepStep(
       icon: Icons.question_answer,
       title: 'Answer a few questions',
       subtitle: 'Help us understand your needs',
       color: Color(0xFF52A097),
       stepNumber: '1',
     ),
-    _PrepStep(
+    const _PrepStep(
       icon: Icons.family_restroom,
       title: 'Set up your family',
       subtitle: 'Add children and parent details',
       color: Color(0xFFEE8B60),
       stepNumber: '2',
     ),
-    _PrepStep(
+    const _PrepStep(
       icon: Icons.auto_awesome,
       title: 'Get personalized content',
       subtitle: 'Meals & milestones',
@@ -101,7 +101,7 @@ class _PreparationWidgetState extends State<PreparationWidget>
         body: Container(
           width: double.infinity,
           height: double.infinity,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             gradient: LinearGradient(
               colors: [Color(0xFFD7F2EB), Color(0xFFFFE9E1)],
               stops: [0.0, 1.0],
@@ -113,7 +113,7 @@ class _PreparationWidgetState extends State<PreparationWidget>
             child: FadeTransition(
               opacity: _fadeAnimation,
               child: Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(24.0, 40.0, 24.0, 40.0),
+                padding: const EdgeInsetsDirectional.fromSTEB(24.0, 40.0, 24.0, 40.0),
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
                   children: [
@@ -134,7 +134,7 @@ class _PreparationWidgetState extends State<PreparationWidget>
                             ),
                           ],
                         ),
-                        child: Icon(
+                        child: const Icon(
                           Icons.check,
                           color: Colors.white,
                           size: 40,
@@ -142,31 +142,31 @@ class _PreparationWidgetState extends State<PreparationWidget>
                       ),
                     ),
 
-                    SizedBox(height: 24),
+                    const SizedBox(height: 24),
 
                     Text(
                       'Welcome!',
                       style: FlutterFlowTheme.of(context).headlineMedium.override(
-                            fontFamily: 'Andika New Basic',
-                            color: Color(0xFF2A6F67),
+                            fontFamily: FFAppState().currentFontFamily,
+                            color: const Color(0xFF2A6F67),
                             fontWeight: FontWeight.bold,
                             letterSpacing: 0.0,
                           ),
                     ),
 
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
 
                     Text(
                       'Your account is ready. Here\'s what\'s next:',
                       textAlign: TextAlign.center,
                       style: FlutterFlowTheme.of(context).bodyLarge.override(
-                            fontFamily: 'Andika New Basic',
-                            color: Color(0xFF5D4E60),
+                            fontFamily: FFAppState().currentFontFamily,
+                            color: const Color(0xFF5D4E60),
                             letterSpacing: 0.0,
                           ),
                     ),
 
-                    SizedBox(height: 40),
+                    const SizedBox(height: 40),
 
                     // Upcoming steps - no borders, cleaner look
                     Expanded(
@@ -188,8 +188,8 @@ class _PreparationWidgetState extends State<PreparationWidget>
                               );
                             },
                             child: Container(
-                              margin: EdgeInsets.only(bottom: 16),
-                              padding: EdgeInsets.all(16),
+                              margin: const EdgeInsets.only(bottom: 16),
+                              padding: const EdgeInsets.all(16),
                               decoration: BoxDecoration(
                                 color: Colors.white.withOpacity(0.85),
                                 borderRadius: BorderRadius.circular(14),
@@ -211,7 +211,7 @@ class _PreparationWidgetState extends State<PreparationWidget>
                                         style: FlutterFlowTheme.of(context)
                                             .bodyLarge
                                             .override(
-                                              fontFamily: 'Andika New Basic',
+                                              fontFamily: FFAppState().currentFontFamily,
                                               color: step.color,
                                               fontWeight: FontWeight.bold,
                                               letterSpacing: 0.0,
@@ -219,7 +219,7 @@ class _PreparationWidgetState extends State<PreparationWidget>
                                       ),
                                     ),
                                   ),
-                                  SizedBox(width: 16),
+                                  const SizedBox(width: 16),
                                   // Step icon
                                   Container(
                                     width: 44,
@@ -234,7 +234,7 @@ class _PreparationWidgetState extends State<PreparationWidget>
                                       size: 24,
                                     ),
                                   ),
-                                  SizedBox(width: 12),
+                                  const SizedBox(width: 12),
                                   Expanded(
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -244,8 +244,8 @@ class _PreparationWidgetState extends State<PreparationWidget>
                                           style: FlutterFlowTheme.of(context)
                                               .bodyMedium
                                               .override(
-                                                fontFamily: 'Andika New Basic',
-                                                color: Color(0xFF2A6F67),
+                                                fontFamily: FFAppState().currentFontFamily,
+                                                color: const Color(0xFF2A6F67),
                                                 fontSize: 15,
                                                 fontWeight: FontWeight.w600,
                                                 letterSpacing: 0.0,
@@ -256,8 +256,8 @@ class _PreparationWidgetState extends State<PreparationWidget>
                                           style: FlutterFlowTheme.of(context)
                                               .bodySmall
                                               .override(
-                                                fontFamily: 'Andika New Basic',
-                                                color: Color(0xFF5D4E60),
+                                                fontFamily: FFAppState().currentFontFamily,
+                                                color: const Color(0xFF5D4E60),
                                                 letterSpacing: 0.0,
                                               ),
                                         ),
@@ -274,21 +274,21 @@ class _PreparationWidgetState extends State<PreparationWidget>
 
                     // Quick setup note
                     Padding(
-                      padding: EdgeInsets.only(bottom: 16),
+                      padding: const EdgeInsets.only(bottom: 16),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(
+                          const Icon(
                             Icons.timer_outlined,
                             size: 16,
                             color: Color(0xFF5D4E60),
                           ),
-                          SizedBox(width: 6),
+                          const SizedBox(width: 6),
                           Text(
                             'Takes about 2 minutes',
                             style: FlutterFlowTheme.of(context).bodySmall.override(
-                                  fontFamily: 'Andika New Basic',
-                                  color: Color(0xFF5D4E60),
+                                  fontFamily: FFAppState().currentFontFamily,
+                                  color: const Color(0xFF5D4E60),
                                   letterSpacing: 0.0,
                                 ),
                           ),
@@ -305,11 +305,11 @@ class _PreparationWidgetState extends State<PreparationWidget>
                       options: FFButtonOptions(
                         width: double.infinity,
                         height: 56.0,
-                        padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
-                        iconPadding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
+                        padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
+                        iconPadding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
                         color: FlutterFlowTheme.of(context).primary,
                         textStyle: FlutterFlowTheme.of(context).titleMedium.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               color: Colors.white,
                               fontSize: 18.0,
                               fontWeight: FontWeight.w600,
@@ -321,12 +321,12 @@ class _PreparationWidgetState extends State<PreparationWidget>
                     ),
 
                     // Version number
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     Text(
                       'v1.2.201',
                       style: FlutterFlowTheme.of(context).bodySmall.override(
-                            fontFamily: 'Andika New Basic',
-                            color: Color(0xFF5D4E60).withOpacity(0.5),
+                            fontFamily: FFAppState().currentFontFamily,
+                            color: const Color(0xFF5D4E60).withOpacity(0.5),
                             fontSize: 12,
                             letterSpacing: 0.0,
                           ),

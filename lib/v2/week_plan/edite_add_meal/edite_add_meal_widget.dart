@@ -1,27 +1,20 @@
 import 'dart:convert';
-import 'dart:typed_data';
 import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
 import '/backend/firebase_storage/storage.dart';
 import '/backend/schema/enums/enums.dart';
 import '/components/home_nav_bar_widget.dart';
 import 'package:http/http.dart' as http;
-import '/flutter_flow/flutter_flow_drop_down.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
-import '/flutter_flow/form_field_controller.dart';
 import '/flutter_flow/upload_data.dart';
 import '/components/animated_press_widget.dart';
 import '/v2/cong_for_a_new_meal/cong_for_a_new_meal_widget.dart';
-import 'dart:ui';
 import '/index.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'edite_add_meal_model.dart';
 export 'edite_add_meal_model.dart';
 
@@ -34,8 +27,8 @@ class EditeAddMealWidget extends StatefulWidget {
     this.isReplceItem,
     this.editCookingMeal,
     bool? isCreatingSide,
-  }) : this.isGenrateForm = isGenrateForm ?? true,
-       this.isCreatingSide = isCreatingSide ?? false;
+  }) : isGenrateForm = isGenrateForm ?? true,
+       isCreatingSide = isCreatingSide ?? false;
 
   final DateTime? weekData;
   final MealTyp? dateTyyp;
@@ -93,19 +86,19 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
     // On page load action.
     SchedulerBinding.instance.addPostFrameCallback((_) async {
       if (!mounted) return; // Prevent setState after dispose
-      if (widget!.editCookingMeal != null) {
-        _model.mealImage = widget!.editCookingMeal?.imageUrl;
+      if (widget.editCookingMeal != null) {
+        _model.mealImage = widget.editCookingMeal?.imageUrl;
         _model.ingredientsList =
-            widget!.editCookingMeal!.ingredients.toList().cast<String>();
-        _model.cookingInsturction = widget!.editCookingMeal!.cookingInstructions
+            widget.editCookingMeal!.ingredients.toList().cast<String>();
+        _model.cookingInsturction = widget.editCookingMeal!.cookingInstructions
             .toList()
             .cast<String>();
 
         // Initialize selectedCategories from existing meal data
         // Add recipe type (Entree/Side/Dessert) — check both recipeType and mainOrSides
-        if (widget!.editCookingMeal!.recipeType == RecipeType.Side || widget!.editCookingMeal!.mainOrSides == 'Side') {
+        if (widget.editCookingMeal!.recipeType == RecipeType.Side || widget.editCookingMeal!.mainOrSides == 'Side') {
           _model.selectedCategories.add('Side');
-        } else if (widget!.editCookingMeal!.recipeType == RecipeType.Dessert || widget!.editCookingMeal!.mainOrSides == 'Dessert') {
+        } else if (widget.editCookingMeal!.recipeType == RecipeType.Dessert || widget.editCookingMeal!.mainOrSides == 'Dessert') {
           _model.selectedCategories.add('Dessert');
         } else {
           // Main = Entree
@@ -113,8 +106,8 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
         }
 
         // Parse mealTyp (comma-separated) into meal type and dietary categories
-        if (widget!.editCookingMeal!.mealTyp.isNotEmpty) {
-          final allTypes = widget!.editCookingMeal!.mealTyp.split(',');
+        if (widget.editCookingMeal!.mealTyp.isNotEmpty) {
+          final allTypes = widget.editCookingMeal!.mealTyp.split(',');
           for (final type in allTypes) {
             final trimmed = type.trim();
             // Add meal types
@@ -131,8 +124,8 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
         safeSetState(() {});
       } else {
         // For new recipes, initialize with default category based on meal type context
-        if (widget!.dateTyyp != null) {
-          switch (widget!.dateTyyp) {
+        if (widget.dateTyyp != null) {
+          switch (widget.dateTyyp) {
             case MealTyp.Breakfast:
               _model.selectedCategories.add('Breakfast');
               break;
@@ -154,13 +147,13 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
     });
 
     _model.textController1 ??=
-        TextEditingController(text: widget!.editCookingMeal?.recipeName);
+        TextEditingController(text: widget.editCookingMeal?.recipeName);
     _model.textFieldFocusNode1 ??= FocusNode();
 
     // Prefill cost with manual cost if set, otherwise AI-estimated cost from import
-    final manualCost = widget!.editCookingMeal?.cost;
-    final estCost = widget!.editCookingMeal?.hasEstimatedCost() == true
-        ? widget!.editCookingMeal!.estimatedCost
+    final manualCost = widget.editCookingMeal?.cost;
+    final estCost = widget.editCookingMeal?.hasEstimatedCost() == true
+        ? widget.editCookingMeal!.estimatedCost
         : null;
     final initialCost = (manualCost != null && manualCost > 0) ? manualCost : estCost;
     final initialCostText = initialCost == null
@@ -173,7 +166,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
     _model.textFieldFocusNode2 ??= FocusNode();
 
     // Initialize cook time hours and minutes from total minutes
-    int cookTimeMinutes = widget!.editCookingMeal?.cookingTime?.toInt() ?? 0;
+    int cookTimeMinutes = widget.editCookingMeal?.cookingTime.toInt() ?? 0;
     int cookHours = cookTimeMinutes ~/ 60;
     int cookMins = cookTimeMinutes % 60;
 
@@ -186,7 +179,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
     _model.cookTimeMinutesFocusNode ??= FocusNode();
 
     // Initialize prep time hours and minutes from total minutes
-    int prepTimeMinutes = widget!.editCookingMeal?.prepareTime?.toInt() ?? 0;
+    int prepTimeMinutes = widget.editCookingMeal?.prepareTime.toInt() ?? 0;
     int prepHours = prepTimeMinutes ~/ 60;
     int prepMins = prepTimeMinutes % 60;
 
@@ -200,18 +193,18 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
 
     // Legacy controllers - kept for backward compatibility
     _model.textController3 ??= TextEditingController(
-        text: widget!.editCookingMeal?.cookingTime != null
-            ? (widget!.editCookingMeal!.cookingTime! % 1 == 0
-                ? widget!.editCookingMeal!.cookingTime!.toInt().toString()
-                : widget!.editCookingMeal!.cookingTime!.toString())
+        text: widget.editCookingMeal?.cookingTime != null
+            ? (widget.editCookingMeal!.cookingTime % 1 == 0
+                ? widget.editCookingMeal!.cookingTime.toInt().toString()
+                : widget.editCookingMeal!.cookingTime.toString())
             : null);
     _model.textFieldFocusNode3 ??= FocusNode();
 
     _model.textController4 ??= TextEditingController(
-        text: widget!.editCookingMeal?.prepareTime != null
-            ? (widget!.editCookingMeal!.prepareTime! % 1 == 0
-                ? widget!.editCookingMeal!.prepareTime!.toInt().toString()
-                : widget!.editCookingMeal!.prepareTime!.toString())
+        text: widget.editCookingMeal?.prepareTime != null
+            ? (widget.editCookingMeal!.prepareTime % 1 == 0
+                ? widget.editCookingMeal!.prepareTime.toInt().toString()
+                : widget.editCookingMeal!.prepareTime.toString())
             : null);
     _model.textFieldFocusNode4 ??= FocusNode();
 
@@ -415,7 +408,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
     final mediaSource = await showModalBottomSheet<String>(
       context: context,
       backgroundColor: Colors.white,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (sheetContext) {
@@ -437,40 +430,40 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                 Text(
                   'Choose Photo Source',
                   style: TextStyle(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
-                    color: Color(0xFF333333),
+                    color: const Color(0xFF333333),
                   ),
                 ),
-                SizedBox(height: 24),
+                const SizedBox(height: 24),
                 ListTile(
                   leading: Container(
-                    padding: EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
                       color: FlutterFlowTheme.of(sheetContext).primary.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Icon(Icons.camera_alt, color: FlutterFlowTheme.of(sheetContext).primary),
                   ),
-                  title: Text('Take Photo', style: TextStyle(fontFamily: 'Andika New Basic', fontWeight: FontWeight.w500)),
-                  subtitle: Text('Use camera to capture cookbook page', style: TextStyle(fontFamily: 'Andika New Basic', fontSize: 12, color: Colors.grey)),
+                  title: Text('Take Photo', style: TextStyle(fontFamily: FFAppState().currentFontFamily, fontWeight: FontWeight.w500)),
+                  subtitle: Text('Use camera to capture cookbook page', style: TextStyle(fontFamily: FFAppState().currentFontFamily, fontSize: 12, color: Colors.grey)),
                   onTap: () => Navigator.pop(sheetContext, 'camera'),
                 ),
                 ListTile(
                   leading: Container(
-                    padding: EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
                       color: FlutterFlowTheme.of(sheetContext).primary.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Icon(Icons.photo_library, color: FlutterFlowTheme.of(sheetContext).primary),
                   ),
-                  title: Text('Choose from Gallery', style: TextStyle(fontFamily: 'Andika New Basic', fontWeight: FontWeight.w500)),
-                  subtitle: Text('Select an existing photo', style: TextStyle(fontFamily: 'Andika New Basic', fontSize: 12, color: Colors.grey)),
+                  title: Text('Choose from Gallery', style: TextStyle(fontFamily: FFAppState().currentFontFamily, fontWeight: FontWeight.w500)),
+                  subtitle: Text('Select an existing photo', style: TextStyle(fontFamily: FFAppState().currentFontFamily, fontSize: 12, color: Colors.grey)),
                   onTap: () => Navigator.pop(sheetContext, 'gallery'),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
               ],
             ),
           ),
@@ -502,7 +495,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
       // Call Claude via cloud function
       const projectRegion = 'us-central1';
       const projectId = 'parenting-plus-7szrif';
-      final url = 'https://$projectRegion-$projectId.cloudfunctions.net/scanCookbookWithClaude';
+      const url = 'https://$projectRegion-$projectId.cloudfunctions.net/scanCookbookWithClaude';
 
       final response = await http.post(
         Uri.parse(url),
@@ -565,7 +558,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Row(
+          content: const Row(
             children: [
               Icon(Icons.check_circle, color: Colors.white, size: 20.0),
               SizedBox(width: 8.0),
@@ -584,8 +577,8 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
         SnackBar(
           content: Row(
             children: [
-              Icon(Icons.error_outline, color: Colors.white, size: 20.0),
-              SizedBox(width: 8.0),
+              const Icon(Icons.error_outline, color: Colors.white, size: 20.0),
+              const SizedBox(width: 8.0),
               Expanded(child: Text('Could not extract recipe: ${e.toString().replaceAll('Exception:', '').trim()}')),
             ],
           ),
@@ -614,7 +607,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
           Text(
             title,
             style: FlutterFlowTheme.of(context).bodyMedium.override(
-              fontFamily: 'Andika New Basic',
+              fontFamily: FFAppState().currentFontFamily,
               fontSize: 16.0,
               fontWeight: FontWeight.w600,
               color: FlutterFlowTheme.of(context).primary,
@@ -649,18 +642,18 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
               children: [
                 Expanded(
                   child: Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(12.0, 20.0, 12.0, 0.0),
+              padding: const EdgeInsetsDirectional.fromSTEB(12.0, 20.0, 12.0, 0.0),
               child: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
                   children: [
                     // Spacer for floating back arrow
-                    SizedBox(height: 32.0),
+                    const SizedBox(height: 32.0),
                     Align(
-                      alignment: AlignmentDirectional(0.0, -1.0),
+                      alignment: const AlignmentDirectional(0.0, -1.0),
                       child: Padding(
                         padding:
-                            EdgeInsetsDirectional.fromSTEB(0.0, 20.0, 0.0, 0.0),
+                            const EdgeInsetsDirectional.fromSTEB(0.0, 20.0, 0.0, 0.0),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
@@ -668,19 +661,19 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                               _getTitle(),
                               style:
                                   FlutterFlowTheme.of(context).bodyMedium.override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         fontSize: 24.0,
                                         letterSpacing: 0.0,
                                       ),
                             ),
                             Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(0.0, 4.0, 0.0, 0.0),
+                              padding: const EdgeInsetsDirectional.fromSTEB(0.0, 4.0, 0.0, 0.0),
                               child: Text(
                                 _getSubtitle(),
                                 style:
                                     FlutterFlowTheme.of(context).bodySmall.override(
-                                          fontFamily: 'Andika New Basic',
-                                          color: Color(0xB71B1F26),
+                                          fontFamily: FFAppState().currentFontFamily,
+                                          color: const Color(0xB71B1F26),
                                           fontSize: 14.0,
                                           letterSpacing: 0.0,
                                         ),
@@ -689,31 +682,31 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                             // Pinterest import tip - only show when creating new recipe
                             if (widget.editCookingMeal == null)
                               Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(16.0, 16.0, 16.0, 0.0),
+                                padding: const EdgeInsetsDirectional.fromSTEB(16.0, 16.0, 16.0, 0.0),
                                 child: Container(
-                                  padding: EdgeInsets.all(12.0),
+                                  padding: const EdgeInsets.all(12.0),
                                   decoration: BoxDecoration(
-                                    color: Color(0xFFFFF3E0), // Light orange background
+                                    color: const Color(0xFFFFF3E0), // Light orange background
                                     borderRadius: BorderRadius.circular(12.0),
                                     border: Border.all(
-                                      color: Color(0xFFFFB74D), // Orange border
+                                      color: const Color(0xFFFFB74D), // Orange border
                                       width: 1.0,
                                     ),
                                   ),
                                   child: Row(
                                     children: [
-                                      Icon(
+                                      const Icon(
                                         Icons.lightbulb_outline,
                                         color: Color(0xFFFF9800),
                                         size: 20.0,
                                       ),
-                                      SizedBox(width: 8.0),
+                                      const SizedBox(width: 8.0),
                                       Expanded(
                                         child: Text(
                                           'Tip: You can import recipes from Pinterest and other websites! Just share the recipe or URL with MomRise, or use "Import from Link" below.',
                                           style: FlutterFlowTheme.of(context).bodySmall.override(
-                                                fontFamily: 'Andika New Basic',
-                                                color: Color(0xFF6D4C41),
+                                                fontFamily: FFAppState().currentFontFamily,
+                                                color: const Color(0xFF6D4C41),
                                                 fontSize: 13.0,
                                                 letterSpacing: 0.0,
                                               ),
@@ -726,13 +719,13 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                             // Scan Cookbook button - only show when creating new recipe
                             if (widget.editCookingMeal == null)
                               Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(0.0, 16.0, 0.0, 0.0),
+                                padding: const EdgeInsetsDirectional.fromSTEB(0.0, 16.0, 0.0, 0.0),
                                 child: AnimatedPress(
                                   onTap: _isScanning ? null : _scanCookbookPage,
                                   child: Container(
-                                    padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
+                                    padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
                                     decoration: BoxDecoration(
-                                      gradient: LinearGradient(
+                                      gradient: const LinearGradient(
                                         colors: [Color(0xFF52A097), Color(0xFF39D2C0)],
                                         begin: Alignment.topLeft,
                                         end: Alignment.bottomRight,
@@ -740,9 +733,9 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                       borderRadius: BorderRadius.circular(25.0),
                                       boxShadow: [
                                         BoxShadow(
-                                          color: Color(0xFF52A097).withOpacity(0.3),
+                                          color: const Color(0xFF52A097).withOpacity(0.3),
                                           blurRadius: 8,
-                                          offset: Offset(0, 4),
+                                          offset: const Offset(0, 4),
                                         ),
                                       ],
                                     ),
@@ -750,7 +743,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         if (_isScanning)
-                                          SizedBox(
+                                          const SizedBox(
                                             width: 20.0,
                                             height: 20.0,
                                             child: CircularProgressIndicator(
@@ -759,19 +752,19 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                             ),
                                           )
                                         else
-                                          Icon(
+                                          const Icon(
                                             Icons.camera_alt,
                                             color: Colors.white,
                                             size: 20.0,
                                           ),
-                                        SizedBox(width: 8.0),
+                                        const SizedBox(width: 8.0),
                                         Text(
                                           _isScanning ? 'Scanning...' : 'Scan Cookbook Page',
                                           style: TextStyle(
                                             color: Colors.white,
                                             fontWeight: FontWeight.w600,
                                             fontSize: 14.0,
-                                            fontFamily: 'Andika New Basic',
+                                            fontFamily: FFAppState().currentFontFamily,
                                           ),
                                         ),
                                       ],
@@ -782,7 +775,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                             // Import from Link button - only show when creating new recipe
                             if (widget.editCookingMeal == null)
                               Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(0.0, 12.0, 0.0, 0.0),
+                                padding: const EdgeInsetsDirectional.fromSTEB(0.0, 12.0, 0.0, 0.0),
                                 child: AnimatedPress(
                                   onTap: () {
                                     context.pushNamed(
@@ -796,9 +789,9 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                     );
                                   },
                                   child: Container(
-                                    padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
+                                    padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
                                     decoration: BoxDecoration(
-                                      gradient: LinearGradient(
+                                      gradient: const LinearGradient(
                                         colors: [Color(0xFF9C6FB8), Color(0xFF7B4FA0)],
                                         begin: Alignment.topLeft,
                                         end: Alignment.bottomRight,
@@ -806,28 +799,28 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                       borderRadius: BorderRadius.circular(25.0),
                                       boxShadow: [
                                         BoxShadow(
-                                          color: Color(0xFF9C6FB8).withOpacity(0.3),
+                                          color: const Color(0xFF9C6FB8).withOpacity(0.3),
                                           blurRadius: 8,
-                                          offset: Offset(0, 4),
+                                          offset: const Offset(0, 4),
                                         ),
                                       ],
                                     ),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        Icon(
+                                        const Icon(
                                           Icons.link,
                                           color: Colors.white,
                                           size: 20.0,
                                         ),
-                                        SizedBox(width: 8.0),
+                                        const SizedBox(width: 8.0),
                                         Text(
                                           'Import from Link',
                                           style: TextStyle(
                                             color: Colors.white,
                                             fontWeight: FontWeight.w600,
                                             fontSize: 14.0,
-                                            fontFamily: 'Andika New Basic',
+                                            fontFamily: FFAppState().currentFontFamily,
                                           ),
                                         ),
                                       ],
@@ -843,7 +836,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                     if (_model.mealImage != null && _model.mealImage != '')
                       Padding(
                         padding:
-                            EdgeInsetsDirectional.fromSTEB(0.0, 20.0, 0.0, 0.0),
+                            const EdgeInsetsDirectional.fromSTEB(0.0, 20.0, 0.0, 0.0),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(14.0),
                           child: Container(
@@ -862,23 +855,23 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                           height: 200.0,
                                           fit: BoxFit.cover,
                                           errorBuilder: (context, error, stackTrace) {
-                                            return Container(
+                                            return SizedBox(
                                               width: double.infinity,
                                               height: 200.0,
                                               child: _buildColoredPlaceholder(),
                                             );
                                           },
                                         )
-                                      : Container(
+                                      : SizedBox(
                                           width: double.infinity,
                                           height: 200.0,
                                           child: _buildColoredPlaceholder(),
                                         ),
                                 ),
                                 Align(
-                                  alignment: AlignmentDirectional(1.0, -1.0),
+                                  alignment: const AlignmentDirectional(1.0, -1.0),
                                   child: Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(
                                         0.0, 16.0, 16.0, 0.0),
                                     child: InkWell(
                                       splashColor: Colors.transparent,
@@ -908,7 +901,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                       ),
                     Padding(
                       padding:
-                          EdgeInsetsDirectional.fromSTEB(0.0, 29.0, 0.0, 0.0),
+                          const EdgeInsetsDirectional.fromSTEB(0.0, 29.0, 0.0, 0.0),
                       child: InkWell(
                         splashColor: Colors.transparent,
                         focusColor: Colors.transparent,
@@ -978,11 +971,11 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                         child: Container(
                           width: MediaQuery.sizeOf(context).width * 0.66,
                           decoration: BoxDecoration(
-                            color: Color(0x4D52A097),
+                            color: const Color(0x4D52A097),
                             borderRadius: BorderRadius.circular(14.0),
                           ),
                           child: Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 16.0, 0.0, 16.0),
                             child: Column(
                               mainAxisSize: MainAxisSize.max,
@@ -1005,14 +998,14 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                   ),
                                 ),
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       0.0, 12.0, 0.0, 0.0),
                                   child: Text(
                                     'Add Photo (Optional)',
                                     style: FlutterFlowTheme.of(context)
                                         .bodyMedium
                                         .override(
-                                          fontFamily: 'Andika New Basic',
+                                          fontFamily: FFAppState().currentFontFamily,
                                           letterSpacing: 0.0,
                                         ),
                                   ),
@@ -1031,11 +1024,11 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                         color: FlutterFlowTheme.of(context).prim30,
                         borderRadius: BorderRadius.circular(14.0),
                         border: Border.all(
-                          color: Color(0xFFCBE3E0),
+                          color: const Color(0xFFCBE3E0),
                           width: 1.0,
                         ),
                       ),
-                      child: Container(
+                      child: SizedBox(
                         width: double.infinity,
                         child: TextFormField(
                           controller: _model.textController1,
@@ -1048,7 +1041,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                             labelStyle: FlutterFlowTheme.of(context)
                                 .labelMedium
                                 .override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   color: FlutterFlowTheme.of(context)
                                       .primaryText,
                                   letterSpacing: 0.0,
@@ -1057,20 +1050,20 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                               hintStyle: FlutterFlowTheme.of(context)
                                   .labelMedium
                                   .override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     color: FlutterFlowTheme.of(context)
                                         .primaryText,
                                     letterSpacing: 0.0,
                                   ),
                               enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
+                                borderSide: const BorderSide(
                                   color: Color(0x00000000),
                                   width: 1.0,
                                 ),
                                 borderRadius: BorderRadius.circular(14.0),
                               ),
                               focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
+                                borderSide: const BorderSide(
                                   color: Color(0x00000000),
                                   width: 1.0,
                                 ),
@@ -1094,7 +1087,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                             style: FlutterFlowTheme.of(context)
                                 .bodyMedium
                                 .override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   letterSpacing: 0.0,
                                 ),
                             cursorColor:
@@ -1107,7 +1100,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                       ),
                     // Section 1: When do you eat this? (Meal Types)
                     Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(0.0, 12.0, 0.0, 0.0),
+                      padding: const EdgeInsetsDirectional.fromSTEB(0.0, 12.0, 0.0, 0.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -1116,23 +1109,23 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                               Text(
                                 'When do you eat this? (select all that apply) *',
                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       fontSize: 13.0,
                                       color: const Color(0xFF666666),
                                       letterSpacing: 0.0,
                                     ),
                               ),
-                              SizedBox(width: 4.0),
+                              const SizedBox(width: 4.0),
                               InkWell(
                                 onTap: () {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
+                                    const SnackBar(
                                       content: Text('🍳 Used to filter recipes by meal time when building meals'),
                                       duration: Duration(seconds: 3),
                                     ),
                                   );
                                 },
-                                child: Icon(
+                                child: const Icon(
                                   Icons.help_outline,
                                   size: 16.0,
                                   color: Color(0xFF999999),
@@ -1184,7 +1177,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                   child: Text(
                                     mealType,
                                     style: FlutterFlowTheme.of(context).bodySmall.override(
-                                          fontFamily: 'Andika New Basic',
+                                          fontFamily: FFAppState().currentFontFamily,
                                           color: isSelected ? Colors.white : FlutterFlowTheme.of(context).primary,
                                           fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
                                           letterSpacing: 0.0,
@@ -1200,7 +1193,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                     // Section 2: What type of recipe? (Recipe Types) - Only show if Snacks not exclusively selected
                     if (!(_model.selectedCategories.contains('Snacks') && _model.selectedCategories.length == 1))
                       Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(0.0, 20.0, 0.0, 0.0),
+                        padding: const EdgeInsetsDirectional.fromSTEB(0.0, 20.0, 0.0, 0.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -1209,23 +1202,23 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                 Text(
                                   'What type of recipe is this? (select one) ${_model.selectedCategories.contains('Snacks') ? '' : '*'}',
                                   style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         fontSize: 13.0,
                                         color: const Color(0xFF666666),
                                         letterSpacing: 0.0,
                                       ),
                                 ),
-                                SizedBox(width: 4.0),
+                                const SizedBox(width: 4.0),
                                 InkWell(
                                   onTap: () {
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
+                                      const SnackBar(
                                         content: Text('🍽️ Defines the role this recipe plays in a meal'),
                                         duration: Duration(seconds: 3),
                                       ),
                                     );
                                   },
-                                  child: Icon(
+                                  child: const Icon(
                                     Icons.help_outline,
                                     size: 16.0,
                                     color: Color(0xFF999999),
@@ -1282,7 +1275,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                     child: Text(
                                       '$emoji $label',
                                       style: FlutterFlowTheme.of(context).bodySmall.override(
-                                            fontFamily: 'Andika New Basic',
+                                            fontFamily: FFAppState().currentFontFamily,
                                             color: isSelected ? Colors.white : FlutterFlowTheme.of(context).secondary,
                                             fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
                                             letterSpacing: 0.0,
@@ -1297,7 +1290,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                       ),
                     // Section 3: Dietary & Allergen Info (Optional)
                     Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(0.0, 20.0, 0.0, 0.0),
+                      padding: const EdgeInsetsDirectional.fromSTEB(0.0, 20.0, 0.0, 0.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -1306,23 +1299,23 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                               Text(
                                 'Dietary & Allergen Info (optional)',
                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       fontSize: 13.0,
                                       color: const Color(0xFF666666),
                                       letterSpacing: 0.0,
                                     ),
                               ),
-                              SizedBox(width: 4.0),
+                              const SizedBox(width: 4.0),
                               InkWell(
                                 onTap: () {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
+                                    const SnackBar(
                                       content: Text('🥗 Helps filter recipes by dietary restrictions and allergens'),
                                       duration: Duration(seconds: 3),
                                     ),
                                   );
                                 },
-                                child: Icon(
+                                child: const Icon(
                                   Icons.help_outline,
                                   size: 16.0,
                                   color: Color(0xFF999999),
@@ -1360,19 +1353,19 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                   padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
                                   decoration: BoxDecoration(
                                     color: isSelected
-                                        ? Color(0xFF52A097)
-                                        : Color(0xFF52A097).withValues(alpha: 0.1),
+                                        ? const Color(0xFF52A097)
+                                        : const Color(0xFF52A097).withValues(alpha: 0.1),
                                     border: Border.all(
                                       color: isSelected
-                                          ? Color(0xFF52A097)
-                                          : Color(0xFF52A097).withValues(alpha: 0.3),
+                                          ? const Color(0xFF52A097)
+                                          : const Color(0xFF52A097).withValues(alpha: 0.3),
                                       width: isSelected ? 2.0 : 1.0,
                                     ),
                                     borderRadius: BorderRadius.circular(14.0),
                                     boxShadow: isSelected
                                         ? [
                                             BoxShadow(
-                                              color: Color(0xFF52A097).withValues(alpha: 0.3),
+                                              color: const Color(0xFF52A097).withValues(alpha: 0.3),
                                               blurRadius: 8.0,
                                               offset: const Offset(0, 2),
                                             ),
@@ -1382,8 +1375,8 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                   child: Text(
                                     '$emoji $label',
                                     style: FlutterFlowTheme.of(context).bodySmall.override(
-                                          fontFamily: 'Andika New Basic',
-                                          color: isSelected ? Colors.white : Color(0xFF52A097),
+                                          fontFamily: FFAppState().currentFontFamily,
+                                          color: isSelected ? Colors.white : const Color(0xFF52A097),
                                           fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
                                           letterSpacing: 0.0,
                                         ),
@@ -1396,7 +1389,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
+                      padding: const EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
                       child: Row(
                         children: [
                           InkWell(
@@ -1411,7 +1404,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Icon(Icons.attach_money, size: 18, color: const Color(0xFF2E7D32)),
+                                  const Icon(Icons.attach_money, size: 18, color: Color(0xFF2E7D32)),
                                   Text(
                                     () {
                                       final v = double.tryParse(_model.textController2.text);
@@ -1419,7 +1412,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                       return 'Est. cost: \$${v == v.roundToDouble() ? v.round() : v.toStringAsFixed(2)}';
                                     }(),
                                     style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                          fontFamily: 'Andika New Basic',
+                                          fontFamily: FFAppState().currentFontFamily,
                                           color: const Color(0xFF2E7D32),
                                           fontWeight: FontWeight.w600,
                                           letterSpacing: 0.0,
@@ -1436,7 +1429,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                     ),
                     Padding(
                       padding:
-                          EdgeInsetsDirectional.fromSTEB(0.0, 30.0, 0.0, 0.0),
+                          const EdgeInsetsDirectional.fromSTEB(0.0, 30.0, 0.0, 0.0),
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         children: [
@@ -1445,11 +1438,11 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Padding(
-                                  padding: EdgeInsets.only(left: 4.0, bottom: 6.0),
+                                  padding: const EdgeInsets.only(left: 4.0, bottom: 6.0),
                                   child: Text(
                                     'Cook Time',
                                     style: FlutterFlowTheme.of(context).bodySmall.override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       fontSize: 12.0,
                                       fontWeight: FontWeight.w600,
                                       letterSpacing: 0.0,
@@ -1466,7 +1459,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                           color: FlutterFlowTheme.of(context).prim30,
                                           borderRadius: BorderRadius.circular(14.0),
                                           border: Border.all(
-                                            color: Color(0xFFCBE3E0),
+                                            color: const Color(0xFFCBE3E0),
                                             width: 1.0,
                                           ),
                                         ),
@@ -1481,7 +1474,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                             hintStyle: FlutterFlowTheme.of(context)
                                                 .labelMedium
                                                 .override(
-                                                  fontFamily: 'Andika New Basic',
+                                                  fontFamily: FFAppState().currentFontFamily,
                                                   color: FlutterFlowTheme.of(context).primaryText,
                                                   fontSize: 12.0,
                                                   letterSpacing: 0.0,
@@ -1490,19 +1483,19 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                             suffixStyle: FlutterFlowTheme.of(context)
                                                 .bodySmall
                                                 .override(
-                                                  fontFamily: 'Andika New Basic',
+                                                  fontFamily: FFAppState().currentFontFamily,
                                                   color: FlutterFlowTheme.of(context).secondaryText,
                                                   letterSpacing: 0.0,
                                                 ),
                                             enabledBorder: OutlineInputBorder(
-                                              borderSide: BorderSide(
+                                              borderSide: const BorderSide(
                                                 color: Color(0x00000000),
                                                 width: 1.0,
                                               ),
                                               borderRadius: BorderRadius.circular(14.0),
                                             ),
                                             focusedBorder: OutlineInputBorder(
-                                              borderSide: BorderSide(
+                                              borderSide: const BorderSide(
                                                 color: Color(0x00000000),
                                                 width: 1.0,
                                               ),
@@ -1526,7 +1519,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                           style: FlutterFlowTheme.of(context)
                                               .bodyMedium
                                               .override(
-                                                fontFamily: 'Andika New Basic',
+                                                fontFamily: FFAppState().currentFontFamily,
                                                 letterSpacing: 0.0,
                                               ),
                                           keyboardType: TextInputType.number,
@@ -1535,7 +1528,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                         ),
                                       ),
                                     ),
-                                    SizedBox(width: 8.0),
+                                    const SizedBox(width: 8.0),
                                     Expanded(
                                       child: Container(
                                         height: 45.0,
@@ -1543,7 +1536,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                           color: FlutterFlowTheme.of(context).prim30,
                                           borderRadius: BorderRadius.circular(14.0),
                                           border: Border.all(
-                                            color: Color(0xFFCBE3E0),
+                                            color: const Color(0xFFCBE3E0),
                                             width: 1.0,
                                           ),
                                         ),
@@ -1558,7 +1551,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                             hintStyle: FlutterFlowTheme.of(context)
                                                 .labelMedium
                                                 .override(
-                                                  fontFamily: 'Andika New Basic',
+                                                  fontFamily: FFAppState().currentFontFamily,
                                                   color: FlutterFlowTheme.of(context).primaryText,
                                                   fontSize: 12.0,
                                                   letterSpacing: 0.0,
@@ -1567,19 +1560,19 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                             suffixStyle: FlutterFlowTheme.of(context)
                                                 .bodySmall
                                                 .override(
-                                                  fontFamily: 'Andika New Basic',
+                                                  fontFamily: FFAppState().currentFontFamily,
                                                   color: FlutterFlowTheme.of(context).secondaryText,
                                                   letterSpacing: 0.0,
                                                 ),
                                             enabledBorder: OutlineInputBorder(
-                                              borderSide: BorderSide(
+                                              borderSide: const BorderSide(
                                                 color: Color(0x00000000),
                                                 width: 1.0,
                                               ),
                                               borderRadius: BorderRadius.circular(14.0),
                                             ),
                                             focusedBorder: OutlineInputBorder(
-                                              borderSide: BorderSide(
+                                              borderSide: const BorderSide(
                                                 color: Color(0x00000000),
                                                 width: 1.0,
                                               ),
@@ -1603,7 +1596,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                           style: FlutterFlowTheme.of(context)
                                               .bodyMedium
                                               .override(
-                                                fontFamily: 'Andika New Basic',
+                                                fontFamily: FFAppState().currentFontFamily,
                                                 letterSpacing: 0.0,
                                               ),
                                           keyboardType: TextInputType.number,
@@ -1622,11 +1615,11 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Padding(
-                                  padding: EdgeInsets.only(left: 4.0, bottom: 6.0),
+                                  padding: const EdgeInsets.only(left: 4.0, bottom: 6.0),
                                   child: Text(
                                     'Prep Time',
                                     style: FlutterFlowTheme.of(context).bodySmall.override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       fontSize: 12.0,
                                       fontWeight: FontWeight.w600,
                                       letterSpacing: 0.0,
@@ -1643,7 +1636,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                           color: FlutterFlowTheme.of(context).prim30,
                                           borderRadius: BorderRadius.circular(14.0),
                                           border: Border.all(
-                                            color: Color(0xFFCBE3E0),
+                                            color: const Color(0xFFCBE3E0),
                                             width: 1.0,
                                           ),
                                         ),
@@ -1658,7 +1651,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                             hintStyle: FlutterFlowTheme.of(context)
                                                 .labelMedium
                                                 .override(
-                                                  fontFamily: 'Andika New Basic',
+                                                  fontFamily: FFAppState().currentFontFamily,
                                                   color: FlutterFlowTheme.of(context).primaryText,
                                                   fontSize: 12.0,
                                                   letterSpacing: 0.0,
@@ -1667,19 +1660,19 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                             suffixStyle: FlutterFlowTheme.of(context)
                                                 .bodySmall
                                                 .override(
-                                                  fontFamily: 'Andika New Basic',
+                                                  fontFamily: FFAppState().currentFontFamily,
                                                   color: FlutterFlowTheme.of(context).secondaryText,
                                                   letterSpacing: 0.0,
                                                 ),
                                             enabledBorder: OutlineInputBorder(
-                                              borderSide: BorderSide(
+                                              borderSide: const BorderSide(
                                                 color: Color(0x00000000),
                                                 width: 1.0,
                                               ),
                                               borderRadius: BorderRadius.circular(14.0),
                                             ),
                                             focusedBorder: OutlineInputBorder(
-                                              borderSide: BorderSide(
+                                              borderSide: const BorderSide(
                                                 color: Color(0x00000000),
                                                 width: 1.0,
                                               ),
@@ -1703,7 +1696,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                           style: FlutterFlowTheme.of(context)
                                               .bodyMedium
                                               .override(
-                                                fontFamily: 'Andika New Basic',
+                                                fontFamily: FFAppState().currentFontFamily,
                                                 letterSpacing: 0.0,
                                               ),
                                           keyboardType: TextInputType.number,
@@ -1712,7 +1705,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                         ),
                                       ),
                                     ),
-                                    SizedBox(width: 8.0),
+                                    const SizedBox(width: 8.0),
                                     Expanded(
                                       child: Container(
                                         height: 45.0,
@@ -1720,7 +1713,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                           color: FlutterFlowTheme.of(context).prim30,
                                           borderRadius: BorderRadius.circular(14.0),
                                           border: Border.all(
-                                            color: Color(0xFFCBE3E0),
+                                            color: const Color(0xFFCBE3E0),
                                             width: 1.0,
                                           ),
                                         ),
@@ -1735,7 +1728,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                             hintStyle: FlutterFlowTheme.of(context)
                                                 .labelMedium
                                                 .override(
-                                                  fontFamily: 'Andika New Basic',
+                                                  fontFamily: FFAppState().currentFontFamily,
                                                   color: FlutterFlowTheme.of(context).primaryText,
                                                   fontSize: 12.0,
                                                   letterSpacing: 0.0,
@@ -1744,19 +1737,19 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                             suffixStyle: FlutterFlowTheme.of(context)
                                                 .bodySmall
                                                 .override(
-                                                  fontFamily: 'Andika New Basic',
+                                                  fontFamily: FFAppState().currentFontFamily,
                                                   color: FlutterFlowTheme.of(context).secondaryText,
                                                   letterSpacing: 0.0,
                                                 ),
                                             enabledBorder: OutlineInputBorder(
-                                              borderSide: BorderSide(
+                                              borderSide: const BorderSide(
                                                 color: Color(0x00000000),
                                                 width: 1.0,
                                               ),
                                               borderRadius: BorderRadius.circular(14.0),
                                             ),
                                             focusedBorder: OutlineInputBorder(
-                                              borderSide: BorderSide(
+                                              borderSide: const BorderSide(
                                                 color: Color(0x00000000),
                                                 width: 1.0,
                                               ),
@@ -1780,7 +1773,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                           style: FlutterFlowTheme.of(context)
                                               .bodyMedium
                                               .override(
-                                                fontFamily: 'Andika New Basic',
+                                                fontFamily: FFAppState().currentFontFamily,
                                                 letterSpacing: 0.0,
                                               ),
                                           keyboardType: TextInputType.number,
@@ -1794,20 +1787,20 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                               ],
                             ),
                           ),
-                        ].divide(SizedBox(width: 8.0)),
+                        ].divide(const SizedBox(width: 8.0)),
                       ),
                     ),
                     // Section: Ingredients
                     _buildSectionHeader(context, 'Ingredients', Icons.kitchen),
                     Padding(
                       padding:
-                          EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
+                          const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
                       child: Container(
                         decoration: BoxDecoration(
                           color: FlutterFlowTheme.of(context).prim30,
                           borderRadius: BorderRadius.circular(14.0),
                           border: Border.all(
-                            color: Color(0xFFCBE3E0),
+                            color: const Color(0xFFCBE3E0),
                             width: 1.0,
                           ),
                         ),
@@ -1853,7 +1846,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                                 context)
                                             .labelMedium
                                             .override(
-                                              fontFamily: 'Andika New Basic',
+                                              fontFamily: FFAppState().currentFontFamily,
                                               color:
                                                   FlutterFlowTheme.of(context)
                                                       .primaryText,
@@ -1864,12 +1857,12 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                                   context)
                                               .labelMedium
                                               .override(
-                                                fontFamily: 'Andika New Basic',
+                                                fontFamily: FFAppState().currentFontFamily,
                                                 color: const Color(0xFF9E9E9E),
                                                 letterSpacing: 0.0,
                                               ),
                                           enabledBorder: OutlineInputBorder(
-                                            borderSide: BorderSide(
+                                            borderSide: const BorderSide(
                                               color: Color(0x00000000),
                                               width: 1.0,
                                             ),
@@ -1877,7 +1870,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                                 BorderRadius.circular(14.0),
                                           ),
                                           focusedBorder: OutlineInputBorder(
-                                            borderSide: BorderSide(
+                                            borderSide: const BorderSide(
                                               color: Color(0x00000000),
                                               width: 1.0,
                                             ),
@@ -1909,7 +1902,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                         style: FlutterFlowTheme.of(context)
                                             .bodyMedium
                                             .override(
-                                              fontFamily: 'Andika New Basic',
+                                              fontFamily: FFAppState().currentFontFamily,
                                               letterSpacing: 0.0,
                                             ),
                                         maxLines: 5,
@@ -1960,7 +1953,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                               ),
                             ),
                             Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   0.0, 0.0, 0.0, 10.0),
                               child: Builder(
                                 builder: (context) {
@@ -1973,13 +1966,13 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                     scrollDirection: Axis.vertical,
                                     itemCount: userInerdients.length,
                                     separatorBuilder: (_, __) =>
-                                        SizedBox(height: 8.0),
+                                        const SizedBox(height: 8.0),
                                     itemBuilder:
                                         (context, userInerdientsIndex) {
                                       final userInerdientsItem =
                                           userInerdients[userInerdientsIndex];
                                       return Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                        padding: const EdgeInsetsDirectional.fromSTEB(
                                             0.0, 0.0, 8.0, 0.0),
                                         child: Row(
                                           mainAxisSize: MainAxisSize.max,
@@ -1988,10 +1981,10 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                           children: [
                                             Expanded(
                                               child: Align(
-                                                alignment: AlignmentDirectional(
+                                                alignment: const AlignmentDirectional(
                                                     -1.0, 0.0),
                                                 child: Padding(
-                                                  padding: EdgeInsetsDirectional
+                                                  padding: const EdgeInsetsDirectional
                                                       .fromSTEB(
                                                           8.0, 0.0, 8.0, 0.0),
                                                   child: Text(
@@ -2048,12 +2041,12 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                     if (!_model.isIntgredientsSeleted)
                       Padding(
                         padding:
-                            EdgeInsetsDirectional.fromSTEB(0.0, 8.0, 0.0, 0.0),
+                            const EdgeInsetsDirectional.fromSTEB(0.0, 8.0, 0.0, 0.0),
                         child: Text(
                           'Please add at least one ingredient.',
                           style:
                               FlutterFlowTheme.of(context).bodyMedium.override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     color: FlutterFlowTheme.of(context).error,
                                     letterSpacing: 0.0,
                                   ),
@@ -2063,13 +2056,13 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                     _buildSectionHeader(context, 'Instructions', Icons.format_list_numbered),
                     Padding(
                       padding:
-                          EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
+                          const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
                       child: Container(
                         decoration: BoxDecoration(
                           color: FlutterFlowTheme.of(context).prim30,
                           borderRadius: BorderRadius.circular(14.0),
                           border: Border.all(
-                            color: Color(0xFFCBE3E0),
+                            color: const Color(0xFFCBE3E0),
                             width: 1.0,
                           ),
                         ),
@@ -2111,7 +2104,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                                 context)
                                             .labelMedium
                                             .override(
-                                              fontFamily: 'Andika New Basic',
+                                              fontFamily: FFAppState().currentFontFamily,
                                               color:
                                                     FlutterFlowTheme.of(context)
                                                         .primaryText,
@@ -2122,12 +2115,12 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                                   context)
                                               .labelMedium
                                               .override(
-                                                fontFamily: 'Andika New Basic',
+                                                fontFamily: FFAppState().currentFontFamily,
                                                 color: const Color(0xFF9E9E9E),
                                                 letterSpacing: 0.0,
                                               ),
                                           enabledBorder: OutlineInputBorder(
-                                            borderSide: BorderSide(
+                                            borderSide: const BorderSide(
                                               color: Color(0x00000000),
                                               width: 1.0,
                                             ),
@@ -2135,7 +2128,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                                 BorderRadius.circular(14.0),
                                           ),
                                           focusedBorder: OutlineInputBorder(
-                                            borderSide: BorderSide(
+                                            borderSide: const BorderSide(
                                               color: Color(0x00000000),
                                               width: 1.0,
                                             ),
@@ -2167,7 +2160,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                         style: FlutterFlowTheme.of(context)
                                             .bodyMedium
                                             .override(
-                                              fontFamily: 'Andika New Basic',
+                                              fontFamily: FFAppState().currentFontFamily,
                                               letterSpacing: 0.0,
                                             ),
                                         maxLines: 5,
@@ -2216,7 +2209,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                               ),
                             ),
                             Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   0.0, 0.0, 0.0, 10.0),
                               child: Builder(
                                 builder: (context) {
@@ -2229,14 +2222,14 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                     scrollDirection: Axis.vertical,
                                     itemCount: userCookingInstructions.length,
                                     separatorBuilder: (_, __) =>
-                                        SizedBox(height: 8.0),
+                                        const SizedBox(height: 8.0),
                                     itemBuilder: (context,
                                         userCookingInstructionsIndex) {
                                       final userCookingInstructionsItem =
                                           userCookingInstructions[
                                               userCookingInstructionsIndex];
                                       return Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                        padding: const EdgeInsetsDirectional.fromSTEB(
                                             0.0, 0.0, 8.0, 0.0),
                                         child: Row(
                                           mainAxisSize: MainAxisSize.max,
@@ -2244,7 +2237,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                           children: [
                                             Expanded(
                                               child: Padding(
-                                                padding: EdgeInsetsDirectional
+                                                padding: const EdgeInsetsDirectional
                                                     .fromSTEB(
                                                         8.0, 0.0, 8.0, 0.0),
                                                 child: Text(
@@ -2278,11 +2271,11 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                                 final result = await showDialog<String>(
                                                   context: context,
                                                   builder: (dialogContext) => AlertDialog(
-                                                    title: Text('Edit Instruction'),
+                                                    title: const Text('Edit Instruction'),
                                                     content: TextField(
                                                       controller: controller,
                                                       maxLines: 3,
-                                                      decoration: InputDecoration(
+                                                      decoration: const InputDecoration(
                                                         hintText: 'Enter instruction',
                                                         border: OutlineInputBorder(),
                                                       ),
@@ -2290,11 +2283,11 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                                     actions: [
                                                       TextButton(
                                                         onPressed: () => Navigator.pop(dialogContext),
-                                                        child: Text('Cancel'),
+                                                        child: const Text('Cancel'),
                                                       ),
                                                       TextButton(
                                                         onPressed: () => Navigator.pop(dialogContext, controller.text),
-                                                        child: Text('Save'),
+                                                        child: const Text('Save'),
                                                       ),
                                                     ],
                                                   ),
@@ -2308,7 +2301,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                                 }
                                               },
                                               child: Padding(
-                                                padding: EdgeInsetsDirectional.fromSTEB(
+                                                padding: const EdgeInsetsDirectional.fromSTEB(
                                                     0.0, 0.0, 8.0, 0.0),
                                                 child: Icon(
                                                   Icons.edit_outlined,
@@ -2358,18 +2351,18 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                     if (!_model.isCookingInsturctionSelected)
                       Padding(
                         padding:
-                            EdgeInsetsDirectional.fromSTEB(0.0, 8.0, 0.0, 0.0),
+                            const EdgeInsetsDirectional.fromSTEB(0.0, 8.0, 0.0, 0.0),
                         child: Text(
                           'Please add at least one cooking instruction.',
                           style:
                               FlutterFlowTheme.of(context).bodyMedium.override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     color: FlutterFlowTheme.of(context).error,
                                     letterSpacing: 0.0,
                                   ),
                         ),
                       ),
-                    SizedBox(height: 20.0),
+                    const SizedBox(height: 20.0),
                   ],
                 ),
               ),
@@ -2377,11 +2370,11 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                 ),
                 // Fixed save button at bottom — always visible
                 Container(
-                  padding: EdgeInsets.fromLTRB(24.0, 12.0, 24.0, 12.0),
+                  padding: const EdgeInsets.fromLTRB(24.0, 12.0, 24.0, 12.0),
                   decoration: BoxDecoration(
                     color: FlutterFlowTheme.of(context).secondaryBackground,
                     boxShadow: [
-                      BoxShadow(color: Colors.black.withValues(alpha: 0.08), blurRadius: 8, offset: Offset(0, -2)),
+                      BoxShadow(color: Colors.black.withValues(alpha: 0.08), blurRadius: 8, offset: const Offset(0, -2)),
                     ],
                   ),
                   child: SizedBox(
@@ -2401,7 +2394,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
 
                                   if (mealTypes.isEmpty) {
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
+                                      const SnackBar(
                                         content: Text('Please select at least one meal type (Breakfast, Lunch, Dinner, or Snacks)'),
                                         backgroundColor: Colors.red,
                                       ),
@@ -2413,7 +2406,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                   if (!(mealTypes.contains('Snacks') && mealTypes.length == 1)) {
                                     if (recipeTypes.isEmpty) {
                                       ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
+                                        const SnackBar(
                                           content: Text('Please select a recipe type (Entree, Side, or Dessert)'),
                                           backgroundColor: Colors.red,
                                         ),
@@ -2425,7 +2418,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                   // Image is now optional
                                   if (_model.ingredientsList.isNotEmpty) {
                                     if (_model.cookingInsturction.isNotEmpty) {
-                                        if (widget!
+                                        if (widget
                                                 .editCookingMeal?.reference !=
                                             null) {
                                           if (!(_model.dropDownValue2 != null &&
@@ -2433,9 +2426,9 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                             safeSetState(() {
                                               _model.dropDownValueController2
                                                       ?.value =
-                                                  widget!.editCookingMeal!
+                                                  widget.editCookingMeal!
                                                       .mainOrSides;
-                                              _model.dropDownValue2 = widget!
+                                              _model.dropDownValue2 = widget
                                                   .editCookingMeal!.mainOrSides;
                                             });
                                           }
@@ -2471,11 +2464,11 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                             }
                                           } else {
                                             // Keep existing value if no categories selected
-                                            mealTypValue = widget!.editCookingMeal?.mealTyp;
-                                            recipeTypeValue = widget!.editCookingMeal?.recipeType;
+                                            mealTypValue = widget.editCookingMeal?.mealTyp;
+                                            recipeTypeValue = widget.editCookingMeal?.recipeType;
                                           }
 
-                                          await widget!
+                                          await widget
                                               .editCookingMeal!.reference
                                               .update({
                                             ...createMealRecordData(
@@ -2512,34 +2505,34 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                             ),
                                           });
 
-                                          if ((widget!.weekData != null) &&
-                                              (widget!.dateTyyp != null)) {
-                                            if (widget!
+                                          if ((widget.weekData != null) &&
+                                              (widget.dateTyyp != null)) {
+                                            if (widget
                                                     .isReplceItem?.reference !=
                                                 null) {
-                                              await widget!
+                                              await widget
                                                   .isReplceItem!.reference
                                                   .update(
                                                       createMealPlanRecordData(
-                                                date: widget!.weekData,
-                                                typ: widget!.dateTyyp,
+                                                date: widget.weekData,
+                                                typ: widget.dateTyyp,
                                                 userRef: currentUserReference,
-                                                userFirebasemeal: widget!
+                                                userFirebasemeal: widget
                                                     .editCookingMeal?.reference,
                                               ));
                                             } else {
                                               await MealPlanRecord.collection
                                                   .doc()
                                                   .set(createMealPlanRecordData(
-                                                    date: widget!.weekData,
-                                                    typ: widget!.dateTyyp,
-                                                    mealId: widget!
+                                                    date: widget.weekData,
+                                                    typ: widget.dateTyyp,
+                                                    mealId: widget
                                                         .editCookingMeal
                                                         ?.reference
                                                         .id,
                                                     userRef:
                                                         currentUserReference,
-                                                    userFirebasemeal: widget!
+                                                    userFirebasemeal: widget
                                                         .editCookingMeal
                                                         ?.reference,
                                                   ));
@@ -2645,24 +2638,24 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                               },
                                             ),
                                           }, mealRecordReference);
-                                          if ((widget!.weekData != null) &&
-                                              (widget!.dateTyyp != null)) {
-                                            if (widget!
+                                          if ((widget.weekData != null) &&
+                                              (widget.dateTyyp != null)) {
+                                            if (widget
                                                     .isReplceItem?.reference !=
                                                 null) {
-                                              await widget!
+                                              await widget
                                                   .isReplceItem!.reference
                                                   .update(
                                                       createMealPlanRecordData(
-                                                date: widget!.weekData,
+                                                date: widget.weekData,
                                                 mealId: _model
                                                     .userMeal?.reference.id,
-                                                typ: widget!.dateTyyp,
+                                                typ: widget.dateTyyp,
                                                 userRef: currentUserReference,
                                                 userFirebasemeal:
-                                                    widget!.editCookingMeal !=
+                                                    widget.editCookingMeal !=
                                                             null
-                                                        ? widget!
+                                                        ? widget
                                                             .editCookingMeal
                                                             ?.reference
                                                         : _model.userMeal
@@ -2672,18 +2665,18 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                               await MealPlanRecord.collection
                                                   .doc()
                                                   .set(createMealPlanRecordData(
-                                                    date: widget!.weekData,
-                                                    typ: widget!.dateTyyp,
-                                                    mealId: widget!
+                                                    date: widget.weekData,
+                                                    typ: widget.dateTyyp,
+                                                    mealId: widget
                                                         .editCookingMeal
                                                         ?.reference
                                                         .id,
                                                     userRef:
                                                         currentUserReference,
-                                                    userFirebasemeal: widget!
+                                                    userFirebasemeal: widget
                                                                 .editCookingMeal !=
                                                             null
-                                                        ? widget!
+                                                        ? widget
                                                             .editCookingMeal
                                                             ?.reference
                                                         : _model.userMeal
@@ -2702,7 +2695,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                                   backgroundColor:
                                                       Colors.transparent,
                                                   alignment:
-                                                      AlignmentDirectional(
+                                                      const AlignmentDirectional(
                                                               0.0, 0.0)
                                                           .resolve(
                                                               Directionality.of(
@@ -2720,7 +2713,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                                         CongForANewMealWidget(
                                                       isMealPlan: true,
                                                       isGenrateForm:
-                                                          widget!.isGenrateForm,
+                                                          widget.isGenrateForm,
                                                     ),
                                                   ),
                                                 );
@@ -2736,7 +2729,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                                   backgroundColor:
                                                       Colors.transparent,
                                                   alignment:
-                                                      AlignmentDirectional(
+                                                      const AlignmentDirectional(
                                                               0.0, 0.0)
                                                           .resolve(
                                                               Directionality.of(
@@ -2754,7 +2747,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                                         CongForANewMealWidget(
                                                       isMealPlan: false,
                                                       isGenrateForm:
-                                                          widget!.isGenrateForm,
+                                                          widget.isGenrateForm,
                                                     ),
                                                   ),
                                                 );
@@ -2768,7 +2761,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                         safeSetState(() {});
                                         ScaffoldMessenger.of(context).showSnackBar(
                                           SnackBar(
-                                            content: Text('Please add at least one cooking instruction'),
+                                            content: const Text('Please add at least one cooking instruction'),
                                             backgroundColor: Colors.red.shade400,
                                             behavior: SnackBarBehavior.floating,
                                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -2780,7 +2773,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                     safeSetState(() {});
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
-                                        content: Text('Please add at least one ingredient'),
+                                        content: const Text('Please add at least one ingredient'),
                                         backgroundColor: Colors.red.shade400,
                                         behavior: SnackBarBehavior.floating,
                                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -2793,15 +2786,15 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                 text: _getButtonText(),
                                 options: FFButtonOptions(
                                   height: 40.0,
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       16.0, 0.0, 16.0, 0.0),
-                                  iconPadding: EdgeInsetsDirectional.fromSTEB(
+                                  iconPadding: const EdgeInsetsDirectional.fromSTEB(
                                       0.0, 0.0, 0.0, 0.0),
                                   color: FlutterFlowTheme.of(context).primary,
                                   textStyle: FlutterFlowTheme.of(context)
                                       .titleSmall
                                       .override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         color: Colors.white,
                                         letterSpacing: 0.0,
                                       ),
@@ -2825,7 +2818,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                     borderRadius: BorderRadius.circular(24.0),
                     onTap: () => Navigator.of(context).pop(),
                     child: Padding(
-                      padding: EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.all(8.0),
                       child: Container(
                         width: 36.0,
                         height: 36.0,
@@ -2833,7 +2826,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                           color: FlutterFlowTheme.of(context).secondaryBackground,
                           shape: BoxShape.circle,
                           boxShadow: [
-                            BoxShadow(color: Colors.black.withValues(alpha: 0.12), blurRadius: 6, offset: Offset(0, 2)),
+                            BoxShadow(color: Colors.black.withValues(alpha: 0.12), blurRadius: 6, offset: const Offset(0, 2)),
                           ],
                         ),
                         child: Center(

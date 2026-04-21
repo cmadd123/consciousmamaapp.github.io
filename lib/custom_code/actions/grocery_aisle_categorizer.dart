@@ -1,5 +1,6 @@
 /// Categorizes grocery ingredients into store aisles using keyword matching.
 /// Used by the grocery list UI to group items by section.
+library;
 
 class GroceryAisleCategorizer {
   GroceryAisleCategorizer._();

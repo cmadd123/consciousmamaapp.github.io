@@ -2,12 +2,8 @@ import '/backend/backend.dart';
 import '/backend/schema/enums/enums.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import '/flutter_flow/flutter_flow_widgets.dart';
-import 'dart:ui';
 import '/index.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'week_plan_item_box_tab_copy_model.dart';
 export 'week_plan_item_box_tab_copy_model.dart';
 
@@ -70,7 +66,7 @@ class _WeekPlanItemBoxTabCopyWidgetState
               children: [
                 Padding(
                   padding:
-                      EdgeInsetsDirectional.fromSTEB(12.0, 20.0, 12.0, 0.0),
+                      const EdgeInsetsDirectional.fromSTEB(12.0, 20.0, 12.0, 0.0),
                   child: Material(
                     color: Colors.transparent,
                     elevation: 1.0,
@@ -90,7 +86,7 @@ class _WeekPlanItemBoxTabCopyWidgetState
                         mainAxisSize: MainAxisSize.max,
                         children: [
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 12.0, 0.0, 12.0, 0.0),
                             child: Row(
                               mainAxisSize: MainAxisSize.max,
@@ -112,7 +108,7 @@ class _WeekPlanItemBoxTabCopyWidgetState
                                   ),
                                 ),
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       0.0, 26.0, 27.0, 0.0),
                                   child: Text(
                                     'Add Meal',
@@ -120,7 +116,7 @@ class _WeekPlanItemBoxTabCopyWidgetState
                                     style: FlutterFlowTheme.of(context)
                                         .bodyMedium
                                         .override(
-                                          fontFamily: 'Andika New Basic',
+                                          fontFamily: FFAppState().currentFontFamily,
                                           fontSize: 24.0,
                                           letterSpacing: 0.0,
                                         ),
@@ -139,7 +135,7 @@ class _WeekPlanItemBoxTabCopyWidgetState
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 20.0, 12.0, 20.0, 0.0),
                             child: Text(
                               'How would you like to to add the meal',
@@ -147,14 +143,14 @@ class _WeekPlanItemBoxTabCopyWidgetState
                               style: FlutterFlowTheme.of(context)
                                   .bodyMedium
                                   .override(
-                                    fontFamily: 'Andika New Basic',
-                                    color: Color(0xB71B1F26),
+                                    fontFamily: FFAppState().currentFontFamily,
+                                    color: const Color(0xB71B1F26),
                                     letterSpacing: 0.0,
                                   ),
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 12.0, 40.0, 12.0, 40.0),
                             child: InkWell(
                               splashColor: Colors.transparent,
@@ -166,24 +162,24 @@ class _WeekPlanItemBoxTabCopyWidgetState
                                   EditeAddMealWidget.routeName,
                                   queryParameters: {
                                     'weekData': serializeParam(
-                                      widget!.date,
+                                      widget.date,
                                       ParamType.DateTime,
                                     ),
                                     'dateTyyp': serializeParam(
-                                      widget!.meaTyp,
+                                      widget.meaTyp,
                                       ParamType.Enum,
                                     ),
                                     'isGenrateForm': serializeParam(
-                                      widget!.isGenrateFromCookBook,
+                                      widget.isGenrateFromCookBook,
                                       ParamType.bool,
                                     ),
                                     'isReplceItem': serializeParam(
-                                      widget!.mealRef,
+                                      widget.mealRef,
                                       ParamType.Document,
                                     ),
                                   }.withoutNulls,
                                   extra: <String, dynamic>{
-                                    'isReplceItem': widget!.mealRef,
+                                    'isReplceItem': widget.mealRef,
                                   },
                                 );
                               },
@@ -202,7 +198,7 @@ class _WeekPlanItemBoxTabCopyWidgetState
                                   children: [
                                     Container(
                                       height: 86.0,
-                                      decoration: BoxDecoration(),
+                                      decoration: const BoxDecoration(),
                                       child: ClipRRect(
                                         borderRadius:
                                             BorderRadius.circular(14.0),
@@ -215,14 +211,14 @@ class _WeekPlanItemBoxTabCopyWidgetState
                                       ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(
                                           0.0, 31.0, 0.0, 0.0),
                                       child: Text(
                                         'From Link',
                                         style: FlutterFlowTheme.of(context)
                                             .bodyMedium
                                             .override(
-                                              fontFamily: 'Andika New Basic',
+                                              fontFamily: FFAppState().currentFontFamily,
                                               fontSize: 24.0,
                                               letterSpacing: 0.0,
                                             ),
@@ -234,7 +230,7 @@ class _WeekPlanItemBoxTabCopyWidgetState
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 12.0, 0.0, 12.0, 40.0),
                             child: InkWell(
                               splashColor: Colors.transparent,
@@ -246,24 +242,24 @@ class _WeekPlanItemBoxTabCopyWidgetState
                                   EditeAddMealWidget.routeName,
                                   queryParameters: {
                                     'weekData': serializeParam(
-                                      widget!.date,
+                                      widget.date,
                                       ParamType.DateTime,
                                     ),
                                     'dateTyyp': serializeParam(
-                                      widget!.meaTyp,
+                                      widget.meaTyp,
                                       ParamType.Enum,
                                     ),
                                     'isGenrateForm': serializeParam(
-                                      widget!.isGenrateFromCookBook,
+                                      widget.isGenrateFromCookBook,
                                       ParamType.bool,
                                     ),
                                     'isReplceItem': serializeParam(
-                                      widget!.mealRef,
+                                      widget.mealRef,
                                       ParamType.Document,
                                     ),
                                   }.withoutNulls,
                                   extra: <String, dynamic>{
-                                    'isReplceItem': widget!.mealRef,
+                                    'isReplceItem': widget.mealRef,
                                   },
                                 );
                               },
@@ -282,7 +278,7 @@ class _WeekPlanItemBoxTabCopyWidgetState
                                   children: [
                                     Container(
                                       height: 86.0,
-                                      decoration: BoxDecoration(),
+                                      decoration: const BoxDecoration(),
                                       child: ClipRRect(
                                         borderRadius:
                                             BorderRadius.circular(14.0),
@@ -295,14 +291,14 @@ class _WeekPlanItemBoxTabCopyWidgetState
                                       ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(
                                           0.0, 31.0, 0.0, 0.0),
                                       child: Text(
                                         'Add Manualy',
                                         style: FlutterFlowTheme.of(context)
                                             .bodyMedium
                                             .override(
-                                              fontFamily: 'Andika New Basic',
+                                              fontFamily: FFAppState().currentFontFamily,
                                               fontSize: 24.0,
                                               letterSpacing: 0.0,
                                             ),

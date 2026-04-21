@@ -34,7 +34,7 @@ class _SelectableRecipe {
   final bool isCombo;
   final Map<String, dynamic> recipeData;
   final Map<String, dynamic>? comboData;
-  bool isSelected;
+  bool isSelected = false;
 
   _SelectableRecipe({
     required this.id,
@@ -45,7 +45,6 @@ class _SelectableRecipe {
     required this.isCombo,
     required this.recipeData,
     this.comboData,
-    this.isSelected = true,
   });
 
   // Get combo sides for display
@@ -100,7 +99,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
 
   // For meal plan mode - selected day and meal type
   DateTime _selectedDate = DateTime.now();
-  String _selectedMealType = 'Dinner';
+  final String _selectedMealType = 'Dinner';
 
   // Meal type order for grouping
   static const _mealTypeOrder = ['Breakfast', 'Lunch', 'Dinner', 'Snacks'];
@@ -345,7 +344,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                 Text(
                   recipe.name,
                   style: FlutterFlowTheme.of(context).bodyMedium.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     fontWeight: FontWeight.w600,
                     fontSize: 15.0,
                     letterSpacing: 0.0,
@@ -359,7 +358,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.grey[600],
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                       ),
                     ),
                   ),
@@ -430,7 +429,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                     Text(
                       template.name,
                       style: FlutterFlowTheme.of(context).titleMedium.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             fontWeight: FontWeight.w600,
                             letterSpacing: 0.0,
                           ),
@@ -447,7 +446,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                         style: TextStyle(
                           fontSize: 10,
                           color: Colors.purple[700],
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                         ),
                       ),
                     ),
@@ -511,7 +510,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                 style: TextStyle(
                   fontSize: 12,
                   color: const Color(0xFF999999),
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                 ),
               ),
               Text(
@@ -520,7 +519,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                   fontSize: 14,
                   color: const Color(0xFF333333),
                   fontWeight: FontWeight.w500,
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                 ),
               ),
             ],
@@ -581,7 +580,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                   child: Text(
                     dayOffset == 0 ? 'Today ($dayName)' : dayName,
                     style: FlutterFlowTheme.of(context).bodyMedium.override(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           fontSize: dayOffset == 0 ? 15.0 : 14.0,
                           fontWeight: dayOffset == 0 ? FontWeight.w600 : FontWeight.normal,
                           letterSpacing: 0.0,
@@ -639,7 +638,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                   Text(
                     '$mealCount meal${mealCount == 1 ? '' : 's'}',
                     style: FlutterFlowTheme.of(context).bodySmall.override(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           color: const Color(0xFF888888),
                           fontSize: 12.0,
                           letterSpacing: 0.0,
@@ -720,7 +719,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                 Text(
                   mealType,
                   style: FlutterFlowTheme.of(context).bodySmall.override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         fontWeight: FontWeight.w600,
                         color: color,
                         letterSpacing: 0.0,
@@ -804,7 +803,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                       Text(
                         recipe.name,
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               fontWeight: FontWeight.w600,
                               letterSpacing: 0.0,
                             ),
@@ -824,7 +823,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                             style: TextStyle(
                               fontSize: 10,
                               color: Colors.purple[700],
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                             ),
                           ),
                         ),
@@ -879,7 +878,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                               style: TextStyle(
                                 fontSize: 12,
                                 color: Colors.grey[700],
-                                fontFamily: 'Andika New Basic',
+                                fontFamily: FFAppState().currentFontFamily,
                               ),
                             ),
                           ],
@@ -898,7 +897,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                             style: TextStyle(
                               fontSize: 12,
                               color: Colors.blue[600],
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                             ),
                           ),
                         ],
@@ -939,7 +938,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
           Text(
             'Loading shared content...',
             style: FlutterFlowTheme.of(context).bodyMedium.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   color: FlutterFlowTheme.of(context).secondaryText,
                   letterSpacing: 0.0,
                 ),
@@ -965,7 +964,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
             Text(
               'Oops!',
               style: FlutterFlowTheme.of(context).headlineMedium.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     letterSpacing: 0.0,
                   ),
             ),
@@ -974,7 +973,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
               _error!,
               textAlign: TextAlign.center,
               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     color: FlutterFlowTheme.of(context).secondaryText,
                     letterSpacing: 0.0,
                   ),
@@ -988,7 +987,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                 padding: const EdgeInsets.symmetric(horizontal: 32),
                 color: FlutterFlowTheme.of(context).primary,
                 textStyle: FlutterFlowTheme.of(context).titleSmall.override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       color: Colors.white,
                       letterSpacing: 0.0,
                     ),
@@ -1032,7 +1031,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                 child: Text(
                   'Shared Activity',
                   style: FlutterFlowTheme.of(context).titleLarge.override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         letterSpacing: 0.0,
                       ),
                 ),
@@ -1082,7 +1081,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                             Text(
                               'Shared by ${content.sharedByName}',
                               style: FlutterFlowTheme.of(context).bodySmall.override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     color: FlutterFlowTheme.of(context).secondaryText,
                                     letterSpacing: 0.0,
                                   ),
@@ -1111,7 +1110,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                                   child: Text(
                                     personalNote,
                                     style: FlutterFlowTheme.of(context).bodySmall.override(
-                                          fontFamily: 'Andika New Basic',
+                                          fontFamily: FFAppState().currentFontFamily,
                                           fontStyle: FontStyle.italic,
                                           letterSpacing: 0.0,
                                         ),
@@ -1169,7 +1168,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                                   Text(
                                     title,
                                     style: FlutterFlowTheme.of(context).titleMedium.override(
-                                          fontFamily: 'Andika New Basic',
+                                          fontFamily: FFAppState().currentFontFamily,
                                           fontWeight: FontWeight.w600,
                                           letterSpacing: 0.0,
                                         ),
@@ -1178,7 +1177,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                                     Text(
                                       timeDuration,
                                       style: FlutterFlowTheme.of(context).bodySmall.override(
-                                            fontFamily: 'Andika New Basic',
+                                            fontFamily: FFAppState().currentFontFamily,
                                             color: FlutterFlowTheme.of(context).secondaryText,
                                             letterSpacing: 0.0,
                                           ),
@@ -1195,7 +1194,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                           Text(
                             description,
                             style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   letterSpacing: 0.0,
                                 ),
                           ),
@@ -1266,7 +1265,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                                   child: Text(
                                     thingsNeeded,
                                     style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                          fontFamily: 'Andika New Basic',
+                                          fontFamily: FFAppState().currentFontFamily,
                                           letterSpacing: 0.0,
                                         ),
                                   ),
@@ -1305,7 +1304,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                                   child: Text(
                                     safetyNote,
                                     style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                          fontFamily: 'Andika New Basic',
+                                          fontFamily: FFAppState().currentFontFamily,
                                           letterSpacing: 0.0,
                                         ),
                                   ),
@@ -1329,7 +1328,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                       height: 56,
                       color: FlutterFlowTheme.of(context).primary,
                       textStyle: FlutterFlowTheme.of(context).titleMedium.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: Colors.white,
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -1349,7 +1348,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                       child: Text(
                         'Not now',
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               color: FlutterFlowTheme.of(context).secondaryText,
                               letterSpacing: 0.0,
                             ),
@@ -1380,7 +1379,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
       child: Text(
         text,
         style: TextStyle(
-          fontFamily: 'Andika New Basic',
+          fontFamily: FFAppState().currentFontFamily,
           fontSize: 12,
           color: color,
           fontWeight: FontWeight.w500,
@@ -1472,7 +1471,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                 child: Text(
                   'Shared Activity Plan',
                   style: FlutterFlowTheme.of(context).titleLarge.override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         letterSpacing: 0.0,
                       ),
                 ),
@@ -1522,7 +1521,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                             Text(
                               'Shared by ${content.sharedByName}',
                               style: FlutterFlowTheme.of(context).bodySmall.override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     color: FlutterFlowTheme.of(context).secondaryText,
                                     letterSpacing: 0.0,
                                   ),
@@ -1551,7 +1550,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                                   child: Text(
                                     personalNote,
                                     style: FlutterFlowTheme.of(context).bodySmall.override(
-                                          fontFamily: 'Andika New Basic',
+                                          fontFamily: FFAppState().currentFontFamily,
                                           fontStyle: FontStyle.italic,
                                           letterSpacing: 0.0,
                                         ),
@@ -1609,7 +1608,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                                   Text(
                                     planTitle,
                                     style: FlutterFlowTheme.of(context).titleMedium.override(
-                                          fontFamily: 'Andika New Basic',
+                                          fontFamily: FFAppState().currentFontFamily,
                                           fontWeight: FontWeight.w600,
                                           letterSpacing: 0.0,
                                         ),
@@ -1617,7 +1616,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                                   Text(
                                     '$activityCount activities for the week',
                                     style: FlutterFlowTheme.of(context).bodySmall.override(
-                                          fontFamily: 'Andika New Basic',
+                                          fontFamily: FFAppState().currentFontFamily,
                                           color: FlutterFlowTheme.of(context).secondaryText,
                                           letterSpacing: 0.0,
                                         ),
@@ -1650,7 +1649,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                           Text(
                             getDayLabel(dayIndex),
                             style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   fontWeight: FontWeight.w600,
                                   color: FlutterFlowTheme.of(context).primary,
                                   letterSpacing: 0.0,
@@ -1675,7 +1674,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                                     child: Text(
                                       name,
                                       style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                            fontFamily: 'Andika New Basic',
+                                            fontFamily: FFAppState().currentFontFamily,
                                             letterSpacing: 0.0,
                                           ),
                                     ),
@@ -1726,7 +1725,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                       height: 56,
                       color: FlutterFlowTheme.of(context).primary,
                       textStyle: FlutterFlowTheme.of(context).titleMedium.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: Colors.white,
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -1746,7 +1745,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                       child: Text(
                         'Not now',
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               color: FlutterFlowTheme.of(context).secondaryText,
                               letterSpacing: 0.0,
                             ),
@@ -1797,7 +1796,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                 child: Text(
                   'Shared Day Template',
                   style: FlutterFlowTheme.of(context).titleLarge.override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         letterSpacing: 0.0,
                       ),
                 ),
@@ -1850,7 +1849,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                               Text(
                                 dayTemplateName,
                                 style: FlutterFlowTheme.of(context).titleMedium.override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       fontWeight: FontWeight.bold,
                                       letterSpacing: 0.0,
                                     ),
@@ -1858,7 +1857,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                               Text(
                                 'Shared by ${content.sharedByName}',
                                 style: FlutterFlowTheme.of(context).bodySmall.override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       color: FlutterFlowTheme.of(context).secondaryText,
                                       letterSpacing: 0.0,
                                     ),
@@ -1866,7 +1865,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                               Text(
                                 '${sortedTemplates.length} meal${sortedTemplates.length == 1 ? '' : 's'}',
                                 style: FlutterFlowTheme.of(context).bodySmall.override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       color: FlutterFlowTheme.of(context).secondaryText,
                                       letterSpacing: 0.0,
                                     ),
@@ -1898,7 +1897,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                             child: Text(
                               personalNote,
                               style: TextStyle(
-                                fontFamily: 'Andika New Basic',
+                                fontFamily: FFAppState().currentFontFamily,
                                 fontSize: 14,
                                 color: Colors.amber[900],
                                 fontStyle: FontStyle.italic,
@@ -1915,7 +1914,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                   Text(
                     'Meals in this template:',
                     style: FlutterFlowTheme.of(context).titleSmall.override(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 0.0,
                         ),
@@ -1981,7 +1980,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                                 Text(
                                   displayName,
                                   style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         fontWeight: FontWeight.w600,
                                         letterSpacing: 0.0,
                                       ),
@@ -1993,7 +1992,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                                   style: TextStyle(
                                     fontSize: 12,
                                     color: Colors.grey[600],
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                   ),
                                 ),
                               ],
@@ -2031,7 +2030,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                           : Text(
                               'Save to My Cookbook',
                               style: FlutterFlowTheme.of(context).titleMedium.override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     color: Colors.white,
                                     fontSize: 16,
                                     fontWeight: FontWeight.w600,
@@ -2174,7 +2173,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                 child: Text(
                   _getImportTitle(),
                   style: FlutterFlowTheme.of(context).titleLarge.override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         letterSpacing: 0.0,
                       ),
                 ),
@@ -2212,7 +2211,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                         Text(
                           content.title,
                           style: FlutterFlowTheme.of(context).titleMedium.override(
-                                fontFamily: 'Andika New Basic',
+                                fontFamily: FFAppState().currentFontFamily,
                                 fontWeight: FontWeight.w600,
                                 letterSpacing: 0.0,
                               ),
@@ -2233,7 +2232,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                             Text(
                               'Shared by ${content.sharedByName}',
                               style: FlutterFlowTheme.of(context).bodySmall.override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     color: FlutterFlowTheme.of(context).secondaryText,
                                     letterSpacing: 0.0,
                                   ),
@@ -2263,7 +2262,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                                   child: Text(
                                     content.contentData['personal_note'] as String,
                                     style: FlutterFlowTheme.of(context).bodySmall.override(
-                                          fontFamily: 'Andika New Basic',
+                                          fontFamily: FFAppState().currentFontFamily,
                                           fontStyle: FontStyle.italic,
                                           letterSpacing: 0.0,
                                         ),
@@ -2284,7 +2283,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                       Text(
                         'Select recipes to import',
                         style: FlutterFlowTheme.of(context).titleSmall.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               fontWeight: FontWeight.w600,
                               letterSpacing: 0.0,
                             ),
@@ -2303,7 +2302,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                           _recipes.every((r) => r.isSelected) ? 'Deselect All' : 'Select All',
                           style: TextStyle(
                             color: FlutterFlowTheme.of(context).primary,
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                           ),
                         ),
                       ),
@@ -2338,7 +2337,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                           child: Text(
                             'Selected items will be saved to your cookbook.',
                             style: FlutterFlowTheme.of(context).bodySmall.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               color: FlutterFlowTheme.of(context).primary,
                               fontSize: 13.0,
                               letterSpacing: 0.0,
@@ -2362,7 +2361,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                       height: 56,
                       color: FlutterFlowTheme.of(context).primary,
                       textStyle: FlutterFlowTheme.of(context).titleMedium.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: Colors.white,
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -2382,7 +2381,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                       child: Text(
                         'Not now',
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               color: FlutterFlowTheme.of(context).secondaryText,
                               letterSpacing: 0.0,
                             ),
@@ -2440,7 +2439,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                         color: isSelected ? Colors.white : Colors.grey[600],
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -2450,7 +2449,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                         color: isSelected ? Colors.white : Colors.black87,
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                       ),
                     ),
                     if (isToday)
@@ -2572,7 +2571,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                     Text(
                       recipe.name,
                       style: FlutterFlowTheme.of(context).headlineSmall.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             fontWeight: FontWeight.w600,
                             letterSpacing: 0.0,
                           ),
@@ -2599,7 +2598,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: _getMealTypeColor(recipe.mealType),
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                 ),
                               ),
                             ],
@@ -2618,7 +2617,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                               style: TextStyle(
                                 fontSize: 12,
                                 color: Colors.purple[700],
-                                fontFamily: 'Andika New Basic',
+                                fontFamily: FFAppState().currentFontFamily,
                               ),
                             ),
                           ),
@@ -2632,7 +2631,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                       Text(
                         'Includes:',
                         style: FlutterFlowTheme.of(context).titleSmall.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               fontWeight: FontWeight.w600,
                               letterSpacing: 0.0,
                             ),
@@ -2653,7 +2652,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                       Text(
                         'Ingredients:',
                         style: FlutterFlowTheme.of(context).titleSmall.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               fontWeight: FontWeight.w600,
                               letterSpacing: 0.0,
                             ),
@@ -2670,7 +2669,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                                   child: Text(
                                     ing,
                                     style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                          fontFamily: 'Andika New Basic',
+                                          fontFamily: FFAppState().currentFontFamily,
                                           letterSpacing: 0.0,
                                         ),
                                   ),
@@ -2686,7 +2685,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                       Text(
                         'Instructions:',
                         style: FlutterFlowTheme.of(context).titleSmall.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               fontWeight: FontWeight.w600,
                               letterSpacing: 0.0,
                             ),
@@ -2720,7 +2719,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                                   child: Text(
                                     entry.value,
                                     style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                          fontFamily: 'Andika New Basic',
+                                          fontFamily: FFAppState().currentFontFamily,
                                           letterSpacing: 0.0,
                                         ),
                                   ),
@@ -2753,16 +2752,16 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
             style: TextStyle(
               fontSize: 14,
               color: Colors.grey[600],
-              fontFamily: 'Andika New Basic',
+              fontFamily: FFAppState().currentFontFamily,
             ),
           ),
           Expanded(
             child: Text(
               value,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
               ),
             ),
           ),
@@ -2826,7 +2825,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                   Text(
                     title,
                     style: FlutterFlowTheme.of(context).bodyMedium.override(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           fontWeight: FontWeight.w600,
                           color: isSelected ? FlutterFlowTheme.of(context).primary : null,
                           letterSpacing: 0.0,
@@ -2835,7 +2834,7 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
                   Text(
                     subtitle,
                     style: FlutterFlowTheme.of(context).bodySmall.override(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           color: Colors.grey[600],
                           letterSpacing: 0.0,
                         ),

@@ -2,13 +2,8 @@ import '/auth/firebase_auth/auth_util.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
-import 'dart:ui';
 import '/index.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'forget_paswword_model.dart';
 export 'forget_paswword_model.dart';
 
@@ -37,7 +32,7 @@ class _ForgetPaswwordWidgetState extends State<ForgetPaswwordWidget> {
     super.initState();
     _model = createModel(context, () => ForgetPaswwordModel());
 
-    _model.emailTextController ??= TextEditingController(text: widget!.email);
+    _model.emailTextController ??= TextEditingController(text: widget.email);
     _model.textFieldFocusNode ??= FocusNode();
   }
 
@@ -61,7 +56,7 @@ class _ForgetPaswwordWidgetState extends State<ForgetPaswwordWidget> {
         body: Container(
           width: double.infinity,
           height: double.infinity,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             gradient: LinearGradient(
               colors: [Color(0xFFECE5E5), Color(0xFFEDFFFD)],
               stops: [0.0, 1.0],
@@ -70,7 +65,7 @@ class _ForgetPaswwordWidgetState extends State<ForgetPaswwordWidget> {
             ),
           ),
           child: Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(24.0, 50.0, 24.0, 0.0),
+            padding: const EdgeInsetsDirectional.fromSTEB(24.0, 50.0, 24.0, 0.0),
             child: SingleChildScrollView(
               primary: false,
               child: Column(
@@ -79,7 +74,7 @@ class _ForgetPaswwordWidgetState extends State<ForgetPaswwordWidget> {
                 children: [
                   // Back button
                   Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 24.0),
+                    padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 24.0),
                     child: InkWell(
                       onTap: () {
                         Navigator.pop(context);
@@ -93,11 +88,11 @@ class _ForgetPaswwordWidgetState extends State<ForgetPaswwordWidget> {
                   ),
                   Padding(
                     padding:
-                        EdgeInsetsDirectional.fromSTEB(0.0, 16.0, 0.0, 0.0),
+                        const EdgeInsetsDirectional.fromSTEB(0.0, 16.0, 0.0, 0.0),
                     child: Text(
                       'Reset Password',
                       style: FlutterFlowTheme.of(context).bodyMedium.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             fontSize: 32.0,
                             letterSpacing: 0.0,
                             fontWeight: FontWeight.bold,
@@ -106,11 +101,11 @@ class _ForgetPaswwordWidgetState extends State<ForgetPaswwordWidget> {
                   ),
                   Padding(
                     padding:
-                        EdgeInsetsDirectional.fromSTEB(0.0, 22.0, 0.0, 65.0),
+                        const EdgeInsetsDirectional.fromSTEB(0.0, 22.0, 0.0, 65.0),
                     child: Text(
                       'Enter your email and we\'ll send you instructions to reset your password.',
                       style: FlutterFlowTheme.of(context).bodyMedium.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: FlutterFlowTheme.of(context).secondaryText,
                             fontSize: 16.0,
                             letterSpacing: 0.0,
@@ -119,12 +114,12 @@ class _ForgetPaswwordWidgetState extends State<ForgetPaswwordWidget> {
                   ),
                   Padding(
                     padding:
-                        EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 40.0),
+                        const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 40.0),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Container(
+                        SizedBox(
                           width: double.infinity,
                           child: TextFormField(
                             controller: _model.emailTextController,
@@ -136,39 +131,39 @@ class _ForgetPaswwordWidgetState extends State<ForgetPaswwordWidget> {
                               labelStyle: FlutterFlowTheme.of(context)
                                   .labelMedium
                                   .override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     letterSpacing: 0.0,
                                   ),
                               hintText: 'Enter your email',
                               hintStyle: FlutterFlowTheme.of(context)
                                   .labelMedium
                                   .override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     letterSpacing: 0.0,
                                   ),
                               enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
+                                borderSide: const BorderSide(
                                   color: Color(0x00000000),
                                   width: 1.0,
                                 ),
                                 borderRadius: BorderRadius.circular(27.0),
                               ),
                               focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
+                                borderSide: const BorderSide(
                                   color: Color(0x00000000),
                                   width: 1.0,
                                 ),
                                 borderRadius: BorderRadius.circular(27.0),
                               ),
                               errorBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
+                                borderSide: const BorderSide(
                                   color: Color(0x00000000),
                                   width: 1.0,
                                 ),
                                 borderRadius: BorderRadius.circular(27.0),
                               ),
                               focusedErrorBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
+                                borderSide: const BorderSide(
                                   color: Color(0x00000000),
                                   width: 1.0,
                                 ),
@@ -177,13 +172,13 @@ class _ForgetPaswwordWidgetState extends State<ForgetPaswwordWidget> {
                               filled: true,
                               fillColor: FlutterFlowTheme.of(context)
                                   .secondaryBackground,
-                              contentPadding: EdgeInsetsDirectional.fromSTEB(
+                              contentPadding: const EdgeInsetsDirectional.fromSTEB(
                                   20.0, 20.0, 0.0, 20.0),
                             ),
                             style: FlutterFlowTheme.of(context)
                                 .bodyMedium
                                 .override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   letterSpacing: 0.0,
                                 ),
                             keyboardType: TextInputType.emailAddress,
@@ -195,7 +190,7 @@ class _ForgetPaswwordWidgetState extends State<ForgetPaswwordWidget> {
                           onPressed: () async {
                             if (_model.emailTextController.text.isEmpty) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
+                                const SnackBar(
                                   content: Text(
                                     'Email required!',
                                   ),
@@ -212,14 +207,14 @@ class _ForgetPaswwordWidgetState extends State<ForgetPaswwordWidget> {
                           options: FFButtonOptions(
                             width: double.infinity,
                             height: 56.0,
-                            padding: EdgeInsets.all(8.0),
-                            iconPadding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsets.all(8.0),
+                            iconPadding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 0.0, 0.0, 0.0),
                             color: FlutterFlowTheme.of(context).primary,
                             textStyle: FlutterFlowTheme.of(context)
                                 .titleSmall
                                 .override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   color: Colors.white,
                                   letterSpacing: 0.0,
                                 ),
@@ -227,12 +222,12 @@ class _ForgetPaswwordWidgetState extends State<ForgetPaswwordWidget> {
                             borderRadius: BorderRadius.circular(28.0),
                           ),
                         ),
-                      ].divide(SizedBox(height: 24.0)),
+                      ].divide(const SizedBox(height: 24.0)),
                     ),
                   ),
                   Padding(
                     padding:
-                        EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 40.0),
+                        const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 40.0),
                     child: InkWell(
                       splashColor: Colors.transparent,
                       focusColor: Colors.transparent,
@@ -250,7 +245,7 @@ class _ForgetPaswwordWidgetState extends State<ForgetPaswwordWidget> {
                               style: FlutterFlowTheme.of(context)
                                   .bodyMedium
                                   .override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     letterSpacing: 0.0,
                                   ),
                             ),
@@ -263,7 +258,7 @@ class _ForgetPaswwordWidgetState extends State<ForgetPaswwordWidget> {
                           ],
                           style:
                               FlutterFlowTheme.of(context).bodyMedium.override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     letterSpacing: 0.0,
                                   ),
                         ),

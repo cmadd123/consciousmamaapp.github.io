@@ -3,12 +3,9 @@ import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
-import 'dart:ui';
 import '/index.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'sign_upv2_model.dart';
 export 'sign_upv2_model.dart';
 
@@ -65,7 +62,7 @@ class _SignUpv2WidgetState extends State<SignUpv2Widget> {
           constraints: BoxConstraints(
             maxHeight: MediaQuery.sizeOf(context).height * 1.0,
           ),
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             gradient: LinearGradient(
               colors: [Color(0xFFD7F2EB), Color(0xFFFFE9E1)],
               stops: [0.0, 1.0],
@@ -73,27 +70,27 @@ class _SignUpv2WidgetState extends State<SignUpv2Widget> {
               end: AlignmentDirectional(0, -1.0),
             ),
           ),
-          child: Container(
+          child: SizedBox(
             width: double.infinity,
             height: double.infinity,
             child: Stack(
               children: [
                 Padding(
                   padding:
-                      EdgeInsetsDirectional.fromSTEB(24.0, 50.0, 24.0, 0.0),
+                      const EdgeInsetsDirectional.fromSTEB(24.0, 50.0, 24.0, 0.0),
                   child: SingleChildScrollView(
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Align(
-                          alignment: AlignmentDirectional(0.0, 0.0),
+                          alignment: const AlignmentDirectional(0.0, 0.0),
                           child: Container(
                             width: 182.0,
                             height: 156.0,
-                            decoration: BoxDecoration(),
+                            decoration: const BoxDecoration(),
                             child: Align(
-                              alignment: AlignmentDirectional(-1.0, 0.0),
+                              alignment: const AlignmentDirectional(-1.0, 0.0),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(14.0),
                                 child: Image.asset(
@@ -110,21 +107,21 @@ class _SignUpv2WidgetState extends State<SignUpv2Widget> {
                           'Create an Account',
                           style:
                               FlutterFlowTheme.of(context).bodyMedium.override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     fontSize: 32.0,
                                     letterSpacing: 0.0,
                                     fontWeight: FontWeight.w600,
                                   ),
                         ),
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 22.0, 0.0, 65.0),
                           child: Text(
                             'Enter details to create your account.',
                             style: FlutterFlowTheme.of(context)
                                 .bodyMedium
                                 .override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   color: FlutterFlowTheme.of(context)
                                       .secondaryText,
                                   fontSize: 16.0,
@@ -133,16 +130,16 @@ class _SignUpv2WidgetState extends State<SignUpv2Widget> {
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 0.0, 0.0, 40.0),
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     0.0, 0.0, 0.0, 10.0),
-                                child: Container(
+                                child: SizedBox(
                                   width: double.infinity,
                                   child: TextFormField(
                                     controller: _model.textController,
@@ -154,7 +151,7 @@ class _SignUpv2WidgetState extends State<SignUpv2Widget> {
                                       labelStyle: FlutterFlowTheme.of(context)
                                           .labelMedium
                                           .override(
-                                            fontFamily: 'Andika New Basic',
+                                            fontFamily: FFAppState().currentFontFamily,
                                             color: FlutterFlowTheme.of(context)
                                                 .secondaryText,
                                             letterSpacing: 0.0,
@@ -163,11 +160,11 @@ class _SignUpv2WidgetState extends State<SignUpv2Widget> {
                                       hintStyle: FlutterFlowTheme.of(context)
                                           .labelMedium
                                           .override(
-                                            fontFamily: 'Andika New Basic',
+                                            fontFamily: FFAppState().currentFontFamily,
                                             letterSpacing: 0.0,
                                           ),
                                       enabledBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
+                                        borderSide: const BorderSide(
                                           color: Color(0x00000000),
                                           width: 1.0,
                                         ),
@@ -175,7 +172,7 @@ class _SignUpv2WidgetState extends State<SignUpv2Widget> {
                                             BorderRadius.circular(14.0),
                                       ),
                                       focusedBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
+                                        borderSide: const BorderSide(
                                           color: Color(0x00000000),
                                           width: 1.0,
                                         ),
@@ -204,13 +201,13 @@ class _SignUpv2WidgetState extends State<SignUpv2Widget> {
                                       fillColor: FlutterFlowTheme.of(context)
                                           .secondaryBackground,
                                       contentPadding:
-                                          EdgeInsetsDirectional.fromSTEB(
+                                          const EdgeInsetsDirectional.fromSTEB(
                                               20.0, 20.0, 0.0, 20.0),
                                     ),
                                     style: FlutterFlowTheme.of(context)
                                         .bodyMedium
                                         .override(
-                                          fontFamily: 'Andika New Basic',
+                                          fontFamily: FFAppState().currentFontFamily,
                                           color: FlutterFlowTheme.of(context)
                                               .secondaryText,
                                           letterSpacing: 0.0,
@@ -223,9 +220,9 @@ class _SignUpv2WidgetState extends State<SignUpv2Widget> {
                                 ),
                               ),
                               Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     0.0, 0.0, 0.0, 10.0),
-                                child: Container(
+                                child: SizedBox(
                                   width: double.infinity,
                                   child: TextFormField(
                                     controller: _model.emailTextController,
@@ -237,18 +234,18 @@ class _SignUpv2WidgetState extends State<SignUpv2Widget> {
                                       labelStyle: FlutterFlowTheme.of(context)
                                           .labelMedium
                                           .override(
-                                            fontFamily: 'Andika New Basic',
+                                            fontFamily: FFAppState().currentFontFamily,
                                             letterSpacing: 0.0,
                                           ),
                                       hintText: 'Enter your email',
                                       hintStyle: FlutterFlowTheme.of(context)
                                           .labelMedium
                                           .override(
-                                            fontFamily: 'Andika New Basic',
+                                            fontFamily: FFAppState().currentFontFamily,
                                             letterSpacing: 0.0,
                                           ),
                                       enabledBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
+                                        borderSide: const BorderSide(
                                           color: Color(0x00000000),
                                           width: 1.0,
                                         ),
@@ -256,7 +253,7 @@ class _SignUpv2WidgetState extends State<SignUpv2Widget> {
                                             BorderRadius.circular(14.0),
                                       ),
                                       focusedBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
+                                        borderSide: const BorderSide(
                                           color: Color(0x00000000),
                                           width: 1.0,
                                         ),
@@ -285,13 +282,13 @@ class _SignUpv2WidgetState extends State<SignUpv2Widget> {
                                       fillColor: FlutterFlowTheme.of(context)
                                           .secondaryBackground,
                                       contentPadding:
-                                          EdgeInsetsDirectional.fromSTEB(
+                                          const EdgeInsetsDirectional.fromSTEB(
                                               20.0, 20.0, 0.0, 20.0),
                                     ),
                                     style: FlutterFlowTheme.of(context)
                                         .bodyMedium
                                         .override(
-                                          fontFamily: 'Andika New Basic',
+                                          fontFamily: FFAppState().currentFontFamily,
                                           color: FlutterFlowTheme.of(context)
                                               .secondaryText,
                                           letterSpacing: 0.0,
@@ -305,9 +302,9 @@ class _SignUpv2WidgetState extends State<SignUpv2Widget> {
                                 ),
                               ),
                               Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     0.0, 0.0, 0.0, 12.0),
-                                child: Container(
+                                child: SizedBox(
                                   width: double.infinity,
                                   child: TextFormField(
                                     controller: _model.passwordTextController,
@@ -319,18 +316,18 @@ class _SignUpv2WidgetState extends State<SignUpv2Widget> {
                                       labelStyle: FlutterFlowTheme.of(context)
                                           .labelMedium
                                           .override(
-                                            fontFamily: 'Andika New Basic',
+                                            fontFamily: FFAppState().currentFontFamily,
                                             letterSpacing: 0.0,
                                           ),
                                       hintText: 'Enter your password',
                                       hintStyle: FlutterFlowTheme.of(context)
                                           .labelMedium
                                           .override(
-                                            fontFamily: 'Andika New Basic',
+                                            fontFamily: FFAppState().currentFontFamily,
                                             letterSpacing: 0.0,
                                           ),
                                       enabledBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
+                                        borderSide: const BorderSide(
                                           color: Color(0x00000000),
                                           width: 1.0,
                                         ),
@@ -338,7 +335,7 @@ class _SignUpv2WidgetState extends State<SignUpv2Widget> {
                                             BorderRadius.circular(14.0),
                                       ),
                                       focusedBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
+                                        borderSide: const BorderSide(
                                           color: Color(0x00000000),
                                           width: 1.0,
                                         ),
@@ -367,7 +364,7 @@ class _SignUpv2WidgetState extends State<SignUpv2Widget> {
                                       fillColor: FlutterFlowTheme.of(context)
                                           .secondaryBackground,
                                       contentPadding:
-                                          EdgeInsetsDirectional.fromSTEB(
+                                          const EdgeInsetsDirectional.fromSTEB(
                                               20.0, 20.0, 0.0, 20.0),
                                       suffixIcon: InkWell(
                                         onTap: () => safeSetState(
@@ -389,7 +386,7 @@ class _SignUpv2WidgetState extends State<SignUpv2Widget> {
                                     style: FlutterFlowTheme.of(context)
                                         .bodyMedium
                                         .override(
-                                          fontFamily: 'Andika New Basic',
+                                          fontFamily: FFAppState().currentFontFamily,
                                           color: FlutterFlowTheme.of(context)
                                               .secondaryText,
                                           letterSpacing: 0.0,
@@ -406,7 +403,7 @@ class _SignUpv2WidgetState extends State<SignUpv2Widget> {
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 0.0, 0.0, 16.0),
                           child: FFButtonWidget(
                             onPressed: () async {
@@ -414,7 +411,7 @@ class _SignUpv2WidgetState extends State<SignUpv2Widget> {
                               if (_model.passwordTextController.text !=
                                   _model.passwordTextController.text) {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
+                                  const SnackBar(
                                     content: Text(
                                       'Passwords don\'t match!',
                                     ),
@@ -448,15 +445,15 @@ class _SignUpv2WidgetState extends State<SignUpv2Widget> {
                             options: FFButtonOptions(
                               width: double.infinity,
                               height: 56.0,
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   16.0, 0.0, 16.0, 0.0),
-                              iconPadding: EdgeInsetsDirectional.fromSTEB(
+                              iconPadding: const EdgeInsetsDirectional.fromSTEB(
                                   0.0, 0.0, 0.0, 0.0),
                               color: FlutterFlowTheme.of(context).primary,
                               textStyle: FlutterFlowTheme.of(context)
                                   .titleSmall
                                   .override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     color: Colors.white,
                                     letterSpacing: 0.0,
                                     fontWeight: FontWeight.normal,
@@ -471,14 +468,14 @@ class _SignUpv2WidgetState extends State<SignUpv2Widget> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   0.0, 0.0, 0.0, 20.0),
                               child: Text(
                                 'Or continue with',
                                 style: FlutterFlowTheme.of(context)
                                     .bodyMedium
                                     .override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       color: FlutterFlowTheme.of(context)
                                           .secondaryText,
                                       letterSpacing: 0.0,
@@ -550,11 +547,11 @@ class _SignUpv2WidgetState extends State<SignUpv2Widget> {
                                         borderRadius:
                                             BorderRadius.circular(100.0),
                                         border: Border.all(
-                                          color: Color(0x6552A097),
+                                          color: const Color(0x6552A097),
                                         ),
                                       ),
                                       child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                        padding: const EdgeInsetsDirectional.fromSTEB(
                                             10.0, 10.0, 10.0, 10.0),
                                         child: Row(
                                           mainAxisSize: MainAxisSize.max,
@@ -562,14 +559,14 @@ class _SignUpv2WidgetState extends State<SignUpv2Widget> {
                                               MainAxisAlignment.center,
                                           children: [
                                             Padding(
-                                              padding: EdgeInsetsDirectional
+                                              padding: const EdgeInsetsDirectional
                                                   .fromSTEB(
                                                       0.0, 0.0, 18.0, 0.0),
                                               child: ClipRRect(
                                                 child: Container(
                                                   width: 24.0,
                                                   height: 24.0,
-                                                  decoration: BoxDecoration(),
+                                                  decoration: const BoxDecoration(),
                                                   child: ClipRRect(
                                                     borderRadius:
                                                         BorderRadius.circular(
@@ -635,11 +632,11 @@ class _SignUpv2WidgetState extends State<SignUpv2Widget> {
                                         borderRadius:
                                             BorderRadius.circular(100.0),
                                         border: Border.all(
-                                          color: Color(0x6552A097),
+                                          color: const Color(0x6552A097),
                                         ),
                                       ),
                                       child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                        padding: const EdgeInsetsDirectional.fromSTEB(
                                             10.0, 10.0, 10.0, 10.0),
                                         child: Row(
                                           mainAxisSize: MainAxisSize.max,
@@ -647,14 +644,14 @@ class _SignUpv2WidgetState extends State<SignUpv2Widget> {
                                               MainAxisAlignment.center,
                                           children: [
                                             Padding(
-                                              padding: EdgeInsetsDirectional
+                                              padding: const EdgeInsetsDirectional
                                                   .fromSTEB(
                                                       0.0, 0.0, 18.0, 0.0),
                                               child: ClipRRect(
                                                 child: Container(
                                                   width: 24.0,
                                                   height: 24.0,
-                                                  decoration: BoxDecoration(),
+                                                  decoration: const BoxDecoration(),
                                                   child: ClipRRect(
                                                     borderRadius:
                                                         BorderRadius.circular(
@@ -686,10 +683,10 @@ class _SignUpv2WidgetState extends State<SignUpv2Widget> {
                                     ),
                                   ),
                                 ),
-                              ].divide(SizedBox(width: 8.0)),
+                              ].divide(const SizedBox(width: 8.0)),
                             ),
                             Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   0.0, 27.0, 0.0, 40.0),
                               child: RichText(
                                 textScaler: MediaQuery.of(context).textScaler,
@@ -700,7 +697,7 @@ class _SignUpv2WidgetState extends State<SignUpv2Widget> {
                                       style: FlutterFlowTheme.of(context)
                                           .bodyMedium
                                           .override(
-                                            fontFamily: 'Andika New Basic',
+                                            fontFamily: FFAppState().currentFontFamily,
                                             letterSpacing: 0.0,
                                           ),
                                     ),
@@ -721,16 +718,16 @@ class _SignUpv2WidgetState extends State<SignUpv2Widget> {
                                   style: FlutterFlowTheme.of(context)
                                       .bodyMedium
                                       .override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         letterSpacing: 0.0,
                                       ),
                                 ),
                               ),
                             ),
                             Align(
-                              alignment: AlignmentDirectional(0.0, 1.0),
+                              alignment: const AlignmentDirectional(0.0, 1.0),
                               child: Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     0.0, 0.0, 0.0, 50.0),
                                 child: RichText(
                                   textScaler: MediaQuery.of(context).textScaler,
@@ -742,7 +739,7 @@ class _SignUpv2WidgetState extends State<SignUpv2Widget> {
                                         style: FlutterFlowTheme.of(context)
                                             .bodyMedium
                                             .override(
-                                              fontFamily: 'Andika New Basic',
+                                              fontFamily: FFAppState().currentFontFamily,
                                               color:
                                                   FlutterFlowTheme.of(context)
                                                       .secondaryText,
@@ -762,8 +759,8 @@ class _SignUpv2WidgetState extends State<SignUpv2Widget> {
                                     style: FlutterFlowTheme.of(context)
                                         .bodyMedium
                                         .override(
-                                          fontFamily: 'Andika New Basic',
-                                          color: Color(0x8F000000),
+                                          fontFamily: FFAppState().currentFontFamily,
+                                          color: const Color(0x8F000000),
                                           fontSize: 12.0,
                                           letterSpacing: 0.0,
                                         ),

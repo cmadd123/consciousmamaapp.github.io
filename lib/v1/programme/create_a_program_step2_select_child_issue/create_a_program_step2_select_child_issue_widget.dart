@@ -3,12 +3,9 @@ import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
-import 'dart:ui';
 import '/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'create_a_program_step2_select_child_issue_model.dart';
 export 'create_a_program_step2_select_child_issue_model.dart';
 
@@ -61,14 +58,14 @@ class _CreateAProgramStep2SelectChildIssueWidgetState
         body: Container(
           width: double.infinity,
           height: double.infinity,
-          decoration: BoxDecoration(),
+          decoration: const BoxDecoration(),
           child: Column(
             mainAxisSize: MainAxisSize.max,
             children: [
               Expanded(
                 child: Padding(
                   padding:
-                      EdgeInsetsDirectional.fromSTEB(13.0, 50.0, 13.0, 0.0),
+                      const EdgeInsetsDirectional.fromSTEB(13.0, 50.0, 13.0, 0.0),
                   child: SingleChildScrollView(
                     child: Column(
                       mainAxisSize: MainAxisSize.max,
@@ -85,7 +82,7 @@ class _CreateAProgramStep2SelectChildIssueWidgetState
                                   width: 6.0,
                                   height: 4.0,
                                   decoration: BoxDecoration(
-                                    color: Color(0x6652A097),
+                                    color: const Color(0x6652A097),
                                     borderRadius: BorderRadius.circular(12.0),
                                   ),
                                 ),
@@ -101,7 +98,7 @@ class _CreateAProgramStep2SelectChildIssueWidgetState
                                   width: 6.0,
                                   height: 4.0,
                                   decoration: BoxDecoration(
-                                    color: Color(0x6652A097),
+                                    color: const Color(0x6652A097),
                                     borderRadius: BorderRadius.circular(12.0),
                                   ),
                                 ),
@@ -109,18 +106,18 @@ class _CreateAProgramStep2SelectChildIssueWidgetState
                                   width: 6.0,
                                   height: 4.0,
                                   decoration: BoxDecoration(
-                                    color: Color(0x6652A097),
+                                    color: const Color(0x6652A097),
                                     borderRadius: BorderRadius.circular(12.0),
                                   ),
                                 ),
-                              ].divide(SizedBox(width: 2.0)),
+                              ].divide(const SizedBox(width: 2.0)),
                             ),
                             Text(
                               'Step 2/4',
                               style: FlutterFlowTheme.of(context)
                                   .bodyMedium
                                   .override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     color: FlutterFlowTheme.of(context).primary,
                                     letterSpacing: 0.0,
                                     fontWeight: FontWeight.w600,
@@ -129,9 +126,9 @@ class _CreateAProgramStep2SelectChildIssueWidgetState
                           ],
                         ),
                         Align(
-                          alignment: AlignmentDirectional(-1.0, 0.0),
+                          alignment: const AlignmentDirectional(-1.0, 0.0),
                           child: Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 100.0, 0.0, 0.0),
                             child: ClipOval(
                               child: Container(
@@ -155,14 +152,14 @@ class _CreateAProgramStep2SelectChildIssueWidgetState
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 32.0, 0.0, 0.0),
                           child: Text(
                             'Which child is experiencing this challenge?',
                             style: FlutterFlowTheme.of(context)
                                 .bodyMedium
                                 .override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   fontSize: 32.0,
                                   letterSpacing: 0.0,
                                   fontWeight: FontWeight.bold,
@@ -170,14 +167,14 @@ class _CreateAProgramStep2SelectChildIssueWidgetState
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 32.0, 0.0, 32.0),
                           child: Text(
                             'Select a child ',
                             style: FlutterFlowTheme.of(context)
                                 .bodyMedium
                                 .override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   color: FlutterFlowTheme.of(context)
                                       .secondaryText,
                                   letterSpacing: 0.0,
@@ -185,9 +182,9 @@ class _CreateAProgramStep2SelectChildIssueWidgetState
                           ),
                         ),
                         Align(
-                          alignment: AlignmentDirectional(0.0, 0.0),
+                          alignment: const AlignmentDirectional(0.0, 0.0),
                           child: Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 2.0, 0.0, 0.0, 0.0),
                             child: StreamBuilder<List<ChildernRecord>>(
                               stream: queryChildernRecord(
@@ -220,7 +217,7 @@ class _CreateAProgramStep2SelectChildIssueWidgetState
                                 return MasonryGridView.builder(
                                   physics: const NeverScrollableScrollPhysics(),
                                   gridDelegate:
-                                      SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                                      const SliverSimpleGridDelegateWithFixedCrossAxisCount(
                                     crossAxisCount: 2,
                                   ),
                                   crossAxisSpacing: 10.0,
@@ -270,12 +267,12 @@ class _CreateAProgramStep2SelectChildIssueWidgetState
                                               child: Container(
                                                 width: 54.0,
                                                 height: 54.0,
-                                                decoration: BoxDecoration(
+                                                decoration: const BoxDecoration(
                                                   color: Color(0xB7ACE1E1),
                                                   shape: BoxShape.circle,
                                                 ),
                                                 child: Padding(
-                                                  padding: EdgeInsetsDirectional
+                                                  padding: const EdgeInsetsDirectional
                                                       .fromSTEB(
                                                           8.0, 8.0, 8.0, 8.0),
                                                   child: ClipRRect(
@@ -294,7 +291,7 @@ class _CreateAProgramStep2SelectChildIssueWidgetState
                                               ),
                                             ),
                                             Padding(
-                                              padding: EdgeInsetsDirectional
+                                              padding: const EdgeInsetsDirectional
                                                   .fromSTEB(
                                                       10.0, 12.0, 10.0, 0.0),
                                               child: Text(
@@ -328,14 +325,14 @@ class _CreateAProgramStep2SelectChildIssueWidgetState
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 0.0, 0.0, 30.0),
                           child: Row(
                             mainAxisSize: MainAxisSize.max,
                             children: [
                               Expanded(
                                 child: Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       0.0, 60.0, 0.0, 20.0),
                                   child: FFButtonWidget(
                                     onPressed: () async {
@@ -344,17 +341,17 @@ class _CreateAProgramStep2SelectChildIssueWidgetState
                                     text: 'Back',
                                     options: FFButtonOptions(
                                       height: 47.0,
-                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(
                                           16.0, 0.0, 16.0, 0.0),
                                       iconPadding:
-                                          EdgeInsetsDirectional.fromSTEB(
+                                          const EdgeInsetsDirectional.fromSTEB(
                                               0.0, 0.0, 0.0, 0.0),
                                       color:
                                           FlutterFlowTheme.of(context).primary,
                                       textStyle: FlutterFlowTheme.of(context)
                                           .titleSmall
                                           .override(
-                                            fontFamily: 'Andika New Basic',
+                                            fontFamily: FFAppState().currentFontFamily,
                                             color: Colors.white,
                                             letterSpacing: 0.0,
                                           ),
@@ -366,7 +363,7 @@ class _CreateAProgramStep2SelectChildIssueWidgetState
                               ),
                               Expanded(
                                 child: Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       0.0, 60.0, 0.0, 20.0),
                                   child: FFButtonWidget(
                                     onPressed: () async {
@@ -376,7 +373,7 @@ class _CreateAProgramStep2SelectChildIssueWidgetState
                                               .routeName,
                                           queryParameters: {
                                             'description': serializeParam(
-                                              widget!.description,
+                                              widget.description,
                                               ParamType.String,
                                             ),
                                             'child': serializeParam(
@@ -401,7 +398,7 @@ class _CreateAProgramStep2SelectChildIssueWidgetState
                                               ),
                                             ),
                                             duration:
-                                                Duration(milliseconds: 4000),
+                                                const Duration(milliseconds: 4000),
                                             backgroundColor:
                                                 FlutterFlowTheme.of(context)
                                                     .error,
@@ -412,17 +409,17 @@ class _CreateAProgramStep2SelectChildIssueWidgetState
                                     text: 'Next',
                                     options: FFButtonOptions(
                                       height: 47.0,
-                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(
                                           16.0, 0.0, 16.0, 0.0),
                                       iconPadding:
-                                          EdgeInsetsDirectional.fromSTEB(
+                                          const EdgeInsetsDirectional.fromSTEB(
                                               0.0, 0.0, 0.0, 0.0),
                                       color:
                                           FlutterFlowTheme.of(context).primary,
                                       textStyle: FlutterFlowTheme.of(context)
                                           .titleSmall
                                           .override(
-                                            fontFamily: 'Andika New Basic',
+                                            fontFamily: FFAppState().currentFontFamily,
                                             color: Colors.white,
                                             letterSpacing: 0.0,
                                           ),
@@ -432,7 +429,7 @@ class _CreateAProgramStep2SelectChildIssueWidgetState
                                   ),
                                 ),
                               ),
-                            ].divide(SizedBox(width: 20.0)),
+                            ].divide(const SizedBox(width: 20.0)),
                           ),
                         ),
                       ],

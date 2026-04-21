@@ -4,14 +4,9 @@ import '/backend/schema/enums/enums.dart';
 import '/components/home_nav_bar_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import '/flutter_flow/flutter_flow_widgets.dart';
 import '/components/share_content_bottom_sheet.dart';
-import 'dart:ui';
 import '/index.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'category_details_local_produc_model.dart';
 export 'category_details_local_produc_model.dart';
@@ -214,7 +209,7 @@ class _CategoryDetailsLocalProducWidgetState
           backgroundColor: Colors.green,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          duration: Duration(seconds: 2),
+          duration: const Duration(seconds: 2),
         ),
       );
 
@@ -225,7 +220,7 @@ class _CategoryDetailsLocalProducWidgetState
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Failed to add meal. Please try again.'),
+          content: const Text('Failed to add meal. Please try again.'),
           backgroundColor: Colors.red,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -278,7 +273,7 @@ class _CategoryDetailsLocalProducWidgetState
           color: Colors.transparent,
           child: Center(
             child: Container(
-              padding: EdgeInsets.all(24.0),
+              padding: const EdgeInsets.all(24.0),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(14.0),
@@ -287,11 +282,11 @@ class _CategoryDetailsLocalProducWidgetState
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   CircularProgressIndicator(color: FlutterFlowTheme.of(dialogContext).primary),
-                  SizedBox(height: 16.0),
+                  const SizedBox(height: 16.0),
                   Text(
                     'Saving to My Recipes...',
                     style: FlutterFlowTheme.of(dialogContext).bodyMedium.override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       letterSpacing: 0.0,
                     ),
                   ),
@@ -335,22 +330,22 @@ class _CategoryDetailsLocalProducWidgetState
           title: Row(
             children: [
               Icon(Icons.check_circle, color: FlutterFlowTheme.of(context).primary),
-              SizedBox(width: 8.0),
-              Expanded(child: Text('Saved to My Recipes!')),
+              const SizedBox(width: 8.0),
+              const Expanded(child: Text('Saved to My Recipes!')),
             ],
           ),
           content: Text('"${original.recipeName}" has been saved to your recipes. Would you like to edit it now?'),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: Text('Later'),
+              child: const Text('Later'),
             ),
             ElevatedButton(
               onPressed: () => Navigator.pop(context, true),
               style: ElevatedButton.styleFrom(
                 backgroundColor: FlutterFlowTheme.of(context).primary,
               ),
-              child: Text('Edit Now', style: TextStyle(color: Colors.white)),
+              child: const Text('Edit Now', style: TextStyle(color: Colors.white)),
             ),
           ],
         ),
@@ -381,7 +376,7 @@ class _CategoryDetailsLocalProducWidgetState
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error copying recipe'),
+            content: const Text('Error copying recipe'),
             backgroundColor: Colors.red,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -432,7 +427,7 @@ class _CategoryDetailsLocalProducWidgetState
             children: [
               // Header with back button and actions
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -460,7 +455,7 @@ class _CategoryDetailsLocalProducWidgetState
                           },
                           borderRadius: BorderRadius.circular(14.0),
                           child: Container(
-                            padding: EdgeInsets.all(8.0),
+                            padding: const EdgeInsets.all(8.0),
                             decoration: BoxDecoration(
                               color: FlutterFlowTheme.of(context).secondary.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(14.0),
@@ -474,7 +469,7 @@ class _CategoryDetailsLocalProducWidgetState
                         ),
                         // Delete button (hidden for curated recipes)
                         if (!_isCuratedRecipe) ...[
-                          SizedBox(width: 12.0),
+                          const SizedBox(width: 12.0),
                           InkWell(
                             onTap: () => _showDeleteConfirmation(context),
                             child: Icon(
@@ -493,16 +488,16 @@ class _CategoryDetailsLocalProducWidgetState
               if (_isSelectionMode)
                 Container(
                   width: double.infinity,
-                  margin: EdgeInsets.symmetric(horizontal: 16.0),
-                  padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                  margin: const EdgeInsets.symmetric(horizontal: 16.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
                   decoration: BoxDecoration(
                     color: _isReplaceMode
-                        ? Color(0xFFFF9800).withOpacity(0.15)
+                        ? const Color(0xFFFF9800).withOpacity(0.15)
                         : FlutterFlowTheme.of(context).primary.withOpacity(0.15),
                     borderRadius: BorderRadius.circular(14.0),
                     border: Border.all(
                       color: _isReplaceMode
-                          ? Color(0xFFFF9800)
+                          ? const Color(0xFFFF9800)
                           : FlutterFlowTheme.of(context).primary,
                       width: 1.5,
                     ),
@@ -513,32 +508,32 @@ class _CategoryDetailsLocalProducWidgetState
                         children: [
                           Icon(
                             _isReplaceMode ? Icons.swap_horiz : Icons.add_circle_outline,
-                            color: _isReplaceMode ? Color(0xFFFF9800) : FlutterFlowTheme.of(context).primary,
+                            color: _isReplaceMode ? const Color(0xFFFF9800) : FlutterFlowTheme.of(context).primary,
                             size: 20.0,
                           ),
-                          SizedBox(width: 8.0),
+                          const SizedBox(width: 8.0),
                           Expanded(
                             child: Text(
                               _getSelectionSubtitle(),
                               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     fontWeight: FontWeight.w600,
-                                    color: _isReplaceMode ? Color(0xFFE65100) : FlutterFlowTheme.of(context).primary,
+                                    color: _isReplaceMode ? const Color(0xFFE65100) : FlutterFlowTheme.of(context).primary,
                                     letterSpacing: 0.0,
                                   ),
                             ),
                           ),
                         ],
                       ),
-                      SizedBox(height: 12.0),
+                      const SizedBox(height: 12.0),
                       InkWell(
                         onTap: _handleMealSelection,
                         child: Container(
                           width: double.infinity,
-                          padding: EdgeInsets.symmetric(vertical: 12.0),
+                          padding: const EdgeInsets.symmetric(vertical: 12.0),
                           decoration: BoxDecoration(
                             color: _isReplaceMode
-                                ? Color(0xFFFF9800)
+                                ? const Color(0xFFFF9800)
                                 : FlutterFlowTheme.of(context).primary,
                             borderRadius: BorderRadius.circular(14.0),
                           ),
@@ -550,11 +545,11 @@ class _CategoryDetailsLocalProducWidgetState
                                 color: Colors.white,
                                 size: 20.0,
                               ),
-                              SizedBox(width: 8.0),
+                              const SizedBox(width: 8.0),
                               Text(
                                 _getActionButtonText(),
                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       color: Colors.white,
                                       fontWeight: FontWeight.w600,
                                       letterSpacing: 0.0,
@@ -567,12 +562,12 @@ class _CategoryDetailsLocalProducWidgetState
                     ],
                   ),
                 ),
-              if (_isSelectionMode) SizedBox(height: 12.0),
+              if (_isSelectionMode) const SizedBox(height: 12.0),
               // Scrollable content
               Expanded(
                 child: SingleChildScrollView(
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -580,7 +575,7 @@ class _CategoryDetailsLocalProducWidgetState
                         Center(
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(14.0),
-                          child: Container(
+                          child: SizedBox(
                             width: MediaQuery.of(context).size.width >= 600 ? 560.0 : double.infinity,
                             height: MediaQuery.of(context).size.width >= 600 ? 320.0 : 220.0,
                             child: _isValidImageUrl(widget.itemDetails?.imageUrl)
@@ -608,44 +603,44 @@ class _CategoryDetailsLocalProducWidgetState
                           ),
                         ),
                         ),
-                        SizedBox(height: 16.0),
+                        const SizedBox(height: 16.0),
 
                         // Recipe Name (below image, properly sized)
                         Text(
                           widget.itemDetails?.recipeName ?? 'Untitled Recipe',
                           style: FlutterFlowTheme.of(context).headlineSmall.override(
-                                fontFamily: 'Andika New Basic',
+                                fontFamily: FFAppState().currentFontFamily,
                                 fontSize: 22.0,
                                 fontWeight: FontWeight.w600,
                                 letterSpacing: 0.0,
                               ),
                         ),
-                        SizedBox(height: 8.0),
+                        const SizedBox(height: 8.0),
 
                         // Star Rating (user-initiated)
                         _buildStarRating(context),
-                        SizedBox(height: 8.0),
+                        const SizedBox(height: 8.0),
 
                         // Prep & Cook Time
                         Row(
                           children: [
-                            Icon(
+                            const Icon(
                               Icons.schedule,
                               size: 18.0,
                               color: Color(0xFF888888),
                             ),
-                            SizedBox(width: 6.0),
+                            const SizedBox(width: 6.0),
                             Text(
                               _buildTimeString(),
                               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                    fontFamily: 'Andika New Basic',
-                                    color: Color(0xFF666666),
+                                    fontFamily: FFAppState().currentFontFamily,
+                                    color: const Color(0xFF666666),
                                     fontSize: 14.0,
                                     letterSpacing: 0.0,
                                   ),
                             ),
                             if (FFAppState().showMealCosts) ...[
-                              SizedBox(width: 12.0),
+                              const SizedBox(width: 12.0),
                               InkWell(
                                 onTap: () => _editEstimatedCost(context),
                                 borderRadius: BorderRadius.circular(8),
@@ -654,7 +649,7 @@ class _CategoryDetailsLocalProducWidgetState
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      Icon(
+                                      const Icon(
                                         Icons.attach_money,
                                         size: 18.0,
                                         color: Color(0xFF2E7D32),
@@ -664,18 +659,18 @@ class _CategoryDetailsLocalProducWidgetState
                                             ? _formatCost(_displayedEstimatedCost()!)
                                             : 'Add',
                                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                              fontFamily: 'Andika New Basic',
-                                              color: Color(0xFF2E7D32),
+                                              fontFamily: FFAppState().currentFontFamily,
+                                              color: const Color(0xFF2E7D32),
                                               fontSize: 14.0,
                                               fontWeight: FontWeight.w600,
                                               letterSpacing: 0.0,
                                             ),
                                       ),
-                                      SizedBox(width: 3.0),
+                                      const SizedBox(width: 3.0),
                                       Icon(
                                         Icons.edit,
                                         size: 12.0,
-                                        color: Color(0xFF2E7D32).withOpacity(0.6),
+                                        color: const Color(0xFF2E7D32).withOpacity(0.6),
                                       ),
                                     ],
                                   ),
@@ -766,7 +761,7 @@ class _CategoryDetailsLocalProducWidgetState
                                     child: Text(
                                       emoji.isNotEmpty ? '$emoji $tag' : tag,
                                       style: FlutterFlowTheme.of(context).bodySmall.override(
-                                            fontFamily: 'Andika New Basic',
+                                            fontFamily: FFAppState().currentFontFamily,
                                             color: chipColor,
                                             fontSize: 12.0,
                                             fontWeight: FontWeight.w500,
@@ -783,7 +778,7 @@ class _CategoryDetailsLocalProducWidgetState
                         // Source URL (clickable)
                         if (widget.itemDetails?.sourceUrl != null &&
                             widget.itemDetails!.sourceUrl.isNotEmpty) ...[
-                          SizedBox(height: 8.0),
+                          const SizedBox(height: 8.0),
                           InkWell(
                             onTap: () => _launchUrl(widget.itemDetails?.sourceUrl),
                             child: Row(
@@ -793,12 +788,12 @@ class _CategoryDetailsLocalProducWidgetState
                                   size: 16.0,
                                   color: FlutterFlowTheme.of(context).primary,
                                 ),
-                                SizedBox(width: 6.0),
+                                const SizedBox(width: 6.0),
                                 Flexible(
                                   child: Text(
                                     _extractDomain(widget.itemDetails?.sourceUrl),
                                     style: FlutterFlowTheme.of(context).bodySmall.override(
-                                          fontFamily: 'Andika New Basic',
+                                          fontFamily: FFAppState().currentFontFamily,
                                           color: FlutterFlowTheme.of(context).primary,
                                           fontSize: 13.0,
                                           letterSpacing: 0.0,
@@ -811,11 +806,11 @@ class _CategoryDetailsLocalProducWidgetState
                             ),
                           ),
                         ],
-                        SizedBox(height: 20.0),
+                        const SizedBox(height: 20.0),
 
                         // Action Buttons with Labels
                         _buildActionButtons(context),
-                        SizedBox(height: 24.0),
+                        const SizedBox(height: 24.0),
 
                         // Ingredients & Instructions — side-by-side on tablet
                         LayoutBuilder(
@@ -829,18 +824,18 @@ class _CategoryDetailsLocalProducWidgetState
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         _buildSectionHeader('Ingredients', Icons.kitchen),
-                                        SizedBox(height: 12.0),
+                                        const SizedBox(height: 12.0),
                                         _buildIngredientsCard(context),
                                       ],
                                     ),
                                   ),
-                                  SizedBox(width: 16.0),
+                                  const SizedBox(width: 16.0),
                                   Expanded(
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         _buildSectionHeader('Instructions', Icons.format_list_numbered),
-                                        SizedBox(height: 12.0),
+                                        const SizedBox(height: 12.0),
                                         _buildInstructionsCard(context),
                                       ],
                                     ),
@@ -852,17 +847,17 @@ class _CategoryDetailsLocalProducWidgetState
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 _buildSectionHeader('Ingredients', Icons.kitchen),
-                                SizedBox(height: 12.0),
+                                const SizedBox(height: 12.0),
                                 _buildIngredientsCard(context),
-                                SizedBox(height: 24.0),
+                                const SizedBox(height: 24.0),
                                 _buildSectionHeader('Instructions', Icons.format_list_numbered),
-                                SizedBox(height: 12.0),
+                                const SizedBox(height: 12.0),
                                 _buildInstructionsCard(context),
                               ],
                             );
                           },
                         ),
-                        SizedBox(height: 32.0),
+                        const SizedBox(height: 32.0),
                       ],
                     ),
                   ),
@@ -915,10 +910,10 @@ class _CategoryDetailsLocalProducWidgetState
               }
             },
             child: Padding(
-              padding: EdgeInsets.only(right: 4.0),
+              padding: const EdgeInsets.only(right: 4.0),
               child: Icon(
                 isFilled ? Icons.star : Icons.star_border,
-                color: isFilled ? Color(0xFFFFB800) : Color(0xFFCCCCCC),
+                color: isFilled ? const Color(0xFFFFB800) : const Color(0xFFCCCCCC),
                 size: 28.0,
               ),
             ),
@@ -926,12 +921,12 @@ class _CategoryDetailsLocalProducWidgetState
         }),
 
         // Rating label
-        SizedBox(width: 8.0),
+        const SizedBox(width: 8.0),
         Text(
           currentRating > 0 ? '$currentRating/5' : 'Tap to rate',
           style: FlutterFlowTheme.of(context).bodySmall.override(
-                fontFamily: 'Andika New Basic',
-                color: currentRating > 0 ? Color(0xFF666666) : Color(0xFF999999),
+                fontFamily: FFAppState().currentFontFamily,
+                color: currentRating > 0 ? const Color(0xFF666666) : const Color(0xFF999999),
                 fontSize: 13.0,
                 letterSpacing: 0.0,
               ),
@@ -1016,11 +1011,11 @@ class _CategoryDetailsLocalProducWidgetState
     return Row(
       children: [
         Icon(icon, size: 20.0, color: FlutterFlowTheme.of(context).primary),
-        SizedBox(width: 8.0),
+        const SizedBox(width: 8.0),
         Text(
           title,
           style: FlutterFlowTheme.of(context).titleMedium.override(
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
                 fontSize: 18.0,
                 fontWeight: FontWeight.w600,
                 letterSpacing: 0.0,
@@ -1032,11 +1027,11 @@ class _CategoryDetailsLocalProducWidgetState
 
   Widget _buildActionButtons(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 8.0),
+      padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 8.0),
       decoration: BoxDecoration(
         color: FlutterFlowTheme.of(context).secondaryBackground,
         borderRadius: BorderRadius.circular(14.0),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             blurRadius: 4.0,
             color: Color(0x1A000000),
@@ -1083,7 +1078,7 @@ class _CategoryDetailsLocalProducWidgetState
           _buildActionButton(
             icon: Icons.shopping_cart_outlined,
             label: 'Grocery',
-            color: Color(0xFF9B8AA0),
+            color: const Color(0xFF9B8AA0),
             showPlusBadge: true,
             onTap: () async {
               final ingredients = widget.itemDetails?.ingredients ?? [];
@@ -1119,7 +1114,7 @@ class _CategoryDetailsLocalProducWidgetState
             _buildActionButton(
               icon: Icons.bookmark_add_outlined,
               label: 'Save',
-              color: Color(0xFF2196F3),
+              color: const Color(0xFF2196F3),
               showPlusBadge: true,
               onTap: () => _copyToMyRecipes(),
             ),
@@ -1129,7 +1124,7 @@ class _CategoryDetailsLocalProducWidgetState
             _buildActionButton(
               icon: Icons.edit_outlined,
               label: 'Edit',
-              color: Color(0xFF2196F3),
+              color: const Color(0xFF2196F3),
               onTap: () {
                 context.pushNamed(
                   EditeAddMealWidget.routeName,
@@ -1155,7 +1150,7 @@ class _CategoryDetailsLocalProducWidgetState
           _buildActionButton(
             icon: Icons.calendar_today_outlined,
             label: 'Plan',
-            color: Color(0xFFFF9800),
+            color: const Color(0xFFFF9800),
             onTap: () {
               if (Navigator.of(context).canPop()) {
                 context.pop();
@@ -1167,7 +1162,7 @@ class _CategoryDetailsLocalProducWidgetState
                 }.withoutNulls,
                 extra: <String, dynamic>{
                   'mealRef': widget.itemDetails,
-                  kTransitionInfoKey: TransitionInfo(
+                  kTransitionInfoKey: const TransitionInfo(
                     hasTransition: true,
                     transitionType: PageTransitionType.fade,
                     duration: Duration(milliseconds: 0),
@@ -1192,7 +1187,7 @@ class _CategoryDetailsLocalProducWidgetState
       onTap: onTap,
       borderRadius: BorderRadius.circular(14.0),
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -1220,18 +1215,18 @@ class _CategoryDetailsLocalProducWidgetState
                         shape: BoxShape.circle,
                         border: Border.all(color: Colors.white, width: 1.5),
                       ),
-                      child: Icon(Icons.add, color: Colors.white, size: 12.0),
+                      child: const Icon(Icons.add, color: Colors.white, size: 12.0),
                     ),
                   ),
               ],
             ),
-            SizedBox(height: 4.0),
+            const SizedBox(height: 4.0),
             Text(
               label,
               style: FlutterFlowTheme.of(context).bodySmall.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     fontSize: 11.0,
-                    color: Color(0xFF666666),
+                    color: const Color(0xFF666666),
                     letterSpacing: 0.0,
                   ),
             ),
@@ -1253,7 +1248,7 @@ class _CategoryDetailsLocalProducWidgetState
       decoration: BoxDecoration(
         color: FlutterFlowTheme.of(context).secondaryBackground,
         borderRadius: BorderRadius.circular(14.0),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             blurRadius: 4.0,
             color: Color(0x1A000000),
@@ -1262,7 +1257,7 @@ class _CategoryDetailsLocalProducWidgetState
         ],
       ),
       child: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           children: ingredients.asMap().entries.map((entry) {
             final index = entry.key;
@@ -1276,7 +1271,7 @@ class _CategoryDetailsLocalProducWidgetState
                 });
               },
               child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 8.0),
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -1291,27 +1286,27 @@ class _CategoryDetailsLocalProducWidgetState
                         border: Border.all(
                           color: isChecked
                               ? FlutterFlowTheme.of(context).primary
-                              : Color(0xFFCCCCCC),
+                              : const Color(0xFFCCCCCC),
                           width: 2.0,
                         ),
                       ),
                       child: isChecked
-                          ? Icon(Icons.check, size: 16.0, color: Colors.white)
+                          ? const Icon(Icons.check, size: 16.0, color: Colors.white)
                           : null,
                     ),
-                    SizedBox(width: 12.0),
+                    const SizedBox(width: 12.0),
                     Expanded(
                       child: Text(
                         ingredient,
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               fontSize: 15.0,
                               letterSpacing: 0.0,
                               decoration: isChecked
                                   ? TextDecoration.lineThrough
                                   : TextDecoration.none,
                               color: isChecked
-                                  ? Color(0xFF999999)
+                                  ? const Color(0xFF999999)
                                   : FlutterFlowTheme.of(context).primaryText,
                             ),
                       ),
@@ -1364,7 +1359,7 @@ class _CategoryDetailsLocalProducWidgetState
       decoration: BoxDecoration(
         color: FlutterFlowTheme.of(context).secondaryBackground,
         borderRadius: BorderRadius.circular(14.0),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             blurRadius: 4.0,
             color: Color(0x1A000000),
@@ -1373,7 +1368,7 @@ class _CategoryDetailsLocalProducWidgetState
         ],
       ),
       child: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           children: instructions.asMap().entries.map((entry) {
             final index = entry.key;
@@ -1387,7 +1382,7 @@ class _CategoryDetailsLocalProducWidgetState
                 });
               },
               child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 10.0),
+                padding: const EdgeInsets.symmetric(vertical: 10.0),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -1398,36 +1393,36 @@ class _CategoryDetailsLocalProducWidgetState
                       decoration: BoxDecoration(
                         color: isCompleted
                             ? FlutterFlowTheme.of(context).primary
-                            : Color(0xFFE0E0E0),
+                            : const Color(0xFFE0E0E0),
                         shape: BoxShape.circle,
                       ),
                       child: Center(
                         child: isCompleted
-                            ? Icon(Icons.check, size: 16.0, color: Colors.white)
+                            ? const Icon(Icons.check, size: 16.0, color: Colors.white)
                             : Text(
                                 '${index + 1}',
                                 style: FlutterFlowTheme.of(context).bodySmall.override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       fontSize: 13.0,
                                       fontWeight: FontWeight.w600,
-                                      color: Color(0xFF666666),
+                                      color: const Color(0xFF666666),
                                       letterSpacing: 0.0,
                                     ),
                               ),
                       ),
                     ),
-                    SizedBox(width: 12.0),
+                    const SizedBox(width: 12.0),
                     Expanded(
                       child: Padding(
-                        padding: EdgeInsets.only(top: 4.0),
+                        padding: const EdgeInsets.only(top: 4.0),
                         child: Text(
                           _cleanInstructionText(instruction),
                           style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                fontFamily: 'Andika New Basic',
+                                fontFamily: FFAppState().currentFontFamily,
                                 fontSize: 15.0,
                                 letterSpacing: 0.0,
                                 color: isCompleted
-                                    ? Color(0xFF999999)
+                                    ? const Color(0xFF999999)
                                     : FlutterFlowTheme.of(context).primaryText,
                               ),
                         ),
@@ -1446,11 +1441,11 @@ class _CategoryDetailsLocalProducWidgetState
   Widget _buildEmptyState(String message) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.all(24.0),
+      padding: const EdgeInsets.all(24.0),
       decoration: BoxDecoration(
         color: FlutterFlowTheme.of(context).secondaryBackground,
         borderRadius: BorderRadius.circular(14.0),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             blurRadius: 4.0,
             color: Color(0x1A000000),
@@ -1462,8 +1457,8 @@ class _CategoryDetailsLocalProducWidgetState
         message,
         textAlign: TextAlign.center,
         style: FlutterFlowTheme.of(context).bodyMedium.override(
-              fontFamily: 'Andika New Basic',
-              color: Color(0xFF999999),
+              fontFamily: FFAppState().currentFontFamily,
+              color: const Color(0xFF999999),
               fontSize: 14.0,
               letterSpacing: 0.0,
             ),

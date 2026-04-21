@@ -3,13 +3,9 @@ import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
-import 'dart:ui';
 import '/index.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'childend_delet_pop_up_model.dart';
 export 'childend_delet_pop_up_model.dart';
 
@@ -53,7 +49,7 @@ class _ChildendDeletPopUpWidgetState extends State<ChildendDeletPopUpWidget> {
     return Container(
       width: 300.0,
       height: 320.0,
-      constraints: BoxConstraints(
+      constraints: const BoxConstraints(
         minWidth: 374.0,
       ),
       decoration: BoxDecoration(
@@ -61,15 +57,15 @@ class _ChildendDeletPopUpWidgetState extends State<ChildendDeletPopUpWidget> {
         borderRadius: BorderRadius.circular(32.0),
       ),
       child: Padding(
-        padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
+        padding: const EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
         child: Column(
           mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Align(
-              alignment: AlignmentDirectional(0.0, 0.0),
+              alignment: const AlignmentDirectional(0.0, 0.0),
               child: Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(0.0, 20.0, 0.0, 0.0),
+                padding: const EdgeInsetsDirectional.fromSTEB(0.0, 20.0, 0.0, 0.0),
                 child: Container(
                   width: 75.0,
                   height: 75.0,
@@ -89,26 +85,26 @@ class _ChildendDeletPopUpWidgetState extends State<ChildendDeletPopUpWidget> {
               ),
             ),
             Align(
-              alignment: AlignmentDirectional(0.0, -1.0),
+              alignment: const AlignmentDirectional(0.0, -1.0),
               child: Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
+                padding: const EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
                 child: Text(
                   'Are you sure!',
                   textAlign: TextAlign.center,
                   style: FlutterFlowTheme.of(context).headlineSmall.override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         letterSpacing: 0.0,
                       ),
                 ),
               ),
             ),
             Align(
-              alignment: AlignmentDirectional(0.0, -1.0),
+              alignment: const AlignmentDirectional(0.0, -1.0),
               child: Text(
                 'Are you sure you want to delete child. If you proceed further the child details will be deleted permanently.',
                 textAlign: TextAlign.start,
                 style: FlutterFlowTheme.of(context).bodyMedium.override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       letterSpacing: 0.0,
                     ),
               ),
@@ -125,13 +121,13 @@ class _ChildendDeletPopUpWidgetState extends State<ChildendDeletPopUpWidget> {
                     options: FFButtonOptions(
                       height: 49.0,
                       padding:
-                          EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
+                          const EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
                       iconPadding:
-                          EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
-                      color: Color(0x0052A097),
+                          const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
+                      color: const Color(0x0052A097),
                       textStyle:
                           FlutterFlowTheme.of(context).titleSmall.override(
-                                fontFamily: 'Andika New Basic',
+                                fontFamily: FFAppState().currentFontFamily,
                                 color: FlutterFlowTheme.of(context).primary,
                                 letterSpacing: 0.0,
                               ),
@@ -147,11 +143,11 @@ class _ChildendDeletPopUpWidgetState extends State<ChildendDeletPopUpWidget> {
                 Expanded(
                   child: FFButtonWidget(
                     onPressed: () async {
-                      await widget!.child!.delete();
+                      await widget.child!.delete();
                       _model.allchildeTaskToDelet = await queryTasksRecordOnce(
                         queryBuilder: (tasksRecord) => tasksRecord.where(
                           'selected_child',
-                          isEqualTo: widget!.child,
+                          isEqualTo: widget.child,
                         ),
                       );
                       _model.allchildTasks = _model.allchildeTaskToDelet!
@@ -202,13 +198,13 @@ class _ChildendDeletPopUpWidgetState extends State<ChildendDeletPopUpWidget> {
                     options: FFButtonOptions(
                       height: 49.0,
                       padding:
-                          EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
+                          const EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
                       iconPadding:
-                          EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
+                          const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
                       color: FlutterFlowTheme.of(context).primary,
                       textStyle:
                           FlutterFlowTheme.of(context).titleSmall.override(
-                                fontFamily: 'Andika New Basic',
+                                fontFamily: FFAppState().currentFontFamily,
                                 color: Colors.white,
                                 letterSpacing: 0.0,
                               ),
@@ -217,9 +213,9 @@ class _ChildendDeletPopUpWidgetState extends State<ChildendDeletPopUpWidget> {
                     ),
                   ),
                 ),
-              ].divide(SizedBox(width: 20.0)),
+              ].divide(const SizedBox(width: 20.0)),
             ),
-          ].divide(SizedBox(height: 24.0)),
+          ].divide(const SizedBox(height: 24.0)),
         ),
       ),
     );

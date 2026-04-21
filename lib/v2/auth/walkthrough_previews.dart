@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import '/app_state.dart';
 import 'package:flutter/material.dart';
 
 /// Food image URLs from Unsplash (free for commercial use)
@@ -54,7 +55,7 @@ class MealPlanPreview extends StatelessWidget {
         Text(
           'Wednesday, Feb 12',
           style: TextStyle(
-            fontFamily: 'Andika New Basic',
+            fontFamily: FFAppState().currentFontFamily,
             fontWeight: FontWeight.bold,
             fontSize: 14,
             color: Colors.grey.shade700,
@@ -72,7 +73,7 @@ class MealPlanPreview extends StatelessWidget {
         Text(
           'Thursday, Feb 13',
           style: TextStyle(
-            fontFamily: 'Andika New Basic',
+            fontFamily: FFAppState().currentFontFamily,
             fontWeight: FontWeight.bold,
             fontSize: 14,
             color: Colors.grey.shade700,
@@ -105,7 +106,7 @@ class MealPlanPreview extends StatelessWidget {
             child: Text(
               mealType,
               style: TextStyle(
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
                 color: Colors.grey.shade500,
@@ -120,7 +121,7 @@ class MealPlanPreview extends StatelessWidget {
             child: Text(
               filled ? (name ?? '') : 'Tap to add',
               style: TextStyle(
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
                 fontSize: 13,
                 color: filled ? Colors.grey.shade800 : Colors.grey.shade400,
                 fontStyle: filled ? FontStyle.normal : FontStyle.italic,
@@ -158,12 +159,12 @@ class GroceryListPreview extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.auto_awesome, size: 14, color: _purple),
+              const Icon(Icons.auto_awesome, size: 14, color: _purple),
               const SizedBox(width: 6),
               Text(
                 'Auto-generated & sorted by aisle',
                 style: TextStyle(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
                   color: _purple,
@@ -202,7 +203,7 @@ class GroceryListPreview extends StatelessWidget {
           Text(
             title,
             style: TextStyle(
-              fontFamily: 'Andika New Basic',
+              fontFamily: FFAppState().currentFontFamily,
               fontSize: 13,
               fontWeight: FontWeight.bold,
               color: Colors.grey.shade700,
@@ -212,7 +213,7 @@ class GroceryListPreview extends StatelessWidget {
           Text(
             count,
             style: TextStyle(
-              fontFamily: 'Andika New Basic',
+              fontFamily: FFAppState().currentFontFamily,
               fontSize: 11,
               color: Colors.grey.shade500,
             ),
@@ -236,7 +237,7 @@ class GroceryListPreview extends StatelessWidget {
           Text(
             name,
             style: TextStyle(
-              fontFamily: 'Andika New Basic',
+              fontFamily: FFAppState().currentFontFamily,
               fontSize: 13,
               color: checked ? Colors.grey.shade400 : Colors.grey.shade800,
               decoration: checked ? TextDecoration.lineThrough : null,
@@ -271,12 +272,12 @@ class CookbookPreview extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.menu_book, size: 14, color: _accent),
+              const Icon(Icons.menu_book, size: 14, color: _accent),
               const SizedBox(width: 6),
               Text(
                 'Your saved recipes',
                 style: TextStyle(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
                   color: _accent,
@@ -317,13 +318,13 @@ class CookbookPreview extends StatelessWidget {
           ),
           child: Row(
             children: [
-              Icon(Icons.link, size: 14, color: _accent),
+              const Icon(Icons.link, size: 14, color: _accent),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
                   'Import recipes from any website or create your own',
                   style: TextStyle(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     fontSize: 11,
                     color: Colors.grey.shade600,
                   ),
@@ -355,7 +356,7 @@ class CookbookPreview extends StatelessWidget {
                 Text(
                   title,
                   style: TextStyle(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     fontSize: 13,
                     fontWeight: FontWeight.bold,
                     color: Colors.grey.shade800,
@@ -369,7 +370,7 @@ class CookbookPreview extends StatelessWidget {
                     Text(
                       time,
                       style: TextStyle(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         fontSize: 11,
                         color: Colors.grey.shade500,
                       ),
@@ -382,7 +383,7 @@ class CookbookPreview extends StatelessWidget {
                           child: Text(
                             tag,
                             style: TextStyle(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               fontSize: 10,
                               color: Colors.grey.shade600,
                             ),
@@ -426,10 +427,10 @@ class LearningPathPreview extends StatelessWidget {
         // Title with AI badge
         Row(
           children: [
-            const Text(
+            Text(
               'Potty Training',
               style: TextStyle(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   fontSize: 15,
                   fontWeight: FontWeight.bold),
             ),
@@ -440,7 +441,7 @@ class LearningPathPreview extends StatelessWidget {
                 color: const Color(0xFFEC407A).withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(4),
               ),
-              child: const Row(
+              child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(Icons.auto_awesome, size: 10, color: Color(0xFFEC407A)),
@@ -448,7 +449,7 @@ class LearningPathPreview extends StatelessWidget {
                   Text(
                     'AI Plan',
                     style: TextStyle(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       fontSize: 10,
                       fontWeight: FontWeight.w600,
                       color: Color(0xFFEC407A),
@@ -514,7 +515,7 @@ class LearningPathPreview extends StatelessWidget {
                         Text(
                           'Day ${i + 1}: $title',
                           style: TextStyle(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             fontSize: 13,
                             fontWeight: status == 1
                                 ? FontWeight.bold
@@ -529,7 +530,7 @@ class LearningPathPreview extends StatelessWidget {
                           Text(
                             desc,
                             style: TextStyle(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               fontSize: 11,
                               color: Colors.grey.shade500,
                             ),
@@ -563,12 +564,12 @@ class LearningPathPreview extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Icon(Icons.lightbulb_outline, size: 14, color: const Color(0xFFEC407A)),
+                  const Icon(Icons.lightbulb_outline, size: 14, color: Color(0xFFEC407A)),
                   const SizedBox(width: 6),
-                  const Text(
+                  Text(
                     'Parent tip',
                     style: TextStyle(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
                       color: Color(0xFFEC407A),
@@ -580,7 +581,7 @@ class LearningPathPreview extends StatelessWidget {
               Text(
                 'Your calm energy matters more than perfection. If they resist, try again in 30 minutes with a playful approach.',
                 style: TextStyle(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   fontSize: 11,
                   color: Colors.grey.shade600,
                   height: 1.3,
@@ -623,7 +624,7 @@ class CalendarPreview extends StatelessWidget {
         Text(
           'February 2026',
           style: TextStyle(
-            fontFamily: 'Andika New Basic',
+            fontFamily: FFAppState().currentFontFamily,
             fontSize: 14,
             fontWeight: FontWeight.bold,
             color: Colors.grey.shade700,
@@ -638,7 +639,7 @@ class CalendarPreview extends StatelessWidget {
                     child: Text(d,
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
                             color: Colors.grey.shade500)),
@@ -674,7 +675,7 @@ class CalendarPreview extends StatelessWidget {
         child: Text(
           label,
           style: TextStyle(
-            fontFamily: 'Andika New Basic',
+            fontFamily: FFAppState().currentFontFamily,
             fontSize: label.length > 2 ? 9 : 11,
             fontWeight: FontWeight.bold,
             color: active ? Colors.white : color,
@@ -695,12 +696,12 @@ class CalendarPreview extends StatelessWidget {
       child: Row(
         children: [
           Icon(icon, size: 16, color: color),
-          const SizedBox(width: 8),
+          SizedBox(width: 8),
           Expanded(
             child: Text(
               title,
-              style: const TextStyle(
-                fontFamily: 'Andika New Basic',
+              style: TextStyle(
+                fontFamily: FFAppState().currentFontFamily,
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
               ),
@@ -715,7 +716,7 @@ class CalendarPreview extends StatelessWidget {
             child: Text(
               person,
               style: TextStyle(
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
                 fontSize: 10,
                 color: color,
                 fontWeight: FontWeight.w500,
@@ -749,7 +750,7 @@ class CalendarPreview extends StatelessWidget {
                   child: Text(
                     '${days[i]}',
                     style: TextStyle(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       fontSize: 12,
                       fontWeight:
                           isToday ? FontWeight.bold : FontWeight.normal,
@@ -794,12 +795,12 @@ class TodoListPreview extends StatelessWidget {
         // Category header
         Row(
           children: [
-            Icon(Icons.checklist_rounded, size: 16, color: _accent),
+            const Icon(Icons.checklist_rounded, size: 16, color: _accent),
             const SizedBox(width: 6),
-            const Text(
+            Text(
               'Family Tasks',
               style: TextStyle(
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
               ),
@@ -814,7 +815,7 @@ class TodoListPreview extends StatelessWidget {
               child: Text(
                 '3 of 6 done',
                 style: TextStyle(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
                   color: _accent,
@@ -826,9 +827,9 @@ class TodoListPreview extends StatelessWidget {
         const SizedBox(height: 8),
         ClipRRect(
           borderRadius: BorderRadius.circular(4),
-          child: LinearProgressIndicator(
+          child: const LinearProgressIndicator(
             value: 3 / 6,
-            backgroundColor: const Color(0xFFE0E0E0),
+            backgroundColor: Color(0xFFE0E0E0),
             valueColor: AlwaysStoppedAnimation(_accent),
             minHeight: 5,
           ),
@@ -851,13 +852,13 @@ class TodoListPreview extends StatelessWidget {
           ),
           child: Row(
             children: [
-              Icon(Icons.add_circle_outline, size: 14, color: _accent),
+              const Icon(Icons.add_circle_outline, size: 14, color: _accent),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
                   'Add tasks and check them off as you go',
                   style: TextStyle(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     fontSize: 11,
                     color: Colors.grey.shade600,
                   ),
@@ -885,7 +886,7 @@ class TodoListPreview extends StatelessWidget {
             child: Text(
               title,
               style: TextStyle(
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
                 fontSize: 13,
                 color: done ? Colors.grey.shade400 : Colors.grey.shade800,
                 decoration: done ? TextDecoration.lineThrough : null,
@@ -902,7 +903,7 @@ class TodoListPreview extends StatelessWidget {
               child: Text(
                 assignee,
                 style: TextStyle(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   fontSize: 10,
                   color: _accent,
                   fontWeight: FontWeight.w500,
@@ -955,10 +956,10 @@ class ActivitiesPreview extends StatelessWidget {
             child: Center(
                 child: Text(emoji, style: const TextStyle(fontSize: 20))),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: 12),
           Text(title,
-              style: const TextStyle(
-                  fontFamily: 'Andika New Basic',
+              style: TextStyle(
+                  fontFamily: FFAppState().currentFontFamily,
                   fontSize: 14,
                   fontWeight: FontWeight.bold)),
           const Spacer(),
@@ -991,10 +992,10 @@ class MilestonesPreview extends StatelessWidget {
             const Icon(Icons.directions_run,
                 size: 16, color: Color(0xFF4CAF50)),
             const SizedBox(width: 6),
-            const Text(
+            Text(
               'Physical Milestones',
               style: TextStyle(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   fontSize: 14,
                   fontWeight: FontWeight.bold),
             ),
@@ -1002,7 +1003,7 @@ class MilestonesPreview extends StatelessWidget {
             Text(
               '3 of 5',
               style: TextStyle(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   fontSize: 12,
                   color: Colors.grey.shade500),
             ),
@@ -1038,7 +1039,7 @@ class MilestonesPreview extends StatelessWidget {
                 Text(
                   text,
                   style: TextStyle(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     fontSize: 13,
                     color: done
                         ? Colors.grey.shade700

@@ -3,12 +3,7 @@ import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
-import 'dart:ui';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'testcloud_model.dart';
 export 'testcloud_model.dart';
 
@@ -63,7 +58,7 @@ class _TestcloudWidgetState extends State<TestcloudWidget> {
         body: SafeArea(
           top: true,
           child: Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(24.0, 32.0, 24.0, 24.0),
+            padding: const EdgeInsetsDirectional.fromSTEB(24.0, 32.0, 24.0, 24.0),
             child: Column(
               mainAxisSize: MainAxisSize.max,
               children: [
@@ -71,7 +66,7 @@ class _TestcloudWidgetState extends State<TestcloudWidget> {
                   'Test Form',
                   textAlign: TextAlign.center,
                   style: FlutterFlowTheme.of(context).headlineMedium.override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         letterSpacing: 0.0,
                       ),
                 ),
@@ -101,14 +96,14 @@ class _TestcloudWidgetState extends State<TestcloudWidget> {
                           borderRadius: BorderRadius.circular(8.0),
                         ),
                         errorBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
+                          borderSide: const BorderSide(
                             color: Color(0x00000000),
                             width: 1.0,
                           ),
                           borderRadius: BorderRadius.circular(8.0),
                         ),
                         focusedErrorBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
+                          borderSide: const BorderSide(
                             color: Color(0x00000000),
                             width: 1.0,
                           ),
@@ -119,7 +114,7 @@ class _TestcloudWidgetState extends State<TestcloudWidget> {
                             FlutterFlowTheme.of(context).secondaryBackground,
                       ),
                       style: FlutterFlowTheme.of(context).bodyMedium.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             letterSpacing: 0.0,
                           ),
                       validator:
@@ -148,14 +143,14 @@ class _TestcloudWidgetState extends State<TestcloudWidget> {
                           borderRadius: BorderRadius.circular(8.0),
                         ),
                         errorBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
+                          borderSide: const BorderSide(
                             color: Color(0x00000000),
                             width: 1.0,
                           ),
                           borderRadius: BorderRadius.circular(8.0),
                         ),
                         focusedErrorBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
+                          borderSide: const BorderSide(
                             color: Color(0x00000000),
                             width: 1.0,
                           ),
@@ -166,7 +161,7 @@ class _TestcloudWidgetState extends State<TestcloudWidget> {
                             FlutterFlowTheme.of(context).secondaryBackground,
                       ),
                       style: FlutterFlowTheme.of(context).bodyMedium.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             letterSpacing: 0.0,
                           ),
                       keyboardType: TextInputType.emailAddress,
@@ -196,14 +191,14 @@ class _TestcloudWidgetState extends State<TestcloudWidget> {
                           borderRadius: BorderRadius.circular(8.0),
                         ),
                         errorBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
+                          borderSide: const BorderSide(
                             color: Color(0x00000000),
                             width: 1.0,
                           ),
                           borderRadius: BorderRadius.circular(8.0),
                         ),
                         focusedErrorBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
+                          borderSide: const BorderSide(
                             color: Color(0x00000000),
                             width: 1.0,
                           ),
@@ -214,7 +209,7 @@ class _TestcloudWidgetState extends State<TestcloudWidget> {
                             FlutterFlowTheme.of(context).secondaryBackground,
                       ),
                       style: FlutterFlowTheme.of(context).bodyMedium.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             letterSpacing: 0.0,
                           ),
                       maxLines: 4,
@@ -222,7 +217,7 @@ class _TestcloudWidgetState extends State<TestcloudWidget> {
                       validator:
                           _model.textController3Validator.asValidator(context),
                     ),
-                  ].divide(SizedBox(height: 16.0)),
+                  ].divide(const SizedBox(height: 16.0)),
                 ),
                 FFButtonWidget(
                   onPressed: () async {
@@ -239,25 +234,25 @@ class _TestcloudWidgetState extends State<TestcloudWidget> {
                   options: FFButtonOptions(
                     width: double.infinity,
                     height: 50.0,
-                    padding: EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.all(8.0),
                     iconPadding:
-                        EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
+                        const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
                     color: FlutterFlowTheme.of(context).primary,
                     textStyle:
                         FlutterFlowTheme.of(context).titleMedium.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               color: Colors.white,
                               letterSpacing: 0.0,
                               fontWeight: FontWeight.w600,
                             ),
                     elevation: 0.0,
-                    borderSide: BorderSide(
+                    borderSide: const BorderSide(
                       color: Colors.transparent,
                     ),
                     borderRadius: BorderRadius.circular(8.0),
                   ),
                 ),
-              ].divide(SizedBox(height: 24.0)),
+              ].divide(const SizedBox(height: 24.0)),
             ),
           ),
         ),

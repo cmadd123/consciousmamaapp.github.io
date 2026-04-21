@@ -1,10 +1,6 @@
-import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import '/flutter_flow/flutter_flow_widgets.dart';
 import '/v2/learning_path/compele_taskpopup/compele_taskpopup_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'popup_model.dart';
 export 'popup_model.dart';
 
@@ -47,30 +43,30 @@ class _PopupWidgetState extends State<PopupWidget> {
       },
       child: Scaffold(
         key: scaffoldKey,
-        backgroundColor: Color(0x80000000),
+        backgroundColor: const Color(0x80000000),
         body: SafeArea(
           top: true,
-          child: Container(
+          child: SizedBox(
             width: double.infinity,
             height: double.infinity,
             child: Stack(
               children: [
                 Align(
-                  alignment: AlignmentDirectional(0.0, 0.0),
+                  alignment: const AlignmentDirectional(0.0, 0.0),
                   child: Container(
                     width: double.infinity,
                     height: double.infinity,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: Color(0x80000000),
                     ),
                   ),
                 ),
                 Align(
-                  alignment: AlignmentDirectional(0.0, 0.0),
+                  alignment: const AlignmentDirectional(0.0, 0.0),
                   child: wrapWithModel(
                     model: _model.compeleTaskpopupModel,
                     updateCallback: () => safeSetState(() {}),
-                    child: CompeleTaskpopupWidget(),
+                    child: const CompeleTaskpopupWidget(),
                   ),
                 ),
               ],

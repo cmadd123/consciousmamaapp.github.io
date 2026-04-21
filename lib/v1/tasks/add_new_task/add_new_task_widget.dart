@@ -3,14 +3,8 @@ import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
-import 'dart:ui';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:collection/collection.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'add_new_task_model.dart';
 export 'add_new_task_model.dart';
 
@@ -69,7 +63,7 @@ class _AddNewTaskWidgetState extends State<AddNewTaskWidget> {
   Widget build(BuildContext context) {
     return Container(
       width: 500.0,
-      constraints: BoxConstraints(
+      constraints: const BoxConstraints(
         minWidth: 374.0,
       ),
       decoration: BoxDecoration(
@@ -80,42 +74,42 @@ class _AddNewTaskWidgetState extends State<AddNewTaskWidget> {
         key: _model.formKey,
         autovalidateMode: AutovalidateMode.disabled,
         child: Padding(
-          padding: EdgeInsetsDirectional.fromSTEB(16.0, 20.0, 16.0, 20.0),
+          padding: const EdgeInsetsDirectional.fromSTEB(16.0, 20.0, 16.0, 20.0),
           child: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.max,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Align(
-                  alignment: AlignmentDirectional(0.0, -1.0),
+                  alignment: const AlignmentDirectional(0.0, -1.0),
                   child: Padding(
                     padding:
-                        EdgeInsetsDirectional.fromSTEB(16.0, 20.0, 16.0, 0.0),
+                        const EdgeInsetsDirectional.fromSTEB(16.0, 20.0, 16.0, 0.0),
                     child: Text(
                       'Add New Task',
                       textAlign: TextAlign.center,
                       style:
                           FlutterFlowTheme.of(context).headlineSmall.override(
-                                fontFamily: 'Andika New Basic',
+                                fontFamily: FFAppState().currentFontFamily,
                                 letterSpacing: 0.0,
                               ),
                     ),
                   ),
                 ),
                 Align(
-                  alignment: AlignmentDirectional(0.0, -1.0),
+                  alignment: const AlignmentDirectional(0.0, -1.0),
                   child: Text(
                     'Enter your task details below to create task.',
                     textAlign: TextAlign.center,
                     style: FlutterFlowTheme.of(context).bodyMedium.override(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           letterSpacing: 0.0,
                         ),
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 10.0),
-                  child: Container(
+                  padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 10.0),
+                  child: SizedBox(
                     width: double.infinity,
                     child: TextFormField(
                       controller: _model.textController1,
@@ -127,7 +121,7 @@ class _AddNewTaskWidgetState extends State<AddNewTaskWidget> {
                         labelStyle: FlutterFlowTheme.of(context)
                             .labelMedium
                             .override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               color: FlutterFlowTheme.of(context).primaryText,
                               letterSpacing: 0.0,
                             ),
@@ -135,19 +129,19 @@ class _AddNewTaskWidgetState extends State<AddNewTaskWidget> {
                         hintStyle: FlutterFlowTheme.of(context)
                             .labelMedium
                             .override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               color: FlutterFlowTheme.of(context).primaryText,
                               letterSpacing: 0.0,
                             ),
                         enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
+                          borderSide: const BorderSide(
                             color: Color(0x00000000),
                             width: 1.0,
                           ),
                           borderRadius: BorderRadius.circular(27.0),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
+                          borderSide: const BorderSide(
                             color: Color(0x00000000),
                             width: 1.0,
                           ),
@@ -168,11 +162,11 @@ class _AddNewTaskWidgetState extends State<AddNewTaskWidget> {
                           borderRadius: BorderRadius.circular(27.0),
                         ),
                         filled: true,
-                        contentPadding: EdgeInsetsDirectional.fromSTEB(
+                        contentPadding: const EdgeInsetsDirectional.fromSTEB(
                             20.0, 25.0, 0.0, 25.0),
                       ),
                       style: FlutterFlowTheme.of(context).bodyMedium.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: FlutterFlowTheme.of(context).primaryText,
                             letterSpacing: 0.0,
                           ),
@@ -183,8 +177,8 @@ class _AddNewTaskWidgetState extends State<AddNewTaskWidget> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 10.0),
-                  child: Container(
+                  padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 10.0),
+                  child: SizedBox(
                     width: double.infinity,
                     child: TextFormField(
                       controller: _model.textController2,
@@ -196,7 +190,7 @@ class _AddNewTaskWidgetState extends State<AddNewTaskWidget> {
                         labelStyle: FlutterFlowTheme.of(context)
                             .labelMedium
                             .override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               color: FlutterFlowTheme.of(context).primaryText,
                               letterSpacing: 0.0,
                             ),
@@ -204,19 +198,19 @@ class _AddNewTaskWidgetState extends State<AddNewTaskWidget> {
                         hintStyle: FlutterFlowTheme.of(context)
                             .labelMedium
                             .override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               color: FlutterFlowTheme.of(context).primaryText,
                               letterSpacing: 0.0,
                             ),
                         enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
+                          borderSide: const BorderSide(
                             color: Color(0x00000000),
                             width: 1.0,
                           ),
                           borderRadius: BorderRadius.circular(27.0),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
+                          borderSide: const BorderSide(
                             color: Color(0x00000000),
                             width: 1.0,
                           ),
@@ -237,11 +231,11 @@ class _AddNewTaskWidgetState extends State<AddNewTaskWidget> {
                           borderRadius: BorderRadius.circular(27.0),
                         ),
                         filled: true,
-                        contentPadding: EdgeInsetsDirectional.fromSTEB(
+                        contentPadding: const EdgeInsetsDirectional.fromSTEB(
                             20.0, 25.0, 0.0, 25.0),
                       ),
                       style: FlutterFlowTheme.of(context).bodyMedium.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: FlutterFlowTheme.of(context).primaryText,
                             letterSpacing: 0.0,
                           ),
@@ -258,7 +252,7 @@ class _AddNewTaskWidgetState extends State<AddNewTaskWidget> {
                   hoverColor: Colors.transparent,
                   highlightColor: Colors.transparent,
                   onTap: () async {
-                    final _datePickedTime = await showTimePicker(
+                    final datePickedTime = await showTimePicker(
                       context: context,
                       initialTime: TimeOfDay.fromDateTime(getCurrentTimestamp),
                       builder: (context, child) {
@@ -272,7 +266,7 @@ class _AddNewTaskWidgetState extends State<AddNewTaskWidget> {
                           headerTextStyle: FlutterFlowTheme.of(context)
                               .headlineLarge
                               .override(
-                                fontFamily: 'Andika New Basic',
+                                fontFamily: FFAppState().currentFontFamily,
                                 fontSize: 32.0,
                                 letterSpacing: 0.0,
                                 fontWeight: FontWeight.w600,
@@ -291,14 +285,14 @@ class _AddNewTaskWidgetState extends State<AddNewTaskWidget> {
                         );
                       },
                     );
-                    if (_datePickedTime != null) {
+                    if (datePickedTime != null) {
                       safeSetState(() {
                         _model.datePicked = DateTime(
                           getCurrentTimestamp.year,
                           getCurrentTimestamp.month,
                           getCurrentTimestamp.day,
-                          _datePickedTime.hour,
-                          _datePickedTime.minute,
+                          datePickedTime.hour,
+                          datePickedTime.minute,
                         );
                       });
                     }
@@ -317,7 +311,7 @@ class _AddNewTaskWidgetState extends State<AddNewTaskWidget> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               20.0, 20.0, 20.0, 20.0),
                           child: Row(
                             mainAxisSize: MainAxisSize.max,
@@ -336,7 +330,7 @@ class _AddNewTaskWidgetState extends State<AddNewTaskWidget> {
                                 style: FlutterFlowTheme.of(context)
                                     .bodyMedium
                                     .override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       color: FlutterFlowTheme.of(context)
                                           .primaryText,
                                       letterSpacing: 0.0,
@@ -355,8 +349,8 @@ class _AddNewTaskWidgetState extends State<AddNewTaskWidget> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 10.0),
-                  child: Container(
+                  padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 10.0),
+                  child: SizedBox(
                     width: double.infinity,
                     child: TextFormField(
                       controller: _model.textController3,
@@ -368,7 +362,7 @@ class _AddNewTaskWidgetState extends State<AddNewTaskWidget> {
                         labelStyle: FlutterFlowTheme.of(context)
                             .labelMedium
                             .override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               color: FlutterFlowTheme.of(context).primaryText,
                               letterSpacing: 0.0,
                             ),
@@ -376,19 +370,19 @@ class _AddNewTaskWidgetState extends State<AddNewTaskWidget> {
                         hintStyle: FlutterFlowTheme.of(context)
                             .labelMedium
                             .override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               color: FlutterFlowTheme.of(context).primaryText,
                               letterSpacing: 0.0,
                             ),
                         enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
+                          borderSide: const BorderSide(
                             color: Color(0x00000000),
                             width: 1.0,
                           ),
                           borderRadius: BorderRadius.circular(27.0),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
+                          borderSide: const BorderSide(
                             color: Color(0x00000000),
                             width: 1.0,
                           ),
@@ -409,11 +403,11 @@ class _AddNewTaskWidgetState extends State<AddNewTaskWidget> {
                           borderRadius: BorderRadius.circular(27.0),
                         ),
                         filled: true,
-                        contentPadding: EdgeInsetsDirectional.fromSTEB(
+                        contentPadding: const EdgeInsetsDirectional.fromSTEB(
                             20.0, 25.0, 0.0, 25.0),
                       ),
                       style: FlutterFlowTheme.of(context).bodyMedium.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             color: FlutterFlowTheme.of(context).primaryText,
                             letterSpacing: 0.0,
                           ),
@@ -436,7 +430,7 @@ class _AddNewTaskWidgetState extends State<AddNewTaskWidget> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(
+                        padding: const EdgeInsetsDirectional.fromSTEB(
                             20.0, 16.0, 20.0, 16.0),
                         child: Row(
                           mainAxisSize: MainAxisSize.max,
@@ -447,7 +441,7 @@ class _AddNewTaskWidgetState extends State<AddNewTaskWidget> {
                               style: FlutterFlowTheme.of(context)
                                   .bodyMedium
                                   .override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     color: FlutterFlowTheme.of(context).black60,
                                     letterSpacing: 0.0,
                                   ),
@@ -461,7 +455,7 @@ class _AddNewTaskWidgetState extends State<AddNewTaskWidget> {
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(
+                        padding: const EdgeInsetsDirectional.fromSTEB(
                             0.0, 16.0, 0.0, 20.0),
                         child: Builder(
                           builder: (context) {
@@ -477,7 +471,7 @@ class _AddNewTaskWidgetState extends State<AddNewTaskWidget> {
                                 final userChildernItem =
                                     userChildern[userChildernIndex];
                                 return Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       20.0, 0.0, 20.0, 2.0),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.max,
@@ -491,7 +485,7 @@ class _AddNewTaskWidgetState extends State<AddNewTaskWidget> {
                                             if (userChildernItem.reference !=
                                                 _model.selectedChild)
                                               Padding(
-                                                padding: EdgeInsetsDirectional
+                                                padding: const EdgeInsetsDirectional
                                                     .fromSTEB(
                                                         0.0, 0.0, 10.0, 0.0),
                                                 child: InkWell(
@@ -527,7 +521,7 @@ class _AddNewTaskWidgetState extends State<AddNewTaskWidget> {
                                             if (userChildernItem.reference ==
                                                 _model.selectedChild)
                                               Padding(
-                                                padding: EdgeInsetsDirectional
+                                                padding: const EdgeInsetsDirectional
                                                     .fromSTEB(
                                                         0.0, 0.0, 10.0, 0.0),
                                                 child: InkWell(
@@ -596,7 +590,7 @@ class _AddNewTaskWidgetState extends State<AddNewTaskWidget> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(0.0, 40.0, 0.0, 0.0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(0.0, 40.0, 0.0, 0.0),
                   child: Row(
                     mainAxisSize: MainAxisSize.max,
                     children: [
@@ -608,15 +602,15 @@ class _AddNewTaskWidgetState extends State<AddNewTaskWidget> {
                           text: 'Cancel',
                           options: FFButtonOptions(
                             height: 49.0,
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 16.0, 0.0, 16.0, 0.0),
-                            iconPadding: EdgeInsetsDirectional.fromSTEB(
+                            iconPadding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 0.0, 0.0, 0.0),
-                            color: Color(0x0052A097),
+                            color: const Color(0x0052A097),
                             textStyle: FlutterFlowTheme.of(context)
                                 .titleSmall
                                 .override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   color: FlutterFlowTheme.of(context).primary,
                                   letterSpacing: 0.0,
                                 ),
@@ -653,15 +647,15 @@ class _AddNewTaskWidgetState extends State<AddNewTaskWidget> {
                           text: 'ADD',
                           options: FFButtonOptions(
                             height: 49.0,
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 16.0, 0.0, 16.0, 0.0),
-                            iconPadding: EdgeInsetsDirectional.fromSTEB(
+                            iconPadding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 0.0, 0.0, 0.0),
                             color: FlutterFlowTheme.of(context).primary,
                             textStyle: FlutterFlowTheme.of(context)
                                 .titleSmall
                                 .override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   color: Colors.white,
                                   letterSpacing: 0.0,
                                 ),
@@ -670,10 +664,10 @@ class _AddNewTaskWidgetState extends State<AddNewTaskWidget> {
                           ),
                         ),
                       ),
-                    ].divide(SizedBox(width: 20.0)),
+                    ].divide(const SizedBox(width: 20.0)),
                   ),
                 ),
-              ].divide(SizedBox(height: 24.0)),
+              ].divide(const SizedBox(height: 24.0)),
             ),
           ),
         ),

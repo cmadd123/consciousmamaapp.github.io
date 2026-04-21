@@ -25,7 +25,7 @@ import 'ai_agent_cloud_function_call.dart';
 /// * [responseType] - The type of response to expect from the agent.
 ///
 /// Returns a Future that completes with the agent's response message, or null if there was an error.
-Future<dynamic?> callAiAgent({
+Future<dynamic> callAiAgent({
   required BuildContext context,
   required String prompt,
   String? imageUrl,

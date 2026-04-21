@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:confetti/confetti.dart';
-import 'package:lottie/lottie.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
@@ -317,7 +316,7 @@ class _MealPlanDemoEnhancedWidgetState
                                 style: FlutterFlowTheme.of(context)
                                     .displaySmall
                                     .override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       fontSize: 32.0,
                                       fontWeight: FontWeight.bold,
                                       letterSpacing: 0.0,
@@ -357,7 +356,7 @@ class _MealPlanDemoEnhancedWidgetState
                                           style: FlutterFlowTheme.of(context)
                                               .bodyMedium
                                               .override(
-                                                fontFamily: 'Andika New Basic',
+                                                fontFamily: FFAppState().currentFontFamily,
                                                 fontSize: 14.0,
                                                 fontWeight: FontWeight.w600,
                                                 letterSpacing: 0.0,
@@ -430,7 +429,7 @@ class _MealPlanDemoEnhancedWidgetState
                           textStyle: FlutterFlowTheme.of(context)
                               .titleMedium
                               .override(
-                                fontFamily: 'Andika New Basic',
+                                fontFamily: FFAppState().currentFontFamily,
                                 color: Colors.white,
                                 fontSize: 18.0,
                                 fontWeight: FontWeight.w600,
@@ -493,7 +492,7 @@ class _MealPlanDemoEnhancedWidgetState
                 child: Text(
                   '$dayName, $date',
                   style: FlutterFlowTheme.of(context).bodyLarge.override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         fontSize: 20.0,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 0.0,
@@ -511,7 +510,7 @@ class _MealPlanDemoEnhancedWidgetState
                   meal['name'],
                   meal['emoji'],
                 );
-              }).toList(),
+              }),
             ],
           ),
         ),
@@ -570,7 +569,7 @@ class _MealPlanDemoEnhancedWidgetState
                     Text(
                       mealType,
                       style: FlutterFlowTheme.of(context).bodySmall.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             fontSize: 12.0,
                             letterSpacing: 0.0,
                             color: FlutterFlowTheme.of(context).secondaryText,
@@ -580,7 +579,7 @@ class _MealPlanDemoEnhancedWidgetState
                     Text(
                       mealName,
                       style: FlutterFlowTheme.of(context).bodyMedium.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             fontSize: 16.0,
                             fontWeight: FontWeight.w600,
                             letterSpacing: 0.0,

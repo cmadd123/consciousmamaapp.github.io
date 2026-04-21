@@ -6,11 +6,7 @@ import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/v2/activites/delete_activtyomponent/delete_activtyomponent_widget.dart';
 import '/v2/todo/addcalender/addcalender_widget.dart';
-import 'dart:ui';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'activitycart_component_model.dart';
 export 'activitycart_component_model.dart';
 
@@ -53,11 +49,11 @@ class _ActivitycartComponentWidgetState
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsetsDirectional.fromSTEB(16.0, 20.0, 16.0, 0.0),
+      padding: const EdgeInsetsDirectional.fromSTEB(16.0, 20.0, 16.0, 0.0),
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          color: Color(0x5AFFD8E4),
+          color: const Color(0x5AFFD8E4),
           borderRadius: BorderRadius.circular(14.0),
           border: Border.all(
             color: FlutterFlowTheme.of(context).primary,
@@ -65,7 +61,7 @@ class _ActivitycartComponentWidgetState
           ),
         ),
         child: Padding(
-          padding: EdgeInsetsDirectional.fromSTEB(8.0, 8.0, 8.0, 4.0),
+          padding: const EdgeInsetsDirectional.fromSTEB(8.0, 8.0, 8.0, 4.0),
           child: Column(
             mainAxisSize: MainAxisSize.max,
             children: [
@@ -75,15 +71,15 @@ class _ActivitycartComponentWidgetState
                 children: [
                   Padding(
                     padding:
-                        EdgeInsetsDirectional.fromSTEB(2.0, 0.0, 8.0, 0.0),
+                        const EdgeInsetsDirectional.fromSTEB(2.0, 0.0, 8.0, 0.0),
                     child: Text(
                       valueOrDefault<String>(
-                        widget!.activty?.title,
+                        widget.activty?.title,
                         'Activity Title',
                       ),
                       style:
                           FlutterFlowTheme.of(context).bodyMedium.override(
-                                fontFamily: 'Andika New Basic',
+                                fontFamily: FFAppState().currentFontFamily,
                                 letterSpacing: 0.0,
                               ),
                     ),
@@ -93,7 +89,7 @@ class _ActivitycartComponentWidgetState
                       queryBuilder: (favActivityRecord) =>
                           favActivityRecord.where(
                         'activity_ref',
-                        isEqualTo: widget!.activty?.reference,
+                        isEqualTo: widget.activty?.reference,
                       ),
                       singleRecord: true,
                     ),
@@ -120,12 +116,12 @@ class _ActivitycartComponentWidgetState
                               : null;
 
                       return Container(
-                        decoration: BoxDecoration(),
+                        decoration: const BoxDecoration(),
                         child: Builder(
                           builder: (context) {
                             if (containerFavActivityRecord?.reference != null) {
                               return Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     0.0, 0.0, 7.0, 0.0),
                                 child: InkWell(
                                   splashColor: Colors.transparent,
@@ -146,7 +142,7 @@ class _ActivitycartComponentWidgetState
                               );
                             } else {
                               return Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     0.0, 0.0, 7.0, 0.0),
                                 child: InkWell(
                                   splashColor: Colors.transparent,
@@ -158,7 +154,7 @@ class _ActivitycartComponentWidgetState
                                         .doc()
                                         .set(createFavActivityRecordData(
                                           activityRef:
-                                              widget!.activty?.reference,
+                                              widget.activty?.reference,
                                           userRef: currentUserReference,
                                         ));
                                     safeSetState(() {});
@@ -180,7 +176,7 @@ class _ActivitycartComponentWidgetState
                 ],
               ),
               Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(0.0, 5.0, 0.0, 0.0),
+                padding: const EdgeInsetsDirectional.fromSTEB(0.0, 5.0, 0.0, 0.0),
                 child: Row(
                   mainAxisSize: MainAxisSize.max,
                   children: [
@@ -191,14 +187,14 @@ class _ActivitycartComponentWidgetState
                     ),
                     Padding(
                       padding:
-                          EdgeInsetsDirectional.fromSTEB(3.0, 0.0, 0.0, 0.0),
+                          const EdgeInsetsDirectional.fromSTEB(3.0, 0.0, 0.0, 0.0),
                       child: Text(
                         valueOrDefault<String>(
-                          widget!.activty?.location,
+                          widget.activty?.location,
                           'indoor',
                         ),
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               color: FlutterFlowTheme.of(context).secondaryText,
                               fontSize: 12.0,
                               letterSpacing: 0.0,
@@ -207,7 +203,7 @@ class _ActivitycartComponentWidgetState
                     ),
                     Padding(
                       padding:
-                          EdgeInsetsDirectional.fromSTEB(9.0, 0.0, 0.0, 0.0),
+                          const EdgeInsetsDirectional.fromSTEB(9.0, 0.0, 0.0, 0.0),
                       child: Icon(
                         Icons.bolt_outlined,
                         color: FlutterFlowTheme.of(context).secondaryText,
@@ -216,14 +212,14 @@ class _ActivitycartComponentWidgetState
                     ),
                     Padding(
                       padding:
-                          EdgeInsetsDirectional.fromSTEB(3.0, 0.0, 0.0, 0.0),
+                          const EdgeInsetsDirectional.fromSTEB(3.0, 0.0, 0.0, 0.0),
                       child: Text(
                         valueOrDefault<String>(
-                          widget!.activty?.energy,
+                          widget.activty?.energy,
                           'medium',
                         ),
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               color: FlutterFlowTheme.of(context).secondaryText,
                               fontSize: 12.0,
                               letterSpacing: 0.0,
@@ -239,7 +235,7 @@ class _ActivitycartComponentWidgetState
                   if (_model.isviewDetails == false)
                     Padding(
                       padding:
-                          EdgeInsetsDirectional.fromSTEB(5.0, 0.0, 0.0, 0.0),
+                          const EdgeInsetsDirectional.fromSTEB(5.0, 0.0, 0.0, 0.0),
                       child: InkWell(
                         splashColor: Colors.transparent,
                         focusColor: Colors.transparent,
@@ -253,8 +249,8 @@ class _ActivitycartComponentWidgetState
                           'View Details',
                           style:
                               FlutterFlowTheme.of(context).bodyMedium.override(
-                                    fontFamily: 'Andika New Basic',
-                                    color: Color(0xBF000000),
+                                    fontFamily: FFAppState().currentFontFamily,
+                                    color: const Color(0xBF000000),
                                     fontSize: 11.0,
                                     letterSpacing: 0.0,
                                     decoration: TextDecoration.underline,
@@ -269,15 +265,15 @@ class _ActivitycartComponentWidgetState
                   mainAxisSize: MainAxisSize.max,
                   children: [
                     Align(
-                      alignment: AlignmentDirectional(-1.0, 0.0),
+                      alignment: const AlignmentDirectional(-1.0, 0.0),
                       child: Padding(
                         padding:
-                            EdgeInsetsDirectional.fromSTEB(2.0, 0.0, 0.0, 0.0),
+                            const EdgeInsetsDirectional.fromSTEB(2.0, 0.0, 0.0, 0.0),
                         child: Text(
                           'Description:',
                           style:
                               FlutterFlowTheme.of(context).bodyMedium.override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     fontSize: 10.0,
                                     letterSpacing: 0.0,
                                   ),
@@ -285,19 +281,19 @@ class _ActivitycartComponentWidgetState
                       ),
                     ),
                     Align(
-                      alignment: AlignmentDirectional(-1.0, 0.0),
+                      alignment: const AlignmentDirectional(-1.0, 0.0),
                       child: Padding(
                         padding:
-                            EdgeInsetsDirectional.fromSTEB(2.0, 0.0, 65.0, 0.0),
+                            const EdgeInsetsDirectional.fromSTEB(2.0, 0.0, 65.0, 0.0),
                         child: Text(
                           valueOrDefault<String>(
-                            widget!.activty?.description,
+                            widget.activty?.description,
                             'activityDescrption',
                           ),
                           style:
                               FlutterFlowTheme.of(context).bodyMedium.override(
-                                    fontFamily: 'Andika New Basic',
-                                    color: Color(0xC4000000),
+                                    fontFamily: FFAppState().currentFontFamily,
+                                    color: const Color(0xC4000000),
                                     fontSize: 10.0,
                                     letterSpacing: 0.0,
                                   ),
@@ -305,15 +301,15 @@ class _ActivitycartComponentWidgetState
                       ),
                     ),
                     Align(
-                      alignment: AlignmentDirectional(-1.0, 0.0),
+                      alignment: const AlignmentDirectional(-1.0, 0.0),
                       child: Padding(
                         padding:
-                            EdgeInsetsDirectional.fromSTEB(2.0, 20.0, 0.0, 0.0),
+                            const EdgeInsetsDirectional.fromSTEB(2.0, 20.0, 0.0, 0.0),
                         child: Text(
                           'Things Needed:',
                           style:
                               FlutterFlowTheme.of(context).bodyMedium.override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     fontSize: 10.0,
                                     letterSpacing: 0.0,
                                   ),
@@ -321,20 +317,20 @@ class _ActivitycartComponentWidgetState
                       ),
                     ),
                     Align(
-                      alignment: AlignmentDirectional(-1.0, 0.0),
+                      alignment: const AlignmentDirectional(-1.0, 0.0),
                       child: Padding(
                         padding:
-                            EdgeInsetsDirectional.fromSTEB(2.0, 0.0, 0.0, 0.0),
+                            const EdgeInsetsDirectional.fromSTEB(2.0, 0.0, 0.0, 0.0),
                         child: Text(
                           valueOrDefault<String>(
-                            widget!.activty?.thingsNeeded,
+                            widget.activty?.thingsNeeded,
                             'None',
                           ),
                           style: FlutterFlowTheme.of(context)
                               .bodyMedium
                               .override(
-                                fontFamily: 'Andika New Basic',
-                                color: Color(0xC4000000),
+                                fontFamily: FFAppState().currentFontFamily,
+                                color: const Color(0xC4000000),
                                 fontSize: 10.0,
                                 letterSpacing: 0.0,
                               ),
@@ -342,15 +338,15 @@ class _ActivitycartComponentWidgetState
                       ),
                     ),
                     Align(
-                      alignment: AlignmentDirectional(-1.0, 0.0),
+                      alignment: const AlignmentDirectional(-1.0, 0.0),
                       child: Padding(
                         padding:
-                            EdgeInsetsDirectional.fromSTEB(2.0, 20.0, 0.0, 0.0),
+                            const EdgeInsetsDirectional.fromSTEB(2.0, 20.0, 0.0, 0.0),
                         child: Text(
                           'Safety Concerns:',
                           style:
                               FlutterFlowTheme.of(context).bodyMedium.override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     fontSize: 10.0,
                                     letterSpacing: 0.0,
                                   ),
@@ -362,20 +358,20 @@ class _ActivitycartComponentWidgetState
                       children: [
                         Expanded(
                           child: Align(
-                            alignment: AlignmentDirectional(-1.0, 0.0),
+                            alignment: const AlignmentDirectional(-1.0, 0.0),
                             child: Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   2.0, 0.0, 20.0, 20.0),
                               child: Text(
                                 valueOrDefault<String>(
-                                  widget!.activty?.activitySafetyConcerns,
+                                  widget.activty?.activitySafetyConcerns,
                                   'activity_safety_concerns',
                                 ),
                                 style: FlutterFlowTheme.of(context)
                                     .bodyMedium
                                     .override(
-                                      fontFamily: 'Andika New Basic',
-                                      color: Color(0xC4000000),
+                                      fontFamily: FFAppState().currentFontFamily,
+                                      color: const Color(0xC4000000),
                                       fontSize: 10.0,
                                       letterSpacing: 0.0,
                                     ),
@@ -397,10 +393,10 @@ class _ActivitycartComponentWidgetState
                                     elevation: 0,
                                     insetPadding: EdgeInsets.zero,
                                     backgroundColor: Colors.transparent,
-                                    alignment: AlignmentDirectional(0.0, 0.0)
+                                    alignment: const AlignmentDirectional(0.0, 0.0)
                                         .resolve(Directionality.of(context)),
                                     child: DeleteActivtyomponentWidget(
-                                      activty: widget!.activty!.reference,
+                                      activty: widget.activty!.reference,
                                     ),
                                   );
                                 },
@@ -417,7 +413,7 @@ class _ActivitycartComponentWidgetState
                     ),
                     // Quick Add buttons
                     Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(0.0, 8.0, 0.0, 8.0),
+                      padding: const EdgeInsetsDirectional.fromSTEB(0.0, 8.0, 0.0, 8.0),
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         mainAxisAlignment: MainAxisAlignment.end,
@@ -442,10 +438,10 @@ class _ActivitycartComponentWidgetState
                                     color: Color(0xFF4CAF50),
                                   ),
                                   const SizedBox(width: 4.0),
-                                  const Text(
+                                  Text(
                                     'Today',
                                     style: TextStyle(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       fontSize: 12.0,
                                       color: Color(0xFF4CAF50),
                                       fontWeight: FontWeight.w600,
@@ -463,8 +459,8 @@ class _ActivitycartComponentWidgetState
                                 MaterialPageRoute(
                                   builder: (context) => AddcalenderWidget(
                                     fromPage: 'activities',
-                                    prefillName: widget!.activty?.title ?? '',
-                                    prefillDescription: widget!.activty?.description ?? '',
+                                    prefillName: widget.activty?.title ?? '',
+                                    prefillDescription: widget.activty?.description ?? '',
                                   ),
                                 ),
                               );
@@ -487,7 +483,7 @@ class _ActivitycartComponentWidgetState
                                   Text(
                                     'Schedule',
                                     style: TextStyle(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       fontSize: 12.0,
                                       color: FlutterFlowTheme.of(context).primary,
                                       fontWeight: FontWeight.w600,
@@ -515,7 +511,7 @@ class _ActivitycartComponentWidgetState
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) => _ActivityQuickAddSheet(
-        activity: widget!.activty!,
+        activity: widget.activty!,
       ),
     );
   }
@@ -533,7 +529,7 @@ class _ActivityQuickAddSheet extends StatefulWidget {
 
 class _ActivityQuickAddSheetState extends State<_ActivityQuickAddSheet> {
   List<ChildernRecord>? _userChildren;
-  Set<DocumentReference> _selectedChildren = {};
+  final Set<DocumentReference> _selectedChildren = {};
   bool _assignToMom = false;
   bool _assignToDad = false;
   bool _isLoading = false;
@@ -591,7 +587,7 @@ class _ActivityQuickAddSheetState extends State<_ActivityQuickAddSheet> {
               Text(
                 'Add to Today',
                 style: FlutterFlowTheme.of(context).titleLarge.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   color: FFAppState().isComfortMode ? const Color(0xFFECF0F1) : const Color(0xFF5D4E60),
                   fontWeight: FontWeight.w600,
                 ),
@@ -600,7 +596,7 @@ class _ActivityQuickAddSheetState extends State<_ActivityQuickAddSheet> {
               Text(
                 widget.activity.title,
                 style: FlutterFlowTheme.of(context).bodyMedium.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   color: FFAppState().isComfortMode ? const Color(0xFF95A5A6) : FlutterFlowTheme.of(context).secondaryText,
                 ),
               ),
@@ -610,7 +606,7 @@ class _ActivityQuickAddSheetState extends State<_ActivityQuickAddSheet> {
               Text(
                 'Assign to',
                 style: FlutterFlowTheme.of(context).bodyMedium.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   color: FFAppState().isComfortMode ? const Color(0xFFECF0F1) : const Color(0xFF5D4E60),
                   fontWeight: FontWeight.w600,
                 ),
@@ -653,7 +649,7 @@ class _ActivityQuickAddSheetState extends State<_ActivityQuickAddSheet> {
                           Text(
                             _parentInfo.myName,
                             style: TextStyle(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               color: FFAppState().isComfortMode ? const Color(0xFFECF0F1) : const Color(0xFF5D4E60),
                               fontSize: 15.0,
                               fontWeight: FontWeight.w500,
@@ -700,7 +696,7 @@ class _ActivityQuickAddSheetState extends State<_ActivityQuickAddSheet> {
                           Text(
                             _parentInfo.partnerName,
                             style: TextStyle(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               color: FFAppState().isComfortMode ? const Color(0xFFECF0F1) : const Color(0xFF5D4E60),
                               fontSize: 15.0,
                               fontWeight: FontWeight.w500,
@@ -723,7 +719,7 @@ class _ActivityQuickAddSheetState extends State<_ActivityQuickAddSheet> {
                 Text(
                   'For children',
                   style: FlutterFlowTheme.of(context).bodyMedium.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     color: FFAppState().isComfortMode ? const Color(0xFFECF0F1) : const Color(0xFF5D4E60),
                     fontWeight: FontWeight.w600,
                   ),
@@ -778,7 +774,7 @@ class _ActivityQuickAddSheetState extends State<_ActivityQuickAddSheet> {
                             Text(
                               child.name,
                               style: TextStyle(
-                                fontFamily: 'Andika New Basic',
+                                fontFamily: FFAppState().currentFontFamily,
                                 color: FFAppState().isComfortMode ? const Color(0xFFECF0F1) : const Color(0xFF5D4E60),
                                 fontSize: 15.0,
                                 fontWeight: FontWeight.w500,
@@ -851,7 +847,7 @@ class _ActivityQuickAddSheetState extends State<_ActivityQuickAddSheet> {
                     height: 50.0,
                     color: const Color(0xFF4CAF50),
                     textStyle: FlutterFlowTheme.of(context).titleSmall.override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       color: Colors.white,
                       fontWeight: FontWeight.w600,
                     ),

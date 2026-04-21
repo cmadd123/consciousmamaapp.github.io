@@ -154,11 +154,11 @@ class ScreenshotLearningPath extends StatelessWidget {
                       const SizedBox(height: 24),
 
                       // Day tasks
-                      _DayCard(
+                      const _DayCard(
                         dayNumber: 1,
                         title: 'Introduction Day',
                         completed: true,
-                        tasks: const [
+                        tasks: [
                           _Task('Read a potty training book together', true),
                           _Task('Let them sit on the potty (clothed) during book time', true),
                           _Task('Use positive language: "This is where big kids go!"', true),
@@ -166,11 +166,11 @@ class ScreenshotLearningPath extends StatelessWidget {
                         parentTip: 'Keep it pressure-free today. The goal is just familiarity.',
                       ),
 
-                      _DayCard(
+                      const _DayCard(
                         dayNumber: 2,
                         title: 'Getting Comfortable',
                         completed: true,
-                        tasks: const [
+                        tasks: [
                           _Task('Try sitting on potty without diaper before bath', true),
                           _Task('Celebrate any attempt, even just sitting', true),
                           _Task('Let them flush and wash hands (make it fun)', true),
@@ -178,11 +178,11 @@ class ScreenshotLearningPath extends StatelessWidget {
                         parentTip: 'If they resist, back off and try again tomorrow. No forcing.',
                       ),
 
-                      _DayCard(
+                      const _DayCard(
                         dayNumber: 3,
                         title: 'Building the Routine',
                         completed: false,
-                        tasks: const [
+                        tasks: [
                           _Task('Offer potty after waking up and after meals', false),
                           _Task('Switch to pull-ups during the day', false),
                           _Task('Create a simple reward system (sticker chart)', false),
@@ -190,11 +190,11 @@ class ScreenshotLearningPath extends StatelessWidget {
                         parentTip: 'Accidents are normal and expected. Stay calm and encouraging.',
                       ),
 
-                      _DayCard(
+                      const _DayCard(
                         dayNumber: 4,
                         title: 'Practice Makes Progress',
                         completed: false,
-                        tasks: const [
+                        tasks: [
                           _Task('Set a timer for every 60-90 minutes', false),
                           _Task('Practice pulling pants up and down', false),
                           _Task('Talk about body signals: "Do you feel anything?"', false),

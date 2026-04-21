@@ -3,11 +3,9 @@ import '/backend/backend.dart';
 import '/backend/schema/enums/enums.dart';
 import '/components/home_nav_bar_widget.dart';
 import '/components/animated_press_widget.dart';
-import '/components/custom_date_time_picker.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
-import 'dart:ui';
 import 'dart:async';
 import '/flutter_flow/custom_functions.dart' as functions;
 import '/index.dart';
@@ -15,12 +13,9 @@ import '/index.dart';
 // import '/custom_code/actions/sharing_service.dart' hide debugPrint;
 import '/components/share_content_bottom_sheet.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 // ARCHIVED: share_plus — uncomment to restore week/day sharing
 // import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -220,17 +215,17 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
           Row(
             children: [
               const Icon(Icons.bug_report, size: 16, color: Color(0xFF8D6E00)),
-              const SizedBox(width: 6),
+              SizedBox(width: 6),
               Text(
                 'DEBUG: ${plans.length} plans, sum=\$${sum.toStringAsFixed(2)}, displayed total=${_fmtDollars(totalCost)}',
-                style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: Color(0xFF8D6E00), fontFamily: 'Andika New Basic'),
+                style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: Color(0xFF8D6E00), fontFamily: FFAppState().currentFontFamily),
               ),
             ],
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: 4),
           ...lines.map((l) => Text(
                 l,
-                style: const TextStyle(fontSize: 10, color: Color(0xFF8D6E00), fontFamily: 'Andika New Basic'),
+                style: TextStyle(fontSize: 10, color: Color(0xFF8D6E00), fontFamily: FFAppState().currentFontFamily),
               )),
         ],
       ),
@@ -261,7 +256,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                       ? 'Planned: ${_fmtDollars(totalCost)} of ${_fmtDollars(budget)}'
                       : 'Planned total: ${_fmtDollars(totalCost)}',
                   style: FlutterFlowTheme.of(context).bodyMedium.override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         color: barColor,
                         fontWeight: FontWeight.w600,
                         letterSpacing: 0,
@@ -273,7 +268,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                 child: Text(
                   hasBudget ? 'Edit' : 'Set budget',
                   style: FlutterFlowTheme.of(context).bodySmall.override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         color: barColor,
                         fontWeight: FontWeight.w600,
                         decoration: TextDecoration.underline,
@@ -324,12 +319,12 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Meal plan budget',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, fontFamily: 'Andika New Basic')),
+            Text('Meal plan budget',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, fontFamily: FFAppState().currentFontFamily)),
             const SizedBox(height: 4),
             Text(
               'Set a target for your planned days. Tap Generate to auto-fill from your cookbook within the budget.',
-              style: TextStyle(fontSize: 13, color: Colors.grey.shade600, fontFamily: 'Andika New Basic'),
+              style: TextStyle(fontSize: 13, color: Colors.grey.shade600, fontFamily: FFAppState().currentFontFamily),
             ),
             const SizedBox(height: 16),
             TextField(
@@ -350,7 +345,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                   child: OutlinedButton(
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 14),
-                      side: BorderSide(color: const Color(0xFF2E7D32)),
+                      side: const BorderSide(color: Color(0xFF2E7D32)),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     ),
                     onPressed: () {
@@ -392,12 +387,12 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
               children: [
                 Expanded(
                   child: Text('Show costs everywhere',
-                      style: TextStyle(fontFamily: 'Andika New Basic', fontSize: 14, color: Colors.grey.shade700)),
+                      style: TextStyle(fontFamily: FFAppState().currentFontFamily, fontSize: 14, color: Colors.grey.shade700)),
                 ),
                 StatefulBuilder(
                   builder: (ctx, setLocal) => Switch(
                     value: FFAppState().showMealCosts,
-                    activeColor: const Color(0xFF2E7D32),
+                    activeThumbColor: const Color(0xFF2E7D32),
                     onChanged: (v) {
                       setLocal(() => FFAppState().showMealCosts = v);
                     },
@@ -789,7 +784,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
         elevation: 0,
         child: ScaleIn(
           child: Container(
-            padding: EdgeInsets.all(24.0),
+            padding: const EdgeInsets.all(24.0),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(20.0),
@@ -797,7 +792,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                 BoxShadow(
                   color: Colors.black.withOpacity(0.15),
                   blurRadius: 20,
-                  offset: Offset(0, 10),
+                  offset: const Offset(0, 10),
                 ),
               ],
             ),
@@ -816,11 +811,11 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                       size: 50.0,
                       color: FlutterFlowTheme.of(context).primary,
                       strokeWidth: 5.0,
-                      duration: Duration(milliseconds: 600),
+                      duration: const Duration(milliseconds: 600),
                     ),
                   ),
                 ),
-                SizedBox(height: 20.0),
+                const SizedBox(height: 20.0),
                 if (count != null)
                   Text(
                     '$count',
@@ -830,13 +825,13 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                       color: FlutterFlowTheme.of(context).primary,
                     ),
                   ),
-                SizedBox(height: 8.0),
+                const SizedBox(height: 8.0),
                 Text(
                   message,
                   textAlign: TextAlign.center,
                   style: FlutterFlowTheme.of(context).titleMedium.override(
-                    fontFamily: 'Andika New Basic',
-                    color: Color(0xFF333333),
+                    fontFamily: FFAppState().currentFontFamily,
+                    color: const Color(0xFF333333),
                     letterSpacing: 0.0,
                   ),
                 ),
@@ -848,7 +843,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
     );
 
     // Auto-dismiss after animation completes
-    Future.delayed(Duration(milliseconds: 1500), () {
+    Future.delayed(const Duration(milliseconds: 1500), () {
       if (mounted && Navigator.canPop(context)) {
         Navigator.pop(context);
       }
@@ -864,7 +859,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
         title: Row(
           children: [
             Icon(Icons.restaurant_menu, color: FlutterFlowTheme.of(context).primary),
-            SizedBox(width: 12.0),
+            const SizedBox(width: 12.0),
             Expanded(
               child: Text(
                 mealsAdded > 0
@@ -885,7 +880,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                   : 'Your cookbook needs more recipes to fill your meal plan. Here is how you can add them:',
               style: FlutterFlowTheme.of(context).bodyMedium,
             ),
-            SizedBox(height: 20.0),
+            const SizedBox(height: 20.0),
             // Option 1: Add from link
             InkWell(
               onTap: () {
@@ -898,7 +893,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                 );
               },
               child: Container(
-                padding: EdgeInsets.all(12.0),
+                padding: const EdgeInsets.all(12.0),
                 decoration: BoxDecoration(
                   color: FlutterFlowTheme.of(context).primaryBackground,
                   borderRadius: BorderRadius.circular(14.0),
@@ -907,20 +902,20 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                 child: Row(
                   children: [
                     Container(
-                      padding: EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.all(8.0),
                       decoration: BoxDecoration(
                         color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(14.0),
                       ),
                       child: Icon(Icons.link, color: FlutterFlowTheme.of(context).primary, size: 24.0),
                     ),
-                    SizedBox(width: 12.0),
+                    const SizedBox(width: 12.0),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Import from URL', style: FlutterFlowTheme.of(context).bodyLarge.override(fontFamily: 'Andika New Basic', fontWeight: FontWeight.w600, letterSpacing: 0.0)),
-                          Text('Paste a recipe link', style: FlutterFlowTheme.of(context).bodySmall.override(fontFamily: 'Andika New Basic', color: FlutterFlowTheme.of(context).secondaryText, letterSpacing: 0.0)),
+                          Text('Import from URL', style: FlutterFlowTheme.of(context).bodyLarge.override(fontFamily: FFAppState().currentFontFamily, fontWeight: FontWeight.w600, letterSpacing: 0.0)),
+                          Text('Paste a recipe link', style: FlutterFlowTheme.of(context).bodySmall.override(fontFamily: FFAppState().currentFontFamily, color: FlutterFlowTheme.of(context).secondaryText, letterSpacing: 0.0)),
                         ],
                       ),
                     ),
@@ -929,7 +924,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                 ),
               ),
             ),
-            SizedBox(height: 12.0),
+            const SizedBox(height: 12.0),
             // Option 2: Create manually
             InkWell(
               onTap: () {
@@ -942,7 +937,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                 );
               },
               child: Container(
-                padding: EdgeInsets.all(12.0),
+                padding: const EdgeInsets.all(12.0),
                 decoration: BoxDecoration(
                   color: FlutterFlowTheme.of(context).primaryBackground,
                   borderRadius: BorderRadius.circular(14.0),
@@ -951,20 +946,20 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                 child: Row(
                   children: [
                     Container(
-                      padding: EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.all(8.0),
                       decoration: BoxDecoration(
                         color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(14.0),
                       ),
                       child: Icon(Icons.edit, color: FlutterFlowTheme.of(context).primary, size: 24.0),
                     ),
-                    SizedBox(width: 12.0),
+                    const SizedBox(width: 12.0),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Create Recipe', style: FlutterFlowTheme.of(context).bodyLarge.override(fontFamily: 'Andika New Basic', fontWeight: FontWeight.w600, letterSpacing: 0.0)),
-                          Text('Add your own recipe', style: FlutterFlowTheme.of(context).bodySmall.override(fontFamily: 'Andika New Basic', color: FlutterFlowTheme.of(context).secondaryText, letterSpacing: 0.0)),
+                          Text('Create Recipe', style: FlutterFlowTheme.of(context).bodyLarge.override(fontFamily: FFAppState().currentFontFamily, fontWeight: FontWeight.w600, letterSpacing: 0.0)),
+                          Text('Add your own recipe', style: FlutterFlowTheme.of(context).bodySmall.override(fontFamily: FFAppState().currentFontFamily, color: FlutterFlowTheme.of(context).secondaryText, letterSpacing: 0.0)),
                         ],
                       ),
                     ),
@@ -1081,7 +1076,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                             child: Text(
                               'Choose days to meal plan for',
                               style: FlutterFlowTheme.of(context).titleLarge.override(
-                                fontFamily: 'Andika New Basic',
+                                fontFamily: FFAppState().currentFontFamily,
                                 fontSize: 20.0,
                                 fontWeight: FontWeight.bold,
                                 letterSpacing: 0.0,
@@ -1089,7 +1084,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                             ),
                           ),
                           IconButton(
-                            icon: Icon(Icons.close),
+                            icon: const Icon(Icons.close),
                             onPressed: () => Navigator.pop(dialogContext),
                           ),
                         ],
@@ -1106,7 +1101,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                               day,
                               textAlign: TextAlign.center,
                               style: FlutterFlowTheme.of(context).bodySmall.override(
-                                fontFamily: 'Andika New Basic',
+                                fontFamily: FFAppState().currentFontFamily,
                                 fontSize: 14.0,
                                 fontWeight: FontWeight.w600,
                                 letterSpacing: 0.0,
@@ -1133,7 +1128,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                           Text(
                             '${selectedDaysSet.length} ${selectedDaysSet.length == 1 ? 'date' : 'dates'} selected',
                             style: FlutterFlowTheme.of(context).bodyLarge.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               fontSize: 16.0,
                               fontWeight: FontWeight.w500,
                               letterSpacing: 0.0,
@@ -1166,7 +1161,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                         SnackBar(
                                           content: Text(
                                             'Meal plan updated to ${selectedDates.length} ${selectedDates.length == 1 ? 'day' : 'days'}',
-                                            style: const TextStyle(fontFamily: 'Andika New Basic'),
+                                            style: TextStyle(fontFamily: FFAppState().currentFontFamily),
                                           ),
                                           backgroundColor: FlutterFlowTheme.of(context).primary,
                                           behavior: SnackBarBehavior.floating,
@@ -1186,7 +1181,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                   ? FlutterFlowTheme.of(context).secondaryText
                                   : FlutterFlowTheme.of(context).primary,
                               textStyle: FlutterFlowTheme.of(context).titleMedium.override(
-                                fontFamily: 'Andika New Basic',
+                                fontFamily: FFAppState().currentFontFamily,
                                 color: Colors.white,
                                 fontSize: 16.0,
                                 fontWeight: FontWeight.w600,
@@ -1263,7 +1258,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
               child: Text(
                 '${day.day}',
                 style: FlutterFlowTheme.of(context).bodyLarge.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   fontSize: 16.0,
                   fontWeight: isSelected || isToday ? FontWeight.w600 : FontWeight.normal,
                   letterSpacing: 0.0,
@@ -1283,7 +1278,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
       mainAxisSpacing: 8.0,
       crossAxisSpacing: 8.0,
       shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
+      physics: const NeverScrollableScrollPhysics(),
       children: calendarCells,
     );
   }
@@ -1462,12 +1457,12 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
           Icon(Icons.share, color: FlutterFlowTheme.of(context).secondary),
           SizedBox(width: 8),
           Text('Share this week\'s meals', style: FlutterFlowTheme.of(context).titleMedium.override(
-            fontFamily: 'Andika New Basic', fontWeight: FontWeight.w600, letterSpacing: 0.0)),
+            fontFamily: FFAppState().currentFontFamily, fontWeight: FontWeight.w600, letterSpacing: 0.0)),
         ]),
         content: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text('Add a personal message to share with your meal plan (optional)',
             style: FlutterFlowTheme.of(context).bodySmall.override(
-              fontFamily: 'Andika New Basic', color: Colors.grey[600], letterSpacing: 0.0)),
+              fontFamily: FFAppState().currentFontFamily, color: Colors.grey[600], letterSpacing: 0.0)),
           SizedBox(height: 12),
           TextField(controller: controller, maxLines: 3, maxLength: 200, decoration: InputDecoration(
             hintText: 'e.g., "These meals were a hit with my picky eater!"',
@@ -1495,12 +1490,12 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
   void _shareSingleDay(BuildContext context, DateTime day, List<MealPlanRecord> dayMealPlans) async {
     if (dayMealPlans.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('No meals planned for this day'), backgroundColor: Colors.orange),
+        const SnackBar(content: Text('No meals planned for this day'), backgroundColor: Colors.orange),
       );
       return;
     }
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Row(children: [
+      const SnackBar(content: Row(children: [
         SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)),
         SizedBox(width: 12), Text('Loading day meals...'),
       ]), duration: Duration(seconds: 5)),
@@ -1518,8 +1513,12 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
           final combo = await MealComboRecord.getDocumentOnce(ref);
           combos.add(combo);
           if (combo.entreeRef != null) mealRefsToFetch.add(combo.entreeRef!);
-          for (final sideRef in combo.sideRefs) mealRefsToFetch.add(sideRef);
-          for (final dessertRef in combo.dessertRefs) mealRefsToFetch.add(dessertRef);
+          for (final sideRef in combo.sideRefs) {
+            mealRefsToFetch.add(sideRef);
+          }
+          for (final dessertRef in combo.dessertRefs) {
+            mealRefsToFetch.add(dessertRef);
+          }
         } catch (_) {}
       }
       final List<MealRecord> meals = [];
@@ -1533,7 +1532,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error loading day meals'), backgroundColor: Colors.red),
+        const SnackBar(content: Text('Error loading day meals'), backgroundColor: Colors.red),
       );
     }
   }
@@ -1541,7 +1540,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
   /// Share a single meal (restored from archive)
   void _shareSingleMeal(BuildContext context, MealPlanRecord mealPlan) async {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Row(children: [
+      const SnackBar(content: Row(children: [
         SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)),
         SizedBox(width: 12), Text('Preparing to share...'),
       ]), duration: Duration(seconds: 5)),
@@ -1570,7 +1569,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error loading meal data'), backgroundColor: Colors.red),
+        const SnackBar(content: Text('Error loading meal data'), backgroundColor: Colors.red),
       );
     }
   }
@@ -1579,7 +1578,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
   void _saveDayAsTemplates(BuildContext context, DateTime day, List<MealPlanRecord> dayMealPlans) async {
     if (dayMealPlans.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('No meals planned for this day'), backgroundColor: Colors.orange),
+        const SnackBar(content: Text('No meals planned for this day'), backgroundColor: Colors.orange),
       );
       return;
     }
@@ -1599,7 +1598,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
           title: Text(
             'Save Day as Templates',
             style: dialogTheme.titleMedium.override(
-              fontFamily: 'Andika New Basic',
+              fontFamily: FFAppState().currentFontFamily,
               letterSpacing: 0.0,
             ),
           ),
@@ -1610,29 +1609,29 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
               Text(
                 'This will save each meal as a reusable template. Give them a name prefix:',
                 style: dialogTheme.bodySmall.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   letterSpacing: 0.0,
                   color: dialogTheme.secondaryText,
                 ),
               ),
-              SizedBox(height: 12.0),
+              const SizedBox(height: 12.0),
               TextField(
                 controller: nameController,
                 decoration: InputDecoration(
                   hintText: 'e.g., Monday, Taco Night',
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.0)),
-                  contentPadding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
                 ),
                 style: dialogTheme.bodyMedium.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   letterSpacing: 0.0,
                 ),
               ),
-              SizedBox(height: 8.0),
+              const SizedBox(height: 8.0),
               Text(
                 '${dayMealPlans.length} meal${dayMealPlans.length > 1 ? 's' : ''} will be saved',
                 style: dialogTheme.bodySmall.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   letterSpacing: 0.0,
                   color: dialogTheme.primary,
                   fontWeight: FontWeight.w600,
@@ -1643,12 +1642,12 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(dialogContext, false),
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
             ElevatedButton(
               onPressed: () => Navigator.pop(dialogContext, true),
               style: ElevatedButton.styleFrom(backgroundColor: dialogTheme.primary),
-              child: Text('Save Saved Days'),
+              child: const Text('Save Saved Days'),
             ),
           ],
         );
@@ -1661,7 +1660,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
 
     // Show loading
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Row(children: [
+      const SnackBar(content: Row(children: [
         SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)),
         SizedBox(width: 12), Text('Saving saved days...'),
       ]), duration: Duration(seconds: 10)),
@@ -1741,14 +1740,14 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('No meals to save as saved days'), backgroundColor: Colors.orange),
+          const SnackBar(content: Text('No meals to save as saved days'), backgroundColor: Colors.orange),
         );
       }
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error saving saved days'), backgroundColor: Colors.red),
+        const SnackBar(content: Text('Error saving saved days'), backgroundColor: Colors.red),
       );
     }
   }
@@ -1777,7 +1776,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
             maxHeight: MediaQuery.of(context).size.height * 0.85,
           ),
           child: Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
           ),
@@ -1786,24 +1785,24 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
             children: [
               // Handle
               Container(
-                margin: EdgeInsets.only(top: 12.0),
+                margin: const EdgeInsets.only(top: 12.0),
                 width: 40.0,
                 height: 4.0,
                 decoration: BoxDecoration(
-                  color: Color(0xFFE0E0E0),
+                  color: const Color(0xFFE0E0E0),
                   borderRadius: BorderRadius.circular(2.0),
                 ),
               ),
               // Title row with Clear Week on right
               Padding(
-                padding: EdgeInsets.fromLTRB(16.0, 16.0, 8.0, 8.0),
+                padding: const EdgeInsets.fromLTRB(16.0, 16.0, 8.0, 8.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
                       'Fill Meal Plan',
                       style: FlutterFlowTheme.of(context).titleMedium.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             fontWeight: FontWeight.w600,
                             letterSpacing: 0.0,
                           ),
@@ -1816,16 +1815,16 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                       },
                       borderRadius: BorderRadius.circular(14.0),
                       child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Icon(Icons.clear_all, size: 16.0, color: Colors.red.shade400),
-                            SizedBox(width: 4.0),
+                            const SizedBox(width: 4.0),
                             Text(
                               'Clear',
                               style: TextStyle(
-                                fontFamily: 'Andika New Basic',
+                                fontFamily: FFAppState().currentFontFamily,
                                 fontSize: 12.0,
                                 color: Colors.red.shade400,
                               ),
@@ -1837,10 +1836,10 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                   ],
                 ),
               ),
-              SizedBox(height: 8.0),
+              const SizedBox(height: 8.0),
               Flexible(
                 child: SingleChildScrollView(
-                  padding: EdgeInsets.fromLTRB(16.0, 0, 16.0, 24.0),
+                  padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 24.0),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -1849,12 +1848,12 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                     Text(
                       '1. Which days?',
                       style: FlutterFlowTheme.of(context).bodyMedium.override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         fontWeight: FontWeight.w600,
                         letterSpacing: 0.0,
                       ),
                     ),
-                    SizedBox(height: 8.0),
+                    const SizedBox(height: 8.0),
                     // Quick select options
                     Wrap(
                       spacing: 8.0,
@@ -1872,7 +1871,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                         }),
                       ],
                     ),
-                    SizedBox(height: 8.0),
+                    const SizedBox(height: 8.0),
                     // Mini calendar with actual dates — wraps to 2 rows when >7 days
                     Wrap(
                       spacing: 6.0,
@@ -1898,16 +1897,16 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                           },
                           child: Container(
                             width: itemWidth,
-                            padding: EdgeInsets.symmetric(vertical: 6.0),
+                            padding: const EdgeInsets.symmetric(vertical: 6.0),
                             decoration: BoxDecoration(
                               color: isSelected
                                   ? FlutterFlowTheme.of(context).primary.withValues(alpha: 0.15)
-                                  : Color(0xFFF5F5F5),
+                                  : const Color(0xFFF5F5F5),
                               borderRadius: BorderRadius.circular(8.0),
                               border: Border.all(
                                 color: isSelected
                                     ? FlutterFlowTheme.of(context).primary
-                                    : Color(0xFFE0E0E0),
+                                    : const Color(0xFFE0E0E0),
                                 width: isSelected ? 2.0 : 1.0,
                               ),
                             ),
@@ -1917,15 +1916,15 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                 Text(
                                   dayName,
                                   style: TextStyle(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     fontSize: 10.0,
                                     fontWeight: FontWeight.normal,
                                     color: isSelected
                                         ? FlutterFlowTheme.of(context).primary
-                                        : Color(0xFF999999),
+                                        : const Color(0xFF999999),
                                   ),
                                 ),
-                                SizedBox(height: 2.0),
+                                const SizedBox(height: 2.0),
                                 Container(
                                   width: 24.0,
                                   height: 24.0,
@@ -1934,21 +1933,21 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                     color: isToday && isSelected
                                         ? FlutterFlowTheme.of(context).primary
                                         : isToday
-                                            ? Color(0xFFE0E0E0)
+                                            ? const Color(0xFFE0E0E0)
                                             : Colors.transparent,
                                   ),
                                   alignment: Alignment.center,
                                   child: Text(
                                     dayNum,
                                     style: TextStyle(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       fontSize: 13.0,
                                       fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                                       color: isToday && isSelected
                                           ? Colors.white
                                           : isSelected
                                               ? FlutterFlowTheme.of(context).primary
-                                              : Color(0xFF666666),
+                                              : const Color(0xFF666666),
                                     ),
                                   ),
                                 ),
@@ -1958,18 +1957,18 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                         );
                       }),
                     ),
-                    SizedBox(height: 16.0),
+                    const SizedBox(height: 16.0),
 
                     // STEP 2: Meal type selection
                     Text(
                       '2. Which meals?',
                       style: FlutterFlowTheme.of(context).bodyMedium.override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         fontWeight: FontWeight.w600,
                         letterSpacing: 0.0,
                       ),
                     ),
-                    SizedBox(height: 8.0),
+                    const SizedBox(height: 8.0),
                     Wrap(
                       spacing: 8.0,
                       runSpacing: 8.0,
@@ -1994,16 +1993,16 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                           },
                           borderRadius: BorderRadius.circular(14.0),
                           child: Container(
-                            padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
                             decoration: BoxDecoration(
                               color: isSelected
                                   ? FlutterFlowTheme.of(context).primary.withValues(alpha: 0.1)
-                                  : Color(0xFFF5F5F5),
+                                  : const Color(0xFFF5F5F5),
                               borderRadius: BorderRadius.circular(14.0),
                               border: Border.all(
                                 color: isSelected
                                     ? FlutterFlowTheme.of(context).primary
-                                    : Color(0xFFE0E0E0),
+                                    : const Color(0xFFE0E0E0),
                                 width: isSelected ? 2.0 : 1.0,
                               ),
                             ),
@@ -2015,18 +2014,18 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                   size: 18.0,
                                   color: isSelected
                                       ? FlutterFlowTheme.of(context).primary
-                                      : Color(0xFF999999),
+                                      : const Color(0xFF999999),
                                 ),
-                                SizedBox(width: 4.0),
+                                const SizedBox(width: 4.0),
                                 Text(
                                   '$emoji ${mealType.name}',
                                   style: TextStyle(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     fontSize: 13.0,
                                     fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                                     color: isSelected
                                         ? FlutterFlowTheme.of(context).primary
-                                        : Color(0xFF666666),
+                                        : const Color(0xFF666666),
                                   ),
                                 ),
                               ],
@@ -2035,18 +2034,18 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                         );
                       }).toList(),
                     ),
-                    SizedBox(height: 16.0),
+                    const SizedBox(height: 16.0),
 
                     // STEP 3: Source selection
                     Text(
                       '3. From where?',
                       style: FlutterFlowTheme.of(context).bodyMedium.override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         fontWeight: FontWeight.w600,
                         letterSpacing: 0.0,
                       ),
                     ),
-                    SizedBox(height: 8.0),
+                    const SizedBox(height: 8.0),
                     // Source options
                     _buildSourceOption(
                       context,
@@ -2059,7 +2058,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                         setSheetState(() => selectedSource = 'all');
                       },
                     ),
-                    SizedBox(height: 8.0),
+                    const SizedBox(height: 8.0),
                     _buildSourceOption(
                       context,
                       icon: Icons.restaurant,
@@ -2071,7 +2070,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                         setSheetState(() => selectedSource = 'my_recipes');
                       },
                     ),
-                    SizedBox(height: 8.0),
+                    const SizedBox(height: 8.0),
                     _buildSourceOption(
                       context,
                       icon: Icons.bookmark,
@@ -2083,7 +2082,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                         setSheetState(() => selectedSource = 'templates');
                       },
                     ),
-                    SizedBox(height: 16.0),
+                    const SizedBox(height: 16.0),
 
                     // Generate button
                     SizedBox(
@@ -2099,16 +2098,16 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: FlutterFlowTheme.of(context).primary,
-                          padding: EdgeInsets.symmetric(vertical: 16.0),
+                          padding: const EdgeInsets.symmetric(vertical: 16.0),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(14.0),
                           ),
-                          disabledBackgroundColor: Color(0xFFCCCCCC),
+                          disabledBackgroundColor: const Color(0xFFCCCCCC),
                         ),
                         child: Text(
                           'Fill Meal Plan',
                           style: TextStyle(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             fontSize: 16.0,
                             fontWeight: FontWeight.w600,
                             color: Colors.white,
@@ -2143,7 +2142,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
         child: Text(
           label,
           style: TextStyle(
-            fontFamily: 'Andika New Basic',
+            fontFamily: FFAppState().currentFontFamily,
             fontSize: 12.0,
             fontWeight: FontWeight.w500,
             color: FlutterFlowTheme.of(context).primary,
@@ -2193,7 +2192,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                   Text(
                     title,
                     style: TextStyle(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       fontSize: 14.0,
                       fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                       color: isSelected ? primaryColor : const Color(0xFF333333),
@@ -2201,8 +2200,8 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                   ),
                   Text(
                     subtitle,
-                    style: const TextStyle(
-                      fontFamily: 'Andika New Basic',
+                    style: TextStyle(
+                      fontFamily: FFAppState().currentFontFamily,
                       fontSize: 11.0,
                       color: Color(0xFF999999),
                     ),
@@ -2232,7 +2231,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
   }) {
     final primaryColor = FlutterFlowTheme.of(context).primary;
     final isDisabled = onTap == null;
-    final optionColor = isDisabled ? Color(0xFFCCCCCC) : (isPrimary ? primaryColor : Color(0xFF666666));
+    final optionColor = isDisabled ? const Color(0xFFCCCCCC) : (isPrimary ? primaryColor : const Color(0xFF666666));
 
     return InkWell(
       onTap: onTap,
@@ -2241,12 +2240,12 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
         opacity: isDisabled ? 0.5 : 1.0,
         child: Container(
           width: double.infinity,
-          padding: EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16.0),
           decoration: BoxDecoration(
-            color: isPrimary ? primaryColor.withValues(alpha: 0.1) : Color(0xFFFAFAFA),
+            color: isPrimary ? primaryColor.withValues(alpha: 0.1) : const Color(0xFFFAFAFA),
             borderRadius: BorderRadius.circular(14.0),
             border: Border.all(
-              color: isPrimary ? primaryColor : Color(0xFFE0E0E0),
+              color: isPrimary ? primaryColor : const Color(0xFFE0E0E0),
               width: isPrimary ? 2.0 : 1.0,
             ),
           ),
@@ -2256,12 +2255,12 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                 width: 48.0,
                 height: 48.0,
                 decoration: BoxDecoration(
-                  color: isPrimary ? primaryColor.withValues(alpha: 0.15) : Color(0xFFF5F5F5),
+                  color: isPrimary ? primaryColor.withValues(alpha: 0.15) : const Color(0xFFF5F5F5),
                   borderRadius: BorderRadius.circular(14.0),
                 ),
                 child: Icon(icon, color: optionColor, size: 24.0),
               ),
-              SizedBox(width: 16.0),
+              const SizedBox(width: 16.0),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -2269,18 +2268,18 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                     Text(
                       title,
                       style: FlutterFlowTheme.of(context).bodyMedium.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                             fontSize: 16.0,
                             fontWeight: FontWeight.w600,
                             letterSpacing: 0.0,
                           ),
                     ),
-                    SizedBox(height: 2.0),
+                    const SizedBox(height: 2.0),
                     Text(
                       subtitle,
                       style: FlutterFlowTheme.of(context).bodySmall.override(
-                            fontFamily: 'Andika New Basic',
-                            color: Color(0xFF888888),
+                            fontFamily: FFAppState().currentFontFamily,
+                            color: const Color(0xFF888888),
                             fontSize: 13.0,
                             letterSpacing: 0.0,
                           ),
@@ -2313,7 +2312,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
         color: Colors.transparent,
         child: Center(
           child: Container(
-            padding: EdgeInsets.all(24.0),
+            padding: const EdgeInsets.all(24.0),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(14.0),
@@ -2322,11 +2321,11 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 CircularProgressIndicator(color: FlutterFlowTheme.of(dialogContext).primary),
-                SizedBox(height: 16.0),
+                const SizedBox(height: 16.0),
                 Text(
                   'Filling meal plan...',
                   style: FlutterFlowTheme.of(dialogContext).bodyMedium.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     letterSpacing: 0.0,
                   ),
                 ),
@@ -2384,7 +2383,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
         Navigator.pop(context); // Close loading
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('No meals in your cookbook yet! Add some recipes first.'),
+            content: const Text('No meals in your cookbook yet! Add some recipes first.'),
             backgroundColor: Colors.orange,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -2397,7 +2396,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
       // Query by user only to avoid needing a composite index, then filter in code
       final now = DateTime.now();
       final startOfWeek = DateTime(now.year, now.month, now.day);
-      final endOfWeek = startOfWeek.add(Duration(days: 7));
+      final endOfWeek = startOfWeek.add(const Duration(days: 7));
 
       final allPlansSnapshot = await MealPlanRecord.collection
           .where('user_ref', isEqualTo: currentUserReference)
@@ -2406,7 +2405,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
           .map((doc) => MealPlanRecord.fromSnapshot(doc))
           .where((plan) {
             if (plan.date == null) return false;
-            return plan.date!.isAfter(startOfWeek.subtract(Duration(days: 1))) &&
+            return plan.date!.isAfter(startOfWeek.subtract(const Duration(days: 1))) &&
                    plan.date!.isBefore(endOfWeek);
           })
           .toList();
@@ -2623,7 +2622,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
             backgroundColor: Colors.red,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            duration: Duration(seconds: 5),
+            duration: const Duration(seconds: 5),
           ),
         );
       }
@@ -2641,7 +2640,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
         color: Colors.transparent,
         child: Center(
           child: Container(
-            padding: EdgeInsets.all(24.0),
+            padding: const EdgeInsets.all(24.0),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(14.0),
@@ -2650,11 +2649,11 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 CircularProgressIndicator(color: FlutterFlowTheme.of(dialogContext).primary),
-                SizedBox(height: 16.0),
+                const SizedBox(height: 16.0),
                 Text(
                   'Finding recipes...',
                   style: FlutterFlowTheme.of(dialogContext).bodyMedium.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     letterSpacing: 0.0,
                   ),
                 ),
@@ -2678,7 +2677,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
         Navigator.pop(context); // Close loading
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('No Discover recipes available yet!'),
+            content: const Text('No Discover recipes available yet!'),
             backgroundColor: Colors.orange,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -2859,7 +2858,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
             backgroundColor: Colors.red,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            duration: Duration(seconds: 5),
+            duration: const Duration(seconds: 5),
           ),
         );
       }
@@ -2871,12 +2870,12 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Clear Entire Meal Plan?'),
-        content: Text('This will remove ALL planned meals. Your meal planner will be completely blank. This cannot be undone.'),
+        title: const Text('Clear Entire Meal Plan?'),
+        content: const Text('This will remove ALL planned meals. Your meal planner will be completely blank. This cannot be undone.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Cancel'),
+            child: const Text('Cancel'),
           ),
           ElevatedButton(
             onPressed: () {
@@ -2884,7 +2883,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
               _clearAllMealPlans();
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: Text('Clear All', style: TextStyle(color: Colors.white)),
+            child: const Text('Clear All', style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -2901,7 +2900,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
         color: Colors.transparent,
         child: Center(
           child: Container(
-            padding: EdgeInsets.all(24.0),
+            padding: const EdgeInsets.all(24.0),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(14.0),
@@ -2910,11 +2909,11 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 CircularProgressIndicator(color: FlutterFlowTheme.of(dialogContext).primary),
-                SizedBox(height: 16.0),
+                const SizedBox(height: 16.0),
                 Text(
                   'Clearing all meals...',
                   style: FlutterFlowTheme.of(dialogContext).bodyMedium.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     letterSpacing: 0.0,
                   ),
                 ),
@@ -2955,7 +2954,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
       debugPrint('Error clearing meal plan: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Error clearing meal plan'),
+          content: const Text('Error clearing meal plan'),
           backgroundColor: Colors.red,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -2972,17 +2971,17 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: Text('Clear All Meals?'),
+        title: const Text('Clear All Meals?'),
         content: Text('This will remove all ${dayMealPlans.length} meal(s) for ${dateTimeFormat('EEEE, MMMM d', day)}.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext, false),
-            child: Text('Cancel'),
+            child: const Text('Cancel'),
           ),
           TextButton(
             onPressed: () => Navigator.pop(dialogContext, true),
             style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: Text('Clear All'),
+            child: const Text('Clear All'),
           ),
         ],
       ),
@@ -2999,7 +2998,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
         color: Colors.transparent,
         child: Center(
           child: Container(
-            padding: EdgeInsets.all(24.0),
+            padding: const EdgeInsets.all(24.0),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(14.0),
@@ -3008,11 +3007,11 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 CircularProgressIndicator(color: FlutterFlowTheme.of(dialogContext).primary),
-                SizedBox(height: 16.0),
+                const SizedBox(height: 16.0),
                 Text(
                   'Clearing meals...',
                   style: FlutterFlowTheme.of(dialogContext).bodyMedium.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     letterSpacing: 0.0,
                   ),
                 ),
@@ -3046,7 +3045,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
       debugPrint('Error clearing meals for day: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Error clearing meals'),
+          content: const Text('Error clearing meals'),
           backgroundColor: Colors.red,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -3064,8 +3063,8 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
         placeholder: (context, url) => _buildColoredPlaceholder(iconSize, mealName),
         errorWidget: (context, url, error) => _buildColoredPlaceholder(iconSize, mealName),
         // Reduce fade duration to minimize stutter
-        fadeInDuration: Duration(milliseconds: 50),
-        fadeOutDuration: Duration(milliseconds: 50),
+        fadeInDuration: const Duration(milliseconds: 50),
+        fadeOutDuration: const Duration(milliseconds: 50),
       );
     }
     return _buildColoredPlaceholder(iconSize, mealName);
@@ -3120,7 +3119,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
           child: Stack(
             children: [
               Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
+                padding: const EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
                 child: SingleChildScrollView(
                   child: Column(
                     mainAxisSize: MainAxisSize.max,
@@ -3128,7 +3127,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                       CascadeItem(
                         index: 0,
                         child: Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(0.0, 16.0, 0.0, 0.0),
+                        padding: const EdgeInsetsDirectional.fromSTEB(0.0, 16.0, 0.0, 0.0),
                         child: Material(
                           color: Colors.transparent,
                           elevation: 2.0,
@@ -3141,7 +3140,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                               width: double.infinity,
                               decoration: BoxDecoration(
                                 color: FlutterFlowTheme.of(context).secondaryBackground,
-                                boxShadow: [
+                                boxShadow: const [
                                   BoxShadow(
                                     blurRadius: 4.0,
                                     color: Color(0x33000000),
@@ -3150,7 +3149,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                 ],
                                 borderRadius: BorderRadius.circular(14.0),
                                 border: Border.all(
-                                  color: Color(0xFF999999),
+                                  color: const Color(0xFF999999),
                                   width: 1.0,
                                 ),
                               ),
@@ -3159,7 +3158,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                 children: [
                                   // Header
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(16.0, 16.0, 16.0, 0.0),
+                                    padding: const EdgeInsetsDirectional.fromSTEB(16.0, 16.0, 16.0, 0.0),
                                     child: Column(
                                       children: [
                                         // First row: Back button and title
@@ -3180,11 +3179,11 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                                 size: 24.0,
                                               ),
                                             ),
-                                            SizedBox(width: 12.0),
+                                            const SizedBox(width: 12.0),
                                             Text(
                                               'Meal Plan',
                                               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                    fontFamily: 'Andika New Basic',
+                                                    fontFamily: FFAppState().currentFontFamily,
                                                     fontSize: 20.0,
                                                     letterSpacing: 0.0,
                                                     fontWeight: FontWeight.w600,
@@ -3192,7 +3191,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                             ),
                                           ],
                                         ),
-                                        SizedBox(height: 12.0),
+                                        const SizedBox(height: 12.0),
                                         // Second row: All 6 action buttons with bounce cascade
                                         Row(
                                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -3208,7 +3207,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                               },
                                               borderRadius: BorderRadius.circular(14.0),
                                               child: Container(
-                                                padding: EdgeInsets.all(8.0),
+                                                padding: const EdgeInsets.all(8.0),
                                                 decoration: BoxDecoration(
                                                   color: Colors.red.withOpacity(0.1),
                                                   borderRadius: BorderRadius.circular(14.0),
@@ -3238,10 +3237,10 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                                   },
                                                   borderRadius: BorderRadius.circular(14.0),
                                                   child: Container(
-                                                    padding: EdgeInsets.all(8.0),
+                                                    padding: const EdgeInsets.all(8.0),
                                                     decoration: BoxDecoration(
                                                       color: remindersEnabled
-                                                          ? Color(0xFFFFA726).withOpacity(0.15)
+                                                          ? const Color(0xFFFFA726).withOpacity(0.15)
                                                           : FlutterFlowTheme.of(context).secondaryText.withOpacity(0.1),
                                                       borderRadius: BorderRadius.circular(14.0),
                                                     ),
@@ -3250,7 +3249,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                                           ? Icons.notifications_active
                                                           : Icons.notifications_off_outlined,
                                                       color: remindersEnabled
-                                                          ? Color(0xFFFFA726)
+                                                          ? const Color(0xFFFFA726)
                                                           : FlutterFlowTheme.of(context).secondaryText,
                                                       size: 20.0,
                                                     ),
@@ -3269,12 +3268,12 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                               },
                                               borderRadius: BorderRadius.circular(14.0),
                                               child: Container(
-                                                padding: EdgeInsets.all(8.0),
+                                                padding: const EdgeInsets.all(8.0),
                                                 decoration: BoxDecoration(
-                                                  color: Color(0xFF9C27B0).withOpacity(0.1),
+                                                  color: const Color(0xFF9C27B0).withOpacity(0.1),
                                                   borderRadius: BorderRadius.circular(14.0),
                                                 ),
-                                                child: Icon(
+                                                child: const Icon(
                                                   Icons.auto_awesome,
                                                   color: Color(0xFF9C27B0),
                                                   size: 20.0,
@@ -3292,7 +3291,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                               },
                                               borderRadius: BorderRadius.circular(14.0),
                                               child: Container(
-                                                padding: EdgeInsets.all(8.0),
+                                                padding: const EdgeInsets.all(8.0),
                                                 decoration: BoxDecoration(
                                                   color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
                                                   borderRadius: BorderRadius.circular(14.0),
@@ -3321,12 +3320,12 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                               },
                                               borderRadius: BorderRadius.circular(14.0),
                                               child: Container(
-                                                padding: EdgeInsets.all(8.0),
+                                                padding: const EdgeInsets.all(8.0),
                                                 decoration: BoxDecoration(
-                                                  color: Color(0xFF9B8AA0).withOpacity(0.15),
+                                                  color: const Color(0xFF9B8AA0).withOpacity(0.15),
                                                   borderRadius: BorderRadius.circular(14.0),
                                                 ),
-                                                child: Icon(
+                                                child: const Icon(
                                                   Icons.shopping_cart,
                                                   color: Color(0xFF9B8AA0),
                                                   size: 20.0,
@@ -3344,12 +3343,12 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                               },
                                               borderRadius: BorderRadius.circular(14.0),
                                               child: Container(
-                                                padding: EdgeInsets.all(8.0),
+                                                padding: const EdgeInsets.all(8.0),
                                                 decoration: BoxDecoration(
-                                                  color: Color(0xFF4CAF50).withOpacity(0.15),
+                                                  color: const Color(0xFF4CAF50).withOpacity(0.15),
                                                   borderRadius: BorderRadius.circular(14.0),
                                                 ),
-                                                child: Icon(
+                                                child: const Icon(
                                                   Icons.calendar_month,
                                                   color: Color(0xFF4CAF50),
                                                   size: 20.0,
@@ -3386,24 +3385,24 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                   if (widget.mealRef != null)
                                     Container(
                                       width: double.infinity,
-                                      margin: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0.0),
-                                      padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
+                                      margin: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0.0),
+                                      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
                                       decoration: BoxDecoration(
-                                        color: Color(0xFFFF9800).withOpacity(0.15),
+                                        color: const Color(0xFFFF9800).withOpacity(0.15),
                                         borderRadius: BorderRadius.circular(14.0),
                                         border: Border.all(
-                                          color: Color(0xFFFF9800),
+                                          color: const Color(0xFFFF9800),
                                           width: 1.0,
                                         ),
                                       ),
                                       child: Row(
                                         children: [
-                                          Icon(
+                                          const Icon(
                                             Icons.add_circle_outline,
                                             color: Color(0xFFFF9800),
                                             size: 20.0,
                                           ),
-                                          SizedBox(width: 8.0),
+                                          const SizedBox(width: 8.0),
                                           Expanded(
                                             child: Column(
                                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -3411,9 +3410,9 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                                 Text(
                                                   'Adding: ${widget.mealRef?.recipeName ?? 'Recipe'}',
                                                   style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                        fontFamily: 'Andika New Basic',
+                                                        fontFamily: FFAppState().currentFontFamily,
                                                         fontWeight: FontWeight.w600,
-                                                        color: Color(0xFFE65100),
+                                                        color: const Color(0xFFE65100),
                                                         letterSpacing: 0.0,
                                                       ),
                                                   maxLines: 1,
@@ -3422,8 +3421,8 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                                 Text(
                                                   'Tap a meal slot below to add',
                                                   style: FlutterFlowTheme.of(context).bodySmall.override(
-                                                        fontFamily: 'Andika New Basic',
-                                                        color: Color(0xFF666666),
+                                                        fontFamily: FFAppState().currentFontFamily,
+                                                        color: const Color(0xFF666666),
                                                         fontSize: 12.0,
                                                         letterSpacing: 0.0,
                                                       ),
@@ -3433,7 +3432,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                           ),
                                           InkWell(
                                             onTap: () => context.safePop(),
-                                            child: Icon(
+                                            child: const Icon(
                                               Icons.close,
                                               color: Color(0xFF888888),
                                               size: 20.0,
@@ -3448,7 +3447,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                     builder: (context, snapshot) {
                                       if (snapshot.connectionState == ConnectionState.waiting && !snapshot.hasData && _model.cachedMealPlans == null) {
                                         return Padding(
-                                          padding: EdgeInsets.all(40.0),
+                                          padding: const EdgeInsets.all(40.0),
                                           child: Center(
                                             child: Column(
                                               mainAxisSize: MainAxisSize.min,
@@ -3457,8 +3456,8 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                                   color: FlutterFlowTheme.of(context).primary,
                                                   size: 12.0,
                                                 ),
-                                                SizedBox(height: 16.0),
-                                                Text(
+                                                const SizedBox(height: 16.0),
+                                                const Text(
                                                   'Loading your meal plan...',
                                                   style: TextStyle(
                                                     color: Color(0xFF888888),
@@ -3473,21 +3472,21 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
 
                                       if (snapshot.hasError && _model.cachedMealPlans == null) {
                                         return Padding(
-                                          padding: EdgeInsets.all(40.0),
+                                          padding: const EdgeInsets.all(40.0),
                                           child: Center(
                                             child: Column(
                                               mainAxisSize: MainAxisSize.min,
                                               children: [
-                                                Icon(Icons.error_outline, color: Colors.red, size: 48.0),
-                                                SizedBox(height: 16.0),
-                                                Text(
+                                                const Icon(Icons.error_outline, color: Colors.red, size: 48.0),
+                                                const SizedBox(height: 16.0),
+                                                const Text(
                                                   'Error loading meal plans',
                                                   style: TextStyle(color: Color(0xFF888888), fontSize: 14.0),
                                                 ),
-                                                SizedBox(height: 8.0),
+                                                const SizedBox(height: 8.0),
                                                 TextButton(
                                                   onPressed: () => setState(() {}),
-                                                  child: Text('Tap to retry'),
+                                                  child: const Text('Tap to retry'),
                                                 ),
                                               ],
                                             ),
@@ -3507,7 +3506,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                       final totalCost = _sumAllCost(mealPlanRecords, days);
 
                                       return Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(0.0, 16.0, 0.0, 100.0),
+                                        padding: const EdgeInsetsDirectional.fromSTEB(0.0, 16.0, 0.0, 100.0),
                                         child: Column(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
@@ -3542,7 +3541,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                                     height: 44,
                                                     color: FlutterFlowTheme.of(context).primary,
                                                     textStyle: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                      fontFamily: 'Andika New Basic',
+                                                      fontFamily: FFAppState().currentFontFamily,
                                                       color: Colors.white,
                                                       fontWeight: FontWeight.w600,
                                                     ),
@@ -3561,8 +3560,8 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                             // First-time directions - dismissible, never shows again once closed
                                             if (!_welcomeDismissed && mealPlanRecords.isEmpty)
                                               Container(
-                                                margin: EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 16.0),
-                                                padding: EdgeInsets.all(16.0),
+                                                margin: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 16.0),
+                                                padding: const EdgeInsets.all(16.0),
                                                 decoration: BoxDecoration(
                                                   color: FlutterFlowTheme.of(context).primary.withOpacity(0.06),
                                                   borderRadius: BorderRadius.circular(16.0),
@@ -3581,12 +3580,12 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                                           color: FlutterFlowTheme.of(context).primary,
                                                           size: 22.0,
                                                         ),
-                                                        SizedBox(width: 8.0),
+                                                        const SizedBox(width: 8.0),
                                                         Expanded(
                                                           child: Text(
                                                             'Welcome to your Meal Planner!',
                                                             style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                              fontFamily: 'Andika New Basic',
+                                                              fontFamily: FFAppState().currentFontFamily,
                                                               fontSize: 16.0,
                                                               fontWeight: FontWeight.w600,
                                                               letterSpacing: 0.0,
@@ -3597,7 +3596,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                                           onTap: _dismissWelcome,
                                                           borderRadius: BorderRadius.circular(12.0),
                                                           child: Padding(
-                                                            padding: EdgeInsets.all(4.0),
+                                                            padding: const EdgeInsets.all(4.0),
                                                             child: Icon(
                                                               Icons.close,
                                                               color: FlutterFlowTheme.of(context).secondaryText,
@@ -3607,25 +3606,25 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                                         ),
                                                       ],
                                                     ),
-                                                    SizedBox(height: 12.0),
+                                                    const SizedBox(height: 12.0),
                                                     _buildDirectionRow(
                                                       context,
                                                       Icons.calendar_month,
-                                                      Color(0xFF4CAF50),
+                                                      const Color(0xFF4CAF50),
                                                       'Tap the calendar icon above to choose which days to plan for.',
                                                     ),
-                                                    SizedBox(height: 8.0),
+                                                    const SizedBox(height: 8.0),
                                                     _buildDirectionRow(
                                                       context,
                                                       Icons.touch_app,
                                                       FlutterFlowTheme.of(context).primary,
                                                       'Tap any day to expand it, then tap a meal slot to add a recipe.',
                                                     ),
-                                                    SizedBox(height: 8.0),
+                                                    const SizedBox(height: 8.0),
                                                     _buildDirectionRow(
                                                       context,
                                                       Icons.auto_awesome,
-                                                      Color(0xFF9C27B0),
+                                                      const Color(0xFF9C27B0),
                                                       'Or use the Fill button to auto-fill your week from your cookbook.',
                                                     ),
                                                   ],
@@ -3642,8 +3641,8 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                             final isExpanded = _model.isDayExpanded(dayIndex);
                                             final plannedCount = _countPlannedMeals(mealPlanRecords, day);
                                             final dayCost = _sumDayCost(mealPlanRecords, day);
-                                            final _now = DateTime.now();
-                                            final _isToday = day.year == _now.year && day.month == _now.month && day.day == _now.day;
+                                            final now = DateTime.now();
+                                            final isToday = day.year == now.year && day.month == now.month && day.day == now.day;
 
                                             return CascadeItem(
                                               index: dayIndex + 1,
@@ -3659,12 +3658,12 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                                   },
                                                   child: Container(
                                                     width: double.infinity,
-                                                    padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                                                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
                                                     decoration: BoxDecoration(
-                                                      color: _isToday
+                                                      color: isToday
                                                           ? FlutterFlowTheme.of(context).primary.withOpacity(0.1)
                                                           : Colors.transparent,
-                                                      border: Border(
+                                                      border: const Border(
                                                         bottom: BorderSide(
                                                           color: Color(0xFFE0E0E0),
                                                           width: 1.0,
@@ -3681,15 +3680,15 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                                           color: FlutterFlowTheme.of(context).primaryText,
                                                           size: 24.0,
                                                         ),
-                                                        SizedBox(width: 8.0),
+                                                        const SizedBox(width: 8.0),
                                                         // Day name
                                                         Expanded(
                                                           child: Text(
                                                             _formatDayHeader(day, dayIndex),
                                                             style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                  fontFamily: 'Andika New Basic',
-                                                                  fontSize: _isToday ? 15.0 : 14.0,
-                                                                  fontWeight: _isToday ? FontWeight.w600 : FontWeight.normal,
+                                                                  fontFamily: FFAppState().currentFontFamily,
+                                                                  fontSize: isToday ? 15.0 : 14.0,
+                                                                  fontWeight: isToday ? FontWeight.w600 : FontWeight.normal,
                                                                   letterSpacing: 0.0,
                                                                 ),
                                                           ),
@@ -3700,7 +3699,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                                             child: Text(
                                                               _fmtDollars(dayCost),
                                                               style: FlutterFlowTheme.of(context).bodySmall.override(
-                                                                    fontFamily: 'Andika New Basic',
+                                                                    fontFamily: FFAppState().currentFontFamily,
                                                                     color: const Color(0xFF2E7D32),
                                                                     fontSize: 12.0,
                                                                     fontWeight: FontWeight.w600,
@@ -3713,11 +3712,11 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                                         if (isExpanded) InkWell(
                                                           onTap: () => _showSavedDaysPickerForDate(context, day),
                                                           child: Padding(
-                                                            padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                                                            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
                                                             child: Text(
                                                               'Saved Days',
                                                               style: FlutterFlowTheme.of(context).bodySmall.override(
-                                                                fontFamily: 'Andika New Basic',
+                                                                fontFamily: FFAppState().currentFontFamily,
                                                                 color: FlutterFlowTheme.of(context).primary,
                                                                 fontSize: 12.0,
                                                                 fontWeight: FontWeight.w600,
@@ -3737,21 +3736,21 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                                                   .map((mealType) {
                                                                 final isPlanned = _isMealPlanned(mealPlanRecords, day, mealType);
                                                                 return Padding(
-                                                                  padding: EdgeInsets.only(left: 4.0),
+                                                                  padding: const EdgeInsets.only(left: 4.0),
                                                                   child: Container(
                                                                     width: 8.0,
                                                                     height: 8.0,
                                                                     decoration: BoxDecoration(
                                                                       color: isPlanned
                                                                           ? FlutterFlowTheme.of(context).primary
-                                                                          : Color(0xFFE0E0E0),
+                                                                          : const Color(0xFFE0E0E0),
                                                                       shape: BoxShape.circle,
                                                                     ),
                                                                   ),
                                                                 );
                                                               }),
                                                               // Gap before snack
-                                                              SizedBox(width: 8.0),
+                                                              const SizedBox(width: 8.0),
                                                               // Snack dot (offset)
                                                               Builder(builder: (context) {
                                                                 final isSnackPlanned = _isMealPlanned(mealPlanRecords, day, MealTyp.Snacks);
@@ -3761,19 +3760,19 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                                                   decoration: BoxDecoration(
                                                                     color: isSnackPlanned
                                                                         ? FlutterFlowTheme.of(context).primary.withOpacity(0.7)
-                                                                        : Color(0xFFE0E0E0),
+                                                                        : const Color(0xFFE0E0E0),
                                                                     shape: BoxShape.circle,
                                                                   ),
                                                                 );
                                                               }),
                                                             ],
                                                           ),
-                                                          SizedBox(width: 8.0),
+                                                          const SizedBox(width: 8.0),
                                                           Text(
                                                             '$plannedCount/4',
                                                             style: FlutterFlowTheme.of(context).bodySmall.override(
-                                                                  fontFamily: 'Andika New Basic',
-                                                                  color: Color(0xFF888888),
+                                                                  fontFamily: FFAppState().currentFontFamily,
+                                                                  color: const Color(0xFF888888),
                                                                   fontSize: 12.0,
                                                                   letterSpacing: 0.0,
                                                                 ),
@@ -3827,7 +3826,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
       onTap: onTap,
       borderRadius: BorderRadius.circular(14.0),
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 10.0),
+        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 10.0),
         decoration: BoxDecoration(
           color: color.withOpacity(0.1),
           borderRadius: BorderRadius.circular(14.0),
@@ -3837,11 +3836,11 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(icon, size: 14.0, color: color),
-            SizedBox(width: 4.0),
+            const SizedBox(width: 4.0),
             Text(
               label,
               style: FlutterFlowTheme.of(context).bodySmall.override(
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
                 color: color,
                 fontSize: 11.0,
                 fontWeight: FontWeight.w600,
@@ -3871,7 +3870,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
     if (grouped.isEmpty) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('No saved days yet. Use "Save" to create one first.')),
+          const SnackBar(content: Text('No saved days yet. Use "Save" to create one first.')),
         );
       }
       return;
@@ -3886,7 +3885,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
       isScrollControlled: true,
       builder: (ctx) => Container(
         constraints: BoxConstraints(maxHeight: MediaQuery.of(ctx).size.height * 0.5),
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(20.0),
@@ -3901,20 +3900,20 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
             Center(
               child: Container(
                 width: 40.0, height: 4.0,
-                decoration: BoxDecoration(color: Color(0xFFDDDDDD), borderRadius: BorderRadius.circular(2.0)),
+                decoration: BoxDecoration(color: const Color(0xFFDDDDDD), borderRadius: BorderRadius.circular(2.0)),
               ),
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             Text(
               'Apply Template to ${dateTimeFormat('E, MMM d', day)}',
               style: FlutterFlowTheme.of(context).titleSmall.override(
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
                 fontSize: 16.0,
                 fontWeight: FontWeight.w600,
                 letterSpacing: 0.0,
               ),
             ),
-            SizedBox(height: 12.0),
+            const SizedBox(height: 12.0),
             Flexible(
               child: ListView(
                 shrinkWrap: true,
@@ -3924,20 +3923,20 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                       ? templates.first.dayTemplateName
                       : 'Saved Day';
                   return Padding(
-                    padding: EdgeInsets.only(bottom: 8.0),
+                    padding: const EdgeInsets.only(bottom: 8.0),
                     child: InkWell(
                       onTap: () => Navigator.pop(ctx, entry.key),
                       borderRadius: BorderRadius.circular(10.0),
                       child: Container(
-                        padding: EdgeInsets.all(12.0),
+                        padding: const EdgeInsets.all(12.0),
                         decoration: BoxDecoration(
-                          color: Color(0xFFF5F5F5),
+                          color: const Color(0xFFF5F5F5),
                           borderRadius: BorderRadius.circular(10.0),
                         ),
                         child: Row(
                           children: [
-                            Icon(Icons.calendar_today, size: 20.0, color: Color(0xFFFF9800)),
-                            SizedBox(width: 10.0),
+                            const Icon(Icons.calendar_today, size: 20.0, color: Color(0xFFFF9800)),
+                            const SizedBox(width: 10.0),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -3945,7 +3944,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                   Text(
                                     groupName,
                                     style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       fontSize: 13.0,
                                       fontWeight: FontWeight.w600,
                                       letterSpacing: 0.0,
@@ -3954,9 +3953,9 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                   Text(
                                     '${templates.length} meal${templates.length == 1 ? '' : 's'}',
                                     style: FlutterFlowTheme.of(context).bodySmall.override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       fontSize: 10.0,
-                                      color: Color(0xFF999999),
+                                      color: const Color(0xFF999999),
                                       letterSpacing: 0.0,
                                     ),
                                   ),
@@ -3966,13 +3965,13 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                             InkWell(
                               onTap: () => _showTemplatePreview(ctx, groupName, templates),
                               borderRadius: BorderRadius.circular(16.0),
-                              child: Padding(
+                              child: const Padding(
                                 padding: EdgeInsets.all(6.0),
                                 child: Icon(Icons.visibility_outlined, size: 20.0, color: Color(0xFF999999)),
                               ),
                             ),
-                            SizedBox(width: 4.0),
-                            Icon(Icons.chevron_right, size: 20.0, color: Color(0xFFCCCCCC)),
+                            const SizedBox(width: 4.0),
+                            const Icon(Icons.chevron_right, size: 20.0, color: Color(0xFFCCCCCC)),
                           ],
                         ),
                       ),
@@ -4034,7 +4033,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
       isScrollControlled: true,
       builder: (ctx) => Container(
         constraints: BoxConstraints(maxHeight: MediaQuery.of(ctx).size.height * 0.6),
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(20.0),
@@ -4049,20 +4048,20 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
             Center(
               child: Container(
                 width: 40.0, height: 4.0,
-                decoration: BoxDecoration(color: Color(0xFFDDDDDD), borderRadius: BorderRadius.circular(2.0)),
+                decoration: BoxDecoration(color: const Color(0xFFDDDDDD), borderRadius: BorderRadius.circular(2.0)),
               ),
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             Text(
               templateName,
               style: FlutterFlowTheme.of(context).titleSmall.override(
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
                 fontSize: 16.0,
                 fontWeight: FontWeight.w600,
                 letterSpacing: 0.0,
               ),
             ),
-            SizedBox(height: 12.0),
+            const SizedBox(height: 12.0),
             Flexible(
               child: ListView(
                 shrinkWrap: true,
@@ -4090,11 +4089,11 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
     final isLeftoverDessert = meal.snapshotData['is_leftover_dessert'] == true;
 
     return Padding(
-      padding: EdgeInsets.only(bottom: 10.0),
+      padding: const EdgeInsets.only(bottom: 10.0),
       child: Container(
-        padding: EdgeInsets.all(12.0),
+        padding: const EdgeInsets.all(12.0),
         decoration: BoxDecoration(
-          color: Color(0xFFF5F5F5),
+          color: const Color(0xFFF5F5F5),
           borderRadius: BorderRadius.circular(10.0),
         ),
         child: Column(
@@ -4104,28 +4103,28 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
             Row(
               children: [
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
                   decoration: BoxDecoration(
-                    color: Color(0xFFFF9800).withOpacity(0.15),
+                    color: const Color(0xFFFF9800).withOpacity(0.15),
                     borderRadius: BorderRadius.circular(6.0),
                   ),
                   child: Text(
                     mealTypeLabel,
                     style: FlutterFlowTheme.of(context).bodySmall.override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       fontSize: 10.0,
                       fontWeight: FontWeight.w600,
-                      color: Color(0xFFFF9800),
+                      color: const Color(0xFFFF9800),
                       letterSpacing: 0.0,
                     ),
                   ),
                 ),
-                SizedBox(width: 10.0),
+                const SizedBox(width: 10.0),
                 Expanded(
                   child: Text(
                     mealName,
                     style: FlutterFlowTheme.of(context).bodyMedium.override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       fontSize: 13.0,
                       fontWeight: FontWeight.w600,
                       letterSpacing: 0.0,
@@ -4134,7 +4133,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                 ),
               ],
             ),
-            SizedBox(height: 8.0),
+            const SizedBox(height: 8.0),
             // Recipe thumbnails divided by type, drink on the right
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -4144,21 +4143,21 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                   _buildRecipeTypeGroup(context, 'Entree', [meal.entreeRef!], isLeftover: isLeftoverEntree),
                 // Sides
                 if (hasSides) ...[
-                  SizedBox(width: 12.0),
+                  const SizedBox(width: 12.0),
                   _buildRecipeTypeGroup(context, meal.sideRefs.length == 1 ? 'Side' : 'Sides', meal.sideRefs, isLeftover: isLeftoverSide),
                 ],
                 // Desserts
                 if (hasDesserts) ...[
-                  SizedBox(width: 12.0),
+                  const SizedBox(width: 12.0),
                   _buildRecipeTypeGroup(context, meal.dessertRefs.length == 1 ? 'Dessert' : 'Desserts', meal.dessertRefs, isLeftover: isLeftoverDessert),
                 ],
                 // Drink - next to the last recipe group on the right
                 if (hasDrink) ...[
-                  SizedBox(width: 12.0),
+                  const SizedBox(width: 12.0),
                   Column(
                     children: [
-                      Text('Drink', style: FlutterFlowTheme.of(context).bodySmall.override(fontFamily: 'Andika New Basic', fontSize: 9.0, color: _getPreviewDrinkColor(meal.drinkType!), fontWeight: FontWeight.w600, letterSpacing: 0.0)),
-                      SizedBox(height: 4.0),
+                      Text('Drink', style: FlutterFlowTheme.of(context).bodySmall.override(fontFamily: FFAppState().currentFontFamily, fontSize: 9.0, color: _getPreviewDrinkColor(meal.drinkType!), fontWeight: FontWeight.w600, letterSpacing: 0.0)),
+                      const SizedBox(height: 4.0),
                       Container(
                         width: 48.0, height: 48.0,
                         decoration: BoxDecoration(
@@ -4169,8 +4168,8 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(_getPreviewDrinkIcon(meal.drinkType!), size: 20.0, color: _getPreviewDrinkColor(meal.drinkType!)),
-                            SizedBox(height: 2.0),
-                            Text(drinkLabel, style: TextStyle(fontFamily: 'Andika New Basic', fontSize: 7.0, color: _getPreviewDrinkColor(meal.drinkType!), fontWeight: FontWeight.w600), overflow: TextOverflow.ellipsis),
+                            const SizedBox(height: 2.0),
+                            Text(drinkLabel, style: TextStyle(fontFamily: FFAppState().currentFontFamily, fontSize: 7.0, color: _getPreviewDrinkColor(meal.drinkType!), fontWeight: FontWeight.w600), overflow: TextOverflow.ellipsis),
                           ],
                         ),
                       ),
@@ -4202,7 +4201,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
 
     if (grouped.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('No Saved Days found. Create one from the Cookbook!')),
+        const SnackBar(content: Text('No Saved Days found. Create one from the Cookbook!')),
       );
       return;
     }
@@ -4213,7 +4212,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
       backgroundColor: Colors.transparent,
       builder: (sheetContext) {
         return Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
           ),
@@ -4228,22 +4227,22 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                   width: 40.0,
                   height: 4.0,
                   decoration: BoxDecoration(
-                    color: Color(0xFFDDDDDD),
+                    color: const Color(0xFFDDDDDD),
                     borderRadius: BorderRadius.circular(2.0),
                   ),
                 ),
               ),
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
               Text(
                 'Choose Saved Day for ${dateTimeFormat('EEE, MMM d', day)}',
                 style: FlutterFlowTheme.of(sheetContext).titleSmall.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   fontSize: 16.0,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 0.0,
                 ),
               ),
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
               ...grouped.entries.map((entry) {
                 final groupName = entry.value.first.dayTemplateName.isNotEmpty
                     ? entry.value.first.dayTemplateName
@@ -4253,16 +4252,16 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                 return InkWell(
                   onTap: () => Navigator.pop(sheetContext, entry.key),
                   child: Container(
-                    margin: EdgeInsets.only(bottom: 12.0),
-                    padding: EdgeInsets.all(16.0),
+                    margin: const EdgeInsets.only(bottom: 12.0),
+                    padding: const EdgeInsets.all(16.0),
                     decoration: BoxDecoration(
-                      color: Color(0xFFF5F5F5),
+                      color: const Color(0xFFF5F5F5),
                       borderRadius: BorderRadius.circular(12.0),
                     ),
                     child: Row(
                       children: [
                         Icon(Icons.event, color: FlutterFlowTheme.of(sheetContext).primary),
-                        SizedBox(width: 12.0),
+                        const SizedBox(width: 12.0),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -4270,7 +4269,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                               Text(
                                 groupName,
                                 style: FlutterFlowTheme.of(sheetContext).bodyMedium.override(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   fontWeight: FontWeight.w600,
                                   letterSpacing: 0.0,
                                 ),
@@ -4280,8 +4279,8 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                   Text(
                                     '$mealCount meal${mealCount > 1 ? 's' : ''}',
                                     style: FlutterFlowTheme.of(sheetContext).bodySmall.override(
-                                      fontFamily: 'Andika New Basic',
-                                      color: Color(0xFF999999),
+                                      fontFamily: FFAppState().currentFontFamily,
+                                      color: const Color(0xFF999999),
                                       fontSize: 12.0,
                                       letterSpacing: 0.0,
                                     ),
@@ -4293,8 +4292,8 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                       if (cost <= 0) return const SizedBox.shrink();
                                       return Text(
                                         '  •  \$${cost.round()}',
-                                        style: const TextStyle(
-                                          fontFamily: 'Andika New Basic',
+                                        style: TextStyle(
+                                          fontFamily: FFAppState().currentFontFamily,
                                           fontSize: 12.0,
                                           color: Color(0xFF2E7D32),
                                           fontWeight: FontWeight.w600,
@@ -4311,7 +4310,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                     ),
                   ),
                 );
-              }).toList(),
+              }),
             ],
           ),
         );
@@ -4373,7 +4372,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Applied "$groupName" to ${dateTimeFormat('EEE, MMM d', day)}'),
-            duration: Duration(seconds: 2),
+            duration: const Duration(seconds: 2),
             backgroundColor: FlutterFlowTheme.of(context).primary,
           ),
         );
@@ -4410,15 +4409,15 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
   /// Drink color matching the meal composer's mapping
   Color _getPreviewDrinkColor(DrinkType drink) {
     switch (drink) {
-      case DrinkType.Water: return Color(0xFF42A5F5);
-      case DrinkType.Milk: return Color(0xFF8D6E63);
-      case DrinkType.Juice: return Color(0xFFFF9800);
-      case DrinkType.Lemonade: return Color(0xFFFBC02D);
-      case DrinkType.Smoothie: return Color(0xFFE91E63);
-      case DrinkType.Tea: return Color(0xFF66BB6A);
-      case DrinkType.Coffee: return Color(0xFF5D4037);
-      case DrinkType.Soda: return Color(0xFF7E57C2);
-      case DrinkType.Other: return Color(0xFF78909C);
+      case DrinkType.Water: return const Color(0xFF42A5F5);
+      case DrinkType.Milk: return const Color(0xFF8D6E63);
+      case DrinkType.Juice: return const Color(0xFFFF9800);
+      case DrinkType.Lemonade: return const Color(0xFFFBC02D);
+      case DrinkType.Smoothie: return const Color(0xFFE91E63);
+      case DrinkType.Tea: return const Color(0xFF66BB6A);
+      case DrinkType.Coffee: return const Color(0xFF5D4037);
+      case DrinkType.Soda: return const Color(0xFF7E57C2);
+      case DrinkType.Other: return const Color(0xFF78909C);
     }
   }
 
@@ -4433,35 +4432,35 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
             Text(
               label,
               style: FlutterFlowTheme.of(context).bodySmall.override(
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
                 fontSize: 9.0,
-                color: isLeftover ? Color(0xFFFF9800) : Color(0xFF999999),
+                color: isLeftover ? const Color(0xFFFF9800) : const Color(0xFF999999),
                 fontWeight: FontWeight.w600,
                 letterSpacing: 0.0,
               ),
             ),
             if (isLeftover) ...[
-              SizedBox(width: 3.0),
+              const SizedBox(width: 3.0),
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 3.0, vertical: 0.5),
+                padding: const EdgeInsets.symmetric(horizontal: 3.0, vertical: 0.5),
                 decoration: BoxDecoration(
-                  color: Color(0xFFFF9800).withOpacity(0.15),
+                  color: const Color(0xFFFF9800).withOpacity(0.15),
                   borderRadius: BorderRadius.circular(3.0),
                 ),
                 child: Text(
                   'L',
                   style: TextStyle(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     fontSize: 8.0,
                     fontWeight: FontWeight.w700,
-                    color: Color(0xFFFF9800),
+                    color: const Color(0xFFFF9800),
                   ),
                 ),
               ),
             ],
           ],
         ),
-        SizedBox(height: 4.0),
+        const SizedBox(height: 4.0),
         Row(
           children: refs.map((ref) => _buildRecipeThumbnail(ref, isLeftover: isLeftover)).toList(),
         ),
@@ -4472,7 +4471,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
   /// Build a small thumbnail for a recipe reference
   Widget _buildRecipeThumbnail(DocumentReference recipeRef, {bool isLeftover = false}) {
     return Padding(
-      padding: EdgeInsets.only(right: 6.0),
+      padding: const EdgeInsets.only(right: 6.0),
       child: FutureBuilder<DocumentSnapshot>(
         future: recipeRef.get(),
         builder: (context, snapshot) {
@@ -4495,8 +4494,8 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                 fit: BoxFit.cover,
                 placeholder: (context, url) => _buildThumbnailPlaceholder(recipeName),
                 errorWidget: (context, url, error) => _buildThumbnailPlaceholder(recipeName),
-                fadeInDuration: Duration(milliseconds: 50),
-                fadeOutDuration: Duration(milliseconds: 50),
+                fadeInDuration: const Duration(milliseconds: 50),
+                fadeOutDuration: const Duration(milliseconds: 50),
               ),
             );
           } else {
@@ -4511,12 +4510,12 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                 Positioned(
                   top: -2, right: -2,
                   child: Container(
-                    padding: EdgeInsets.all(2.0),
+                    padding: const EdgeInsets.all(2.0),
                     decoration: BoxDecoration(
-                      color: Color(0xFFFF9800),
+                      color: const Color(0xFFFF9800),
                       borderRadius: BorderRadius.circular(6.0),
                     ),
-                    child: Text('L', style: TextStyle(fontSize: 8.0, fontWeight: FontWeight.bold, color: Colors.white)),
+                    child: const Text('L', style: TextStyle(fontSize: 8.0, fontWeight: FontWeight.bold, color: Colors.white)),
                   ),
                 ),
               ],
@@ -4534,17 +4533,17 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
       width: 48.0,
       height: 48.0,
       decoration: BoxDecoration(
-        color: Color(0xFFE0E0E0),
+        color: const Color(0xFFE0E0E0),
         borderRadius: BorderRadius.circular(8.0),
       ),
       alignment: Alignment.center,
       child: Text(
         initial,
         style: TextStyle(
-          fontFamily: 'Andika New Basic',
+          fontFamily: FFAppState().currentFontFamily,
           fontSize: 16.0,
           fontWeight: FontWeight.w600,
-          color: Color(0xFF999999),
+          color: const Color(0xFF999999),
         ),
       ),
     );
@@ -4555,19 +4554,19 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          padding: EdgeInsets.all(6.0),
+          padding: const EdgeInsets.all(6.0),
           decoration: BoxDecoration(
             color: color.withOpacity(0.1),
             borderRadius: BorderRadius.circular(8.0),
           ),
           child: Icon(icon, size: 16.0, color: color),
         ),
-        SizedBox(width: 10.0),
+        const SizedBox(width: 10.0),
         Expanded(
           child: Text(
             text,
             style: FlutterFlowTheme.of(context).bodySmall.override(
-              fontFamily: 'Andika New Basic',
+              fontFamily: FFAppState().currentFontFamily,
               fontSize: 13.0,
               letterSpacing: 0.0,
               color: FlutterFlowTheme.of(context).secondaryText,
@@ -4588,8 +4587,8 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
     final hasAnyMeals = dayMealPlans.isNotEmpty;
 
     return Container(
-      padding: EdgeInsets.all(12.0),
-      decoration: BoxDecoration(
+      padding: const EdgeInsets.all(12.0),
+      decoration: const BoxDecoration(
         color: Color(0xFFFAFAFA),
       ),
       child: Column(
@@ -4597,7 +4596,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
           // Action buttons row (only show if there are meals)
           if (hasAnyMeals)
             Padding(
-              padding: EdgeInsets.only(bottom: 8.0),
+              padding: const EdgeInsets.only(bottom: 8.0),
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
@@ -4610,7 +4609,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                     color: FlutterFlowTheme.of(context).secondary,
                     onTap: () => _shareSingleDay(context, day, dayMealPlans),
                   ),
-                  SizedBox(width: 6.0),
+                  const SizedBox(width: 6.0),
                   // Save button
                   _buildDayActionChip(
                     context,
@@ -4619,7 +4618,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                     color: FlutterFlowTheme.of(context).primary,
                     onTap: () => _saveDayAsTemplates(context, day, dayMealPlans),
                   ),
-                  SizedBox(width: 6.0),
+                  const SizedBox(width: 6.0),
                   // Clear button
                   _buildDayActionChip(
                     context,
@@ -4656,13 +4655,13 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
       // Only handle tap for unplanned meals - planned meals have their own tap handler inside
       onTap: isPlanned ? null : () => _addOrReplaceMeal(context, day, mealType, mealPlan),
       child: Container(
-        margin: EdgeInsets.only(bottom: 8.0),
-        padding: EdgeInsets.all(12.0),
+        margin: const EdgeInsets.only(bottom: 8.0),
+        padding: const EdgeInsets.all(12.0),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(14.0),
           border: Border.all(
-            color: isPlanned ? FlutterFlowTheme.of(context).primary.withOpacity(0.3) : Color(0xFFE0E0E0),
+            color: isPlanned ? FlutterFlowTheme.of(context).primary.withOpacity(0.3) : const Color(0xFFE0E0E0),
             width: 1.0,
           ),
         ),
@@ -4673,8 +4672,8 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                 context.pushNamed(
                   MealComposerWidget.routeName,
                   queryParameters: {
-                    'date': serializeParam(mealPlan!.date, ParamType.DateTime),
-                    'mealType': serializeParam(mealPlan!.typ, ParamType.Enum),
+                    'date': serializeParam(mealPlan.date, ParamType.DateTime),
+                    'mealType': serializeParam(mealPlan.typ, ParamType.Enum),
                   },
                   extra: <String, dynamic>{
                     'existingMealPlan': mealPlan,
@@ -4696,7 +4695,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                       Text(
                         mealType.name,
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               fontSize: 14.0,
                               fontWeight: FontWeight.w600,
                               letterSpacing: 0.0,
@@ -4704,10 +4703,10 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                             ),
                       ),
                       InkWell(
-                        onTap: () => _shareSingleMeal(context, mealPlan!),
+                        onTap: () => _shareSingleMeal(context, mealPlan),
                         borderRadius: BorderRadius.circular(10.0),
                         child: Container(
-                          padding: EdgeInsets.all(6.0),
+                          padding: const EdgeInsets.all(6.0),
                           decoration: BoxDecoration(
                             color: FlutterFlowTheme.of(context).secondary.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(10.0),
@@ -4721,9 +4720,9 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 8.0),
+                  const SizedBox(height: 8.0),
                   // Meal content
-                  _buildPlannedMealContent(context, mealPlan!, day, mealType),
+                  _buildPlannedMealContent(context, mealPlan, day, mealType),
                 ],
               ),
             )
@@ -4734,26 +4733,26 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                 Text(
                   mealType.name,
                   style: FlutterFlowTheme.of(context).bodyMedium.override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         fontSize: 14.0,
                         fontWeight: FontWeight.w600,
                         letterSpacing: 0.0,
                         color: FlutterFlowTheme.of(context).primaryText,
                       ),
                 ),
-                SizedBox(height: 8.0),
+                const SizedBox(height: 8.0),
             InkWell(
               onTap: () {
                 _addOrReplaceMeal(context, day, mealType, null);
               },
               child: Container(
                 width: double.infinity,
-                padding: EdgeInsets.symmetric(vertical: 16.0),
+                padding: const EdgeInsets.symmetric(vertical: 16.0),
                 decoration: BoxDecoration(
-                  color: Color(0xFFF5F5F5),
+                  color: const Color(0xFFF5F5F5),
                   borderRadius: BorderRadius.circular(6.0),
                   border: Border.all(
-                    color: Color(0xFFE0E0E0),
+                    color: const Color(0xFFE0E0E0),
                     style: BorderStyle.solid,
                   ),
                 ),
@@ -4761,8 +4760,8 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                   child: Text(
                     'Tap to add ${mealType.name.toLowerCase()}',
                     style: FlutterFlowTheme.of(context).bodySmall.override(
-                          fontFamily: 'Andika New Basic',
-                          color: Color(0xFF888888),
+                          fontFamily: FFAppState().currentFontFamily,
+                          color: const Color(0xFF888888),
                           fontSize: 13.0,
                           letterSpacing: 0.0,
                         ),
@@ -4790,16 +4789,16 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
               width: 60.0,
               height: 60.0,
               decoration: BoxDecoration(
-                color: Color(0xFFFF9800).withOpacity(0.2),
+                color: const Color(0xFFFF9800).withOpacity(0.2),
               ),
-              child: Icon(
+              child: const Icon(
                 Icons.restaurant,
                 color: Color(0xFFFF9800),
                 size: 30.0,
               ),
             ),
           ),
-          SizedBox(width: 12.0),
+          const SizedBox(width: 12.0),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -4807,7 +4806,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                 Text(
                   mealPlan.customMeal,
                   style: FlutterFlowTheme.of(context).bodyMedium.override(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         fontSize: 14.0,
                         fontWeight: FontWeight.w500,
                         letterSpacing: 0.0,
@@ -4815,24 +4814,24 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
-                SizedBox(height: 4.0),
+                const SizedBox(height: 4.0),
                 Row(
                   children: [
                     Text(
                       'Custom meal',
                       style: FlutterFlowTheme.of(context).bodySmall.override(
-                            fontFamily: 'Andika New Basic',
-                            color: Color(0xFF999999),
+                            fontFamily: FFAppState().currentFontFamily,
+                            color: const Color(0xFF999999),
                             fontSize: 11.0,
                             letterSpacing: 0.0,
                           ),
                     ),
                     if (FFAppState().showMealCosts && mealPlan.hasCustomMealCost()) ...[
-                      const SizedBox(width: 8),
+                      SizedBox(width: 8),
                       Text(
                         '\$${mealPlan.customMealCost.round()}',
-                        style: const TextStyle(
-                          fontFamily: 'Andika New Basic',
+                        style: TextStyle(
+                          fontFamily: FFAppState().currentFontFamily,
                           fontSize: 12.0,
                           color: Color(0xFF2E7D32),
                           fontWeight: FontWeight.w600,
@@ -4855,7 +4854,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
 
     // Single recipe - fetch the meal record
     if (mealPlan.userFirebasemeal == null) {
-      return Text('Meal data not found');
+      return const Text('Meal data not found');
     }
 
     // Check if we have cached data to avoid showing loading indicator unnecessarily
@@ -4870,7 +4869,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
           if (snapshot.connectionState == ConnectionState.waiting && !snapshot.hasData) {
             return Center(
               child: Padding(
-                padding: EdgeInsets.all(20.0),
+                padding: const EdgeInsets.all(20.0),
                 child: BouncingDots(
                   color: FlutterFlowTheme.of(context).primary,
                   size: 8.0,
@@ -4883,7 +4882,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
           if (snapshot.hasError || !snapshot.hasData || snapshot.data == null) {
             // Delete the orphaned meal plan record
             mealPlan.reference.delete();
-            return SizedBox.shrink(); // Will disappear on next rebuild
+            return const SizedBox.shrink(); // Will disappear on next rebuild
           }
 
           final meal = snapshot.data!;
@@ -4909,13 +4908,13 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                 child: Container(
                   width: 60.0,
                   height: 60.0,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: Color(0xFFE0E0E0),
                   ),
                   child: _buildMealImage(meal.imageUrl, 24.0, mealName: meal.recipeName),
                 ),
               ),
-              SizedBox(width: 12.0),
+              const SizedBox(width: 12.0),
               // Meal info - wrap in container to make entire area tappable
               Expanded(
                 child: Container(
@@ -4930,20 +4929,20 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                         children: [
                           if (isLeftover)
                             Container(
-                              padding: EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
-                              margin: EdgeInsets.only(right: 6.0),
+                              padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
+                              margin: const EdgeInsets.only(right: 6.0),
                               decoration: BoxDecoration(
-                                color: Color(0xFFFF9800).withOpacity(0.15),
+                                color: const Color(0xFFFF9800).withOpacity(0.15),
                                 borderRadius: BorderRadius.circular(4.0),
-                                border: Border.all(color: Color(0xFFFF9800), width: 1.0),
+                                border: Border.all(color: const Color(0xFFFF9800), width: 1.0),
                               ),
                               child: Text(
                                 'Leftover',
                                 style: TextStyle(
                                   fontSize: 10.0,
                                   fontWeight: FontWeight.w600,
-                                  color: Color(0xFFFF9800),
-                                  fontFamily: 'Andika New Basic',
+                                  color: const Color(0xFFFF9800),
+                                  fontFamily: FFAppState().currentFontFamily,
                                 ),
                               ),
                             ),
@@ -4951,7 +4950,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                             child: Text(
                               meal.recipeName,
                               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     fontSize: 14.0,
                                     fontWeight: FontWeight.w500,
                                     letterSpacing: 0.0,
@@ -4962,7 +4961,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 4.0),
+                      const SizedBox(height: 4.0),
                     // Show the plan-level total (entree + sides + desserts)
                     // from the cached rollup instead of the entree's own
                     // estimatedCost. Falls back to entree cost only if the
@@ -4979,8 +4978,8 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                         padding: const EdgeInsets.only(bottom: 4.0),
                         child: Text(
                           '\$${displayCost.round()}',
-                          style: const TextStyle(
-                            fontFamily: 'Andika New Basic',
+                          style: TextStyle(
+                            fontFamily: FFAppState().currentFontFamily,
                             fontSize: 12.0,
                             color: Color(0xFF2E7D32),
                             fontWeight: FontWeight.w600,
@@ -4990,7 +4989,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                     }),
                     // Show recipe type indicator for sides/desserts with leaf/cake icon + count
                     if ((meal.recipeType == RecipeType.Side || meal.mainOrSides == 'Side') && !mealPlan.hasSideRefs() && !mealPlan.hasDessertRefs())
-                      Row(
+                      const Row(
                         children: [
                           Icon(Icons.eco, size: 12.0, color: Color(0xFF4CAF50)),
                           SizedBox(width: 2.0),
@@ -5001,7 +5000,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                         ],
                       )
                     else if ((meal.recipeType == RecipeType.Dessert || meal.mainOrSides == 'Dessert') && !mealPlan.hasSideRefs() && !mealPlan.hasDessertRefs())
-                      Row(
+                      const Row(
                         children: [
                           Icon(Icons.cake, size: 12.0, color: Color(0xFFE91E63)),
                           SizedBox(width: 2.0),
@@ -5019,16 +5018,16 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                             meal.recipeType == RecipeType.Side ? Icons.eco :
                             meal.recipeType == RecipeType.Dessert ? Icons.cake : Icons.restaurant,
                             size: 12.0,
-                            color: meal.recipeType == RecipeType.Side ? Color(0xFF4CAF50) :
-                                   meal.recipeType == RecipeType.Dessert ? Color(0xFFE91E63) : Color(0xFFFF9800),
+                            color: meal.recipeType == RecipeType.Side ? const Color(0xFF4CAF50) :
+                                   meal.recipeType == RecipeType.Dessert ? const Color(0xFFE91E63) : const Color(0xFFFF9800),
                           ),
-                          SizedBox(width: 2.0),
+                          const SizedBox(width: 2.0),
                           Flexible(
                             child: Text(
                               meal.recipeName,
                               style: FlutterFlowTheme.of(context).bodySmall.override(
-                                    fontFamily: 'Andika New Basic',
-                                    color: Color(0xFF666666),
+                                    fontFamily: FFAppState().currentFontFamily,
+                                    color: const Color(0xFF666666),
                                     fontSize: 11.0,
                                     letterSpacing: 0.0,
                                   ),
@@ -5039,47 +5038,47 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                           // Sides count
                           if (mealPlan.sideRefs.isNotEmpty) ...[
                             () {
-                              final validSidesCount = mealPlan.sideRefs.where((ref) => ref != null && ref.path.isNotEmpty).length;
+                              final validSidesCount = mealPlan.sideRefs.where((ref) => ref.path.isNotEmpty).length;
                               if (validSidesCount > 0) {
                                 return Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    SizedBox(width: 8.0),
-                                    Icon(Icons.add, size: 10.0, color: Color(0xFFAAAAAA)),
-                                    SizedBox(width: 4.0),
-                                    Icon(Icons.eco, size: 12.0, color: Color(0xFF4CAF50)),
-                                    SizedBox(width: 2.0),
+                                    const SizedBox(width: 8.0),
+                                    const Icon(Icons.add, size: 10.0, color: Color(0xFFAAAAAA)),
+                                    const SizedBox(width: 4.0),
+                                    const Icon(Icons.eco, size: 12.0, color: Color(0xFF4CAF50)),
+                                    const SizedBox(width: 2.0),
                                     Text(
                                       '$validSidesCount',
-                                      style: TextStyle(color: Color(0xFF666666), fontSize: 11.0),
+                                      style: const TextStyle(color: Color(0xFF666666), fontSize: 11.0),
                                     ),
                                   ],
                                 );
                               }
-                              return SizedBox.shrink();
+                              return const SizedBox.shrink();
                             }(),
                           ],
                           // Dessert count
                           if (mealPlan.dessertRefs.isNotEmpty) ...[
                             () {
-                              final validDessertCount = mealPlan.dessertRefs.where((ref) => ref != null && ref.path.isNotEmpty).length;
+                              final validDessertCount = mealPlan.dessertRefs.where((ref) => ref.path.isNotEmpty).length;
                               if (validDessertCount > 0) {
                                 return Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    SizedBox(width: 8.0),
-                                    Icon(Icons.add, size: 10.0, color: Color(0xFFAAAAAA)),
-                                    SizedBox(width: 4.0),
-                                    Icon(Icons.cake, size: 12.0, color: Color(0xFFE91E63)),
-                                    SizedBox(width: 2.0),
+                                    const SizedBox(width: 8.0),
+                                    const Icon(Icons.add, size: 10.0, color: Color(0xFFAAAAAA)),
+                                    const SizedBox(width: 4.0),
+                                    const Icon(Icons.cake, size: 12.0, color: Color(0xFFE91E63)),
+                                    const SizedBox(width: 2.0),
                                     Text(
                                       '$validDessertCount',
-                                      style: TextStyle(color: Color(0xFF666666), fontSize: 11.0),
+                                      style: const TextStyle(color: Color(0xFF666666), fontSize: 11.0),
                                     ),
                                   ],
                                 );
                               }
-                              return SizedBox.shrink();
+                              return const SizedBox.shrink();
                             }(),
                           ],
                         ],
@@ -5088,17 +5087,17 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                       // Show cooking time if not showing components
                       Row(
                         children: [
-                          Icon(
+                          const Icon(
                             Icons.schedule,
                             size: 12.0,
                             color: Color(0xFF888888),
                           ),
-                          SizedBox(width: 4.0),
+                          const SizedBox(width: 4.0),
                           Text(
                             '${(meal.prepareTime + meal.cookingTime).toInt()} min',
                             style: FlutterFlowTheme.of(context).bodySmall.override(
-                                  fontFamily: 'Andika New Basic',
-                                  color: Color(0xFF888888),
+                                  fontFamily: FFAppState().currentFontFamily,
+                                  color: const Color(0xFF888888),
                                   fontSize: 11.0,
                                   letterSpacing: 0.0,
                                 ),
@@ -5110,7 +5109,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                 ),
               ),
               // Menu icon
-              Icon(
+              const Icon(
                 Icons.more_vert,
                 size: 20.0,
                 color: Color(0xFF888888),
@@ -5134,7 +5133,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
           if (comboSnapshot.connectionState == ConnectionState.waiting && !comboSnapshot.hasData) {
             return Center(
               child: Padding(
-                padding: EdgeInsets.all(20.0),
+                padding: const EdgeInsets.all(20.0),
                 child: BouncingDots(
                   color: FlutterFlowTheme.of(context).primary,
                   size: 8.0,
@@ -5145,7 +5144,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
 
           if (comboSnapshot.hasError || !comboSnapshot.hasData || comboSnapshot.data == null) {
             mealPlan.reference.delete();
-            return SizedBox.shrink();
+            return const SizedBox.shrink();
           }
 
           final combo = comboSnapshot.data!;
@@ -5163,7 +5162,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
               if (entreeSnapshot.connectionState == ConnectionState.waiting && !entreeSnapshot.hasData) {
                 return Center(
                   child: Padding(
-                    padding: EdgeInsets.all(20.0),
+                    padding: const EdgeInsets.all(20.0),
                     child: BouncingDots(
                       color: FlutterFlowTheme.of(context).primary,
                       size: 8.0,
@@ -5203,7 +5202,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                     child: Container(
                       width: 60.0,
                       height: 60.0,
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         color: Color(0xFFE0E0E0),
                       ),
                       child: entree != null
@@ -5211,7 +5210,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                           : _buildColoredPlaceholder(24.0, combo.name),
                     ),
                   ),
-                  SizedBox(width: 12.0),
+                  const SizedBox(width: 12.0),
                   // Meal info - wrap in container to make entire area tappable
                   Expanded(
                     child: Container(
@@ -5226,20 +5225,20 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                           children: [
                             if (hasLeftovers)
                               Container(
-                                padding: EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
-                                margin: EdgeInsets.only(right: 6.0),
+                                padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
+                                margin: const EdgeInsets.only(right: 6.0),
                                 decoration: BoxDecoration(
-                                  color: Color(0xFFFF9800).withOpacity(0.15),
+                                  color: const Color(0xFFFF9800).withOpacity(0.15),
                                   borderRadius: BorderRadius.circular(4.0),
-                                  border: Border.all(color: Color(0xFFFF9800), width: 1.0),
+                                  border: Border.all(color: const Color(0xFFFF9800), width: 1.0),
                                 ),
                                 child: Text(
                                   'Leftover',
                                   style: TextStyle(
                                     fontSize: 10.0,
                                     fontWeight: FontWeight.w600,
-                                    color: Color(0xFFFF9800),
-                                    fontFamily: 'Andika New Basic',
+                                    color: const Color(0xFFFF9800),
+                                    fontFamily: FFAppState().currentFontFamily,
                                   ),
                                 ),
                               ),
@@ -5249,7 +5248,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                     ? combo.name
                                     : (entree?.recipeName ?? firstSideName ?? 'Meal'),
                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                      fontFamily: 'Andika New Basic',
+                                      fontFamily: FFAppState().currentFontFamily,
                                       fontSize: 14.0,
                                       fontWeight: FontWeight.w500,
                                       letterSpacing: 0.0,
@@ -5260,20 +5259,20 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                             ),
                           ],
                         ),
-                        SizedBox(height: 4.0),
+                        const SizedBox(height: 4.0),
                         // Show components with colored icons
                         Row(
                           children: [
                             // Show Entrée indicator if there is an entree, otherwise show side info
                             if (entree != null) ...[
-                              Icon(Icons.restaurant, size: 12.0, color: Color(0xFFFF9800)),
-                              SizedBox(width: 2.0),
+                              const Icon(Icons.restaurant, size: 12.0, color: Color(0xFFFF9800)),
+                              const SizedBox(width: 2.0),
                               Flexible(
                                 child: Text(
                                   entree.recipeName,
                                   style: FlutterFlowTheme.of(context).bodySmall.override(
-                                        fontFamily: 'Andika New Basic',
-                                        color: Color(0xFF666666),
+                                        fontFamily: FFAppState().currentFontFamily,
+                                        color: const Color(0xFF666666),
                                         fontSize: 11.0,
                                         letterSpacing: 0.0,
                                       ),
@@ -5283,58 +5282,58 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                               ),
                             ] else if (combo.sideRefs.isNotEmpty) ...[
                               // No entree — show leaf icon + side count as the primary indicator
-                              Icon(Icons.eco, size: 12.0, color: Color(0xFF4CAF50)),
-                              SizedBox(width: 2.0),
+                              const Icon(Icons.eco, size: 12.0, color: Color(0xFF4CAF50)),
+                              const SizedBox(width: 2.0),
                               Text(
-                                '${combo.sideRefs.where((ref) => ref != null && ref.path.isNotEmpty).length}',
-                                style: TextStyle(color: Color(0xFF666666), fontSize: 11.0),
+                                '${combo.sideRefs.where((ref) => ref.path.isNotEmpty).length}',
+                                style: const TextStyle(color: Color(0xFF666666), fontSize: 11.0),
                               ),
                             ],
                             // Only show sides count (with + prefix) when there IS an entree
                             if (entree != null && combo.sideRefs.isNotEmpty) ...[
                               () {
-                                final validSidesCount = combo.sideRefs.where((ref) => ref != null && ref.path.isNotEmpty).length;
+                                final validSidesCount = combo.sideRefs.where((ref) => ref.path.isNotEmpty).length;
                                 if (validSidesCount > 0) {
                                   return Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      SizedBox(width: 8.0),
-                                      Icon(Icons.add, size: 10.0, color: Color(0xFFAAAAAA)),
-                                      SizedBox(width: 4.0),
+                                      const SizedBox(width: 8.0),
+                                      const Icon(Icons.add, size: 10.0, color: Color(0xFFAAAAAA)),
+                                      const SizedBox(width: 4.0),
                                       // Side dish icon (green for vegetables/sides)
-                                      Icon(Icons.eco, size: 12.0, color: Color(0xFF4CAF50)),
-                                      SizedBox(width: 2.0),
+                                      const Icon(Icons.eco, size: 12.0, color: Color(0xFF4CAF50)),
+                                      const SizedBox(width: 2.0),
                                       Text(
                                         '$validSidesCount',
-                                        style: TextStyle(color: Color(0xFF666666), fontSize: 11.0),
+                                        style: const TextStyle(color: Color(0xFF666666), fontSize: 11.0),
                                       ),
                                     ],
                                   );
                                 }
-                                return SizedBox.shrink();
+                                return const SizedBox.shrink();
                               }(),
                             ],
                             // Dessert count
                             if (combo.dessertRefs.isNotEmpty) ...[
                               () {
-                                final validDessertCount = combo.dessertRefs.where((ref) => ref != null && ref.path.isNotEmpty).length;
+                                final validDessertCount = combo.dessertRefs.where((ref) => ref.path.isNotEmpty).length;
                                 if (validDessertCount > 0) {
                                   return Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      SizedBox(width: 8.0),
-                                      Icon(Icons.add, size: 10.0, color: Color(0xFFAAAAAA)),
-                                      SizedBox(width: 4.0),
-                                      Icon(Icons.cake, size: 12.0, color: Color(0xFFE91E63)),
-                                      SizedBox(width: 2.0),
+                                      const SizedBox(width: 8.0),
+                                      const Icon(Icons.add, size: 10.0, color: Color(0xFFAAAAAA)),
+                                      const SizedBox(width: 4.0),
+                                      const Icon(Icons.cake, size: 12.0, color: Color(0xFFE91E63)),
+                                      const SizedBox(width: 2.0),
                                       Text(
                                         '$validDessertCount',
-                                        style: TextStyle(color: Color(0xFF666666), fontSize: 11.0),
+                                        style: const TextStyle(color: Color(0xFF666666), fontSize: 11.0),
                                       ),
                                     ],
                                   );
                                 }
-                                return SizedBox.shrink();
+                                return const SizedBox.shrink();
                               }(),
                             ],
                           ],
@@ -5344,7 +5343,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                   ),
                     ),
                   // Menu icon
-                  Icon(
+                  const Icon(
                     Icons.more_vert,
                     size: 20.0,
                     color: Color(0xFF888888),
@@ -5394,11 +5393,11 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
           width: 60.0,
           height: 60.0,
           decoration: BoxDecoration(
-            color: Color(0xFFE0E0E0),
+            color: const Color(0xFFE0E0E0),
             borderRadius: BorderRadius.circular(6.0),
           ),
         ),
-        SizedBox(width: 12.0),
+        const SizedBox(width: 12.0),
         // Text skeleton
         Expanded(
           child: Column(
@@ -5410,17 +5409,17 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                 height: 14.0,
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  color: Color(0xFFE0E0E0),
+                  color: const Color(0xFFE0E0E0),
                   borderRadius: BorderRadius.circular(4.0),
                 ),
               ),
-              SizedBox(height: 8.0),
+              const SizedBox(height: 8.0),
               // Subtitle skeleton
               Container(
                 height: 11.0,
                 width: 120.0,
                 decoration: BoxDecoration(
-                  color: Color(0xFFE0E0E0),
+                  color: const Color(0xFFE0E0E0),
                   borderRadius: BorderRadius.circular(4.0),
                 ),
               ),
@@ -5432,7 +5431,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
           width: 20.0,
           height: 20.0,
           decoration: BoxDecoration(
-            color: Color(0xFFE0E0E0),
+            color: const Color(0xFFE0E0E0),
             borderRadius: BorderRadius.circular(10.0),
           ),
         ),
@@ -5467,7 +5466,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
       backgroundColor: Colors.transparent,
       builder: (context) {
         return Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
           ),
@@ -5477,21 +5476,21 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
               children: [
                 // Handle
                 Container(
-                  margin: EdgeInsets.only(top: 12.0),
+                  margin: const EdgeInsets.only(top: 12.0),
                   width: 40.0,
                   height: 4.0,
                   decoration: BoxDecoration(
-                    color: Color(0xFFE0E0E0),
+                    color: const Color(0xFFE0E0E0),
                     borderRadius: BorderRadius.circular(2.0),
                   ),
                 ),
                 // Title
                 Padding(
-                  padding: EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(16.0),
                   child: Text(
                     existingPlan != null ? 'Replace ${mealType.name}' : 'Add ${mealType.name}',
                     style: FlutterFlowTheme.of(context).titleMedium.override(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 0.0,
                         ),
@@ -5499,7 +5498,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                 ),
                 // Options with staggered animations
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: Column(
                     children: [
                       // Fill from Cookbook option (primary)
@@ -5516,7 +5515,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                             );
                           },
                           child: Container(
-                            padding: EdgeInsets.all(16.0),
+                            padding: const EdgeInsets.all(16.0),
                             decoration: BoxDecoration(
                               color: FlutterFlowTheme.of(context).primary.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(14.0),
@@ -5528,7 +5527,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                             child: Row(
                               children: [
                                 Container(
-                                  padding: EdgeInsets.all(10.0),
+                                  padding: const EdgeInsets.all(10.0),
                                   decoration: BoxDecoration(
                                     color: FlutterFlowTheme.of(context).primary.withValues(alpha: 0.15),
                                     borderRadius: BorderRadius.circular(14.0),
@@ -5539,7 +5538,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                     size: 24.0,
                                   ),
                                 ),
-                                SizedBox(width: 16.0),
+                                const SizedBox(width: 16.0),
                                 Expanded(
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -5547,7 +5546,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                       Text(
                                         'Use Your Recipes and Templates',
                                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                              fontFamily: 'Andika New Basic',
+                                              fontFamily: FFAppState().currentFontFamily,
                                               fontWeight: FontWeight.w600,
                                               letterSpacing: 0.0,
                                             ),
@@ -5555,8 +5554,8 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                       Text(
                                         'Auto-pick from your cookbook and meal templates',
                                         style: FlutterFlowTheme.of(context).bodySmall.override(
-                                              fontFamily: 'Andika New Basic',
-                                              color: Color(0xFF888888),
+                                              fontFamily: FFAppState().currentFontFamily,
+                                              color: const Color(0xFF888888),
                                               fontSize: 12.0,
                                               letterSpacing: 0.0,
                                             ),
@@ -5570,7 +5569,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 12.0),
+                      const SizedBox(height: 12.0),
                       // Choose or Create Meal option (goes to submenu)
                       AnimatedListItem(
                         index: 1,
@@ -5582,27 +5581,27 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                             _showChooseOrCreateMealOptions(context, day, mealType, existingPlan);
                           },
                           child: Container(
-                            padding: EdgeInsets.all(16.0),
+                            padding: const EdgeInsets.all(16.0),
                             decoration: BoxDecoration(
-                              color: Color(0xFFFAFAFA),
+                              color: const Color(0xFFFAFAFA),
                               borderRadius: BorderRadius.circular(14.0),
-                              border: Border.all(color: Color(0xFFE0E0E0)),
+                              border: Border.all(color: const Color(0xFFE0E0E0)),
                             ),
                             child: Row(
                               children: [
                                 Container(
-                                  padding: EdgeInsets.all(10.0),
+                                  padding: const EdgeInsets.all(10.0),
                                   decoration: BoxDecoration(
-                                    color: Color(0xFF2196F3).withValues(alpha: 0.1),
+                                    color: const Color(0xFF2196F3).withValues(alpha: 0.1),
                                     borderRadius: BorderRadius.circular(14.0),
                                   ),
-                                  child: Icon(
+                                  child: const Icon(
                                     Icons.restaurant_menu,
                                     color: Color(0xFF2196F3),
                                     size: 24.0,
                                   ),
                                 ),
-                                SizedBox(width: 16.0),
+                                const SizedBox(width: 16.0),
                                 Expanded(
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -5610,7 +5609,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                       Text(
                                         'Choose or Create Meal',
                                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                              fontFamily: 'Andika New Basic',
+                                              fontFamily: FFAppState().currentFontFamily,
                                               fontWeight: FontWeight.w600,
                                               letterSpacing: 0.0,
                                             ),
@@ -5618,8 +5617,8 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                       Text(
                                         'Pick a specific recipe or create a new one',
                                         style: FlutterFlowTheme.of(context).bodySmall.override(
-                                              fontFamily: 'Andika New Basic',
-                                              color: Color(0xFF888888),
+                                              fontFamily: FFAppState().currentFontFamily,
+                                              color: const Color(0xFF888888),
                                               fontSize: 12.0,
                                               letterSpacing: 0.0,
                                             ),
@@ -5627,7 +5626,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                     ],
                                   ),
                                 ),
-                                Icon(Icons.chevron_right, color: Color(0xFF888888)),
+                                const Icon(Icons.chevron_right, color: Color(0xFF888888)),
                               ],
                             ),
                           ),
@@ -5636,7 +5635,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                     ],
                   ),
                 ),
-                SizedBox(height: 24.0),
+                const SizedBox(height: 24.0),
               ],
             ),
           ),
@@ -5656,7 +5655,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
           constraints: BoxConstraints(
             maxHeight: MediaQuery.of(context).size.height * 0.7,
           ),
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
           ),
@@ -5666,21 +5665,21 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
               children: [
                 // Handle
                 Container(
-                  margin: EdgeInsets.only(top: 12.0),
+                  margin: const EdgeInsets.only(top: 12.0),
                   width: 40.0,
                   height: 4.0,
                   decoration: BoxDecoration(
-                    color: Color(0xFFE0E0E0),
+                    color: const Color(0xFFE0E0E0),
                     borderRadius: BorderRadius.circular(2.0),
                   ),
                 ),
                 // Title with back button
                 Padding(
-                  padding: EdgeInsets.fromLTRB(8.0, 8.0, 16.0, 8.0),
+                  padding: const EdgeInsets.fromLTRB(8.0, 8.0, 16.0, 8.0),
                   child: Row(
                     children: [
                       IconButton(
-                        icon: Icon(Icons.arrow_back, color: Color(0xFF666666)),
+                        icon: const Icon(Icons.arrow_back, color: Color(0xFF666666)),
                         onPressed: () {
                           Navigator.pop(context);
                           _showAddMealOptions(context, day, mealType, existingPlan);
@@ -5689,7 +5688,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                       Text(
                         'Choose or Create',
                         style: FlutterFlowTheme.of(context).titleMedium.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               fontWeight: FontWeight.w600,
                               letterSpacing: 0.0,
                             ),
@@ -5700,7 +5699,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                 // Options with staggered animations - scrollable
                 Flexible(
                   child: SingleChildScrollView(
-                    padding: EdgeInsets.symmetric(horizontal: 16.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: Column(
                     children: [
                       // Pick a Recipe option
@@ -5714,16 +5713,16 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                             _showRecipeOptions(context, day, mealType, existingPlan);
                           },
                           child: Container(
-                            padding: EdgeInsets.all(16.0),
+                            padding: const EdgeInsets.all(16.0),
                             decoration: BoxDecoration(
-                              color: Color(0xFFFAFAFA),
+                              color: const Color(0xFFFAFAFA),
                               borderRadius: BorderRadius.circular(14.0),
-                              border: Border.all(color: Color(0xFFE0E0E0)),
+                              border: Border.all(color: const Color(0xFFE0E0E0)),
                             ),
                             child: Row(
                               children: [
                                 Container(
-                                  padding: EdgeInsets.all(10.0),
+                                  padding: const EdgeInsets.all(10.0),
                                   decoration: BoxDecoration(
                                     color: FlutterFlowTheme.of(context).primary.withValues(alpha: 0.1),
                                     borderRadius: BorderRadius.circular(14.0),
@@ -5734,7 +5733,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                     size: 24.0,
                                   ),
                                 ),
-                                SizedBox(width: 16.0),
+                                const SizedBox(width: 16.0),
                                 Expanded(
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -5742,7 +5741,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                       Text(
                                         'Pick a Recipe',
                                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                              fontFamily: 'Andika New Basic',
+                                              fontFamily: FFAppState().currentFontFamily,
                                               fontWeight: FontWeight.w600,
                                               letterSpacing: 0.0,
                                             ),
@@ -5750,8 +5749,8 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                       Text(
                                         'Choose from your cookbook or discover',
                                         style: FlutterFlowTheme.of(context).bodySmall.override(
-                                              fontFamily: 'Andika New Basic',
-                                              color: Color(0xFF888888),
+                                              fontFamily: FFAppState().currentFontFamily,
+                                              color: const Color(0xFF888888),
                                               fontSize: 12.0,
                                               letterSpacing: 0.0,
                                             ),
@@ -5759,13 +5758,13 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                     ],
                                   ),
                                 ),
-                                Icon(Icons.chevron_right, color: Color(0xFF888888)),
+                                const Icon(Icons.chevron_right, color: Color(0xFF888888)),
                               ],
                             ),
                           ),
                         ),
                       ),
-                      SizedBox(height: 12.0),
+                      const SizedBox(height: 12.0),
                       // Pick a Saved Meal option
                       AnimatedListItem(
                         index: 1,
@@ -5777,27 +5776,27 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                             _showMealComboPicker(context, day, mealType, existingPlan);
                           },
                           child: Container(
-                            padding: EdgeInsets.all(16.0),
+                            padding: const EdgeInsets.all(16.0),
                             decoration: BoxDecoration(
-                              color: Color(0xFFFAFAFA),
+                              color: const Color(0xFFFAFAFA),
                               borderRadius: BorderRadius.circular(14.0),
-                              border: Border.all(color: Color(0xFFE0E0E0)),
+                              border: Border.all(color: const Color(0xFFE0E0E0)),
                             ),
                             child: Row(
                               children: [
                                 Container(
-                                  padding: EdgeInsets.all(10.0),
+                                  padding: const EdgeInsets.all(10.0),
                                   decoration: BoxDecoration(
-                                    color: Color(0xFFFF9800).withValues(alpha: 0.1),
+                                    color: const Color(0xFFFF9800).withValues(alpha: 0.1),
                                     borderRadius: BorderRadius.circular(14.0),
                                   ),
-                                  child: Icon(
+                                  child: const Icon(
                                     Icons.restaurant_menu,
                                     color: Color(0xFFFF9800),
                                     size: 24.0,
                                   ),
                                 ),
-                                SizedBox(width: 16.0),
+                                const SizedBox(width: 16.0),
                                 Expanded(
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -5807,19 +5806,19 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                           Text(
                                             'Pick a Saved Meal',
                                             style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                  fontFamily: 'Andika New Basic',
+                                                  fontFamily: FFAppState().currentFontFamily,
                                                   fontWeight: FontWeight.w600,
                                                   letterSpacing: 0.0,
                                                 ),
                                           ),
-                                          SizedBox(width: 6.0),
+                                          const SizedBox(width: 6.0),
                                           Container(
-                                            padding: EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
+                                            padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
                                             decoration: BoxDecoration(
-                                              color: Color(0xFFFF9800),
+                                              color: const Color(0xFFFF9800),
                                               borderRadius: BorderRadius.circular(4.0),
                                             ),
-                                            child: Text(
+                                            child: const Text(
                                               'COMBO',
                                               style: TextStyle(
                                                 color: Colors.white,
@@ -5833,8 +5832,8 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                       Text(
                                         'Entrée + sides + drink combo',
                                         style: FlutterFlowTheme.of(context).bodySmall.override(
-                                              fontFamily: 'Andika New Basic',
-                                              color: Color(0xFF888888),
+                                              fontFamily: FFAppState().currentFontFamily,
+                                              color: const Color(0xFF888888),
                                               fontSize: 12.0,
                                               letterSpacing: 0.0,
                                             ),
@@ -5842,13 +5841,13 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                     ],
                                   ),
                                 ),
-                                Icon(Icons.chevron_right, color: Color(0xFF888888)),
+                                const Icon(Icons.chevron_right, color: Color(0xFF888888)),
                               ],
                             ),
                           ),
                         ),
                       ),
-                      SizedBox(height: 12.0),
+                      const SizedBox(height: 12.0),
                       // Create New Meal option
                       AnimatedListItem(
                         index: 2,
@@ -5868,27 +5867,27 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                             );
                           },
                           child: Container(
-                            padding: EdgeInsets.all(16.0),
+                            padding: const EdgeInsets.all(16.0),
                             decoration: BoxDecoration(
-                              color: Color(0xFFFAFAFA),
+                              color: const Color(0xFFFAFAFA),
                               borderRadius: BorderRadius.circular(14.0),
-                              border: Border.all(color: Color(0xFFE0E0E0)),
+                              border: Border.all(color: const Color(0xFFE0E0E0)),
                             ),
                             child: Row(
                               children: [
                                 Container(
-                                  padding: EdgeInsets.all(10.0),
+                                  padding: const EdgeInsets.all(10.0),
                                   decoration: BoxDecoration(
-                                    color: Color(0xFF4CAF50).withValues(alpha: 0.1),
+                                    color: const Color(0xFF4CAF50).withValues(alpha: 0.1),
                                     borderRadius: BorderRadius.circular(14.0),
                                   ),
-                                  child: Icon(
+                                  child: const Icon(
                                     Icons.add_circle_outline,
                                     color: Color(0xFF4CAF50),
                                     size: 24.0,
                                   ),
                                 ),
-                                SizedBox(width: 16.0),
+                                const SizedBox(width: 16.0),
                                 Expanded(
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -5896,7 +5895,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                       Text(
                                         'Create New Meal',
                                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                              fontFamily: 'Andika New Basic',
+                                              fontFamily: FFAppState().currentFontFamily,
                                               fontWeight: FontWeight.w600,
                                               letterSpacing: 0.0,
                                             ),
@@ -5904,8 +5903,8 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                       Text(
                                         'Build an entrée + sides + drink combo',
                                         style: FlutterFlowTheme.of(context).bodySmall.override(
-                                              fontFamily: 'Andika New Basic',
-                                              color: Color(0xFF888888),
+                                              fontFamily: FFAppState().currentFontFamily,
+                                              color: const Color(0xFF888888),
                                               fontSize: 12.0,
                                               letterSpacing: 0.0,
                                             ),
@@ -5913,13 +5912,13 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                     ],
                                   ),
                                 ),
-                                Icon(Icons.chevron_right, color: Color(0xFF888888)),
+                                const Icon(Icons.chevron_right, color: Color(0xFF888888)),
                               ],
                             ),
                           ),
                         ),
                       ),
-                      SizedBox(height: 12.0),
+                      const SizedBox(height: 12.0),
                       // Create New Side option
                       AnimatedListItem(
                         index: 3,
@@ -5938,27 +5937,27 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                             );
                           },
                           child: Container(
-                            padding: EdgeInsets.all(16.0),
+                            padding: const EdgeInsets.all(16.0),
                             decoration: BoxDecoration(
-                              color: Color(0xFFFAFAFA),
+                              color: const Color(0xFFFAFAFA),
                               borderRadius: BorderRadius.circular(14.0),
-                              border: Border.all(color: Color(0xFFE0E0E0)),
+                              border: Border.all(color: const Color(0xFFE0E0E0)),
                             ),
                             child: Row(
                               children: [
                                 Container(
-                                  padding: EdgeInsets.all(10.0),
+                                  padding: const EdgeInsets.all(10.0),
                                   decoration: BoxDecoration(
-                                    color: Color(0xFF9C27B0).withValues(alpha: 0.1),
+                                    color: const Color(0xFF9C27B0).withValues(alpha: 0.1),
                                     borderRadius: BorderRadius.circular(14.0),
                                   ),
-                                  child: Icon(
+                                  child: const Icon(
                                     Icons.add_box_outlined,
                                     color: Color(0xFF9C27B0),
                                     size: 24.0,
                                   ),
                                 ),
-                                SizedBox(width: 16.0),
+                                const SizedBox(width: 16.0),
                                 Expanded(
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -5966,7 +5965,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                       Text(
                                         'Create New Side',
                                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                              fontFamily: 'Andika New Basic',
+                                              fontFamily: FFAppState().currentFontFamily,
                                               fontWeight: FontWeight.w600,
                                               letterSpacing: 0.0,
                                             ),
@@ -5974,8 +5973,8 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                       Text(
                                         'Add a new side dish to your cookbook',
                                         style: FlutterFlowTheme.of(context).bodySmall.override(
-                                              fontFamily: 'Andika New Basic',
-                                              color: Color(0xFF888888),
+                                              fontFamily: FFAppState().currentFontFamily,
+                                              color: const Color(0xFF888888),
                                               fontSize: 12.0,
                                               letterSpacing: 0.0,
                                             ),
@@ -5983,13 +5982,13 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                     ],
                                   ),
                                 ),
-                                Icon(Icons.chevron_right, color: Color(0xFF888888)),
+                                const Icon(Icons.chevron_right, color: Color(0xFF888888)),
                               ],
                             ),
                           ),
                         ),
                       ),
-                      SizedBox(height: 24.0),
+                      const SizedBox(height: 24.0),
                     ],
                     ),
                   ),
@@ -6009,7 +6008,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
       backgroundColor: Colors.transparent,
       builder: (context) {
         return Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
           ),
@@ -6019,17 +6018,17 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
               children: [
                 // Handle
                 Container(
-                  margin: EdgeInsets.only(top: 12.0),
+                  margin: const EdgeInsets.only(top: 12.0),
                   width: 40.0,
                   height: 4.0,
                   decoration: BoxDecoration(
-                    color: Color(0xFFE0E0E0),
+                    color: const Color(0xFFE0E0E0),
                     borderRadius: BorderRadius.circular(2.0),
                   ),
                 ),
                 // Breadcrumb + Title
                 Padding(
-                  padding: EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(16.0),
                   child: Column(
                     children: [
                       // Breadcrumb
@@ -6037,13 +6036,13 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            '${mealType.name}',
-                            style: TextStyle(
+                            mealType.name,
+                            style: const TextStyle(
                               color: Color(0xFF888888),
                               fontSize: 12.0,
                             ),
                           ),
-                          Padding(
+                          const Padding(
                             padding: EdgeInsets.symmetric(horizontal: 6.0),
                             child: Icon(Icons.chevron_right, size: 14.0, color: Color(0xFFAAAAAA)),
                           ),
@@ -6057,12 +6056,12 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 8.0),
+                      const SizedBox(height: 8.0),
                       // Title
                       Text(
                         'Add Recipe',
                         style: FlutterFlowTheme.of(context).titleMedium.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               fontWeight: FontWeight.w600,
                               letterSpacing: 0.0,
                             ),
@@ -6072,7 +6071,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                 ),
                 // Options
                 Padding(
-                  padding: EdgeInsets.fromLTRB(16.0, 0, 16.0, 16.0),
+                  padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 16.0),
                   child: Column(
                     children: [
                       // From Cookbook
@@ -6094,7 +6093,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                           );
                         },
                       ),
-                      SizedBox(height: 10.0),
+                      const SizedBox(height: 10.0),
                       // Import Recipe
                       _buildRecipeOption(
                         context: context,
@@ -6113,7 +6112,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                           );
                         },
                       ),
-                      SizedBox(height: 10.0),
+                      const SizedBox(height: 10.0),
                       // Create New Recipe
                       _buildRecipeOption(
                         context: context,
@@ -6157,16 +6156,16 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
       onTap: onTap,
       borderRadius: BorderRadius.circular(14.0),
       child: Container(
-        padding: EdgeInsets.all(14.0),
+        padding: const EdgeInsets.all(14.0),
         decoration: BoxDecoration(
-          color: Color(0xFFFAFAFA),
+          color: const Color(0xFFFAFAFA),
           borderRadius: BorderRadius.circular(14.0),
-          border: Border.all(color: Color(0xFFE0E0E0)),
+          border: Border.all(color: const Color(0xFFE0E0E0)),
         ),
         child: Row(
           children: [
             Container(
-              padding: EdgeInsets.all(10.0),
+              padding: const EdgeInsets.all(10.0),
               decoration: BoxDecoration(
                 color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(14.0),
@@ -6177,7 +6176,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                 size: 22.0,
               ),
             ),
-            SizedBox(width: 14.0),
+            const SizedBox(width: 14.0),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -6185,7 +6184,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                   Text(
                     title,
                     style: FlutterFlowTheme.of(context).bodyMedium.override(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           fontWeight: FontWeight.w600,
                           fontSize: 15.0,
                           letterSpacing: 0.0,
@@ -6194,8 +6193,8 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                   Text(
                     subtitle,
                     style: FlutterFlowTheme.of(context).bodySmall.override(
-                          fontFamily: 'Andika New Basic',
-                          color: Color(0xFF888888),
+                          fontFamily: FFAppState().currentFontFamily,
+                          color: const Color(0xFF888888),
                           fontSize: 12.0,
                           letterSpacing: 0.0,
                         ),
@@ -6203,7 +6202,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                 ],
               ),
             ),
-            Icon(Icons.chevron_right, color: Color(0xFF888888)),
+            const Icon(Icons.chevron_right, color: Color(0xFF888888)),
           ],
         ),
       ),
@@ -6218,7 +6217,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
       builder: (context) {
         return Container(
           height: MediaQuery.of(context).size.height * 0.7,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
           ),
@@ -6226,11 +6225,11 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
             children: [
               // Handle
               Container(
-                margin: EdgeInsets.only(top: 12.0),
+                margin: const EdgeInsets.only(top: 12.0),
                 width: 40.0,
                 height: 4.0,
                 decoration: BoxDecoration(
-                  color: Color(0xFFE0E0E0),
+                  color: const Color(0xFFE0E0E0),
                   borderRadius: BorderRadius.circular(2.0),
                 ),
               ),
@@ -6252,7 +6251,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                       children: [
                         // Breadcrumb + Title with conditional +New button
                         Padding(
-                          padding: EdgeInsets.all(16.0),
+                          padding: const EdgeInsets.all(16.0),
                           child: Column(
                             children: [
                               // Breadcrumb
@@ -6261,12 +6260,12 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                 children: [
                                   Text(
                                     mealType.name,
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       color: Color(0xFF888888),
                                       fontSize: 12.0,
                                     ),
                                   ),
-                                  Padding(
+                                  const Padding(
                                     padding: EdgeInsets.symmetric(horizontal: 6.0),
                                     child: Icon(Icons.chevron_right, size: 14.0, color: Color(0xFFAAAAAA)),
                                   ),
@@ -6280,7 +6279,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                   ),
                                 ],
                               ),
-                              SizedBox(height: 8.0),
+                              const SizedBox(height: 8.0),
                               // Title row
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -6288,7 +6287,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                   Text(
                                     'Saved Meals',
                                     style: FlutterFlowTheme.of(context).titleMedium.override(
-                                          fontFamily: 'Andika New Basic',
+                                          fontFamily: FFAppState().currentFontFamily,
                                           fontWeight: FontWeight.w600,
                                           letterSpacing: 0.0,
                                         ),
@@ -6301,12 +6300,12 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                         context.pushNamed(CreateMealComboWidget.routeName);
                                       },
                                       child: Container(
-                                        padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
+                                        padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
                                         decoration: BoxDecoration(
                                           color: FlutterFlowTheme.of(context).primary,
                                           borderRadius: BorderRadius.circular(14.0),
                                         ),
-                                        child: Row(
+                                        child: const Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
                                             Icon(Icons.add, color: Colors.white, size: 16.0),
@@ -6334,7 +6333,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                             builder: (context) {
                               if (snapshot.hasError) {
                                 debugPrint('MealCombo query error: ${snapshot.error}');
-                                return Center(
+                                return const Center(
                                   child: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
@@ -6347,7 +6346,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                               }
 
                               if (isLoading) {
-                                return Center(child: CircularProgressIndicator());
+                                return const Center(child: CircularProgressIndicator());
                               }
 
                               debugPrint('Found ${mealCombos.length} meal combos');
@@ -6357,25 +6356,25 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                   child: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      Icon(Icons.restaurant_menu, size: 48, color: Color(0xFFCCCCCC)),
-                                      SizedBox(height: 12),
-                                      Text(
+                                      const Icon(Icons.restaurant_menu, size: 48, color: Color(0xFFCCCCCC)),
+                                      const SizedBox(height: 12),
+                                      const Text(
                                         'No saved meals yet',
                                         style: TextStyle(color: Color(0xFF999999), fontSize: 16),
                                       ),
-                                      SizedBox(height: 8),
-                                      Text(
+                                      const SizedBox(height: 8),
+                                      const Text(
                                         'Create a meal combo to get started',
                                         style: TextStyle(color: Color(0xFFCCCCCC), fontSize: 13),
                                       ),
-                                      SizedBox(height: 16),
+                                      const SizedBox(height: 16),
                                       ElevatedButton.icon(
                                         onPressed: () {
                                           Navigator.pop(context);
                                           context.pushNamed(CreateMealComboWidget.routeName);
                                         },
-                                        icon: Icon(Icons.add),
-                                        label: Text('Create Meal'),
+                                        icon: const Icon(Icons.add),
+                                        label: const Text('Create Meal'),
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: FlutterFlowTheme.of(context).primary,
                                           foregroundColor: Colors.white,
@@ -6387,7 +6386,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                               }
 
                               return ListView.builder(
-                                padding: EdgeInsets.symmetric(horizontal: 16.0),
+                                padding: const EdgeInsets.symmetric(horizontal: 16.0),
                                 itemCount: mealCombos.length,
                                 itemBuilder: (context, index) {
                                   final combo = mealCombos[index];
@@ -6422,12 +6421,12 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
             await _addMealComboToPlan(combo, day, mealType, existingPlan);
           },
           child: Container(
-            margin: EdgeInsets.only(bottom: 12.0),
-            padding: EdgeInsets.all(12.0),
+            margin: const EdgeInsets.only(bottom: 12.0),
+            padding: const EdgeInsets.all(12.0),
             decoration: BoxDecoration(
-              color: Color(0xFFFAFAFA),
+              color: const Color(0xFFFAFAFA),
               borderRadius: BorderRadius.circular(14.0),
-              border: Border.all(color: Color(0xFFE0E0E0)),
+              border: Border.all(color: const Color(0xFFE0E0E0)),
             ),
             child: Row(
               children: [
@@ -6436,7 +6435,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(14.0),
-                      child: Container(
+                      child: SizedBox(
                         width: 56.0,
                         height: 56.0,
                         child: entree != null
@@ -6449,18 +6448,18 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                       right: -2,
                       top: -2,
                       child: Container(
-                        padding: EdgeInsets.all(3.0),
+                        padding: const EdgeInsets.all(3.0),
                         decoration: BoxDecoration(
-                          color: Color(0xFFFF9800),
+                          color: const Color(0xFFFF9800),
                           shape: BoxShape.circle,
                           border: Border.all(color: Colors.white, width: 2.0),
                         ),
-                        child: Icon(Icons.restaurant_menu, color: Colors.white, size: 10.0),
+                        child: const Icon(Icons.restaurant_menu, color: Colors.white, size: 10.0),
                       ),
                     ),
                   ],
                 ),
-                SizedBox(width: 12.0),
+                const SizedBox(width: 12.0),
                 // Meal info
                 Expanded(
                   child: Column(
@@ -6469,19 +6468,19 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                       Text(
                         combo.name.isNotEmpty ? combo.name : (entree?.recipeName ?? 'Meal'),
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                              fontFamily: 'Andika New Basic',
+                              fontFamily: FFAppState().currentFontFamily,
                               fontWeight: FontWeight.w600,
                               letterSpacing: 0.0,
                             ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      SizedBox(height: 2.0),
+                      const SizedBox(height: 2.0),
                       Text(
                         _buildMealComboDescription(combo, entree),
                         style: FlutterFlowTheme.of(context).bodySmall.override(
-                              fontFamily: 'Andika New Basic',
-                              color: Color(0xFF888888),
+                              fontFamily: FFAppState().currentFontFamily,
+                              color: const Color(0xFF888888),
                               fontSize: 12.0,
                               letterSpacing: 0.0,
                             ),
@@ -6490,12 +6489,12 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                       ),
                       if (combo.rating > 0)
                         Padding(
-                          padding: EdgeInsets.only(top: 4.0),
+                          padding: const EdgeInsets.only(top: 4.0),
                           child: Row(
                             children: List.generate(5, (i) {
                               return Icon(
                                 i < combo.rating ? Icons.star : Icons.star_border,
-                                color: Color(0xFFFFB800),
+                                color: const Color(0xFFFFB800),
                                 size: 14,
                               );
                             }),
