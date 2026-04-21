@@ -1,0 +1,13 @@
+{
+  "name": "momrise-admin-scripts",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Local admin scripts for provisioning MomRise creators and similar one-off tasks. Not deployed anywhere.",
+  "scripts": {
+    "approve": "node approve-creator.js",
+    "list": "node approve-creator.js"
+  },
+  "dependencies": {
+    "firebase-admin": "^12.1.0"
+  }
+}

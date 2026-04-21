@@ -36,7 +36,7 @@ workflows:
             echo "No file list available — running full build"
             exit 0
           fi
-          APP=$(echo "$CHANGED" | grep -vE '^(creator/|s/|\.well-known/|app_store_assets/|firebase/|firestore\.|functions/|.*\.(html|md|yml|yaml|ico)$|favicon\..*|_config\.yml|CNAME|QA_REPORT\.md|codemagic\.yaml)' || true)
+          APP=$(echo "$CHANGED" | grep -vE '^(creator/|s/|apply/|admin/|\.well-known/|app_store_assets/|firebase/|firestore\.|functions/|.*\.(html|md|yml|yaml|ico)$|favicon\..*|_config\.yml|CNAME|QA_REPORT\.md|codemagic\.yaml)' || true)
           if [ -z "$APP" ]; then
             echo "::: Website/backend-only commit — skipping iOS build :::"
             echo "Changed files:"
@@ -151,7 +151,7 @@ workflows:
             echo "No file list available — running full build"
             exit 0
           fi
-          APP=$(echo "$CHANGED" | grep -vE '^(creator/|s/|\.well-known/|app_store_assets/|firebase/|firestore\.|functions/|.*\.(html|md|yml|yaml|ico)$|favicon\..*|_config\.yml|CNAME|QA_REPORT\.md|codemagic\.yaml)' || true)
+          APP=$(echo "$CHANGED" | grep -vE '^(creator/|s/|apply/|admin/|\.well-known/|app_store_assets/|firebase/|firestore\.|functions/|.*\.(html|md|yml|yaml|ico)$|favicon\..*|_config\.yml|CNAME|QA_REPORT\.md|codemagic\.yaml)' || true)
           if [ -z "$APP" ]; then
             echo "::: Website/backend-only commit — skipping Android build :::"
             echo "$CHANGED" | sed 's/^/  /'

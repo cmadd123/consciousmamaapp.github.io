@@ -41,10 +41,7 @@
       display: flex; align-items: center; justify-content: space-between;
     }
     .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; }
-    .brand .logo {
-      width: 32px; height: 32px; border-radius: 8px;
-      background: linear-gradient(135deg, var(--primary), var(--accent));
-    }
+    .brand .logo { width: 32px; height: 32px; border-radius: 8px; display: block; object-fit: contain; }
     .user-chip { display: flex; align-items: center; gap: 10px; font-size: 14px; }
     .user-chip img { width: 28px; height: 28px; border-radius: 50%; }
     .user-chip .signout { color: var(--text-muted); background: none; border: none; padding: 6px; }
@@ -425,7 +422,7 @@
   <div class="app" id="app">
     <header class="topbar">
       <div class="brand">
-        <div class="logo"></div>
+        <img class="logo" src="/app_store_assets/brand/momrise-icon-square-512.png" alt="MomRise">
         MomRise · Creator
       </div>
       <div class="user-chip" id="userChip" style="display:none;">
