@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '/app_state.dart';
 import '/backend/backend.dart';
 import '/custom_code/actions/creator_service.dart';
+import 'creator_font_loader.dart';
 
 const String _kDefaultFontFamily = 'Andika New Basic';
 
@@ -55,8 +56,24 @@ class CreatorThemeNotifier extends ChangeNotifier {
   /// Push the resolved font family to FFAppState so every widget that reads
   /// FFAppState().currentFontFamily repaints with the new font. Called after
   /// any state change that could affect the active font.
+  ///
+  /// If the active creator has a `theme_font_url` (custom-uploaded font),
+  /// download + register it under the creator's `theme_font` family BEFORE
+  /// pushing to FFAppState — otherwise the name would resolve to a missing
+  /// family and text would fall back to the system font.
   void _syncFontToAppState() {
-    FFAppState().currentFontFamily = fontFamily ?? _kDefaultFontFamily;
+    final family = fontFamily;
+    final creator = _activeCreator;
+    if (family != null && family.isNotEmpty &&
+        creator != null && creator.hasThemeFontUrl() && isCreatorThemeActive) {
+      // Kick off async load; FFAppState update happens in the .then so text
+      // widgets only repaint once the glyphs are actually available.
+      CreatorFontLoader.ensureLoaded(family, creator.themeFontUrl).then((_) {
+        FFAppState().currentFontFamily = family;
+      });
+      return;
+    }
+    FFAppState().currentFontFamily = family ?? _kDefaultFontFamily;
   }
 
   /// Load the active creator from the user's profile.

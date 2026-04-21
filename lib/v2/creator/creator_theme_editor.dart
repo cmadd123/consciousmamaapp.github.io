@@ -1,11 +1,32 @@
+import 'package:file_picker/file_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/custom_code/actions/creator_service.dart';
+import 'creator_font_loader.dart';
 import 'creator_theme_notifier.dart';
+
+// Curated Google Fonts list offered in the picker. Kept short so creators
+// don't have to scroll 1,500 options; these cover warm/serif/modern/kid.
+const _kCuratedFonts = <String>[
+  'Andika New Basic', // default (sentinel — means "use app default")
+  'Playfair Display',
+  'Poppins',
+  'Nunito',
+  'Quicksand',
+  'Fredoka',
+  'Comfortaa',
+  'Montserrat',
+  'Lora',
+  'DM Serif Display',
+  'Caveat',
+  'Pacifico',
+];
 
 /// Preset theme palettes for creators to choose from
 class _ThemePreset {
@@ -60,6 +81,13 @@ class _CreatorThemeEditorWidgetState extends State<CreatorThemeEditorWidget> {
   bool _isSaving = false;
   String? _editingColor; // Which color is being edited (null = none)
 
+  // Font state. `_fontFamily` is either one of [_kCuratedFonts], or a
+  // synthetic name when the creator has uploaded a custom TTF — in the
+  // latter case `_fontUrl` points at Firebase Storage.
+  late String _fontFamily;
+  String? _fontUrl;
+  bool _isUploadingFont = false;
+
   @override
   void initState() {
     super.initState();
@@ -69,6 +97,17 @@ class _CreatorThemeEditorWidgetState extends State<CreatorThemeEditorWidget> {
     _gradEnd = parseHexColor(widget.creator.themeBackgroundGradientEnd) ?? const Color(0xFFFFE9E1);
     _iconColor = parseHexColor(widget.creator.themeIconColor) ?? const Color(0xFF52A097);
     _useGradient = _gradStart != _gradEnd;
+    _fontFamily = widget.creator.hasThemeFont() && widget.creator.themeFont.isNotEmpty
+        ? widget.creator.themeFont
+        : 'Andika New Basic';
+    _fontUrl = widget.creator.hasThemeFontUrl() ? widget.creator.themeFontUrl : null;
+
+    // Preload the custom font locally so the preview shows the right glyphs.
+    if (_fontUrl != null) {
+      CreatorFontLoader.ensureLoaded(_fontFamily, _fontUrl!).then((_) {
+        if (mounted) setState(() {});
+      });
+    }
   }
 
   String _colorToHex(Color c) => '#${c.value.toRadixString(16).substring(2).toUpperCase()}';
@@ -84,6 +123,8 @@ class _CreatorThemeEditorWidgetState extends State<CreatorThemeEditorWidget> {
         'theme_background_gradient_start': _colorToHex(_gradStart),
         'theme_background_gradient_end': _useGradient ? _colorToHex(_gradEnd) : _colorToHex(_gradStart),
         'theme_icon_color': _colorToHex(_iconColor),
+        'theme_font': _fontFamily,
+        'theme_font_url': _fontUrl,
       });
 
       // Update the theme notifier
@@ -303,6 +344,9 @@ class _CreatorThemeEditorWidgetState extends State<CreatorThemeEditorWidget> {
               const SizedBox(height: 16),
             ],
 
+            _buildFontSection(),
+            const SizedBox(height: 20),
+
             // Reset button
             Center(
               child: TextButton.icon(
@@ -503,6 +547,179 @@ class _CreatorThemeEditorWidgetState extends State<CreatorThemeEditorWidget> {
         ),
       ),
     );
+  }
+
+  /// Font picker — curated Google Fonts + "Upload custom" option.
+  Widget _buildFontSection() {
+    // True when the currently-selected family isn't in the curated list,
+    // meaning a custom TTF has been uploaded.
+    final isCustom = _fontUrl != null && !_kCuratedFonts.contains(_fontFamily);
+
+    TextStyle previewStyle() {
+      // For a Google Font in the curated list, use GoogleFonts so the glyph
+      // actually resolves in this editor preview even if the follower's
+      // font sync hasn't run yet. For custom uploaded fonts, use a regular
+      // TextStyle — CreatorFontLoader.ensureLoaded() registers the family.
+      if (!isCustom && _kCuratedFonts.contains(_fontFamily) && _fontFamily != 'Andika New Basic') {
+        try {
+          return GoogleFonts.getFont(_fontFamily, fontSize: 18, fontWeight: FontWeight.w500);
+        } catch (_) {}
+      }
+      return TextStyle(fontFamily: _fontFamily, fontSize: 18, fontWeight: FontWeight.w500);
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade50,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Font', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: Colors.grey.shade800)),
+          const SizedBox(height: 4),
+          Text(
+            'Pick a Google Font or upload your own.',
+            style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+          ),
+          const SizedBox(height: 12),
+
+          // Preview
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: Colors.grey.shade200),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('The quick brown fox', style: previewStyle()),
+                const SizedBox(height: 4),
+                Text(
+                  isCustom ? 'Custom: ${_fontFamily}' : _fontFamily,
+                  style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
+
+          // Dropdown — curated list + [Custom…] entry when one is uploaded
+          DropdownButtonFormField<String>(
+            value: isCustom ? _fontFamily : _fontFamily,
+            decoration: InputDecoration(
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              filled: true,
+              fillColor: Colors.white,
+            ),
+            isExpanded: true,
+            items: [
+              ..._kCuratedFonts.map((f) => DropdownMenuItem(value: f, child: Text(f))),
+              if (isCustom)
+                DropdownMenuItem(value: _fontFamily, child: Text('Custom: $_fontFamily')),
+            ],
+            onChanged: (value) {
+              if (value == null) return;
+              setState(() {
+                _fontFamily = value;
+                // Selecting a curated font clears any custom upload reference.
+                if (_kCuratedFonts.contains(value)) _fontUrl = null;
+              });
+            },
+          ),
+          const SizedBox(height: 10),
+
+          // Upload button
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: _isUploadingFont ? null : _uploadCustomFont,
+                  icon: _isUploadingFont
+                      ? const SizedBox(
+                          width: 16, height: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(Icons.upload_file, size: 18),
+                  label: Text(_isUploadingFont ? 'Uploading…' : 'Upload .ttf / .otf'),
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  ),
+                ),
+              ),
+              if (isCustom) ...[
+                const SizedBox(width: 8),
+                IconButton(
+                  tooltip: 'Remove custom font',
+                  icon: const Icon(Icons.delete_outline),
+                  onPressed: () => setState(() {
+                    _fontUrl = null;
+                    _fontFamily = 'Andika New Basic';
+                  }),
+                ),
+              ],
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _uploadCustomFont() async {
+    setState(() => _isUploadingFont = true);
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['ttf', 'otf'],
+        withData: true,
+      );
+      if (result == null || result.files.single.bytes == null) {
+        return;
+      }
+      final picked = result.files.single;
+      // Strip extension + invalid chars to derive a stable family name.
+      final base = picked.name.replaceAll(RegExp(r'\.(ttf|otf)$', caseSensitive: false), '');
+      final family = 'Creator_${widget.creator.reference.id}_${base.replaceAll(RegExp(r'[^A-Za-z0-9_]'), '')}';
+
+      final storageRef = FirebaseStorage.instance
+          .ref('creator_fonts/${widget.creator.reference.id}/${picked.name}');
+      await storageRef.putData(picked.bytes!);
+      final url = await storageRef.getDownloadURL();
+
+      // Load immediately so the preview reflects the new font.
+      await CreatorFontLoader.ensureLoaded(family, url);
+
+      if (!mounted) return;
+      setState(() {
+        _fontFamily = family;
+        _fontUrl = url;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Uploaded ${picked.name}. Tap Save to apply for followers.'),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        margin: const EdgeInsets.all(16),
+      ));
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Font upload failed: $e'),
+        backgroundColor: Colors.red,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        margin: const EdgeInsets.all(16),
+      ));
+    } finally {
+      if (mounted) setState(() => _isUploadingFont = false);
+    }
   }
 
   /// Color picker for the currently editing color

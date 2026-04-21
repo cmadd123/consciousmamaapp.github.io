@@ -65,10 +65,18 @@ class CreatorsRecord extends FirestoreRecord {
   String get themeAccent => _themeAccent ?? '';
   bool hasThemeAccent() => _themeAccent != null;
 
-  // "theme_font" field — font family name (e.g., "Playfair Display").
+  // "theme_font" field — font family name (e.g., "Playfair Display"),
+  // OR a synthetic family name for a custom uploaded font.
   String? _themeFont;
   String get themeFont => _themeFont ?? '';
   bool hasThemeFont() => _themeFont != null;
+
+  // "theme_font_url" field — optional Firebase Storage URL to a .ttf/.otf
+  // file. When present, followers download and register the font at
+  // runtime under the `theme_font` family name.
+  String? _themeFontUrl;
+  String get themeFontUrl => _themeFontUrl ?? '';
+  bool hasThemeFontUrl() => _themeFontUrl != null && _themeFontUrl!.isNotEmpty;
 
   // "theme_background_gradient_start" field.
   String? _themeBackgroundGradientStart;
@@ -112,6 +120,7 @@ class CreatorsRecord extends FirestoreRecord {
     _themeSecondary = snapshotData['theme_secondary'] as String?;
     _themeAccent = snapshotData['theme_accent'] as String?;
     _themeFont = snapshotData['theme_font'] as String?;
+    _themeFontUrl = snapshotData['theme_font_url'] as String?;
     _themeBackgroundGradientStart = snapshotData['theme_background_gradient_start'] as String?;
     _themeBackgroundGradientEnd = snapshotData['theme_background_gradient_end'] as String?;
     _themeIconColor = snapshotData['theme_icon_color'] as String?;
@@ -168,6 +177,7 @@ Map<String, dynamic> createCreatorsRecordData({
   String? themeSecondary,
   String? themeAccent,
   String? themeFont,
+  String? themeFontUrl,
   String? themeBackgroundGradientStart,
   String? themeBackgroundGradientEnd,
   String? themeIconColor,
@@ -187,6 +197,7 @@ Map<String, dynamic> createCreatorsRecordData({
       'theme_secondary': themeSecondary,
       'theme_accent': themeAccent,
       'theme_font': themeFont,
+      'theme_font_url': themeFontUrl,
       'theme_background_gradient_start': themeBackgroundGradientStart,
       'theme_background_gradient_end': themeBackgroundGradientEnd,
       'theme_icon_color': themeIconColor,

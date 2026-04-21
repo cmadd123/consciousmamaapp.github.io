@@ -12,5 +12,12 @@ service firebase.storage {
       allow read: if true;
       allow write: if request.auth != null;
     }
+    // Creator-uploaded custom fonts. Publicly readable so the follower
+    // runtime can download them; writable only by authed users (we
+    // further scope by creatorId subfolder via app logic).
+    match /creator_fonts/{creatorId}/{allPaths=**} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
   }
 }
