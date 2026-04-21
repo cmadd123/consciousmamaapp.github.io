@@ -499,18 +499,6 @@
               <div id="earningsChart" class="spark-chart"></div>
             </div>
 
-            <!-- Content performance: docs -->
-            <div class="analytics-card">
-              <h3>Doc engagement <span class="muted" id="docsSubtitle"></span></h3>
-              <div id="docsChart" class="bar-chart"></div>
-            </div>
-
-            <!-- Content performance: meal plans -->
-            <div class="analytics-card">
-              <h3>Meal plan imports <span class="muted" id="mealSubtitle"></span></h3>
-              <div id="mealChart" class="bar-chart"></div>
-            </div>
-
             <!-- Retention + Conversion -->
             <div class="analytics-card span-2">
               <h3>Retention & conversion</h3>
@@ -591,6 +579,10 @@
         <div class="doc-list" id="docList">
           <div class="empty"><div class="loader" style="margin: 0 auto 12px;"></div>Loading docs…</div>
         </div>
+        <div class="analytics-card" style="margin-top: 20px;">
+          <h3>Doc engagement <span class="muted" id="docsSubtitle"></span></h3>
+          <div id="docsChart" class="bar-chart"></div>
+        </div>
       </div>
 
       <!-- 5. Meal Plans sub-view -->
@@ -605,6 +597,10 @@
         </p>
         <div class="meal-plan-grid" id="mealPlanGrid">
           <div class="empty"><div class="loader" style="margin: 0 auto 12px;"></div>Loading meal plans…</div>
+        </div>
+        <div class="analytics-card" style="margin-top: 20px;">
+          <h3>Meal plan imports <span class="muted" id="mealSubtitle"></span></h3>
+          <div id="mealChart" class="bar-chart"></div>
         </div>
       </div>
 
@@ -1285,16 +1281,16 @@
           ? '<span class="up">Active this period</span>'
           : '<span class="muted">None yet</span>';
 
-        // Est. monthly earnings (MRR × 50% creator share). Assumes $4.99/mo
+        // Est. monthly earnings (MRR × 50% creator share). Assumes $6.99/mo
         // standard sub; actual per-user price can differ (annual, promo,
         // etc.) — this is a projection, not a ledger value.
-        const SUB_PRICE_CENTS = 499;
+        const SUB_PRICE_CENTS = 699;
         const REV_SHARE = 0.5;
         const projectedMonthlyCents = Math.round(subscriberCount * SUB_PRICE_CENTS * REV_SHARE);
         $('statMrr').textContent = fmtMoney(projectedMonthlyCents);
         $('statMrrSub').innerHTML = subscriberCount > 0
           ? `<span class="muted">${subscriberCount} sub${subscriberCount === 1 ? '' : 's'} × 50% share</span>`
-          : '<span class="muted">Based on $4.99/mo · 50% share</span>';
+          : '<span class="muted">Based on $6.99/mo · 50% share</span>';
 
         // Top content callouts — hide card if nothing to show.
         const topDoc = publishedDocs.slice().sort((a, b) => (b.view_count || 0) - (a.view_count || 0))[0];
