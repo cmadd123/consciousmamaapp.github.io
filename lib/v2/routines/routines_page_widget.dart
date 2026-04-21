@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
 import '/custom_code/actions/creator_service.dart';
@@ -24,10 +25,38 @@ class RoutinesPageWidget extends StatefulWidget {
 class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
   CreatorsRecord? _creatorProfile;
 
+  /// Set of creator-routine doc IDs the follower has dismissed or already
+  /// imported. Persisted in SharedPreferences so they stay hidden across
+  /// app restarts. Key is scoped by the follower's own uid so multiple
+  /// accounts on the same device don't collide.
+  Set<String> _dismissedCreatorRoutineIds = {};
+  static const _kDismissedPrefsKeyPrefix = 'creator_routines_dismissed_';
+
+  String get _dismissedPrefsKey =>
+      '$_kDismissedPrefsKeyPrefix${currentUserReference?.id ?? "anon"}';
+
   @override
   void initState() {
     super.initState();
     _loadCreatorProfile();
+    _loadDismissedIds();
+  }
+
+  Future<void> _loadDismissedIds() async {
+    final prefs = await SharedPreferences.getInstance();
+    final stored = prefs.getStringList(_dismissedPrefsKey) ?? const <String>[];
+    if (!mounted) return;
+    setState(() => _dismissedCreatorRoutineIds = stored.toSet());
+  }
+
+  Future<void> _saveDismissedIds() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList(_dismissedPrefsKey, _dismissedCreatorRoutineIds.toList());
+  }
+
+  void _dismissCreatorRoutine(String id) {
+    setState(() => _dismissedCreatorRoutineIds.add(id));
+    _saveDismissedIds();
   }
 
   Future<void> _loadCreatorProfile() async {
@@ -65,6 +94,9 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
       stepCompletions: List<bool>.filled(creatorRoutine.steps.length, false),
     );
     await RoutinesRecord.collection.add(data);
+    // Once the follower has imported it, hide it from the suggestions
+    // list — it's now in their own routines, no reason to show twice.
+    _dismissCreatorRoutine(creatorRoutine.reference.id);
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text('Added "${creatorRoutine.name}" to your routines'),
@@ -181,7 +213,9 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
                 .where('shared_with_followers', isEqualTo: true),
           ),
           builder: (context, snapshot) {
-            final shared = snapshot.data ?? [];
+            final shared = (snapshot.data ?? [])
+                .where((r) => !_dismissedCreatorRoutineIds.contains(r.reference.id))
+                .toList();
             if (shared.isEmpty) return const SizedBox.shrink();
 
             final primary = FlutterFlowTheme.of(context).primary;
@@ -274,8 +308,22 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
               label: const Text('Add'),
               style: TextButton.styleFrom(
                 foregroundColor: FlutterFlowTheme.of(context).primary,
-                padding: const EdgeInsets.symmetric(horizontal: 12),
+                padding: const EdgeInsets.symmetric(horizontal: 8),
               ),
+            ),
+            // Dismiss (× button) — hides this routine from the
+            // suggestions list without importing it. Persisted locally
+            // so it stays hidden across app restarts.
+            IconButton(
+              tooltip: 'Hide',
+              visualDensity: VisualDensity.compact,
+              padding: const EdgeInsets.all(4),
+              constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+              icon: Icon(Icons.close, size: 18, color: Colors.grey.shade500),
+              onPressed: () {
+                HapticFeedback.selectionClick();
+                _dismissCreatorRoutine(routine.reference.id);
+              },
             ),
           ],
         ),
