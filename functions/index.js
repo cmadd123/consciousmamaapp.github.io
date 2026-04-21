@@ -1,5 +1,5 @@
 // MomRise Cloud Functions - v2 (Node 22)
-const { onDocumentCreated } = require('firebase-functions/v2/firestore');
+const { onDocumentCreated, onDocumentWritten } = require('firebase-functions/v2/firestore');
 const { onCall, onRequest, HttpsError } = require('firebase-functions/v2/https');
 const { onSchedule } = require('firebase-functions/v2/scheduler');
 const { defineString, defineSecret } = require('firebase-functions/params');
@@ -1917,5 +1917,33 @@ exports.generateDailyRecurringTasks = onSchedule(
     } catch (error) {
       console.error('🔥 Error generating recurring tasks:', error);
     }
+  }
+);
+
+// ── Creator follower counter ──────────────────────────
+// The creator dashboard can't list users by active_creator_code (users docs
+// are owner-only read), so we denormalize the count onto creators/{id}.
+// Triggered on every user doc write; adjusts the old and new creator's
+// follower_count when active_creator_code changes.
+async function _adjustFollowerCount(code, delta) {
+  if (!code) return;
+  const db = getFirestore();
+  const snap = await db.collection('creators').where('code', '==', code).limit(1).get();
+  if (snap.empty) return;
+  await snap.docs[0].ref.update({
+    follower_count: FieldValue.increment(delta),
+  });
+}
+
+exports.maintainCreatorFollowerCount = onDocumentWritten(
+  'users/{uid}',
+  async (event) => {
+    const before = event.data.before.exists ? event.data.before.data().active_creator_code : null;
+    const after = event.data.after.exists ? event.data.after.data().active_creator_code : null;
+    if (before === after) return;
+    await Promise.all([
+      _adjustFollowerCount(before, -1),
+      _adjustFollowerCount(after, 1),
+    ]);
   }
 );
