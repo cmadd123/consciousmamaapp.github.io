@@ -545,6 +545,33 @@ exports.createCreatorOnboardingLink = onCall(
   }
 );
 
+// Returns a one-time Stripe Express login URL so the creator can view
+// payouts, update bank info, and download tax docs. Short-lived (~5min).
+exports.createCreatorDashboardLink = onCall(
+  { secrets: [stripeSecretKey] },
+  async (request) => {
+    if (!request.auth) {
+      throw new HttpsError('unauthenticated', 'Sign in required');
+    }
+    const uid = request.auth.uid;
+    const creatorSnap = await db.collection('creators')
+      .where('user_ref', '==', db.doc(`users/${uid}`))
+      .limit(1)
+      .get();
+    if (creatorSnap.empty) {
+      throw new HttpsError('failed-precondition', 'No creator profile for this user');
+    }
+    const creator = creatorSnap.docs[0].data();
+    if (!creator.stripe_connect_account_id) {
+      throw new HttpsError('failed-precondition', 'Connect your bank first');
+    }
+
+    const stripeClient = stripe(stripeSecretKey.value().replace(/[\s\r\n]+/g, ''));
+    const link = await stripeClient.accounts.createLoginLink(creator.stripe_connect_account_id);
+    return { url: link.url };
+  }
+);
+
 exports.getCreatorConnectStatus = onCall(
   { secrets: [stripeSecretKey] },
   async (request) => {

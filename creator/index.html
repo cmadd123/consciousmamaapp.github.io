@@ -450,8 +450,9 @@
           </div>
 
           <!-- Finance -->
-          <div class="section-head section-head-simple">
-            <h2>Finance</h2>
+          <div class="section-head">
+            <h2 style="font-size: 16px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em;">Finance</h2>
+            <button class="btn ghost" id="manageStripeBtn" hidden>Manage payouts on Stripe →</button>
           </div>
           <div class="earnings-strip" id="earningsStrip" hidden>
             <div class="stat-card accent">
@@ -541,11 +542,6 @@
                   </div>
                   <div class="retention-caption" id="conversionCaption">Followers who became subscribers</div>
                 </div>
-                <div class="retention-cell wide">
-                  <div class="retention-label">Content reach</div>
-                  <div class="retention-bars" id="reachBars"></div>
-                  <div class="retention-caption">Avg views per doc · avg imports per meal plan</div>
-                </div>
               </div>
             </div>
           </div>
@@ -595,7 +591,19 @@
         <div class="doc-list" id="docList">
           <div class="empty"><div class="loader" style="margin: 0 auto 12px;"></div>Loading docs…</div>
         </div>
-        <div class="analytics-card" style="margin-top: 20px;">
+        <div class="stat-grid stat-grid-compact" style="margin-top: 20px;">
+          <div class="stat-card">
+            <div class="stat-label">Total views</div>
+            <div class="stat-value" id="statDocTotalViews">—</div>
+            <div class="stat-sub" id="statDocTotalViewsSub"></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Avg views per doc</div>
+            <div class="stat-value" id="statDocAvgViews">—</div>
+            <div class="stat-sub" id="statDocAvgViewsSub"></div>
+          </div>
+        </div>
+        <div class="analytics-card" style="margin-top: 14px;">
           <h3>Doc engagement <span class="muted" id="docsSubtitle"></span></h3>
           <div id="docsChart" class="bar-chart"></div>
         </div>
@@ -614,7 +622,19 @@
         <div class="meal-plan-grid" id="mealPlanGrid">
           <div class="empty"><div class="loader" style="margin: 0 auto 12px;"></div>Loading meal plans…</div>
         </div>
-        <div class="analytics-card" style="margin-top: 20px;">
+        <div class="stat-grid stat-grid-compact" style="margin-top: 20px;">
+          <div class="stat-card">
+            <div class="stat-label">Total imports</div>
+            <div class="stat-value" id="statMealTotalImports">—</div>
+            <div class="stat-sub" id="statMealTotalImportsSub"></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Avg imports per plan</div>
+            <div class="stat-value" id="statMealAvgImports">—</div>
+            <div class="stat-sub" id="statMealAvgImportsSub"></div>
+          </div>
+        </div>
+        <div class="analytics-card" style="margin-top: 14px;">
           <h3>Meal plan imports <span class="muted" id="mealSubtitle"></span></h3>
           <div id="mealChart" class="bar-chart"></div>
         </div>
@@ -986,6 +1006,21 @@
       localStorage.setItem(`checklist_hidden_${creatorDoc.id}`, '1');
       $('checklistCard').hidden = true;
     });
+    $('manageStripeBtn').addEventListener('click', async () => {
+      const btn = $('manageStripeBtn');
+      const original = btn.textContent;
+      btn.disabled = true; btn.textContent = 'Opening Stripe…';
+      try {
+        const call = httpsCallable(functions, 'createCreatorDashboardLink');
+        const { data } = await call({});
+        window.open(data.url, '_blank', 'noopener');
+      } catch (e) {
+        console.error(e);
+        toast('Could not open Stripe dashboard: ' + (e.message || 'unknown error'), true);
+      } finally {
+        btn.disabled = false; btn.textContent = original;
+      }
+    });
 
     // If the user just returned from Stripe onboarding, force a fresh status pull.
     if (new URLSearchParams(location.search).has('connect')) {
@@ -1041,6 +1076,7 @@
       const onboarded = !!connectStatusCache.onboarded;
       $('earningsStrip').hidden = !onboarded;
       $('financeEmpty').hidden = onboarded;
+      $('manageStripeBtn').hidden = !onboarded;
       if (!onboarded) {
         if (connectStatusCache.connected) {
           $('financeEmpty').innerHTML = 'Stripe onboarding started but not complete. <button class="checklist-action" id="financeContinueBtn">Continue setup</button>';
@@ -1415,23 +1451,24 @@
           ? 'No followers yet'
           : `${subscriberCount} of ${followerCount} follower${followerCount === 1 ? '' : 's'} subscribed`;
 
-        // Reach breakdown
+        // Per-sub-view reach stats (moved from the old Content Reach bars)
         const avgViewsPerDoc = publishedDocs.length > 0
-          ? Math.round(totalViews / publishedDocs.length) : 0;
-        const mealImportRate = plans.length > 0
-          ? Math.round(totalImports / plans.length) : 0;
-        const maxReach = Math.max(avgViewsPerDoc, mealImportRate, 1);
-        $('reachBars').innerHTML = `
-          <div class="reach-row">
-            <span class="reach-label">Avg views per doc</span>
-            <span class="reach-val">${avgViewsPerDoc}</span>
-            <div class="reach-bar"><div class="reach-fill" style="width:${(avgViewsPerDoc / maxReach) * 100}%"></div></div>
-          </div>
-          <div class="reach-row">
-            <span class="reach-label">Avg imports per meal plan</span>
-            <span class="reach-val">${mealImportRate}</span>
-            <div class="reach-bar"><div class="reach-fill" style="width:${(mealImportRate / maxReach) * 100}%; background: var(--accent);"></div></div>
-          </div>`;
+          ? (totalViews / publishedDocs.length).toFixed(1) : '0';
+        const avgImportsPerMeal = plans.length > 0
+          ? (totalImports / plans.length).toFixed(1) : '0';
+        $('statDocTotalViews').textContent = totalViews;
+        $('statDocTotalViewsSub').innerHTML = publishedDocs.length > 0
+          ? `<span class="muted">across ${publishedDocs.length} doc${publishedDocs.length === 1 ? '' : 's'}</span>` : '';
+        $('statDocAvgViews').textContent = avgViewsPerDoc;
+        $('statDocAvgViewsSub').innerHTML = topDoc && hasTopDoc
+          ? `<span class="muted">top: ${escapeHtml((topDoc.title || 'Untitled').slice(0, 28))}${(topDoc.title || '').length > 28 ? '…' : ''}</span>` : '';
+
+        $('statMealTotalImports').textContent = totalImports;
+        $('statMealTotalImportsSub').innerHTML = plans.length > 0
+          ? `<span class="muted">across ${plans.length} plan${plans.length === 1 ? '' : 's'}</span>` : '';
+        $('statMealAvgImports').textContent = avgImportsPerMeal;
+        $('statMealAvgImportsSub').innerHTML = topMeal && hasTopMeal
+          ? `<span class="muted">top: ${escapeHtml((topMeal.title || 'Untitled').slice(0, 28))}${(topMeal.title || '').length > 28 ? '…' : ''}</span>` : '';
       } catch (e) {
         console.error(e);
         toast('Analytics load failed: ' + e.message, true);

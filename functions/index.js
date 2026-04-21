@@ -1392,6 +1392,7 @@ exports.cancelSubscription = stripeFunctions.cancelSubscription;
 exports.restorePurchases = stripeFunctions.restorePurchases;
 exports.stripeWebhook = stripeFunctions.stripeWebhook;
 exports.createCreatorOnboardingLink = stripeFunctions.createCreatorOnboardingLink;
+exports.createCreatorDashboardLink = stripeFunctions.createCreatorDashboardLink;
 exports.getCreatorConnectStatus = stripeFunctions.getCreatorConnectStatus;
 exports.runCreatorPayouts = stripeFunctions.runCreatorPayouts;
 

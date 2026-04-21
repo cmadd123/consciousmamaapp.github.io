@@ -249,6 +249,15 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // ─── Creator applications (public create, admin-only read) ────
+    // Apply page at /apply/ POSTs anonymously. Read/approve happens
+    // via Firebase console (admin SDK bypasses these rules).
+
+    match /creator_applications/{appId} {
+      allow create: if true;
+      allow read, update, delete: if false;
+    }
+
     // ─── Waitlist (public create, no reads) ───────────────────────
     // Landing page POSTs here; Cloud Function updates email_sent.
 
