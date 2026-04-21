@@ -251,6 +251,18 @@
       color: var(--text-muted); text-align: center;
     }
 
+    /* Top content callouts */
+    .top-content { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; margin: 14px 0 6px; }
+    .top-content-item {
+      background: color-mix(in srgb, var(--primary) 5%, var(--surface));
+      border: 1px solid color-mix(in srgb, var(--primary) 20%, var(--border));
+      border-radius: 10px; padding: 10px 14px; font-size: 13px; color: var(--text);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .top-content-item .top-icon { font-size: 18px; }
+    .top-content-item .top-text b { font-weight: 600; }
+    .top-content-item .top-text .muted { color: var(--text-muted); }
+
     /* Meal Plans */
     .meal-plan-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
 
@@ -467,6 +479,17 @@
               <div class="stat-value" id="statSubscribers">—</div>
               <div class="stat-sub" id="statSubscribersSub"></div>
             </div>
+            <div class="stat-card">
+              <div class="stat-label">Est. monthly earnings</div>
+              <div class="stat-value" id="statMrr">—</div>
+              <div class="stat-sub" id="statMrrSub"></div>
+            </div>
+          </div>
+
+          <!-- Top content callout -->
+          <div class="top-content" id="topContent" hidden>
+            <div class="top-content-item" id="topDocCallout"></div>
+            <div class="top-content-item" id="topMealCallout"></div>
           </div>
 
           <div class="analytics-grid">
@@ -1124,6 +1147,25 @@
       return `${sign}$${(abs / 100).toFixed(2)}`;
     }
 
+    function pickLatestDate(values) {
+      let latest = null;
+      for (const v of values) {
+        const d = v?.toDate?.() || (v instanceof Date ? v : null);
+        if (d && (!latest || d > latest)) latest = d;
+      }
+      return latest;
+    }
+
+    function sincePublished(date) {
+      const diff = Date.now() - date.getTime();
+      const days = Math.floor(diff / 86400000);
+      if (days < 1) return 'Today';
+      if (days < 7) return `${days}d ago`;
+      if (days < 30) return `${Math.floor(days / 7)}w ago`;
+      if (days < 365) return `${Math.floor(days / 30)}mo ago`;
+      return `${Math.floor(days / 365)}y ago`;
+    }
+
     function renderChecklist(ctx) {
       // ctx: { onboarded, docsPublished, mealPlansPublished, codeShared }
       const items = [
@@ -1243,21 +1285,62 @@
           ? '<span class="up">Active this period</span>'
           : '<span class="muted">None yet</span>';
 
+        // Est. monthly earnings (MRR × 50% creator share). Assumes $4.99/mo
+        // standard sub; actual per-user price can differ (annual, promo,
+        // etc.) — this is a projection, not a ledger value.
+        const SUB_PRICE_CENTS = 499;
+        const REV_SHARE = 0.5;
+        const projectedMonthlyCents = Math.round(subscriberCount * SUB_PRICE_CENTS * REV_SHARE);
+        $('statMrr').textContent = fmtMoney(projectedMonthlyCents);
+        $('statMrrSub').innerHTML = subscriberCount > 0
+          ? `<span class="muted">${subscriberCount} sub${subscriberCount === 1 ? '' : 's'} × 50% share</span>`
+          : '<span class="muted">Based on $4.99/mo · 50% share</span>';
+
+        // Top content callouts — hide card if nothing to show.
+        const topDoc = publishedDocs.slice().sort((a, b) => (b.view_count || 0) - (a.view_count || 0))[0];
+        const topMeal = plans.slice().sort((a, b) => (b.download_count || 0) - (a.download_count || 0))[0];
+        const hasTopDoc = topDoc && (topDoc.view_count || 0) > 0;
+        const hasTopMeal = topMeal && (topMeal.download_count || 0) > 0;
+        $('topContent').hidden = !hasTopDoc && !hasTopMeal;
+        $('topDocCallout').innerHTML = hasTopDoc
+          ? `<span class="top-icon">🏆</span><span class="top-text"><b>Top doc:</b> ${escapeHtml(topDoc.title || 'Untitled')} <span class="muted">· ${topDoc.view_count} view${topDoc.view_count === 1 ? '' : 's'}</span></span>`
+          : '';
+        $('topDocCallout').style.display = hasTopDoc ? '' : 'none';
+        $('topMealCallout').innerHTML = hasTopMeal
+          ? `<span class="top-icon">🥇</span><span class="top-text"><b>Top meal plan:</b> ${escapeHtml(topMeal.title || 'Untitled')} <span class="muted">· ${topMeal.download_count} import${topMeal.download_count === 1 ? '' : 's'}</span></span>`
+          : '';
+        $('topMealCallout').style.display = hasTopMeal ? '' : 'none';
+
         // Feature cards (navigation)
+        const docsLastAt = pickLatestDate(publishedDocs.map(d => d.created_at));
+        const mealsLastAt = pickLatestDate(plans.map(p => p.published_at || p.created_at));
+        const routinesLastAt = pickLatestDate(routines.map(r => r.created_at));
+
         $('featureDocsPrimary').textContent = publishedDocs.length;
-        $('featureDocsSub').textContent = totalViews > 0
-          ? `${totalViews} total view${totalViews === 1 ? '' : 's'}${draftDocs > 0 ? ` · ${draftDocs} draft${draftDocs === 1 ? '' : 's'}` : ''}`
-          : publishedDocs.length === 0 ? 'Nothing published yet' : 'No views yet';
+        $('featureDocsSub').textContent = publishedDocs.length === 0
+          ? 'Nothing published yet'
+          : [
+              totalViews > 0 ? `${totalViews} view${totalViews === 1 ? '' : 's'}` : null,
+              draftDocs > 0 ? `${draftDocs} draft${draftDocs === 1 ? '' : 's'}` : null,
+              docsLastAt ? sincePublished(docsLastAt) : null,
+            ].filter(Boolean).join(' · ');
 
         $('featureMealsPrimary').textContent = plans.length;
-        $('featureMealsSub').textContent = totalImports > 0
-          ? `${totalImports} import${totalImports === 1 ? '' : 's'}${activePlans !== plans.length ? ` · ${activePlans} active` : ''}`
-          : plans.length === 0 ? 'No plans shared yet' : 'No imports yet';
+        $('featureMealsSub').textContent = plans.length === 0
+          ? 'No plans shared yet'
+          : [
+              totalImports > 0 ? `${totalImports} import${totalImports === 1 ? '' : 's'}` : null,
+              activePlans !== plans.length ? `${activePlans} active` : null,
+              mealsLastAt ? sincePublished(mealsLastAt) : null,
+            ].filter(Boolean).join(' · ');
 
         $('featureRoutinesPrimary').textContent = routines.length;
-        $('featureRoutinesSub').textContent = routines.length > 0
-          ? `Shared with followers`
-          : 'Toggle sharing in the app';
+        $('featureRoutinesSub').textContent = routines.length === 0
+          ? 'Toggle sharing in the app'
+          : [
+              'Shared with followers',
+              routinesLastAt ? sincePublished(routinesLastAt) : null,
+            ].filter(Boolean).join(' · ');
 
         // Checklist
         renderChecklist({
