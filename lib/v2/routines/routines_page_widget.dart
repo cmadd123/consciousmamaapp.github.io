@@ -25,38 +25,50 @@ class RoutinesPageWidget extends StatefulWidget {
 class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
   CreatorsRecord? _creatorProfile;
 
-  /// Set of creator-routine doc IDs the follower has dismissed or already
-  /// imported. Persisted in SharedPreferences so they stay hidden across
-  /// app restarts. Key is scoped by the follower's own uid so multiple
-  /// accounts on the same device don't collide.
-  Set<String> _dismissedCreatorRoutineIds = {};
-  static const _kDismissedPrefsKeyPrefix = 'creator_routines_dismissed_';
-
-  String get _dismissedPrefsKey =>
-      '$_kDismissedPrefsKeyPrefix${currentUserReference?.id ?? "anon"}';
+  /// Whether the follower has collapsed the "From {Creator}" section.
+  /// Default expanded; collapse state is persisted per-creator (keyed by
+  /// follower-uid:creator-code) so expanding/collapsing one creator
+  /// doesn't affect another and the preference survives app restarts.
+  bool _creatorSectionCollapsed = false;
+  String? _loadedCollapseKey;
+  static const _kCollapsePrefsKey = 'creator_routines_collapsed';
 
   @override
   void initState() {
     super.initState();
     _loadCreatorProfile();
-    _loadDismissedIds();
   }
 
-  Future<void> _loadDismissedIds() async {
+  String _collapseKey(CreatorsRecord creator) =>
+      '${currentUserReference?.id ?? 'anon'}:${creator.code}';
+
+  Future<void> _loadCollapsedStateFor(CreatorsRecord creator) async {
+    final key = _collapseKey(creator);
+    if (_loadedCollapseKey == key) return;
     final prefs = await SharedPreferences.getInstance();
-    final stored = prefs.getStringList(_dismissedPrefsKey) ?? const <String>[];
+    final collapsed = prefs.getStringList(_kCollapsePrefsKey) ?? const <String>[];
     if (!mounted) return;
-    setState(() => _dismissedCreatorRoutineIds = stored.toSet());
+    setState(() {
+      _loadedCollapseKey = key;
+      // Default to EXPANDED for the first encounter with this creator.
+      // Only collapse if the follower has explicitly collapsed before.
+      _creatorSectionCollapsed = collapsed.contains(key);
+    });
   }
 
-  Future<void> _saveDismissedIds() async {
+  Future<void> _toggleCollapsed(CreatorsRecord creator) async {
+    final key = _collapseKey(creator);
+    final newValue = !_creatorSectionCollapsed;
+    setState(() => _creatorSectionCollapsed = newValue);
+    HapticFeedback.selectionClick();
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setStringList(_dismissedPrefsKey, _dismissedCreatorRoutineIds.toList());
-  }
-
-  void _dismissCreatorRoutine(String id) {
-    setState(() => _dismissedCreatorRoutineIds.add(id));
-    _saveDismissedIds();
+    final current = (prefs.getStringList(_kCollapsePrefsKey) ?? const <String>[]).toSet();
+    if (newValue) {
+      current.add(key);
+    } else {
+      current.remove(key);
+    }
+    await prefs.setStringList(_kCollapsePrefsKey, current.toList());
   }
 
   Future<void> _loadCreatorProfile() async {
@@ -94,9 +106,6 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
       stepCompletions: List<bool>.filled(creatorRoutine.steps.length, false),
     );
     await RoutinesRecord.collection.add(data);
-    // Once the follower has imported it, hide it from the suggestions
-    // list — it's now in their own routines, no reason to show twice.
-    _dismissCreatorRoutine(creatorRoutine.reference.id);
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text('Added "${creatorRoutine.name}" to your routines'),
@@ -213,10 +222,13 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
                 .where('shared_with_followers', isEqualTo: true),
           ),
           builder: (context, snapshot) {
-            final shared = (snapshot.data ?? [])
-                .where((r) => !_dismissedCreatorRoutineIds.contains(r.reference.id))
-                .toList();
+            final shared = snapshot.data ?? [];
             if (shared.isEmpty) return const SizedBox.shrink();
+
+            // Load persisted collapsed state the first time we see this
+            // creator. Default = expanded; once the follower collapses it
+            // once, it stays collapsed across restarts.
+            _loadCollapsedStateFor(creator);
 
             final primary = FlutterFlowTheme.of(context).primary;
             return Padding(
@@ -224,24 +236,61 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      Icon(Icons.people, color: primary, size: 18),
-                      const SizedBox(width: 8),
-                      Text(
-                        'From ${creator.name}',
-                        style: FlutterFlowTheme.of(context).bodyMedium.override(
-                          fontFamily: FFAppState().currentFontFamily,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: primary,
-                          letterSpacing: 0,
-                        ),
+                  // Tappable header — toggles collapse on the whole section.
+                  InkWell(
+                    onTap: () => _toggleCollapsed(creator),
+                    borderRadius: BorderRadius.circular(8),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      child: Row(
+                        children: [
+                          Icon(Icons.people, color: primary, size: 18),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              'From ${creator.name}',
+                              style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                fontFamily: FFAppState().currentFontFamily,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: primary,
+                                letterSpacing: 0,
+                              ),
+                            ),
+                          ),
+                          Text(
+                            '${shared.length}',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: primary.withOpacity(0.7),
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          AnimatedRotation(
+                            turns: _creatorSectionCollapsed ? 0 : 0.5,
+                            duration: const Duration(milliseconds: 180),
+                            child: Icon(Icons.expand_more, color: primary, size: 20),
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
-                  const SizedBox(height: 10),
-                  ...shared.map((r) => _buildSharedRoutineCard(r, creator)),
+                  AnimatedCrossFade(
+                    firstChild: const SizedBox(width: double.infinity),
+                    secondChild: Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: Column(
+                        children: [
+                          for (final r in shared) _buildSharedRoutineCard(r, creator),
+                        ],
+                      ),
+                    ),
+                    crossFadeState: _creatorSectionCollapsed
+                        ? CrossFadeState.showFirst
+                        : CrossFadeState.showSecond,
+                    duration: const Duration(milliseconds: 200),
+                  ),
                 ],
               ),
             );
