@@ -76,6 +76,14 @@
         { "fieldPath": "charge_id", "order": "ASCENDING" },
         { "fieldPath": "kind", "order": "ASCENDING" }
       ]
+    },
+    {
+      "collectionGroup": "routines",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "user_ref", "order": "ASCENDING" },
+        { "fieldPath": "shared_with_followers", "order": "ASCENDING" }
+      ]
     }
   ],
   "fieldOverrides": []

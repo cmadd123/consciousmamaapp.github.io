@@ -188,19 +188,41 @@
     .stat-sub .down { color: var(--danger); font-weight: 600; }
     .stat-card.accent { background: linear-gradient(135deg, color-mix(in srgb, var(--primary) 12%, var(--surface)), var(--surface)); border-color: color-mix(in srgb, var(--primary) 30%, var(--border)); }
 
-    /* Payouts card */
-    .payouts-card {
-      background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
-      padding: 20px 22px; margin-bottom: 24px;
+    /* Getting Started checklist */
+    .checklist-card {
+      background: linear-gradient(135deg, color-mix(in srgb, var(--primary) 8%, var(--surface)), var(--surface));
+      border: 1px solid color-mix(in srgb, var(--primary) 24%, var(--border));
+      border-radius: 14px; padding: 18px 20px 20px; margin-bottom: 20px;
     }
-    .payouts-state { display: flex; flex-direction: column; gap: 18px; }
-    .payouts-headline { display: flex; gap: 16px; align-items: flex-start; }
-    .payouts-headline .payouts-icon { font-size: 32px; line-height: 1; }
-    .payouts-headline h3 { margin: 0 0 4px; font-size: 17px; }
-    .payouts-headline p { margin: 0; color: var(--text-muted); font-size: 14px; line-height: 1.5; }
-    .payouts-actions { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
-    .earnings-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
-    .payout-footer { font-size: 12px; text-align: center; padding-top: 4px; }
+    .checklist-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .checklist-head h3 { margin: 0; font-size: 16px; }
+    .checklist-close { background: none; border: none; color: var(--text-muted); font-size: 22px; line-height: 1; padding: 0 4px; }
+    .checklist-close:hover { color: var(--text); }
+    .checklist-progress { height: 6px; background: color-mix(in srgb, var(--primary) 12%, var(--border)); border-radius: 999px; overflow: hidden; margin-bottom: 14px; }
+    .checklist-progress-fill { height: 100%; background: var(--primary); border-radius: inherit; transition: width 0.4s ease; }
+    .checklist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+    .checklist li { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 8px; font-size: 14px; }
+    .checklist li.done { color: var(--text-muted); text-decoration: line-through; text-decoration-color: color-mix(in srgb, var(--text-muted) 40%, transparent); }
+    .checklist li.active { background: color-mix(in srgb, var(--primary) 8%, var(--surface)); }
+    .checklist-mark { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--border); flex-shrink: 0; display: grid; place-items: center; font-size: 11px; color: var(--success); background: var(--surface); }
+    .checklist li.done .checklist-mark { border-color: var(--success); background: var(--success); color: white; }
+    .checklist li.active .checklist-mark { border-color: var(--primary); }
+    .checklist-body { flex: 1; }
+    .checklist-body .checklist-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+    .checklist-action { background: var(--primary); color: white; border: none; padding: 6px 12px; border-radius: 8px; font-size: 13px; font-weight: 600; white-space: nowrap; }
+    .checklist-action:hover { background: var(--primary-dark); }
+    .checklist-action.ghost { background: transparent; color: var(--primary); border: 1px solid var(--primary); }
+
+    /* Earnings strip */
+    .earnings-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 20px; }
+
+    /* Earnings over-time spark chart */
+    .spark-chart { display: flex; align-items: flex-end; gap: 6px; height: 140px; padding: 8px 0 4px; }
+    .spark-bar { flex: 1; background: linear-gradient(180deg, var(--primary), color-mix(in srgb, var(--primary) 60%, var(--surface))); border-radius: 6px 6px 0 0; position: relative; min-height: 4px; transition: height 0.6s ease; display: flex; align-items: flex-start; justify-content: center; }
+    .spark-bar .spark-value { font-size: 11px; font-weight: 600; color: var(--primary); margin-top: -18px; opacity: 0; transition: opacity 0.15s; }
+    .spark-bar:hover .spark-value { opacity: 1; }
+    .spark-labels { display: flex; gap: 6px; font-size: 11px; color: var(--text-muted); margin-top: 6px; }
+    .spark-labels span { flex: 1; text-align: center; }
 
     /* Meal Plans */
     .meal-plan-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
@@ -266,6 +288,9 @@
     .ring-svg { transform: rotate(-90deg); width: 100%; height: 100%; }
     .ring-bg { fill: none; stroke: #F3F4F6; stroke-width: 3; }
     .ring-fg { fill: none; stroke: var(--primary); stroke-width: 3; stroke-linecap: round; transition: stroke-dasharray 600ms ease; }
+    .ring-fg.ring-accent { stroke: var(--accent); }
+    .retention-cell.wide { grid-column: span 2; }
+    @media (max-width: 720px) { .retention-cell.wide { grid-column: auto; } }
     .ring-label { position: absolute; inset: 0; display: grid; place-items: center; font-size: 28px; font-weight: 700; color: var(--text); }
 
     .retention-bars { width: 100%; display: flex; flex-direction: column; gap: 12px; margin-top: 4px; }
@@ -379,58 +404,38 @@
             <button class="btn ghost" id="refreshAnalyticsBtn">↻ Refresh</button>
           </div>
 
-          <!-- Payouts -->
-          <div class="payouts-card" id="payoutsCard">
-            <div id="payoutsLoading" class="payouts-state">
-              <div class="loader" style="margin: 0 auto;"></div>
+          <!-- Getting Started checklist (auto-hides once all steps complete) -->
+          <div class="checklist-card" id="checklistCard" hidden>
+            <div class="checklist-head">
+              <h3>Get your creator page off the ground</h3>
+              <button class="checklist-close" id="checklistHideBtn" title="Hide">×</button>
             </div>
-            <div id="payoutsUnconnected" class="payouts-state" hidden>
-              <div class="payouts-headline">
-                <span class="payouts-icon">💳</span>
-                <div>
-                  <h3>Get paid for your content</h3>
-                  <p>Earn 50% of every subscription from your followers. Connect your bank through Stripe to start tracking earnings.</p>
-                </div>
-              </div>
-              <div class="payouts-actions">
-                <button class="btn" id="connectBtn">Connect your bank</button>
-                <span class="muted">Takes 2–3 minutes · Stripe Express</span>
-              </div>
+            <div class="checklist-progress">
+              <div class="checklist-progress-fill" id="checklistFill"></div>
             </div>
-            <div id="payoutsIncomplete" class="payouts-state" hidden>
-              <div class="payouts-headline">
-                <span class="payouts-icon">⚠️</span>
-                <div>
-                  <h3>Finish connecting your bank</h3>
-                  <p>Stripe needs a few more details before we can route earnings to you.</p>
-                </div>
-              </div>
-              <div class="payouts-actions">
-                <button class="btn" id="continueConnectBtn">Continue setup</button>
-              </div>
+            <ul class="checklist" id="checklistItems"></ul>
+          </div>
+
+          <!-- Earnings strip (only when Connect onboarded) -->
+          <div class="earnings-strip" id="earningsStrip" hidden>
+            <div class="stat-card accent">
+              <div class="stat-label">Pending payout</div>
+              <div class="stat-value" id="statPending">$0.00</div>
+              <div class="stat-sub" id="statPendingSub"></div>
             </div>
-            <div id="payoutsOnboarded" class="payouts-state" hidden>
-              <div class="earnings-grid">
-                <div class="stat-card accent">
-                  <div class="stat-label">Pending payout</div>
-                  <div class="stat-value" id="statPending">$0.00</div>
-                  <div class="stat-sub" id="statPendingSub"></div>
-                </div>
-                <div class="stat-card">
-                  <div class="stat-label">Lifetime earnings</div>
-                  <div class="stat-value" id="statLifetime">$0.00</div>
-                  <div class="stat-sub" id="statLifetimeSub"></div>
-                </div>
-                <div class="stat-card">
-                  <div class="stat-label">Last payout</div>
-                  <div class="stat-value" id="statLastPayout">—</div>
-                  <div class="stat-sub" id="statLastPayoutSub"></div>
-                </div>
-              </div>
-              <div class="payout-footer muted">Payouts run on the 1st of each month. Minimum $25 — amounts below roll to next month.</div>
+            <div class="stat-card">
+              <div class="stat-label">Lifetime earnings</div>
+              <div class="stat-value" id="statLifetime">$0.00</div>
+              <div class="stat-sub" id="statLifetimeSub"></div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Last payout</div>
+              <div class="stat-value" id="statLastPayout">—</div>
+              <div class="stat-sub" id="statLastPayoutSub"></div>
             </div>
           </div>
 
+          <!-- Primary stats -->
           <div class="stat-grid">
             <div class="stat-card">
               <div class="stat-label">Followers</div>
@@ -438,41 +443,52 @@
               <div class="stat-sub" id="statFollowersSub"></div>
             </div>
             <div class="stat-card">
-              <div class="stat-label">Published docs</div>
+              <div class="stat-label">Subscribers</div>
+              <div class="stat-value" id="statSubscribers">—</div>
+              <div class="stat-sub" id="statSubscribersSub"></div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Docs</div>
               <div class="stat-value" id="statDocs">—</div>
               <div class="stat-sub" id="statDocsSub"></div>
             </div>
             <div class="stat-card">
-              <div class="stat-label">Total doc views</div>
-              <div class="stat-value" id="statViews">—</div>
-              <div class="stat-sub" id="statViewsSub"></div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-label">Meal plans published</div>
+              <div class="stat-label">Meal plans</div>
               <div class="stat-value" id="statMealPlans">—</div>
               <div class="stat-sub" id="statMealPlansSub"></div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Routines</div>
+              <div class="stat-value" id="statRoutines">—</div>
+              <div class="stat-sub" id="statRoutinesSub"></div>
             </div>
           </div>
 
           <div class="analytics-grid">
-            <!-- Per-doc engagement -->
+            <!-- Earnings over time -->
+            <div class="analytics-card span-2" id="earningsChartCard" hidden>
+              <h3>Earnings over time <span class="muted" id="earningsChartSubtitle"></span></h3>
+              <div id="earningsChart" class="spark-chart"></div>
+            </div>
+
+            <!-- Content performance: docs -->
             <div class="analytics-card">
               <h3>Doc engagement <span class="muted" id="docsSubtitle"></span></h3>
               <div id="docsChart" class="bar-chart"></div>
             </div>
 
-            <!-- Meal plan import rate -->
+            <!-- Content performance: meal plans -->
             <div class="analytics-card">
               <h3>Meal plan imports <span class="muted" id="mealSubtitle"></span></h3>
               <div id="mealChart" class="bar-chart"></div>
             </div>
 
-            <!-- Retention -->
+            <!-- Retention + Conversion -->
             <div class="analytics-card span-2">
-              <h3>Retention snapshot</h3>
+              <h3>Retention & conversion</h3>
               <div class="retention-row" id="retentionRow">
                 <div class="retention-cell">
-                  <div class="retention-label">Active followers</div>
+                  <div class="retention-label">Content engagement</div>
                   <div class="retention-ring">
                     <svg viewBox="0 0 36 36" class="ring-svg">
                       <path class="ring-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
@@ -480,12 +496,23 @@
                     </svg>
                     <div class="ring-label" id="ringRetentionLabel">—</div>
                   </div>
-                  <div class="retention-caption" id="retentionCaption">Followers who've opened any content</div>
+                  <div class="retention-caption" id="retentionCaption">Views + imports per follower</div>
                 </div>
                 <div class="retention-cell">
+                  <div class="retention-label">Follower → subscriber</div>
+                  <div class="retention-ring">
+                    <svg viewBox="0 0 36 36" class="ring-svg">
+                      <path class="ring-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                      <path class="ring-fg ring-accent" id="ringConversion" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                    </svg>
+                    <div class="ring-label" id="ringConversionLabel">—</div>
+                  </div>
+                  <div class="retention-caption" id="conversionCaption">Followers who became subscribers</div>
+                </div>
+                <div class="retention-cell wide">
                   <div class="retention-label">Content reach</div>
                   <div class="retention-bars" id="reachBars"></div>
-                  <div class="retention-caption">Avg views per published doc × meal plan imports</div>
+                  <div class="retention-caption">Avg views per doc · avg imports per meal plan</div>
                 </div>
               </div>
             </div>
@@ -814,18 +841,41 @@
       loadAnalytics();
       loadPayouts();
     });
-    $('connectBtn').addEventListener('click', startConnectOnboarding);
-    $('continueConnectBtn').addEventListener('click', startConnectOnboarding);
+    $('checklistHideBtn').addEventListener('click', () => {
+      localStorage.setItem(`checklist_hidden_${creatorDoc.id}`, '1');
+      $('checklistCard').hidden = true;
+    });
 
     // If the user just returned from Stripe onboarding, force a fresh status pull.
     if (new URLSearchParams(location.search).has('connect')) {
       history.replaceState({}, '', location.pathname);
     }
 
-    async function startConnectOnboarding() {
-      const btn = $('connectBtn');
-      const btn2 = $('continueConnectBtn');
-      [btn, btn2].forEach(b => { if (b) { b.disabled = true; b.textContent = 'Opening Stripe…'; } });
+    // Creator theme — apply primary color from creator doc if set. Scoped to
+    // accents (CSS vars) only; surfaces, text, and borders stay neutral for
+    // readability.
+    applyCreatorTheme();
+    function applyCreatorTheme() {
+      const themeColor = creatorDoc.data.theme_primary_color;
+      if (!themeColor || typeof themeColor !== 'string') return;
+      const hex = themeColor.startsWith('#') ? themeColor : `#${themeColor}`;
+      if (!/^#[0-9A-Fa-f]{6}$/.test(hex)) return;
+      document.documentElement.style.setProperty('--primary', hex);
+      document.documentElement.style.setProperty('--primary-dark', shadeHex(hex, -18));
+    }
+    function shadeHex(hex, pct) {
+      const n = parseInt(hex.slice(1), 16);
+      const r = Math.max(0, Math.min(255, (n >> 16) + Math.round(255 * pct / 100)));
+      const g = Math.max(0, Math.min(255, ((n >> 8) & 0xff) + Math.round(255 * pct / 100)));
+      const b = Math.max(0, Math.min(255, (n & 0xff) + Math.round(255 * pct / 100)));
+      return `#${((r << 16) | (g << 8) | b).toString(16).padStart(6, '0')}`;
+    }
+
+    // --- Payouts: Connect onboarding drives the checklist state ---
+    let connectStatusCache = null;
+    async function startConnectOnboarding(triggerBtn) {
+      const original = triggerBtn?.textContent;
+      if (triggerBtn) { triggerBtn.disabled = true; triggerBtn.textContent = 'Opening Stripe…'; }
       try {
         const call = httpsCallable(functions, 'createCreatorOnboardingLink');
         const { data } = await call({});
@@ -833,41 +883,23 @@
       } catch (e) {
         console.error(e);
         toast('Could not start Stripe onboarding: ' + (e.message || 'unknown error'), true);
-        [btn, btn2].forEach(b => { if (b) { b.disabled = false; } });
-        if (btn) btn.textContent = 'Connect your bank';
-        if (btn2) btn2.textContent = 'Continue setup';
+        if (triggerBtn) { triggerBtn.disabled = false; triggerBtn.textContent = original; }
       }
-    }
-
-    function showPayoutState(state) {
-      ['payoutsLoading', 'payoutsUnconnected', 'payoutsIncomplete', 'payoutsOnboarded']
-        .forEach(id => { $(id).hidden = (id !== state); });
     }
 
     async function loadPayouts() {
-      showPayoutState('payoutsLoading');
-      let status;
       try {
         const call = httpsCallable(functions, 'getCreatorConnectStatus');
         const { data } = await call({});
-        status = data;
+        connectStatusCache = data;
       } catch (e) {
-        console.error('Connect status failed:', e);
-        showPayoutState('payoutsUnconnected');
-        return;
+        console.warn('Connect status failed:', e);
+        connectStatusCache = { connected: false };
       }
 
-      if (!status.connected) {
-        showPayoutState('payoutsUnconnected');
-        return;
-      }
-      if (!status.onboarded) {
-        showPayoutState('payoutsIncomplete');
-        return;
-      }
-
-      showPayoutState('payoutsOnboarded');
-      await loadEarnings();
+      const onboarded = !!connectStatusCache.onboarded;
+      $('earningsStrip').hidden = !onboarded;
+      if (onboarded) await loadEarnings();
     }
 
     async function loadEarnings() {
@@ -877,12 +909,17 @@
           where('creator_ref', '==', creatorDoc.ref),
         ));
         let pending = 0, lifetime = 0;
+        const byMonth = new Map();
         for (const d of snap.docs) {
           const e = d.data();
           if (e.payout_status === 'pending') pending += e.creator_cents;
-          if (e.kind === 'earning') lifetime += e.creator_cents;
-          if (e.kind === 'clawback') lifetime += e.creator_cents; // negative
+          if (e.kind === 'earning' || e.kind === 'clawback') lifetime += e.creator_cents;
+
+          const ts = e.created_at?.toDate?.() || new Date();
+          const key = `${ts.getFullYear()}-${String(ts.getMonth() + 1).padStart(2, '0')}`;
+          byMonth.set(key, (byMonth.get(key) || 0) + (e.creator_cents || 0));
         }
+
         $('statPending').textContent = fmtMoney(pending);
         $('statLifetime').textContent = fmtMoney(lifetime);
 
@@ -897,16 +934,52 @@
         const lastPayoutAt = creatorDoc.data.last_payout_at;
         if (lastPayoutCents > 0) {
           $('statLastPayout').textContent = fmtMoney(lastPayoutCents);
-          $('statLastPayoutSub').textContent = lastPayoutAt && lastPayoutAt.toDate
+          $('statLastPayoutSub').textContent = lastPayoutAt?.toDate
             ? lastPayoutAt.toDate().toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })
             : '';
         } else {
           $('statLastPayout').textContent = '—';
           $('statLastPayoutSub').textContent = 'No payouts yet';
         }
+
+        renderEarningsChart(byMonth);
       } catch (e) {
         console.warn('Earnings load failed:', e.message);
       }
+    }
+
+    function renderEarningsChart(byMonth) {
+      // Last 6 months, including current, in order.
+      const now = new Date();
+      const months = [];
+      for (let i = 5; i >= 0; i--) {
+        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+        months.push({ key, label: d.toLocaleDateString(undefined, { month: 'short' }), cents: byMonth.get(key) || 0 });
+      }
+      const hasAny = months.some(m => m.cents > 0);
+      $('earningsChartCard').hidden = !hasAny;
+      if (!hasAny) return;
+
+      const max = Math.max(1, ...months.map(m => Math.abs(m.cents)));
+      const chart = $('earningsChart');
+      chart.innerHTML = months.map(m => {
+        const h = Math.max(2, Math.round((Math.abs(m.cents) / max) * 100));
+        return `<div class="spark-bar" style="height: ${h}%;" title="${m.label}: ${fmtMoney(m.cents)}"><span class="spark-value">${fmtMoney(m.cents)}</span></div>`;
+      }).join('');
+
+      // Labels row (month names below bars)
+      let labelsRow = document.getElementById('sparkLabels');
+      if (!labelsRow) {
+        labelsRow = document.createElement('div');
+        labelsRow.id = 'sparkLabels';
+        labelsRow.className = 'spark-labels';
+        chart.parentElement.appendChild(labelsRow);
+      }
+      labelsRow.innerHTML = months.map(m => `<span>${m.label}</span>`).join('');
+
+      const total6mo = months.reduce((s, m) => s + m.cents, 0);
+      $('earningsChartSubtitle').textContent = `${fmtMoney(total6mo)} in last 6 mo`;
     }
 
     function fmtMoney(cents) {
@@ -915,23 +988,106 @@
       return `${sign}$${(abs / 100).toFixed(2)}`;
     }
 
+    function renderChecklist(ctx) {
+      // ctx: { onboarded, docsPublished, mealPlansPublished, codeShared }
+      const items = [
+        { id: 'account', label: 'Create your creator account', done: true },
+        {
+          id: 'connect',
+          label: 'Connect your bank for payouts',
+          sub: connectStatusCache?.connected && !ctx.onboarded
+            ? 'Finish the Stripe setup to start earning' : 'Stripe Express · 2–3 minutes',
+          done: ctx.onboarded,
+          action: !ctx.onboarded ? {
+            label: connectStatusCache?.connected ? 'Continue setup' : 'Connect',
+            handler: (btn) => startConnectOnboarding(btn),
+          } : null,
+        },
+        {
+          id: 'doc',
+          label: 'Publish your first helpful doc',
+          sub: ctx.docsPublished > 0 ? `${ctx.docsPublished} published` : 'Share a PDF or write-up followers can read',
+          done: ctx.docsPublished > 0,
+          action: !ctx.docsPublished ? { label: 'Go to Docs', handler: () => document.querySelector('.tab[data-tab="docs"]').click() } : null,
+        },
+        {
+          id: 'meal',
+          label: 'Publish your first meal plan',
+          sub: ctx.mealPlansPublished > 0 ? `${ctx.mealPlansPublished} published` : 'Publish from the MomRise app',
+          done: ctx.mealPlansPublished > 0,
+        },
+        {
+          id: 'share',
+          label: 'Share your creator code',
+          sub: `Your code: ${creatorDoc.data.code || 'not set'}`,
+          done: !!localStorage.getItem(`checklist_share_done_${creatorDoc.id}`),
+          action: !localStorage.getItem(`checklist_share_done_${creatorDoc.id}`) ? {
+            label: 'Mark done',
+            handler: () => {
+              localStorage.setItem(`checklist_share_done_${creatorDoc.id}`, '1');
+              renderChecklist(ctx);
+            },
+          } : null,
+        },
+      ];
+
+      const doneCount = items.filter(i => i.done).length;
+      const hidden = localStorage.getItem(`checklist_hidden_${creatorDoc.id}`) === '1';
+      const allDone = doneCount === items.length;
+      $('checklistCard').hidden = hidden || allDone;
+      if (hidden || allDone) return;
+
+      $('checklistFill').style.width = `${(doneCount / items.length) * 100}%`;
+      $('checklistItems').innerHTML = items.map(i => `
+        <li class="${i.done ? 'done' : (!items.slice(0, items.indexOf(i)).every(prev => prev.done) ? '' : 'active')}" data-id="${i.id}">
+          <span class="checklist-mark">${i.done ? '✓' : ''}</span>
+          <div class="checklist-body">
+            <div>${escapeHtml(i.label)}</div>
+            ${i.sub ? `<div class="checklist-sub">${escapeHtml(i.sub)}</div>` : ''}
+          </div>
+          ${i.action ? `<button class="checklist-action" data-action="${i.id}">${escapeHtml(i.action.label)}</button>` : ''}
+        </li>
+      `).join('');
+
+      $('checklistItems').querySelectorAll('.checklist-action').forEach(btn => {
+        const id = btn.dataset.action;
+        const item = items.find(i => i.id === id);
+        if (item?.action) btn.addEventListener('click', () => item.action.handler(btn));
+      });
+    }
+
     async function loadAnalytics() {
       try {
-        const [docsSnap, mealPlans] = await Promise.all([
+        // Run all in parallel. Routines: query separately because rules require
+        // either ownership or shared_with_followers; we filter to the creator's
+        // own routines that are shared.
+        const routinesP = (async () => {
+          try {
+            return await getDocs(query(
+              collection(db, 'routines'),
+              where('user_ref', '==', creatorDoc.data.user_ref),
+              where('shared_with_followers', '==', true),
+            ));
+          } catch (e) {
+            console.warn('Routines query failed:', e.message);
+            return { docs: [] };
+          }
+        })();
+
+        const [docsSnap, mealPlans, routinesSnap] = await Promise.all([
           getDocs(query(collection(db, 'app_content'), where('creator_ref', '==', creatorDoc.ref))),
           getDocs(query(collection(db, 'creator_content'),
             where('creator_code', '==', creatorDoc.data.code),
             where('type', '==', 'meal_plan'))),
+          routinesP,
         ]);
 
-        // Follower count: the users collection is owner-only, so a raw query denies.
-        // Read the denormalized counter on the creator doc instead. A Cloud Function
-        // maintains this on user active_creator_code changes; 0 is the right default
-        // until that function lands.
         const followerCount = creatorDoc.data.follower_count || 0;
+        const subscriberCount = creatorDoc.data.subscriber_count || 0;
 
         const docs = docsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
         const plans = mealPlans.docs.map(d => ({ id: d.id, ...d.data() }));
+        const routines = routinesSnap.docs.map(d => ({ id: d.id, ...d.data() }));
 
         const publishedDocs = docs.filter(d => d.is_published === true);
         const totalViews = docs.reduce((s, d) => s + (d.view_count || 0), 0);
@@ -939,20 +1095,36 @@
 
         // Stat cards
         $('statFollowers').textContent = followerCount;
+        $('statSubscribers').textContent = subscriberCount;
         $('statDocs').textContent = publishedDocs.length;
-        $('statViews').textContent = totalViews;
         $('statMealPlans').textContent = plans.length;
+        $('statRoutines').textContent = routines.length;
 
         // Sub-labels
         const draftDocs = docs.length - publishedDocs.length;
         $('statDocsSub').innerHTML = draftDocs > 0
-          ? `<span class="muted">${draftDocs} draft${draftDocs === 1 ? '' : 's'}</span>` : '';
-        $('statViewsSub').innerHTML = publishedDocs.length > 0
-          ? `<span>${(totalViews / publishedDocs.length).toFixed(1)} per doc avg</span>` : '';
+          ? `<span class="muted">${draftDocs} draft${draftDocs === 1 ? '' : 's'}</span>`
+          : totalViews > 0 ? `<span>${totalViews} total views</span>` : '';
         const activePlans = plans.filter(p => p.is_active).length;
-        $('statMealPlansSub').innerHTML = activePlans > 0
-          ? `<span>${activePlans} active</span>` : '';
-        $('statFollowersSub').innerHTML = '';
+        $('statMealPlansSub').innerHTML = activePlans !== plans.length && plans.length > 0
+          ? `<span>${activePlans} active</span>`
+          : totalImports > 0 ? `<span>${totalImports} imports</span>` : '';
+        $('statFollowersSub').innerHTML = followerCount > 0 && subscriberCount > 0
+          ? `<span class="muted">${Math.round((subscriberCount / followerCount) * 100)}% subscribed</span>`
+          : '';
+        $('statSubscribersSub').innerHTML = subscriberCount > 0
+          ? '<span class="up">Active this period</span>'
+          : '<span class="muted">None yet</span>';
+        $('statRoutinesSub').innerHTML = routines.length > 0
+          ? '<span class="muted">Shared with followers</span>'
+          : '<span class="muted">None shared yet</span>';
+
+        // Checklist
+        renderChecklist({
+          onboarded: connectStatusCache?.onboarded,
+          docsPublished: publishedDocs.length,
+          mealPlansPublished: plans.length,
+        });
 
         // Per-doc chart
         renderBarChart('docsChart', publishedDocs
@@ -982,9 +1154,7 @@
         );
         $('mealSubtitle').textContent = plans.length > 8 ? `top 8 of ${plans.length}` : '';
 
-        // Retention — followers who have any view or import
-        // Proxy: (total views + total imports) / followers — how many content
-        // interactions per follower on average, capped at 100%.
+        // Retention ring: content interactions per follower
         const interactions = totalViews + totalImports;
         const retentionPct = followerCount === 0
           ? 0
@@ -994,6 +1164,16 @@
         $('retentionCaption').textContent = followerCount === 0
           ? 'No followers yet'
           : `${interactions} interactions across ${followerCount} follower${followerCount === 1 ? '' : 's'}`;
+
+        // Conversion ring: followers → subscribers
+        const conversionPct = followerCount === 0
+          ? 0
+          : Math.min(100, Math.round((subscriberCount / followerCount) * 100));
+        $('ringConversion').setAttribute('stroke-dasharray', `${conversionPct}, 100`);
+        $('ringConversionLabel').textContent = `${conversionPct}%`;
+        $('conversionCaption').textContent = followerCount === 0
+          ? 'No followers yet'
+          : `${subscriberCount} of ${followerCount} follower${followerCount === 1 ? '' : 's'} subscribed`;
 
         // Reach breakdown
         const avgViewsPerDoc = publishedDocs.length > 0

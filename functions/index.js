@@ -1923,30 +1923,51 @@ exports.generateDailyRecurringTasks = onSchedule(
   }
 );
 
-// ── Creator follower counter ──────────────────────────
+// ── Creator follower + subscriber counters ────────────
 // The creator dashboard can't list users by active_creator_code (users docs
-// are owner-only read), so we denormalize the count onto creators/{id}.
-// Triggered on every user doc write; adjusts the old and new creator's
-// follower_count when active_creator_code changes.
-async function _adjustFollowerCount(code, delta) {
+// are owner-only read), so we denormalize the counts onto creators/{id}.
+// Triggered on every user doc write.
+//   follower_count:  any user with active_creator_code set
+//   subscriber_count: users with active_creator_code AND active subscription
+async function _adjustCreatorCounter(code, field, delta) {
   if (!code) return;
   const db = getFirestore();
   const snap = await db.collection('creators').where('code', '==', code).limit(1).get();
   if (snap.empty) return;
-  await snap.docs[0].ref.update({
-    follower_count: FieldValue.increment(delta),
-  });
+  await snap.docs[0].ref.update({ [field]: FieldValue.increment(delta) });
+}
+
+function _isActiveSub(data) {
+  if (!data) return false;
+  const status = data.subscription_status;
+  return status === 'active' || status === 'trialing';
 }
 
 exports.maintainCreatorFollowerCount = onDocumentWritten(
   'users/{uid}',
   async (event) => {
-    const before = event.data.before.exists ? event.data.before.data().active_creator_code : null;
-    const after = event.data.after.exists ? event.data.after.data().active_creator_code : null;
-    if (before === after) return;
-    await Promise.all([
-      _adjustFollowerCount(before, -1),
-      _adjustFollowerCount(after, 1),
-    ]);
+    const before = event.data.before.exists ? event.data.before.data() : null;
+    const after = event.data.after.exists ? event.data.after.data() : null;
+
+    const beforeCode = before?.active_creator_code || null;
+    const afterCode = after?.active_creator_code || null;
+    const beforeSub = _isActiveSub(before) && beforeCode;
+    const afterSub = _isActiveSub(after) && afterCode;
+
+    const ops = [];
+
+    // Follower: any user with an active_creator_code set.
+    if (beforeCode !== afterCode) {
+      if (beforeCode) ops.push(_adjustCreatorCounter(beforeCode, 'follower_count', -1));
+      if (afterCode) ops.push(_adjustCreatorCounter(afterCode, 'follower_count', 1));
+    }
+
+    // Subscriber: active sub with code set.
+    if (beforeSub !== afterSub || beforeCode !== afterCode) {
+      if (beforeSub) ops.push(_adjustCreatorCounter(beforeCode, 'subscriber_count', -1));
+      if (afterSub) ops.push(_adjustCreatorCounter(afterCode, 'subscriber_count', 1));
+    }
+
+    await Promise.all(ops);
   }
 );
