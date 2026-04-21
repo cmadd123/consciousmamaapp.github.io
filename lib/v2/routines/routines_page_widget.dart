@@ -357,22 +357,8 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
               label: const Text('Add'),
               style: TextButton.styleFrom(
                 foregroundColor: FlutterFlowTheme.of(context).primary,
-                padding: const EdgeInsets.symmetric(horizontal: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 12),
               ),
-            ),
-            // Dismiss (× button) — hides this routine from the
-            // suggestions list without importing it. Persisted locally
-            // so it stays hidden across app restarts.
-            IconButton(
-              tooltip: 'Hide',
-              visualDensity: VisualDensity.compact,
-              padding: const EdgeInsets.all(4),
-              constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
-              icon: Icon(Icons.close, size: 18, color: Colors.grey.shade500),
-              onPressed: () {
-                HapticFeedback.selectionClick();
-                _dismissCreatorRoutine(routine.reference.id);
-              },
             ),
           ],
         ),
