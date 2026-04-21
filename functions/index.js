@@ -1391,6 +1391,9 @@ exports.createSubscription = stripeFunctions.createSubscription;
 exports.cancelSubscription = stripeFunctions.cancelSubscription;
 exports.restorePurchases = stripeFunctions.restorePurchases;
 exports.stripeWebhook = stripeFunctions.stripeWebhook;
+exports.createCreatorOnboardingLink = stripeFunctions.createCreatorOnboardingLink;
+exports.getCreatorConnectStatus = stripeFunctions.getCreatorConnectStatus;
+exports.runCreatorPayouts = stripeFunctions.runCreatorPayouts;
 
 // ── Notification Scheduling ─────────────────────────
 // Writes a reminder doc; processReminders cron picks it up and sends

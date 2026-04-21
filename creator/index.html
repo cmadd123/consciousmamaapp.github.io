@@ -186,6 +186,21 @@
     .stat-sub { font-size: 12px; color: var(--text-muted); margin-top: 6px; }
     .stat-sub .up { color: var(--success); font-weight: 600; }
     .stat-sub .down { color: var(--danger); font-weight: 600; }
+    .stat-card.accent { background: linear-gradient(135deg, color-mix(in srgb, var(--primary) 12%, var(--surface)), var(--surface)); border-color: color-mix(in srgb, var(--primary) 30%, var(--border)); }
+
+    /* Payouts card */
+    .payouts-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+      padding: 20px 22px; margin-bottom: 24px;
+    }
+    .payouts-state { display: flex; flex-direction: column; gap: 18px; }
+    .payouts-headline { display: flex; gap: 16px; align-items: flex-start; }
+    .payouts-headline .payouts-icon { font-size: 32px; line-height: 1; }
+    .payouts-headline h3 { margin: 0 0 4px; font-size: 17px; }
+    .payouts-headline p { margin: 0; color: var(--text-muted); font-size: 14px; line-height: 1.5; }
+    .payouts-actions { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+    .earnings-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+    .payout-footer { font-size: 12px; text-align: center; padding-top: 4px; }
 
     .analytics-grid {
       display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -324,6 +339,58 @@
             <button class="btn ghost" id="refreshAnalyticsBtn">↻ Refresh</button>
           </div>
 
+          <!-- Payouts -->
+          <div class="payouts-card" id="payoutsCard">
+            <div id="payoutsLoading" class="payouts-state">
+              <div class="loader" style="margin: 0 auto;"></div>
+            </div>
+            <div id="payoutsUnconnected" class="payouts-state" hidden>
+              <div class="payouts-headline">
+                <span class="payouts-icon">💳</span>
+                <div>
+                  <h3>Get paid for your content</h3>
+                  <p>Earn 50% of every subscription from your followers. Connect your bank through Stripe to start tracking earnings.</p>
+                </div>
+              </div>
+              <div class="payouts-actions">
+                <button class="btn" id="connectBtn">Connect your bank</button>
+                <span class="muted">Takes 2–3 minutes · Stripe Express</span>
+              </div>
+            </div>
+            <div id="payoutsIncomplete" class="payouts-state" hidden>
+              <div class="payouts-headline">
+                <span class="payouts-icon">⚠️</span>
+                <div>
+                  <h3>Finish connecting your bank</h3>
+                  <p>Stripe needs a few more details before we can route earnings to you.</p>
+                </div>
+              </div>
+              <div class="payouts-actions">
+                <button class="btn" id="continueConnectBtn">Continue setup</button>
+              </div>
+            </div>
+            <div id="payoutsOnboarded" class="payouts-state" hidden>
+              <div class="earnings-grid">
+                <div class="stat-card accent">
+                  <div class="stat-label">Pending payout</div>
+                  <div class="stat-value" id="statPending">$0.00</div>
+                  <div class="stat-sub" id="statPendingSub"></div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-label">Lifetime earnings</div>
+                  <div class="stat-value" id="statLifetime">$0.00</div>
+                  <div class="stat-sub" id="statLifetimeSub"></div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-label">Last payout</div>
+                  <div class="stat-value" id="statLastPayout">—</div>
+                  <div class="stat-sub" id="statLastPayoutSub"></div>
+                </div>
+              </div>
+              <div class="payout-footer muted">Payouts run on the 1st of each month. Minimum $25 — amounts below roll to next month.</div>
+            </div>
+          </div>
+
           <div class="stat-grid">
             <div class="stat-card">
               <div class="stat-label">Followers</div>
@@ -444,6 +511,9 @@
     import {
       getStorage, ref as storageRef, uploadBytes, getDownloadURL, deleteObject,
     } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js';
+    import {
+      getFunctions, httpsCallable,
+    } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js';
 
     const firebaseConfig = {
       apiKey: "AIzaSyBucTVaWpYhDYScTpQ4JH9XdJgCBFmbHWk",
@@ -458,6 +528,7 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
     const storage = getStorage(app);
+    const functions = getFunctions(app);
 
     // State
     let currentUser = null;
@@ -506,7 +577,7 @@
         document.querySelectorAll('.panel').forEach(x => x.classList.remove('active'));
         t.classList.add('active');
         $('panel' + t.dataset.tab.charAt(0).toUpperCase() + t.dataset.tab.slice(1)).classList.add('active');
-        if (t.dataset.tab === 'analytics') loadAnalytics();
+        if (t.dataset.tab === 'analytics') { loadAnalytics(); loadPayouts(); }
       });
     });
 
@@ -686,7 +757,110 @@
     }
 
     // --- Analytics ---
-    $('refreshAnalyticsBtn').addEventListener('click', loadAnalytics);
+    $('refreshAnalyticsBtn').addEventListener('click', () => {
+      loadAnalytics();
+      loadPayouts();
+    });
+    $('connectBtn').addEventListener('click', startConnectOnboarding);
+    $('continueConnectBtn').addEventListener('click', startConnectOnboarding);
+
+    // If the user just returned from Stripe onboarding, force a fresh status pull.
+    if (new URLSearchParams(location.search).has('connect')) {
+      history.replaceState({}, '', location.pathname);
+    }
+
+    async function startConnectOnboarding() {
+      const btn = $('connectBtn');
+      const btn2 = $('continueConnectBtn');
+      [btn, btn2].forEach(b => { if (b) { b.disabled = true; b.textContent = 'Opening Stripe…'; } });
+      try {
+        const call = httpsCallable(functions, 'createCreatorOnboardingLink');
+        const { data } = await call({});
+        location.href = data.url;
+      } catch (e) {
+        console.error(e);
+        toast('Could not start Stripe onboarding: ' + (e.message || 'unknown error'), true);
+        [btn, btn2].forEach(b => { if (b) { b.disabled = false; } });
+        if (btn) btn.textContent = 'Connect your bank';
+        if (btn2) btn2.textContent = 'Continue setup';
+      }
+    }
+
+    function showPayoutState(state) {
+      ['payoutsLoading', 'payoutsUnconnected', 'payoutsIncomplete', 'payoutsOnboarded']
+        .forEach(id => { $(id).hidden = (id !== state); });
+    }
+
+    async function loadPayouts() {
+      showPayoutState('payoutsLoading');
+      let status;
+      try {
+        const call = httpsCallable(functions, 'getCreatorConnectStatus');
+        const { data } = await call({});
+        status = data;
+      } catch (e) {
+        console.error('Connect status failed:', e);
+        showPayoutState('payoutsUnconnected');
+        return;
+      }
+
+      if (!status.connected) {
+        showPayoutState('payoutsUnconnected');
+        return;
+      }
+      if (!status.onboarded) {
+        showPayoutState('payoutsIncomplete');
+        return;
+      }
+
+      showPayoutState('payoutsOnboarded');
+      await loadEarnings();
+    }
+
+    async function loadEarnings() {
+      try {
+        const snap = await getDocs(query(
+          collection(db, 'creator_earnings'),
+          where('creator_ref', '==', creatorDoc.ref),
+        ));
+        let pending = 0, lifetime = 0;
+        for (const d of snap.docs) {
+          const e = d.data();
+          if (e.payout_status === 'pending') pending += e.creator_cents;
+          if (e.kind === 'earning') lifetime += e.creator_cents;
+          if (e.kind === 'clawback') lifetime += e.creator_cents; // negative
+        }
+        $('statPending').textContent = fmtMoney(pending);
+        $('statLifetime').textContent = fmtMoney(lifetime);
+
+        const thresholdGap = 2500 - pending;
+        $('statPendingSub').innerHTML = pending >= 2500
+          ? '<span class="up">Ready for next payout</span>'
+          : thresholdGap > 0
+            ? `<span class="muted">${fmtMoney(thresholdGap)} to $25 minimum</span>`
+            : '';
+
+        const lastPayoutCents = creatorDoc.data.last_payout_cents || 0;
+        const lastPayoutAt = creatorDoc.data.last_payout_at;
+        if (lastPayoutCents > 0) {
+          $('statLastPayout').textContent = fmtMoney(lastPayoutCents);
+          $('statLastPayoutSub').textContent = lastPayoutAt && lastPayoutAt.toDate
+            ? lastPayoutAt.toDate().toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })
+            : '';
+        } else {
+          $('statLastPayout').textContent = '—';
+          $('statLastPayoutSub').textContent = 'No payouts yet';
+        }
+      } catch (e) {
+        console.warn('Earnings load failed:', e.message);
+      }
+    }
+
+    function fmtMoney(cents) {
+      const sign = cents < 0 ? '-' : '';
+      const abs = Math.abs(cents);
+      return `${sign}$${(abs / 100).toFixed(2)}`;
+    }
 
     async function loadAnalytics() {
       try {

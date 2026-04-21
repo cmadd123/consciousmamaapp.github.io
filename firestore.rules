@@ -237,6 +237,18 @@ service cloud.firestore {
       );
     }
 
+    // ─── Creator earnings ledger (read-only from client) ─────────
+    // Written only by Cloud Functions (admin SDK bypasses these rules).
+    // Creator can read their own earnings by filtering on creator_ref.
+
+    match /creator_earnings/{earningId} {
+      allow read: if isAuthenticated() &&
+        resource.data.creator_ref != null &&
+        get(resource.data.creator_ref).data.user_ref ==
+          /databases/$(database)/documents/users/$(request.auth.uid);
+      allow write: if false;
+    }
+
     // ─── Waitlist (public create, no reads) ───────────────────────
     // Landing page POSTs here; Cloud Function updates email_sent.
 
