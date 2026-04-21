@@ -1281,16 +1281,21 @@
           ? '<span class="up">Active this period</span>'
           : '<span class="muted">None yet</span>';
 
-        // Est. monthly earnings (MRR × 50% creator share). Assumes $6.99/mo
-        // standard sub; actual per-user price can differ (annual, promo,
-        // etc.) — this is a projection, not a ledger value.
-        const SUB_PRICE_CENTS = 699;
+        // Est. monthly earnings — creator's 50% share of subscriber revenue,
+        // shown as a range from all-annual to all-monthly. We can't know the
+        // actual plan mix from the client (users doc is owner-only); this is
+        // a projection, not a ledger value. Ledger values live in Finance.
+        const MONTHLY_CENTS = 699;          // $6.99/mo sub price
+        const YEARLY_MONTHLY_CENTS = 583;   // $69.99/yr ÷ 12 ≈ $5.83/mo
         const REV_SHARE = 0.5;
-        const projectedMonthlyCents = Math.round(subscriberCount * SUB_PRICE_CENTS * REV_SHARE);
-        $('statMrr').textContent = fmtMoney(projectedMonthlyCents);
+        const lowCents = Math.round(subscriberCount * YEARLY_MONTHLY_CENTS * REV_SHARE);
+        const highCents = Math.round(subscriberCount * MONTHLY_CENTS * REV_SHARE);
+        $('statMrr').textContent = subscriberCount === 0
+          ? '$0.00'
+          : (lowCents === highCents ? fmtMoney(highCents) : `${fmtMoney(lowCents)} – ${fmtMoney(highCents)}`);
         $('statMrrSub').innerHTML = subscriberCount > 0
-          ? `<span class="muted">${subscriberCount} sub${subscriberCount === 1 ? '' : 's'} × 50% share</span>`
-          : '<span class="muted">Based on $6.99/mo · 50% share</span>';
+          ? `<span class="muted">${subscriberCount} sub${subscriberCount === 1 ? '' : 's'} · low = all yearly, high = all monthly</span>`
+          : '<span class="muted">Based on $6.99/mo or $69.99/yr · 50% share</span>';
 
         // Top content callouts — hide card if nothing to show.
         const topDoc = publishedDocs.slice().sort((a, b) => (b.view_count || 0) - (a.view_count || 0))[0];
