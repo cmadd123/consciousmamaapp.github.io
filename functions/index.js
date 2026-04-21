@@ -1973,6 +1973,7 @@ exports.notifyOnCreatorApplication = onDocumentCreated(
               <tr><td style="padding: 8px 12px; background: #F9FAFB; width: 140px;"><b>Name</b></td><td style="padding: 8px 12px;">${esc(d.name)}</td></tr>
               <tr><td style="padding: 8px 12px; background: #F9FAFB;"><b>Email</b></td><td style="padding: 8px 12px;"><a href="mailto:${esc(d.email)}">${esc(d.email)}</a></td></tr>
               <tr><td style="padding: 8px 12px; background: #F9FAFB;"><b>Handle</b></td><td style="padding: 8px 12px;">${esc(d.primary_handle)}</td></tr>
+              ${d.other_handles ? `<tr><td style="padding: 8px 12px; background: #F9FAFB;"><b>Other</b></td><td style="padding: 8px 12px;">${esc(d.other_handles)}</td></tr>` : ''}
               <tr><td style="padding: 8px 12px; background: #F9FAFB;"><b>Audience</b></td><td style="padding: 8px 12px;">${esc(d.audience_size)}</td></tr>
               <tr><td style="padding: 8px 12px; background: #F9FAFB;"><b>Website</b></td><td style="padding: 8px 12px;">${d.website ? `<a href="${esc(d.website)}">${esc(d.website)}</a>` : '<i>(none)</i>'}</td></tr>
               <tr><td style="padding: 8px 12px; background: #F9FAFB; vertical-align: top;"><b>Community</b></td><td style="padding: 8px 12px;">${esc(d.audience_description)}</td></tr>

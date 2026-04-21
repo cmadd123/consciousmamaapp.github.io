@@ -107,6 +107,9 @@
         <label>Primary platform + handle
           <input type="text" name="primary_handle" required maxlength="120" placeholder="Instagram: @haleyraisesem">
         </label>
+        <label>Other platforms <span class="hint">(optional)</span>
+          <input type="text" name="other_handles" maxlength="220" placeholder="TikTok: @haley · YouTube: Haley Maddox">
+        </label>
         <div class="row">
           <label>Audience size (approx.)
             <select name="audience_size" required>
@@ -119,7 +122,7 @@
               <option>500,000+</option>
             </select>
           </label>
-          <label>Website / portfolio <span class="hint">(optional)</span>
+          <label>Website <span class="hint">(optional)</span>
             <input type="url" name="website" maxlength="200" placeholder="https://…">
           </label>
         </div>
@@ -174,6 +177,7 @@
         name: fd.get('name')?.toString().trim(),
         email: fd.get('email')?.toString().trim().toLowerCase(),
         primary_handle: fd.get('primary_handle')?.toString().trim(),
+        other_handles: fd.get('other_handles')?.toString().trim() || null,
         audience_size: fd.get('audience_size')?.toString(),
         website: fd.get('website')?.toString().trim() || null,
         audience_description: fd.get('audience_description')?.toString().trim(),
