@@ -1944,6 +1944,53 @@ function _isActiveSub(data) {
   return status === 'active' || status === 'trialing';
 }
 
+// ── Notify admin on new creator application ──────────
+// Fires when someone submits /apply/. Emails collinjmaddox@gmail.com
+// with a summary so pending applications don't rot unseen in Firestore.
+exports.notifyOnCreatorApplication = onDocumentCreated(
+  {
+    document: 'creator_applications/{appId}',
+    secrets: [sendgridApiKey],
+  },
+  async (event) => {
+    const snap = event.data;
+    if (!snap) return;
+    const d = snap.data();
+
+    try {
+      sgMail.setApiKey(sendgridApiKey.value());
+      const appId = snap.id;
+      const esc = (s) => String(s || '').replace(/[<>&]/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;' }[c]));
+
+      await sgMail.send({
+        to: 'collinjmaddox@gmail.com',
+        from: sendgridFromEmail.value(),
+        subject: `New creator application: ${d.name || '(no name)'}`,
+        html: `
+          <div style="font-family: Inter, system-ui, sans-serif; max-width: 600px; margin: 0 auto; color: #1F2937; line-height: 1.6;">
+            <h2 style="color: #2A6F67; border-bottom: 2px solid #52A097; padding-bottom: 8px;">New creator application</h2>
+            <table style="width: 100%; border-collapse: collapse; margin: 16px 0;">
+              <tr><td style="padding: 8px 12px; background: #F9FAFB; width: 140px;"><b>Name</b></td><td style="padding: 8px 12px;">${esc(d.name)}</td></tr>
+              <tr><td style="padding: 8px 12px; background: #F9FAFB;"><b>Email</b></td><td style="padding: 8px 12px;"><a href="mailto:${esc(d.email)}">${esc(d.email)}</a></td></tr>
+              <tr><td style="padding: 8px 12px; background: #F9FAFB;"><b>Handle</b></td><td style="padding: 8px 12px;">${esc(d.primary_handle)}</td></tr>
+              <tr><td style="padding: 8px 12px; background: #F9FAFB;"><b>Audience</b></td><td style="padding: 8px 12px;">${esc(d.audience_size)}</td></tr>
+              <tr><td style="padding: 8px 12px; background: #F9FAFB;"><b>Website</b></td><td style="padding: 8px 12px;">${d.website ? `<a href="${esc(d.website)}">${esc(d.website)}</a>` : '<i>(none)</i>'}</td></tr>
+              <tr><td style="padding: 8px 12px; background: #F9FAFB; vertical-align: top;"><b>Community</b></td><td style="padding: 8px 12px;">${esc(d.audience_description)}</td></tr>
+              <tr><td style="padding: 8px 12px; background: #F9FAFB; vertical-align: top;"><b>Pitch</b></td><td style="padding: 8px 12px;">${esc(d.pitch)}</td></tr>
+            </table>
+            <p style="background: #EFF6FF; padding: 12px 16px; border-radius: 8px; font-size: 14px;">
+              <b>To approve:</b> <code style="background: white; padding: 2px 6px; border-radius: 4px;">node admin/approve-creator.js ${appId}</code>
+            </p>
+            <p style="color: #6B7280; font-size: 13px;">Application ID: ${appId}</p>
+          </div>`,
+      });
+      console.log(`Sent creator-application notification for ${appId}`);
+    } catch (err) {
+      console.error('Failed to send creator-application notification:', err.message);
+    }
+  }
+);
+
 // ── Daily creator metric snapshots ───────────────────
 // Stamps follower_count / subscriber_count / lifetime_payout_cents for
 // every creator once a day. The dashboard reads these back as a line

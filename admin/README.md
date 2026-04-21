@@ -61,3 +61,26 @@ node approve-creator.js <applicationId> --uid <firebaseUid>
 Skips the email-based lookup and uses the UID you pass. Useful when the
 applicant's Firebase-Auth email doesn't match the email they submitted
 with.
+
+### Directly invite a creator (no application)
+
+```bash
+node invite-creator.js <email> [--name "First Last"] [--uid <uid>]
+```
+
+Use this when you're proactively recruiting a specific influencer —
+you already know who they are and don't need them to fill out the
+/apply/ form. Creates the creator doc directly with MomRise-default
+theme colors and prints an invite email for you to send.
+
+Requires the invitee to have a Firebase account already (they need to
+have signed up in the MomRise app). If no user exists for that email,
+the script tells you to ask them to sign up first, then re-run with
+`--uid`.
+
+### Notifications
+
+A Cloud Function (`notifyOnCreatorApplication`) emails
+collinjmaddox@gmail.com whenever a new `creator_applications` doc is
+created via the public /apply/ form. Use that email as the prompt to
+run `approve-creator.js`.
