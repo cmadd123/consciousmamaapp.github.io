@@ -2,6 +2,7 @@ import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
 import '/backend/schema/enums/enums.dart';
 import '/components/home_nav_bar_widget.dart';
+import '/v2/creator/creator_theme_wrapper.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/index.dart';
@@ -501,14 +502,11 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
       },
       child: Scaffold(
         bottomNavigationBar: const HomeNavBarWidget(currentPage: HomeNavPage.meals),
-        body: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0xFFFAF8F5), Color(0xFFF5EDE6)],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-            ),
-          ),
+        body: CreatorThemedBackground(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          fallbackStart: const Color(0xFFFAF8F5),
+          fallbackEnd: const Color(0xFFF5EDE6),
           child: SafeArea(
             bottom: false,
             child: Column(

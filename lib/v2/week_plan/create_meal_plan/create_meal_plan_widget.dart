@@ -27,6 +27,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '/components/page_animations.dart';
 import '/custom_code/actions/creator_service.dart';
 import '/v2/creator/creator_meal_plan_card.dart';
+import '/v2/creator/creator_theme_wrapper.dart';
 import '/v2/creator/publish_meal_plan_sheet.dart';
 import 'create_meal_plan_model.dart';
 export 'create_meal_plan_model.dart';
@@ -3109,14 +3110,11 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
         },
         child: Scaffold(
           key: scaffoldKey,
-          body: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xFFFAF8F5), Color(0xFFF5EDE6)],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-              ),
-            ),
+          body: CreatorThemedBackground(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            fallbackStart: const Color(0xFFFAF8F5),
+            fallbackEnd: const Color(0xFFF5EDE6),
             child: SafeArea(
           top: true,
           child: Stack(

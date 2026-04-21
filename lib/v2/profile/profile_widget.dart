@@ -2,6 +2,7 @@ import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
 import '/backend/schema/enums/enums.dart';
 import '/v2/creator/creator_theme_notifier.dart';
+import '/v2/creator/creator_theme_wrapper.dart';
 import '/v2/creator/enter_creator_code_widget.dart';
 import '/v2/creator/creator_theme_editor.dart';
 import '/custom_code/actions/creator_service.dart';
@@ -86,17 +87,14 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
           key: scaffoldKey,
         body: Stack(
           children: [
-            Container(
+            CreatorThemedBackground(
               width: double.infinity,
               height: double.infinity,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Color(0xFFECE5E5), Color(0xFFEDFFFD)],
-                  stops: [0.0, 1.0],
-                  begin: AlignmentDirectional(0.0, 1.0),
-                  end: AlignmentDirectional(0, -1.0),
-                ),
-              ),
+              stops: const [0.0, 1.0],
+              begin: const AlignmentDirectional(0.0, 1.0),
+              end: const AlignmentDirectional(0, -1.0),
+              fallbackStart: const Color(0xFFECE5E5),
+              fallbackEnd: const Color(0xFFEDFFFD),
               child: SafeArea(
                 child: SingleChildScrollView(
                   child: Column(

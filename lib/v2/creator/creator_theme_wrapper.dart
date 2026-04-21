@@ -68,6 +68,12 @@ class CreatorThemedBackground extends StatelessWidget {
   final double? width;
   final double? height;
 
+  /// Colors used when the follower doesn't have a creator theme active.
+  /// Defaults to the app's teal→pink, but pages like the meal planner
+  /// pass their own warm-cream fallback.
+  final Color? fallbackStart;
+  final Color? fallbackEnd;
+
   const CreatorThemedBackground({
     super.key,
     required this.child,
@@ -76,24 +82,34 @@ class CreatorThemedBackground extends StatelessWidget {
     this.stops,
     this.width,
     this.height,
+    this.fallbackStart,
+    this.fallbackEnd,
   });
 
   @override
   Widget build(BuildContext context) {
     return Consumer<CreatorThemeNotifier>(
-      builder: (context, _, __) => Container(
-        width: width,
-        height: height,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [context.creatorGradientStart, context.creatorGradientEnd],
-            stops: stops,
-            begin: begin,
-            end: end,
+      builder: (context, notifier, __) {
+        final Color start = notifier.backgroundGradientStart
+            ?? fallbackStart
+            ?? const Color(0xFFD7F2EB);
+        final Color end = notifier.backgroundGradientEnd
+            ?? fallbackEnd
+            ?? const Color(0xFFFFE9E1);
+        return Container(
+          width: width,
+          height: height,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [start, end],
+              stops: stops,
+              begin: this.begin,
+              end: this.end,
+            ),
           ),
-        ),
-        child: child,
-      ),
+          child: child,
+        );
+      },
     );
   }
 }

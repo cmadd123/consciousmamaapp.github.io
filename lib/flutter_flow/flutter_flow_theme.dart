@@ -2,10 +2,24 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import '/v2/creator/creator_theme_notifier.dart';
 
 abstract class FlutterFlowTheme {
   static FlutterFlowTheme of(BuildContext context) {
-    return LightModeTheme();
+    // Look up the creator theme notifier (may be absent during early
+    // startup or in tests). listen:false so theme lookups don't register
+    // listeners on every widget that reads a color — follower-facing
+    // pages that need reactivity already use Consumer<CreatorThemeNotifier>.
+    CreatorThemeNotifier? notifier;
+    try {
+      notifier = Provider.of<CreatorThemeNotifier>(context, listen: false);
+    } catch (_) {
+      notifier = null;
+    }
+    final base = LightModeTheme();
+    if (notifier == null || !notifier.isCreatorThemeActive) return base;
+    return _CreatorOverrideTheme(base, notifier);
   }
 
   @Deprecated('Use primary instead')
@@ -152,6 +166,29 @@ class LightModeTheme extends FlutterFlowTheme {
   late Color formTextFiledBackGround = const Color(0xFFF4F4F4);
   late Color bordercolors = const Color(0xFF999999);
   late Color prim30 = const Color(0x4C52A097);
+}
+
+/// A thin wrapper around LightModeTheme that substitutes the follower's
+/// active creator colors for primary/secondary/tertiary/accent without
+/// touching any widget call sites. Built by FlutterFlowTheme.of(context)
+/// when the CreatorThemeNotifier reports isCreatorThemeActive.
+class _CreatorOverrideTheme extends LightModeTheme {
+  final LightModeTheme _base;
+  final CreatorThemeNotifier _notifier;
+  _CreatorOverrideTheme(this._base, this._notifier);
+
+  @override
+  Color get primary => _notifier.primaryColor ?? _base.primary;
+  @override
+  Color get secondary => _notifier.secondaryColor ?? _base.secondary;
+  @override
+  Color get tertiary => _notifier.accentColor ?? _base.tertiary;
+  @override
+  Color get floatedBtnColor => _notifier.primaryColor ?? _base.floatedBtnColor;
+  @override
+  Color get bordarColor => (_notifier.primaryColor ?? _base.primary).withOpacity(0.16);
+  @override
+  Color get prim30 => (_notifier.primaryColor ?? _base.primary).withOpacity(0.30);
 }
 
 abstract class Typography {
