@@ -57,23 +57,34 @@ class CreatorThemeNotifier extends ChangeNotifier {
   /// FFAppState().currentFontFamily repaints with the new font. Called after
   /// any state change that could affect the active font.
   ///
-  /// If the active creator has a `theme_font_url` (custom-uploaded font),
-  /// download + register it under the creator's `theme_font` family BEFORE
-  /// pushing to FFAppState — otherwise the name would resolve to a missing
-  /// family and text would fall back to the system font.
+  /// For custom-uploaded fonts (theme_font_url set) we download the TTF and
+  /// register it via FontLoader. For Google-Font names (curated list in the
+  /// editor) we pull the TTF from fonts.googleapis.com and register under
+  /// the same family name — otherwise `fontFamily: 'Playfair Display'` won't
+  /// resolve because Flutter doesn't know the family exists.
   void _syncFontToAppState() {
     final family = fontFamily;
     final creator = _activeCreator;
-    if (family != null && family.isNotEmpty &&
-        creator != null && creator.hasThemeFontUrl() && isCreatorThemeActive) {
-      // Kick off async load; FFAppState update happens in the .then so text
-      // widgets only repaint once the glyphs are actually available.
-      CreatorFontLoader.ensureLoaded(family, creator.themeFontUrl).then((_) {
-        FFAppState().currentFontFamily = family;
-      });
+    if (family == null || family.isEmpty || family == _kDefaultFontFamily) {
+      FFAppState().currentFontFamily = _kDefaultFontFamily;
       return;
     }
-    FFAppState().currentFontFamily = family ?? _kDefaultFontFamily;
+    if (!isCreatorThemeActive) {
+      FFAppState().currentFontFamily = _kDefaultFontFamily;
+      return;
+    }
+
+    Future<void> load;
+    if (creator != null && creator.hasThemeFontUrl()) {
+      // Custom uploaded TTF
+      load = CreatorFontLoader.ensureLoaded(family, creator.themeFontUrl);
+    } else {
+      // Assume Google Font — resolve TTF via the legacy CSS endpoint
+      load = CreatorFontLoader.ensureGoogleFontLoaded(family);
+    }
+    load.then((_) {
+      FFAppState().currentFontFamily = family;
+    });
   }
 
   /// Load the active creator from the user's profile.

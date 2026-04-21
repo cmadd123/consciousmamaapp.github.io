@@ -112,6 +112,33 @@ class _CreatorThemeEditorWidgetState extends State<CreatorThemeEditorWidget> {
 
   String _colorToHex(Color c) => '#${c.value.toRadixString(16).substring(2).toUpperCase()}';
 
+  /// Apply the currently-selected font to a base TextStyle so the preview
+  /// reflects the creator's choice. Uses GoogleFonts.getFont for curated
+  /// picks (downloads + returns a TextStyle referencing a registered family
+  /// name). Custom uploaded fonts were already registered in initState via
+  /// CreatorFontLoader, so a plain fontFamily: resolves them.
+  TextStyle _withFont(TextStyle base) {
+    if (_fontFamily == 'Andika New Basic') {
+      return base.copyWith(fontFamily: 'Andika New Basic');
+    }
+    if (_fontUrl != null) {
+      // Custom uploaded font — family already registered
+      return base.copyWith(fontFamily: _fontFamily);
+    }
+    // Curated Google Font
+    try {
+      return GoogleFonts.getFont(
+        _fontFamily,
+        fontSize: base.fontSize,
+        fontWeight: base.fontWeight,
+        color: base.color,
+        letterSpacing: base.letterSpacing,
+      );
+    } catch (_) {
+      return base.copyWith(fontFamily: _fontFamily);
+    }
+  }
+
   Future<void> _save() async {
     setState(() => _isSaving = true);
     HapticFeedback.mediumImpact();
@@ -404,9 +431,9 @@ class _CreatorThemeEditorWidgetState extends State<CreatorThemeEditorWidget> {
               const SizedBox(height: 12),
 
               // Greeting
-              const Align(
+              Align(
                 alignment: Alignment.centerLeft,
-                child: Text('Good morning, Sarah', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Color(0xFF5D4E60))),
+                child: Text('Good morning, Sarah', style: _withFont(const TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Color(0xFF5D4E60)))),
               ),
               const SizedBox(height: 12),
 
@@ -429,7 +456,7 @@ class _CreatorThemeEditorWidgetState extends State<CreatorThemeEditorWidget> {
                         children: [
                           Icon(Icons.restaurant_menu_rounded, color: _iconColor, size: 18),
                           const SizedBox(width: 6),
-                          const Text("Today's Meals", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Color(0xFF5D4E60))),
+                          Text("Today's Meals", style: _withFont(const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Color(0xFF5D4E60)))),
                           const Spacer(),
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
@@ -449,7 +476,7 @@ class _CreatorThemeEditorWidgetState extends State<CreatorThemeEditorWidget> {
                             children: [
                               Container(width: 4, height: 20, decoration: BoxDecoration(color: _primary, borderRadius: BorderRadius.circular(2))),
                               const SizedBox(width: 8),
-                              Text(meal, style: const TextStyle(fontSize: 12, color: Color(0xFF5D4E60))),
+                              Text(meal, style: _withFont(const TextStyle(fontSize: 12, color: Color(0xFF5D4E60)))),
                             ],
                           ),
                         ),
@@ -555,18 +582,7 @@ class _CreatorThemeEditorWidgetState extends State<CreatorThemeEditorWidget> {
     // meaning a custom TTF has been uploaded.
     final isCustom = _fontUrl != null && !_kCuratedFonts.contains(_fontFamily);
 
-    TextStyle previewStyle() {
-      // For a Google Font in the curated list, use GoogleFonts so the glyph
-      // actually resolves in this editor preview even if the follower's
-      // font sync hasn't run yet. For custom uploaded fonts, use a regular
-      // TextStyle — CreatorFontLoader.ensureLoaded() registers the family.
-      if (!isCustom && _kCuratedFonts.contains(_fontFamily) && _fontFamily != 'Andika New Basic') {
-        try {
-          return GoogleFonts.getFont(_fontFamily, fontSize: 18, fontWeight: FontWeight.w500);
-        } catch (_) {}
-      }
-      return TextStyle(fontFamily: _fontFamily, fontSize: 18, fontWeight: FontWeight.w500);
-    }
+    final previewStyle = _withFont(const TextStyle(fontSize: 18, fontWeight: FontWeight.w500));
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -598,7 +614,7 @@ class _CreatorThemeEditorWidgetState extends State<CreatorThemeEditorWidget> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('The quick brown fox', style: previewStyle()),
+                Text('The quick brown fox', style: previewStyle),
                 const SizedBox(height: 4),
                 Text(
                   isCustom ? 'Custom: ${_fontFamily}' : _fontFamily,

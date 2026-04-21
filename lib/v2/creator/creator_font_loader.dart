@@ -50,4 +50,42 @@ class CreatorFontLoader {
     await loader.load();
     debugPrint('CreatorFontLoader: registered $family (${bytes.length} bytes)');
   }
+
+  /// Load a Google Font by family name. Uses the legacy /css endpoint with
+  /// a stripped User-Agent so Google returns a TTF URL (not WOFF2, which
+  /// FontLoader can't handle). Registers under the exact `family` name so
+  /// subsequent `fontFamily: family` strings resolve.
+  static Future<void> ensureGoogleFontLoaded(String family) async {
+    if (family.isEmpty) return;
+    if (_registered.contains(family)) return;
+    final existing = _inFlight[family];
+    if (existing != null) return existing;
+
+    final future = _downloadGoogleFont(family);
+    _inFlight[family] = future;
+    try {
+      await future;
+      _registered.add(family);
+    } catch (e) {
+      debugPrint('CreatorFontLoader: failed to load Google Font $family: $e');
+    } finally {
+      _inFlight.remove(family);
+    }
+  }
+
+  static Future<void> _downloadGoogleFont(String family) async {
+    // Force an old User-Agent so Google serves TTF (modern UAs get WOFF2).
+    final cssResp = await http.get(
+      Uri.parse('https://fonts.googleapis.com/css?family=${Uri.encodeComponent(family)}'),
+      headers: {'User-Agent': 'Mozilla/4.0 (compatible; Android)'},
+    );
+    if (cssResp.statusCode != 200) {
+      throw Exception('CSS HTTP ${cssResp.statusCode}');
+    }
+    final match = RegExp(r'src:\s*url\((https?://[^)]+\.ttf)\)').firstMatch(cssResp.body);
+    if (match == null) {
+      throw Exception('No TTF url in Google Fonts CSS for $family');
+    }
+    await _download(family, match.group(1)!);
+  }
 }
