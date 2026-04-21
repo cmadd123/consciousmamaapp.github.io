@@ -76,7 +76,7 @@ Built for the mom who's tired of juggling three apps and a whiteboard.
 • Private by default; your data stays yours
 • 7-day free trial, then $6.99/month or $69.99/year
 
-Questions, feedback, or a feature request? We actually read them all: support@consciousmama.app
+Questions, feedback, or a feature request? We actually read them all: support@momrise.app
 ```
 
 ---

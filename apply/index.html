@@ -134,7 +134,7 @@
         </label>
 
         <button class="btn" id="submitBtn" type="submit">Submit application</button>
-        <div class="foot">We'll review and get back to you within a few days. Questions? <a href="mailto:support@consciousmama.app">support@consciousmama.app</a></div>
+        <div class="foot">We'll review and get back to you within a few days. Questions? <a href="mailto:creators@momrise.app">creators@momrise.app</a></div>
       </form>
 
       <div id="thanks" class="thanks" hidden>
@@ -194,7 +194,7 @@
         document.getElementById('thanks').hidden = false;
       } catch (err) {
         console.error(err);
-        errorBanner.textContent = 'Could not submit: ' + (err.message || 'unknown error') + '. Please try again or email support@consciousmama.app.';
+        errorBanner.textContent = 'Could not submit: ' + (err.message || 'unknown error') + '. Please try again or email support@momrise.app.';
         errorBanner.classList.add('show');
         submitBtn.disabled = false;
         submitBtn.textContent = 'Submit application';
