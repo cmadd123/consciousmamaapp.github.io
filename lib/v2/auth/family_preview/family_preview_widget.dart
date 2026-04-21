@@ -397,7 +397,7 @@ class _FamilyPreviewWidgetState extends State<FamilyPreviewWidget>
                                     }
 
                                     if (mounted) {
-                                      context.goNamed(PaimentCopyWidget.routeName);
+                                      context.goNamed(HaveCreatorCodeWidget.routeName);
                                     }
                                   },
                                   text: 'Let\'s Get Started!',

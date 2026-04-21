@@ -542,6 +542,11 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           builder: (context, params) => const PreparationWidget(),
         ),
         FFRoute(
+          name: HaveCreatorCodeWidget.routeName,
+          path: HaveCreatorCodeWidget.routePath,
+          builder: (context, params) => const HaveCreatorCodeWidget(),
+        ),
+        FFRoute(
           name: FamilySetupIntroWidget.routeName,
           path: FamilySetupIntroWidget.routePath,
           builder: (context, params) => const FamilySetupIntroWidget(),

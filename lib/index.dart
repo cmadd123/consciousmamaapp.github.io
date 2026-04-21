@@ -59,6 +59,7 @@ export '/v2/auth/loginv2/loginv2_widget.dart' show Loginv2Widget;
 export '/v2/auth/sign_upv2/sign_upv2_widget.dart' show SignUpv2Widget;
 export '/v2/auth/welcome/welcome_widget.dart' show WelcomeWidget;
 export '/v2/auth/preparation/preparation_widget.dart' show PreparationWidget;
+export '/v2/auth/have_creator_code/have_creator_code_widget.dart' show HaveCreatorCodeWidget;
 export '/v2/auth/family_setup_intro/family_setup_intro_widget.dart'
     show FamilySetupIntroWidget;
 export '/v2/auth/add_childx/add_childx_widget.dart' show AddChildxWidget;

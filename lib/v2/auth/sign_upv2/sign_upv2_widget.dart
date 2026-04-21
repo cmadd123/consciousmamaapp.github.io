@@ -438,7 +438,7 @@ class _SignUpv2WidgetState extends State<SignUpv2Widget> {
                                   ));
 
                               context.pushNamed(
-                                PaimentCopyWidget.routeName,
+                                HaveCreatorCodeWidget.routeName,
                               );
                             },
                             text: 'Create account',
@@ -529,7 +529,7 @@ class _SignUpv2WidgetState extends State<SignUpv2Widget> {
                                         } else {
                                           // New user - go to paywall
                                           context.goNamed(
-                                              PaimentCopyWidget.routeName);
+                                              HaveCreatorCodeWidget.routeName);
                                         }
                                       } catch (e) {
                                         print('Google Sign-In (Signup) Error: $e');
@@ -622,7 +622,7 @@ class _SignUpv2WidgetState extends State<SignUpv2Widget> {
                                       } else {
                                         // New user - go to paywall
                                         context.goNamed(
-                                            PaimentCopyWidget.routeName);
+                                            HaveCreatorCodeWidget.routeName);
                                       }
                                     },
                                     child: Container(
