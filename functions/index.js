@@ -1944,6 +1944,41 @@ function _isActiveSub(data) {
   return status === 'active' || status === 'trialing';
 }
 
+// ── Daily creator metric snapshots ───────────────────
+// Stamps follower_count / subscriber_count / lifetime_payout_cents for
+// every creator once a day. The dashboard reads these back as a line
+// chart "followers & subscribers over time". Deduped on the date key
+// so accidental re-runs don't double-stamp.
+exports.snapshotCreatorMetrics = onSchedule(
+  {
+    schedule: '5 1 * * *',
+    timeZone: 'America/New_York',
+  },
+  async () => {
+    const db = getFirestore();
+    const now = new Date();
+    const y = now.getFullYear();
+    const m = String(now.getMonth() + 1).padStart(2, '0');
+    const d = String(now.getDate()).padStart(2, '0');
+    const dateKey = `${y}-${m}-${d}`;
+
+    const creatorsSnap = await db.collection('creators').get();
+    let written = 0;
+    for (const creatorDoc of creatorsSnap.docs) {
+      const c = creatorDoc.data();
+      await creatorDoc.ref.collection('snapshots').doc(dateKey).set({
+        date: dateKey,
+        taken_at: FieldValue.serverTimestamp(),
+        follower_count: c.follower_count || 0,
+        subscriber_count: c.subscriber_count || 0,
+        lifetime_payout_cents: c.lifetime_payout_cents || 0,
+      }, { merge: true });
+      written += 1;
+    }
+    console.log(`Snapshotted ${written} creators for ${dateKey}`);
+  }
+);
+
 exports.maintainCreatorFollowerCount = onDocumentWritten(
   'users/{uid}',
   async (event) => {

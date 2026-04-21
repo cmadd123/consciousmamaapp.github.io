@@ -158,6 +158,17 @@ service cloud.firestore {
         resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
     }
 
+    // ─── Creator metric snapshots (daily history) ─────────────────
+    // Written only by the snapshotCreatorMetrics Cloud Function. The
+    // creator can read their own subcollection; everyone else is denied.
+
+    match /creators/{creatorId}/snapshots/{date} {
+      allow read: if isAuthenticated() &&
+        get(/databases/$(database)/documents/creators/$(creatorId)).data.user_ref ==
+          /databases/$(database)/documents/users/$(request.auth.uid);
+      allow write: if false;
+    }
+
     // ─── Creator-published content (meal plans, templates, etc.) ─
     // Any authenticated user can read (followers view + import).
     // Writes are open to any authenticated user for now so follower

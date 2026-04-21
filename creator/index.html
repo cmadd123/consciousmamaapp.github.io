@@ -256,6 +256,36 @@
     .spark-labels { display: flex; gap: 6px; font-size: 11px; color: var(--text-muted); margin-top: 6px; }
     .spark-labels span { flex: 1; text-align: center; }
 
+    /* Line chart (followers/subscribers over time) */
+    .line-chart { width: 100%; height: 180px; display: block; }
+    .line-chart .axis { stroke: var(--border); stroke-width: 1; }
+    .line-chart .grid { stroke: var(--border); stroke-width: 1; stroke-dasharray: 2 3; opacity: 0.6; }
+    .line-chart .line { fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .line-chart .line-primary { stroke: var(--primary); }
+    .line-chart .line-accent { stroke: var(--accent); }
+    .line-chart .area { opacity: 0.12; }
+    .line-chart .area-primary { fill: var(--primary); }
+    .line-chart .area-accent { fill: var(--accent); }
+    .line-chart .tick { font-size: 10px; fill: var(--text-muted); }
+    .line-legend { display: flex; gap: 16px; font-size: 12px; color: var(--text-muted); margin-top: 6px; }
+    .line-legend .swatch { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+
+    /* Cohort table */
+    .cohort-table {
+      display: grid; gap: 2px; font-size: 11px;
+    }
+    .cohort-row { display: grid; gap: 2px; align-items: stretch; }
+    .cohort-cell {
+      padding: 8px 4px; text-align: center; border-radius: 4px; font-weight: 600; color: var(--text);
+      background: var(--surface); border: 1px solid var(--border);
+    }
+    .cohort-label {
+      padding: 8px 6px; font-size: 11px; color: var(--text-muted);
+      border: 1px solid transparent; text-align: right; font-weight: 500;
+    }
+    .cohort-header .cohort-label { text-align: right; font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .cohort-header .cohort-cell { background: transparent; border: 0; color: var(--text-muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; font-size: 10px; }
+
     /* Dashboard section headers & empty states */
     .section-head-simple { margin-bottom: 10px; }
     .section-head-simple h2 { font-size: 16px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; }
@@ -510,10 +540,27 @@
           </div>
 
           <div class="analytics-grid">
+            <!-- Followers & subscribers over time -->
+            <div class="analytics-card span-2" id="audienceChartCard" hidden>
+              <h3>Audience over time <span class="muted" id="audienceChartSubtitle"></span></h3>
+              <svg id="audienceChart" class="line-chart" viewBox="0 0 600 180" preserveAspectRatio="none"></svg>
+              <div class="line-legend">
+                <span><span class="swatch" style="background: var(--primary);"></span>Followers</span>
+                <span><span class="swatch" style="background: var(--accent);"></span>Subscribers</span>
+              </div>
+            </div>
+
             <!-- Earnings over time -->
             <div class="analytics-card span-2" id="earningsChartCard" hidden>
               <h3>Earnings over time <span class="muted" id="earningsChartSubtitle"></span></h3>
               <div id="earningsChart" class="spark-chart"></div>
+            </div>
+
+            <!-- Subscriber cohort retention -->
+            <div class="analytics-card span-2" id="cohortCard" hidden>
+              <h3>Subscriber cohorts <span class="muted" id="cohortSubtitle"></span></h3>
+              <div id="cohortTable" class="cohort-table"></div>
+              <div class="muted" style="font-size: 12px; margin-top: 8px;">Each row is subscribers who started that month; columns show what % were still paying N months later.</div>
             </div>
 
             <!-- Retention + Conversion -->
@@ -1099,6 +1146,7 @@
         ));
         let pending = 0, lifetime = 0;
         const byMonth = new Map();
+        const byUser = new Map(); // userPath -> Set of "YYYY-MM" they paid in
         for (const d of snap.docs) {
           const e = d.data();
           if (e.payout_status === 'pending') pending += e.creator_cents;
@@ -1107,6 +1155,13 @@
           const ts = e.created_at?.toDate?.() || new Date();
           const key = `${ts.getFullYear()}-${String(ts.getMonth() + 1).padStart(2, '0')}`;
           byMonth.set(key, (byMonth.get(key) || 0) + (e.creator_cents || 0));
+
+          // Track each user's paying months for cohort retention (earnings only, not clawbacks).
+          if (e.kind === 'earning' && e.user_ref) {
+            const userKey = e.user_ref.path || e.user_ref.toString();
+            if (!byUser.has(userKey)) byUser.set(userKey, new Set());
+            byUser.get(userKey).add(key);
+          }
         }
 
         $('statPending').textContent = fmtMoney(pending);
@@ -1150,6 +1205,7 @@
             : '<span class="muted">No earnings yet this month</span>';
 
         renderEarningsChart(byMonth);
+        renderCohorts(byUser);
       } catch (e) {
         console.warn('Earnings load failed:', e.message);
       }
@@ -1193,6 +1249,132 @@
       const sign = cents < 0 ? '-' : '';
       const abs = Math.abs(cents);
       return `${sign}$${(abs / 100).toFixed(2)}`;
+    }
+
+    // --- Audience over time (line chart from daily snapshots) ---
+    async function loadAudienceChart() {
+      try {
+        const snap = await getDocs(query(
+          collection(db, 'creators', creatorDoc.id, 'snapshots'),
+          orderBy('date', 'desc'),
+        ));
+        const rows = snap.docs.map(d => d.data())
+          .filter(r => r.date)
+          .sort((a, b) => a.date.localeCompare(b.date));
+
+        if (rows.length < 2) {
+          $('audienceChartCard').hidden = true;
+          return;
+        }
+        $('audienceChartCard').hidden = false;
+
+        const W = 600, H = 180, P = { t: 8, r: 10, b: 20, l: 30 };
+        const innerW = W - P.l - P.r;
+        const innerH = H - P.t - P.b;
+
+        const maxVal = Math.max(1, ...rows.flatMap(r => [r.follower_count || 0, r.subscriber_count || 0]));
+        const xAt = (i) => P.l + (rows.length === 1 ? innerW / 2 : (i / (rows.length - 1)) * innerW);
+        const yAt = (v) => P.t + innerH - (v / maxVal) * innerH;
+
+        const pathFor = (field) => rows.map((r, i) => `${i === 0 ? 'M' : 'L'}${xAt(i).toFixed(1)},${yAt(r[field] || 0).toFixed(1)}`).join(' ');
+        const areaFor = (field) => `${pathFor(field)} L${xAt(rows.length - 1).toFixed(1)},${(P.t + innerH).toFixed(1)} L${xAt(0).toFixed(1)},${(P.t + innerH).toFixed(1)} Z`;
+
+        // X ticks: first, middle, last date (short format).
+        const fmtDate = (s) => { const [, m, d] = s.split('-'); return `${+m}/${+d}`; };
+        const tickIndices = rows.length <= 4
+          ? rows.map((_, i) => i)
+          : [0, Math.floor(rows.length / 2), rows.length - 1];
+
+        const gridYs = [0, 0.5, 1].map(f => {
+          const y = P.t + innerH - f * innerH;
+          const v = Math.round(f * maxVal);
+          return `<line class="grid" x1="${P.l}" y1="${y}" x2="${W - P.r}" y2="${y}"/><text class="tick" x="${P.l - 4}" y="${y + 3}" text-anchor="end">${v}</text>`;
+        }).join('');
+
+        const xTicks = tickIndices.map(i => `<text class="tick" x="${xAt(i)}" y="${H - 4}" text-anchor="middle">${fmtDate(rows[i].date)}</text>`).join('');
+
+        $('audienceChart').innerHTML = `
+          ${gridYs}
+          <path class="area area-primary" d="${areaFor('follower_count')}"/>
+          <path class="area area-accent" d="${areaFor('subscriber_count')}"/>
+          <path class="line line-primary" d="${pathFor('follower_count')}"/>
+          <path class="line line-accent" d="${pathFor('subscriber_count')}"/>
+          ${xTicks}
+        `;
+        $('audienceChartSubtitle').textContent = `${rows.length} day${rows.length === 1 ? '' : 's'} of history`;
+      } catch (e) {
+        console.warn('Audience chart load failed:', e.message);
+        $('audienceChartCard').hidden = true;
+      }
+    }
+
+    // --- Subscriber cohort retention (from creator_earnings) ---
+    // Cohort = month of each user's FIRST earning. Retained at month N =
+    // percentage of cohort users that ALSO have an earning row N calendar
+    // months after their cohort month.
+    function renderCohorts(earningsByUser) {
+      // earningsByUser: Map<userPath, Set<"YYYY-MM">>
+      const cohorts = new Map(); // cohort key -> { users: Set, retained: Map<n, count> }
+      for (const months of earningsByUser.values()) {
+        if (months.size === 0) continue;
+        const sorted = [...months].sort();
+        const cohortKey = sorted[0];
+        if (!cohorts.has(cohortKey)) cohorts.set(cohortKey, { users: 0, retained: new Map() });
+        const c = cohorts.get(cohortKey);
+        c.users += 1;
+        for (const m of months) {
+          const n = monthsBetween(cohortKey, m);
+          if (n < 0) continue;
+          c.retained.set(n, (c.retained.get(n) || 0) + 1);
+        }
+      }
+
+      if (cohorts.size === 0) {
+        $('cohortCard').hidden = true;
+        return;
+      }
+      $('cohortCard').hidden = false;
+
+      // Sort cohorts chronologically, most recent first (rolling view).
+      const sortedKeys = [...cohorts.keys()].sort().reverse().slice(0, 6);
+      const maxOffset = Math.max(...[...cohorts.values()].flatMap(c => [...c.retained.keys()]));
+      const offsets = Array.from({ length: maxOffset + 1 }, (_, i) => i);
+
+      const cols = offsets.length + 1; // +1 for cohort label
+      const gridCols = `minmax(90px, auto) repeat(${offsets.length}, minmax(48px, 1fr))`;
+
+      const header = `
+        <div class="cohort-row cohort-header" style="grid-template-columns: ${gridCols};">
+          <div class="cohort-label">Started</div>
+          ${offsets.map(n => `<div class="cohort-cell">${n === 0 ? 'New' : `+${n}mo`}</div>`).join('')}
+        </div>`;
+
+      const body = sortedKeys.map(key => {
+        const c = cohorts.get(key);
+        const cells = offsets.map(n => {
+          const r = c.retained.get(n) || 0;
+          const pct = c.users > 0 ? Math.round((r / c.users) * 100) : 0;
+          const bg = n === 0
+            ? 'color-mix(in srgb, var(--primary) 18%, var(--surface))'
+            : `color-mix(in srgb, var(--primary) ${Math.round(pct * 0.28)}%, var(--surface))`;
+          const display = r > 0 ? `${pct}%` : '·';
+          return `<div class="cohort-cell" style="background: ${bg};" title="${r}/${c.users}">${display}</div>`;
+        }).join('');
+        return `<div class="cohort-row" style="grid-template-columns: ${gridCols};"><div class="cohort-label">${formatCohortLabel(key)} <span class="muted" style="display:block; font-size:10px;">${c.users} sub${c.users === 1 ? '' : 's'}</span></div>${cells}</div>`;
+      }).join('');
+
+      $('cohortTable').innerHTML = header + body;
+      $('cohortSubtitle').textContent = `${cohorts.size} cohort${cohorts.size === 1 ? '' : 's'}`;
+    }
+
+    function monthsBetween(a, b) {
+      const [ay, am] = a.split('-').map(Number);
+      const [by, bm] = b.split('-').map(Number);
+      return (by - ay) * 12 + (bm - am);
+    }
+    function formatCohortLabel(key) {
+      const [y, m] = key.split('-').map(Number);
+      return new Date(y, m - 1, 1).toLocaleDateString(undefined, { month: 'short', year: 'numeric' });
     }
 
     function pickLatestDate(values) {
@@ -1401,6 +1583,9 @@
           docsPublished: publishedDocs.length,
           mealPlansPublished: plans.length,
         });
+
+        // Audience over time (reads daily snapshots subcollection).
+        loadAudienceChart();
 
         // Per-doc chart
         renderBarChart('docsChart', publishedDocs
