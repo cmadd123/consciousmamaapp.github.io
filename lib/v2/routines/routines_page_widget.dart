@@ -369,6 +369,7 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
                   Expanded(
                     child: Text(
                       routine.name,
+                      overflow: TextOverflow.ellipsis,
                       style: FlutterFlowTheme.of(context).bodyMedium.override(
                         fontFamily: FFAppState().currentFontFamily,
                         fontSize: 16,
@@ -377,12 +378,16 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
                       ),
                     ),
                   ),
-                  // Creator-only: share with followers toggle
-                  if (_creatorProfile != null)
+                  // Creator-only: share with followers toggle. Placed with
+                  // generous spacing on both sides so it can't be confused
+                  // with the play button and doesn't crowd the title.
+                  if (_creatorProfile != null) ...[
+                    const SizedBox(width: 12),
                     GestureDetector(
+                      behavior: HitTestBehavior.opaque,
                       onTap: () => _toggleShare(routine),
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                        padding: const EdgeInsets.all(4),
                         child: Icon(
                           routine.sharedWithFollowers ? Icons.people : Icons.people_outline,
                           color: routine.sharedWithFollowers
@@ -392,6 +397,8 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
                         ),
                       ),
                     ),
+                    const SizedBox(width: 12),
+                  ],
                   Icon(Icons.play_circle_outline, color: FlutterFlowTheme.of(context).primary, size: 28),
                 ],
               ),
