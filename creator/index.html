@@ -108,9 +108,16 @@
     .feature-card:hover { transform: translateY(-2px); border-color: var(--primary); box-shadow: 0 6px 20px rgba(0,0,0,0.06); }
     .feature-card.feature-card-passive { cursor: default; }
     .feature-card.feature-card-passive:hover { transform: none; border-color: var(--border); box-shadow: none; }
-    .feature-card .feature-head { display: flex; align-items: center; gap: 10px; }
+    .feature-card .feature-head { display: flex; align-items: center; gap: 12px; }
     .feature-card .feature-head h3 { margin: 0; font-size: 15px; font-weight: 600; }
-    .feature-card .feature-icon { font-size: 22px; }
+    .feature-card .feature-icon {
+      font-size: 22px; width: 40px; height: 40px; display: grid; place-items: center;
+      border-radius: 10px; background: color-mix(in srgb, var(--primary) 10%, var(--surface)); flex-shrink: 0;
+    }
+    /* Type-tinted icon badges */
+    .feature-card[data-goto="docs"] .feature-icon { background: color-mix(in srgb, #3B82F6 14%, var(--surface)); }
+    .feature-card[data-goto="mealPlans"] .feature-icon { background: color-mix(in srgb, #F59E0B 16%, var(--surface)); }
+    .feature-card[data-goto="routines"] .feature-icon { background: color-mix(in srgb, #8B5CF6 14%, var(--surface)); }
     .feature-card .feature-primary { font-size: 28px; font-weight: 700; line-height: 1.1; }
     .feature-card .feature-sub { font-size: 13px; color: var(--text-muted); min-height: 1.2em; }
     .feature-card .feature-cta { margin-top: auto; font-size: 13px; color: var(--primary); font-weight: 600; padding-top: 6px; }
@@ -203,6 +210,15 @@
     .stat-sub .up { color: var(--success); font-weight: 600; }
     .stat-sub .down { color: var(--danger); font-weight: 600; }
     .stat-card.accent { background: linear-gradient(135deg, color-mix(in srgb, var(--primary) 12%, var(--surface)), var(--surface)); border-color: color-mix(in srgb, var(--primary) 30%, var(--border)); }
+    /* Earnings-strip per-card tints: pending=teal (action), forecast=amber (projection). */
+    .stat-card.tint-money { background: linear-gradient(135deg, color-mix(in srgb, #10B981 10%, var(--surface)), var(--surface)); border-color: color-mix(in srgb, #10B981 26%, var(--border)); }
+    .stat-card.tint-forecast { background: linear-gradient(135deg, color-mix(in srgb, #F59E0B 10%, var(--surface)), var(--surface)); border-color: color-mix(in srgb, #F59E0B 28%, var(--border)); }
+
+    /* Section-head accent bar */
+    .section-head h2, .section-head-simple h2 {
+      border-left: 3px solid var(--primary); padding-left: 10px;
+    }
+    .section-head-simple h2 { border-left-color: color-mix(in srgb, var(--primary) 50%, var(--border)); }
 
     /* Getting Started checklist */
     .checklist-card {
@@ -443,7 +459,7 @@
               <div class="stat-value" id="statPending">$0.00</div>
               <div class="stat-sub" id="statPendingSub"></div>
             </div>
-            <div class="stat-card">
+            <div class="stat-card tint-money">
               <div class="stat-label">Lifetime earnings</div>
               <div class="stat-value" id="statLifetime">$0.00</div>
               <div class="stat-sub" id="statLifetimeSub"></div>
@@ -453,7 +469,7 @@
               <div class="stat-value" id="statLastPayout">—</div>
               <div class="stat-sub" id="statLastPayoutSub"></div>
             </div>
-            <div class="stat-card">
+            <div class="stat-card tint-forecast">
               <div class="stat-label">Next payout forecast</div>
               <div class="stat-value" id="statForecast">—</div>
               <div class="stat-sub" id="statForecastSub"></div>
