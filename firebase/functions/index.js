@@ -128,3 +128,29 @@ If the image is unclear or doesn't contain a recipe, return:
       res.status(500).json({ result: { success: false, error: error.message || "Failed to extract recipe" } });
     }
   });
+
+// Maintain follower_count on creators/{code} when a user's active_creator_code changes.
+// The creator dashboard reads this denormalized count; raw users queries fail because
+// users docs are owner-only read.
+async function adjustFollowerCount(code, delta) {
+  if (!code) return;
+  const db = admin.firestore();
+  const snap = await db.collection("creators").where("code", "==", code).limit(1).get();
+  if (snap.empty) return;
+  await snap.docs[0].ref.update({
+    follower_count: admin.firestore.FieldValue.increment(delta),
+  });
+}
+
+exports.maintainCreatorFollowerCount = functions.firestore
+  .document("users/{uid}")
+  .onWrite(async (change) => {
+    const before = change.before.exists ? change.before.data().active_creator_code : null;
+    const after = change.after.exists ? change.after.data().active_creator_code : null;
+    if (before === after) return null;
+    await Promise.all([
+      adjustFollowerCount(before, -1),
+      adjustFollowerCount(after, 1),
+    ]);
+    return null;
+  });

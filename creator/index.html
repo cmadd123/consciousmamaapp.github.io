@@ -690,13 +690,18 @@
 
     async function loadAnalytics() {
       try {
-        const [followers, docsSnap, mealPlans] = await Promise.all([
-          getDocs(query(collection(db, 'users'), where('active_creator_code', '==', creatorDoc.data.code))),
+        const [docsSnap, mealPlans] = await Promise.all([
           getDocs(query(collection(db, 'app_content'), where('creator_ref', '==', creatorDoc.ref))),
           getDocs(query(collection(db, 'creator_content'),
             where('creator_code', '==', creatorDoc.data.code),
             where('type', '==', 'meal_plan'))),
         ]);
+
+        // Follower count: the users collection is owner-only, so a raw query denies.
+        // Read the denormalized counter on the creator doc instead. A Cloud Function
+        // maintains this on user active_creator_code changes; 0 is the right default
+        // until that function lands.
+        const followerCount = creatorDoc.data.follower_count || 0;
 
         const docs = docsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
         const plans = mealPlans.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -706,7 +711,7 @@
         const totalImports = plans.reduce((s, p) => s + (p.download_count || 0), 0);
 
         // Stat cards
-        $('statFollowers').textContent = followers.size;
+        $('statFollowers').textContent = followerCount;
         $('statDocs').textContent = publishedDocs.length;
         $('statViews').textContent = totalViews;
         $('statMealPlans').textContent = plans.length;
@@ -754,14 +759,14 @@
         // Proxy: (total views + total imports) / followers — how many content
         // interactions per follower on average, capped at 100%.
         const interactions = totalViews + totalImports;
-        const retentionPct = followers.size === 0
+        const retentionPct = followerCount === 0
           ? 0
-          : Math.min(100, Math.round((interactions / followers.size) * 100));
+          : Math.min(100, Math.round((interactions / followerCount) * 100));
         $('ringRetention').setAttribute('stroke-dasharray', `${retentionPct}, 100`);
         $('ringRetentionLabel').textContent = `${retentionPct}%`;
-        $('retentionCaption').textContent = followers.size === 0
+        $('retentionCaption').textContent = followerCount === 0
           ? 'No followers yet'
-          : `${interactions} interactions across ${followers.size} follower${followers.size === 1 ? '' : 's'}`;
+          : `${interactions} interactions across ${followerCount} follower${followerCount === 1 ? '' : 's'}`;
 
         // Reach breakdown
         const avgViewsPerDoc = publishedDocs.length > 0
