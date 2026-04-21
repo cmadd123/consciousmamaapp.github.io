@@ -240,8 +240,34 @@
     .spark-labels { display: flex; gap: 6px; font-size: 11px; color: var(--text-muted); margin-top: 6px; }
     .spark-labels span { flex: 1; text-align: center; }
 
+    /* Dashboard section headers & empty states */
+    .section-head-simple { margin-bottom: 10px; }
+    .section-head-simple h2 { font-size: 16px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; }
+    .stat-grid-compact { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+    .empty-finance {
+      background: color-mix(in srgb, var(--primary) 6%, var(--surface));
+      border: 1px dashed color-mix(in srgb, var(--primary) 32%, var(--border));
+      border-radius: 12px; padding: 18px 20px; font-size: 14px;
+      color: var(--text-muted); text-align: center;
+    }
+
     /* Meal Plans */
     .meal-plan-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+
+    /* Routines */
+    .routine-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+    .routine-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+      padding: 16px 18px; display: flex; flex-direction: column; gap: 10px;
+      cursor: pointer; transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+    }
+    .routine-card:hover { transform: translateY(-2px); border-color: var(--primary); box-shadow: 0 6px 18px rgba(0,0,0,0.06); }
+    .routine-card .r-head { display: flex; align-items: center; gap: 10px; }
+    .routine-card .r-emoji { font-size: 24px; }
+    .routine-card .r-title { font-weight: 600; font-size: 15px; }
+    .routine-card .r-meta { font-size: 12px; color: var(--text-muted); margin-top: auto; padding-top: 4px; }
+    .routine-steps { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px; font-size: 14px; max-height: 60vh; overflow-y: auto; }
+    .routine-steps li { padding: 2px 0; }
     .meal-plan-card {
       background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
       padding: 16px 18px; display: flex; flex-direction: column; gap: 10px;
@@ -395,7 +421,10 @@
             <ul class="checklist" id="checklistItems"></ul>
           </div>
 
-          <!-- Earnings strip (only when Connect onboarded) -->
+          <!-- Finance -->
+          <div class="section-head section-head-simple">
+            <h2>Finance</h2>
+          </div>
           <div class="earnings-strip" id="earningsStrip" hidden>
             <div class="stat-card accent">
               <div class="stat-label">Pending payout</div>
@@ -412,10 +441,22 @@
               <div class="stat-value" id="statLastPayout">—</div>
               <div class="stat-sub" id="statLastPayoutSub"></div>
             </div>
+            <div class="stat-card">
+              <div class="stat-label">Next payout forecast</div>
+              <div class="stat-value" id="statForecast">—</div>
+              <div class="stat-sub" id="statForecastSub"></div>
+            </div>
+          </div>
+          <div class="empty empty-finance" id="financeEmpty">
+            Connect your bank to start earning 50% of every subscription from your followers.
           </div>
 
-          <!-- Primary stats -->
-          <div class="stat-grid">
+          <!-- Performance -->
+          <div class="section-head" style="margin-top: 28px;">
+            <h2>Performance</h2>
+            <button class="btn ghost" id="refreshAnalyticsBtn">↻ Refresh</button>
+          </div>
+          <div class="stat-grid stat-grid-compact">
             <div class="stat-card">
               <div class="stat-label">Followers</div>
               <div class="stat-value" id="statFollowers">—</div>
@@ -426,57 +467,6 @@
               <div class="stat-value" id="statSubscribers">—</div>
               <div class="stat-sub" id="statSubscribersSub"></div>
             </div>
-            <div class="stat-card">
-              <div class="stat-label">Docs</div>
-              <div class="stat-value" id="statDocs">—</div>
-              <div class="stat-sub" id="statDocsSub"></div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-label">Meal plans</div>
-              <div class="stat-value" id="statMealPlans">—</div>
-              <div class="stat-sub" id="statMealPlansSub"></div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-label">Routines</div>
-              <div class="stat-value" id="statRoutines">—</div>
-              <div class="stat-sub" id="statRoutinesSub"></div>
-            </div>
-          </div>
-
-          <!-- Feature cards (navigation to sub-views) -->
-          <div class="feature-grid">
-            <button class="feature-card" data-goto="docs">
-              <div class="feature-head">
-                <span class="feature-icon">📄</span>
-                <h3>Helpful Docs</h3>
-              </div>
-              <div class="feature-primary" id="featureDocsPrimary">—</div>
-              <div class="feature-sub" id="featureDocsSub">&nbsp;</div>
-              <div class="feature-cta">Manage docs →</div>
-            </button>
-            <button class="feature-card" data-goto="mealPlans">
-              <div class="feature-head">
-                <span class="feature-icon">🍽️</span>
-                <h3>Meal Plans</h3>
-              </div>
-              <div class="feature-primary" id="featureMealsPrimary">—</div>
-              <div class="feature-sub" id="featureMealsSub">&nbsp;</div>
-              <div class="feature-cta">View plans →</div>
-            </button>
-            <div class="feature-card feature-card-passive">
-              <div class="feature-head">
-                <span class="feature-icon">📋</span>
-                <h3>Routines</h3>
-              </div>
-              <div class="feature-primary" id="featureRoutinesPrimary">—</div>
-              <div class="feature-sub" id="featureRoutinesSub">&nbsp;</div>
-              <div class="feature-cta muted">Create in the MomRise app</div>
-            </div>
-          </div>
-
-          <div class="section-head" style="margin-top: 28px;">
-            <h2>Performance</h2>
-            <button class="btn ghost" id="refreshAnalyticsBtn">↻ Refresh</button>
           </div>
 
           <div class="analytics-grid">
@@ -532,6 +522,40 @@
               </div>
             </div>
           </div>
+
+          <!-- Your content — feature cards, clickable -->
+          <div class="section-head section-head-simple" style="margin-top: 28px;">
+            <h2>Your content</h2>
+          </div>
+          <div class="feature-grid">
+            <button class="feature-card" data-goto="docs">
+              <div class="feature-head">
+                <span class="feature-icon">📄</span>
+                <h3>Helpful Docs</h3>
+              </div>
+              <div class="feature-primary" id="featureDocsPrimary">—</div>
+              <div class="feature-sub" id="featureDocsSub">&nbsp;</div>
+              <div class="feature-cta">Manage docs →</div>
+            </button>
+            <button class="feature-card" data-goto="mealPlans">
+              <div class="feature-head">
+                <span class="feature-icon">🍽️</span>
+                <h3>Meal Plans</h3>
+              </div>
+              <div class="feature-primary" id="featureMealsPrimary">—</div>
+              <div class="feature-sub" id="featureMealsSub">&nbsp;</div>
+              <div class="feature-cta">View plans →</div>
+            </button>
+            <button class="feature-card" data-goto="routines">
+              <div class="feature-head">
+                <span class="feature-icon">📋</span>
+                <h3>Routines</h3>
+              </div>
+              <div class="feature-primary" id="featureRoutinesPrimary">—</div>
+              <div class="feature-sub" id="featureRoutinesSub">&nbsp;</div>
+              <div class="feature-cta">View routines →</div>
+            </button>
+          </div>
       </div>
 
       <!-- 4. Docs sub-view -->
@@ -558,6 +582,21 @@
         </p>
         <div class="meal-plan-grid" id="mealPlanGrid">
           <div class="empty"><div class="loader" style="margin: 0 auto 12px;"></div>Loading meal plans…</div>
+        </div>
+      </div>
+
+      <!-- 6. Routines sub-view -->
+      <div class="view" id="viewRoutines">
+        <button class="back-btn" data-back>← Dashboard</button>
+        <div class="section-head">
+          <h2>Shared routines</h2>
+          <button class="btn ghost" id="refreshRoutinesBtn">↻ Refresh</button>
+        </div>
+        <p class="muted" style="margin: 0 0 16px; font-size: 13px;">
+          Routines you've toggled for followers in the MomRise app. Create or edit from the Routines tab in-app.
+        </p>
+        <div class="routine-grid" id="routineGrid">
+          <div class="empty"><div class="loader" style="margin: 0 auto 12px;"></div>Loading routines…</div>
         </div>
       </div>
     </main>
@@ -612,6 +651,18 @@
       </div>
       <div class="meal-plan-meta muted" id="mealPlanModalMeta"></div>
       <div id="mealPlanModalBody" class="meal-plan-preview"></div>
+    </div>
+  </div>
+
+  <!-- Routine preview modal -->
+  <div class="modal-backdrop" id="routineModal">
+    <div class="modal wide">
+      <div class="modal-head">
+        <h3 id="routineModalTitle">Routine preview</h3>
+        <button type="button" class="btn ghost" id="closeRoutineModalBtn">Close</button>
+      </div>
+      <div class="meal-plan-meta muted" id="routineModalMeta"></div>
+      <ol id="routineModalBody" class="routine-steps"></ol>
     </div>
   </div>
 
@@ -699,6 +750,9 @@
         } else if (target === 'mealPlans') {
           show('viewMealPlans');
           loadCreatorMealPlans();
+        } else if (target === 'routines') {
+          show('viewRoutines');
+          loadCreatorRoutines();
         }
       });
     });
@@ -951,6 +1005,18 @@
 
       const onboarded = !!connectStatusCache.onboarded;
       $('earningsStrip').hidden = !onboarded;
+      $('financeEmpty').hidden = onboarded;
+      if (!onboarded) {
+        if (connectStatusCache.connected) {
+          $('financeEmpty').innerHTML = 'Stripe onboarding started but not complete. <button class="checklist-action" id="financeContinueBtn">Continue setup</button>';
+          const btn = $('financeContinueBtn');
+          if (btn) btn.addEventListener('click', () => startConnectOnboarding(btn));
+        } else {
+          $('financeEmpty').innerHTML = 'Connect your bank to start earning 50% of every subscription from your followers. <button class="checklist-action" id="financeConnectBtn">Connect your bank</button>';
+          const btn = $('financeConnectBtn');
+          if (btn) btn.addEventListener('click', () => startConnectOnboarding(btn));
+        }
+      }
       if (onboarded) await loadEarnings();
     }
 
@@ -993,6 +1059,24 @@
           $('statLastPayout').textContent = '—';
           $('statLastPayoutSub').textContent = 'No payouts yet';
         }
+
+        // Next payout forecast: pending + projected remainder at current pace.
+        // Pace is this month's earnings so far ÷ days elapsed, projected to
+        // end of month. Forecast = pending + (pace * remaining days).
+        const now = new Date();
+        const monthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+        const thisMonth = byMonth.get(monthKey) || 0;
+        const dayOfMonth = now.getDate();
+        const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+        const remainingDays = daysInMonth - dayOfMonth;
+        const pace = dayOfMonth > 0 ? thisMonth / dayOfMonth : 0;
+        const forecast = pending + Math.round(pace * remainingDays);
+        $('statForecast').textContent = fmtMoney(forecast);
+        $('statForecastSub').innerHTML = forecast >= 2500
+          ? '<span class="up">On track to clear minimum</span>'
+          : pending > 0 || thisMonth > 0
+            ? `<span class="muted">Rolls over if under $25</span>`
+            : '<span class="muted">No earnings yet this month</span>';
 
         renderEarningsChart(byMonth);
       } catch (e) {
@@ -1145,31 +1229,19 @@
         const totalViews = docs.reduce((s, d) => s + (d.view_count || 0), 0);
         const totalImports = plans.reduce((s, p) => s + (p.download_count || 0), 0);
 
-        // Stat cards
+        // Top-level stats (Followers, Subscribers only — content counts live on the cards)
         $('statFollowers').textContent = followerCount;
         $('statSubscribers').textContent = subscriberCount;
-        $('statDocs').textContent = publishedDocs.length;
-        $('statMealPlans').textContent = plans.length;
-        $('statRoutines').textContent = routines.length;
 
-        // Sub-labels
         const draftDocs = docs.length - publishedDocs.length;
-        $('statDocsSub').innerHTML = draftDocs > 0
-          ? `<span class="muted">${draftDocs} draft${draftDocs === 1 ? '' : 's'}</span>`
-          : totalViews > 0 ? `<span>${totalViews} total views</span>` : '';
         const activePlans = plans.filter(p => p.is_active).length;
-        $('statMealPlansSub').innerHTML = activePlans !== plans.length && plans.length > 0
-          ? `<span>${activePlans} active</span>`
-          : totalImports > 0 ? `<span>${totalImports} imports</span>` : '';
+
         $('statFollowersSub').innerHTML = followerCount > 0 && subscriberCount > 0
           ? `<span class="muted">${Math.round((subscriberCount / followerCount) * 100)}% subscribed</span>`
           : '';
         $('statSubscribersSub').innerHTML = subscriberCount > 0
           ? '<span class="up">Active this period</span>'
           : '<span class="muted">None yet</span>';
-        $('statRoutinesSub').innerHTML = routines.length > 0
-          ? '<span class="muted">Shared with followers</span>'
-          : '<span class="muted">None shared yet</span>';
 
         // Feature cards (navigation)
         $('featureDocsPrimary').textContent = publishedDocs.length;
@@ -1422,6 +1494,82 @@
       }
 
       $('mealPlanModal').classList.add('open');
+    }
+
+    // --- Routines sub-view ---
+    $('refreshRoutinesBtn').addEventListener('click', loadCreatorRoutines);
+    $('closeRoutineModalBtn').addEventListener('click', () => {
+      $('routineModal').classList.remove('open');
+    });
+    $('routineModal').addEventListener('click', (e) => {
+      if (e.target === $('routineModal')) $('routineModal').classList.remove('open');
+    });
+
+    async function loadCreatorRoutines() {
+      const grid = $('routineGrid');
+      grid.innerHTML = '<div class="empty"><div class="loader" style="margin: 0 auto 12px;"></div>Loading routines…</div>';
+      try {
+        const snap = await getDocs(query(
+          collection(db, 'routines'),
+          where('user_ref', '==', creatorDoc.data.user_ref),
+          where('shared_with_followers', '==', true),
+        ));
+        const routines = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        routines.sort((a, b) => {
+          const at = a.created_at?.toMillis?.() || 0;
+          const bt = b.created_at?.toMillis?.() || 0;
+          return bt - at;
+        });
+
+        if (routines.length === 0) {
+          grid.innerHTML = `
+            <div class="empty">
+              <div style="font-size: 36px; margin-bottom: 10px;">📋</div>
+              <div style="font-weight: 600; margin-bottom: 4px;">No routines shared yet</div>
+              <div style="font-size: 13px;">Toggle "Share with followers" on any routine in the MomRise app.</div>
+            </div>`;
+          return;
+        }
+
+        grid.innerHTML = routines.map(r => {
+          const stepCount = Array.isArray(r.steps) ? r.steps.length : 0;
+          const lastDone = r.last_completed_date
+            ? `Last done ${escapeHtml(r.last_completed_date)}`
+            : 'Not completed yet';
+          return `
+            <div class="routine-card" data-id="${r.id}">
+              <div class="r-head">
+                <span class="r-emoji">${escapeHtml(r.emoji || '📋')}</span>
+                <span class="r-title">${escapeHtml(r.name || 'Untitled routine')}</span>
+              </div>
+              <div class="r-meta">${stepCount} step${stepCount === 1 ? '' : 's'} · ${lastDone}</div>
+            </div>`;
+        }).join('');
+
+        grid.querySelectorAll('.routine-card').forEach(card => {
+          card.addEventListener('click', () => {
+            const routine = routines.find(r => r.id === card.dataset.id);
+            if (routine) openRoutinePreview(routine);
+          });
+        });
+      } catch (e) {
+        console.error(e);
+        grid.innerHTML = `<div class="empty">Couldn't load routines: ${escapeHtml(e.message)}</div>`;
+      }
+    }
+
+    function openRoutinePreview(routine) {
+      $('routineModalTitle').textContent = `${routine.emoji || '📋'} ${routine.name || 'Routine'}`;
+      const stepCount = Array.isArray(routine.steps) ? routine.steps.length : 0;
+      $('routineModalMeta').textContent = [
+        `${stepCount} step${stepCount === 1 ? '' : 's'}`,
+        routine.last_completed_date ? `Last done ${routine.last_completed_date}` : 'Never completed',
+      ].join(' · ');
+      const steps = Array.isArray(routine.steps) ? routine.steps : [];
+      $('routineModalBody').innerHTML = steps.length === 0
+        ? '<li class="muted">This routine has no steps yet.</li>'
+        : steps.map(s => `<li>${escapeHtml(s)}</li>`).join('');
+      $('routineModal').classList.add('open');
     }
   </script>
 </body>
