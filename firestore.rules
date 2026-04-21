@@ -77,8 +77,15 @@ service cloud.firestore {
         request.resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
     }
 
+    // Routines — owner has full access. Any authenticated user can READ
+    // routines that have shared_with_followers=true (followers filter by
+    // creator code client-side).
     match /routines/{routineId} {
-      allow read, update, delete: if isAuthenticated() &&
+      allow read: if isAuthenticated() && (
+        resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid) ||
+        resource.data.shared_with_followers == true
+      );
+      allow update, delete: if isAuthenticated() &&
         resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
       allow create: if isAuthenticated() &&
         request.resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);

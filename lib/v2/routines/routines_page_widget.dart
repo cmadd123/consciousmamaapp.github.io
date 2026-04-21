@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
+import '/custom_code/actions/creator_service.dart';
+import '/v2/creator/creator_theme_notifier.dart';
 import '/v2/creator/creator_theme_wrapper.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -19,6 +22,60 @@ class RoutinesPageWidget extends StatefulWidget {
 }
 
 class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
+  CreatorsRecord? _creatorProfile;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCreatorProfile();
+  }
+
+  Future<void> _loadCreatorProfile() async {
+    final profile = await getCurrentUserCreatorProfile();
+    if (mounted && profile != null) {
+      setState(() => _creatorProfile = profile);
+    }
+  }
+
+  Future<void> _toggleShare(RoutinesRecord routine) async {
+    final newValue = !routine.sharedWithFollowers;
+    await routine.reference.update({'shared_with_followers': newValue});
+    if (!mounted) return;
+    HapticFeedback.selectionClick();
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(newValue
+          ? 'Shared "${routine.name}" with your followers'
+          : 'Stopped sharing "${routine.name}"'),
+      behavior: SnackBarBehavior.floating,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      margin: const EdgeInsets.all(16),
+      duration: const Duration(seconds: 2),
+    ));
+  }
+
+  Future<void> _copyCreatorRoutine(RoutinesRecord creatorRoutine, String creatorName) async {
+    if (currentUserReference == null) return;
+    HapticFeedback.mediumImpact();
+    final data = createRoutinesRecordData(
+      name: '${creatorRoutine.name} (by $creatorName)',
+      emoji: creatorRoutine.emoji,
+      steps: List<String>.from(creatorRoutine.steps),
+      userRef: currentUserReference,
+      createdAt: DateTime.now(),
+      stepCompletions: List<bool>.filled(creatorRoutine.steps.length, false),
+    );
+    await RoutinesRecord.collection.add(data);
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text('Added "${creatorRoutine.name}" to your routines'),
+      backgroundColor: FlutterFlowTheme.of(context).primary,
+      behavior: SnackBarBehavior.floating,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      margin: const EdgeInsets.all(16),
+      duration: const Duration(seconds: 2),
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -68,7 +125,8 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
               ),
             ),
 
-            // Routines list
+            // Routines list — own routines, followed by creator-shared
+            // routines (if the user has an active creator code).
             Expanded(
               child: StreamBuilder<List<RoutinesRecord>>(
                 stream: queryRoutinesRecord(
@@ -86,14 +144,15 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
                     );
                   }
 
-                  if (routines.isEmpty) {
-                    return _buildEmptyState();
-                  }
-
-                  return ListView.builder(
+                  return ListView(
                     padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-                    itemCount: routines.length,
-                    itemBuilder: (context, index) => _buildRoutineCard(routines[index]),
+                    children: [
+                      if (routines.isEmpty)
+                        _buildEmptyState()
+                      else
+                        ...routines.map(_buildRoutineCard),
+                      _buildCreatorRoutinesSection(),
+                    ],
                   );
                 },
               ),
@@ -101,6 +160,125 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
           ],
         ),
       ),
+      ),
+    );
+  }
+
+  /// Section shown to followers when they have an active creator code —
+  /// lists the creator's routines where `shared_with_followers = true`
+  /// and lets the follower copy any into their own routines.
+  Widget _buildCreatorRoutinesSection() {
+    return Consumer<CreatorThemeNotifier>(
+      builder: (context, notifier, _) {
+        final creator = notifier.activeCreator;
+        if (creator == null || !creator.hasUserRef()) return const SizedBox.shrink();
+        if (creator.userRef == currentUserReference) return const SizedBox.shrink();
+
+        return StreamBuilder<List<RoutinesRecord>>(
+          stream: queryRoutinesRecord(
+            queryBuilder: (q) => q
+                .where('user_ref', isEqualTo: creator.userRef)
+                .where('shared_with_followers', isEqualTo: true),
+          ),
+          builder: (context, snapshot) {
+            final shared = snapshot.data ?? [];
+            if (shared.isEmpty) return const SizedBox.shrink();
+
+            final primary = FlutterFlowTheme.of(context).primary;
+            return Padding(
+              padding: const EdgeInsets.only(top: 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.people, color: primary, size: 18),
+                      const SizedBox(width: 8),
+                      Text(
+                        'From ${creator.name}',
+                        style: FlutterFlowTheme.of(context).bodyMedium.override(
+                          fontFamily: FFAppState().currentFontFamily,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: primary,
+                          letterSpacing: 0,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  ...shared.map((r) => _buildSharedRoutineCard(r, creator)),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildSharedRoutineCard(RoutinesRecord routine, CreatorsRecord creator) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: FlutterFlowTheme.of(context).primary.withOpacity(0.2)),
+          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 8, offset: const Offset(0, 2))],
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Center(
+                child: Text(routine.emoji, style: const TextStyle(fontSize: 22)),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    routine.name,
+                    style: FlutterFlowTheme.of(context).bodyMedium.override(
+                      fontFamily: FFAppState().currentFontFamily,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    '${routine.steps.length} step${routine.steps.length == 1 ? '' : 's'}',
+                    style: FlutterFlowTheme.of(context).bodySmall.override(
+                      fontFamily: FFAppState().currentFontFamily,
+                      color: FlutterFlowTheme.of(context).secondaryText,
+                      fontSize: 12,
+                      letterSpacing: 0,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            TextButton.icon(
+              onPressed: () => _copyCreatorRoutine(routine, creator.name),
+              icon: const Icon(Icons.add, size: 16),
+              label: const Text('Add'),
+              style: TextButton.styleFrom(
+                foregroundColor: FlutterFlowTheme.of(context).primary,
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -199,6 +377,21 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
                       ),
                     ),
                   ),
+                  // Creator-only: share with followers toggle
+                  if (_creatorProfile != null)
+                    GestureDetector(
+                      onTap: () => _toggleShare(routine),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                        child: Icon(
+                          routine.sharedWithFollowers ? Icons.people : Icons.people_outline,
+                          color: routine.sharedWithFollowers
+                              ? FlutterFlowTheme.of(context).primary
+                              : Colors.grey.shade400,
+                          size: 22,
+                        ),
+                      ),
+                    ),
                   Icon(Icons.play_circle_outline, color: FlutterFlowTheme.of(context).primary, size: 28),
                 ],
               ),

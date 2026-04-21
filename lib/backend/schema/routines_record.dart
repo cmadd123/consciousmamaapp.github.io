@@ -48,6 +48,12 @@ class RoutinesRecord extends FirestoreRecord {
   String get lastCompletedDate => _lastCompletedDate ?? '';
   bool hasLastCompletedDate() => _lastCompletedDate != null;
 
+  // "shared_with_followers" field — creator-only toggle; when true the
+  // routine is visible to anyone with the creator's active code.
+  bool? _sharedWithFollowers;
+  bool get sharedWithFollowers => _sharedWithFollowers ?? false;
+  bool hasSharedWithFollowers() => _sharedWithFollowers != null;
+
   void _initializeFields() {
     _name = snapshotData['name'] as String?;
     _emoji = snapshotData['emoji'] as String?;
@@ -58,6 +64,7 @@ class RoutinesRecord extends FirestoreRecord {
         ?.map((e) => e as bool)
         .toList();
     _lastCompletedDate = snapshotData['last_completed_date'] as String?;
+    _sharedWithFollowers = snapshotData['shared_with_followers'] as bool?;
   }
 
   static CollectionReference get collection =>
@@ -102,6 +109,7 @@ Map<String, dynamic> createRoutinesRecordData({
   DateTime? createdAt,
   List<bool>? stepCompletions,
   String? lastCompletedDate,
+  bool? sharedWithFollowers,
 }) {
   final firestoreData = mapToFirestore(
     <String, dynamic>{
@@ -112,6 +120,7 @@ Map<String, dynamic> createRoutinesRecordData({
       'created_at': createdAt,
       'step_completions': stepCompletions,
       'last_completed_date': lastCompletedDate,
+      'shared_with_followers': sharedWithFollowers,
     }.withoutNulls,
   );
 
