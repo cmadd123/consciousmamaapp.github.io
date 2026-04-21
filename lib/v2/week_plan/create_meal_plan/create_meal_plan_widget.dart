@@ -3553,7 +3553,12 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                                   ),
                                                 ),
                                               ),
-                                            if (FFAppState().showMealCosts && visiblePlans.isNotEmpty && (totalCost > 0 || FFAppState().mealPlanBudget > 0))
+                                            // Show the budget bar as soon as the user has either planned a
+                                            // meal with cost OR set a budget. Previously it also required
+                                            // visiblePlans.isNotEmpty, which meant saving a budget on an empty
+                                            // week did nothing visible — the bar would only appear after
+                                            // adding meals or importing from a creator.
+                                            if (FFAppState().showMealCosts && (totalCost > 0 || FFAppState().mealPlanBudget > 0))
                                               _buildBudgetBar(context, totalCost),
                                             // First-time directions - dismissible, never shows again once closed
                                             if (!_welcomeDismissed && mealPlanRecords.isEmpty)
