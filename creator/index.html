@@ -156,6 +156,22 @@
     .empty {
       text-align: center; padding: 48px 24px; color: var(--text-muted);
     }
+    /* Empty states inside grids should span the full row so they center
+       instead of squeezing into the first column. */
+    .meal-plan-grid > .empty,
+    .routine-grid > .empty,
+    .doc-list > .empty { grid-column: 1 / -1; }
+
+    /* Chart empty state: subtle dashed placeholder that explains when the
+       chart will populate, rather than hiding the card entirely. */
+    .chart-empty {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; padding: 28px 20px; color: var(--text-muted);
+      background: color-mix(in srgb, var(--primary) 3%, var(--surface));
+      border: 1px dashed color-mix(in srgb, var(--primary) 25%, var(--border));
+      border-radius: 10px; font-size: 13px; line-height: 1.5; min-height: 120px;
+    }
+    .chart-empty .chart-empty-title { font-weight: 600; color: var(--text); font-size: 14px; margin-bottom: 4px; }
 
     /* Form */
     .form-grid { display: grid; gap: 16px; }
@@ -538,26 +554,36 @@
 
           <div class="analytics-grid">
             <!-- Followers & subscribers over time -->
-            <div class="analytics-card span-2" id="audienceChartCard" hidden>
+            <div class="analytics-card span-2" id="audienceChartCard">
               <h3>Audience over time <span class="muted" id="audienceChartSubtitle"></span></h3>
-              <svg id="audienceChart" class="line-chart" viewBox="0 0 600 180" preserveAspectRatio="none"></svg>
-              <div class="line-legend">
-                <span><span class="swatch" style="background: var(--primary);"></span>Followers</span>
-                <span><span class="swatch" style="background: var(--accent);"></span>Subscribers</span>
+              <div id="audienceChartBody">
+                <div class="chart-empty">
+                  <div class="chart-empty-title">Your audience line chart will appear here</div>
+                  <div>Once a few days of follower + subscriber snapshots are logged, the trend line renders automatically.</div>
+                </div>
               </div>
             </div>
 
             <!-- Earnings over time -->
-            <div class="analytics-card span-2" id="earningsChartCard" hidden>
+            <div class="analytics-card span-2" id="earningsChartCard">
               <h3>Earnings over time <span class="muted" id="earningsChartSubtitle"></span></h3>
-              <div id="earningsChart" class="spark-chart"></div>
+              <div id="earningsChartBody">
+                <div class="chart-empty">
+                  <div class="chart-empty-title">No earnings yet</div>
+                  <div>This chart fills in month by month as your followers subscribe.</div>
+                </div>
+              </div>
             </div>
 
             <!-- Subscriber cohort retention -->
-            <div class="analytics-card span-2" id="cohortCard" hidden>
+            <div class="analytics-card span-2" id="cohortCard">
               <h3>Subscriber cohorts <span class="muted" id="cohortSubtitle"></span></h3>
-              <div id="cohortTable" class="cohort-table"></div>
-              <div class="muted" style="font-size: 12px; margin-top: 8px;">Each row is subscribers who started that month; columns show what % were still paying N months later.</div>
+              <div id="cohortTable" class="cohort-table">
+                <div class="chart-empty">
+                  <div class="chart-empty-title">Cohort retention shows up once you have subscribers</div>
+                  <div>Each future month will add a row — subscribers who started that month, and what percent were still paying N months later.</div>
+                </div>
+              </div>
             </div>
 
             <!-- Retention + Conversion -->
@@ -1209,7 +1235,7 @@
     }
 
     function renderEarningsChart(byMonth) {
-      // Last 6 months, including current, in order.
+      const body = $('earningsChartBody');
       const now = new Date();
       const months = [];
       for (let i = 5; i >= 0; i--) {
@@ -1218,25 +1244,25 @@
         months.push({ key, label: d.toLocaleDateString(undefined, { month: 'short' }), cents: byMonth.get(key) || 0 });
       }
       const hasAny = months.some(m => m.cents > 0);
-      $('earningsChartCard').hidden = !hasAny;
-      if (!hasAny) return;
+      if (!hasAny) {
+        body.innerHTML = `
+          <div class="chart-empty">
+            <div class="chart-empty-title">No earnings yet</div>
+            <div>This chart fills in month by month as your followers subscribe.</div>
+          </div>`;
+        $('earningsChartSubtitle').textContent = '';
+        return;
+      }
 
       const max = Math.max(1, ...months.map(m => Math.abs(m.cents)));
-      const chart = $('earningsChart');
-      chart.innerHTML = months.map(m => {
-        const h = Math.max(2, Math.round((Math.abs(m.cents) / max) * 100));
-        return `<div class="spark-bar" style="height: ${h}%;" title="${m.label}: ${fmtMoney(m.cents)}"><span class="spark-value">${fmtMoney(m.cents)}</span></div>`;
-      }).join('');
-
-      // Labels row (month names below bars)
-      let labelsRow = document.getElementById('sparkLabels');
-      if (!labelsRow) {
-        labelsRow = document.createElement('div');
-        labelsRow.id = 'sparkLabels';
-        labelsRow.className = 'spark-labels';
-        chart.parentElement.appendChild(labelsRow);
-      }
-      labelsRow.innerHTML = months.map(m => `<span>${m.label}</span>`).join('');
+      body.innerHTML = `
+        <div id="earningsChart" class="spark-chart">
+          ${months.map(m => {
+            const h = Math.max(2, Math.round((Math.abs(m.cents) / max) * 100));
+            return `<div class="spark-bar" style="height: ${h}%;" title="${m.label}: ${fmtMoney(m.cents)}"><span class="spark-value">${fmtMoney(m.cents)}</span></div>`;
+          }).join('')}
+        </div>
+        <div class="spark-labels">${months.map(m => `<span>${m.label}</span>`).join('')}</div>`;
 
       const total6mo = months.reduce((s, m) => s + m.cents, 0);
       $('earningsChartSubtitle').textContent = `${fmtMoney(total6mo)} in last 6 mo`;
@@ -1250,6 +1276,7 @@
 
     // --- Audience over time (line chart from daily snapshots) ---
     async function loadAudienceChart() {
+      const body = $('audienceChartBody');
       try {
         const snap = await getDocs(query(
           collection(db, 'creators', creatorDoc.id, 'snapshots'),
@@ -1260,10 +1287,14 @@
           .sort((a, b) => a.date.localeCompare(b.date));
 
         if (rows.length < 2) {
-          $('audienceChartCard').hidden = true;
+          body.innerHTML = `
+            <div class="chart-empty">
+              <div class="chart-empty-title">Audience chart needs at least 2 days of data</div>
+              <div>A snapshot runs once a day. Check back tomorrow once a second data point lands.</div>
+            </div>`;
+          $('audienceChartSubtitle').textContent = rows.length === 1 ? '1 day so far' : '';
           return;
         }
-        $('audienceChartCard').hidden = false;
 
         const W = 600, H = 180, P = { t: 8, r: 10, b: 20, l: 30 };
         const innerW = W - P.l - P.r;
@@ -1290,18 +1321,27 @@
 
         const xTicks = tickIndices.map(i => `<text class="tick" x="${xAt(i)}" y="${H - 4}" text-anchor="middle">${fmtDate(rows[i].date)}</text>`).join('');
 
-        $('audienceChart').innerHTML = `
-          ${gridYs}
-          <path class="area area-primary" d="${areaFor('follower_count')}"/>
-          <path class="area area-accent" d="${areaFor('subscriber_count')}"/>
-          <path class="line line-primary" d="${pathFor('follower_count')}"/>
-          <path class="line line-accent" d="${pathFor('subscriber_count')}"/>
-          ${xTicks}
-        `;
+        body.innerHTML = `
+          <svg id="audienceChart" class="line-chart" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
+            ${gridYs}
+            <path class="area area-primary" d="${areaFor('follower_count')}"/>
+            <path class="area area-accent" d="${areaFor('subscriber_count')}"/>
+            <path class="line line-primary" d="${pathFor('follower_count')}"/>
+            <path class="line line-accent" d="${pathFor('subscriber_count')}"/>
+            ${xTicks}
+          </svg>
+          <div class="line-legend">
+            <span><span class="swatch" style="background: var(--primary);"></span>Followers</span>
+            <span><span class="swatch" style="background: var(--accent);"></span>Subscribers</span>
+          </div>`;
         $('audienceChartSubtitle').textContent = `${rows.length} day${rows.length === 1 ? '' : 's'} of history`;
       } catch (e) {
         console.warn('Audience chart load failed:', e.message);
-        $('audienceChartCard').hidden = true;
+        body.innerHTML = `
+          <div class="chart-empty">
+            <div class="chart-empty-title">Audience chart unavailable</div>
+            <div>Couldn't load snapshots: ${escapeHtml(e.message)}</div>
+          </div>`;
       }
     }
 
@@ -1327,10 +1367,14 @@
       }
 
       if (cohorts.size === 0) {
-        $('cohortCard').hidden = true;
+        $('cohortTable').innerHTML = `
+          <div class="chart-empty">
+            <div class="chart-empty-title">Cohort retention shows up once you have subscribers</div>
+            <div>Each future month will add a row — subscribers who started that month, and what percent were still paying N months later.</div>
+          </div>`;
+        $('cohortSubtitle').textContent = '';
         return;
       }
-      $('cohortCard').hidden = false;
 
       // Sort cohorts chronologically, most recent first (rolling view).
       const sortedKeys = [...cohorts.keys()].sort().reverse().slice(0, 6);
