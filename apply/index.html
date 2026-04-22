@@ -123,7 +123,7 @@
             </select>
           </label>
           <label>Website <span class="hint">(optional)</span>
-            <input type="url" name="website" maxlength="200" placeholder="https://…">
+            <input type="text" name="website" maxlength="200" placeholder="momrise.app" inputmode="url" autocomplete="url">
           </label>
         </div>
         <label>Who's in your community? <span class="hint">(moms of toddlers, new moms, etc.)</span>
@@ -179,7 +179,13 @@
         primary_handle: fd.get('primary_handle')?.toString().trim(),
         other_handles: fd.get('other_handles')?.toString().trim() || null,
         audience_size: fd.get('audience_size')?.toString(),
-        website: fd.get('website')?.toString().trim() || null,
+        website: (() => {
+          const raw = fd.get('website')?.toString().trim();
+          if (!raw) return null;
+          // Accept "momrise.app" as well as "https://momrise.app" —
+          // prepend https:// if the user didn't include a scheme.
+          return /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
+        })(),
         audience_description: fd.get('audience_description')?.toString().trim(),
         pitch: fd.get('pitch')?.toString().trim(),
         status: 'new',
