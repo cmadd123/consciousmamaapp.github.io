@@ -76,6 +76,38 @@
     .btn-oauth:active { transform: scale(0.98); }
     .btn-oauth.apple { background: #000; color: #fff; border-color: #000; }
     .btn-oauth svg { width: 18px; height: 18px; }
+    .signin-divider {
+      display: flex; align-items: center; gap: 12px;
+      width: 100%; max-width: 320px; color: var(--text-muted); font-size: 12px;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      margin: 4px 0;
+    }
+    .signin-divider::before, .signin-divider::after {
+      content: ''; flex: 1; border-top: 1px solid var(--border);
+    }
+    .signin-email { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 320px; }
+    .signin-email input {
+      padding: 12px 14px; font-size: 15px; border: 1px solid var(--border);
+      border-radius: 10px; background: var(--surface); font-family: inherit;
+    }
+    .signin-email input:focus { outline: 2px solid var(--primary); outline-offset: -1px; border-color: var(--primary); }
+    .signin-email .btn-primary {
+      background: var(--primary); color: white; border: none;
+      padding: 12px; border-radius: 10px; font-size: 15px; font-weight: 600;
+      margin-top: 4px;
+    }
+    .signin-email .btn-primary:hover:not(:disabled) { background: var(--primary-dark); }
+    .signin-email .btn-primary:disabled { opacity: 0.7; cursor: not-allowed; }
+    .signin-email .btn-link {
+      background: none; border: none; color: var(--text-muted); font-size: 13px;
+      text-decoration: underline; padding: 4px; font-family: inherit;
+    }
+    .signin-email .btn-link:hover { color: var(--primary); }
+    .signin-error {
+      background: color-mix(in srgb, var(--danger) 8%, var(--surface));
+      border: 1px solid color-mix(in srgb, var(--danger) 30%, var(--border));
+      color: var(--danger); padding: 8px 12px; border-radius: 8px; font-size: 13px;
+    }
 
     /* Gate (not-a-creator) */
     .gate {
@@ -464,6 +496,14 @@
               Continue with Apple
             </button>
           </div>
+          <div class="signin-divider"><span>or use email</span></div>
+          <form class="signin-email" id="emailSignInForm" autocomplete="on">
+            <input type="email" id="emailInput" placeholder="Email" required autocomplete="email">
+            <input type="password" id="passwordInput" placeholder="Password" required autocomplete="current-password">
+            <button type="submit" class="btn-primary" id="emailSignInBtn">Sign in</button>
+            <button type="button" class="btn-link" id="forgotPwBtn">Forgot password?</button>
+            <div class="signin-error" id="signinError" hidden></div>
+          </form>
           <a href="/" style="font-size: 13px; color: var(--text-muted);">← Back to momrise.app</a>
         </div>
       </div>
@@ -813,6 +853,7 @@
     import {
       getAuth, onAuthStateChanged, signOut,
       GoogleAuthProvider, OAuthProvider, signInWithPopup,
+      signInWithEmailAndPassword, sendPasswordResetEmail,
     } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
     import {
       getFirestore, collection, doc, query, where, onSnapshot, orderBy,
@@ -879,6 +920,52 @@
     };
     $('signOutBtn').addEventListener('click', doSignOut);
     $('gateSignOutBtn').addEventListener('click', doSignOut);
+
+    // Email + password sign-in
+    const errEl = $('signinError');
+    const showSigninError = (msg) => {
+      errEl.textContent = msg;
+      errEl.hidden = false;
+      setTimeout(() => { errEl.hidden = true; }, 8000);
+    };
+    $('emailSignInForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = $('emailInput').value.trim();
+      const password = $('passwordInput').value;
+      if (!email || !password) return;
+      const btn = $('emailSignInBtn');
+      btn.disabled = true;
+      btn.textContent = 'Signing in…';
+      errEl.hidden = true;
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        // onAuthStateChanged takes it from here
+      } catch (err) {
+        const code = err.code || '';
+        let msg = 'Sign-in failed. Double-check your email and password.';
+        if (code === 'auth/wrong-password' || code === 'auth/invalid-credential') msg = 'Wrong email or password. Try again or reset your password.';
+        else if (code === 'auth/user-not-found') msg = "We don't have an account for that email. Use the MomRise app to sign up first.";
+        else if (code === 'auth/too-many-requests') msg = 'Too many attempts. Try again in a few minutes or reset your password.';
+        else if (code === 'auth/network-request-failed') msg = 'Network error. Check your connection and try again.';
+        showSigninError(msg);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Sign in';
+      }
+    });
+    $('forgotPwBtn').addEventListener('click', async () => {
+      const email = $('emailInput').value.trim();
+      if (!email) {
+        showSigninError('Type your email above first, then tap Forgot password.');
+        return;
+      }
+      try {
+        await sendPasswordResetEmail(auth, email);
+        toast('Password reset email sent — check your inbox.');
+      } catch (err) {
+        showSigninError(err.message || 'Could not send reset email.');
+      }
+    });
 
     // Pick-your-code flow
     $('codeInput').addEventListener('input', (e) => {
