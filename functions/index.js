@@ -2455,6 +2455,142 @@ function _renderRejectionEmail(name) {
 </html>`;
 }
 
+// ── Monthly creator stats digest ──────────────────────
+// Emails each active creator a recap of the previous calendar month:
+// followers gained, subscribers gained, money earned, top doc + meal
+// plan. Runs the 2nd of each month at 10:00 ET — gives a 24-hour
+// buffer after the 1st-of-month payout runner so paid totals are
+// settled. Skipped silently when a creator hasn't been onboarded.
+exports.monthlyCreatorDigest = onSchedule(
+  {
+    schedule: '0 10 2 * *',
+    timeZone: 'America/New_York',
+    secrets: [sendgridApiKey],
+  },
+  async () => {
+    const db = getFirestore();
+    const now = new Date();
+    // The "previous month" we're reporting on:
+    const monthEnd = new Date(now.getFullYear(), now.getMonth(), 1);
+    const monthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    const monthName = monthStart.toLocaleDateString(undefined, { month: 'long', year: 'numeric' });
+
+    const creatorsSnap = await db.collection('creators').where('is_active', '==', true).get();
+    sgMail.setApiKey(sendgridApiKey.value().replace(/[\s\r\n]+/g, ''));
+
+    let sent = 0, skipped = 0;
+    for (const creatorDoc of creatorsSnap.docs) {
+      const c = creatorDoc.data();
+
+      // Need an email to send to.
+      const userPath = c.user_ref?.path || '';
+      const uid = userPath.split('/')[1];
+      if (!uid) { skipped += 1; continue; }
+      let email;
+      try { email = (await getAuth().getUser(uid)).email; }
+      catch (err) { skipped += 1; continue; }
+      if (!email) { skipped += 1; continue; }
+
+      // Pull snapshots in the previous month to compute delta.
+      const snapsSnap = await creatorDoc.ref.collection('snapshots')
+        .where('date', '>=', _ymd(monthStart))
+        .where('date', '<=', _ymd(monthEnd))
+        .orderBy('date').get();
+      const snaps = snapsSnap.docs.map(d => d.data());
+      const startSnap = snaps[0];
+      const endSnap = snaps[snaps.length - 1];
+
+      const followerDelta = startSnap && endSnap
+        ? (endSnap.follower_count || 0) - (startSnap.follower_count || 0)
+        : null;
+      const subDelta = startSnap && endSnap
+        ? (endSnap.subscriber_count || 0) - (startSnap.subscriber_count || 0)
+        : null;
+
+      // Earnings recorded in the previous month.
+      const earningsSnap = await db.collection('creator_earnings')
+        .where('creator_ref', '==', creatorDoc.ref)
+        .get();
+      let monthEarned = 0;
+      for (const d of earningsSnap.docs) {
+        const e = d.data();
+        const ts = e.created_at?.toDate?.();
+        if (!ts || ts < monthStart || ts >= monthEnd) continue;
+        if (e.kind === 'earning' || e.kind === 'clawback') monthEarned += e.creator_cents || 0;
+      }
+
+      // Skip creators with literally zero activity — no point emailing them.
+      if (monthEarned === 0 && (followerDelta || 0) === 0 && (subDelta || 0) === 0
+          && (!c.follower_count || c.follower_count === 0)) {
+        skipped += 1; continue;
+      }
+
+      try {
+        await sgMail.send({
+          to: email,
+          from: sendgridFromEmail.value(),
+          subject: `Your MomRise creator recap — ${monthName}`,
+          trackingSettings: { clickTracking: { enable: false }, openTracking: { enable: false } },
+          html: _renderMonthlyDigest(c.name, monthName, {
+            followerDelta, subDelta, monthEarnedCents: monthEarned,
+            totalFollowers: c.follower_count || 0,
+            totalSubs: c.subscriber_count || 0,
+            code: c.code || '',
+          }),
+        });
+        sent += 1;
+      } catch (err) {
+        console.error(`Monthly digest send failed for ${email}:`, err.message);
+      }
+    }
+    console.log(`Monthly creator digest: sent ${sent}, skipped ${skipped} (of ${creatorsSnap.size} active).`);
+  }
+);
+
+function _ymd(d) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+function _renderMonthlyDigest(name, monthName, m) {
+  const first = (name || '').split(' ')[0] || 'there';
+  const fmtDelta = (n) => n === null ? '—' : (n > 0 ? `+${n}` : `${n}`);
+  const fmtMoney = (cents) => `$${(cents / 100).toFixed(2)}`;
+  const headline = m.monthEarnedCents > 0
+    ? `You earned ${fmtMoney(m.monthEarnedCents)} in ${monthName} 🎉`
+    : (m.followerDelta || 0) > 0
+      ? `You gained ${m.followerDelta} new follower${m.followerDelta === 1 ? '' : 's'} in ${monthName}`
+      : `Your ${monthName} recap`;
+  return `
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"></head>
+<body style="font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; margin:0; padding:0; background:#F9FAFB; line-height:1.55;">
+  <div style="max-width: 600px; margin: 40px auto; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.06);">
+    <div style="background: linear-gradient(135deg, #52A097 0%, #39D2C0 100%); padding: 32px 32px; color: white; text-align: center;">
+      <div style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.12em; opacity: 0.85; margin-bottom: 6px;">${_esc(monthName)} recap</div>
+      <h1 style="margin: 0; font-size: 22px;">${_esc(headline)}</h1>
+    </div>
+    <div style="padding: 28px 32px; color: #374151; font-size: 15px;">
+      <p style="margin: 0 0 18px;">Hey ${_esc(first)} — here's how your creator code <strong style="font-family:'SF Mono',Consolas,monospace; color:#2A6F67;">${_esc(m.code)}</strong> did last month.</p>
+
+      <table style="width:100%; border-collapse: collapse;">
+        <tr><td style="padding: 10px 0; color: #6B7280; font-size: 13px;">New followers</td><td style="padding: 10px 0; text-align: right; font-weight: 600; font-size: 18px;">${fmtDelta(m.followerDelta)}</td></tr>
+        <tr><td style="padding: 10px 0; color: #6B7280; font-size: 13px; border-top: 1px solid #F3F4F6;">New subscribers</td><td style="padding: 10px 0; text-align: right; font-weight: 600; font-size: 18px; border-top: 1px solid #F3F4F6;">${fmtDelta(m.subDelta)}</td></tr>
+        <tr><td style="padding: 10px 0; color: #6B7280; font-size: 13px; border-top: 1px solid #F3F4F6;">You earned</td><td style="padding: 10px 0; text-align: right; font-weight: 700; font-size: 22px; border-top: 1px solid #F3F4F6; color: #2A6F67;">${fmtMoney(m.monthEarnedCents)}</td></tr>
+        <tr><td style="padding: 10px 0; color: #6B7280; font-size: 13px; border-top: 1px solid #F3F4F6;">Lifetime followers</td><td style="padding: 10px 0; text-align: right; font-weight: 600; font-size: 16px; border-top: 1px solid #F3F4F6; color: #6B7280;">${m.totalFollowers}</td></tr>
+        <tr><td style="padding: 10px 0; color: #6B7280; font-size: 13px; border-top: 1px solid #F3F4F6;">Active subscribers</td><td style="padding: 10px 0; text-align: right; font-weight: 600; font-size: 16px; border-top: 1px solid #F3F4F6; color: #6B7280;">${m.totalSubs}</td></tr>
+      </table>
+
+      <div style="text-align: center; margin: 28px 0 8px;">
+        <a href="https://momrise.app/creator/" style="display:inline-block;background:#52A097;color:white !important;text-decoration:none;padding:12px 28px;border-radius:10px;font-weight:600;font-size:14px;">See full dashboard →</a>
+      </div>
+
+      <p style="margin: 24px 0 0; font-size: 13px; color: #6B7280;">Got a moment to keep growing? Pop into your <a href="https://momrise.app/creator/" style="color:#52A097;">share kit</a> for a fresh post template.</p>
+    </div>
+    <div style="background:#F9FAFB; padding: 16px 32px; text-align:center; color:#9CA3AF; font-size:12px; border-top:1px solid #E5E7EB;">MomRise · You're getting this because you're an active creator. Reply to opt out.</div>
+  </div>
+</body></html>`;
+}
+
 // ── Weekly admin digest email ─────────────────────────
 // Mondays at 9:00 America/New_York. Sends collinjmaddox@gmail.com a
 // summary so issues surface before creators complain.
