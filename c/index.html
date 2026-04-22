@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MomRise creator</title>
+  <meta name="description" content="Use this creator's MomRise code to start your free trial — they earn 50% for life when you subscribe.">
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Dynamic OG tags get filled in via JS after creator load -->
+  <meta id="og-title" property="og:title" content="Join MomRise with a creator's code">
+  <meta id="og-desc" property="og:description" content="7-day free trial — cancel anytime. The creator earns 50% when you stay.">
+  <meta id="og-image" property="og:image" content="/app_store_assets/brand/momrise-icon-square-512.png">
+  <meta property="og:type" content="profile">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <style>
+    :root {
+      --primary: #52A097;
+      --primary-dark: #2A6F67;
+      --accent: #EE8B60;
+      --surface: #FFFFFF;
+      --text: #1F2937;
+      --text-muted: #6B7280;
+      --border: #E5E7EB;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; padding: 0;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      color: var(--text);
+      background: linear-gradient(180deg, #D7F2EB 0%, #FFE9E1 100%);
+      min-height: 100vh;
+    }
+    main { max-width: 560px; margin: 0 auto; padding: 40px 20px 60px; }
+    .brand-top {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13px; font-weight: 600; color: var(--primary-dark);
+      letter-spacing: 0.04em; text-transform: uppercase;
+      justify-content: center; margin-bottom: 24px;
+    }
+    .brand-top img { width: 24px; height: 24px; border-radius: 6px; }
+    .card {
+      background: var(--surface); border-radius: 20px;
+      padding: 32px 28px 28px;
+      box-shadow: 0 18px 44px -20px rgba(0,0,0,0.22);
+    }
+    .profile-head { text-align: center; }
+    .avatar {
+      width: 96px; height: 96px; border-radius: 50%; object-fit: cover;
+      background: #E5E7EB; margin: 0 auto 12px; display: block;
+      border: 3px solid white; box-shadow: 0 6px 18px -8px rgba(0,0,0,0.2);
+    }
+    .name { font-size: 24px; font-weight: 700; margin: 0 0 4px; letter-spacing: -0.01em; }
+    .niche { font-size: 14px; color: var(--text-muted); margin: 0; }
+    .bio { margin: 18px 0 22px; font-size: 15px; line-height: 1.6; text-align: center; color: var(--text); }
+    .code-wrap {
+      background: color-mix(in srgb, var(--primary) 6%, white);
+      border: 1px solid color-mix(in srgb, var(--primary) 20%, var(--border));
+      border-radius: 14px;
+      padding: 18px 16px;
+      text-align: center;
+      margin-bottom: 18px;
+    }
+    .code-label { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; color: var(--primary-dark); margin-bottom: 6px; }
+    .code { font-family: 'SF Mono', Consolas, monospace; font-size: 34px; font-weight: 700; color: var(--primary-dark); letter-spacing: 4px; margin: 0 0 10px; }
+    .copy-btn { background: white; border: 1px solid var(--border); padding: 8px 14px; font-size: 13px; border-radius: 8px; cursor: pointer; font-weight: 500; font-family: inherit; }
+    .copy-btn:hover { border-color: var(--primary); color: var(--primary); }
+    .copy-btn.copied { background: color-mix(in srgb, var(--primary) 10%, white); color: var(--primary-dark); border-color: var(--primary); }
+    .cta {
+      display: block; text-align: center;
+      background: var(--primary); color: white;
+      padding: 14px 20px; border-radius: 12px;
+      font-size: 16px; font-weight: 600; text-decoration: none;
+      margin-bottom: 10px;
+    }
+    .cta:hover { background: var(--primary-dark); }
+    .cta-sub { text-align: center; font-size: 13px; color: var(--text-muted); margin: 0 0 8px; }
+    .fine {
+      margin-top: 26px; padding-top: 18px; border-top: 1px solid var(--border);
+      font-size: 12px; color: var(--text-muted); line-height: 1.6; text-align: center;
+    }
+    .fine strong { color: var(--text); font-weight: 600; }
+    .loading, .error {
+      text-align: center; padding: 60px 20px; color: var(--text-muted); font-size: 15px;
+    }
+    .error strong { display: block; font-size: 17px; margin-bottom: 6px; color: var(--text); }
+    .error a { color: var(--primary); }
+    .spinner {
+      display: inline-block; width: 24px; height: 24px;
+      border: 3px solid #E5E7EB; border-top-color: var(--primary);
+      border-radius: 50%; animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .disclosure-pill {
+      display: inline-block;
+      background: color-mix(in srgb, var(--accent) 14%, white);
+      color: #6B3A18;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 11px;
+      letter-spacing: 0.04em;
+      font-weight: 600;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="brand-top">
+      <img src="/app_store_assets/brand/momrise-icon-square-512.png" alt="">
+      MomRise
+    </div>
+
+    <div id="loadingView" class="card loading">
+      <div class="spinner"></div>
+      <div style="margin-top: 12px;">Loading…</div>
+    </div>
+
+    <div id="errorView" class="card error" hidden>
+      <strong>We couldn't find that creator.</strong>
+      <p>The code may have been changed or retired. <a href="/">Explore MomRise →</a></p>
+    </div>
+
+    <div id="profileView" class="card" hidden>
+      <div class="profile-head">
+        <img id="pAvatar" class="avatar" src="" alt="">
+        <h1 id="pName" class="name">—</h1>
+        <p id="pNiche" class="niche" hidden></p>
+      </div>
+      <p id="pBio" class="bio" hidden></p>
+      <div class="code-wrap">
+        <div class="code-label">Creator code</div>
+        <div id="pCode" class="code">—</div>
+        <button id="pCopyBtn" class="copy-btn">Copy code</button>
+      </div>
+      <a id="pCta" class="cta" href="/" target="_blank" rel="noopener">Start my 7-day free trial</a>
+      <p class="cta-sub">Cancel anytime · $6.99/mo or $69.99/yr after trial</p>
+      <div class="fine">
+        <span class="disclosure-pill">Paid partnership</span>
+        <p id="pDisclosureName" style="margin: 0;">
+          <strong id="pFine">This creator</strong> earns 50% of every subscription from people who use their code — for as long as you stay subscribed. We show you this upfront because it's the deal.
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Public Cloud Function — returns only safe fields for the given code.
+    const PUBLIC_PROFILE_URL = 'https://us-central1-parenting-plus-7szrif.cloudfunctions.net/getPublicCreatorProfile';
+
+    const $ = (id) => document.getElementById(id);
+
+    function showError() {
+      $('loadingView').hidden = true;
+      $('errorView').hidden = false;
+    }
+
+    async function load() {
+      const params = new URLSearchParams(window.location.search);
+      const code = (params.get('code') || '').trim().toUpperCase();
+      if (!code || !/^[A-Z0-9]{3,20}$/.test(code)) {
+        showError();
+        return;
+      }
+      try {
+        const res = await fetch(`${PUBLIC_PROFILE_URL}?code=${encodeURIComponent(code)}`);
+        if (!res.ok) { showError(); return; }
+        const c = await res.json();
+
+        const name = c.name || 'MomRise creator';
+        const firstName = name.split(' ')[0] || name;
+        const photo = c.photo_url || '/app_store_assets/brand/momrise-icon-square-512.png';
+        const niche = c.niche || '';
+        const bio = c.bio || '';
+
+        $('pAvatar').src = photo;
+        $('pAvatar').alt = name;
+        $('pName').textContent = name;
+        if (niche) { $('pNiche').textContent = niche; $('pNiche').hidden = false; }
+        if (bio && bio !== niche) { $('pBio').textContent = bio; $('pBio').hidden = false; }
+        $('pCode').textContent = c.code;
+        $('pFine').textContent = firstName;
+        $('pCta').href = `/?c=${encodeURIComponent(c.code)}`;
+
+        // Update tab + OG tags for sharing
+        document.title = `${firstName} on MomRise — code ${c.code}`;
+        $('og-title').setAttribute('content', `Join MomRise with ${firstName}'s code`);
+        $('og-desc').setAttribute('content', `${firstName} recommends MomRise. Use code ${c.code} for a 7-day free trial.`);
+        if (c.photo_url) $('og-image').setAttribute('content', c.photo_url);
+
+        // Apply creator's brand color if set
+        const color = c.theme_primary;
+        if (color && /^#?[0-9A-Fa-f]{6}$/.test(color.replace('#', ''))) {
+          const hex = color.startsWith('#') ? color : `#${color}`;
+          document.documentElement.style.setProperty('--primary', hex);
+        }
+
+        $('pCopyBtn').addEventListener('click', async () => {
+          try {
+            await navigator.clipboard.writeText(c.code);
+            $('pCopyBtn').textContent = 'Copied ✓';
+            $('pCopyBtn').classList.add('copied');
+            setTimeout(() => {
+              $('pCopyBtn').textContent = 'Copy code';
+              $('pCopyBtn').classList.remove('copied');
+            }, 1800);
+          } catch (_) { /* ignore */ }
+        });
+
+        $('loadingView').hidden = true;
+        $('profileView').hidden = false;
+      } catch (e) {
+        console.error(e);
+        showError();
+      }
+    }
+    load();
+  </script>
+</body>
+</html>

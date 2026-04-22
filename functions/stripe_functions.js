@@ -438,10 +438,21 @@ exports.stripeWebhook = onRequest(
 
           if (!usersSnapshot.empty) {
             const userDoc = usersSnapshot.docs[0];
-            await userDoc.ref.update({
-              subscription_status: 'canceled',
-              subscription_id: null,
-            });
+            const userData = userDoc.data() || {};
+            // Don't revoke comped creators' access when a paid Stripe sub
+            // they had alongside the comp ends — they keep the free-forever comp.
+            if (userData.is_comped === true) {
+              await userDoc.ref.update({
+                subscription_id: null,
+                subscription_status: 'active',
+                subscription_source: 'creator_comp',
+              });
+            } else {
+              await userDoc.ref.update({
+                subscription_status: 'canceled',
+                subscription_id: null,
+              });
+            }
           }
           break;
         }

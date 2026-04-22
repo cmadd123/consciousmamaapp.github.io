@@ -130,6 +130,14 @@
     <script>
         // Extract share code from URL path
         const path = window.location.pathname;
+
+        // Creator profile: /c/HALEY → /c/?code=HALEY
+        const creatorMatch = path.match(/^\/c\/([a-z0-9]{3,20})\/?$/i);
+        if (creatorMatch) {
+            window.location.replace('/c/?code=' + encodeURIComponent(creatorMatch[1].toUpperCase()));
+            throw new Error('redirecting');
+        }
+
         const match = path.match(/\/s\/([a-z0-9]{8})$/i) || path.match(/\/shared\/([a-z0-9]{8})$/i);
         const shareCode = match ? match[1].toLowerCase() : null;
 

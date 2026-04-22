@@ -2058,6 +2058,43 @@ async function _generateUniqueCreatorCode(baseName) {
   throw new HttpsError('internal', 'Could not generate a unique code');
 }
 
+// Public creator profile lookup (unauthenticated) — powers /c/{CODE} pages.
+// Returns only safe, public fields; never Stripe IDs or earnings.
+exports.getPublicCreatorProfile = onRequest({ cors: true }, async (request, response) => {
+  try {
+    const code = String(request.query.code || '').trim().toUpperCase();
+    if (!/^[A-Z0-9]{3,20}$/.test(code)) {
+      response.status(400).json({ error: 'invalid code' });
+      return;
+    }
+    const db = getFirestore();
+    const snap = await db.collection('creators')
+      .where('code', '==', code).limit(1).get();
+    if (snap.empty) {
+      response.status(404).json({ error: 'not found' });
+      return;
+    }
+    const c = snap.docs[0].data();
+    if (c.is_active === false) {
+      response.status(404).json({ error: 'not found' });
+      return;
+    }
+    response.set('Cache-Control', 'public, max-age=60, s-maxage=300');
+    response.json({
+      code: c.code,
+      name: c.name || null,
+      bio: c.bio || null,
+      niche: c.niche || null,
+      photo_url: c.photo_url || null,
+      theme_primary: c.theme_primary_color || c.theme_primary || null,
+      follower_count: c.follower_count || 0,
+    });
+  } catch (e) {
+    console.error('getPublicCreatorProfile failed', e);
+    response.status(500).json({ error: 'server error' });
+  }
+});
+
 exports.approveCreatorApplication = onCall(
   { secrets: [sendgridApiKey] },
   async (request) => {
@@ -2149,6 +2186,21 @@ exports.approveCreatorApplication = onCall(
     assigned_uid: uid,
     approved_by: request.auth.token.email,
   });
+  // Every approved creator gets MomRise free forever. We set their
+  // users doc to "active" with a comp source so the existing paywall
+  // check (hasActiveSubscription → status in {trialing, active}) passes
+  // without any app changes. If they ever also buy a Stripe sub the
+  // webhook will overwrite these fields and that's fine — they keep access.
+  const userRef = db.doc(`users/${uid}`);
+  batch.set(userRef, {
+    is_comped: true,
+    subscription_source: 'creator_comp',
+    subscription_status: 'active',
+    current_period_end: new Date('2099-12-31T00:00:00Z'),
+    comped_at: FieldValue.serverTimestamp(),
+    comped_by: request.auth.token.email,
+    comped_reason: 'creator_program',
+  }, { merge: true });
   await batch.commit();
 
   // Send the welcome email. Don't fail the whole approval if email fails —
@@ -2406,11 +2458,40 @@ exports.adminSetCreatorActive = onCall(async (request) => {
     throw new HttpsError('invalid-argument', 'creatorId + isActive (bool) required');
   }
   const db = getFirestore();
+  const creatorSnap = await db.collection('creators').doc(creatorId).get();
+  if (!creatorSnap.exists) throw new HttpsError('not-found', 'Creator not found');
   await db.collection('creators').doc(creatorId).update({
     is_active: isActive,
     deactivated_at: isActive ? FieldValue.delete() : FieldValue.serverTimestamp(),
     deactivated_by: isActive ? FieldValue.delete() : request.auth.token.email,
   });
+  // Toggle the creator's free-forever comp in sync. If they have a real
+  // Stripe subscription (stripe_customer_id set) we leave it alone — the
+  // webhook owns those fields. Otherwise we flip the comp on/off.
+  const userRef = creatorSnap.data().user_ref;
+  if (userRef) {
+    const userSnap = await userRef.get();
+    const u = userSnap.exists ? userSnap.data() : {};
+    const hasRealStripeSub = !!u.stripe_customer_id && u.subscription_source !== 'creator_comp';
+    if (!hasRealStripeSub) {
+      if (isActive) {
+        await userRef.set({
+          is_comped: true,
+          subscription_source: 'creator_comp',
+          subscription_status: 'active',
+          current_period_end: new Date('2099-12-31T00:00:00Z'),
+          comped_at: FieldValue.serverTimestamp(),
+        }, { merge: true });
+      } else {
+        await userRef.set({
+          is_comped: false,
+          subscription_status: 'canceled',
+          subscription_source: FieldValue.delete(),
+          comp_revoked_at: FieldValue.serverTimestamp(),
+        }, { merge: true });
+      }
+    }
+  }
   return { ok: true };
 });
 
@@ -2639,6 +2720,124 @@ exports.monthlyCreatorDigest = onSchedule(
 
 function _ymd(d) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+// Admin-triggered creator brief. Admin composes subject + body (markdown-ish)
+// in the dashboard and hits send. Emails go to every active creator's auth
+// email. A record gets saved in `creator_briefs` for history.
+exports.sendCreatorBrief = onCall(
+  { secrets: [sendgridApiKey] },
+  async (request) => {
+    _requireAdmin(request);
+    const { subject, body, cta_text, cta_url, test_only } = request.data || {};
+    if (!subject || !body) throw new HttpsError('invalid-argument', 'subject + body required');
+    if (subject.length > 120) throw new HttpsError('invalid-argument', 'subject too long');
+    if (body.length > 20000) throw new HttpsError('invalid-argument', 'body too long');
+
+    const db = getFirestore();
+    const creatorsSnap = await db.collection('creators').where('is_active', '==', true).get();
+
+    sgMail.setApiKey(sendgridApiKey.value().replace(/[\s\r\n]+/g, ''));
+    const from = sendgridFromEmail.value();
+
+    // If test_only, just send to the admin.
+    const recipients = [];
+    if (test_only) {
+      recipients.push({ email: request.auth.token.email, name: 'Admin (test)', code: 'TEST' });
+    } else {
+      for (const doc of creatorsSnap.docs) {
+        const c = doc.data();
+        const uid = c.user_ref?.path?.split('/')[1];
+        if (!uid) continue;
+        let email;
+        try { email = (await getAuth().getUser(uid)).email; }
+        catch (_) { continue; }
+        if (!email) continue;
+        recipients.push({ email, name: c.name || '', code: c.code || '' });
+      }
+    }
+
+    let sent = 0, failed = 0;
+    for (const r of recipients) {
+      try {
+        await sgMail.send({
+          to: r.email,
+          from,
+          subject,
+          trackingSettings: { clickTracking: { enable: false }, openTracking: { enable: false } },
+          html: _renderCreatorBrief({ subject, body, cta_text, cta_url, name: r.name, code: r.code }),
+        });
+        sent += 1;
+      } catch (err) {
+        console.error(`Brief send failed for ${r.email}:`, err.message);
+        failed += 1;
+      }
+    }
+
+    if (!test_only) {
+      await db.collection('creator_briefs').add({
+        subject,
+        body,
+        cta_text: cta_text || null,
+        cta_url: cta_url || null,
+        sent_count: sent,
+        failed_count: failed,
+        sent_at: FieldValue.serverTimestamp(),
+        sent_by: request.auth.token.email,
+      });
+    }
+    return { ok: true, sent, failed, test_only: !!test_only };
+  }
+);
+
+function _renderCreatorBrief({ subject, body, cta_text, cta_url, name, code }) {
+  const first = (name || '').split(' ')[0] || 'there';
+  // Tiny markdown-ish renderer: ##/###/paragraphs/lists/**bold**/links.
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+  }[c]));
+  const renderInline = (s) => esc(s)
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" style="color: #2A6F67; text-decoration: underline;">$1</a>');
+  const lines = body.split(/\r?\n/);
+  const html = [];
+  let inList = false;
+  for (const raw of lines) {
+    const line = raw.replace(/\s+$/, '');
+    if (/^###\s+/.test(line)) {
+      if (inList) { html.push('</ul>'); inList = false; }
+      html.push(`<h3 style="font-size: 16px; margin: 22px 0 8px; color: #1F2937;">${renderInline(line.replace(/^###\s+/, ''))}</h3>`);
+    } else if (/^##\s+/.test(line)) {
+      if (inList) { html.push('</ul>'); inList = false; }
+      html.push(`<h2 style="font-size: 20px; margin: 28px 0 10px; color: #2A6F67;">${renderInline(line.replace(/^##\s+/, ''))}</h2>`);
+    } else if (/^[-*]\s+/.test(line)) {
+      if (!inList) { html.push('<ul style="padding-left: 20px; margin: 0 0 12px; line-height: 1.65;">'); inList = true; }
+      html.push(`<li>${renderInline(line.replace(/^[-*]\s+/, ''))}</li>`);
+    } else if (!line) {
+      if (inList) { html.push('</ul>'); inList = false; }
+    } else {
+      if (inList) { html.push('</ul>'); inList = false; }
+      html.push(`<p style="margin: 0 0 14px; line-height: 1.65;">${renderInline(line)}</p>`);
+    }
+  }
+  if (inList) html.push('</ul>');
+  const ctaBlock = cta_text && cta_url
+    ? `<div style="margin: 28px 0 8px;"><a href="${esc(cta_url)}" style="display: inline-block; background: #52A097; color: white; padding: 12px 22px; border-radius: 10px; text-decoration: none; font-weight: 600;">${esc(cta_text)}</a></div>`
+    : '';
+  return `<!DOCTYPE html><html><body style="font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; margin: 0; padding: 0; background: #F9FAFB;">
+<div style="max-width: 600px; margin: 0 auto; padding: 32px 20px;">
+  <div style="background: white; border-radius: 16px; padding: 32px 30px; box-shadow: 0 10px 30px -15px rgba(0,0,0,0.15);">
+    <div style="font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #52A097; font-weight: 600; margin-bottom: 6px;">MomRise · Creator brief</div>
+    <p style="margin: 0 0 22px; color: #6B7280; font-size: 14px;">Hey ${esc(first)} —</p>
+    ${html.join('\n')}
+    ${ctaBlock}
+    <div style="margin-top: 32px; padding-top: 20px; border-top: 1px solid #E5E7EB; font-size: 13px; color: #6B7280; line-height: 1.55;">
+      Your code: <code style="background: #F3F4F6; padding: 2px 8px; border-radius: 4px; color: #2A6F67; font-weight: 600;">${esc(code || '—')}</code> · <a href="https://momrise.app/creator/" style="color: #6B7280;">Creator dashboard</a>
+      <br>Questions? Reply to this email or hit us at <a href="mailto:creators@momrise.app" style="color: #6B7280;">creators@momrise.app</a>.
+    </div>
+  </div>
+</div>
+</body></html>`;
 }
 
 function _renderMonthlyDigest(name, monthName, m) {

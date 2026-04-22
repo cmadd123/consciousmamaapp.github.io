@@ -272,6 +272,8 @@
           <button class="tab-btn active" data-tab="applications" style="background: none; border: none; padding: 10px 16px; font-size: 15px; color: var(--primary); border-bottom: 2px solid var(--primary); font-weight: 600; margin-bottom: -1px;">Applications</button>
           <button class="tab-btn" data-tab="creators" style="background: none; border: none; padding: 10px 16px; font-size: 15px; color: var(--text-muted); border-bottom: 2px solid transparent; margin-bottom: -1px;">Creators</button>
           <button class="tab-btn" data-tab="taxes" style="background: none; border: none; padding: 10px 16px; font-size: 15px; color: var(--text-muted); border-bottom: 2px solid transparent; margin-bottom: -1px;">Taxes (1099)</button>
+          <button class="tab-btn" data-tab="suggestions" style="background: none; border: none; padding: 10px 16px; font-size: 15px; color: var(--text-muted); border-bottom: 2px solid transparent; margin-bottom: -1px;">Suggestions <span id="suggestionBadge" hidden style="background: var(--accent); color: white; border-radius: 999px; padding: 2px 7px; font-size: 11px; margin-left: 4px;">0</span></button>
+          <button class="tab-btn" data-tab="brief" style="background: none; border: none; padding: 10px 16px; font-size: 15px; color: var(--text-muted); border-bottom: 2px solid transparent; margin-bottom: -1px;">Brief</button>
         </div>
 
         <!-- Applications tab -->
@@ -353,6 +355,66 @@
                 <tr><td colspan="5" style="padding: 48px; text-align: center; color: var(--text-muted);"><div class="loader"></div> Loading…</td></tr>
               </tbody>
             </table>
+          </div>
+        </div>
+
+        <!-- Brief tab: compose + send the monthly creator brief -->
+        <div class="tab-panel" id="tabBrief" hidden>
+          <div class="section-head">
+            <h2>Monthly creator brief</h2>
+            <button class="btn ghost" id="refreshBriefsBtn">↻ History</button>
+          </div>
+          <div style="background: color-mix(in srgb, var(--primary) 6%, white); border: 1px solid color-mix(in srgb, var(--primary) 20%, var(--border)); border-radius: 12px; padding: 14px 18px; margin-bottom: 18px; font-size: 13px; line-height: 1.55; color: var(--text);">
+            <strong>How this works:</strong> This goes to every active creator (one email per creator). Keep it under 300 words. Structure:
+            <strong>## What shipped this month</strong>, <strong>## What's coming</strong>, <strong>## Post idea this week</strong>. Markdown supported: <code>##</code> <code>###</code> <code>- bullets</code> <code>**bold**</code> <code>[link](url)</code>. Send a test to yourself first.
+          </div>
+          <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; display: flex; flex-direction: column; gap: 14px;">
+            <label style="display: flex; flex-direction: column; gap: 6px; font-size: 13px; font-weight: 500;">Subject
+              <input type="text" id="briefSubject" maxlength="120" placeholder="April brief — spring-reset content + what shipped"
+                style="padding: 11px 13px; border: 1px solid var(--border); border-radius: 10px; font-size: 15px; font-family: inherit;">
+            </label>
+            <label style="display: flex; flex-direction: column; gap: 6px; font-size: 13px; font-weight: 500;">Body (markdown)
+              <textarea id="briefBody" rows="18" placeholder="## What shipped&#10;- …&#10;&#10;## Coming this month&#10;- …&#10;&#10;## Post idea this week&#10;…"
+                style="padding: 11px 13px; border: 1px solid var(--border); border-radius: 10px; font-size: 14px; line-height: 1.55; font-family: 'SF Mono', Consolas, monospace; resize: vertical;"></textarea>
+            </label>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+              <label style="display: flex; flex-direction: column; gap: 6px; font-size: 13px; font-weight: 500;">CTA text <span style="font-weight: 400; color: var(--text-muted);">(optional)</span>
+                <input type="text" id="briefCtaText" maxlength="40" placeholder="Grab this week's post"
+                  style="padding: 11px 13px; border: 1px solid var(--border); border-radius: 10px; font-size: 14px; font-family: inherit;">
+              </label>
+              <label style="display: flex; flex-direction: column; gap: 6px; font-size: 13px; font-weight: 500;">CTA URL <span style="font-weight: 400; color: var(--text-muted);">(optional)</span>
+                <input type="url" id="briefCtaUrl" maxlength="400" placeholder="https://momrise.app/creator/"
+                  style="padding: 11px 13px; border: 1px solid var(--border); border-radius: 10px; font-size: 14px; font-family: inherit;">
+              </label>
+            </div>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px;">
+              <button class="btn ghost" id="briefTestBtn">Send test to me</button>
+              <button class="btn" id="briefSendBtn">Send to all active creators</button>
+            </div>
+          </div>
+
+          <h3 style="margin: 28px 0 10px; font-size: 15px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em;">Recent briefs</h3>
+          <div id="briefHistory" style="display: flex; flex-direction: column; gap: 10px;">
+            <div class="empty" style="color: var(--text-muted); font-size: 14px;">None yet.</div>
+          </div>
+        </div>
+
+        <!-- Suggestions tab -->
+        <div class="tab-panel" id="tabSuggestions" hidden>
+          <div class="section-head">
+            <h2>Creator suggestions</h2>
+            <div style="display: flex; gap: 8px;">
+              <select id="suggestionStatusFilter" style="padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border); background: white; font-size: 14px; font-family: inherit;">
+                <option value="new">New</option>
+                <option value="seen">Seen</option>
+                <option value="closed">Closed</option>
+                <option value="all">All</option>
+              </select>
+              <button class="btn ghost" id="refreshSuggestionsBtn">↻ Refresh</button>
+            </div>
+          </div>
+          <div id="suggestionList" style="display: flex; flex-direction: column; gap: 12px;">
+            <div class="empty"><div class="loader"></div> Loading…</div>
           </div>
         </div>
         </div><!-- /viewListInner -->
@@ -445,7 +507,7 @@
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
     import { getAuth, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup }
       from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-    import { getFirestore, collection, doc, query, where, orderBy, getDocs, getDoc }
+    import { getFirestore, collection, doc, query, where, orderBy, getDocs, getDoc, updateDoc }
       from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
     import { getFunctions, httpsCallable }
       from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js';
@@ -511,6 +573,7 @@
       show('viewList');
       loadApplications();
       loadAggregateMetrics();
+      loadSuggestionBadge();
     });
 
     async function loadAggregateMetrics() {
@@ -608,8 +671,163 @@
         $('tab' + btn.dataset.tab.charAt(0).toUpperCase() + btn.dataset.tab.slice(1)).hidden = false;
         if (btn.dataset.tab === 'creators') loadCreators();
         if (btn.dataset.tab === 'taxes') loadTaxesView();
+        if (btn.dataset.tab === 'suggestions') loadSuggestions();
+        if (btn.dataset.tab === 'brief') loadBriefHistory();
       });
     });
+
+    // Monthly creator brief
+    $('briefTestBtn').addEventListener('click', () => sendBrief(true));
+    $('briefSendBtn').addEventListener('click', () => sendBrief(false));
+    $('refreshBriefsBtn').addEventListener('click', loadBriefHistory);
+
+    async function sendBrief(testOnly) {
+      const subject = $('briefSubject').value.trim();
+      const body = $('briefBody').value.trim();
+      const ctaText = $('briefCtaText').value.trim();
+      const ctaUrl = $('briefCtaUrl').value.trim();
+      if (!subject || !body) { alert('Subject + body are required.'); return; }
+      if (!testOnly && !confirm('Send this to EVERY active creator? This cannot be undone.')) return;
+      const btn = testOnly ? $('briefTestBtn') : $('briefSendBtn');
+      const orig = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = testOnly ? 'Sending test…' : 'Sending…';
+      try {
+        const call = httpsCallable(functions, 'sendCreatorBrief');
+        const { data } = await call({
+          subject, body,
+          cta_text: ctaText || null,
+          cta_url: ctaUrl || null,
+          test_only: testOnly,
+        });
+        alert(`${testOnly ? 'Test ' : ''}Sent ${data.sent}, failed ${data.failed}.`);
+        if (!testOnly) {
+          $('briefSubject').value = '';
+          $('briefBody').value = '';
+          $('briefCtaText').value = '';
+          $('briefCtaUrl').value = '';
+          loadBriefHistory();
+        }
+      } catch (e) {
+        alert('Send failed: ' + (e.message || 'unknown'));
+      } finally {
+        btn.disabled = false;
+        btn.textContent = orig;
+      }
+    }
+
+    async function loadBriefHistory() {
+      const wrap = $('briefHistory');
+      wrap.innerHTML = `<div class="empty" style="color: var(--text-muted); font-size: 14px;">Loading…</div>`;
+      try {
+        const snap = await getDocs(query(collection(db, 'creator_briefs'), orderBy('sent_at', 'desc')));
+        if (snap.empty) {
+          wrap.innerHTML = `<div class="empty" style="color: var(--text-muted); font-size: 14px;">None yet.</div>`;
+          return;
+        }
+        wrap.innerHTML = snap.docs.slice(0, 12).map(d => {
+          const b = d.data();
+          const when = b.sent_at?.toDate?.()?.toLocaleDateString() || '';
+          return `<div style="background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 14px;">
+            <div style="min-width: 0;"><strong>${escapeHtml(b.subject || '')}</strong><div style="font-size: 12px; color: var(--text-muted);">${when} · sent ${b.sent_count}${b.failed_count ? ` · failed ${b.failed_count}` : ''}</div></div>
+          </div>`;
+        }).join('');
+      } catch (e) {
+        wrap.innerHTML = `<div class="empty" style="color: var(--danger); font-size: 14px;">Couldn't load history: ${escapeHtml(e.message || '')}</div>`;
+      }
+    }
+
+    // Suggestions
+    let suggestionStatusFilter = 'new';
+    $('suggestionStatusFilter').addEventListener('change', (e) => {
+      suggestionStatusFilter = e.target.value;
+      loadSuggestions();
+    });
+    $('refreshSuggestionsBtn').addEventListener('click', loadSuggestions);
+
+    async function loadSuggestionBadge() {
+      try {
+        const snap = await getDocs(query(
+          collection(db, 'creator_suggestions'),
+          where('status', '==', 'new')
+        ));
+        const badge = $('suggestionBadge');
+        if (snap.size > 0) {
+          badge.textContent = snap.size;
+          badge.hidden = false;
+        } else {
+          badge.hidden = true;
+        }
+      } catch (e) { console.warn('suggestion badge failed:', e.message); }
+    }
+
+    async function loadSuggestions() {
+      const list = $('suggestionList');
+      list.innerHTML = `<div class="empty"><div class="loader"></div> Loading…</div>`;
+      try {
+        const constraints = [orderBy('created_at', 'desc')];
+        if (suggestionStatusFilter !== 'all') constraints.unshift(where('status', '==', suggestionStatusFilter));
+        const snap = await getDocs(query(collection(db, 'creator_suggestions'), ...constraints));
+        if (snap.empty) {
+          list.innerHTML = `<div class="empty" style="padding: 40px; text-align: center; color: var(--text-muted);">No ${suggestionStatusFilter === 'all' ? '' : suggestionStatusFilter + ' '}suggestions.</div>`;
+          return;
+        }
+        const labelFor = {
+          idea: 'Feature idea', bug: 'Bug', ux: 'UX', other: 'Other',
+        };
+        list.innerHTML = snap.docs.map(d => {
+          const s = d.data();
+          const when = s.created_at?.toDate?.()?.toLocaleString() || '';
+          const cat = labelFor[s.category] || 'Other';
+          const catColor = s.category === 'bug' ? 'var(--danger)' : s.category === 'ux' ? '#F59E0B' : 'var(--primary)';
+          const authorLine = s.anonymous
+            ? `<span style="color: var(--text-muted); font-style: italic;">Anonymous</span>`
+            : `<strong>${escapeHtml(s.creator_name || '—')}</strong> · <code style="font-size: 12px; background: #F3F4F6; padding: 1px 6px; border-radius: 4px;">${escapeHtml(s.creator_code || '—')}</code>${s.creator_email ? ` · <a href="mailto:${escapeHtml(s.creator_email)}" style="color: var(--text-muted); font-size: 13px;">${escapeHtml(s.creator_email)}</a>` : ''}`;
+          const statusPill = `<span style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; background: #F3F4F6; color: var(--text-muted); padding: 3px 8px; border-radius: 999px;">${s.status || 'new'}</span>`;
+          return `
+            <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px;">
+              <div style="display: flex; justify-content: space-between; gap: 12px; margin-bottom: 8px; flex-wrap: wrap;">
+                <div style="display: flex; gap: 8px; align-items: center;">
+                  <span style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; background: color-mix(in srgb, ${catColor} 14%, white); color: ${catColor}; padding: 3px 8px; border-radius: 999px; font-weight: 600;">${cat}</span>
+                  ${statusPill}
+                </div>
+                <div style="font-size: 12px; color: var(--text-muted);">${when}</div>
+              </div>
+              <div style="font-size: 14px; color: var(--text-muted); margin-bottom: 8px;">${authorLine}</div>
+              <div style="white-space: pre-wrap; font-size: 15px; line-height: 1.55;">${escapeHtml(s.body || '')}</div>
+              <div style="display: flex; gap: 8px; margin-top: 12px;">
+                ${s.status !== 'seen' ? `<button class="btn ghost" data-mark-seen="${d.id}" style="font-size: 13px; padding: 6px 12px;">Mark as seen</button>` : ''}
+                ${s.status !== 'closed' ? `<button class="btn ghost" data-mark-closed="${d.id}" style="font-size: 13px; padding: 6px 12px;">Close</button>` : ''}
+              </div>
+            </div>
+          `;
+        }).join('');
+        list.querySelectorAll('[data-mark-seen]').forEach(btn => {
+          btn.addEventListener('click', () => updateSuggestionStatus(btn.dataset.markSeen, 'seen'));
+        });
+        list.querySelectorAll('[data-mark-closed]').forEach(btn => {
+          btn.addEventListener('click', () => updateSuggestionStatus(btn.dataset.markClosed, 'closed'));
+        });
+      } catch (e) {
+        list.innerHTML = `<div class="empty" style="color: var(--danger); padding: 20px;">Could not load: ${escapeHtml(e.message || 'unknown')}</div>`;
+      }
+    }
+
+    async function updateSuggestionStatus(id, status) {
+      try {
+        await updateDoc(doc(db, 'creator_suggestions', id), { status });
+        loadSuggestions();
+        loadSuggestionBadge();
+      } catch (e) {
+        alert('Could not update: ' + (e.message || 'unknown'));
+      }
+    }
+
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, (c) => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      }[c]));
+    }
 
     async function loadTaxesView() {
       const body = $('taxesBody');

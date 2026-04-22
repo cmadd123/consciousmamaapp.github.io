@@ -289,6 +289,26 @@ service cloud.firestore {
       allow read, update, delete: if false;
     }
 
+    // ─── Creator briefs (admin-only read; writes via Cloud Function) ─
+    match /creator_briefs/{briefId} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
+
+    // ─── Creator suggestions ─────────────────────────────────────
+    // Any signed-in creator can submit feedback. Anonymous submissions
+    // omit creator/user refs entirely so the admin literally can't see
+    // who it came from. Only admins can read or update status.
+
+    match /creator_suggestions/{suggestionId} {
+      allow create: if request.auth != null &&
+        request.resource.data.body is string &&
+        request.resource.data.body.size() > 0 &&
+        request.resource.data.body.size() <= 2000;
+      allow read, update: if isAdmin();
+      allow delete: if false;
+    }
+
     // ─── Default deny ─────────────────────────────────────────────
     match /{document=**} {
       allow read, write: if false;

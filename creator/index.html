@@ -42,10 +42,36 @@
     }
     .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; }
     .brand .logo { width: 32px; height: 32px; border-radius: 8px; display: block; object-fit: contain; }
-    .user-chip { display: flex; align-items: center; gap: 10px; font-size: 14px; }
-    .user-chip img { width: 28px; height: 28px; border-radius: 50%; }
+    .user-chip { display: flex; align-items: center; gap: 10px; font-size: 14px; position: relative; }
+    .user-chip img { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; background: #E5E7EB; }
     .user-chip .signout { color: var(--text-muted); background: none; border: none; padding: 6px; }
     .user-chip .signout:hover { color: var(--danger); }
+    .profile-trigger {
+      display: flex; align-items: center; gap: 8px;
+      background: none; border: none; padding: 4px 8px; border-radius: 999px;
+      cursor: pointer; font: inherit; color: var(--text);
+    }
+    .profile-trigger:hover { background: rgba(0,0,0,0.05); }
+    .profile-trigger .caret { font-size: 10px; color: var(--text-muted); }
+    .profile-menu {
+      position: absolute; top: calc(100% + 6px); right: 0;
+      background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+      box-shadow: 0 12px 32px -12px rgba(0,0,0,0.2);
+      min-width: 200px; padding: 6px; z-index: 100;
+      display: none;
+    }
+    .profile-menu.open { display: block; }
+    .profile-menu button, .profile-menu a {
+      display: flex; align-items: center; gap: 10px; width: 100%;
+      background: none; border: none; padding: 10px 12px; border-radius: 8px;
+      font: inherit; font-size: 14px; color: var(--text); text-align: left;
+      text-decoration: none; cursor: pointer;
+    }
+    .profile-menu button:hover, .profile-menu a:hover { background: color-mix(in srgb, var(--primary) 8%, var(--surface)); }
+    .profile-menu .divider { height: 1px; background: var(--border); margin: 6px 0; }
+    .profile-menu .danger { color: var(--danger); }
+    .profile-menu .danger:hover { background: color-mix(in srgb, var(--danger) 8%, var(--surface)); }
+    .profile-menu .menu-icon { font-size: 16px; width: 18px; text-align: center; }
 
     main {
       flex: 1;
@@ -53,9 +79,12 @@
     }
     @media (max-width: 600px) {
       main { padding: 16px; }
-      header.topbar { padding: 12px 16px; flex-wrap: wrap; gap: 8px; }
-      .user-chip { font-size: 13px; gap: 8px; flex-wrap: wrap; }
-      .user-chip span { display: none; } /* hide name on small screens */
+      header.topbar { padding: 10px 14px; gap: 8px; flex-wrap: nowrap; }
+      .brand { font-size: 14px; min-width: 0; flex: 1; }
+      .brand .logo { width: 28px; height: 28px; }
+      .user-chip { font-size: 13px; gap: 6px; flex-shrink: 0; }
+      .profile-trigger { padding: 3px 6px; }
+      .profile-trigger span#userName { max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: inline-block; }
       .share-head { flex-direction: column; align-items: stretch; }
       .share-actions { flex-direction: column; }
       .share-actions .btn { width: 100%; }
@@ -592,11 +621,18 @@
         MomRise · Creator
       </div>
       <div class="user-chip" id="userChip" style="display:none;">
-        <img id="userPhoto" src="" alt="">
-        <span id="userName"></span>
-        <button class="signout" id="settingsBtn" title="Profile settings">Settings</button>
-        <a class="signout" id="supportLink" href="mailto:creators@momrise.app" title="Contact support">Support</a>
-        <button class="signout" id="signOutBtn" title="Sign out">Sign out</button>
+        <button class="profile-trigger" id="profileTrigger" aria-haspopup="menu" aria-expanded="false">
+          <img id="userPhoto" src="" alt="">
+          <span id="userName"></span>
+          <span class="caret">▾</span>
+        </button>
+        <div class="profile-menu" id="profileMenu" role="menu" aria-labelledby="profileTrigger">
+          <button id="settingsBtn" role="menuitem"><span class="menu-icon">⚙️</span> Profile settings</button>
+          <button id="suggestionBtn" role="menuitem"><span class="menu-icon">💡</span> Send a suggestion</button>
+          <a id="supportLink" href="mailto:creators@momrise.app" role="menuitem"><span class="menu-icon">✉️</span> Contact support</a>
+          <div class="divider"></div>
+          <button id="signOutBtn" class="danger" role="menuitem"><span class="menu-icon">↪</span> Sign out</button>
+        </div>
       </div>
     </header>
 
@@ -753,7 +789,7 @@
                     <span class="template-label">Shareable graphic (1080×1080)</span>
                     <button class="btn-mini" id="downloadGraphicBtn">Download PNG</button>
                   </div>
-                  <canvas id="shareCanvas" width="2160" height="2160" style="width: 100%; max-width: 360px; border-radius: 12px; display: block; margin-top: 8px;"></canvas>
+                  <canvas id="shareCanvas" width="3240" height="3240" style="width: 100%; max-width: 360px; border-radius: 12px; display: block; margin-top: 8px;"></canvas>
                 </div>
               </div>
             </details>
@@ -927,6 +963,19 @@
               <div class="feature-cta">View routines →</div>
             </button>
           </div>
+
+          <!-- What's new in MomRise — pulled from /CHANGELOG.md -->
+          <div class="section-head section-head-simple" style="margin-top: 28px;">
+            <h2>What's new in the app</h2>
+          </div>
+          <div id="changelogWrap" style="background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 18px 20px;">
+            <div id="changelogList" style="display: flex; flex-direction: column; gap: 16px;">
+              <div class="skeleton-row"><div class="skeleton-lines"><div class="skeleton skeleton-line medium"></div><div class="skeleton skeleton-line long"></div></div></div>
+            </div>
+            <div id="changelogToggle" hidden style="margin-top: 12px; text-align: center;">
+              <button type="button" class="btn ghost" id="changelogToggleBtn">See all updates</button>
+            </div>
+          </div>
       </div>
 
       <!-- 4. Docs sub-view -->
@@ -1083,6 +1132,19 @@
       <p class="muted" style="font-size: 13px; margin: 0 0 16px;">Your code is permanent. Everything else you can update as you grow.</p>
       <form id="settingsForm" class="form-grid">
         <div class="field">
+          <label>Profile picture</label>
+          <div style="display: flex; align-items: center; gap: 14px;">
+            <img id="settingsAvatarPreview" src="https://www.gravatar.com/avatar/0?d=mp"
+                 alt="" style="width: 72px; height: 72px; border-radius: 50%; object-fit: cover; background: #E5E7EB;">
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+              <input type="file" id="settingsAvatarInput" accept="image/png,image/jpeg,image/webp" style="display: none;">
+              <button type="button" class="btn ghost" id="settingsAvatarBtn">Upload photo</button>
+              <button type="button" class="btn ghost" id="settingsAvatarRemoveBtn" hidden style="color: var(--danger); border-color: var(--danger);">Remove</button>
+            </div>
+          </div>
+          <div class="hint" style="font-size: 12px; color: var(--text-muted); margin-top: 6px;">Square image, up to 3MB. Shown on your dashboard + in the creator directory.</div>
+        </div>
+        <div class="field">
           <label for="settingsName">Display name</label>
           <input type="text" id="settingsName" maxlength="80" placeholder="Haley Maddox">
         </div>
@@ -1126,6 +1188,43 @@
         <button type="button" class="btn ghost" id="deleteAccountBtn" style="color: var(--danger); border-color: var(--danger);">Delete my creator account</button>
       </div>
       <div class="hint" style="font-size: 12px; color: var(--text-muted); margin-top: 8px;">Export gives you a JSON file with everything we have on you. Deletion deactivates your code immediately and queues your data for permanent removal — irreversible after grace period.</div>
+    </div>
+  </div>
+
+  <!-- Suggestion modal -->
+  <div class="modal-backdrop" id="suggestionModal">
+    <div class="modal">
+      <div class="modal-head">
+        <h3>Send a suggestion</h3>
+        <button type="button" class="btn ghost" id="closeSuggestionBtn">Close</button>
+      </div>
+      <p class="muted" style="font-size: 13px; margin: 0 0 16px;">
+        Bugs, feature ideas, things that feel off — we want all of it. Read every one.
+      </p>
+      <form id="suggestionForm" class="form-grid">
+        <div class="field">
+          <label for="suggestionCategory">Type</label>
+          <select id="suggestionCategory">
+            <option value="idea">Feature idea</option>
+            <option value="bug">Bug or something broken</option>
+            <option value="ux">Feels clunky / UX issue</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="suggestionBody">What's on your mind?</label>
+          <textarea id="suggestionBody" maxlength="2000" required
+            placeholder="Share as much detail as is helpful. Screenshots? Email them to creators@momrise.app with a reference to this note."></textarea>
+        </div>
+        <label style="display: flex; align-items: flex-start; gap: 8px; font-size: 13px; color: var(--text-muted); cursor: pointer;">
+          <input type="checkbox" id="suggestionAnonymous" style="margin-top: 3px;">
+          <span>Send anonymously. We won't know which creator this came from — no follow-ups possible.</span>
+        </label>
+        <div class="modal-actions">
+          <button type="button" class="btn ghost" id="cancelSuggestionBtn">Cancel</button>
+          <button type="submit" class="btn" id="saveSuggestionBtn">Send suggestion</button>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -1205,6 +1304,27 @@
     $('signOutBtn').addEventListener('click', doSignOut);
     $('gateSignOutBtn').addEventListener('click', doSignOut);
 
+    // Profile dropdown menu
+    const profileMenu = $('profileMenu');
+    const profileTrigger = $('profileTrigger');
+    const toggleProfileMenu = (open) => {
+      const next = open ?? !profileMenu.classList.contains('open');
+      profileMenu.classList.toggle('open', next);
+      profileTrigger.setAttribute('aria-expanded', next ? 'true' : 'false');
+    };
+    profileTrigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleProfileMenu();
+    });
+    document.addEventListener('click', (e) => {
+      if (!profileMenu.classList.contains('open')) return;
+      if (!profileMenu.contains(e.target) && e.target !== profileTrigger) toggleProfileMenu(false);
+    });
+    // Close the menu whenever a menu item is activated.
+    profileMenu.querySelectorAll('button, a').forEach((el) => {
+      el.addEventListener('click', () => toggleProfileMenu(false));
+    });
+
     // Profile settings modal
     const openSettings = () => {
       if (!creatorDoc) return;
@@ -1215,6 +1335,9 @@
       $('settingsColor').value = color;
       $('settingsColorHex').value = color;
       $('settingsCurrentCode').textContent = creatorDoc.data.code || '—';
+      const currentPhoto = creatorDoc.data.photo_url || currentUser?.photoURL || 'https://www.gravatar.com/avatar/0?d=mp';
+      $('settingsAvatarPreview').src = currentPhoto;
+      $('settingsAvatarRemoveBtn').hidden = !creatorDoc.data.photo_url;
 
       // Code-change cooldown hint
       const lastChange = creatorDoc.data.code_changed_at?.toDate?.()
@@ -1283,6 +1406,109 @@
         toast('Export failed: ' + (err.message || 'unknown'), true);
       } finally {
         btn.disabled = false; btn.textContent = orig;
+      }
+    });
+
+    // Suggestion modal (creator feedback)
+    const openSuggestion = () => {
+      $('suggestionBody').value = '';
+      $('suggestionCategory').value = 'idea';
+      $('suggestionAnonymous').checked = false;
+      $('suggestionModal').classList.add('open');
+      setTimeout(() => $('suggestionBody').focus(), 80);
+    };
+    const closeSuggestion = () => $('suggestionModal').classList.remove('open');
+    $('suggestionBtn').addEventListener('click', openSuggestion);
+    $('closeSuggestionBtn').addEventListener('click', closeSuggestion);
+    $('cancelSuggestionBtn').addEventListener('click', closeSuggestion);
+    $('suggestionModal').addEventListener('click', (e) => { if (e.target === $('suggestionModal')) closeSuggestion(); });
+    $('suggestionForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const body = $('suggestionBody').value.trim();
+      if (!body) { toast('Tell us what you\'re thinking.', true); return; }
+      const anonymous = $('suggestionAnonymous').checked;
+      const btn = $('saveSuggestionBtn');
+      btn.disabled = true; btn.textContent = 'Sending…';
+      try {
+        const payload = {
+          body,
+          category: $('suggestionCategory').value,
+          anonymous,
+          status: 'new',
+          created_at: serverTimestamp(),
+        };
+        if (!anonymous) {
+          payload.creator_ref = creatorDoc.ref;
+          payload.user_ref = doc(db, 'users', currentUser.uid);
+          payload.creator_name = creatorDoc.data.name || currentUser.displayName || null;
+          payload.creator_code = creatorDoc.data.code || null;
+          payload.creator_email = currentUser.email || null;
+        }
+        await addDoc(collection(db, 'creator_suggestions'), payload);
+        toast('Thanks — we got it.');
+        closeSuggestion();
+      } catch (err) {
+        toast('Could not send: ' + (err.message || 'unknown'), true);
+      } finally {
+        btn.disabled = false; btn.textContent = 'Send suggestion';
+      }
+    });
+
+    // Profile picture upload
+    $('settingsAvatarBtn').addEventListener('click', () => $('settingsAvatarInput').click());
+    $('settingsAvatarInput').addEventListener('change', async (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      if (!/^image\/(png|jpe?g|webp)$/i.test(file.type)) {
+        toast('Pick a PNG, JPG, or WEBP image.', true);
+        return;
+      }
+      if (file.size > 3 * 1024 * 1024) {
+        toast('Image is larger than 3MB — pick a smaller one.', true);
+        return;
+      }
+      const btn = $('settingsAvatarBtn');
+      const orig = btn.textContent;
+      btn.disabled = true; btn.textContent = 'Uploading…';
+      try {
+        const ext = file.type === 'image/png' ? 'png' : file.type === 'image/webp' ? 'webp' : 'jpg';
+        const path = `creator_avatars/${currentUser.uid}/avatar_${Date.now()}.${ext}`;
+        const ref = storageRef(storage, path);
+        await uploadBytes(ref, file, { contentType: file.type });
+        const url = await getDownloadURL(ref);
+        // Best-effort delete of any prior avatar we stored (path saved when uploaded).
+        const prior = creatorDoc.data.photo_storage_path;
+        if (prior) { try { await deleteObject(storageRef(storage, prior)); } catch (_) {} }
+        await updateDoc(creatorDoc.ref, { photo_url: url, photo_storage_path: path });
+        creatorDoc.data.photo_url = url;
+        creatorDoc.data.photo_storage_path = path;
+        $('settingsAvatarPreview').src = url;
+        $('userPhoto').src = url;
+        $('settingsAvatarRemoveBtn').hidden = false;
+        toast('Profile picture updated.');
+      } catch (err) {
+        console.error(err);
+        toast('Upload failed: ' + (err.message || 'unknown'), true);
+      } finally {
+        btn.disabled = false; btn.textContent = orig;
+        e.target.value = '';
+      }
+    });
+    $('settingsAvatarRemoveBtn').addEventListener('click', async () => {
+      if (!confirm('Remove your profile picture?')) return;
+      try {
+        const prior = creatorDoc.data.photo_storage_path;
+        if (prior) { try { await deleteObject(storageRef(storage, prior)); } catch (_) {} }
+        await updateDoc(creatorDoc.ref, { photo_url: null, photo_storage_path: null });
+        creatorDoc.data.photo_url = null;
+        creatorDoc.data.photo_storage_path = null;
+        const fallback = currentUser?.photoURL || 'https://www.gravatar.com/avatar/0?d=mp';
+        $('settingsAvatarPreview').src = fallback;
+        $('userPhoto').src = fallback;
+        $('settingsAvatarRemoveBtn').hidden = true;
+        toast('Profile picture removed.');
+      } catch (err) {
+        toast('Could not remove: ' + (err.message || 'unknown'), true);
       }
     });
 
@@ -1472,6 +1698,9 @@
       }
       creatorDoc = { id: snap.docs[0].id, ref: snap.docs[0].ref, data: snap.docs[0].data() };
 
+      // Prefer the creator's uploaded photo over the provider photo
+      if (creatorDoc.data.photo_url) $('userPhoto').src = creatorDoc.data.photo_url;
+
       // Support mailto pre-filled with creator context.
       const code = creatorDoc.data.code || '(not set)';
       const name = creatorDoc.data.name || user.displayName || '';
@@ -1493,7 +1722,75 @@
       subscribeDocs();
       loadAnalytics();
       loadPayouts();
+      loadChangelog();
     });
+
+    // --- Changelog ---
+    // Fetch /CHANGELOG.md, parse "## vX.Y.Z — YYYY-MM-DD" blocks, render recent entries.
+    let changelogEntries = null;
+    let changelogExpanded = false;
+    async function loadChangelog() {
+      const list = $('changelogList');
+      const toggle = $('changelogToggle');
+      try {
+        const res = await fetch('/CHANGELOG.md', { cache: 'no-cache' });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const md = await res.text();
+        changelogEntries = parseChangelog(md);
+        if (!changelogEntries.length) {
+          list.innerHTML = `<div style="color: var(--text-muted); font-size: 14px;">No updates posted yet.</div>`;
+          toggle.hidden = true;
+          return;
+        }
+        renderChangelog();
+        if (changelogEntries.length > 3) {
+          toggle.hidden = false;
+          $('changelogToggleBtn').onclick = () => {
+            changelogExpanded = !changelogExpanded;
+            $('changelogToggleBtn').textContent = changelogExpanded ? 'Show less' : 'See all updates';
+            renderChangelog();
+          };
+        }
+      } catch (e) {
+        list.innerHTML = `<div style="color: var(--text-muted); font-size: 14px;">Couldn't load updates.</div>`;
+        toggle.hidden = true;
+      }
+    }
+    function renderChangelog() {
+      const list = $('changelogList');
+      const shown = changelogExpanded ? changelogEntries : changelogEntries.slice(0, 3);
+      list.innerHTML = shown.map((e, i) => `
+        <div${i > 0 ? ' style="padding-top: 16px; border-top: 1px solid var(--border);"' : ''}>
+          <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 6px;">
+            <span style="font-size: 14px; font-weight: 600; color: var(--primary-dark);">${escapeHtml(e.version)}</span>
+            ${e.date ? `<span style="font-size: 12px; color: var(--text-muted);">${escapeHtml(e.date)}</span>` : ''}
+          </div>
+          ${e.title ? `<div style="font-size: 15px; font-weight: 600; margin-bottom: 6px;">${escapeHtml(e.title)}</div>` : ''}
+          <ul style="margin: 0; padding-left: 18px; font-size: 14px; line-height: 1.55;">
+            ${e.bullets.map(b => `<li>${escapeHtml(b)}</li>`).join('')}
+          </ul>
+        </div>
+      `).join('');
+    }
+    function parseChangelog(md) {
+      // Match "## v1.2.3 — 2026-04-15 [optional title]" or "## v1.2.3 - 2026-04-15"
+      const lines = md.split(/\r?\n/);
+      const entries = [];
+      let current = null;
+      for (const line of lines) {
+        const h = line.match(/^##\s+(v?[\d.]+)(?:\s*[-—–]\s*(\d{4}-\d{2}-\d{2}))?(?:\s*[-—–]\s*(.+))?\s*$/);
+        if (h) {
+          if (current) entries.push(current);
+          current = { version: h[1], date: h[2] || '', title: h[3] || '', bullets: [] };
+          continue;
+        }
+        if (!current) continue;
+        const b = line.match(/^\s*[-*]\s+(.+?)\s*$/);
+        if (b) current.bullets.push(b[1]);
+      }
+      if (current) entries.push(current);
+      return entries.filter(e => e.bullets.length > 0);
+    }
 
     // --- Docs list ---
     function subscribeDocs() {
@@ -1774,7 +2071,7 @@
     function renderShareKit() {
       const code = creatorDoc.data.code || '';
       const name = creatorDoc.data.name || '';
-      const shareLink = `https://momrise.app/?c=${encodeURIComponent(code)}`;
+      const shareLink = `https://momrise.app/c/${encodeURIComponent(code)}`;
       $('shareCode').textContent = code;
 
       const templates = {
@@ -1788,7 +2085,7 @@
       $('tplEm').textContent = templates.em;
       $('tplTx').textContent = templates.tx;
 
-      renderShareGraphic(code, name);
+      renderShareGraphic(code, name); // async; fires-and-forgets. Re-fires inside if fonts weren't ready.
 
       // Copy handlers
       const copyText = async (btn, text) => {
@@ -1807,7 +2104,13 @@
       document.querySelectorAll('[data-template]').forEach(btn => {
         btn.onclick = () => copyText(btn, templates[btn.dataset.template]);
       });
-      $('downloadGraphicBtn').onclick = () => {
+      $('downloadGraphicBtn').onclick = async () => {
+        const btn = $('downloadGraphicBtn');
+        const orig = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = 'Preparing…';
+        // Re-render right before download so fonts are definitely loaded.
+        await renderShareGraphic(code, name);
         const canvas = $('shareCanvas');
         canvas.toBlob((blob) => {
           const url = URL.createObjectURL(blob);
@@ -1816,11 +2119,13 @@
           a.download = `momrise-${code}.png`;
           a.click();
           setTimeout(() => URL.revokeObjectURL(url), 1000);
+          btn.disabled = false;
+          btn.textContent = orig;
         }, 'image/png');
       };
     }
 
-    function renderShareGraphic(code, name) {
+    async function renderShareGraphic(code, name) {
       const canvas = $('shareCanvas');
       const ctx = canvas.getContext('2d');
       const W = canvas.width, H = canvas.height;
@@ -1828,6 +2133,17 @@
       // up to whatever the canvas's actual width is so the design
       // renders crisply at any resolution.
       const s = W / 1080;
+
+      // Wait for Inter to load — otherwise canvas falls back to system-ui
+      // mid-render and the saved PNG looks "off" / less crisp.
+      try {
+        await Promise.all([
+          document.fonts.load(`bold ${140 * s}px "Inter"`),
+          document.fonts.load(`bold ${48 * s}px "Inter"`),
+          document.fonts.load(`400 ${36 * s}px "Inter"`),
+          document.fonts.ready,
+        ]);
+      } catch (_) { /* proceed with fallback */ }
 
       ctx.imageSmoothingEnabled = true;
       if ('imageSmoothingQuality' in ctx) ctx.imageSmoothingQuality = 'high';
