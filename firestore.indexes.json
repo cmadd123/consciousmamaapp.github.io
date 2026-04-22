@@ -84,6 +84,14 @@
         { "fieldPath": "user_ref", "order": "ASCENDING" },
         { "fieldPath": "shared_with_followers", "order": "ASCENDING" }
       ]
+    },
+    {
+      "collectionGroup": "creator_applications",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "status", "order": "ASCENDING" },
+        { "fieldPath": "submitted_at", "order": "DESCENDING" }
+      ]
     }
   ],
   "fieldOverrides": []

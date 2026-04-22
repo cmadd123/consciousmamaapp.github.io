@@ -6,6 +6,7 @@ const { defineString, defineSecret } = require('firebase-functions/params');
 const { initializeApp } = require('firebase-admin/app');
 const { getFirestore, FieldValue, Timestamp } = require('firebase-admin/firestore');
 const { getMessaging } = require('firebase-admin/messaging');
+const { getAuth } = require('firebase-admin/auth');
 const sgMail = require('@sendgrid/mail');
 const https = require('https');
 const http = require('http');
@@ -2001,18 +2002,11 @@ exports.notifyOnCreatorApplication = onDocumentCreated(
       </table>
     </div>
 
-    <div style="padding: 4px 32px 28px;">
-      <div style="background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 10px; padding: 16px 18px;">
-        <div style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: #6B7280; font-weight: 600; margin-bottom: 10px;">Admin actions</div>
-        <div style="margin-bottom: 8px;">
-          <div style="font-size: 13px; color: #374151; margin-bottom: 4px;">Approve</div>
-          <code style="display: block; background: white; border: 1px solid #E5E7EB; padding: 8px 12px; border-radius: 6px; font-family: 'SF Mono', Consolas, monospace; font-size: 12px; color: #1F2937; word-break: break-all;">node admin/approve-creator.js ${appId}</code>
-        </div>
-        <div>
-          <div style="font-size: 13px; color: #374151; margin: 10px 0 4px;">Reject</div>
-          <code style="display: block; background: white; border: 1px solid #E5E7EB; padding: 8px 12px; border-radius: 6px; font-family: 'SF Mono', Consolas, monospace; font-size: 12px; color: #1F2937; word-break: break-all;">node admin/approve-creator.js ${appId} --reject</code>
-        </div>
-      </div>
+    <div style="padding: 4px 32px 28px; text-align: center;">
+      <a href="https://momrise.app/admin/?app=${appId}"
+         style="display: inline-block; background: #52A097; color: white !important; text-decoration: none; padding: 14px 32px; border-radius: 10px; font-weight: 600; font-size: 15px;">
+        Review in admin dashboard →
+      </a>
     </div>
 
     <div style="background: #F9FAFB; padding: 16px 32px; text-align: center; color: #9CA3AF; font-size: 12px; border-top: 1px solid #E5E7EB;">
@@ -2032,6 +2026,129 @@ exports.notifyOnCreatorApplication = onDocumentCreated(
     }
   }
 );
+
+// ── Admin: approve / reject creator applications ─────
+// Called by the /admin/ dashboard. Gated on the caller's email.
+// Approve creates the creator doc (same logic as admin/approve-creator.js)
+// and marks the application approved. Reject just flips the status.
+const ADMIN_EMAILS = ['collinjmaddox@gmail.com'];
+
+function _requireAdmin(request) {
+  if (!request.auth) throw new HttpsError('unauthenticated', 'Sign in required');
+  const email = (request.auth.token?.email || '').toLowerCase();
+  if (!ADMIN_EMAILS.includes(email)) {
+    throw new HttpsError('permission-denied', 'Admin access required');
+  }
+}
+
+async function _generateUniqueCreatorCode(baseName) {
+  const db = getFirestore();
+  const clean = (baseName || 'CREATOR').replace(/[^A-Za-z]/g, '').toUpperCase();
+  const stem = (clean.slice(0, 5) || 'MOM').padEnd(3, 'X');
+  for (let i = 0; i < 25; i++) {
+    const suffix = String(Math.floor(Math.random() * 90) + 10);
+    const candidate = `${stem}${suffix}`;
+    const existing = await db.collection('creators').where('code', '==', candidate).limit(1).get();
+    if (existing.empty) return candidate;
+  }
+  throw new HttpsError('internal', 'Could not generate a unique code');
+}
+
+exports.approveCreatorApplication = onCall(async (request) => {
+  _requireAdmin(request);
+  const { applicationId, uid: providedUid } = request.data || {};
+  if (!applicationId) throw new HttpsError('invalid-argument', 'applicationId required');
+
+  const db = getFirestore();
+  const auth = getAuth();
+  const appRef = db.collection('creator_applications').doc(applicationId);
+  const appSnap = await appRef.get();
+  if (!appSnap.exists) throw new HttpsError('not-found', 'Application not found');
+  const appData = appSnap.data();
+
+  // Resolve user uid by submitted email, fall back to caller-provided.
+  let uid = providedUid;
+  if (!uid) {
+    try {
+      const userRec = await auth.getUserByEmail(appData.email);
+      uid = userRec.uid;
+    } catch (err) {
+      if (err.code === 'auth/user-not-found') {
+        throw new HttpsError('failed-precondition',
+          `No Firebase user with email ${appData.email}. Ask them to sign up in the app, then retry with their UID.`);
+      }
+      throw err;
+    }
+  }
+
+  // Sanity-verify uid exists.
+  try { await auth.getUser(uid); }
+  catch (err) { throw new HttpsError('failed-precondition', `Could not verify uid ${uid}: ${err.message}`); }
+
+  // Check for existing creator doc linked to this user.
+  const existing = await db.collection('creators')
+    .where('user_ref', '==', db.doc(`users/${uid}`))
+    .limit(1).get();
+  if (!existing.empty) {
+    throw new HttpsError('already-exists',
+      `User already has a creator profile (code ${existing.docs[0].data().code}).`);
+  }
+
+  const code = await _generateUniqueCreatorCode(appData.name);
+  const creatorRef = db.collection('creators').doc();
+  const batch = db.batch();
+  batch.set(creatorRef, {
+    name: appData.name,
+    code,
+    user_ref: db.doc(`users/${uid}`),
+    is_active: true,
+    bio: appData.audience_description || '',
+    niche: appData.audience_description || '',
+    avatar_url: '',
+    follower_count: 0,
+    subscriber_count: 0,
+    lifetime_payout_cents: 0,
+    theme_primary: '#52A097',
+    theme_secondary: '#D7F2EB',
+    theme_accent: '#EE8B60',
+    theme_font: '',
+    theme_font_url: '',
+    stripe_connect_onboarded: false,
+    created_at: FieldValue.serverTimestamp(),
+    approved_from_application: appRef,
+  });
+  batch.update(appRef, {
+    status: 'approved',
+    approved_at: FieldValue.serverTimestamp(),
+    approved_creator_ref: creatorRef,
+    assigned_code: code,
+    assigned_uid: uid,
+    approved_by: request.auth.token.email,
+  });
+  await batch.commit();
+
+  return { ok: true, creatorId: creatorRef.id, code };
+});
+
+exports.rejectCreatorApplication = onCall(async (request) => {
+  _requireAdmin(request);
+  const { applicationId, reason } = request.data || {};
+  if (!applicationId) throw new HttpsError('invalid-argument', 'applicationId required');
+
+  const db = getFirestore();
+  const appRef = db.collection('creator_applications').doc(applicationId);
+  const appSnap = await appRef.get();
+  if (!appSnap.exists) throw new HttpsError('not-found', 'Application not found');
+
+  await appRef.update({
+    status: 'rejected',
+    rejected_at: FieldValue.serverTimestamp(),
+    rejected_by: request.auth.token.email,
+    rejection_reason: reason || null,
+  });
+
+  return { ok: true };
+});
 
 // ── Daily creator metric snapshots ───────────────────
 // Stamps follower_count / subscriber_count / lifetime_payout_cents for
