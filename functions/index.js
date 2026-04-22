@@ -2062,7 +2062,7 @@ exports.approveCreatorApplication = onCall(
   { secrets: [sendgridApiKey] },
   async (request) => {
   _requireAdmin(request);
-  const { applicationId, uid: providedUid } = request.data || {};
+  const { applicationId, uid: providedUid, overwriteExisting } = request.data || {};
   if (!applicationId) throw new HttpsError('invalid-argument', 'applicationId required');
 
   const db = getFirestore();
@@ -2098,8 +2098,25 @@ exports.approveCreatorApplication = onCall(
   if (!existing.empty) {
     const exDoc = existing.docs[0];
     const exData = exDoc.data();
-    throw new HttpsError('already-exists',
-      `This user already has a creator profile (doc ${exDoc.id}, code ${exData.code || '(not set)'}). Delete that doc in Firestore first if you want to re-approve.`);
+    if (overwriteExisting === true) {
+      // Admin chose "delete and retry" — also clean up the old
+      // creator's earnings + snapshots subcollection so stats don't leak.
+      console.log(`Overwriting existing creator ${exDoc.id} (code ${exData.code || '(none)'}) per admin request`);
+      const earningsSnap = await db.collection('creator_earnings')
+        .where('creator_ref', '==', exDoc.ref).get();
+      const snapshotsSnap = await exDoc.ref.collection('snapshots').get();
+      const delBatch = db.batch();
+      earningsSnap.forEach(d => delBatch.delete(d.ref));
+      snapshotsSnap.forEach(d => delBatch.delete(d.ref));
+      delBatch.delete(exDoc.ref);
+      await delBatch.commit();
+    } else {
+      throw new HttpsError(
+        'already-exists',
+        `This user already has a creator profile (code ${exData.code || '(not set)'}).`,
+        { existingCreatorId: exDoc.id, existingCode: exData.code || null }
+      );
+    }
   }
 
   const creatorRef = db.collection('creators').doc();

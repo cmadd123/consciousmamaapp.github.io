@@ -268,6 +268,18 @@
     </main>
   </div>
 
+  <!-- Overwrite-existing-creator confirm modal -->
+  <div class="modal-backdrop" id="overwriteModal">
+    <div class="modal">
+      <h3>Replace existing creator?</h3>
+      <p id="overwriteModalBody">—</p>
+      <div class="modal-actions">
+        <button class="btn ghost" id="cancelOverwriteBtn">Cancel</button>
+        <button class="btn danger" id="confirmOverwriteBtn">Delete existing & approve</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Reject modal -->
   <div class="modal-backdrop" id="rejectModal">
     <div class="modal">
@@ -555,13 +567,13 @@
       show('viewDetail');
     }
 
-    async function handleApprove(appData) {
+    async function handleApprove(appData, overwriteExisting = false) {
       const btn = $('approveBtn');
       btn.disabled = true;
       btn.innerHTML = '<span class="loader"></span> Approving…';
       try {
         const call = httpsCallable(functions, 'approveCreatorApplication');
-        await call({ applicationId: appData.id });
+        await call({ applicationId: appData.id, overwriteExisting });
         toast(`Approved — welcome email sent. They'll pick their code on first sign-in.`);
         // Reload and return to list
         await loadApplications();
@@ -569,11 +581,29 @@
         show('viewList');
       } catch (e) {
         console.error(e);
-        toast('Approve failed: ' + (e.message || 'unknown error'), true);
+        const details = e.details || {};
+        // 409 already-exists with structured details → offer inline recovery
+        if (e.code === 'functions/already-exists' && details.existingCreatorId) {
+          $('overwriteModalBody').innerHTML =
+            `This applicant's user already has a creator profile ` +
+            `(code <code style="background: #F3F4F6; padding: 2px 6px; border-radius: 4px;">${esc(details.existingCode || '(not set)')}</code>). ` +
+            `<br><br>Replacing deletes the existing creator doc, earnings, and daily snapshots, then approves this application fresh.`;
+          $('overwriteModal').classList.add('open');
+          $('confirmOverwriteBtn').onclick = async () => {
+            $('overwriteModal').classList.remove('open');
+            await handleApprove(appData, true);
+          };
+        } else {
+          toast('Approve failed: ' + (e.message || 'unknown error'), true);
+        }
         btn.disabled = false;
-        btn.textContent = 'Approve & create creator';
+        btn.textContent = 'Approve creator';
       }
     }
+    $('cancelOverwriteBtn').addEventListener('click', () => $('overwriteModal').classList.remove('open'));
+    $('overwriteModal').addEventListener('click', (e) => {
+      if (e.target === $('overwriteModal')) $('overwriteModal').classList.remove('open');
+    });
 
     function openRejectModal(appData) {
       $('rejectReason').value = '';
