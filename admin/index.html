@@ -540,23 +540,12 @@
       // Actions
       const actions = $('detailActions');
       if (status === 'new') {
-        const suggested = suggestCode(appData.name);
         actions.innerHTML = `
-          <div style="display: flex; flex-direction: column; gap: 8px; flex: 1;">
-            <label style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); font-weight: 600;">Creator code</label>
-            <input type="text" id="codeInput" value="${suggested}" maxlength="20"
-                   style="padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-family: 'SF Mono', Consolas, monospace; font-size: 15px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase;"
-                   pattern="[A-Z0-9]{3,20}">
-            <div style="font-size: 12px; color: var(--text-muted);">3–20 uppercase letters or numbers. Must be unique.</div>
+          <div style="flex: 1; font-size: 13px; color: var(--text-muted); align-self: center;">
+            The creator will pick their own code after their first sign-in.
           </div>
-          <div style="display: flex; gap: 10px; align-items: flex-end;">
-            <button class="btn danger" id="rejectBtn">Reject</button>
-            <button class="btn" id="approveBtn">Approve & create creator</button>
-          </div>`;
-        const codeInput = $('codeInput');
-        codeInput.addEventListener('input', (e) => {
-          e.target.value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
-        });
+          <button class="btn danger" id="rejectBtn">Reject</button>
+          <button class="btn" id="approveBtn">Approve creator</button>`;
         $('approveBtn').addEventListener('click', () => handleApprove(appData));
         $('rejectBtn').addEventListener('click', () => openRejectModal(appData));
       } else {
@@ -566,27 +555,14 @@
       show('viewDetail');
     }
 
-    function suggestCode(name) {
-      const clean = String(name || 'CREATOR').replace(/[^A-Za-z]/g, '').toUpperCase();
-      const stem = (clean.slice(0, 5) || 'MOM').padEnd(3, 'X');
-      const suffix = String(Math.floor(Math.random() * 90) + 10);
-      return stem + suffix;
-    }
-
     async function handleApprove(appData) {
       const btn = $('approveBtn');
-      const codeInput = $('codeInput');
-      const customCode = codeInput?.value.trim().toUpperCase() || null;
-      if (customCode && !/^[A-Z0-9]{3,20}$/.test(customCode)) {
-        toast('Code must be 3-20 uppercase letters or numbers.', true);
-        return;
-      }
       btn.disabled = true;
       btn.innerHTML = '<span class="loader"></span> Approving…';
       try {
         const call = httpsCallable(functions, 'approveCreatorApplication');
-        const { data } = await call({ applicationId: appData.id, customCode });
-        toast(`Approved — creator code ${data.code} assigned. Welcome email sent.`);
+        await call({ applicationId: appData.id });
+        toast(`Approved — welcome email sent. They'll pick their code on first sign-in.`);
         // Reload and return to list
         await loadApplications();
         history.replaceState({}, '', '/admin/');

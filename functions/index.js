@@ -2062,7 +2062,7 @@ exports.approveCreatorApplication = onCall(
   { secrets: [sendgridApiKey] },
   async (request) => {
   _requireAdmin(request);
-  const { applicationId, uid: providedUid, customCode } = request.data || {};
+  const { applicationId, uid: providedUid } = request.data || {};
   if (!applicationId) throw new HttpsError('invalid-argument', 'applicationId required');
 
   const db = getFirestore();
@@ -2096,33 +2096,17 @@ exports.approveCreatorApplication = onCall(
     .where('user_ref', '==', db.doc(`users/${uid}`))
     .limit(1).get();
   if (!existing.empty) {
+    const exDoc = existing.docs[0];
+    const exData = exDoc.data();
     throw new HttpsError('already-exists',
-      `User already has a creator profile (code ${existing.docs[0].data().code}).`);
-  }
-
-  // Custom code override: admin can pick a vanity code instead of the
-  // auto-generated one. Must be A-Z/0-9 only, 3-20 chars, unique.
-  let code;
-  if (customCode && typeof customCode === 'string') {
-    const cleaned = customCode.trim().toUpperCase();
-    if (!/^[A-Z0-9]{3,20}$/.test(cleaned)) {
-      throw new HttpsError('invalid-argument',
-        'Custom code must be 3-20 uppercase letters or numbers.');
-    }
-    const clash = await db.collection('creators').where('code', '==', cleaned).limit(1).get();
-    if (!clash.empty) {
-      throw new HttpsError('already-exists', `Code ${cleaned} is already taken.`);
-    }
-    code = cleaned;
-  } else {
-    code = await _generateUniqueCreatorCode(appData.name);
+      `This user already has a creator profile (doc ${exDoc.id}, code ${exData.code || '(not set)'}). Delete that doc in Firestore first if you want to re-approve.`);
   }
 
   const creatorRef = db.collection('creators').doc();
   const batch = db.batch();
   batch.set(creatorRef, {
     name: appData.name,
-    code,
+    code: '', // Creator picks their own code on first sign-in.
     user_ref: db.doc(`users/${uid}`),
     is_active: true,
     bio: appData.audience_description || '',
@@ -2144,7 +2128,6 @@ exports.approveCreatorApplication = onCall(
     status: 'approved',
     approved_at: FieldValue.serverTimestamp(),
     approved_creator_ref: creatorRef,
-    assigned_code: code,
     assigned_uid: uid,
     approved_by: request.auth.token.email,
   });
@@ -2163,18 +2146,18 @@ exports.approveCreatorApplication = onCall(
         clickTracking: { enable: false, enableText: false },
         openTracking: { enable: false },
       },
-      html: _renderCreatorWelcomeEmail(appData.name, code),
+      html: _renderCreatorWelcomeEmail(appData.name),
     });
-    console.log(`Sent creator welcome email to ${appData.email} (code ${code})`);
+    console.log(`Sent creator welcome email to ${appData.email}`);
   } catch (err) {
     console.error('Welcome email send failed (creator doc still created):', err.message);
     if (err.response?.body) console.error('SendGrid body:', JSON.stringify(err.response.body));
   }
 
-  return { ok: true, creatorId: creatorRef.id, code };
+  return { ok: true, creatorId: creatorRef.id };
 });
 
-function _renderCreatorWelcomeEmail(name, code) {
+function _renderCreatorWelcomeEmail(name) {
   const first = (name || '').split(' ')[0] || 'there';
   return `
 <!DOCTYPE html>
@@ -2189,16 +2172,12 @@ function _renderCreatorWelcomeEmail(name, code) {
     <div style="padding: 32px; color: #374151; font-size: 15px;">
       <p style="margin: 0 0 16px;">Welcome to the MomRise creator program. We reviewed your application and would love to have you on board.</p>
 
-      <div style="background: linear-gradient(135deg, #D7F2EB 0%, #FFE9E1 100%); border-radius: 12px; padding: 24px; text-align: center; margin: 24px 0;">
-        <div style="font-size: 13px; color: #2A6F67; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; margin-bottom: 8px;">Your creator code</div>
-        <div style="font-size: 32px; font-weight: 700; color: #2A6F67; letter-spacing: 3px; font-family: 'SF Mono', Consolas, monospace;">${_esc(code)}</div>
-      </div>
-
-      <p style="margin: 24px 0 8px; font-weight: 600; color: #1F2937;">What to do next:</p>
+      <p style="margin: 20px 0 8px; font-weight: 600; color: #1F2937;">What to do next:</p>
       <ol style="padding-left: 20px; margin: 0 0 20px;">
         <li style="margin: 10px 0;">Sign in at <a href="https://momrise.app/creator/" style="color: #52A097;">momrise.app/creator/</a> with the same Google or Apple account you use for MomRise. Your dashboard will load automatically.</li>
+        <li style="margin: 10px 0;"><strong>Pick your creator code.</strong> On first sign-in you'll choose a code (3–20 letters or numbers) — this is what your community enters to earn you a share of their subscriptions. Pick something memorable.</li>
         <li style="margin: 10px 0;"><strong>Connect your bank through Stripe</strong> (2–3 minutes). That's how we pay you your 50% revenue share.</li>
-        <li style="margin: 10px 0;">Start sharing your code — <code style="background: #F3F4F6; padding: 2px 6px; border-radius: 4px;">${_esc(code)}</code> — with your community. Anyone who subscribes using it earns you half of every month they stay.</li>
+        <li style="margin: 10px 0;">Start sharing your code with your community. Anyone who subscribes using it earns you half of every month they stay.</li>
       </ol>
 
       <p style="margin: 24px 0 8px;">Payouts run on the 1st of each month, minimum $25. Everything's in your dashboard — follower count, earnings, content performance.</p>
@@ -2216,6 +2195,55 @@ function _renderCreatorWelcomeEmail(name, code) {
 </body>
 </html>`;
 }
+
+// Called by the creator from their dashboard on first sign-in to claim
+// their code. Validates format + uniqueness, verifies caller owns the
+// creator doc, and writes atomically.
+exports.setCreatorCode = onCall(async (request) => {
+  if (!request.auth) throw new HttpsError('unauthenticated', 'Sign in required');
+  const { code } = request.data || {};
+  if (!code || typeof code !== 'string') {
+    throw new HttpsError('invalid-argument', 'Code required');
+  }
+  const cleaned = code.trim().toUpperCase();
+  if (!/^[A-Z0-9]{3,20}$/.test(cleaned)) {
+    throw new HttpsError('invalid-argument', 'Code must be 3-20 letters or numbers (A-Z, 0-9).');
+  }
+
+  const db = getFirestore();
+  const uid = request.auth.uid;
+
+  // Find the caller's creator doc.
+  const mySnap = await db.collection('creators')
+    .where('user_ref', '==', db.doc(`users/${uid}`))
+    .limit(1)
+    .get();
+  if (mySnap.empty) {
+    throw new HttpsError('failed-precondition', 'No creator profile for this user');
+  }
+  const creatorDoc = mySnap.docs[0];
+  const existingCode = creatorDoc.data().code;
+
+  // If they already have a code set, require admin to change it.
+  if (existingCode && existingCode.trim() !== '') {
+    throw new HttpsError('failed-precondition',
+      'Creator code is already set. Contact support to change it.');
+  }
+
+  // Uniqueness check.
+  const clash = await db.collection('creators').where('code', '==', cleaned).limit(1).get();
+  if (!clash.empty && clash.docs[0].id !== creatorDoc.id) {
+    throw new HttpsError('already-exists',
+      `The code "${cleaned}" is already taken. Try another.`);
+  }
+
+  await creatorDoc.ref.update({
+    code: cleaned,
+    code_set_at: FieldValue.serverTimestamp(),
+  });
+
+  return { ok: true, code: cleaned };
+});
 function _esc(s) { return String(s || '').replace(/[<>&"]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c])); }
 
 exports.rejectCreatorApplication = onCall(async (request) => {

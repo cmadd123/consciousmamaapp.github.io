@@ -477,6 +477,20 @@
         </div>
       </div>
 
+      <!-- 2b. Pick your creator code (first-time setup) -->
+      <div class="view" id="viewPickCode">
+        <div class="gate" style="max-width: 520px;">
+          <div style="font-size: 44px; margin-bottom: 8px;">🎉</div>
+          <h2>Welcome! Pick your creator code</h2>
+          <p style="margin-bottom: 20px;">This is what your community will enter in the MomRise app to support you. Pick something memorable — 3 to 20 letters or numbers.</p>
+          <input type="text" id="codeInput" maxlength="20" placeholder="HALEY"
+                 autocomplete="off" autocorrect="off" autocapitalize="characters"
+                 style="width: 100%; padding: 14px 16px; font-size: 22px; text-align: center; letter-spacing: 4px; text-transform: uppercase; font-weight: 700; border: 1px solid var(--border); border-radius: 10px; font-family: 'SF Mono', Consolas, monospace; color: var(--primary-dark); margin-bottom: 8px;">
+          <div id="codeMsg" style="font-size: 13px; color: var(--text-muted); min-height: 18px; margin-bottom: 16px;">3–20 characters, letters and numbers only. Can't be changed later without contacting support.</div>
+          <button class="btn" id="saveCodeBtn" style="width: 100%;">Claim this code</button>
+        </div>
+      </div>
+
       <!-- 3. Main dashboard (overview) -->
       <div class="view" id="viewDashboard">
 
@@ -866,6 +880,57 @@
     $('signOutBtn').addEventListener('click', doSignOut);
     $('gateSignOutBtn').addEventListener('click', doSignOut);
 
+    // Pick-your-code flow
+    $('codeInput').addEventListener('input', (e) => {
+      e.target.value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+      const val = e.target.value;
+      const msgEl = $('codeMsg');
+      if (!val) {
+        msgEl.textContent = '3–20 characters, letters and numbers only. Can\'t be changed later without contacting support.';
+        msgEl.style.color = 'var(--text-muted)';
+      } else if (val.length < 3) {
+        msgEl.textContent = `Need at least 3 characters (${val.length}/3).`;
+        msgEl.style.color = 'var(--text-muted)';
+      } else {
+        msgEl.textContent = `✓ Looks good — ${val.length} characters.`;
+        msgEl.style.color = 'var(--success)';
+      }
+    });
+    $('codeInput').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); $('saveCodeBtn').click(); }
+    });
+    $('saveCodeBtn').addEventListener('click', async () => {
+      const btn = $('saveCodeBtn');
+      const val = $('codeInput').value.trim().toUpperCase();
+      const msgEl = $('codeMsg');
+      if (!/^[A-Z0-9]{3,20}$/.test(val)) {
+        msgEl.textContent = 'Code must be 3–20 letters or numbers.';
+        msgEl.style.color = 'var(--danger)';
+        return;
+      }
+      btn.disabled = true;
+      btn.textContent = 'Claiming…';
+      try {
+        const call = httpsCallable(functions, 'setCreatorCode');
+        const { data } = await call({ code: val });
+        creatorDoc.data.code = data.code;
+        // Now drop into the main dashboard.
+        show('viewDashboard');
+        applyCreatorTheme();
+        subscribeDocs();
+        loadAnalytics();
+        loadPayouts();
+        toast(`Your code "${data.code}" is yours. Welcome aboard.`);
+      } catch (e) {
+        console.error(e);
+        msgEl.textContent = e.message || 'Something went wrong — try again.';
+        msgEl.style.color = 'var(--danger)';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Claim this code';
+      }
+    });
+
     // Navigation: feature cards drill into sub-views; back button returns.
     document.querySelectorAll('.feature-card[data-goto]').forEach(card => {
       card.addEventListener('click', () => {
@@ -911,6 +976,15 @@
         return;
       }
       creatorDoc = { id: snap.docs[0].id, ref: snap.docs[0].ref, data: snap.docs[0].data() };
+
+      // First-time-sign-in flow: if the code hasn't been set yet, gate
+      // access behind the Pick Your Code screen.
+      if (!creatorDoc.data.code || !creatorDoc.data.code.trim()) {
+        show('viewPickCode');
+        setTimeout(() => $('codeInput').focus(), 100);
+        return;
+      }
+
       show('viewDashboard');
       applyCreatorTheme();
       subscribeDocs();
