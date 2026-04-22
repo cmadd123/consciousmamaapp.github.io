@@ -556,7 +556,7 @@
     }
 
     // List
-    $('refreshBtn').addEventListener('click', loadApplications);
+    $('refreshBtn').addEventListener('click', () => { loadApplications(); loadAggregateMetrics(); });
     $('refreshCreatorsBtn').addEventListener('click', loadCreators);
     $('pendingCalloutBtn').addEventListener('click', () => {
       // Jump to Applications tab + Pending filter
@@ -797,6 +797,7 @@
         c.is_active = makeActive;
         openCreatorDetail(c);
         loadCreators();
+        loadAggregateMetrics();
       } catch (e) {
         toast('Failed: ' + (e.message || 'unknown error'), true);
       } finally {
@@ -845,6 +846,7 @@
         $('editCodeModal').classList.remove('open');
         openCreatorDetail(c);
         loadCreators();
+        loadAggregateMetrics();
       } catch (e) {
         toast('Failed: ' + (e.message || 'unknown error'), true);
       } finally {
@@ -980,6 +982,7 @@
         toast(`Approved — welcome email sent. They'll pick their code on first sign-in.`);
         // Reload and return to list
         await loadApplications();
+        loadAggregateMetrics();
         history.replaceState({}, '', '/admin/');
         show('viewList');
       } catch (e) {
@@ -1029,6 +1032,7 @@
         toast('Application rejected.');
         $('rejectModal').classList.remove('open');
         await loadApplications();
+        loadAggregateMetrics();
         history.replaceState({}, '', '/admin/');
         show('viewList');
       } catch (e) {
