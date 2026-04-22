@@ -44,7 +44,7 @@ exports.sendWaitlistWelcome = onDocumentCreated(
 
     try {
       // Initialize SendGrid
-      sgMail.setApiKey(sendgridApiKey.value());
+      sgMail.setApiKey(sendgridApiKey.value().replace(/[\s\r\n]+/g, ''));
 
       // Email content
       const emailMsg = {
@@ -1958,7 +1958,7 @@ exports.notifyOnCreatorApplication = onDocumentCreated(
     const d = snap.data();
 
     try {
-      sgMail.setApiKey(sendgridApiKey.value());
+      sgMail.setApiKey(sendgridApiKey.value().replace(/[\s\r\n]+/g, ''));
       const appId = snap.id;
       const esc = (s) => String(s || '').replace(/[<>&]/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;' }[c]));
 
