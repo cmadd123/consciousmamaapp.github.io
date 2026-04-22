@@ -1962,28 +1962,65 @@ exports.notifyOnCreatorApplication = onDocumentCreated(
       const appId = snap.id;
       const esc = (s) => String(s || '').replace(/[<>&]/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;' }[c]));
 
+      const row = (label, value) =>
+        `<tr>
+          <td style="padding: 10px 14px; border-bottom: 1px solid #F3F4F6; color: #6B7280; font-size: 13px; font-weight: 500; vertical-align: top; width: 120px; text-transform: uppercase; letter-spacing: 0.04em;">${label}</td>
+          <td style="padding: 10px 14px; border-bottom: 1px solid #F3F4F6; color: #1F2937; font-size: 15px;">${value}</td>
+        </tr>`;
+
       await sgMail.send({
         to: 'collinjmaddox@gmail.com',
         from: sendgridFromEmail.value(),
         subject: `New creator application: ${d.name || '(no name)'}`,
         html: `
-          <div style="font-family: Inter, system-ui, sans-serif; max-width: 600px; margin: 0 auto; color: #1F2937; line-height: 1.6;">
-            <h2 style="color: #2A6F67; border-bottom: 2px solid #52A097; padding-bottom: 8px;">New creator application</h2>
-            <table style="width: 100%; border-collapse: collapse; margin: 16px 0;">
-              <tr><td style="padding: 8px 12px; background: #F9FAFB; width: 140px;"><b>Name</b></td><td style="padding: 8px 12px;">${esc(d.name)}</td></tr>
-              <tr><td style="padding: 8px 12px; background: #F9FAFB;"><b>Email</b></td><td style="padding: 8px 12px;"><a href="mailto:${esc(d.email)}">${esc(d.email)}</a></td></tr>
-              <tr><td style="padding: 8px 12px; background: #F9FAFB;"><b>Handle</b></td><td style="padding: 8px 12px;">${esc(d.primary_handle)}</td></tr>
-              ${d.other_handles ? `<tr><td style="padding: 8px 12px; background: #F9FAFB;"><b>Other</b></td><td style="padding: 8px 12px;">${esc(d.other_handles)}</td></tr>` : ''}
-              <tr><td style="padding: 8px 12px; background: #F9FAFB;"><b>Audience</b></td><td style="padding: 8px 12px;">${esc(d.audience_size)}</td></tr>
-              <tr><td style="padding: 8px 12px; background: #F9FAFB;"><b>Website</b></td><td style="padding: 8px 12px;">${d.website ? `<a href="${esc(d.website)}">${esc(d.website)}</a>` : '<i>(none)</i>'}</td></tr>
-              <tr><td style="padding: 8px 12px; background: #F9FAFB; vertical-align: top;"><b>Community</b></td><td style="padding: 8px 12px;">${esc(d.audience_description)}</td></tr>
-              <tr><td style="padding: 8px 12px; background: #F9FAFB; vertical-align: top;"><b>Pitch</b></td><td style="padding: 8px 12px;">${esc(d.pitch)}</td></tr>
-            </table>
-            <p style="background: #EFF6FF; padding: 12px 16px; border-radius: 8px; font-size: 14px;">
-              <b>To approve:</b> <code style="background: white; padding: 2px 6px; border-radius: 4px;">node admin/approve-creator.js ${appId}</code>
-            </p>
-            <p style="color: #6B7280; font-size: 13px;">Application ID: ${appId}</p>
-          </div>`,
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; margin: 0; padding: 0; background: #F9FAFB; line-height: 1.6;">
+  <div style="max-width: 600px; margin: 40px auto; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.06);">
+
+    <div style="background: linear-gradient(135deg, #52A097 0%, #39D2C0 100%); padding: 28px 32px; color: white;">
+      <div style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.85; margin-bottom: 4px;">MomRise Creator Program</div>
+      <h1 style="margin: 0; font-size: 22px; font-weight: 700;">New creator application</h1>
+      <div style="margin-top: 6px; font-size: 14px; opacity: 0.9;">${esc(d.name)} · ${esc(d.primary_handle)}</div>
+    </div>
+
+    <div style="padding: 24px 32px 12px;">
+      <table style="width: 100%; border-collapse: collapse;">
+        ${row('Name', esc(d.name))}
+        ${row('Email', `<a href="mailto:${esc(d.email)}" style="color: #52A097; text-decoration: none;">${esc(d.email)}</a>`)}
+        ${row('Handle', esc(d.primary_handle))}
+        ${d.other_handles ? row('Other', esc(d.other_handles)) : ''}
+        ${row('Audience', esc(d.audience_size))}
+        ${row('Website', d.website ? `<a href="${esc(d.website)}" style="color: #52A097; text-decoration: none;">${esc(d.website)}</a>` : '<span style="color: #9CA3AF;">(none)</span>')}
+        ${row('Community', esc(d.audience_description))}
+        ${row('Pitch', `<div style="white-space: pre-wrap;">${esc(d.pitch)}</div>`)}
+      </table>
+    </div>
+
+    <div style="padding: 4px 32px 28px;">
+      <div style="background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 10px; padding: 16px 18px;">
+        <div style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: #6B7280; font-weight: 600; margin-bottom: 10px;">Admin actions</div>
+        <div style="margin-bottom: 8px;">
+          <div style="font-size: 13px; color: #374151; margin-bottom: 4px;">Approve</div>
+          <code style="display: block; background: white; border: 1px solid #E5E7EB; padding: 8px 12px; border-radius: 6px; font-family: 'SF Mono', Consolas, monospace; font-size: 12px; color: #1F2937; word-break: break-all;">node admin/approve-creator.js ${appId}</code>
+        </div>
+        <div>
+          <div style="font-size: 13px; color: #374151; margin: 10px 0 4px;">Reject</div>
+          <code style="display: block; background: white; border: 1px solid #E5E7EB; padding: 8px 12px; border-radius: 6px; font-family: 'SF Mono', Consolas, monospace; font-size: 12px; color: #1F2937; word-break: break-all;">node admin/approve-creator.js ${appId} --reject</code>
+        </div>
+      </div>
+    </div>
+
+    <div style="background: #F9FAFB; padding: 16px 32px; text-align: center; color: #9CA3AF; font-size: 12px; border-top: 1px solid #E5E7EB;">
+      Application ID: <span style="font-family: monospace; color: #6B7280;">${appId}</span>
+    </div>
+  </div>
+</body>
+</html>`,
       });
       console.log(`Sent creator-application notification for ${appId}`);
     } catch (err) {
