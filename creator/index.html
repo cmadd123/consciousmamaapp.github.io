@@ -395,6 +395,14 @@
     }
     .share-templates summary:hover { color: var(--primary); }
     .share-templates-body { display: flex; flex-direction: column; gap: 14px; margin-top: 12px; }
+    .share-controls { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+    .share-control-field { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 150px; }
+    .share-control-field-wide { flex: 2; min-width: 220px; }
+    .share-control-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; color: var(--text-muted); }
+    .share-control-field select, .share-control-field input {
+      font-family: inherit; font-size: 14px; padding: 8px 10px;
+      border: 1px solid var(--border); border-radius: 8px; background: var(--surface);
+    }
     .template {
       background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px;
     }
@@ -786,10 +794,24 @@
                 </div>
                 <div class="template">
                   <div class="template-head">
-                    <span class="template-label">Shareable graphic (1080×1080)</span>
+                    <span class="template-label">Shareable graphic</span>
                     <button class="btn-mini" id="downloadGraphicBtn">Download PNG</button>
                   </div>
-                  <canvas id="shareCanvas" width="3240" height="3240" style="width: 100%; max-width: 360px; border-radius: 12px; display: block; margin-top: 8px;"></canvas>
+                  <div class="share-controls">
+                    <label class="share-control-field">
+                      <span class="share-control-label">Size</span>
+                      <select id="shareSizeSelect">
+                        <option value="square" selected>Square · 1:1 (IG feed)</option>
+                        <option value="story">Story · 9:16 (IG/TikTok)</option>
+                        <option value="landscape">Landscape · 16:9 (Twitter)</option>
+                      </select>
+                    </label>
+                    <label class="share-control-field share-control-field-wide">
+                      <span class="share-control-label">Headline <span style="color: var(--text-muted); font-weight: 400;">(up to 50 chars)</span></span>
+                      <input type="text" id="shareHeadlineInput" maxlength="50" placeholder="Use my MomRise code">
+                    </label>
+                  </div>
+                  <canvas id="shareCanvas" width="3240" height="3240" style="max-width: 360px; width: auto; max-height: 560px; border-radius: 12px; display: block; margin: 12px auto 0; background: #E5E7EB;"></canvas>
                 </div>
               </div>
             </details>
@@ -2085,7 +2107,19 @@
       $('tplEm').textContent = templates.em;
       $('tplTx').textContent = templates.tx;
 
-      renderShareGraphic(code, name); // async; fires-and-forgets. Re-fires inside if fonts weren't ready.
+      // Default controls, then live re-render on any change.
+      const sizeSel = $('shareSizeSelect');
+      const headlineInput = $('shareHeadlineInput');
+      if (!headlineInput.value) headlineInput.value = 'Use my MomRise code';
+      const currentOpts = () => ({ size: sizeSel.value, headline: headlineInput.value });
+      renderShareGraphic(code, name, currentOpts());
+
+      let headlineTimer = null;
+      sizeSel.onchange = () => renderShareGraphic(code, name, currentOpts());
+      headlineInput.oninput = () => {
+        clearTimeout(headlineTimer);
+        headlineTimer = setTimeout(() => renderShareGraphic(code, name, currentOpts()), 220);
+      };
 
       // Copy handlers
       const copyText = async (btn, text) => {
@@ -2109,14 +2143,16 @@
         const orig = btn.textContent;
         btn.disabled = true;
         btn.textContent = 'Preparing…';
-        // Re-render right before download so fonts are definitely loaded.
-        await renderShareGraphic(code, name);
+        const opts = currentOpts();
+        // Re-render right before download so fonts are definitely loaded
+        // and latest controls are reflected.
+        await renderShareGraphic(code, name, opts);
         const canvas = $('shareCanvas');
         canvas.toBlob((blob) => {
           const url = URL.createObjectURL(blob);
           const a = document.createElement('a');
           a.href = url;
-          a.download = `momrise-${code}.png`;
+          a.download = `momrise-${code}-${opts.size}.png`;
           a.click();
           setTimeout(() => URL.revokeObjectURL(url), 1000);
           btn.disabled = false;
@@ -2125,17 +2161,32 @@
       };
     }
 
-    async function renderShareGraphic(code, name) {
+    const SHARE_SIZES = {
+      square:    { w: 3240, h: 3240, label: '1:1' },
+      story:     { w: 2160, h: 3840, label: '9:16' },
+      landscape: { w: 3200, h: 1800, label: '16:9' },
+    };
+
+    async function renderShareGraphic(code, name, opts = {}) {
+      const size = SHARE_SIZES[opts.size] || SHARE_SIZES.square;
+      const headline = (opts.headline || '').trim() || 'Use my MomRise code';
       const canvas = $('shareCanvas');
+      if (canvas.width !== size.w || canvas.height !== size.h) {
+        canvas.width = size.w;
+        canvas.height = size.h;
+      }
+      // Set CSS dimensions so the preview keeps the right aspect at a sane size.
+      const MAX_W = 360, MAX_H = 560;
+      const ratio = size.w / size.h;
+      let previewW = MAX_W, previewH = MAX_W / ratio;
+      if (previewH > MAX_H) { previewH = MAX_H; previewW = MAX_H * ratio; }
+      canvas.style.width = `${previewW}px`;
+      canvas.style.height = `${previewH}px`;
       const ctx = canvas.getContext('2d');
       const W = canvas.width, H = canvas.height;
-      // Coordinates were originally for a 1080-wide canvas. Scale them
-      // up to whatever the canvas's actual width is so the design
-      // renders crisply at any resolution.
-      const s = W / 1080;
+      // Use min dimension so every element fits in both square and landscape.
+      const s = Math.min(W, H) / 1080;
 
-      // Wait for Inter to load — otherwise canvas falls back to system-ui
-      // mid-render and the saved PNG looks "off" / less crisp.
       try {
         await Promise.all([
           document.fonts.load(`bold ${140 * s}px "Inter"`),
@@ -2143,38 +2194,59 @@
           document.fonts.load(`400 ${36 * s}px "Inter"`),
           document.fonts.ready,
         ]);
-      } catch (_) { /* proceed with fallback */ }
+      } catch (_) { /* fallback */ }
 
       ctx.imageSmoothingEnabled = true;
       if ('imageSmoothingQuality' in ctx) ctx.imageSmoothingQuality = 'high';
 
-      // Background gradient (brand colors)
+      // Background gradient
       const bg = ctx.createLinearGradient(0, 0, 0, H);
       bg.addColorStop(0, '#D7F2EB');
       bg.addColorStop(1, '#FFE9E1');
       ctx.fillStyle = bg;
       ctx.fillRect(0, 0, W, H);
 
-      // Centered content block
-      ctx.textAlign = 'center';
-      ctx.fillStyle = '#2A6F67';
-
-      // "Use my MomRise code"
-      ctx.font = `bold ${48 * s}px Inter, system-ui, sans-serif`;
-      ctx.fillText('Use my MomRise code', W / 2, 280 * s);
-
-      // Subtitle with creator's name
-      if (name) {
-        ctx.font = `400 ${36 * s}px Inter, system-ui, sans-serif`;
-        ctx.fillStyle = '#5D4E60';
-        ctx.fillText(`— ${name}`, W / 2, 340 * s);
+      // Layout model — compute block heights, center vertically.
+      // Shrink headline font if it would overflow the content width.
+      let headlineFont = 58 * s;
+      ctx.font = `bold ${headlineFont}px Inter, system-ui, sans-serif`;
+      const maxTextWidth = W * 0.82;
+      while (ctx.measureText(headline).width > maxTextWidth && headlineFont > 24 * s) {
+        headlineFont -= 2 * s;
+        ctx.font = `bold ${headlineFont}px Inter, system-ui, sans-serif`;
       }
 
-      // Big code pill
-      ctx.fillStyle = '#FFFFFF';
-      const pillW = 780 * s, pillH = 260 * s;
+      const hHeadline  = headlineFont + 8 * s;
+      const hName      = name ? 46 * s : 0;
+      const gapToPill  = 44 * s;
+      const pillW      = Math.min(820 * s, W * 0.88);
+      const pillH      = 260 * s;
+      const gapBelow   = 56 * s;
+      const hReward    = 50 * s;
+      const hTrial     = 40 * s;
+      const gapFooter  = 44 * s;
+      const hFooter    = 44 * s;
+
+      const total = hHeadline + hName + gapToPill + pillH + gapBelow + hReward + 10 * s + hTrial + gapFooter + hFooter;
+      let y = Math.max((H - total) / 2 + hHeadline, 80 * s + hHeadline);
+
+      ctx.textAlign = 'center';
+      ctx.fillStyle = '#2A6F67';
+      ctx.font = `bold ${headlineFont}px Inter, system-ui, sans-serif`;
+      ctx.fillText(headline, W / 2, y);
+
+      if (name) {
+        y += hName;
+        ctx.font = `400 ${36 * s}px Inter, system-ui, sans-serif`;
+        ctx.fillStyle = '#5D4E60';
+        ctx.fillText(`— ${name}`, W / 2, y);
+      }
+
+      // Code pill
+      y += gapToPill;
       const pillX = (W - pillW) / 2;
-      const pillY = 420 * s;
+      const pillY = y;
+      ctx.fillStyle = '#FFFFFF';
       ctx.beginPath();
       ctx.roundRect(pillX, pillY, pillW, pillH, 40 * s);
       ctx.fill();
@@ -2182,23 +2254,33 @@
       ctx.lineWidth = 4 * s;
       ctx.stroke();
 
+      // Shrink code font if it would overflow the pill.
+      let codeFont = 140 * s;
+      ctx.font = `bold ${codeFont}px "SF Mono", Consolas, monospace`;
+      while (ctx.measureText(code).width > pillW - 60 * s && codeFont > 60 * s) {
+        codeFont -= 4 * s;
+        ctx.font = `bold ${codeFont}px "SF Mono", Consolas, monospace`;
+      }
       ctx.fillStyle = '#2A6F67';
-      ctx.font = `bold ${140 * s}px "SF Mono", Consolas, monospace`;
-      ctx.fillText(code, W / 2, pillY + pillH / 2 + 48 * s);
+      ctx.textBaseline = 'middle';
+      ctx.fillText(code, W / 2, pillY + pillH / 2);
+      ctx.textBaseline = 'alphabetic';
 
-      // 50% reward + trial line
+      // Below pill
+      y = pillY + pillH + gapBelow;
       ctx.fillStyle = '#2A6F67';
       ctx.font = `bold ${40 * s}px Inter, system-ui, sans-serif`;
-      ctx.fillText('Earn me 50% when you join', W / 2, pillY + pillH + 110 * s);
+      ctx.fillText('Earn me 50% when you join', W / 2, y);
 
+      y += 50 * s;
       ctx.fillStyle = '#5D4E60';
       ctx.font = `400 ${32 * s}px Inter, system-ui, sans-serif`;
-      ctx.fillText('7-day free trial · cancel anytime', W / 2, pillY + pillH + 160 * s);
+      ctx.fillText('7-day free trial · cancel anytime', W / 2, y);
 
-      // Footer
+      // Footer pinned to bottom
       ctx.fillStyle = '#2A6F67';
       ctx.font = `bold ${36 * s}px Inter, system-ui, sans-serif`;
-      ctx.fillText('momrise.app', W / 2, H - 90 * s);
+      ctx.fillText('momrise.app', W / 2, H - 80 * s);
     }
 
     function applyCreatorTheme() {
