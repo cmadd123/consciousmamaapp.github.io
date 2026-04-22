@@ -42,6 +42,26 @@
 
     main { max-width: 1000px; margin: 0 auto; padding: 24px; width: 100%; }
 
+    /* Aggregate metrics banner */
+    .metrics-banner {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 10px; margin-bottom: 24px;
+    }
+    .metric {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 14px 16px;
+    }
+    .metric-label {
+      font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--text-muted); font-weight: 600; margin-bottom: 4px;
+    }
+    .metric-value {
+      font-size: 22px; font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums;
+    }
+    input[type="search"]:focus {
+      outline: 2px solid var(--primary); outline-offset: -1px; border-color: var(--primary);
+    }
+
     .view { display: none; }
     .view.active { display: block; }
 
@@ -200,6 +220,15 @@
 
       <!-- Tab bar -->
       <div class="view" id="viewList">
+        <!-- Aggregate metrics banner -->
+        <div class="metrics-banner" id="metricsBanner" hidden>
+          <div class="metric"><div class="metric-label">Active creators</div><div class="metric-value" id="mActive">—</div></div>
+          <div class="metric"><div class="metric-label">Total followers</div><div class="metric-value" id="mFollowers">—</div></div>
+          <div class="metric"><div class="metric-label">Subscribers</div><div class="metric-value" id="mSubs">—</div></div>
+          <div class="metric"><div class="metric-label">Gross MRR (est.)</div><div class="metric-value" id="mMrr">—</div></div>
+          <div class="metric"><div class="metric-label">Paid this month</div><div class="metric-value" id="mPaid">—</div></div>
+        </div>
+        <div id="viewListInner">
         <div class="tabs" style="display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin-bottom: 20px;">
           <button class="tab-btn active" data-tab="applications" style="background: none; border: none; padding: 10px 16px; font-size: 15px; color: var(--primary); border-bottom: 2px solid var(--primary); font-weight: 600; margin-bottom: -1px;">Applications</button>
           <button class="tab-btn" data-tab="creators" style="background: none; border: none; padding: 10px 16px; font-size: 15px; color: var(--text-muted); border-bottom: 2px solid transparent; margin-bottom: -1px;">Creators</button>
@@ -228,7 +257,11 @@
         <div class="tab-panel" id="tabCreators" hidden>
           <div class="section-head">
             <h2>Approved creators</h2>
-            <button class="btn ghost" id="refreshCreatorsBtn">↻ Refresh</button>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <input type="search" id="creatorSearch" placeholder="Search name, code, niche…"
+                     style="padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border); background: white; font-size: 14px; font-family: inherit; width: 240px;">
+              <button class="btn ghost" id="refreshCreatorsBtn">↻ Refresh</button>
+            </div>
           </div>
           <div style="overflow-x: auto; background: var(--surface); border: 1px solid var(--border); border-radius: 12px;">
             <table id="creatorsTable" style="width: 100%; border-collapse: collapse; font-size: 14px;">
@@ -248,6 +281,7 @@
             </table>
           </div>
         </div>
+        </div><!-- /viewListInner -->
       </div>
 
       <!-- Detail view -->
@@ -334,6 +368,7 @@
     const esc = (s) => String(s || '').replace(/[<>&"]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));
 
     let currentApplications = [];
+    let currentCreators = [];
     let currentStatusFilter = 'new';
     let currentUser = null;
 
@@ -363,11 +398,50 @@
       $('userName').textContent = user.displayName || user.email;
       show('viewList');
       loadApplications();
+      loadAggregateMetrics();
     });
+
+    async function loadAggregateMetrics() {
+      try {
+        const creatorsSnap = await getDocs(query(collection(db, 'creators'), where('is_active', '==', true)));
+        const creators = creatorsSnap.docs.map(d => d.data());
+        const totalFollowers = creators.reduce((s, c) => s + (c.follower_count || 0), 0);
+        const totalSubs = creators.reduce((s, c) => s + (c.subscriber_count || 0), 0);
+        const grossMrr = totalSubs * 699; // cents, $6.99/mo assumption
+
+        // Paid-this-month: sum of creator_cents on creator_earnings where payout_status=paid and paid_at in current calendar month.
+        let paidThisMonth = 0;
+        try {
+          const earningsSnap = await getDocs(query(
+            collection(db, 'creator_earnings'),
+            where('payout_status', '==', 'paid'),
+          ));
+          const now = new Date();
+          const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+          for (const d of earningsSnap.docs) {
+            const e = d.data();
+            const paidAt = e.paid_at?.toDate?.();
+            if (paidAt && paidAt >= monthStart) {
+              paidThisMonth += e.creator_cents || 0;
+            }
+          }
+        } catch (err) { console.warn('Paid-this-month calc failed:', err.message); }
+
+        $('mActive').textContent = creators.length;
+        $('mFollowers').textContent = totalFollowers;
+        $('mSubs').textContent = totalSubs;
+        $('mMrr').textContent = `$${(grossMrr / 100).toFixed(2)}`;
+        $('mPaid').textContent = `$${(paidThisMonth / 100).toFixed(2)}`;
+        $('metricsBanner').hidden = false;
+      } catch (e) {
+        console.warn('Aggregate metrics load failed:', e.message);
+      }
+    }
 
     // List
     $('refreshBtn').addEventListener('click', loadApplications);
     $('refreshCreatorsBtn').addEventListener('click', loadCreators);
+    $('creatorSearch').addEventListener('input', renderCreatorsTable);
     $('statusFilter').addEventListener('change', (e) => {
       currentStatusFilter = e.target.value;
       loadApplications();
@@ -401,8 +475,6 @@
         const creators = creatorsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
         creators.sort((a, b) => (b.follower_count || 0) - (a.follower_count || 0));
 
-        // Pull lifetime earnings per creator (sum of creator_cents on creator_earnings).
-        // We read once across all creators; admin rule allows it.
         let earningsByCreator = new Map();
         try {
           const earningsSnap = await getDocs(collection(db, 'creator_earnings'));
@@ -416,37 +488,57 @@
           console.warn('Could not load creator_earnings aggregate:', err.message);
         }
 
-        if (creators.length === 0) {
-          body.innerHTML = `<tr><td colspan="6" style="padding: 48px; text-align: center; color: var(--text-muted);">No active creators yet.</td></tr>`;
-          return;
+        // Stamp lifetime onto each row so the filter can sort on it later.
+        for (const c of creators) {
+          c._lifetime = earningsByCreator.get(`creators/${c.id}`) || c.lifetime_payout_cents || 0;
         }
-
-        body.innerHTML = creators.map(c => {
-          const followers = c.follower_count || 0;
-          const subs = c.subscriber_count || 0;
-          const lifetime = earningsByCreator.get(`creators/${c.id}`) || c.lifetime_payout_cents || 0;
-          const stripeStatus = c.stripe_connect_onboarded
-            ? '<span style="color: var(--success); font-weight: 600;">✓ Connected</span>'
-            : c.stripe_connect_account_id
-              ? '<span style="color: #F59E0B;">Pending</span>'
-              : '<span style="color: var(--text-muted);">Not connected</span>';
-          return `
-            <tr style="border-bottom: 1px solid var(--border);">
-              <td style="padding: 14px;">
-                <div style="font-weight: 600; color: var(--text);">${esc(c.name || '(no name)')}</div>
-                <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">${esc(c.niche || '')}</div>
-              </td>
-              <td style="padding: 14px;"><code style="background: #F3F4F6; padding: 3px 8px; border-radius: 4px; font-size: 13px; color: var(--primary-dark); font-weight: 600; letter-spacing: 1px;">${esc(c.code || '—')}</code></td>
-              <td style="padding: 14px; text-align: right; font-variant-numeric: tabular-nums;">${followers}</td>
-              <td style="padding: 14px; text-align: right; font-variant-numeric: tabular-nums;">${subs}</td>
-              <td style="padding: 14px; text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; color: var(--text);">$${(lifetime / 100).toFixed(2)}</td>
-              <td style="padding: 14px;">${stripeStatus}</td>
-            </tr>`;
-        }).join('');
+        currentCreators = creators;
+        renderCreatorsTable();
       } catch (e) {
         console.error(e);
         body.innerHTML = `<tr><td colspan="6" style="padding: 48px; text-align: center; color: var(--danger);">Couldn't load creators: ${esc(e.message)}</td></tr>`;
       }
+    }
+
+    function renderCreatorsTable() {
+      const body = $('creatorsBody');
+      const q = ($('creatorSearch')?.value || '').trim().toLowerCase();
+      const filtered = q
+        ? currentCreators.filter(c =>
+            (c.name || '').toLowerCase().includes(q) ||
+            (c.code || '').toLowerCase().includes(q) ||
+            (c.niche || '').toLowerCase().includes(q)
+          )
+        : currentCreators;
+
+      if (filtered.length === 0) {
+        const msg = currentCreators.length === 0 ? 'No active creators yet.' : `No creators match "${esc(q)}".`;
+        body.innerHTML = `<tr><td colspan="6" style="padding: 48px; text-align: center; color: var(--text-muted);">${msg}</td></tr>`;
+        return;
+      }
+
+      body.innerHTML = filtered.map(c => {
+        const followers = c.follower_count || 0;
+        const subs = c.subscriber_count || 0;
+        const lifetime = c._lifetime || 0;
+        const stripeStatus = c.stripe_connect_onboarded
+          ? '<span style="color: var(--success); font-weight: 600;">✓ Connected</span>'
+          : c.stripe_connect_account_id
+            ? '<span style="color: #F59E0B;">Pending</span>'
+            : '<span style="color: var(--text-muted);">Not connected</span>';
+        return `
+          <tr style="border-bottom: 1px solid var(--border);">
+            <td style="padding: 14px;">
+              <div style="font-weight: 600; color: var(--text);">${esc(c.name || '(no name)')}</div>
+              <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">${esc(c.niche || '')}</div>
+            </td>
+            <td style="padding: 14px;"><code style="background: #F3F4F6; padding: 3px 8px; border-radius: 4px; font-size: 13px; color: var(--primary-dark); font-weight: 600; letter-spacing: 1px;">${esc(c.code || '—')}</code></td>
+            <td style="padding: 14px; text-align: right; font-variant-numeric: tabular-nums;">${followers}</td>
+            <td style="padding: 14px; text-align: right; font-variant-numeric: tabular-nums;">${subs}</td>
+            <td style="padding: 14px; text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; color: var(--text);">$${(lifetime / 100).toFixed(2)}</td>
+            <td style="padding: 14px;">${stripeStatus}</td>
+          </tr>`;
+      }).join('');
     }
     $('backBtn').addEventListener('click', () => {
       // Clear the deep-link query param when going back to list

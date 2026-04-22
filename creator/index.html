@@ -476,6 +476,7 @@
       <div class="user-chip" id="userChip" style="display:none;">
         <img id="userPhoto" src="" alt="">
         <span id="userName"></span>
+        <a class="signout" id="supportLink" href="mailto:creators@momrise.app" title="Contact support">Support</a>
         <button class="signout" id="signOutBtn" title="Sign out">Sign out</button>
       </div>
     </header>
@@ -1063,6 +1064,13 @@
         return;
       }
       creatorDoc = { id: snap.docs[0].id, ref: snap.docs[0].ref, data: snap.docs[0].data() };
+
+      // Support mailto pre-filled with creator context.
+      const code = creatorDoc.data.code || '(not set)';
+      const name = creatorDoc.data.name || user.displayName || '';
+      $('supportLink').href =
+        `mailto:creators@momrise.app?subject=${encodeURIComponent(`MomRise creator support — ${code}`)}` +
+        `&body=${encodeURIComponent(`Creator: ${name}\nCode: ${code}\nEmail: ${user.email || ''}\n\nHi MomRise team,\n\n`)}`;
 
       // First-time-sign-in flow: if the code hasn't been set yet, gate
       // access behind the Pick Your Code screen.

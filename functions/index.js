@@ -2191,7 +2191,8 @@ function _renderCreatorWelcomeEmail(name) {
 
       <p style="margin: 20px 0 8px; font-weight: 600; color: #1F2937;">What to do next:</p>
       <ol style="padding-left: 20px; margin: 0 0 20px;">
-        <li style="margin: 10px 0;">Sign in at <a href="https://momrise.app/creator/" style="color: #52A097;">momrise.app/creator/</a> with the same Google or Apple account you use for MomRise. Your dashboard will load automatically.</li>
+        <li style="margin: 10px 0;"><strong>Need a MomRise account first?</strong> If you haven't signed up for MomRise yet, <a href="https://momrise.app/" style="color: #52A097;">grab the app</a> and create an account with this same email. Takes 30 seconds.</li>
+        <li style="margin: 10px 0;">Sign in at <a href="https://momrise.app/creator/" style="color: #52A097;">momrise.app/creator/</a> with the same email you used on your application. Your dashboard will load automatically.</li>
         <li style="margin: 10px 0;"><strong>Pick your creator code.</strong> On first sign-in you'll choose a code (3–20 letters or numbers) — this is what your community enters to earn you a share of their subscriptions. Pick something memorable.</li>
         <li style="margin: 10px 0;"><strong>Connect your bank through Stripe</strong> (2–3 minutes). That's how we pay you your 50% revenue share.</li>
         <li style="margin: 10px 0;">Start sharing your code with your community. Anyone who subscribes using it earns you half of every month they stay.</li>
@@ -2263,7 +2264,9 @@ exports.setCreatorCode = onCall(async (request) => {
 });
 function _esc(s) { return String(s || '').replace(/[<>&"]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c])); }
 
-exports.rejectCreatorApplication = onCall(async (request) => {
+exports.rejectCreatorApplication = onCall(
+  { secrets: [sendgridApiKey] },
+  async (request) => {
   _requireAdmin(request);
   const { applicationId, reason } = request.data || {};
   if (!applicationId) throw new HttpsError('invalid-argument', 'applicationId required');
@@ -2272,6 +2275,7 @@ exports.rejectCreatorApplication = onCall(async (request) => {
   const appRef = db.collection('creator_applications').doc(applicationId);
   const appSnap = await appRef.get();
   if (!appSnap.exists) throw new HttpsError('not-found', 'Application not found');
+  const appData = appSnap.data();
 
   await appRef.update({
     status: 'rejected',
@@ -2280,8 +2284,53 @@ exports.rejectCreatorApplication = onCall(async (request) => {
     rejection_reason: reason || null,
   });
 
+  // Warm rejection email. Don't fail the whole reject if email fails.
+  try {
+    sgMail.setApiKey(sendgridApiKey.value().replace(/[\s\r\n]+/g, ''));
+    await sgMail.send({
+      to: appData.email,
+      from: sendgridFromEmail.value(),
+      subject: 'About your MomRise creator application',
+      trackingSettings: {
+        clickTracking: { enable: false, enableText: false },
+        openTracking: { enable: false },
+      },
+      html: _renderRejectionEmail(appData.name),
+    });
+    console.log(`Sent rejection email to ${appData.email}`);
+  } catch (err) {
+    console.error('Rejection email send failed:', err.message);
+    if (err.response?.body) console.error('SendGrid body:', JSON.stringify(err.response.body));
+  }
+
   return { ok: true };
 });
+
+function _renderRejectionEmail(name) {
+  const first = (name || '').split(' ')[0] || 'there';
+  return `
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+<body style="font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; margin: 0; padding: 0; background: #F9FAFB; line-height: 1.6;">
+  <div style="max-width: 560px; margin: 40px auto; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.06);">
+    <div style="background: linear-gradient(135deg, #52A097 0%, #39D2C0 100%); padding: 28px 32px; color: white;">
+      <div style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.12em; opacity: 0.85; margin-bottom: 4px;">MomRise Creator Program</div>
+      <h1 style="margin: 0; font-size: 22px; font-weight: 700;">Thanks for applying, ${_esc(first)}</h1>
+    </div>
+    <div style="padding: 28px 32px; color: #374151; font-size: 15px;">
+      <p style="margin: 0 0 16px;">We reviewed your application and we're not able to take you on right now. This isn't a judgement on your work — just a timing and fit call on our end as we're keeping the first cohort small and focused.</p>
+      <p style="margin: 0 0 16px;">We'd love to revisit down the road if your community grows or the fit changes. No hard feelings.</p>
+      <p style="margin: 0 0 16px;">If you're already a MomRise user: we appreciate you. Thank you for caring about the app enough to want to share it.</p>
+      <p style="margin: 0; color: #6B7280; font-size: 14px;">Questions or just want to chat? Reply here — we read everything.</p>
+    </div>
+    <div style="background: #F9FAFB; padding: 18px 32px; text-align: center; color: #9CA3AF; font-size: 12px; border-top: 1px solid #E5E7EB;">
+      MomRise · Helping moms rise above the chaos
+    </div>
+  </div>
+</body>
+</html>`;
+}
 
 // ── Daily creator metric snapshots ───────────────────
 // Stamps follower_count / subscriber_count / lifetime_payout_cents for
