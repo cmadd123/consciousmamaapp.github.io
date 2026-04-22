@@ -1988,6 +1988,10 @@ exports.notifyOnCreatorApplication = onDocumentCreated(
       console.log(`Sent creator-application notification for ${appId}`);
     } catch (err) {
       console.error('Failed to send creator-application notification:', err.message);
+      if (err.response?.body) {
+        console.error('SendGrid response body:', JSON.stringify(err.response.body));
+      }
+      console.error('SendGrid response code:', err.code || err.response?.statusCode);
     }
   }
 );
