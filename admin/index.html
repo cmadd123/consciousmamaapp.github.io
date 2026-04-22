@@ -232,6 +232,7 @@
         <div class="tabs" style="display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin-bottom: 20px;">
           <button class="tab-btn active" data-tab="applications" style="background: none; border: none; padding: 10px 16px; font-size: 15px; color: var(--primary); border-bottom: 2px solid var(--primary); font-weight: 600; margin-bottom: -1px;">Applications</button>
           <button class="tab-btn" data-tab="creators" style="background: none; border: none; padding: 10px 16px; font-size: 15px; color: var(--text-muted); border-bottom: 2px solid transparent; margin-bottom: -1px;">Creators</button>
+          <button class="tab-btn" data-tab="taxes" style="background: none; border: none; padding: 10px 16px; font-size: 15px; color: var(--text-muted); border-bottom: 2px solid transparent; margin-bottom: -1px;">Taxes (1099)</button>
         </div>
 
         <!-- Applications tab -->
@@ -281,10 +282,75 @@
             </table>
           </div>
         </div>
+
+        <!-- Taxes / 1099 tab -->
+        <div class="tab-panel" id="tabTaxes" hidden>
+          <div class="section-head">
+            <h2>1099 monitoring · <span style="color: var(--text-muted); font-size: 14px; font-weight: 400;" id="taxYearLabel"></span></h2>
+            <a class="btn ghost" href="https://dashboard.stripe.com/connect/accounts" target="_blank" rel="noopener">All Stripe accounts →</a>
+          </div>
+          <div style="background: color-mix(in srgb, #F59E0B 8%, white); border: 1px solid color-mix(in srgb, #F59E0B 30%, var(--border)); border-radius: 10px; padding: 14px 18px; margin-bottom: 18px; font-size: 13px; color: #92400E;">
+            <strong>How this works:</strong> US tax law requires a 1099-NEC for any creator paid $600+ in a calendar year. Stripe Connect generates and files these for you — but you should monitor here that high-earner accounts have completed their tax-info onboarding in Stripe (W-9 / W-8). Click any row to verify in their Stripe dashboard.
+          </div>
+          <div style="overflow-x: auto; background: var(--surface); border: 1px solid var(--border); border-radius: 12px;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+              <thead>
+                <tr style="background: #F9FAFB; text-align: left;">
+                  <th style="padding: 12px 14px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); font-weight: 600; border-bottom: 1px solid var(--border);">Creator</th>
+                  <th style="padding: 12px 14px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); font-weight: 600; border-bottom: 1px solid var(--border);">Code</th>
+                  <th style="padding: 12px 14px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); font-weight: 600; border-bottom: 1px solid var(--border); text-align: right;">YTD paid</th>
+                  <th style="padding: 12px 14px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); font-weight: 600; border-bottom: 1px solid var(--border);">1099 status</th>
+                  <th style="padding: 12px 14px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); font-weight: 600; border-bottom: 1px solid var(--border);">Stripe</th>
+                </tr>
+              </thead>
+              <tbody id="taxesBody">
+                <tr><td colspan="5" style="padding: 48px; text-align: center; color: var(--text-muted);"><div class="loader"></div> Loading…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
         </div><!-- /viewListInner -->
       </div>
 
-      <!-- Detail view -->
+      <!-- Creator detail view -->
+      <div class="view" id="viewCreatorDetail">
+        <button class="back-btn" id="backToCreatorsBtn">← Back to creators</button>
+        <div class="detail" style="max-width: 760px;">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 18px;">
+            <div>
+              <h1 id="cdName">—</h1>
+              <div class="handle"><code id="cdCode" style="background: #F3F4F6; padding: 3px 8px; border-radius: 4px; font-size: 13px; color: var(--primary-dark); font-weight: 600; letter-spacing: 1px;">—</code></div>
+            </div>
+            <span class="app-status-pill" id="cdStatusPill">—</span>
+          </div>
+          <table class="fields" id="cdFields"></table>
+          <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border);">
+            <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); font-weight: 600; margin-bottom: 12px;">Admin actions</div>
+            <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+              <button class="btn ghost" id="cdEditCodeBtn">Edit code</button>
+              <button class="btn ghost" id="cdResendWelcomeBtn">Resend welcome email</button>
+              <button class="btn ghost" id="cdToggleActiveBtn">—</button>
+              <a class="btn ghost" id="cdStripeLink" href="https://dashboard.stripe.com/connect/accounts" target="_blank" rel="noopener">Open Stripe →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Edit code modal -->
+      <div class="modal-backdrop" id="editCodeModal">
+        <div class="modal">
+          <h3>Edit creator code</h3>
+          <p>Use this only if the creator asked you to change it. Existing share links pointing to the old code will break.</p>
+          <input type="text" id="editCodeInput" maxlength="20" style="width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-family: 'SF Mono', Consolas, monospace; font-size: 16px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase;">
+          <div style="font-size: 12px; color: var(--text-muted); margin-top: 6px;">3–20 uppercase letters or numbers. Must be unique.</div>
+          <div class="modal-actions">
+            <button class="btn ghost" id="cancelEditCodeBtn">Cancel</button>
+            <button class="btn" id="confirmEditCodeBtn">Save new code</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detail view (applications) -->
       <div class="view" id="viewDetail">
         <button class="back-btn" id="backBtn">← Back to applications</button>
         <div class="detail">
@@ -464,8 +530,69 @@
         document.querySelectorAll('.tab-panel').forEach(p => p.hidden = true);
         $('tab' + btn.dataset.tab.charAt(0).toUpperCase() + btn.dataset.tab.slice(1)).hidden = false;
         if (btn.dataset.tab === 'creators') loadCreators();
+        if (btn.dataset.tab === 'taxes') loadTaxesView();
       });
     });
+
+    async function loadTaxesView() {
+      const body = $('taxesBody');
+      const year = new Date().getFullYear();
+      $('taxYearLabel').textContent = `${year}`;
+      body.innerHTML = `<tr><td colspan="5" style="padding: 48px; text-align: center; color: var(--text-muted);"><div class="loader"></div> Loading…</td></tr>`;
+      try {
+        const creatorsSnap = await getDocs(collection(db, 'creators'));
+        const creators = creatorsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+        const yearStart = new Date(year, 0, 1);
+        const ytdByCreator = new Map();
+        try {
+          const earningsSnap = await getDocs(query(collection(db, 'creator_earnings'), where('payout_status', '==', 'paid')));
+          for (const d of earningsSnap.docs) {
+            const e = d.data();
+            const paidAt = e.paid_at?.toDate?.();
+            if (!paidAt || paidAt < yearStart) continue;
+            const path = e.creator_ref?.path || '';
+            ytdByCreator.set(path, (ytdByCreator.get(path) || 0) + (e.creator_cents || 0));
+          }
+        } catch (err) { console.warn('YTD calc failed:', err.message); }
+
+        const enriched = creators.map(c => ({
+          ...c,
+          _ytd: ytdByCreator.get(`creators/${c.id}`) || 0,
+        }));
+        enriched.sort((a, b) => b._ytd - a._ytd);
+
+        if (enriched.length === 0 || enriched.every(c => c._ytd === 0)) {
+          body.innerHTML = `<tr><td colspan="5" style="padding: 48px; text-align: center; color: var(--text-muted);">No paid earnings in ${year} yet. Once payouts run, this view will populate.</td></tr>`;
+          return;
+        }
+
+        body.innerHTML = enriched.map(c => {
+          const requires1099 = c._ytd >= 60000; // $600.00 in cents
+          const tax = requires1099
+            ? `<span style="color: ${c.stripe_connect_onboarded ? 'var(--success)' : '#F59E0B'}; font-weight: 600;">${c.stripe_connect_onboarded ? '✓ Stripe handles' : '⚠ Stripe pending'}</span>`
+            : `<span style="color: var(--text-muted);">Below $600 threshold</span>`;
+          return `
+            <tr style="border-bottom: 1px solid var(--border);">
+              <td style="padding: 14px;">
+                <div style="font-weight: 600;">${esc(c.name || '(no name)')}</div>
+                <div style="font-size: 12px; color: var(--text-muted);">${esc(c.niche || '')}</div>
+              </td>
+              <td style="padding: 14px;"><code style="background: #F3F4F6; padding: 3px 8px; border-radius: 4px; font-size: 13px; color: var(--primary-dark); font-weight: 600;">${esc(c.code || '—')}</code></td>
+              <td style="padding: 14px; text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; color: ${requires1099 ? 'var(--text)' : 'var(--text-muted)'};">$${(c._ytd / 100).toFixed(2)}</td>
+              <td style="padding: 14px;">${tax}</td>
+              <td style="padding: 14px;">${
+                c.stripe_connect_account_id
+                  ? `<a href="https://dashboard.stripe.com/connect/accounts/${esc(c.stripe_connect_account_id)}" target="_blank" rel="noopener" style="color: var(--primary); text-decoration: none;">Open ↗</a>`
+                  : '<span style="color: var(--text-muted);">—</span>'
+              }</td>
+            </tr>`;
+        }).join('');
+      } catch (e) {
+        console.error(e);
+        body.innerHTML = `<tr><td colspan="5" style="padding: 48px; text-align: center; color: var(--danger);">Couldn't load: ${esc(e.message)}</td></tr>`;
+      }
+    }
 
     async function loadCreators() {
       const body = $('creatorsBody');
@@ -526,10 +653,11 @@
           : c.stripe_connect_account_id
             ? '<span style="color: #F59E0B;">Pending</span>'
             : '<span style="color: var(--text-muted);">Not connected</span>';
+        const inactiveTag = c.is_active === false ? ' <span style="font-size: 10px; background: #FEE2E2; color: #991B1B; padding: 2px 6px; border-radius: 999px; margin-left: 4px; font-weight: 600;">INACTIVE</span>' : '';
         return `
-          <tr style="border-bottom: 1px solid var(--border);">
+          <tr data-id="${c.id}" style="border-bottom: 1px solid var(--border); cursor: pointer;">
             <td style="padding: 14px;">
-              <div style="font-weight: 600; color: var(--text);">${esc(c.name || '(no name)')}</div>
+              <div style="font-weight: 600; color: var(--text);">${esc(c.name || '(no name)')}${inactiveTag}</div>
               <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">${esc(c.niche || '')}</div>
             </td>
             <td style="padding: 14px;"><code style="background: #F3F4F6; padding: 3px 8px; border-radius: 4px; font-size: 13px; color: var(--primary-dark); font-weight: 600; letter-spacing: 1px;">${esc(c.code || '—')}</code></td>
@@ -539,6 +667,129 @@
             <td style="padding: 14px;">${stripeStatus}</td>
           </tr>`;
       }).join('');
+
+      body.querySelectorAll('tr[data-id]').forEach(row => {
+        row.addEventListener('mouseover', () => row.style.background = '#F9FAFB');
+        row.addEventListener('mouseout', () => row.style.background = '');
+        row.addEventListener('click', () => {
+          const c = currentCreators.find(x => x.id === row.dataset.id);
+          if (c) openCreatorDetail(c);
+        });
+      });
+    }
+
+    let activeCreatorDetail = null;
+    function openCreatorDetail(c) {
+      activeCreatorDetail = c;
+      $('cdName').textContent = c.name || '(no name)';
+      $('cdCode').textContent = c.code || '(not set)';
+      const status = c.is_active === false ? 'inactive' : 'active';
+      $('cdStatusPill').textContent = status.toUpperCase();
+      $('cdStatusPill').className = 'app-status-pill ' + (status === 'active' ? 'approved' : 'rejected');
+
+      const stripeLine = c.stripe_connect_onboarded
+        ? `<span style="color: var(--success);">✓ Connected</span> <span style="color: var(--text-muted);">· ${esc(c.stripe_connect_account_id || '')}</span>`
+        : c.stripe_connect_account_id
+          ? `<span style="color: #F59E0B;">Pending</span> <span style="color: var(--text-muted);">· ${esc(c.stripe_connect_account_id)}</span>`
+          : `<span style="color: var(--text-muted);">Not connected</span>`;
+
+      const rows = [
+        ['Niche', esc(c.niche || '—')],
+        ['Bio', c.bio ? `<div class="pitch-pre">${esc(c.bio)}</div>` : '<span style="color: var(--text-muted);">—</span>'],
+        ['Followers', c.follower_count || 0],
+        ['Subscribers', c.subscriber_count || 0],
+        ['Lifetime earnings', `$${((c._lifetime || 0) / 100).toFixed(2)}`],
+        ['Last payout', c.last_payout_cents ? `$${(c.last_payout_cents / 100).toFixed(2)} on ${c.last_payout_at?.toDate?.()?.toLocaleDateString() || '—'}` : '<span style="color: var(--text-muted);">None yet</span>'],
+        ['Stripe Connect', stripeLine],
+        ['Theme color', c.theme_primary ? `<span style="display:inline-block;width:14px;height:14px;border-radius:3px;background:${esc(c.theme_primary)};vertical-align:-3px;margin-right:6px;"></span><code>${esc(c.theme_primary)}</code>` : '<span style="color: var(--text-muted);">default</span>'],
+        ['Created', c.created_at?.toDate?.()?.toLocaleString() || '—'],
+        ['Creator doc', `<code style="font-size: 11px; color: var(--text-muted);">${c.id}</code>`],
+      ];
+      $('cdFields').innerHTML = rows.map(([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`).join('');
+
+      // Stripe link goes to that specific Connect account if known
+      $('cdStripeLink').href = c.stripe_connect_account_id
+        ? `https://dashboard.stripe.com/connect/accounts/${c.stripe_connect_account_id}`
+        : 'https://dashboard.stripe.com/connect/accounts';
+
+      // Toggle active button
+      const isActive = c.is_active !== false;
+      const tBtn = $('cdToggleActiveBtn');
+      tBtn.textContent = isActive ? 'Deactivate' : 'Reactivate';
+      tBtn.className = isActive ? 'btn ghost' : 'btn';
+      tBtn.onclick = () => handleToggleActive(c, !isActive);
+
+      $('cdEditCodeBtn').onclick = () => openEditCodeModal(c);
+      $('cdResendWelcomeBtn').onclick = () => handleResendWelcome(c);
+
+      show('viewCreatorDetail');
+    }
+    $('backToCreatorsBtn').addEventListener('click', () => show('viewList'));
+
+    async function handleToggleActive(c, makeActive) {
+      const btn = $('cdToggleActiveBtn');
+      const orig = btn.textContent;
+      btn.disabled = true; btn.textContent = makeActive ? 'Reactivating…' : 'Deactivating…';
+      try {
+        const call = httpsCallable(functions, 'adminSetCreatorActive');
+        await call({ creatorId: c.id, isActive: makeActive });
+        toast(makeActive ? 'Creator reactivated.' : 'Creator deactivated.');
+        c.is_active = makeActive;
+        openCreatorDetail(c);
+        loadCreators();
+      } catch (e) {
+        toast('Failed: ' + (e.message || 'unknown error'), true);
+      } finally {
+        btn.disabled = false; btn.textContent = orig;
+      }
+    }
+
+    async function handleResendWelcome(c) {
+      const btn = $('cdResendWelcomeBtn');
+      const orig = btn.textContent;
+      btn.disabled = true; btn.textContent = 'Sending…';
+      try {
+        const call = httpsCallable(functions, 'adminResendWelcomeEmail');
+        const { data } = await call({ creatorId: c.id });
+        toast(`Welcome email resent to ${data.email}.`);
+      } catch (e) {
+        toast('Resend failed: ' + (e.message || 'unknown error'), true);
+      } finally {
+        btn.disabled = false; btn.textContent = orig;
+      }
+    }
+
+    function openEditCodeModal(c) {
+      $('editCodeInput').value = c.code || '';
+      $('editCodeModal').classList.add('open');
+      $('editCodeInput').focus();
+      $('confirmEditCodeBtn').onclick = () => handleEditCode(c);
+    }
+    $('cancelEditCodeBtn').addEventListener('click', () => $('editCodeModal').classList.remove('open'));
+    $('editCodeInput')?.addEventListener('input', (e) => {
+      e.target.value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+    });
+
+    async function handleEditCode(c) {
+      const newCode = $('editCodeInput').value.trim().toUpperCase();
+      if (!/^[A-Z0-9]{3,20}$/.test(newCode)) {
+        toast('Code must be 3-20 letters or numbers.', true); return;
+      }
+      const btn = $('confirmEditCodeBtn');
+      btn.disabled = true; btn.textContent = 'Saving…';
+      try {
+        const call = httpsCallable(functions, 'adminUpdateCreatorCode');
+        await call({ creatorId: c.id, code: newCode });
+        toast(`Code changed to ${newCode}.`);
+        c.code = newCode;
+        $('editCodeModal').classList.remove('open');
+        openCreatorDetail(c);
+        loadCreators();
+      } catch (e) {
+        toast('Failed: ' + (e.message || 'unknown error'), true);
+      } finally {
+        btn.disabled = false; btn.textContent = 'Save new code';
+      }
     }
     $('backBtn').addEventListener('click', () => {
       // Clear the deep-link query param when going back to list

@@ -2305,6 +2305,88 @@ exports.setCreatorCode = onCall(async (request) => {
 });
 function _esc(s) { return String(s || '').replace(/[<>&"]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c])); }
 
+// ── Admin creator management ──────────────────────────
+// Toggle a creator active/inactive. Inactive creators stop earning,
+// stop appearing in follower-facing surfaces, but the doc + history
+// stay intact (no destructive deletes).
+exports.adminSetCreatorActive = onCall(async (request) => {
+  _requireAdmin(request);
+  const { creatorId, isActive } = request.data || {};
+  if (!creatorId || typeof isActive !== 'boolean') {
+    throw new HttpsError('invalid-argument', 'creatorId + isActive (bool) required');
+  }
+  const db = getFirestore();
+  await db.collection('creators').doc(creatorId).update({
+    is_active: isActive,
+    deactivated_at: isActive ? FieldValue.delete() : FieldValue.serverTimestamp(),
+    deactivated_by: isActive ? FieldValue.delete() : request.auth.token.email,
+  });
+  return { ok: true };
+});
+
+// Override a creator's code (e.g., they typed something they regret).
+// Same validation rules as setCreatorCode but no caller-owns-doc check.
+exports.adminUpdateCreatorCode = onCall(async (request) => {
+  _requireAdmin(request);
+  const { creatorId, code } = request.data || {};
+  if (!creatorId || !code) throw new HttpsError('invalid-argument', 'creatorId + code required');
+  const cleaned = String(code).trim().toUpperCase();
+  if (!/^[A-Z0-9]{3,20}$/.test(cleaned)) {
+    throw new HttpsError('invalid-argument', 'Code must be 3-20 letters or numbers.');
+  }
+  const db = getFirestore();
+  const clash = await db.collection('creators').where('code', '==', cleaned).limit(1).get();
+  if (!clash.empty && clash.docs[0].id !== creatorId) {
+    throw new HttpsError('already-exists', `Code ${cleaned} is already taken.`);
+  }
+  await db.collection('creators').doc(creatorId).update({
+    code: cleaned,
+    code_changed_by_admin_at: FieldValue.serverTimestamp(),
+    code_changed_by: request.auth.token.email,
+  });
+  return { ok: true, code: cleaned };
+});
+
+// Re-send the welcome email to a creator (e.g., they lost it).
+exports.adminResendWelcomeEmail = onCall(
+  { secrets: [sendgridApiKey] },
+  async (request) => {
+  _requireAdmin(request);
+  const { creatorId } = request.data || {};
+  if (!creatorId) throw new HttpsError('invalid-argument', 'creatorId required');
+
+  const db = getFirestore();
+  const creatorSnap = await db.collection('creators').doc(creatorId).get();
+  if (!creatorSnap.exists) throw new HttpsError('not-found', 'Creator not found');
+  const creator = creatorSnap.data();
+
+  // Look up the user's email via auth (cleanest source of truth).
+  const userPath = creator.user_ref?.path || '';
+  const uid = userPath.split('/')[1];
+  if (!uid) throw new HttpsError('failed-precondition', 'Creator has no user_ref');
+  let email;
+  try {
+    email = (await getAuth().getUser(uid)).email;
+  } catch (err) {
+    throw new HttpsError('failed-precondition', `Could not look up email: ${err.message}`);
+  }
+  if (!email) throw new HttpsError('failed-precondition', 'User has no email on file');
+
+  sgMail.setApiKey(sendgridApiKey.value().replace(/[\s\r\n]+/g, ''));
+  await sgMail.send({
+    to: email,
+    from: sendgridFromEmail.value(),
+    subject: `Welcome back to MomRise creator program 🎉`,
+    trackingSettings: {
+      clickTracking: { enable: false, enableText: false },
+      openTracking: { enable: false },
+    },
+    html: _renderCreatorWelcomeEmail(creator.name),
+  });
+
+  return { ok: true, email };
+});
+
 exports.rejectCreatorApplication = onCall(
   { secrets: [sendgridApiKey] },
   async (request) => {
@@ -2372,6 +2454,80 @@ function _renderRejectionEmail(name) {
 </body>
 </html>`;
 }
+
+// ── Weekly admin digest email ─────────────────────────
+// Mondays at 9:00 America/New_York. Sends collinjmaddox@gmail.com a
+// summary so issues surface before creators complain.
+exports.weeklyAdminDigest = onSchedule(
+  {
+    schedule: '0 9 * * 1',
+    timeZone: 'America/New_York',
+    secrets: [sendgridApiKey],
+  },
+  async () => {
+    const db = getFirestore();
+    const now = new Date();
+    const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+
+    const [pendingApps, allCreators, paidEarnings] = await Promise.all([
+      db.collection('creator_applications').where('status', '==', 'new').get(),
+      db.collection('creators').get(),
+      db.collection('creator_earnings').where('payout_status', '==', 'paid').get(),
+    ]);
+
+    const newCreatorsThisWeek = allCreators.docs.filter(d => {
+      const t = d.data().created_at?.toDate?.();
+      return t && t >= weekAgo;
+    });
+    const activeCreators = allCreators.docs.filter(d => d.data().is_active !== false);
+
+    const totalFollowers = allCreators.docs.reduce((s, d) => s + (d.data().follower_count || 0), 0);
+    const totalSubs = allCreators.docs.reduce((s, d) => s + (d.data().subscriber_count || 0), 0);
+
+    let paidThisMonth = 0;
+    for (const d of paidEarnings.docs) {
+      const e = d.data();
+      const paidAt = e.paid_at?.toDate?.();
+      if (paidAt && paidAt >= monthStart) paidThisMonth += e.creator_cents || 0;
+    }
+
+    sgMail.setApiKey(sendgridApiKey.value().replace(/[\s\r\n]+/g, ''));
+    await sgMail.send({
+      to: 'collinjmaddox@gmail.com',
+      from: sendgridFromEmail.value(),
+      subject: `MomRise weekly digest · ${now.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}`,
+      trackingSettings: { clickTracking: { enable: false }, openTracking: { enable: false } },
+      html: `
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"></head>
+<body style="font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; margin:0; padding:0; background:#F9FAFB; line-height:1.55;">
+  <div style="max-width: 600px; margin: 40px auto; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.06);">
+    <div style="background: linear-gradient(135deg, #52A097 0%, #39D2C0 100%); padding: 28px 32px; color: white;">
+      <div style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.12em; opacity: 0.85;">MomRise · Weekly Digest</div>
+      <h1 style="margin: 4px 0 0; font-size: 22px;">Week of ${now.toLocaleDateString(undefined, { month: 'long', day: 'numeric' })}</h1>
+    </div>
+    <div style="padding: 24px 32px; color: #374151; font-size: 15px;">
+      <table style="width:100%; border-collapse: collapse; margin-bottom: 18px;">
+        <tr><td style="padding: 8px 0; color: #6B7280; font-size: 13px;">Pending applications</td><td style="padding: 8px 0; text-align: right; font-weight: 600; font-size: 18px;">${pendingApps.size}</td></tr>
+        <tr><td style="padding: 8px 0; color: #6B7280; font-size: 13px; border-top: 1px solid #F3F4F6;">New creators this week</td><td style="padding: 8px 0; text-align: right; font-weight: 600; font-size: 18px; border-top: 1px solid #F3F4F6;">${newCreatorsThisWeek.length}</td></tr>
+        <tr><td style="padding: 8px 0; color: #6B7280; font-size: 13px; border-top: 1px solid #F3F4F6;">Active creators</td><td style="padding: 8px 0; text-align: right; font-weight: 600; font-size: 18px; border-top: 1px solid #F3F4F6;">${activeCreators.length}</td></tr>
+        <tr><td style="padding: 8px 0; color: #6B7280; font-size: 13px; border-top: 1px solid #F3F4F6;">Total followers</td><td style="padding: 8px 0; text-align: right; font-weight: 600; font-size: 18px; border-top: 1px solid #F3F4F6;">${totalFollowers}</td></tr>
+        <tr><td style="padding: 8px 0; color: #6B7280; font-size: 13px; border-top: 1px solid #F3F4F6;">Total subscribers</td><td style="padding: 8px 0; text-align: right; font-weight: 600; font-size: 18px; border-top: 1px solid #F3F4F6;">${totalSubs}</td></tr>
+        <tr><td style="padding: 8px 0; color: #6B7280; font-size: 13px; border-top: 1px solid #F3F4F6;">Paid to creators this month</td><td style="padding: 8px 0; text-align: right; font-weight: 600; font-size: 18px; border-top: 1px solid #F3F4F6;">$${(paidThisMonth / 100).toFixed(2)}</td></tr>
+      </table>
+      ${pendingApps.size > 0 ? `<div style="background: #FEF3C7; border-radius: 8px; padding: 12px 14px; font-size: 14px; color: #92400E;">⏰ <strong>${pendingApps.size} application${pendingApps.size === 1 ? '' : 's'} waiting on you</strong> — they're sitting in the inbox.</div>` : ''}
+      <div style="text-align: center; margin: 24px 0 8px;">
+        <a href="https://momrise.app/admin/" style="display:inline-block;background:#52A097;color:white !important;text-decoration:none;padding:12px 28px;border-radius:10px;font-weight:600;font-size:14px;">Open admin dashboard →</a>
+      </div>
+    </div>
+    <div style="background:#F9FAFB; padding: 16px 32px; text-align:center; color:#9CA3AF; font-size:12px; border-top:1px solid #E5E7EB;">Weekly · Mondays at 9 AM ET · MomRise admin</div>
+  </div>
+</body></html>`,
+    });
+    console.log(`Weekly digest sent. ${pendingApps.size} pending, ${newCreatorsThisWeek.length} new this week.`);
+  }
+);
 
 // ── Daily creator metric snapshots ───────────────────
 // Stamps follower_count / subscriber_count / lifetime_payout_cents for
