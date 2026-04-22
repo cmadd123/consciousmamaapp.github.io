@@ -3,6 +3,7 @@ import '/backend/backend.dart';
 import '/backend/schema/enums/enums.dart';
 import '/components/home_nav_bar_widget.dart';
 import '/components/parent_circle_widget.dart';
+import '/services/review_service.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/custom_functions.dart' as functions;
@@ -408,6 +409,8 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
       // Check if user has active subscription
       final subscriptionStatus = userData['subscription_status'] as String?;
       if (subscriptionStatus == 'trialing' || subscriptionStatus == 'active') {
+        // Fire-and-forget: asks for review 3 days into paid subscription.
+        ReviewService.onAppStartWithActiveSubscription(status: subscriptionStatus ?? '');
         return; // Subscribed, no gate needed
       }
 
