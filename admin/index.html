@@ -747,6 +747,7 @@
 
     async function loadSuggestionBadge() {
       try {
+        // Simple single-field query, no composite index needed.
         const snap = await getDocs(query(
           collection(db, 'creator_suggestions'),
           where('status', '==', 'new')
@@ -758,24 +759,32 @@
         } else {
           badge.hidden = true;
         }
-      } catch (e) { console.warn('suggestion badge failed:', e.message); }
+      } catch (e) {
+        // This shouldn't need an index (single field), but if Firestore
+        // ever complains we just hide the badge silently.
+        console.warn('suggestion badge failed:', e.message);
+        $('suggestionBadge').hidden = true;
+      }
     }
 
     async function loadSuggestions() {
       const list = $('suggestionList');
       list.innerHTML = `<div class="empty"><div class="loader"></div> Loading…</div>`;
       try {
-        const constraints = [orderBy('created_at', 'desc')];
-        if (suggestionStatusFilter !== 'all') constraints.unshift(where('status', '==', suggestionStatusFilter));
-        const snap = await getDocs(query(collection(db, 'creator_suggestions'), ...constraints));
-        if (snap.empty) {
+        // Filter client-side to avoid needing a composite index.
+        // Volume here is tiny — single-digit/dozens of suggestions.
+        const snap = await getDocs(query(collection(db, 'creator_suggestions'), orderBy('created_at', 'desc')));
+        const docs = suggestionStatusFilter === 'all'
+          ? snap.docs
+          : snap.docs.filter(d => (d.data().status || 'new') === suggestionStatusFilter);
+        if (docs.length === 0) {
           list.innerHTML = `<div class="empty" style="padding: 40px; text-align: center; color: var(--text-muted);">No ${suggestionStatusFilter === 'all' ? '' : suggestionStatusFilter + ' '}suggestions.</div>`;
           return;
         }
         const labelFor = {
           idea: 'Feature idea', bug: 'Bug', ux: 'UX', other: 'Other',
         };
-        list.innerHTML = snap.docs.map(d => {
+        list.innerHTML = docs.map(d => {
           const s = d.data();
           const when = s.created_at?.toDate?.()?.toLocaleString() || '';
           const cat = labelFor[s.category] || 'Other';
