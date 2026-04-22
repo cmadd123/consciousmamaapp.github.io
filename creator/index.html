@@ -635,7 +635,7 @@
                     <span class="template-label">Shareable graphic (1080×1080)</span>
                     <button class="btn-mini" id="downloadGraphicBtn">Download PNG</button>
                   </div>
-                  <canvas id="shareCanvas" width="1080" height="1080" style="width: 100%; max-width: 360px; border-radius: 12px; display: block; margin-top: 8px;"></canvas>
+                  <canvas id="shareCanvas" width="2160" height="2160" style="width: 100%; max-width: 360px; border-radius: 12px; display: block; margin-top: 8px;"></canvas>
                 </div>
               </div>
             </details>
@@ -1514,6 +1514,13 @@
       const canvas = $('shareCanvas');
       const ctx = canvas.getContext('2d');
       const W = canvas.width, H = canvas.height;
+      // Coordinates were originally for a 1080-wide canvas. Scale them
+      // up to whatever the canvas's actual width is so the design
+      // renders crisply at any resolution.
+      const s = W / 1080;
+
+      ctx.imageSmoothingEnabled = true;
+      if ('imageSmoothingQuality' in ctx) ctx.imageSmoothingQuality = 'high';
 
       // Background gradient (brand colors)
       const bg = ctx.createLinearGradient(0, 0, 0, H);
@@ -1527,45 +1534,45 @@
       ctx.fillStyle = '#2A6F67';
 
       // "Use my MomRise code"
-      ctx.font = 'bold 48px Inter, system-ui, sans-serif';
-      ctx.fillText('Use my MomRise code', W / 2, 280);
+      ctx.font = `bold ${48 * s}px Inter, system-ui, sans-serif`;
+      ctx.fillText('Use my MomRise code', W / 2, 280 * s);
 
       // Subtitle with creator's name
       if (name) {
-        ctx.font = '400 36px Inter, system-ui, sans-serif';
+        ctx.font = `400 ${36 * s}px Inter, system-ui, sans-serif`;
         ctx.fillStyle = '#5D4E60';
-        ctx.fillText(`— ${name}`, W / 2, 340);
+        ctx.fillText(`— ${name}`, W / 2, 340 * s);
       }
 
       // Big code pill
       ctx.fillStyle = '#FFFFFF';
-      const pillW = 780, pillH = 260;
+      const pillW = 780 * s, pillH = 260 * s;
       const pillX = (W - pillW) / 2;
-      const pillY = 420;
+      const pillY = 420 * s;
       ctx.beginPath();
-      ctx.roundRect(pillX, pillY, pillW, pillH, 40);
+      ctx.roundRect(pillX, pillY, pillW, pillH, 40 * s);
       ctx.fill();
       ctx.strokeStyle = '#52A097';
-      ctx.lineWidth = 4;
+      ctx.lineWidth = 4 * s;
       ctx.stroke();
 
       ctx.fillStyle = '#2A6F67';
-      ctx.font = 'bold 140px "SF Mono", Consolas, monospace';
-      ctx.fillText(code, W / 2, pillY + pillH / 2 + 48);
+      ctx.font = `bold ${140 * s}px "SF Mono", Consolas, monospace`;
+      ctx.fillText(code, W / 2, pillY + pillH / 2 + 48 * s);
 
       // 50% reward + trial line
       ctx.fillStyle = '#2A6F67';
-      ctx.font = 'bold 40px Inter, system-ui, sans-serif';
-      ctx.fillText('Earn me 50% when you join', W / 2, pillY + pillH + 110);
+      ctx.font = `bold ${40 * s}px Inter, system-ui, sans-serif`;
+      ctx.fillText('Earn me 50% when you join', W / 2, pillY + pillH + 110 * s);
 
       ctx.fillStyle = '#5D4E60';
-      ctx.font = '400 32px Inter, system-ui, sans-serif';
-      ctx.fillText('7-day free trial · cancel anytime', W / 2, pillY + pillH + 160);
+      ctx.font = `400 ${32 * s}px Inter, system-ui, sans-serif`;
+      ctx.fillText('7-day free trial · cancel anytime', W / 2, pillY + pillH + 160 * s);
 
       // Footer
       ctx.fillStyle = '#2A6F67';
-      ctx.font = 'bold 36px Inter, system-ui, sans-serif';
-      ctx.fillText('momrise.app', W / 2, H - 90);
+      ctx.font = `bold ${36 * s}px Inter, system-ui, sans-serif`;
+      ctx.fillText('momrise.app', W / 2, H - 90 * s);
     }
 
     function applyCreatorTheme() {
