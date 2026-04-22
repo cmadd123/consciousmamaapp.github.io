@@ -2126,6 +2126,7 @@ exports.approveCreatorApplication = onCall(
     code: '', // Creator picks their own code on first sign-in.
     user_ref: db.doc(`users/${uid}`),
     is_active: true,
+    country: (appData.country && appData.country !== 'OTHER') ? appData.country : 'US',
     bio: appData.audience_description || '',
     niche: appData.audience_description || '',
     avatar_url: '',
@@ -2283,10 +2284,22 @@ exports.setCreatorCode = onCall(async (request) => {
   const creatorDoc = mySnap.docs[0];
   const existingCode = creatorDoc.data().code;
 
-  // If they already have a code set, require admin to change it.
+  // If a code is already set, allow self-service change once per 365 days.
   if (existingCode && existingCode.trim() !== '') {
-    throw new HttpsError('failed-precondition',
-      'Creator code is already set. Contact support to change it.');
+    const lastChange = creatorDoc.data().code_set_at?.toDate?.()
+      || creatorDoc.data().code_changed_at?.toDate?.();
+    const COOLDOWN_DAYS = 365;
+    if (lastChange) {
+      const daysSince = Math.floor((Date.now() - lastChange.getTime()) / (24 * 60 * 60 * 1000));
+      const daysLeft = COOLDOWN_DAYS - daysSince;
+      if (daysLeft > 0) {
+        throw new HttpsError(
+          'failed-precondition',
+          `You can change your code once a year. Try again in ${daysLeft} day${daysLeft === 1 ? '' : 's'}, or contact support@momrise.app for help.`,
+          { daysLeft, lastChange: lastChange.toISOString() }
+        );
+      }
+    }
   }
 
   // Uniqueness check.
@@ -2296,12 +2309,89 @@ exports.setCreatorCode = onCall(async (request) => {
       `The code "${cleaned}" is already taken. Try another.`);
   }
 
-  await creatorDoc.ref.update({
+  const updates = {
     code: cleaned,
     code_set_at: FieldValue.serverTimestamp(),
-  });
+  };
+  // If this is a CHANGE (not initial set), also stamp code_changed_at so
+  // the cooldown clock reflects the most recent change, not the original set.
+  if (existingCode && existingCode.trim() !== '') {
+    updates.code_changed_at = FieldValue.serverTimestamp();
+    updates.previous_code = existingCode;
+  }
+  await creatorDoc.ref.update(updates);
 
   return { ok: true, code: cleaned };
+});
+
+// ── Creator data export (GDPR-style "give me my data") ──────
+exports.exportCreatorData = onCall(async (request) => {
+  if (!request.auth) throw new HttpsError('unauthenticated', 'Sign in required');
+  const db = getFirestore();
+  const uid = request.auth.uid;
+  const userRef = db.doc(`users/${uid}`);
+
+  const creatorSnap = await db.collection('creators')
+    .where('user_ref', '==', userRef).limit(1).get();
+  if (creatorSnap.empty) throw new HttpsError('failed-precondition', 'No creator profile for this user');
+
+  const creatorDoc = creatorSnap.docs[0];
+  const creator = creatorDoc.data();
+
+  // Collect related collections.
+  const [earningsSnap, snapshotsSnap, contentSnap, docsSnap] = await Promise.all([
+    db.collection('creator_earnings').where('creator_ref', '==', creatorDoc.ref).get(),
+    creatorDoc.ref.collection('snapshots').get(),
+    db.collection('creator_content').where('creator_ref', '==', creatorDoc.ref).get(),
+    db.collection('app_content').where('creator_ref', '==', creatorDoc.ref).get(),
+  ]);
+
+  const serialize = (doc) => {
+    const data = doc.data();
+    // Convert Timestamps to ISO strings; strip DocumentReferences to paths.
+    const out = {};
+    for (const [k, v] of Object.entries(data)) {
+      if (v?.toDate) out[k] = v.toDate().toISOString();
+      else if (v?.path) out[k] = v.path;
+      else out[k] = v;
+    }
+    return { _id: doc.id, ...out };
+  };
+
+  return {
+    exported_at: new Date().toISOString(),
+    creator_profile: serialize(creatorDoc),
+    earnings: earningsSnap.docs.map(serialize),
+    daily_snapshots: snapshotsSnap.docs.map(serialize),
+    published_meal_plans_routines: contentSnap.docs.map(serialize),
+    published_docs: docsSnap.docs.map(serialize),
+  };
+});
+
+// ── Creator account deletion request ──────────────────
+// Soft-delete: marks the creator as deleted, deactivates them, but the
+// admin SDK (you) does the actual permanent purge after a grace period.
+// This is the safest pattern — gives time to recover from accidents +
+// keeps audit trail intact for accounting.
+exports.requestCreatorAccountDeletion = onCall(async (request) => {
+  if (!request.auth) throw new HttpsError('unauthenticated', 'Sign in required');
+  const db = getFirestore();
+  const uid = request.auth.uid;
+  const userRef = db.doc(`users/${uid}`);
+
+  const creatorSnap = await db.collection('creators')
+    .where('user_ref', '==', userRef).limit(1).get();
+  if (creatorSnap.empty) throw new HttpsError('failed-precondition', 'No creator profile for this user');
+
+  await creatorSnap.docs[0].ref.update({
+    is_active: false,
+    deletion_requested_at: FieldValue.serverTimestamp(),
+    deletion_requested_by: 'creator-self',
+    deactivated_at: FieldValue.serverTimestamp(),
+    deactivated_by: 'creator-self-delete',
+  });
+
+  return { ok: true };
 });
 function _esc(s) { return String(s || '').replace(/[<>&"]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c])); }
 

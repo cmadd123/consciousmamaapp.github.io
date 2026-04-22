@@ -130,6 +130,34 @@
         <label><span class="label-text">Who's in your community? <span class="hint">(moms of toddlers, new moms, etc.)</span></span>
           <input type="text" name="audience_description" required maxlength="160" placeholder="Moms of 0–5 year olds, focus on postpartum + routines">
         </label>
+        <label><span class="label-text">Country <span class="hint">(for payouts via Stripe)</span></span>
+          <select name="country" required>
+            <option value="">Select…</option>
+            <option value="US" selected>United States</option>
+            <option value="CA">Canada</option>
+            <option value="GB">United Kingdom</option>
+            <option value="AU">Australia</option>
+            <option value="NZ">New Zealand</option>
+            <option value="IE">Ireland</option>
+            <option value="DE">Germany</option>
+            <option value="FR">France</option>
+            <option value="ES">Spain</option>
+            <option value="IT">Italy</option>
+            <option value="NL">Netherlands</option>
+            <option value="BE">Belgium</option>
+            <option value="SE">Sweden</option>
+            <option value="DK">Denmark</option>
+            <option value="NO">Norway</option>
+            <option value="FI">Finland</option>
+            <option value="MX">Mexico</option>
+            <option value="BR">Brazil</option>
+            <option value="OTHER">Other (we'll reach out)</option>
+          </select>
+        </label>
+        <!-- Honeypot — hidden from real users, filled by bots. We reject if non-empty. -->
+        <div style="position: absolute; left: -9999px; top: -9999px; height: 0; overflow: hidden;" aria-hidden="true">
+          <label>Don't fill this out: <input type="text" name="trap" autocomplete="off" tabindex="-1"></label>
+        </div>
         <label>Why does MomRise resonate with you?
           <textarea name="pitch" required maxlength="600" placeholder="Tell us a bit about why you'd recommend MomRise to your community…"></textarea>
         </label>
@@ -174,11 +202,20 @@
       submitBtn.textContent = 'Submitting…';
 
       const fd = new FormData(form);
+
+      // Honeypot — only bots fill this. Pretend success so they don't retry.
+      if (fd.get('trap')?.toString().trim()) {
+        form.hidden = true;
+        document.getElementById('thanks').hidden = false;
+        return;
+      }
+
       const payload = {
         name: fd.get('name')?.toString().trim(),
         email: fd.get('email')?.toString().trim().toLowerCase(),
         primary_handle: fd.get('primary_handle')?.toString().trim(),
         other_handles: fd.get('other_handles')?.toString().trim() || null,
+        country: fd.get('country')?.toString() || null,
         audience_size: fd.get('audience_size')?.toString(),
         website: (() => {
           const raw = fd.get('website')?.toString().trim();

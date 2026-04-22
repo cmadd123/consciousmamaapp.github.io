@@ -41,6 +41,16 @@
     .user-chip .signout:hover { color: var(--danger); }
 
     main { max-width: 1000px; margin: 0 auto; padding: 24px; width: 100%; }
+    @media (max-width: 600px) {
+      main { padding: 16px; }
+      header.topbar { padding: 12px 16px; flex-wrap: wrap; gap: 8px; }
+      .section-head { flex-direction: column; align-items: stretch; gap: 10px; }
+      .section-head h2 { font-size: 18px; }
+      .action-callout { flex-direction: column; align-items: stretch; gap: 10px; text-align: left; }
+      .action-callout .btn { width: 100%; }
+      input[type="search"] { width: 100% !important; }
+      .modal { padding: 20px; }
+    }
 
     /* Aggregate metrics banner */
     .metrics-banner {
@@ -317,6 +327,13 @@
           <div class="section-head">
             <h2>1099 monitoring · <span style="color: var(--text-muted); font-size: 14px; font-weight: 400;" id="taxYearLabel"></span></h2>
             <a class="btn ghost" href="https://dashboard.stripe.com/connect/accounts" target="_blank" rel="noopener">All Stripe accounts →</a>
+          </div>
+          <!-- Quick summary card -->
+          <div class="metrics-banner" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin-bottom: 14px;">
+            <div class="metric"><div class="metric-label">Creators tracked</div><div class="metric-value" id="taxCreatorsCount">—</div></div>
+            <div class="metric metric-action"><div class="metric-label">Require 1099 (≥$600 YTD)</div><div class="metric-value" id="taxRequireCount">—</div></div>
+            <div class="metric"><div class="metric-label">Total YTD paid</div><div class="metric-value" id="taxTotalPaid">—</div></div>
+            <div class="metric"><div class="metric-label">Onboarded with Stripe</div><div class="metric-value" id="taxOnboardedCount">—</div></div>
           </div>
           <div style="background: color-mix(in srgb, #F59E0B 8%, white); border: 1px solid color-mix(in srgb, #F59E0B 30%, var(--border)); border-radius: 10px; padding: 14px 18px; margin-bottom: 18px; font-size: 13px; color: #92400E;">
             <strong>How this works:</strong> US tax law requires a 1099-NEC for any creator paid $600+ in a calendar year. Stripe Connect generates and files these for you — but you should monitor here that high-earner accounts have completed their tax-info onboarding in Stripe (W-9 / W-8). Click any row to verify in their Stripe dashboard.
@@ -622,8 +639,21 @@
         }));
         enriched.sort((a, b) => b._ytd - a._ytd);
 
+        // Summary stats — always shown, even when no paid yet
+        const requireCount = enriched.filter(c => c._ytd >= 60000).length;
+        const totalPaid = enriched.reduce((s, c) => s + c._ytd, 0);
+        const onboardedCount = enriched.filter(c => c.stripe_connect_onboarded).length;
+        $('taxCreatorsCount').textContent = enriched.length;
+        $('taxRequireCount').textContent = requireCount;
+        $('taxTotalPaid').textContent = `$${(totalPaid / 100).toFixed(2)}`;
+        $('taxOnboardedCount').textContent = `${onboardedCount} / ${enriched.length}`;
+
         if (enriched.length === 0 || enriched.every(c => c._ytd === 0)) {
-          body.innerHTML = `<tr><td colspan="5" style="padding: 48px; text-align: center; color: var(--text-muted);">No paid earnings in ${year} yet. Once payouts run, this view will populate.</td></tr>`;
+          body.innerHTML = `<tr><td colspan="5" style="padding: 48px; text-align: center; color: var(--text-muted);">
+            <div style="font-size: 36px; margin-bottom: 10px;">📋</div>
+            <div style="font-weight: 600; margin-bottom: 4px;">No paid earnings in ${year} yet</div>
+            <div style="font-size: 13px;">This view fills in as Stripe transfers complete on the 1st of each month.<br>Year-end (December), Stripe will issue 1099s automatically for any creator paid ≥ $600.</div>
+          </td></tr>`;
           return;
         }
 

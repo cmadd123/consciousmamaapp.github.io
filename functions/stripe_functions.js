@@ -511,9 +511,15 @@ exports.createCreatorOnboardingLink = onCall(
 
     let accountId = creator.stripe_connect_account_id;
     if (!accountId) {
+      // Country defaults to the value on the creator doc (set at apply
+      // time), falls back to the param sent on this call, then US.
+      // Stripe Express supports 40+ countries; valid ISO 3166-1 alpha-2.
+      const country = (creator.country
+        || request.data?.country
+        || 'US').toUpperCase();
       const account = await stripeClient.accounts.create({
         type: 'express',
-        country: 'US',
+        country,
         email: request.auth.token.email || undefined,
         capabilities: {
           transfers: { requested: true },

@@ -51,6 +51,25 @@
       flex: 1;
       max-width: 960px; margin: 0 auto; padding: 24px; width: 100%;
     }
+    @media (max-width: 600px) {
+      main { padding: 16px; }
+      header.topbar { padding: 12px 16px; flex-wrap: wrap; gap: 8px; }
+      .user-chip { font-size: 13px; gap: 8px; flex-wrap: wrap; }
+      .user-chip span { display: none; } /* hide name on small screens */
+      .share-head { flex-direction: column; align-items: stretch; }
+      .share-actions { flex-direction: column; }
+      .share-actions .btn { width: 100%; }
+      .share-code { font-size: 28px; letter-spacing: 3px; }
+      .checklist li { flex-wrap: wrap; }
+      .checklist-action { width: 100%; margin-top: 8px; }
+      .modal { padding: 20px; max-height: 95vh; }
+      .feature-card .feature-primary { font-size: 24px; }
+      .stat-value { font-size: 26px; }
+      .celebrate-card { padding: 28px 22px; }
+      .celebrate-h1 { font-size: 22px; }
+      .celebrate-code { font-size: 30px; letter-spacing: 3px; padding: 12px; }
+      .celebrate-step { padding: 10px 12px; gap: 10px; }
+    }
 
     /* Views */
     .view { display: none; }
@@ -108,6 +127,46 @@
       border: 1px solid color-mix(in srgb, var(--danger) 30%, var(--border));
       color: var(--danger); padding: 8px 12px; border-radius: 8px; font-size: 13px;
     }
+
+    /* Code-claimed celebration */
+    .celebrate-wrap {
+      min-height: calc(100vh - 60px); position: relative;
+      display: flex; align-items: center; justify-content: center;
+      padding: 24px; overflow: hidden;
+    }
+    #confettiCanvas {
+      position: absolute; inset: 0; pointer-events: none; z-index: 1;
+    }
+    .celebrate-card {
+      position: relative; z-index: 2;
+      background: var(--surface); border-radius: 20px;
+      padding: 36px 32px; max-width: 480px; width: 100%; text-align: center;
+      box-shadow: 0 30px 60px -20px rgba(42, 111, 103, 0.25);
+    }
+    .celebrate-icon { font-size: 56px; margin-bottom: 8px; }
+    .celebrate-h1 { font-size: 26px; margin: 0 0 6px; color: var(--text); }
+    .celebrate-h1 span { color: var(--primary); }
+    .celebrate-sub { color: var(--text-muted); margin: 0 0 18px; font-size: 14px; }
+    .celebrate-code {
+      font-family: 'SF Mono', Consolas, monospace; font-weight: 700;
+      font-size: 38px; letter-spacing: 5px; color: var(--primary-dark);
+      background: linear-gradient(135deg, color-mix(in srgb, var(--primary) 12%, var(--surface)), var(--surface));
+      border: 2px solid color-mix(in srgb, var(--primary) 30%, var(--border));
+      border-radius: 14px; padding: 14px; margin: 0 auto 24px;
+    }
+    .celebrate-helper { font-size: 13px; color: var(--text-muted); margin: 0 0 14px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
+    .celebrate-tour { display: flex; flex-direction: column; gap: 12px; margin-bottom: 22px; text-align: left; }
+    .celebrate-step {
+      display: flex; gap: 14px; padding: 12px 14px;
+      background: var(--bg); border-radius: 10px; align-items: center;
+    }
+    .celebrate-step-icon {
+      width: 40px; height: 40px; display: grid; place-items: center; flex-shrink: 0;
+      background: var(--surface); border-radius: 10px; font-size: 20px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    }
+    .celebrate-step-title { font-weight: 600; font-size: 14px; color: var(--text); margin-bottom: 2px; }
+    .celebrate-step-sub { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
 
     /* Gate (not-a-creator) */
     .gate {
@@ -187,6 +246,27 @@
 
     .empty {
       text-align: center; padding: 48px 24px; color: var(--text-muted);
+    }
+    /* Skeleton shimmer placeholders */
+    .skeleton {
+      background: linear-gradient(90deg, #F3F4F6 0%, #E5E7EB 50%, #F3F4F6 100%);
+      background-size: 200% 100%;
+      animation: skeletonShimmer 1.4s ease-in-out infinite;
+      border-radius: 8px;
+    }
+    @keyframes skeletonShimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    .skeleton-row { display: flex; gap: 14px; padding: 14px 16px; align-items: center; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 10px; }
+    .skeleton-circle { width: 44px; height: 44px; border-radius: 10px; flex-shrink: 0; }
+    .skeleton-lines { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+    .skeleton-line { height: 14px; }
+    .skeleton-line.short { width: 60%; }
+    .skeleton-line.medium { width: 80%; }
+    .skeleton-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+      padding: 16px 18px; height: 140px; display: flex; flex-direction: column; gap: 12px;
     }
     /* Empty states inside grids should span the full row so they center
        instead of squeezing into the first column. */
@@ -557,6 +637,44 @@
         </div>
       </div>
 
+      <!-- 2c. Code claimed celebration -->
+      <div class="view" id="viewCodeCelebration">
+        <div class="celebrate-wrap">
+          <canvas id="confettiCanvas"></canvas>
+          <div class="celebrate-card">
+            <div class="celebrate-icon">🎉</div>
+            <h1 class="celebrate-h1">You're a MomRise creator, <span id="celebrateName">there</span>!</h1>
+            <p class="celebrate-sub">Your code is locked in.</p>
+            <div class="celebrate-code" id="celebrateCode">—</div>
+            <p class="celebrate-helper">Here's what's waiting for you:</p>
+            <div class="celebrate-tour">
+              <div class="celebrate-step">
+                <div class="celebrate-step-icon">💳</div>
+                <div>
+                  <div class="celebrate-step-title">Connect your bank</div>
+                  <div class="celebrate-step-sub">In Finance — takes 2 minutes via Stripe.</div>
+                </div>
+              </div>
+              <div class="celebrate-step">
+                <div class="celebrate-step-icon">📣</div>
+                <div>
+                  <div class="celebrate-step-title">Grab your share kit</div>
+                  <div class="celebrate-step-sub">Pre-written posts and a downloadable graphic with your code.</div>
+                </div>
+              </div>
+              <div class="celebrate-step">
+                <div class="celebrate-step-icon">📊</div>
+                <div>
+                  <div class="celebrate-step-title">Watch your stats grow</div>
+                  <div class="celebrate-step-sub">Followers, subscribers, and earnings update in real time.</div>
+                </div>
+              </div>
+            </div>
+            <button class="btn" id="celebrateContinueBtn" style="width: 100%; margin-top: 8px; padding: 14px;">Take me to my dashboard →</button>
+          </div>
+        </div>
+      </div>
+
       <!-- 2b. Pick your creator code (first-time setup) -->
       <div class="view" id="viewPickCode">
         <div class="gate" style="max-width: 520px;">
@@ -819,7 +937,8 @@
           <button class="btn" id="newDocBtn">+ New doc</button>
         </div>
         <div class="doc-list" id="docList">
-          <div class="empty"><div class="loader" style="margin: 0 auto 12px;"></div>Loading docs…</div>
+          <div class="skeleton-row"><div class="skeleton skeleton-circle"></div><div class="skeleton-lines"><div class="skeleton skeleton-line medium"></div><div class="skeleton skeleton-line short"></div></div></div>
+          <div class="skeleton-row"><div class="skeleton skeleton-circle"></div><div class="skeleton-lines"><div class="skeleton skeleton-line medium"></div><div class="skeleton skeleton-line short"></div></div></div>
         </div>
         <div class="stat-grid stat-grid-compact" style="margin-top: 20px;">
           <div class="stat-card">
@@ -850,7 +969,9 @@
           Meal plans you've shared from the MomRise app. Followers see these in their Meals tab.
         </p>
         <div class="meal-plan-grid" id="mealPlanGrid">
-          <div class="empty"><div class="loader" style="margin: 0 auto 12px;"></div>Loading meal plans…</div>
+          <div class="skeleton-card"><div class="skeleton skeleton-line medium"></div><div class="skeleton skeleton-line short"></div></div>
+          <div class="skeleton-card"><div class="skeleton skeleton-line medium"></div><div class="skeleton skeleton-line short"></div></div>
+          <div class="skeleton-card"><div class="skeleton skeleton-line medium"></div><div class="skeleton skeleton-line short"></div></div>
         </div>
         <div class="stat-grid stat-grid-compact" style="margin-top: 20px;">
           <div class="stat-card">
@@ -881,7 +1002,8 @@
           Routines you've toggled for followers in the MomRise app. Create or edit from the Routines tab in-app.
         </p>
         <div class="routine-grid" id="routineGrid">
-          <div class="empty"><div class="loader" style="margin: 0 auto 12px;"></div>Loading routines…</div>
+          <div class="skeleton-card"><div class="skeleton skeleton-line medium"></div><div class="skeleton skeleton-line short"></div></div>
+          <div class="skeleton-card"><div class="skeleton skeleton-line medium"></div><div class="skeleton skeleton-line short"></div></div>
         </div>
       </div>
     </main>
@@ -984,6 +1106,26 @@
           <button type="submit" class="btn" id="saveSettingsBtn">Save changes</button>
         </div>
       </form>
+
+      <hr style="border: none; border-top: 1px solid var(--border); margin: 24px 0;">
+
+      <div class="field">
+        <label style="font-size: 13px; font-weight: 500;">Creator code</label>
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <code id="settingsCurrentCode" style="background: #F3F4F6; padding: 8px 14px; border-radius: 8px; font-size: 16px; font-weight: 700; color: var(--primary-dark); letter-spacing: 2px; flex: 1;">—</code>
+          <button type="button" class="btn ghost" id="changeCodeBtn">Change</button>
+        </div>
+        <div class="hint" style="font-size: 12px; color: var(--text-muted); margin-top: 4px;" id="codeChangeHint">You can change your code once a year. Old share links pointing to your previous code will stop working.</div>
+      </div>
+
+      <hr style="border: none; border-top: 1px solid var(--border); margin: 24px 0;">
+
+      <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); font-weight: 600; margin-bottom: 12px;">Your data</div>
+      <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <button type="button" class="btn ghost" id="exportDataBtn">Export my data (JSON)</button>
+        <button type="button" class="btn ghost" id="deleteAccountBtn" style="color: var(--danger); border-color: var(--danger);">Delete my creator account</button>
+      </div>
+      <div class="hint" style="font-size: 12px; color: var(--text-muted); margin-top: 8px;">Export gives you a JSON file with everything we have on you. Deletion deactivates your code immediately and queues your data for permanent removal — irreversible after grace period.</div>
     </div>
   </div>
 
@@ -1072,6 +1214,19 @@
       const color = creatorDoc.data.theme_primary_color || creatorDoc.data.theme_primary || '#52A097';
       $('settingsColor').value = color;
       $('settingsColorHex').value = color;
+      $('settingsCurrentCode').textContent = creatorDoc.data.code || '—';
+
+      // Code-change cooldown hint
+      const lastChange = creatorDoc.data.code_changed_at?.toDate?.()
+        || creatorDoc.data.code_set_at?.toDate?.();
+      if (lastChange) {
+        const days = Math.floor((Date.now() - lastChange.getTime()) / (24 * 60 * 60 * 1000));
+        const left = 365 - days;
+        $('codeChangeHint').textContent = left > 0
+          ? `You can change your code again in ${left} day${left === 1 ? '' : 's'}. Old share links will break — choose carefully.`
+          : 'You can change your code now. Old share links pointing to your current code will stop working.';
+      }
+
       $('settingsModal').classList.add('open');
     };
     const closeSettings = () => $('settingsModal').classList.remove('open');
@@ -1084,6 +1239,73 @@
       const v = e.target.value.trim();
       if (/^#[0-9A-Fa-f]{6}$/.test(v)) $('settingsColor').value = v;
     });
+    $('changeCodeBtn').addEventListener('click', async () => {
+      const newCode = prompt('New creator code (3-20 letters or numbers). This breaks any share links pointing to your current code.', creatorDoc.data.code || '');
+      if (!newCode) return;
+      const cleaned = newCode.trim().toUpperCase();
+      if (!/^[A-Z0-9]{3,20}$/.test(cleaned)) {
+        toast('Code must be 3-20 letters or numbers.', true);
+        return;
+      }
+      if (cleaned === (creatorDoc.data.code || '').toUpperCase()) {
+        toast('That\'s already your code.', true);
+        return;
+      }
+      try {
+        const call = httpsCallable(functions, 'setCreatorCode');
+        const { data } = await call({ code: cleaned });
+        creatorDoc.data.code = data.code;
+        creatorDoc.data.code_changed_at = new Date();
+        $('settingsCurrentCode').textContent = data.code;
+        toast(`Code changed to ${data.code}. Share kit refreshed.`);
+        renderShareKit();
+      } catch (err) {
+        toast(err.message || 'Code change failed.', true);
+      }
+    });
+
+    $('exportDataBtn').addEventListener('click', async () => {
+      const btn = $('exportDataBtn');
+      const orig = btn.textContent;
+      btn.disabled = true; btn.textContent = 'Preparing…';
+      try {
+        const call = httpsCallable(functions, 'exportCreatorData');
+        const { data } = await call({});
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `momrise-creator-export-${creatorDoc.data.code || 'me'}-${new Date().toISOString().slice(0,10)}.json`;
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        toast('Your data has been downloaded.');
+      } catch (err) {
+        toast('Export failed: ' + (err.message || 'unknown'), true);
+      } finally {
+        btn.disabled = false; btn.textContent = orig;
+      }
+    });
+
+    $('deleteAccountBtn').addEventListener('click', async () => {
+      const confirmed = confirm(
+        'Are you sure? This deactivates your creator profile immediately and queues your data for permanent deletion. Your share code will stop working right away. Reply YES in the next prompt to confirm.'
+      );
+      if (!confirmed) return;
+      const phrase = prompt('Type "DELETE" exactly to confirm.', '');
+      if (phrase !== 'DELETE') {
+        toast('Cancelled.', true);
+        return;
+      }
+      try {
+        const call = httpsCallable(functions, 'requestCreatorAccountDeletion');
+        await call({});
+        toast('Account deletion requested. Signing you out…');
+        setTimeout(() => doSignOut(), 1500);
+      } catch (err) {
+        toast('Deletion failed: ' + (err.message || 'unknown'), true);
+      }
+    });
+
     $('settingsForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const btn = $('saveSettingsBtn');
@@ -1192,13 +1414,8 @@
         const call = httpsCallable(functions, 'setCreatorCode');
         const { data } = await call({ code: val });
         creatorDoc.data.code = data.code;
-        // Now drop into the main dashboard.
-        show('viewDashboard');
-        applyCreatorTheme();
-        subscribeDocs();
-        loadAnalytics();
-        loadPayouts();
-        toast(`Your code "${data.code}" is yours. Welcome aboard.`);
+        // Show the celebration first; user clicks "Take me to my dashboard" to proceed.
+        showCodeClaimedCelebration(data.code);
       } catch (e) {
         console.error(e);
         msgEl.textContent = e.message || 'Something went wrong — try again.';
@@ -1460,6 +1677,99 @@
     // Creator theme — apply primary color from creator doc if set. Scoped to
     // accents (CSS vars) only; surfaces, text, and borders stay neutral for
     // readability. Called from onAuthStateChanged once creatorDoc is resolved.
+    // Skeleton helper for grid containers (meal plans, routines).
+    function renderSkeletonGrid(n) {
+      let html = '';
+      for (let i = 0; i < n; i++) {
+        html += '<div class="skeleton-card"><div class="skeleton skeleton-line medium"></div><div class="skeleton skeleton-line short"></div></div>';
+      }
+      return html;
+    }
+
+    // Compute "next 1 AM ET" for audience-chart empty state copy.
+    function nextSnapshotTimeText() {
+      const now = new Date();
+      // Snapshot fires at 1:05 ET. We say "tomorrow morning" if it's after 1 AM today; else "later today".
+      const ny = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }));
+      const passed = ny.getHours() >= 1;
+      return passed ? 'tomorrow at 1 AM Eastern' : 'later today at 1 AM Eastern';
+    }
+
+    // --- Code-claimed celebration ---
+    function showCodeClaimedCelebration(code) {
+      const first = (creatorDoc.data.name || '').split(' ')[0]
+        || (currentUser?.displayName || '').split(' ')[0]
+        || 'there';
+      $('celebrateName').textContent = first;
+      $('celebrateCode').textContent = code;
+      show('viewCodeCelebration');
+      runConfetti();
+      $('celebrateContinueBtn').onclick = () => {
+        show('viewDashboard');
+        applyCreatorTheme();
+        subscribeDocs();
+        loadAnalytics();
+        loadPayouts();
+      };
+    }
+
+    function runConfetti() {
+      const canvas = $('confettiCanvas');
+      const ctx = canvas.getContext('2d');
+      const resize = () => {
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+      };
+      resize();
+      window.addEventListener('resize', resize, { once: true });
+
+      const colors = ['#52A097', '#EE8B60', '#39D2C0', '#D7F2EB', '#FFE9E1', '#FBBF24'];
+      const pieces = [];
+      const COUNT = 140;
+      for (let i = 0; i < COUNT; i++) {
+        pieces.push({
+          x: Math.random() * canvas.width,
+          y: -20 - Math.random() * 200,
+          vx: (Math.random() - 0.5) * 4,
+          vy: 2 + Math.random() * 4,
+          size: 6 + Math.random() * 8,
+          rot: Math.random() * Math.PI * 2,
+          vrot: (Math.random() - 0.5) * 0.2,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          shape: Math.random() > 0.5 ? 'rect' : 'circle',
+        });
+      }
+
+      const start = performance.now();
+      const DURATION = 3200; // ms
+
+      function frame(now) {
+        const elapsed = now - start;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (const p of pieces) {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.05; // gravity
+          p.rot += p.vrot;
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.rot);
+          ctx.fillStyle = p.color;
+          if (p.shape === 'rect') {
+            ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+          } else {
+            ctx.beginPath();
+            ctx.arc(0, 0, p.size / 2, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          ctx.restore();
+        }
+        if (elapsed < DURATION) requestAnimationFrame(frame);
+        else ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+      requestAnimationFrame(frame);
+    }
+
     // --- Share kit ---
     function renderShareKit() {
       const code = creatorDoc.data.code || '';
@@ -1839,8 +2149,8 @@
         if (rows.length < 2) {
           body.innerHTML = `
             <div class="chart-empty">
-              <div class="chart-empty-title">Audience chart needs at least 2 days of data</div>
-              <div>A snapshot runs once a day. Check back tomorrow once a second data point lands.</div>
+              <div class="chart-empty-title">Audience chart needs 2 days of data</div>
+              <div>Your next daily snapshot runs ${nextSnapshotTimeText()}. The chart appears once two snapshots are stored.</div>
             </div>`;
           $('audienceChartSubtitle').textContent = rows.length === 1 ? '1 day so far' : '';
           return;
@@ -2304,7 +2614,7 @@
 
     async function loadCreatorMealPlans() {
       const grid = $('mealPlanGrid');
-      grid.innerHTML = '<div class="empty"><div class="loader" style="margin: 0 auto 12px;"></div>Loading meal plans…</div>';
+      grid.innerHTML = renderSkeletonGrid(3);
       try {
         const snap = await getDocs(query(
           collection(db, 'creator_content'),
@@ -2420,7 +2730,7 @@
 
     async function loadCreatorRoutines() {
       const grid = $('routineGrid');
-      grid.innerHTML = '<div class="empty"><div class="loader" style="margin: 0 auto 12px;"></div>Loading routines…</div>';
+      grid.innerHTML = renderSkeletonGrid(3);
       try {
         const snap = await getDocs(query(
           collection(db, 'routines'),
