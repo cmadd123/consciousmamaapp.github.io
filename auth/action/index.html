@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MomRise · Reset Your Password</title>
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #52A097;
+      --primary-dark: #2A6F67;
+      --accent: #EE8B60;
+      --text: #1F2937;
+      --text-muted: #6B7280;
+      --border: #E5E7EB;
+      --surface: #FFFFFF;
+      --danger: #EF4444;
+      --success: #10B981;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; padding: 0; min-height: 100vh;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      color: var(--text);
+      background: linear-gradient(180deg, #D7F2EB 0%, #FFE9E1 100%);
+    }
+    a { color: var(--primary); }
+    button { cursor: pointer; font-family: inherit; }
+
+    main {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      padding: 24px;
+    }
+    .card {
+      background: var(--surface); border-radius: 20px;
+      padding: 36px 32px 32px; width: 100%; max-width: 440px;
+      box-shadow: 0 24px 48px -18px rgba(42, 111, 103, 0.22);
+    }
+    .brand {
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      margin-bottom: 20px;
+    }
+    .brand img { width: 40px; height: 40px; border-radius: 10px; }
+    .brand .name {
+      font-family: 'Andika', sans-serif; font-weight: 700;
+      font-size: 20px; color: var(--primary-dark);
+    }
+
+    h1 { margin: 0 0 8px; font-size: 24px; font-family: 'Andika', sans-serif; text-align: center; }
+    .subtext { color: var(--text-muted); font-size: 14px; line-height: 1.55; text-align: center; margin: 0 0 24px; }
+    .subtext strong { color: var(--text); font-weight: 600; }
+
+    form { display: flex; flex-direction: column; gap: 12px; }
+    label { display: flex; flex-direction: column; gap: 6px; font-size: 13px; font-weight: 500; }
+    input[type="password"] {
+      padding: 12px 14px; font-size: 15px; border: 1px solid var(--border);
+      border-radius: 10px; background: var(--surface); font-family: inherit;
+    }
+    input[type="password"]:focus {
+      outline: 2px solid var(--primary); outline-offset: -1px; border-color: var(--primary);
+    }
+    .hint { font-size: 12px; color: var(--text-muted); }
+
+    .btn {
+      background: var(--primary); color: white; border: none;
+      padding: 14px 20px; border-radius: 10px; font-size: 15px; font-weight: 600;
+      margin-top: 4px;
+    }
+    .btn:hover:not(:disabled) { background: var(--primary-dark); }
+    .btn:disabled { opacity: 0.7; cursor: not-allowed; }
+
+    .error-banner {
+      background: color-mix(in srgb, var(--danger) 8%, var(--surface));
+      border: 1px solid color-mix(in srgb, var(--danger) 30%, var(--border));
+      color: var(--danger); padding: 10px 14px; border-radius: 8px; font-size: 13px;
+    }
+
+    .state { display: none; }
+    .state.active { display: block; }
+
+    .state-loading, .state-success, .state-error { text-align: center; padding: 8px 4px; }
+    .state-loading .loader, .spinner {
+      width: 28px; height: 28px; border: 3px solid var(--border);
+      border-top-color: var(--primary); border-radius: 50%;
+      animation: spin 0.8s linear infinite; margin: 0 auto 16px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .success-icon {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: color-mix(in srgb, var(--success) 12%, var(--surface));
+      color: var(--success); font-size: 28px; display: grid; place-items: center;
+      margin: 0 auto 14px;
+    }
+    .error-icon {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: color-mix(in srgb, var(--danger) 10%, var(--surface));
+      color: var(--danger); font-size: 28px; display: grid; place-items: center;
+      margin: 0 auto 14px;
+    }
+
+    .foot { text-align: center; margin-top: 20px; font-size: 12px; color: var(--text-muted); }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="card">
+      <div class="brand">
+        <img src="/favicon.png" alt="">
+        <span class="name">MomRise</span>
+      </div>
+
+      <!-- Initial loading -->
+      <div class="state active state-loading" id="stateLoading">
+        <div class="spinner"></div>
+        <div class="subtext" style="margin: 0;">Just a moment…</div>
+      </div>
+
+      <!-- Reset password form -->
+      <div class="state state-reset" id="stateReset">
+        <h1>Reset your password</h1>
+        <p class="subtext">Resetting password for <strong id="resetEmail">—</strong>. Pick something you'll remember — at least 8 characters.</p>
+        <form id="resetForm">
+          <label>
+            New password
+            <input type="password" id="newPassword" autocomplete="new-password" required minlength="8" placeholder="At least 8 characters">
+          </label>
+          <label>
+            Confirm new password
+            <input type="password" id="confirmPassword" autocomplete="new-password" required minlength="8" placeholder="Type it again">
+          </label>
+          <div class="error-banner" id="resetError" hidden></div>
+          <button type="submit" class="btn" id="resetBtn">Save new password</button>
+        </form>
+      </div>
+
+      <!-- Verify email -->
+      <div class="state state-verify" id="stateVerify">
+        <div class="spinner"></div>
+        <div class="subtext" style="margin: 0;">Verifying your email…</div>
+      </div>
+
+      <!-- Success -->
+      <div class="state state-success" id="stateSuccess">
+        <div class="success-icon">✓</div>
+        <h1 id="successTitle">All set</h1>
+        <p class="subtext" id="successMsg">Your password has been updated. You can close this tab and sign in to MomRise with your new password.</p>
+        <a href="/" class="btn" style="display: inline-block; text-decoration: none; text-align: center; padding: 12px 24px;">Back to MomRise</a>
+      </div>
+
+      <!-- Error -->
+      <div class="state state-error" id="stateError">
+        <div class="error-icon">!</div>
+        <h1 id="errorTitle">Something went wrong</h1>
+        <p class="subtext" id="errorMsg">This link isn't valid anymore. It may have expired or already been used. Request a new reset link from the sign-in screen.</p>
+        <a href="/" class="btn" style="display: inline-block; text-decoration: none; text-align: center; padding: 12px 24px;">Back to MomRise</a>
+      </div>
+
+      <div class="foot">Trouble? <a href="mailto:support@momrise.app">support@momrise.app</a></div>
+    </div>
+  </main>
+
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+    import { getAuth, verifyPasswordResetCode, confirmPasswordReset, applyActionCode, checkActionCode }
+      from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBucTVaWpYhDYScTpQ4JH9XdJgCBFmbHWk",
+      authDomain: "parenting-plus-7szrif.firebaseapp.com",
+      projectId: "parenting-plus-7szrif",
+      storageBucket: "parenting-plus-7szrif.appspot.com",
+      messagingSenderId: "67449654316",
+      appId: "1:67449654316:web:88be5e06e598d56dd55589",
+    };
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    const $ = (id) => document.getElementById(id);
+    const show = (id) => {
+      document.querySelectorAll('.state').forEach(s => s.classList.remove('active'));
+      $(id).classList.add('active');
+    };
+
+    // Firebase passes these as URL params on the action link:
+    //   mode=resetPassword|verifyEmail|recoverEmail|signIn
+    //   oobCode=<the one-time token>
+    //   apiKey=<...>  (we ignore, use our config)
+    //   continueUrl=<optional>
+    //   lang=<optional>
+    const params = new URLSearchParams(location.search);
+    const mode = params.get('mode');
+    const oobCode = params.get('oobCode');
+
+    if (!mode || !oobCode) {
+      showError('Missing information', 'This page needs a valid action link from your email. If you clicked a link and still see this, try again or request a new one.');
+    } else {
+      dispatch(mode, oobCode);
+    }
+
+    async function dispatch(mode, code) {
+      try {
+        switch (mode) {
+          case 'resetPassword':
+            await startResetPassword(code);
+            break;
+          case 'verifyEmail':
+            show('stateVerify');
+            await applyActionCode(auth, code);
+            showSuccess('Email verified', 'Your email is confirmed. You can close this tab and keep using MomRise.');
+            break;
+          case 'recoverEmail':
+            show('stateVerify');
+            await applyActionCode(auth, code);
+            showSuccess('Email change reverted', 'Your email has been restored to the previous address.');
+            break;
+          default:
+            showError('Unsupported link', `We don't recognize action "${mode}". Request a new link if you need help.`);
+        }
+      } catch (err) {
+        handleFirebaseError(err);
+      }
+    }
+
+    async function startResetPassword(code) {
+      try {
+        const email = await verifyPasswordResetCode(auth, code);
+        $('resetEmail').textContent = email;
+        show('stateReset');
+      } catch (err) {
+        handleFirebaseError(err);
+        return;
+      }
+
+      $('resetForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const pw = $('newPassword').value;
+        const pw2 = $('confirmPassword').value;
+        const errEl = $('resetError');
+        errEl.hidden = true;
+
+        if (pw.length < 8) {
+          errEl.textContent = 'Password must be at least 8 characters.';
+          errEl.hidden = false; return;
+        }
+        if (pw !== pw2) {
+          errEl.textContent = "Passwords don't match. Check both fields.";
+          errEl.hidden = false; return;
+        }
+
+        const btn = $('resetBtn');
+        btn.disabled = true; btn.textContent = 'Saving…';
+        try {
+          await confirmPasswordReset(auth, code, pw);
+          showSuccess('Password updated', "You're all set. Open MomRise and sign in with your new password.");
+        } catch (err) {
+          handleFirebaseError(err, errEl);
+          btn.disabled = false; btn.textContent = 'Save new password';
+        }
+      }, { once: true });
+    }
+
+    function showSuccess(title, msg) {
+      $('successTitle').textContent = title;
+      $('successMsg').textContent = msg;
+      show('stateSuccess');
+    }
+    function showError(title, msg) {
+      $('errorTitle').textContent = title;
+      $('errorMsg').textContent = msg;
+      show('stateError');
+    }
+    function handleFirebaseError(err, inlineEl) {
+      const code = err?.code || '';
+      let msg = 'Something went wrong. Try again or request a new link.';
+      if (code === 'auth/expired-action-code') msg = 'This link has expired. Request a new one from the sign-in screen.';
+      else if (code === 'auth/invalid-action-code') msg = "This link isn't valid. It may have already been used or expired.";
+      else if (code === 'auth/user-disabled') msg = 'This account has been disabled. Contact support@momrise.app.';
+      else if (code === 'auth/user-not-found') msg = "We couldn't find that account anymore.";
+      else if (code === 'auth/weak-password') msg = 'That password is too weak. Pick something longer or more unique.';
+
+      if (inlineEl) {
+        inlineEl.textContent = msg;
+        inlineEl.hidden = false;
+      } else {
+        showError('Link error', msg);
+      }
+    }
+  </script>
+</body>
+</html>
