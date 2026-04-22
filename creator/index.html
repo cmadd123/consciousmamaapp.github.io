@@ -265,6 +265,44 @@
     }
     .section-head-simple h2 { border-left-color: color-mix(in srgb, var(--primary) 50%, var(--border)); }
 
+    /* Share card */
+    .share-card {
+      background: linear-gradient(135deg, color-mix(in srgb, var(--primary) 6%, var(--surface)), var(--surface));
+      border: 1px solid color-mix(in srgb, var(--primary) 22%, var(--border));
+      border-radius: 14px; padding: 20px 22px; margin-bottom: 24px;
+    }
+    .share-head { display: flex; gap: 20px; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+    .share-code {
+      font-family: 'SF Mono', Consolas, monospace; font-weight: 700;
+      font-size: 36px; letter-spacing: 4px; color: var(--primary-dark);
+      margin: 4px 0 6px;
+    }
+    .share-helper { font-size: 13px; color: var(--text-muted); max-width: 400px; line-height: 1.5; }
+    .share-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    .share-templates { margin-top: 18px; border-top: 1px solid color-mix(in srgb, var(--primary) 18%, var(--border)); padding-top: 14px; }
+    .share-templates summary {
+      cursor: pointer; font-size: 14px; font-weight: 600; color: var(--primary-dark);
+      padding: 4px 0; user-select: none;
+    }
+    .share-templates summary:hover { color: var(--primary); }
+    .share-templates-body { display: flex; flex-direction: column; gap: 14px; margin-top: 12px; }
+    .template {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px;
+    }
+    .template-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .template-label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); font-weight: 600; }
+    .btn-mini {
+      background: transparent; border: 1px solid var(--primary); color: var(--primary);
+      padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600;
+    }
+    .btn-mini:hover { background: var(--primary); color: white; }
+    .btn-mini.copied { background: var(--success); border-color: var(--success); color: white; }
+    .template-text {
+      white-space: pre-wrap; font-family: inherit; font-size: 13px; line-height: 1.55;
+      color: var(--text); margin: 0; background: #F9FAFB; padding: 10px 12px;
+      border-radius: 8px;
+    }
+
     /* Getting Started checklist */
     .checklist-card {
       background: linear-gradient(135deg, color-mix(in srgb, var(--primary) 8%, var(--surface)), var(--surface));
@@ -476,6 +514,7 @@
       <div class="user-chip" id="userChip" style="display:none;">
         <img id="userPhoto" src="" alt="">
         <span id="userName"></span>
+        <button class="signout" id="settingsBtn" title="Profile settings">Settings</button>
         <a class="signout" id="supportLink" href="mailto:creators@momrise.app" title="Contact support">Support</a>
         <button class="signout" id="signOutBtn" title="Sign out">Sign out</button>
       </div>
@@ -545,6 +584,61 @@
               <div class="checklist-progress-fill" id="checklistFill"></div>
             </div>
             <ul class="checklist" id="checklistItems"></ul>
+          </div>
+
+          <!-- Share kit -->
+          <div class="share-card">
+            <div class="share-head">
+              <div>
+                <div class="section-head-simple"><h2 style="font-size: 16px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; border-left-width: 2px;">Your code</h2></div>
+                <div class="share-code" id="shareCode">—</div>
+                <div class="share-helper">Tap any button to copy. Anyone who enters this code earns you 50% of their subscription.</div>
+              </div>
+              <div class="share-actions">
+                <button class="btn" id="copyCodeBtn" style="min-width: 150px;">Copy code</button>
+                <button class="btn ghost" id="copyLinkBtn" style="min-width: 150px;">Copy share link</button>
+              </div>
+            </div>
+            <details class="share-templates">
+              <summary>See post templates + downloadable graphic</summary>
+              <div class="share-templates-body">
+                <div class="template">
+                  <div class="template-head">
+                    <span class="template-label">Instagram caption</span>
+                    <button class="btn-mini" data-template="ig">Copy</button>
+                  </div>
+                  <pre class="template-text" id="tplIg"></pre>
+                </div>
+                <div class="template">
+                  <div class="template-head">
+                    <span class="template-label">TikTok / Reels caption</span>
+                    <button class="btn-mini" data-template="tt">Copy</button>
+                  </div>
+                  <pre class="template-text" id="tplTt"></pre>
+                </div>
+                <div class="template">
+                  <div class="template-head">
+                    <span class="template-label">Email / newsletter</span>
+                    <button class="btn-mini" data-template="em">Copy</button>
+                  </div>
+                  <pre class="template-text" id="tplEm"></pre>
+                </div>
+                <div class="template">
+                  <div class="template-head">
+                    <span class="template-label">Text to a friend</span>
+                    <button class="btn-mini" data-template="tx">Copy</button>
+                  </div>
+                  <pre class="template-text" id="tplTx"></pre>
+                </div>
+                <div class="template">
+                  <div class="template-head">
+                    <span class="template-label">Shareable graphic (1080×1080)</span>
+                    <button class="btn-mini" id="downloadGraphicBtn">Download PNG</button>
+                  </div>
+                  <canvas id="shareCanvas" width="1080" height="1080" style="width: 100%; max-width: 360px; border-radius: 12px; display: block; margin-top: 8px;"></canvas>
+                </div>
+              </div>
+            </details>
           </div>
 
           <!-- Finance -->
@@ -626,6 +720,17 @@
                 <div class="chart-empty">
                   <div class="chart-empty-title">No earnings yet</div>
                   <div>This chart fills in month by month as your followers subscribe.</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Payout history -->
+            <div class="analytics-card span-2" id="payoutHistoryCard">
+              <h3>Payout history <span class="muted" id="payoutHistorySubtitle"></span></h3>
+              <div id="payoutHistoryBody">
+                <div class="chart-empty">
+                  <div class="chart-empty-title">No payouts yet</div>
+                  <div>Payouts appear here after the 1st of each month once your pending balance clears $25.</div>
                 </div>
               </div>
             </div>
@@ -846,6 +951,42 @@
     </div>
   </div>
 
+  <!-- Profile settings modal -->
+  <div class="modal-backdrop" id="settingsModal">
+    <div class="modal">
+      <div class="modal-head">
+        <h3>Profile settings</h3>
+        <button type="button" class="btn ghost" id="closeSettingsBtn">Close</button>
+      </div>
+      <p class="muted" style="font-size: 13px; margin: 0 0 16px;">Your code is permanent. Everything else you can update as you grow.</p>
+      <form id="settingsForm" class="form-grid">
+        <div class="field">
+          <label for="settingsName">Display name</label>
+          <input type="text" id="settingsName" maxlength="80" placeholder="Haley Maddox">
+        </div>
+        <div class="field">
+          <label for="settingsNiche">Niche / audience</label>
+          <input type="text" id="settingsNiche" maxlength="120" placeholder="Moms of toddlers · postpartum · routines">
+        </div>
+        <div class="field">
+          <label for="settingsBio">Bio</label>
+          <textarea id="settingsBio" maxlength="400" placeholder="A sentence or two about you — what you share, who you help."></textarea>
+        </div>
+        <div class="field">
+          <label for="settingsColor">Brand color <span style="color: var(--text-muted); font-weight: 400;">(used on your dashboard's accents)</span></label>
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <input type="color" id="settingsColor" value="#52A097" style="width: 56px; height: 44px; padding: 2px; cursor: pointer;">
+            <input type="text" id="settingsColorHex" maxlength="7" placeholder="#52A097" style="flex: 1; font-family: 'SF Mono', Consolas, monospace;">
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn ghost" id="cancelSettingsBtn">Cancel</button>
+          <button type="submit" class="btn" id="saveSettingsBtn">Save changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <div class="toast" id="toast"></div>
 
   <!-- Firebase (v9 compat for a single-file vanilla page) -->
@@ -921,6 +1062,55 @@
     };
     $('signOutBtn').addEventListener('click', doSignOut);
     $('gateSignOutBtn').addEventListener('click', doSignOut);
+
+    // Profile settings modal
+    const openSettings = () => {
+      if (!creatorDoc) return;
+      $('settingsName').value = creatorDoc.data.name || '';
+      $('settingsNiche').value = creatorDoc.data.niche || '';
+      $('settingsBio').value = creatorDoc.data.bio || '';
+      const color = creatorDoc.data.theme_primary_color || creatorDoc.data.theme_primary || '#52A097';
+      $('settingsColor').value = color;
+      $('settingsColorHex').value = color;
+      $('settingsModal').classList.add('open');
+    };
+    const closeSettings = () => $('settingsModal').classList.remove('open');
+    $('settingsBtn').addEventListener('click', openSettings);
+    $('closeSettingsBtn').addEventListener('click', closeSettings);
+    $('cancelSettingsBtn').addEventListener('click', closeSettings);
+    $('settingsModal').addEventListener('click', (e) => { if (e.target === $('settingsModal')) closeSettings(); });
+    $('settingsColor').addEventListener('input', (e) => { $('settingsColorHex').value = e.target.value.toUpperCase(); });
+    $('settingsColorHex').addEventListener('input', (e) => {
+      const v = e.target.value.trim();
+      if (/^#[0-9A-Fa-f]{6}$/.test(v)) $('settingsColor').value = v;
+    });
+    $('settingsForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = $('saveSettingsBtn');
+      btn.disabled = true; btn.textContent = 'Saving…';
+      try {
+        const call = httpsCallable(functions, 'updateCreatorProfile');
+        await call({
+          name: $('settingsName').value,
+          niche: $('settingsNiche').value,
+          bio: $('settingsBio').value,
+          theme_primary: $('settingsColorHex').value.trim(),
+        });
+        // Reflect locally so the UI updates without a reload.
+        creatorDoc.data.name = $('settingsName').value;
+        creatorDoc.data.niche = $('settingsNiche').value;
+        creatorDoc.data.bio = $('settingsBio').value;
+        creatorDoc.data.theme_primary = $('settingsColorHex').value.trim();
+        creatorDoc.data.theme_primary_color = $('settingsColorHex').value.trim();
+        applyCreatorTheme();
+        toast('Profile saved.');
+        closeSettings();
+      } catch (err) {
+        toast('Save failed: ' + (err.message || 'unknown error'), true);
+      } finally {
+        btn.disabled = false; btn.textContent = 'Save changes';
+      }
+    });
 
     // Email + password sign-in
     const errEl = $('signinError');
@@ -1082,6 +1272,7 @@
 
       show('viewDashboard');
       applyCreatorTheme();
+      renderShareKit();
       subscribeDocs();
       loadAnalytics();
       loadPayouts();
@@ -1269,6 +1460,114 @@
     // Creator theme — apply primary color from creator doc if set. Scoped to
     // accents (CSS vars) only; surfaces, text, and borders stay neutral for
     // readability. Called from onAuthStateChanged once creatorDoc is resolved.
+    // --- Share kit ---
+    function renderShareKit() {
+      const code = creatorDoc.data.code || '';
+      const name = creatorDoc.data.name || '';
+      const shareLink = `https://momrise.app/?c=${encodeURIComponent(code)}`;
+      $('shareCode').textContent = code;
+
+      const templates = {
+        ig: `I've been using MomRise to plan our family's meals, track milestones, and stay on top of everyone's schedules — finally, one app for all of it.\n\nIf you want to try it, use my code ${code} at checkout and I'll get a cut of your subscription. 7-day free trial — cancel anytime.\n\n${shareLink}\n\n#momlife #mealplanning #parenting`,
+        tt: `POV: you finally found the app that handles meal planning, milestones, and the whole family calendar.\n\nMomRise. Use code ${code} if you sign up — link in bio.\n\n7-day free trial. ${shareLink}`,
+        em: `Hi,\n\nQuick one — I've been using MomRise for the last few weeks to wrangle meal planning, our family calendar, and tracking milestones for the kids. It's genuinely made things less chaotic.\n\nIf you want to try it, use my code ${code} when you subscribe and I'll earn a small cut. It's a 7-day free trial so you can see if it fits before any charge.\n\nHere's the link: ${shareLink}\n\nHappy to answer questions.`,
+        tx: `have you seen MomRise? it handles meal planning + family calendar + milestone tracking in one app. 7 day free trial. use my code ${code} if you sign up → ${shareLink}`,
+      };
+      $('tplIg').textContent = templates.ig;
+      $('tplTt').textContent = templates.tt;
+      $('tplEm').textContent = templates.em;
+      $('tplTx').textContent = templates.tx;
+
+      renderShareGraphic(code, name);
+
+      // Copy handlers
+      const copyText = async (btn, text) => {
+        try {
+          await navigator.clipboard.writeText(text);
+          const orig = btn.textContent;
+          btn.textContent = 'Copied ✓';
+          btn.classList.add('copied');
+          setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 1800);
+        } catch (e) {
+          toast('Copy failed — select the text manually', true);
+        }
+      };
+      $('copyCodeBtn').onclick = () => copyText($('copyCodeBtn'), code);
+      $('copyLinkBtn').onclick = () => copyText($('copyLinkBtn'), shareLink);
+      document.querySelectorAll('[data-template]').forEach(btn => {
+        btn.onclick = () => copyText(btn, templates[btn.dataset.template]);
+      });
+      $('downloadGraphicBtn').onclick = () => {
+        const canvas = $('shareCanvas');
+        canvas.toBlob((blob) => {
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `momrise-${code}.png`;
+          a.click();
+          setTimeout(() => URL.revokeObjectURL(url), 1000);
+        }, 'image/png');
+      };
+    }
+
+    function renderShareGraphic(code, name) {
+      const canvas = $('shareCanvas');
+      const ctx = canvas.getContext('2d');
+      const W = canvas.width, H = canvas.height;
+
+      // Background gradient (brand colors)
+      const bg = ctx.createLinearGradient(0, 0, 0, H);
+      bg.addColorStop(0, '#D7F2EB');
+      bg.addColorStop(1, '#FFE9E1');
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, W, H);
+
+      // Centered content block
+      ctx.textAlign = 'center';
+      ctx.fillStyle = '#2A6F67';
+
+      // "Use my MomRise code"
+      ctx.font = 'bold 48px Inter, system-ui, sans-serif';
+      ctx.fillText('Use my MomRise code', W / 2, 280);
+
+      // Subtitle with creator's name
+      if (name) {
+        ctx.font = '400 36px Inter, system-ui, sans-serif';
+        ctx.fillStyle = '#5D4E60';
+        ctx.fillText(`— ${name}`, W / 2, 340);
+      }
+
+      // Big code pill
+      ctx.fillStyle = '#FFFFFF';
+      const pillW = 780, pillH = 260;
+      const pillX = (W - pillW) / 2;
+      const pillY = 420;
+      ctx.beginPath();
+      ctx.roundRect(pillX, pillY, pillW, pillH, 40);
+      ctx.fill();
+      ctx.strokeStyle = '#52A097';
+      ctx.lineWidth = 4;
+      ctx.stroke();
+
+      ctx.fillStyle = '#2A6F67';
+      ctx.font = 'bold 140px "SF Mono", Consolas, monospace';
+      ctx.fillText(code, W / 2, pillY + pillH / 2 + 48);
+
+      // 50% reward + trial line
+      ctx.fillStyle = '#2A6F67';
+      ctx.font = 'bold 40px Inter, system-ui, sans-serif';
+      ctx.fillText('Earn me 50% when you join', W / 2, pillY + pillH + 110);
+
+      ctx.fillStyle = '#5D4E60';
+      ctx.font = '400 32px Inter, system-ui, sans-serif';
+      ctx.fillText('7-day free trial · cancel anytime', W / 2, pillY + pillH + 160);
+
+      // Footer
+      ctx.fillStyle = '#2A6F67';
+      ctx.font = 'bold 36px Inter, system-ui, sans-serif';
+      ctx.fillText('momrise.app', W / 2, H - 90);
+    }
+
     function applyCreatorTheme() {
       if (!creatorDoc) return;
       const themeColor = creatorDoc.data.theme_primary_color;
@@ -1398,6 +1697,7 @@
 
         renderEarningsChart(byMonth);
         renderCohorts(byUser);
+        renderPayoutHistory(snap.docs);
       } catch (e) {
         console.warn('Earnings load failed:', e.message);
       }
@@ -1435,6 +1735,80 @@
 
       const total6mo = months.reduce((s, m) => s + m.cents, 0);
       $('earningsChartSubtitle').textContent = `${fmtMoney(total6mo)} in last 6 mo`;
+    }
+
+    // Payout history: group paid creator_earnings rows by payout_id and
+    // render a chronological table. Pending rows summarized in the header.
+    function renderPayoutHistory(earningDocs) {
+      const body = $('payoutHistoryBody');
+      const payouts = new Map(); // payout_id -> { total, paidAt }
+      let pendingTotal = 0;
+      for (const d of earningDocs) {
+        const e = d.data();
+        const cents = e.creator_cents || 0;
+        if (e.payout_status === 'paid' && e.payout_id) {
+          if (!payouts.has(e.payout_id)) {
+            payouts.set(e.payout_id, { total: 0, paidAt: e.paid_at?.toDate?.() || null });
+          }
+          payouts.get(e.payout_id).total += cents;
+          if (!payouts.get(e.payout_id).paidAt && e.paid_at?.toDate) {
+            payouts.get(e.payout_id).paidAt = e.paid_at.toDate();
+          }
+        } else if (e.payout_status === 'pending') {
+          pendingTotal += cents;
+        }
+      }
+
+      if (payouts.size === 0) {
+        body.innerHTML = `
+          <div class="chart-empty">
+            <div class="chart-empty-title">No payouts yet</div>
+            <div>${pendingTotal > 0
+              ? `You have ${fmtMoney(pendingTotal)} pending. Payouts run on the 1st of each month once pending ≥ $25.`
+              : 'Payouts appear here after the 1st of each month once your pending balance clears $25.'}</div>
+          </div>`;
+        $('payoutHistorySubtitle').textContent = '';
+        return;
+      }
+
+      const rows = [...payouts.entries()]
+        .sort((a, b) => (b[1].paidAt?.getTime() || 0) - (a[1].paidAt?.getTime() || 0));
+
+      const grandTotal = rows.reduce((s, [, v]) => s + v.total, 0);
+      $('payoutHistorySubtitle').textContent = `${rows.length} payout${rows.length === 1 ? '' : 's'} · ${fmtMoney(grandTotal)} total`;
+
+      body.innerHTML = `
+        <div style="overflow-x: auto;">
+          <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+            <thead>
+              <tr style="color: var(--text-muted); text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;">
+                <th style="padding: 10px 12px; border-bottom: 1px solid var(--border); font-weight: 600;">Date</th>
+                <th style="padding: 10px 12px; border-bottom: 1px solid var(--border); font-weight: 600; text-align: right;">Amount</th>
+                <th style="padding: 10px 12px; border-bottom: 1px solid var(--border); font-weight: 600;">Stripe transfer</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rows.map(([id, v]) => `
+                <tr>
+                  <td style="padding: 12px; border-bottom: 1px solid var(--border);">
+                    ${v.paidAt ? v.paidAt.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) : '—'}
+                  </td>
+                  <td style="padding: 12px; border-bottom: 1px solid var(--border); text-align: right; font-variant-numeric: tabular-nums; font-weight: 600;">
+                    ${fmtMoney(v.total)}
+                  </td>
+                  <td style="padding: 12px; border-bottom: 1px solid var(--border); font-family: 'SF Mono', Consolas, monospace; font-size: 12px; color: var(--text-muted); word-break: break-all;">
+                    ${escapeHtml(id)}
+                  </td>
+                </tr>`).join('')}
+              ${pendingTotal > 0 ? `
+                <tr>
+                  <td style="padding: 12px; color: var(--primary); font-weight: 600;">Pending (next payout)</td>
+                  <td style="padding: 12px; text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; color: var(--primary);">${fmtMoney(pendingTotal)}</td>
+                  <td style="padding: 12px; color: var(--text-muted); font-size: 12px;">${pendingTotal >= 2500 ? 'Ready for 1st-of-month run' : `${fmtMoney(2500 - pendingTotal)} to $25 minimum`}</td>
+                </tr>` : ''}
+            </tbody>
+          </table>
+        </div>`;
     }
 
     function fmtMoney(cents) {

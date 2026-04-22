@@ -2217,6 +2217,47 @@ function _renderCreatorWelcomeEmail(name) {
 // Called by the creator from their dashboard on first sign-in to claim
 // their code. Validates format + uniqueness, verifies caller owns the
 // creator doc, and writes atomically.
+// Called by the creator to update their own profile (name, bio, niche,
+// theme_primary). Scope is narrow — the code, stripe fields, and
+// counters are off-limits.
+exports.updateCreatorProfile = onCall(async (request) => {
+  if (!request.auth) throw new HttpsError('unauthenticated', 'Sign in required');
+  const { name, bio, niche, theme_primary } = request.data || {};
+
+  const db = getFirestore();
+  const uid = request.auth.uid;
+  const snap = await db.collection('creators')
+    .where('user_ref', '==', db.doc(`users/${uid}`))
+    .limit(1).get();
+  if (snap.empty) throw new HttpsError('failed-precondition', 'No creator profile for this user');
+
+  const updates = {};
+  if (typeof name === 'string') {
+    const clean = name.trim().slice(0, 80);
+    if (clean) updates.name = clean;
+  }
+  if (typeof bio === 'string') updates.bio = bio.trim().slice(0, 400);
+  if (typeof niche === 'string') updates.niche = niche.trim().slice(0, 120);
+  if (typeof theme_primary === 'string') {
+    const hex = theme_primary.trim();
+    if (!/^#[0-9A-Fa-f]{6}$/.test(hex)) {
+      throw new HttpsError('invalid-argument', 'theme_primary must be a 6-digit hex color like #52A097.');
+    }
+    updates.theme_primary = hex;
+  }
+
+  if (Object.keys(updates).length === 0) {
+    throw new HttpsError('invalid-argument', 'Nothing to update.');
+  }
+
+  await snap.docs[0].ref.update({
+    ...updates,
+    profile_updated_at: FieldValue.serverTimestamp(),
+  });
+
+  return { ok: true, updated: Object.keys(updates) };
+});
+
 exports.setCreatorCode = onCall(async (request) => {
   if (!request.auth) throw new HttpsError('unauthenticated', 'Sign in required');
   const { code } = request.data || {};
