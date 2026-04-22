@@ -1973,6 +1973,10 @@ exports.notifyOnCreatorApplication = onDocumentCreated(
         to: 'collinjmaddox@gmail.com',
         from: sendgridFromEmail.value(),
         subject: `New creator application: ${d.name || '(no name)'}`,
+        trackingSettings: {
+          clickTracking: { enable: false, enableText: false },
+          openTracking: { enable: false },
+        },
         html: `
 <!DOCTYPE html>
 <html>
