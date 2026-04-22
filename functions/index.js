@@ -2058,9 +2058,11 @@ async function _generateUniqueCreatorCode(baseName) {
   throw new HttpsError('internal', 'Could not generate a unique code');
 }
 
-exports.approveCreatorApplication = onCall(async (request) => {
+exports.approveCreatorApplication = onCall(
+  { secrets: [sendgridApiKey] },
+  async (request) => {
   _requireAdmin(request);
-  const { applicationId, uid: providedUid } = request.data || {};
+  const { applicationId, uid: providedUid, customCode } = request.data || {};
   if (!applicationId) throw new HttpsError('invalid-argument', 'applicationId required');
 
   const db = getFirestore();
@@ -2098,7 +2100,24 @@ exports.approveCreatorApplication = onCall(async (request) => {
       `User already has a creator profile (code ${existing.docs[0].data().code}).`);
   }
 
-  const code = await _generateUniqueCreatorCode(appData.name);
+  // Custom code override: admin can pick a vanity code instead of the
+  // auto-generated one. Must be A-Z/0-9 only, 3-20 chars, unique.
+  let code;
+  if (customCode && typeof customCode === 'string') {
+    const cleaned = customCode.trim().toUpperCase();
+    if (!/^[A-Z0-9]{3,20}$/.test(cleaned)) {
+      throw new HttpsError('invalid-argument',
+        'Custom code must be 3-20 uppercase letters or numbers.');
+    }
+    const clash = await db.collection('creators').where('code', '==', cleaned).limit(1).get();
+    if (!clash.empty) {
+      throw new HttpsError('already-exists', `Code ${cleaned} is already taken.`);
+    }
+    code = cleaned;
+  } else {
+    code = await _generateUniqueCreatorCode(appData.name);
+  }
+
   const creatorRef = db.collection('creators').doc();
   const batch = db.batch();
   batch.set(creatorRef, {
@@ -2131,8 +2150,73 @@ exports.approveCreatorApplication = onCall(async (request) => {
   });
   await batch.commit();
 
+  // Send the welcome email. Don't fail the whole approval if email fails —
+  // log it and return success anyway so the admin doesn't retry approval
+  // (which would error with "already exists" on the creator doc).
+  try {
+    sgMail.setApiKey(sendgridApiKey.value().replace(/[\s\r\n]+/g, ''));
+    await sgMail.send({
+      to: appData.email,
+      from: sendgridFromEmail.value(),
+      subject: `You're in — welcome to the MomRise creator program 🎉`,
+      trackingSettings: {
+        clickTracking: { enable: false, enableText: false },
+        openTracking: { enable: false },
+      },
+      html: _renderCreatorWelcomeEmail(appData.name, code),
+    });
+    console.log(`Sent creator welcome email to ${appData.email} (code ${code})`);
+  } catch (err) {
+    console.error('Welcome email send failed (creator doc still created):', err.message);
+    if (err.response?.body) console.error('SendGrid body:', JSON.stringify(err.response.body));
+  }
+
   return { ok: true, creatorId: creatorRef.id, code };
 });
+
+function _renderCreatorWelcomeEmail(name, code) {
+  const first = (name || '').split(' ')[0] || 'there';
+  return `
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+<body style="font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; margin: 0; padding: 0; background: #F9FAFB; line-height: 1.6;">
+  <div style="max-width: 600px; margin: 40px auto; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.06);">
+    <div style="background: linear-gradient(135deg, #52A097 0%, #39D2C0 100%); padding: 40px 32px; color: white; text-align: center;">
+      <div style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.12em; opacity: 0.85; margin-bottom: 8px;">MomRise Creator Program</div>
+      <h1 style="margin: 0; font-size: 26px; font-weight: 700;">You're in, ${_esc(first)} 🎉</h1>
+    </div>
+    <div style="padding: 32px; color: #374151; font-size: 15px;">
+      <p style="margin: 0 0 16px;">Welcome to the MomRise creator program. We reviewed your application and would love to have you on board.</p>
+
+      <div style="background: linear-gradient(135deg, #D7F2EB 0%, #FFE9E1 100%); border-radius: 12px; padding: 24px; text-align: center; margin: 24px 0;">
+        <div style="font-size: 13px; color: #2A6F67; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; margin-bottom: 8px;">Your creator code</div>
+        <div style="font-size: 32px; font-weight: 700; color: #2A6F67; letter-spacing: 3px; font-family: 'SF Mono', Consolas, monospace;">${_esc(code)}</div>
+      </div>
+
+      <p style="margin: 24px 0 8px; font-weight: 600; color: #1F2937;">What to do next:</p>
+      <ol style="padding-left: 20px; margin: 0 0 20px;">
+        <li style="margin: 10px 0;">Sign in at <a href="https://momrise.app/creator/" style="color: #52A097;">momrise.app/creator/</a> with the same Google or Apple account you use for MomRise. Your dashboard will load automatically.</li>
+        <li style="margin: 10px 0;"><strong>Connect your bank through Stripe</strong> (2–3 minutes). That's how we pay you your 50% revenue share.</li>
+        <li style="margin: 10px 0;">Start sharing your code — <code style="background: #F3F4F6; padding: 2px 6px; border-radius: 4px;">${_esc(code)}</code> — with your community. Anyone who subscribes using it earns you half of every month they stay.</li>
+      </ol>
+
+      <p style="margin: 24px 0 8px;">Payouts run on the 1st of each month, minimum $25. Everything's in your dashboard — follower count, earnings, content performance.</p>
+
+      <div style="text-align: center; margin: 32px 0 16px;">
+        <a href="https://momrise.app/creator/" style="display: inline-block; background: #52A097; color: white !important; text-decoration: none; padding: 14px 36px; border-radius: 10px; font-weight: 600; font-size: 15px;">Go to your dashboard →</a>
+      </div>
+
+      <p style="margin: 24px 0 0; color: #6B7280; font-size: 14px;">Questions or ideas? Just reply to this email — we read everything.</p>
+    </div>
+    <div style="background: #F9FAFB; padding: 20px 32px; text-align: center; color: #9CA3AF; font-size: 12px; border-top: 1px solid #E5E7EB;">
+      MomRise · Helping moms rise above the chaos
+    </div>
+  </div>
+</body>
+</html>`;
+}
+function _esc(s) { return String(s || '').replace(/[<>&"]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c])); }
 
 exports.rejectCreatorApplication = onCall(async (request) => {
   _requireAdmin(request);

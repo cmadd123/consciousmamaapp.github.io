@@ -253,10 +253,14 @@ service cloud.firestore {
     // Creator can read their own earnings by filtering on creator_ref.
 
     match /creator_earnings/{earningId} {
-      allow read: if isAuthenticated() &&
-        resource.data.creator_ref != null &&
-        get(resource.data.creator_ref).data.user_ref ==
-          /databases/$(database)/documents/users/$(request.auth.uid);
+      allow read: if isAuthenticated() && (
+        // Admin dashboard reads all creators' earnings for the aggregate view
+        request.auth.token.email == 'collinjmaddox@gmail.com' ||
+        // Creator reads their own earnings
+        (resource.data.creator_ref != null &&
+         get(resource.data.creator_ref).data.user_ref ==
+           /databases/$(database)/documents/users/$(request.auth.uid))
+      );
       allow write: if false;
     }
 

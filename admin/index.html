@@ -198,22 +198,55 @@
         </div>
       </div>
 
-      <!-- List view -->
+      <!-- Tab bar -->
       <div class="view" id="viewList">
-        <div class="section-head">
-          <h2>Creator applications</h2>
-          <div style="display: flex; gap: 8px;">
-            <select id="statusFilter" style="padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border); background: white; font-size: 14px; font-family: inherit;">
-              <option value="new">Pending</option>
-              <option value="approved">Approved</option>
-              <option value="rejected">Rejected</option>
-              <option value="all">All</option>
-            </select>
-            <button class="btn ghost" id="refreshBtn">↻ Refresh</button>
+        <div class="tabs" style="display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin-bottom: 20px;">
+          <button class="tab-btn active" data-tab="applications" style="background: none; border: none; padding: 10px 16px; font-size: 15px; color: var(--primary); border-bottom: 2px solid var(--primary); font-weight: 600; margin-bottom: -1px;">Applications</button>
+          <button class="tab-btn" data-tab="creators" style="background: none; border: none; padding: 10px 16px; font-size: 15px; color: var(--text-muted); border-bottom: 2px solid transparent; margin-bottom: -1px;">Creators</button>
+        </div>
+
+        <!-- Applications tab -->
+        <div class="tab-panel active" id="tabApplications">
+          <div class="section-head">
+            <h2>Creator applications</h2>
+            <div style="display: flex; gap: 8px;">
+              <select id="statusFilter" style="padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border); background: white; font-size: 14px; font-family: inherit;">
+                <option value="new">Pending</option>
+                <option value="approved">Approved</option>
+                <option value="rejected">Rejected</option>
+                <option value="all">All</option>
+              </select>
+              <button class="btn ghost" id="refreshBtn">↻ Refresh</button>
+            </div>
+          </div>
+          <div class="app-list" id="appList">
+            <div class="empty"><div class="loader"></div> Loading…</div>
           </div>
         </div>
-        <div class="app-list" id="appList">
-          <div class="empty"><div class="loader"></div> Loading…</div>
+
+        <!-- Creators tab -->
+        <div class="tab-panel" id="tabCreators" hidden>
+          <div class="section-head">
+            <h2>Approved creators</h2>
+            <button class="btn ghost" id="refreshCreatorsBtn">↻ Refresh</button>
+          </div>
+          <div style="overflow-x: auto; background: var(--surface); border: 1px solid var(--border); border-radius: 12px;">
+            <table id="creatorsTable" style="width: 100%; border-collapse: collapse; font-size: 14px;">
+              <thead>
+                <tr style="background: #F9FAFB; text-align: left;">
+                  <th style="padding: 12px 14px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); font-weight: 600; border-bottom: 1px solid var(--border);">Creator</th>
+                  <th style="padding: 12px 14px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); font-weight: 600; border-bottom: 1px solid var(--border);">Code</th>
+                  <th style="padding: 12px 14px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); font-weight: 600; border-bottom: 1px solid var(--border); text-align: right;">Followers</th>
+                  <th style="padding: 12px 14px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); font-weight: 600; border-bottom: 1px solid var(--border); text-align: right;">Subs</th>
+                  <th style="padding: 12px 14px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); font-weight: 600; border-bottom: 1px solid var(--border); text-align: right;">Lifetime earnings</th>
+                  <th style="padding: 12px 14px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); font-weight: 600; border-bottom: 1px solid var(--border);">Stripe</th>
+                </tr>
+              </thead>
+              <tbody id="creatorsBody">
+                <tr><td colspan="6" style="padding: 48px; text-align: center; color: var(--text-muted);"><div class="loader"></div> Loading…</td></tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
@@ -322,10 +355,87 @@
 
     // List
     $('refreshBtn').addEventListener('click', loadApplications);
+    $('refreshCreatorsBtn').addEventListener('click', loadCreators);
     $('statusFilter').addEventListener('change', (e) => {
       currentStatusFilter = e.target.value;
       loadApplications();
     });
+
+    // Tabs
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => {
+          b.classList.remove('active');
+          b.style.color = 'var(--text-muted)';
+          b.style.borderBottomColor = 'transparent';
+          b.style.fontWeight = '400';
+        });
+        btn.classList.add('active');
+        btn.style.color = 'var(--primary)';
+        btn.style.borderBottomColor = 'var(--primary)';
+        btn.style.fontWeight = '600';
+
+        document.querySelectorAll('.tab-panel').forEach(p => p.hidden = true);
+        $('tab' + btn.dataset.tab.charAt(0).toUpperCase() + btn.dataset.tab.slice(1)).hidden = false;
+        if (btn.dataset.tab === 'creators') loadCreators();
+      });
+    });
+
+    async function loadCreators() {
+      const body = $('creatorsBody');
+      body.innerHTML = `<tr><td colspan="6" style="padding: 48px; text-align: center; color: var(--text-muted);"><div class="loader"></div> Loading…</td></tr>`;
+      try {
+        const creatorsSnap = await getDocs(query(collection(db, 'creators'), where('is_active', '==', true)));
+        const creators = creatorsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+        creators.sort((a, b) => (b.follower_count || 0) - (a.follower_count || 0));
+
+        // Pull lifetime earnings per creator (sum of creator_cents on creator_earnings).
+        // We read once across all creators; admin rule allows it.
+        let earningsByCreator = new Map();
+        try {
+          const earningsSnap = await getDocs(collection(db, 'creator_earnings'));
+          for (const d of earningsSnap.docs) {
+            const e = d.data();
+            if (e.kind !== 'earning' && e.kind !== 'clawback') continue;
+            const path = e.creator_ref?.path || '';
+            earningsByCreator.set(path, (earningsByCreator.get(path) || 0) + (e.creator_cents || 0));
+          }
+        } catch (err) {
+          console.warn('Could not load creator_earnings aggregate:', err.message);
+        }
+
+        if (creators.length === 0) {
+          body.innerHTML = `<tr><td colspan="6" style="padding: 48px; text-align: center; color: var(--text-muted);">No active creators yet.</td></tr>`;
+          return;
+        }
+
+        body.innerHTML = creators.map(c => {
+          const followers = c.follower_count || 0;
+          const subs = c.subscriber_count || 0;
+          const lifetime = earningsByCreator.get(`creators/${c.id}`) || c.lifetime_payout_cents || 0;
+          const stripeStatus = c.stripe_connect_onboarded
+            ? '<span style="color: var(--success); font-weight: 600;">✓ Connected</span>'
+            : c.stripe_connect_account_id
+              ? '<span style="color: #F59E0B;">Pending</span>'
+              : '<span style="color: var(--text-muted);">Not connected</span>';
+          return `
+            <tr style="border-bottom: 1px solid var(--border);">
+              <td style="padding: 14px;">
+                <div style="font-weight: 600; color: var(--text);">${esc(c.name || '(no name)')}</div>
+                <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">${esc(c.niche || '')}</div>
+              </td>
+              <td style="padding: 14px;"><code style="background: #F3F4F6; padding: 3px 8px; border-radius: 4px; font-size: 13px; color: var(--primary-dark); font-weight: 600; letter-spacing: 1px;">${esc(c.code || '—')}</code></td>
+              <td style="padding: 14px; text-align: right; font-variant-numeric: tabular-nums;">${followers}</td>
+              <td style="padding: 14px; text-align: right; font-variant-numeric: tabular-nums;">${subs}</td>
+              <td style="padding: 14px; text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; color: var(--text);">$${(lifetime / 100).toFixed(2)}</td>
+              <td style="padding: 14px;">${stripeStatus}</td>
+            </tr>`;
+        }).join('');
+      } catch (e) {
+        console.error(e);
+        body.innerHTML = `<tr><td colspan="6" style="padding: 48px; text-align: center; color: var(--danger);">Couldn't load creators: ${esc(e.message)}</td></tr>`;
+      }
+    }
     $('backBtn').addEventListener('click', () => {
       // Clear the deep-link query param when going back to list
       history.replaceState({}, '', '/admin/');
@@ -430,9 +540,23 @@
       // Actions
       const actions = $('detailActions');
       if (status === 'new') {
+        const suggested = suggestCode(appData.name);
         actions.innerHTML = `
-          <button class="btn danger" id="rejectBtn">Reject</button>
-          <button class="btn" id="approveBtn">Approve & create creator</button>`;
+          <div style="display: flex; flex-direction: column; gap: 8px; flex: 1;">
+            <label style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); font-weight: 600;">Creator code</label>
+            <input type="text" id="codeInput" value="${suggested}" maxlength="20"
+                   style="padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-family: 'SF Mono', Consolas, monospace; font-size: 15px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase;"
+                   pattern="[A-Z0-9]{3,20}">
+            <div style="font-size: 12px; color: var(--text-muted);">3–20 uppercase letters or numbers. Must be unique.</div>
+          </div>
+          <div style="display: flex; gap: 10px; align-items: flex-end;">
+            <button class="btn danger" id="rejectBtn">Reject</button>
+            <button class="btn" id="approveBtn">Approve & create creator</button>
+          </div>`;
+        const codeInput = $('codeInput');
+        codeInput.addEventListener('input', (e) => {
+          e.target.value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+        });
         $('approveBtn').addEventListener('click', () => handleApprove(appData));
         $('rejectBtn').addEventListener('click', () => openRejectModal(appData));
       } else {
@@ -442,14 +566,27 @@
       show('viewDetail');
     }
 
+    function suggestCode(name) {
+      const clean = String(name || 'CREATOR').replace(/[^A-Za-z]/g, '').toUpperCase();
+      const stem = (clean.slice(0, 5) || 'MOM').padEnd(3, 'X');
+      const suffix = String(Math.floor(Math.random() * 90) + 10);
+      return stem + suffix;
+    }
+
     async function handleApprove(appData) {
       const btn = $('approveBtn');
+      const codeInput = $('codeInput');
+      const customCode = codeInput?.value.trim().toUpperCase() || null;
+      if (customCode && !/^[A-Z0-9]{3,20}$/.test(customCode)) {
+        toast('Code must be 3-20 uppercase letters or numbers.', true);
+        return;
+      }
       btn.disabled = true;
       btn.innerHTML = '<span class="loader"></span> Approving…';
       try {
         const call = httpsCallable(functions, 'approveCreatorApplication');
-        const { data } = await call({ applicationId: appData.id });
-        toast(`Approved — creator code ${data.code} assigned.`);
+        const { data } = await call({ applicationId: appData.id, customCode });
+        toast(`Approved — creator code ${data.code} assigned. Welcome email sent.`);
         // Reload and return to list
         await loadApplications();
         history.replaceState({}, '', '/admin/');
