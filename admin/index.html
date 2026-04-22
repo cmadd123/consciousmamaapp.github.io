@@ -58,6 +58,24 @@
     .metric-value {
       font-size: 22px; font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums;
     }
+    .metric-action {
+      background: linear-gradient(135deg, color-mix(in srgb, #F59E0B 12%, white), white);
+      border-color: color-mix(in srgb, #F59E0B 32%, var(--border));
+    }
+    .metric-action .metric-value { color: #92400E; }
+
+    .action-callout {
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      background: linear-gradient(135deg, #FEF3C7, #FDE68A);
+      border: 1px solid #F59E0B;
+      border-radius: 12px;
+      padding: 14px 18px;
+      margin-bottom: 16px;
+    }
+    .action-callout-text { color: #92400E; font-size: 14px; }
+    .action-callout-text strong { font-size: 18px; font-weight: 700; margin-right: 6px; }
+    .action-callout .btn { background: #92400E; flex-shrink: 0; }
+    .action-callout .btn:hover { background: #78350F; }
     input[type="search"]:focus {
       outline: 2px solid var(--primary); outline-offset: -1px; border-color: var(--primary);
     }
@@ -220,8 +238,19 @@
 
       <!-- Tab bar -->
       <div class="view" id="viewList">
+        <!-- Pending-action callout (only shows when there are open applications) -->
+        <div class="action-callout" id="pendingCallout" hidden>
+          <div class="action-callout-text">
+            <strong id="pendingCalloutCount">—</strong>
+            <span id="pendingCalloutLabel">applications waiting on you</span>
+          </div>
+          <button class="btn" id="pendingCalloutBtn">Review now →</button>
+        </div>
+
         <!-- Aggregate metrics banner -->
         <div class="metrics-banner" id="metricsBanner" hidden>
+          <div class="metric metric-action"><div class="metric-label">Pending apps</div><div class="metric-value" id="mPending">—</div></div>
+          <div class="metric"><div class="metric-label">New this week</div><div class="metric-value" id="mNewWeek">—</div></div>
           <div class="metric"><div class="metric-label">Active creators</div><div class="metric-value" id="mActive">—</div></div>
           <div class="metric"><div class="metric-label">Total followers</div><div class="metric-value" id="mFollowers">—</div></div>
           <div class="metric"><div class="metric-label">Subscribers</div><div class="metric-value" id="mSubs">—</div></div>
@@ -469,21 +498,30 @@
 
     async function loadAggregateMetrics() {
       try {
-        const creatorsSnap = await getDocs(query(collection(db, 'creators'), where('is_active', '==', true)));
+        const now = new Date();
+        const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+
+        const [creatorsSnap, pendingSnap] = await Promise.all([
+          getDocs(query(collection(db, 'creators'), where('is_active', '==', true))),
+          getDocs(query(collection(db, 'creator_applications'), where('status', '==', 'new'))),
+        ]);
         const creators = creatorsSnap.docs.map(d => d.data());
         const totalFollowers = creators.reduce((s, c) => s + (c.follower_count || 0), 0);
         const totalSubs = creators.reduce((s, c) => s + (c.subscriber_count || 0), 0);
-        const grossMrr = totalSubs * 699; // cents, $6.99/mo assumption
+        const grossMrr = totalSubs * 699;
+        const newThisWeek = creators.filter(c => {
+          const t = c.created_at?.toDate?.();
+          return t && t >= weekAgo;
+        }).length;
+        const pendingCount = pendingSnap.size;
 
-        // Paid-this-month: sum of creator_cents on creator_earnings where payout_status=paid and paid_at in current calendar month.
         let paidThisMonth = 0;
         try {
           const earningsSnap = await getDocs(query(
             collection(db, 'creator_earnings'),
             where('payout_status', '==', 'paid'),
           ));
-          const now = new Date();
-          const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
           for (const d of earningsSnap.docs) {
             const e = d.data();
             const paidAt = e.paid_at?.toDate?.();
@@ -493,12 +531,25 @@
           }
         } catch (err) { console.warn('Paid-this-month calc failed:', err.message); }
 
+        $('mPending').textContent = pendingCount;
+        $('mNewWeek').textContent = newThisWeek;
         $('mActive').textContent = creators.length;
         $('mFollowers').textContent = totalFollowers;
         $('mSubs').textContent = totalSubs;
         $('mMrr').textContent = `$${(grossMrr / 100).toFixed(2)}`;
         $('mPaid').textContent = `$${(paidThisMonth / 100).toFixed(2)}`;
         $('metricsBanner').hidden = false;
+
+        // Action callout: only when there's something waiting
+        if (pendingCount > 0) {
+          $('pendingCalloutCount').textContent = pendingCount;
+          $('pendingCalloutLabel').textContent = pendingCount === 1
+            ? 'application waiting on you'
+            : 'applications waiting on you';
+          $('pendingCallout').hidden = false;
+        } else {
+          $('pendingCallout').hidden = true;
+        }
       } catch (e) {
         console.warn('Aggregate metrics load failed:', e.message);
       }
@@ -507,6 +558,15 @@
     // List
     $('refreshBtn').addEventListener('click', loadApplications);
     $('refreshCreatorsBtn').addEventListener('click', loadCreators);
+    $('pendingCalloutBtn').addEventListener('click', () => {
+      // Jump to Applications tab + Pending filter
+      const appsTab = document.querySelector('.tab-btn[data-tab="applications"]');
+      if (appsTab) appsTab.click();
+      $('statusFilter').value = 'new';
+      currentStatusFilter = 'new';
+      loadApplications();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
     $('creatorSearch').addEventListener('input', renderCreatorsTable);
     $('statusFilter').addEventListener('change', (e) => {
       currentStatusFilter = e.target.value;
