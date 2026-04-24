@@ -1592,9 +1592,8 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
     // Capture primary color before async gap to avoid InheritedWidget issues
     final primaryColor = FlutterFlowTheme.of(context).primary;
 
-    // Selected preferred weekday for this saved day (null = no preference).
-    // Default to the current day's weekday as a convenience.
-    int? selectedWeekday;
+    // Multi-select preferred weekdays. Empty = no preference.
+    final Set<int> selectedWeekdays = {};
 
     final confirmed = await showDialog<bool>(
       context: context,
@@ -1638,7 +1637,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                   ),
                   SizedBox(height: 16.0),
                   Text(
-                    'Preferred weekday (optional)',
+                    'Preferred weekdays (optional, tap any)',
                     style: dialogTheme.bodySmall.override(
                       fontFamily: 'Andika New Basic',
                       letterSpacing: 0.0,
@@ -1647,7 +1646,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                   ),
                   SizedBox(height: 4.0),
                   Text(
-                    'Autofill will land this saved day on matching weekdays.',
+                    'Autofill will land this saved day on any matching weekday.',
                     style: dialogTheme.bodySmall.override(
                       fontFamily: 'Andika New Basic',
                       letterSpacing: 0.0,
@@ -1661,15 +1660,19 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                     runSpacing: 6.0,
                     children: [
                       _weekdayChip(ctx, dialogTheme, null, 'None',
-                          selected: selectedWeekday == null,
-                          onTap: () => setDialogState(() => selectedWeekday = null)),
+                          selected: selectedWeekdays.isEmpty,
+                          onTap: () => setDialogState(() => selectedWeekdays.clear())),
                       ...List.generate(7, (i) {
                         final weekday = i + 1; // 1..7 Mon..Sun
                         const labels = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
                         return _weekdayChip(
                           ctx, dialogTheme, weekday, labels[i],
-                          selected: selectedWeekday == weekday,
-                          onTap: () => setDialogState(() => selectedWeekday = weekday),
+                          selected: selectedWeekdays.contains(weekday),
+                          onTap: () => setDialogState(() {
+                            if (!selectedWeekdays.remove(weekday)) {
+                              selectedWeekdays.add(weekday);
+                            }
+                          }),
                         );
                       }),
                     ],
@@ -1706,7 +1709,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
     if (confirmed != true || !mounted) return;
 
     final prefix = nameController.text.trim();
-    final preferredWeekday = selectedWeekday;
+    final preferredWeekdays = selectedWeekdays.toList()..sort();
 
     // Show loading
     ScaffoldMessenger.of(context).showSnackBar(
@@ -1769,7 +1772,9 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
           comboData['is_leftover_snack'] = plan.isLeftoverSnack;
           comboData['day_template_group'] = groupId;
           comboData['day_template_name'] = prefix.isNotEmpty ? prefix : dayName;
-          if (preferredWeekday != null) comboData['preferred_weekday'] = preferredWeekday;
+          if (preferredWeekdays.isNotEmpty) {
+            comboData['preferred_weekdays'] = preferredWeekdays;
+          }
           await MealComboRecord.collection.add(comboData);
           savedCount++;
         }
@@ -4208,26 +4213,27 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
       return;
     }
 
-    // Split groups into labeled (by weekday 1..7) and unlabeled pools.
+    // Split groups into labeled vs unlabeled pools. A saved day labeled
+    // for multiple weekdays registers under EACH weekday's pool.
     final Map<int, List<String>> labeledByWeekday = {};
     final List<String> unlabeledKeys = [];
     grouped.forEach((key, templates) {
-      final w = templates.first.preferredWeekday;
-      if (w != null && w >= 1 && w <= 7) {
-        labeledByWeekday.putIfAbsent(w, () => []).add(key);
-      } else {
+      final weekdays = templates.first.preferredWeekdays;
+      if (weekdays.isEmpty) {
         unlabeledKeys.add(key);
+      } else {
+        for (final w in weekdays) {
+          labeledByWeekday.putIfAbsent(w, () => []).add(key);
+        }
       }
     });
 
-    // Pass 1: assign labeled saved days to matching dates. Track which
-    // dates got assigned so pass 2 skips them.
+    // Pass 1: assign labeled saved days to matching dates.
     final assignments = <int, String>{}; // index in selectedDates → group key
     for (var i = 0; i < selectedDates.length; i++) {
       final weekday = selectedDates[i].weekday; // 1..7 Mon..Sun
       final matches = labeledByWeekday[weekday];
       if (matches != null && matches.isNotEmpty) {
-        // Pick randomly if multiple saved days share the same label.
         final pick = (matches.toList()..shuffle()).first;
         assignments[i] = pick;
       }
@@ -4266,7 +4272,9 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
         templatesForGroup.first.dayTemplateName,
       );
       applied += 1;
-      if (templatesForGroup.first.preferredWeekday == day.weekday) labeledApplied += 1;
+      if (templatesForGroup.first.preferredWeekdays.contains(day.weekday)) {
+        labeledApplied += 1;
+      }
     }
 
     _model.mealCache.clear();

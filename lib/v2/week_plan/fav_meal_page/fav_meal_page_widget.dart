@@ -667,21 +667,31 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
     safeSetState(() {});
   }
 
-  /// Convert ISO weekday (1=Mon..7=Sun) to display label. Null returns null.
-  String? _weekdayLabel(int? weekday) {
-    if (weekday == null) return null;
-    const names = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-    if (weekday < 1 || weekday > 7) return null;
-    return names[weekday - 1];
+  /// Smart label for a set of ISO weekdays (1=Mon..7=Sun). Picks a
+  /// concise phrase when the selection matches a common pattern,
+  /// otherwise joins short day names.
+  String? _weekdaysLabel(List<int> weekdays) {
+    if (weekdays.isEmpty) return null;
+    final sorted = (weekdays.toList()..sort());
+    if (sorted.length == 7) return 'Every day';
+    if (sorted.length == 5 && sorted.every((w) => w >= 1 && w <= 5)) return 'Weekdays';
+    if (sorted.length == 2 && sorted[0] == 6 && sorted[1] == 7) return 'Weekends';
+    if (sorted.length == 1) {
+      const names = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+      return names[sorted.first - 1];
+    }
+    const shortNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    return sorted.map((w) => shortNames[w - 1]).join(', ');
   }
 
   /// Edit a saved day group: rename all templates in the group + set the
-  /// preferred weekday. Updates every template sharing the day_template_group.
+  /// preferred weekdays. Updates every template sharing the day_template_group.
   Future<void> _editSavedDayGroup(List<MealComboRecord> templates) async {
     if (templates.isEmpty) return;
 
     final nameController = TextEditingController(text: templates.first.dayTemplateName);
-    int? selectedWeekday = templates.first.preferredWeekday;
+    final Set<int> selectedWeekdays =
+        templates.first.preferredWeekdays.toSet();
 
     final confirmed = await showDialog<bool>(
       context: context,
@@ -709,13 +719,13 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                   ),
                   const SizedBox(height: 14),
                   const Text(
-                    'Preferred weekday (optional)',
+                    'Preferred weekdays (optional, tap any)',
                     style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Autofill prefers this saved day for matching weekdays, '
-                    'regardless of its name.',
+                    'Autofill lands this saved day on any matching weekday '
+                    '(regardless of name).',
                     style: TextStyle(
                       fontSize: 11,
                       color: theme.secondaryText,
@@ -726,13 +736,19 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                     spacing: 6,
                     runSpacing: 6,
                     children: [
-                      _editWeekdayChip(theme, 'None', null, selectedWeekday,
-                          () => setDialogState(() => selectedWeekday = null)),
+                      _editWeekdayChip(theme, 'None',
+                          selected: selectedWeekdays.isEmpty,
+                          onTap: () => setDialogState(() => selectedWeekdays.clear())),
                       ...List.generate(7, (i) {
                         final weekday = i + 1;
                         const labels = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
-                        return _editWeekdayChip(theme, labels[i], weekday, selectedWeekday,
-                            () => setDialogState(() => selectedWeekday = weekday));
+                        return _editWeekdayChip(theme, labels[i],
+                            selected: selectedWeekdays.contains(weekday),
+                            onTap: () => setDialogState(() {
+                                  if (!selectedWeekdays.remove(weekday)) {
+                                    selectedWeekdays.add(weekday);
+                                  }
+                                }));
                       }),
                     ],
                   ),
@@ -760,15 +776,20 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
     final newName = nameController.text.trim();
     if (newName.isEmpty) return;
 
+    final sortedWeekdays = selectedWeekdays.toList()..sort();
+
     try {
-      // Update every template in the group. Preferred weekday is group-level,
-      // not per-meal — so it gets applied uniformly across all meals in the day.
+      // Update every template in the group. Preferred weekdays are group-
+      // level, not per-meal — applied uniformly across all meals.
       for (final t in templates) {
         final updates = <String, dynamic>{'day_template_name': newName};
-        if (selectedWeekday == null) {
+        if (sortedWeekdays.isEmpty) {
+          updates['preferred_weekdays'] = FieldValue.delete();
+          // Also scrub the legacy single-int field if present on old docs.
           updates['preferred_weekday'] = FieldValue.delete();
         } else {
-          updates['preferred_weekday'] = selectedWeekday;
+          updates['preferred_weekdays'] = sortedWeekdays;
+          updates['preferred_weekday'] = FieldValue.delete();
         }
         await t.reference.update(updates);
       }
@@ -799,9 +820,12 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
     }
   }
 
-  Widget _editWeekdayChip(FlutterFlowTheme theme, String label, int? value,
-      int? selected, VoidCallback onTap) {
-    final isSelected = selected == value;
+  Widget _editWeekdayChip(
+    FlutterFlowTheme theme,
+    String label, {
+    required bool selected,
+    required VoidCallback onTap,
+  }) {
     final primary = theme.primary;
     return InkWell(
       onTap: onTap,
@@ -809,9 +833,9 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
         decoration: BoxDecoration(
-          color: isSelected ? primary : primary.withValues(alpha: 0.08),
+          color: selected ? primary : primary.withValues(alpha: 0.08),
           borderRadius: BorderRadius.circular(8.0),
-          border: Border.all(color: isSelected ? primary : primary.withValues(alpha: 0.3)),
+          border: Border.all(color: selected ? primary : primary.withValues(alpha: 0.3)),
         ),
         child: Text(
           label,
@@ -819,7 +843,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
             fontFamily: 'Andika New Basic',
             fontSize: 12.0,
             fontWeight: FontWeight.w600,
-            color: isSelected ? Colors.white : primary,
+            color: selected ? Colors.white : primary,
           ),
         ),
       ),
@@ -3032,8 +3056,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
               ? templates.first.dayTemplateName
               : 'Meal Template';
           final createdDate = templates.first.createdTime;
-          final preferredWeekday = templates.first.preferredWeekday;
-          final weekdayLabel = _weekdayLabel(preferredWeekday);
+          final weekdayLabel = _weekdaysLabel(templates.first.preferredWeekdays);
 
           return Padding(
             padding: const EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 16.0),

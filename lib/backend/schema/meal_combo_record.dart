@@ -94,12 +94,14 @@ class MealComboRecord extends FirestoreRecord {
   String get dayTemplateName => _dayTemplateName ?? '';
   bool hasDayTemplateName() => _dayTemplateName != null && _dayTemplateName!.isNotEmpty;
 
-  // "preferred_weekday" field - 1-7 per ISO 8601 (Mon=1, Sun=7). When set,
-  // autofill prefers this saved day for that weekday regardless of its
-  // display name. Null means "no preference, fill any day."
-  int? _preferredWeekday;
-  int? get preferredWeekday => _preferredWeekday;
-  bool hasPreferredWeekday() => _preferredWeekday != null;
+  // "preferred_weekdays" field - list of ISO weekdays (1=Mon..7=Sun).
+  // Empty/missing = "no preference, fill any day." Multiple entries mean
+  // this saved day is eligible for any of those weekdays in autofill.
+  // Also reads legacy single-int `preferred_weekday` field so early
+  // single-select docs still work.
+  List<int> _preferredWeekdays = const [];
+  List<int> get preferredWeekdays => _preferredWeekdays;
+  bool hasPreferredWeekdays() => _preferredWeekdays.isNotEmpty;
 
   void _initializeFields() {
     _name = snapshotData['name'] as String?;
@@ -121,7 +123,20 @@ class MealComboRecord extends FirestoreRecord {
     _createdTime = snapshotData['created_time'] as DateTime?;
     _dayTemplateGroup = snapshotData['day_template_group'] as String?;
     _dayTemplateName = snapshotData['day_template_name'] as String?;
-    _preferredWeekday = castToType<int>(snapshotData['preferred_weekday']);
+    // Multi-select preferred weekdays; fall back to legacy single-int field.
+    final rawList = snapshotData['preferred_weekdays'];
+    if (rawList is List) {
+      _preferredWeekdays = rawList
+          .whereType<num>()
+          .map((n) => n.toInt())
+          .where((i) => i >= 1 && i <= 7)
+          .toList();
+    } else {
+      final legacy = castToType<int>(snapshotData['preferred_weekday']);
+      _preferredWeekdays = (legacy != null && legacy >= 1 && legacy <= 7)
+          ? [legacy]
+          : const [];
+    }
   }
 
   static CollectionReference get collection =>
