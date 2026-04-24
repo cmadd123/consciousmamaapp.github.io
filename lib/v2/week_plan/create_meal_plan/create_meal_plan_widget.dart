@@ -2112,8 +2112,9 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                   ? 'Templates come ready-made — sides, desserts, '
                                     'and drinks already paired.'
                                   : selectedSource == 'saved_days'
-                                    ? 'Saved Days clone the whole day — every meal '
-                                      'slot filled exactly the way you saved it.'
+                                    ? 'Randomly shuffles a different Saved Day onto '
+                                      'each selected date — instant variety across '
+                                      'the whole week.'
                                     : 'Autofill handles the tough call — your '
                                       'entrees. You know what sides your family '
                                       'loves, so those are yours to add.',
@@ -2159,7 +2160,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                         ),
                         child: Text(
                           selectedSource == 'saved_days'
-                              ? 'Pick a Saved Day'
+                              ? 'Shuffle Saved Days'
                               : 'Fill Meal Plan',
                           style: TextStyle(
                             fontFamily: 'Andika New Basic',
@@ -4088,16 +4089,20 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
   }
 
   /// Show saved days picker for a specific date
-  /// Autofill multiple dates by cloning one saved-day template onto each.
-  /// The user picks ONE saved day; it gets applied to every selected date
-  /// (filtered by meal types if the user unchecked any).
+  /// Autofill selected dates by randomly assigning different saved days
+  /// to each. The point of saved days is variety — if we applied the same
+  /// one to every slot the feature would be identical to the manual
+  /// "apply saved day" picker.
+  ///
+  /// If the user has fewer saved days than selected dates, we shuffle the
+  /// pool and repeat (so dates still get distributed, no gaps).
   Future<void> _fillFromSavedDays({
     required List<DateTime> selectedDates,
     required List<MealTyp> mealTypes,
   }) async {
     if (selectedDates.isEmpty) return;
 
-    // Load the user's saved day templates and group by day_template_group.
+    // Load + group saved days by day_template_group.
     final allTemplates = await queryMealComboRecordOnce(
       queryBuilder: (q) => q.where('user_ref', isEqualTo: currentUserReference),
     );
@@ -4119,121 +4124,37 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
       return;
     }
 
-    // Show saved-day picker. Single pick → applied to every selected date.
-    final selectedGroup = await showModalBottomSheet<String>(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (sheetContext) {
-        return Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
-          ),
-          padding: EdgeInsets.fromLTRB(20.0, 16.0, 20.0, MediaQuery.of(sheetContext).padding.bottom + 20.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Container(
-                  width: 40.0,
-                  height: 4.0,
-                  decoration: BoxDecoration(
-                    color: Color(0xFFDDDDDD),
-                    borderRadius: BorderRadius.circular(2.0),
-                  ),
-                ),
-              ),
-              SizedBox(height: 16.0),
-              Text(
-                'Pick a Saved Day to clone onto ${selectedDates.length} ${selectedDates.length == 1 ? 'day' : 'days'}',
-                style: FlutterFlowTheme.of(sheetContext).titleSmall.override(
-                  fontFamily: 'Andika New Basic',
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 0.0,
-                ),
-              ),
-              SizedBox(height: 16.0),
-              ...grouped.entries.map((entry) {
-                final groupName = entry.value.first.dayTemplateName.isNotEmpty
-                    ? entry.value.first.dayTemplateName
-                    : 'Unnamed Group';
-                final mealCount = entry.value.length;
-                return InkWell(
-                  onTap: () => Navigator.pop(sheetContext, entry.key),
-                  child: Container(
-                    margin: EdgeInsets.only(bottom: 12.0),
-                    padding: EdgeInsets.all(16.0),
-                    decoration: BoxDecoration(
-                      color: Color(0xFFF5F5F5),
-                      borderRadius: BorderRadius.circular(12.0),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(Icons.event_repeat, color: FlutterFlowTheme.of(sheetContext).primary),
-                        SizedBox(width: 12.0),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                groupName,
-                                style: FlutterFlowTheme.of(sheetContext).bodyMedium.override(
-                                  fontFamily: 'Andika New Basic',
-                                  fontWeight: FontWeight.w600,
-                                  letterSpacing: 0.0,
-                                ),
-                              ),
-                              Text(
-                                '$mealCount meal${mealCount > 1 ? 's' : ''}',
-                                style: FlutterFlowTheme.of(sheetContext).bodySmall.override(
-                                  fontFamily: 'Andika New Basic',
-                                  color: Color(0xFF999999),
-                                  fontSize: 12.0,
-                                  letterSpacing: 0.0,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              }).toList(),
-            ],
-          ),
-        );
-      },
-    );
-
-    if (selectedGroup == null) return;
-
-    // Apply to each selected date. Filter by the mealTypes the user kept
-    // checked in the autofill sheet (so Snacks-only, say, would only clone
-    // the saved day's snack entry).
-    final templatesForGroup = grouped[selectedGroup]!;
-    final allowedTypeNames = mealTypes.map((t) => t.name).toSet();
-    final filteredTemplates = templatesForGroup.where((t) {
-      return t.mealTyp == null || allowedTypeNames.contains(t.mealTyp!.name);
-    }).toList();
-
-    if (filteredTemplates.isEmpty) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(
-            'That Saved Day has no meals for the types you selected.',
-          )),
-        );
-      }
-      return;
+    // Build an assignment list — one saved-day group key per selected date.
+    // Shuffle so order is random; if we have fewer groups than dates, cycle
+    // so every date still gets something.
+    final groupKeys = grouped.keys.toList()..shuffle();
+    final assignments = <String>[];
+    for (var i = 0; i < selectedDates.length; i++) {
+      assignments.add(groupKeys[i % groupKeys.length]);
     }
+    // One more shuffle so repeated groups aren't stacked at the end.
+    assignments.shuffle();
 
-    final groupName = templatesForGroup.first.dayTemplateName;
+    final allowedTypeNames = mealTypes.map((t) => t.name).toSet();
     int applied = 0;
-    for (final day in selectedDates) {
-      await _applySavedDayToDate(day, filteredTemplates, groupName);
+
+    for (var i = 0; i < selectedDates.length; i++) {
+      final day = selectedDates[i];
+      final groupKey = assignments[i];
+      final templatesForGroup = grouped[groupKey]!;
+
+      // Respect the mealTypes checkboxes.
+      final filteredTemplates = templatesForGroup.where((t) {
+        return t.mealTyp == null || allowedTypeNames.contains(t.mealTyp!.name);
+      }).toList();
+
+      if (filteredTemplates.isEmpty) continue;
+
+      await _applySavedDayToDate(
+        day,
+        filteredTemplates,
+        templatesForGroup.first.dayTemplateName,
+      );
       applied += 1;
     }
 
@@ -4242,7 +4163,10 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
     await _refreshMealPlans();
 
     if (mounted) {
-      _showSuccessDialog('days filled from "$groupName"', count: applied);
+      final variety = grouped.length >= selectedDates.length
+          ? '${selectedDates.length} different'
+          : '${grouped.length}';
+      _showSuccessDialog('days filled from $variety saved day${grouped.length == 1 ? '' : 's'}', count: applied);
     }
   }
 
