@@ -1532,7 +1532,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                           children: [
                                             {'label': 'Entree', 'emoji': '🍽️'},
                                             {'label': 'Side', 'emoji': '🥗'},
-                                            {'label': 'Desserts', 'emoji': '🍰'},
+                                            {'label': 'Dessert', 'emoji': '🍰'},
                                           ].map((recipeType) {
                                             final label = recipeType['label']!;
                                             final emoji = recipeType['emoji']!;
@@ -1836,8 +1836,8 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                                       e.mainOrSides == 'Side' ||
                                                       e.recipeType == RecipeType.Side)
                                                   .toList();
-                                            } else if (_model.categoryFilter == 'Desserts') {
-                                              // Recipe Type: Desserts
+                                            } else if (_model.categoryFilter == 'Dessert') {
+                                              // Recipe Type: Dessert
                                               filtered = activeRecipes
                                                   .where((e) =>
                                                       e.mainOrSides == 'Dessert' ||

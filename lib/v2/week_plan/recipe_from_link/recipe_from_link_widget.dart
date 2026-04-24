@@ -330,7 +330,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
       _model.selectedCategories.add('Snacks');
     }
     if (dessertKeywords.any((keyword) => combinedText.contains(keyword))) {
-      _model.selectedCategories.add('Desserts');
+      _model.selectedCategories.add('Dessert');
     }
 
     // Check for dietary restrictions
@@ -351,7 +351,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
     }
 
     // If no meal type categories detected, default to Dinner (most common)
-    final mealTypes = _model.selectedCategories.where((c) => ['Breakfast', 'Lunch', 'Dinner', 'Snacks', 'Desserts'].contains(c)).toList();
+    final mealTypes = _model.selectedCategories.where((c) => ['Breakfast', 'Lunch', 'Dinner', 'Snacks', 'Dessert'].contains(c)).toList();
     if (mealTypes.isEmpty) {
       _model.selectedCategories.add('Dinner');
     }
@@ -446,8 +446,8 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
           mainOrSidesValue = 'Side';
           debugPrint('🔵 Set mainOrSides to: Side');
         }
-        // Build mealTyp in canonical order: Breakfast, Lunch, Dinner, Snacks, then dietary
-        final canonicalOrder = ['Breakfast', 'Lunch', 'Dinner', 'Snacks', 'Gluten-Free', 'Dairy-Free', 'Nut-Free', 'Vegetarian', 'Vegan'];
+        // Build mealTyp in canonical order: Breakfast, Lunch, Dinner, Snacks, Dessert, then dietary
+        final canonicalOrder = ['Breakfast', 'Lunch', 'Dinner', 'Snacks', 'Dessert', 'Gluten-Free', 'Dairy-Free', 'Nut-Free', 'Vegetarian', 'Vegan'];
         final mealAndDietaryCategories = canonicalOrder
             .where((c) => _model.selectedCategories.contains(c))
             .toList();
@@ -461,18 +461,21 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
       }
       debugPrint('🔵 Final values - mealTyp: $mealTypValue, mainOrSides: $mainOrSidesValue');
 
-      // Convert selectedRecipeType string to RecipeType enum
-      RecipeType? recipeTypeEnum;
+      // Convert selectedRecipeType string to RecipeType enum. If the user
+      // skipped the chip entirely, default to Entree — matches the
+      // creation page behavior and keeps autofill happy (recipes without a
+      // type land in the "Main" bucket, not null).
+      RecipeType recipeTypeEnum;
       switch (_model.selectedRecipeType) {
-        case 'Entree':
-          recipeTypeEnum = RecipeType.Entree;
-          break;
         case 'Side':
           recipeTypeEnum = RecipeType.Side;
           break;
         case 'Dessert':
           recipeTypeEnum = RecipeType.Dessert;
           break;
+        case 'Entree':
+        default:
+          recipeTypeEnum = RecipeType.Entree;
       }
       debugPrint('🔵 Recipe type: ${_model.selectedRecipeType} -> $recipeTypeEnum');
 
