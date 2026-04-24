@@ -2497,40 +2497,23 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
               // Random selection - no weight on rating or time
               matchingRecipes.shuffle();
               recipeToUse = matchingRecipes.first;
-            } else {
-              // Try any entree recipe not yet used
-              final anyEntrees = recipes.where((r) {
-                final isEntree = r.recipeType == RecipeType.Entree ||
-                                 r.mainOrSides == 'Main' ||
-                                 (r.mainOrSides.isEmpty && r.recipeType != RecipeType.Side && r.recipeType != RecipeType.Dessert);
-                final notUsed = !usedRecipeIds.contains(r.reference.path);
-                return isEntree && notUsed;
-              }).toList();
-
-              if (anyEntrees.isNotEmpty) {
-                anyEntrees.shuffle();
-                recipeToUse = anyEntrees.first;
-              }
             }
+            // No recipe match for this meal type — leave recipeToUse null.
+            // Previously fell back to "any unused entree" which silently
+            // dropped a breakfast recipe into a dinner slot. Respect the
+            // user's tags: if nothing matches, try combos, then leave empty.
 
-            // If no unused recipe found, try combos
+            // If no unused recipe found, try combos that match this meal type.
             if (recipeToUse == null) {
               final matchingCombos = combos.where((c) =>
                   c.mealTyp?.name == mealType.name &&
                   !usedComboIds.contains(c.reference.path)).toList();
               if (matchingCombos.isNotEmpty) {
-                // Random selection - no weight on rating
                 matchingCombos.shuffle();
                 comboToUse = matchingCombos.first;
-              } else {
-                // Try any unused combo
-                final anyCombos = combos.where((c) =>
-                    !usedComboIds.contains(c.reference.path)).toList();
-                if (anyCombos.isNotEmpty) {
-                  anyCombos.shuffle();
-                  comboToUse = anyCombos.first;
-                }
               }
+              // No meal-type-matching combo either — leave slot empty
+              // instead of grabbing a combo tagged for a different meal.
             }
           }
 
@@ -2763,21 +2746,10 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
               // Random selection - no weight on rating
               matchingRecipes.shuffle();
               recipeToUse = matchingRecipes.first;
-            } else {
-              // Try any entree recipe not yet used
-              final anyEntrees = curatedRecipes.where((r) {
-                final isEntree = r.recipeType == RecipeType.Entree ||
-                                 r.mainOrSides == 'Main' ||
-                                 (r.mainOrSides.isEmpty && r.recipeType != RecipeType.Side && r.recipeType != RecipeType.Dessert);
-                final notUsed = !usedRecipeIds.contains(r.reference.path);
-                return isEntree && notUsed;
-              }).toList();
-
-              if (anyEntrees.isNotEmpty) {
-                anyEntrees.shuffle();
-                recipeToUse = anyEntrees.first;
-              }
             }
+            // If nothing matches the meal type, leave the slot unfilled.
+            // Better to show an empty slot than to silently slot a breakfast
+            // recipe into dinner because the user ran out of dinner picks.
           }
 
           // Create the meal plan entry
