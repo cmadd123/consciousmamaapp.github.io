@@ -2208,9 +2208,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                           disabledBackgroundColor: Color(0xFFCCCCCC),
                         ),
                         child: Text(
-                          selectedSource == 'saved_days'
-                              ? 'Shuffle Saved Days'
-                              : 'Fill Meal Plan',
+                          'Fill Meal Plan',
                           style: TextStyle(
                             fontFamily: 'Andika New Basic',
                             fontSize: 16.0,
