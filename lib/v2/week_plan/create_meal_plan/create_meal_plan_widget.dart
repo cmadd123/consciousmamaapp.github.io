@@ -2136,48 +2136,44 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                     ),
                     SizedBox(height: 16.0),
 
-                    // Source-aware note. Recipe-based sources land entrees
-                    // only (user picks sides). Combo/saved-day sources carry
-                    // their own sides.
-                    Container(
-                      padding: EdgeInsets.all(12.0),
-                      decoration: BoxDecoration(
-                        color: FlutterFlowTheme.of(context).primary.withValues(alpha: 0.08),
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Icon(
-                            Icons.auto_awesome,
-                            size: 16.0,
-                            color: FlutterFlowTheme.of(context).primary,
-                          ),
-                          SizedBox(width: 8.0),
-                          Expanded(
-                            child: Text(
-                              selectedSource == 'templates'
-                                  ? 'Templates come ready-made — sides, desserts, '
-                                    'and drinks already paired.'
-                                  : selectedSource == 'saved_days'
-                                    ? 'Randomly shuffles a different Saved Day onto '
-                                      'each selected date — instant variety across '
-                                      'the whole week.'
-                                    : 'Autofill handles the tough call — your '
-                                      'entrees. You know what sides your family '
-                                      'loves, so those are yours to add.',
-                              style: TextStyle(
-                                fontFamily: 'Andika New Basic',
-                                fontSize: 12.0,
-                                color: FlutterFlowTheme.of(context).primaryText,
-                                height: 1.35,
+                    // Note only shows for My Recipes — that's the only
+                    // source where autofill leaves sides to the user.
+                    // Templates and Saved Days carry their own sides, so
+                    // a tip about "you add sides" would be misleading.
+                    if (selectedSource == 'my_recipes') ...[
+                      Container(
+                        padding: EdgeInsets.all(12.0),
+                        decoration: BoxDecoration(
+                          color: FlutterFlowTheme.of(context).primary.withValues(alpha: 0.08),
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Icon(
+                              Icons.auto_awesome,
+                              size: 16.0,
+                              color: FlutterFlowTheme.of(context).primary,
+                            ),
+                            SizedBox(width: 8.0),
+                            Expanded(
+                              child: Text(
+                                'Autofill handles the tough call — your '
+                                'entrees. You know what sides your family '
+                                'loves, so those are yours to add.',
+                                style: TextStyle(
+                                  fontFamily: 'Andika New Basic',
+                                  fontSize: 12.0,
+                                  color: FlutterFlowTheme.of(context).primaryText,
+                                  height: 1.35,
+                                ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 16.0),
+                      SizedBox(height: 16.0),
+                    ],
 
                     // Generate button
                     SizedBox(
