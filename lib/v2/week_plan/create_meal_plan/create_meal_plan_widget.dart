@@ -1603,7 +1603,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
           builder: (ctx, setDialogState) => AlertDialog(
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
             title: Text(
-              'Save Day as Templates',
+              'Save as Saved Day',
               style: dialogTheme.titleMedium.override(
                 fontFamily: 'Andika New Basic',
                 letterSpacing: 0.0,
@@ -1615,7 +1615,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'This will save each meal as a reusable template. Give them a name prefix:',
+                    'Save this whole day as a reusable Saved Day. Give it a name:',
                     style: dialogTheme.bodySmall.override(
                       fontFamily: 'Andika New Basic',
                       letterSpacing: 0.0,
@@ -1637,7 +1637,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                   ),
                   SizedBox(height: 16.0),
                   Text(
-                    'Preferred weekdays (optional, tap any)',
+                    'Preferred days (optional, tap any)',
                     style: dialogTheme.bodySmall.override(
                       fontFamily: 'Andika New Basic',
                       letterSpacing: 0.0,
@@ -1646,7 +1646,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                   ),
                   SizedBox(height: 4.0),
                   Text(
-                    'Autofill will land this saved day on any matching weekday.',
+                    'Autofill will land this Saved Day on any day you pick.',
                     style: dialogTheme.bodySmall.override(
                       fontFamily: 'Andika New Basic',
                       letterSpacing: 0.0,
@@ -1698,7 +1698,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
               ElevatedButton(
                 onPressed: () => Navigator.pop(dialogContext, true),
                 style: ElevatedButton.styleFrom(backgroundColor: dialogTheme.primary),
-                child: Text('Save Saved Days'),
+                child: Text('Save'),
               ),
             ],
           ),
@@ -1715,7 +1715,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Row(children: [
         SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)),
-        SizedBox(width: 12), Text('Saving saved days...'),
+        SizedBox(width: 12), Text('Saving...'),
       ]), duration: Duration(seconds: 10)),
     );
 
@@ -4281,7 +4281,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
 
     if (mounted) {
       final labeledNote = labeledApplied > 0
-          ? ' ($labeledApplied matched by weekday)'
+          ? ' ($labeledApplied matched by day)'
           : '';
       _showSuccessDialog('days filled from your Saved Days$labeledNote', count: applied);
     }

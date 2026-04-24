@@ -719,12 +719,12 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                   ),
                   const SizedBox(height: 14),
                   const Text(
-                    'Preferred weekdays (optional, tap any)',
+                    'Preferred days (optional, tap any)',
                     style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Autofill lands this saved day on any matching weekday '
+                    'Autofill lands this Saved Day on any day you pick below '
                     '(regardless of name).',
                     style: TextStyle(
                       fontSize: 11,
@@ -2523,73 +2523,119 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
     );
   }
 
-  /// Show dialog to name a day template, then let user build each meal via MealComposer
+  /// Show dialog to name a Saved Day + pick preferred days, then let
+  /// user build each meal via MealComposer.
   void _showCreateDayTemplateSheet(BuildContext context) async {
     final nameController = TextEditingController();
-    final theme = FlutterFlowTheme.of(context);
+    final Set<int> selectedDays = {};
 
-    // Step 1: Ask for day name
-    final dayName = await showDialog<String>(
+    // Step 1: Ask for name + preferred days.
+    final result = await showDialog<_CreateDayResult>(
       context: context,
       builder: (ctx) {
         final dialogTheme = FlutterFlowTheme.of(ctx);
-        return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
-          title: Text(
-            'Create Day Template',
-            style: dialogTheme.titleMedium.override(
-              fontFamily: 'Andika New Basic',
-              letterSpacing: 0.0,
-            ),
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Give your day a name, then build each meal:',
-                style: dialogTheme.bodySmall.override(
-                  fontFamily: 'Andika New Basic',
-                  color: dialogTheme.secondaryText,
-                  letterSpacing: 0.0,
-                ),
+        return StatefulBuilder(
+          builder: (ctx, setDialogState) => AlertDialog(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
+            title: Text(
+              'Create Saved Day',
+              style: dialogTheme.titleMedium.override(
+                fontFamily: 'Andika New Basic',
+                letterSpacing: 0.0,
               ),
-              SizedBox(height: 12.0),
-              TextField(
-                controller: nameController,
-                autofocus: true,
-                decoration: InputDecoration(
-                  hintText: 'e.g., Taco Tuesday, Lazy Sunday',
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.0)),
-                  contentPadding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
-                ),
-                style: dialogTheme.bodyMedium.override(
-                  fontFamily: 'Andika New Basic',
-                  letterSpacing: 0.0,
-                ),
+            ),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Give your saved day a name, then build each meal:',
+                    style: dialogTheme.bodySmall.override(
+                      fontFamily: 'Andika New Basic',
+                      color: dialogTheme.secondaryText,
+                      letterSpacing: 0.0,
+                    ),
+                  ),
+                  SizedBox(height: 12.0),
+                  TextField(
+                    controller: nameController,
+                    autofocus: true,
+                    decoration: InputDecoration(
+                      hintText: 'e.g., Taco Tuesday, Lazy Sunday',
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.0)),
+                      contentPadding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
+                    ),
+                    style: dialogTheme.bodyMedium.override(
+                      fontFamily: 'Andika New Basic',
+                      letterSpacing: 0.0,
+                    ),
+                  ),
+                  SizedBox(height: 16.0),
+                  Text(
+                    'Preferred days (optional, tap any)',
+                    style: dialogTheme.bodySmall.override(
+                      fontFamily: 'Andika New Basic',
+                      letterSpacing: 0.0,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  SizedBox(height: 4.0),
+                  Text(
+                    "Autofill lands this saved day on any day you pick below.",
+                    style: dialogTheme.bodySmall.override(
+                      fontFamily: 'Andika New Basic',
+                      letterSpacing: 0.0,
+                      color: dialogTheme.secondaryText,
+                      fontSize: 11.0,
+                    ),
+                  ),
+                  SizedBox(height: 8.0),
+                  Wrap(
+                    spacing: 6,
+                    runSpacing: 6,
+                    children: [
+                      _editWeekdayChip(dialogTheme, 'None',
+                          selected: selectedDays.isEmpty,
+                          onTap: () => setDialogState(() => selectedDays.clear())),
+                      ...List.generate(7, (i) {
+                        final w = i + 1;
+                        const labels = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+                        return _editWeekdayChip(dialogTheme, labels[i],
+                            selected: selectedDays.contains(w),
+                            onTap: () => setDialogState(() {
+                                  if (!selectedDays.remove(w)) selectedDays.add(w);
+                                }));
+                      }),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx, null),
+                child: Text('Cancel'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  final name = nameController.text.trim();
+                  if (name.isEmpty) return;
+                  Navigator.pop(ctx, _CreateDayResult(name, selectedDays.toList()..sort()));
+                },
+                style: ElevatedButton.styleFrom(backgroundColor: dialogTheme.primary),
+                child: Text('Next'),
               ),
             ],
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(ctx, null),
-              child: Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                final name = nameController.text.trim();
-                if (name.isEmpty) return;
-                Navigator.pop(ctx, name);
-              },
-              style: ElevatedButton.styleFrom(backgroundColor: dialogTheme.primary),
-              child: Text('Next'),
-            ),
-          ],
         );
       },
     );
 
-    if (dayName == null || dayName.isEmpty || !mounted) return;
+    if (result == null || result.name.isEmpty || !mounted) return;
+
+    final dayName = result.name;
+    final preferredDays = result.preferredDays;
 
     // Generate group ID for this day template
     final groupId = '${DateTime.now().millisecondsSinceEpoch}';
@@ -2603,9 +2649,23 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
       builder: (sheetContext) => _DayTemplateBuilderSheet(
         dayName: dayName,
         groupId: groupId,
-        onDone: () {
+        onDone: () async {
+          // Stamp every template in this group with the preferred days the
+          // user picked in step 1. Done here so it fires regardless of how
+          // many meals they built / in what order.
+          if (preferredDays.isNotEmpty) {
+            try {
+              final snap = await MealComboRecord.collection
+                  .where('day_template_group', isEqualTo: groupId)
+                  .get();
+              for (final doc in snap.docs) {
+                await doc.reference.update({'preferred_weekdays': preferredDays});
+              }
+            } catch (e) {
+              debugPrint('Error writing preferred_weekdays on create: $e');
+            }
+          }
           Navigator.pop(sheetContext);
-          // Reload templates
           _model.loadedMealTemplates = false;
           _loadMealTemplates();
         },
@@ -4410,4 +4470,11 @@ class _TemplateDetailsSheet extends StatelessWidget {
 
     return recipes;
   }
+}
+
+/// Tiny return holder for the Create Saved Day dialog.
+class _CreateDayResult {
+  final String name;
+  final List<int> preferredDays;
+  const _CreateDayResult(this.name, this.preferredDays);
 }
