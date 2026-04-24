@@ -667,6 +667,165 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
     safeSetState(() {});
   }
 
+  /// Convert ISO weekday (1=Mon..7=Sun) to display label. Null returns null.
+  String? _weekdayLabel(int? weekday) {
+    if (weekday == null) return null;
+    const names = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    if (weekday < 1 || weekday > 7) return null;
+    return names[weekday - 1];
+  }
+
+  /// Edit a saved day group: rename all templates in the group + set the
+  /// preferred weekday. Updates every template sharing the day_template_group.
+  Future<void> _editSavedDayGroup(List<MealComboRecord> templates) async {
+    if (templates.isEmpty) return;
+
+    final nameController = TextEditingController(text: templates.first.dayTemplateName);
+    int? selectedWeekday = templates.first.preferredWeekday;
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        final theme = FlutterFlowTheme.of(dialogContext);
+        return StatefulBuilder(
+          builder: (ctx, setDialogState) => AlertDialog(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
+            title: const Text('Edit Saved Day'),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Name'),
+                  const SizedBox(height: 6),
+                  TextField(
+                    controller: nameController,
+                    autofocus: true,
+                    decoration: InputDecoration(
+                      hintText: 'e.g., Taco Tuesday',
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.0)),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  const Text(
+                    'Preferred weekday (optional)',
+                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Autofill prefers this saved day for matching weekdays, '
+                    'regardless of its name.',
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: theme.secondaryText,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 6,
+                    runSpacing: 6,
+                    children: [
+                      _editWeekdayChip(theme, 'None', null, selectedWeekday,
+                          () => setDialogState(() => selectedWeekday = null)),
+                      ...List.generate(7, (i) {
+                        final weekday = i + 1;
+                        const labels = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+                        return _editWeekdayChip(theme, labels[i], weekday, selectedWeekday,
+                            () => setDialogState(() => selectedWeekday = weekday));
+                      }),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(dialogContext, false),
+                child: const Text('Cancel'),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.pop(dialogContext, true),
+                style: ElevatedButton.styleFrom(backgroundColor: theme.primary),
+                child: const Text('Save'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+
+    if (confirmed != true || !mounted) return;
+
+    final newName = nameController.text.trim();
+    if (newName.isEmpty) return;
+
+    try {
+      // Update every template in the group. Preferred weekday is group-level,
+      // not per-meal — so it gets applied uniformly across all meals in the day.
+      for (final t in templates) {
+        final updates = <String, dynamic>{'day_template_name': newName};
+        if (selectedWeekday == null) {
+          updates['preferred_weekday'] = FieldValue.delete();
+        } else {
+          updates['preferred_weekday'] = selectedWeekday;
+        }
+        await t.reference.update(updates);
+      }
+
+      _model.loadedMealTemplates = false;
+      await _loadMealTemplates();
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Saved Day updated!'),
+            backgroundColor: Colors.green,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    } catch (e) {
+      debugPrint('Error editing saved day: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error updating saved day'),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    }
+  }
+
+  Widget _editWeekdayChip(FlutterFlowTheme theme, String label, int? value,
+      int? selected, VoidCallback onTap) {
+    final isSelected = selected == value;
+    final primary = theme.primary;
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8.0),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+        decoration: BoxDecoration(
+          color: isSelected ? primary : primary.withValues(alpha: 0.08),
+          borderRadius: BorderRadius.circular(8.0),
+          border: Border.all(color: isSelected ? primary : primary.withValues(alpha: 0.3)),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontFamily: 'Andika New Basic',
+            fontSize: 12.0,
+            fontWeight: FontWeight.w600,
+            color: isSelected ? Colors.white : primary,
+          ),
+        ),
+      ),
+    );
+  }
+
   /// Rename template
   void _renameTemplate(MealComboRecord template) {
     final nameController = TextEditingController(text: template.name);
@@ -2873,6 +3032,8 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
               ? templates.first.dayTemplateName
               : 'Meal Template';
           final createdDate = templates.first.createdTime;
+          final preferredWeekday = templates.first.preferredWeekday;
+          final weekdayLabel = _weekdayLabel(preferredWeekday);
 
           return Padding(
             padding: const EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 16.0),
@@ -2926,7 +3087,9 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                               ),
                               if (createdDate != null)
                                 Text(
-                                  'Saved ${dateTimeFormat('MMMd', createdDate)}',
+                                  weekdayLabel != null
+                                      ? '$weekdayLabel · Saved ${dateTimeFormat('MMMd', createdDate)}'
+                                      : 'Saved ${dateTimeFormat('MMMd', createdDate)}',
                                   style: FlutterFlowTheme.of(context).bodySmall.override(
                                         fontFamily: 'Andika New Basic',
                                         color: const Color(0xFF999999),
@@ -2969,6 +3132,16 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                               },
                             ),
                           ],
+                        ),
+                        // Edit saved day (name + preferred weekday)
+                        IconButton(
+                          tooltip: 'Edit Saved Day',
+                          icon: Icon(
+                            Icons.edit_outlined,
+                            size: 18.0,
+                            color: FlutterFlowTheme.of(context).primary,
+                          ),
+                          onPressed: () => _editSavedDayGroup(templates),
                         ),
                       ],
                     ),

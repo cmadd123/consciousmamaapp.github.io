@@ -94,6 +94,13 @@ class MealComboRecord extends FirestoreRecord {
   String get dayTemplateName => _dayTemplateName ?? '';
   bool hasDayTemplateName() => _dayTemplateName != null && _dayTemplateName!.isNotEmpty;
 
+  // "preferred_weekday" field - 1-7 per ISO 8601 (Mon=1, Sun=7). When set,
+  // autofill prefers this saved day for that weekday regardless of its
+  // display name. Null means "no preference, fill any day."
+  int? _preferredWeekday;
+  int? get preferredWeekday => _preferredWeekday;
+  bool hasPreferredWeekday() => _preferredWeekday != null;
+
   void _initializeFields() {
     _name = snapshotData['name'] as String?;
     _entreeRef = snapshotData['entree_ref'] as DocumentReference?;
@@ -114,6 +121,7 @@ class MealComboRecord extends FirestoreRecord {
     _createdTime = snapshotData['created_time'] as DateTime?;
     _dayTemplateGroup = snapshotData['day_template_group'] as String?;
     _dayTemplateName = snapshotData['day_template_name'] as String?;
+    _preferredWeekday = castToType<int>(snapshotData['preferred_weekday']);
   }
 
   static CollectionReference get collection =>

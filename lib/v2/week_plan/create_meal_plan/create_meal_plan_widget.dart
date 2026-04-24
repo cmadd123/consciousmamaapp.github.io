@@ -1592,67 +1592,113 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
     // Capture primary color before async gap to avoid InheritedWidget issues
     final primaryColor = FlutterFlowTheme.of(context).primary;
 
+    // Selected preferred weekday for this saved day (null = no preference).
+    // Default to the current day's weekday as a convenience.
+    int? selectedWeekday;
+
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) {
         final dialogTheme = FlutterFlowTheme.of(dialogContext);
-        return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
-          title: Text(
-            'Save Day as Templates',
-            style: dialogTheme.titleMedium.override(
-              fontFamily: 'Andika New Basic',
-              letterSpacing: 0.0,
+        return StatefulBuilder(
+          builder: (ctx, setDialogState) => AlertDialog(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
+            title: Text(
+              'Save Day as Templates',
+              style: dialogTheme.titleMedium.override(
+                fontFamily: 'Andika New Basic',
+                letterSpacing: 0.0,
+              ),
             ),
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'This will save each meal as a reusable template. Give them a name prefix:',
-                style: dialogTheme.bodySmall.override(
-                  fontFamily: 'Andika New Basic',
-                  letterSpacing: 0.0,
-                  color: dialogTheme.secondaryText,
-                ),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'This will save each meal as a reusable template. Give them a name prefix:',
+                    style: dialogTheme.bodySmall.override(
+                      fontFamily: 'Andika New Basic',
+                      letterSpacing: 0.0,
+                      color: dialogTheme.secondaryText,
+                    ),
+                  ),
+                  SizedBox(height: 12.0),
+                  TextField(
+                    controller: nameController,
+                    decoration: InputDecoration(
+                      hintText: 'e.g., Monday, Taco Night',
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.0)),
+                      contentPadding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
+                    ),
+                    style: dialogTheme.bodyMedium.override(
+                      fontFamily: 'Andika New Basic',
+                      letterSpacing: 0.0,
+                    ),
+                  ),
+                  SizedBox(height: 16.0),
+                  Text(
+                    'Preferred weekday (optional)',
+                    style: dialogTheme.bodySmall.override(
+                      fontFamily: 'Andika New Basic',
+                      letterSpacing: 0.0,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  SizedBox(height: 4.0),
+                  Text(
+                    'Autofill will land this saved day on matching weekdays.',
+                    style: dialogTheme.bodySmall.override(
+                      fontFamily: 'Andika New Basic',
+                      letterSpacing: 0.0,
+                      color: dialogTheme.secondaryText,
+                      fontSize: 11.0,
+                    ),
+                  ),
+                  SizedBox(height: 8.0),
+                  Wrap(
+                    spacing: 6.0,
+                    runSpacing: 6.0,
+                    children: [
+                      _weekdayChip(ctx, dialogTheme, null, 'None',
+                          selected: selectedWeekday == null,
+                          onTap: () => setDialogState(() => selectedWeekday = null)),
+                      ...List.generate(7, (i) {
+                        final weekday = i + 1; // 1..7 Mon..Sun
+                        const labels = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+                        return _weekdayChip(
+                          ctx, dialogTheme, weekday, labels[i],
+                          selected: selectedWeekday == weekday,
+                          onTap: () => setDialogState(() => selectedWeekday = weekday),
+                        );
+                      }),
+                    ],
+                  ),
+                  SizedBox(height: 12.0),
+                  Text(
+                    '${dayMealPlans.length} meal${dayMealPlans.length > 1 ? 's' : ''} will be saved',
+                    style: dialogTheme.bodySmall.override(
+                      fontFamily: 'Andika New Basic',
+                      letterSpacing: 0.0,
+                      color: dialogTheme.primary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
               ),
-              SizedBox(height: 12.0),
-              TextField(
-                controller: nameController,
-                decoration: InputDecoration(
-                  hintText: 'e.g., Monday, Taco Night',
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.0)),
-                  contentPadding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
-                ),
-                style: dialogTheme.bodyMedium.override(
-                  fontFamily: 'Andika New Basic',
-                  letterSpacing: 0.0,
-                ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(dialogContext, false),
+                child: Text('Cancel'),
               ),
-              SizedBox(height: 8.0),
-              Text(
-                '${dayMealPlans.length} meal${dayMealPlans.length > 1 ? 's' : ''} will be saved',
-                style: dialogTheme.bodySmall.override(
-                  fontFamily: 'Andika New Basic',
-                  letterSpacing: 0.0,
-                  color: dialogTheme.primary,
-                  fontWeight: FontWeight.w600,
-                ),
+              ElevatedButton(
+                onPressed: () => Navigator.pop(dialogContext, true),
+                style: ElevatedButton.styleFrom(backgroundColor: dialogTheme.primary),
+                child: Text('Save Saved Days'),
               ),
             ],
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(dialogContext, false),
-              child: Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () => Navigator.pop(dialogContext, true),
-              style: ElevatedButton.styleFrom(backgroundColor: dialogTheme.primary),
-              child: Text('Save Saved Days'),
-            ),
-          ],
         );
       },
     );
@@ -1660,6 +1706,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
     if (confirmed != true || !mounted) return;
 
     final prefix = nameController.text.trim();
+    final preferredWeekday = selectedWeekday;
 
     // Show loading
     ScaffoldMessenger.of(context).showSnackBar(
@@ -1722,6 +1769,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
           comboData['is_leftover_snack'] = plan.isLeftoverSnack;
           comboData['day_template_group'] = groupId;
           comboData['day_template_name'] = prefix.isNotEmpty ? prefix : dayName;
+          if (preferredWeekday != null) comboData['preferred_weekday'] = preferredWeekday;
           await MealComboRecord.collection.add(comboData);
           savedCount++;
         }
@@ -2178,6 +2226,42 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
             ],
           ),
         )),
+      ),
+    );
+  }
+
+  /// Small selectable chip for weekday picking in the Save Day dialog.
+  /// `weekday` is 1-7 (ISO: Mon=1..Sun=7) or null for the "None" chip.
+  Widget _weekdayChip(
+    BuildContext context,
+    FlutterFlowTheme theme,
+    int? weekday, // ignored for styling; just a semantic tag
+    String label, {
+    required bool selected,
+    required VoidCallback onTap,
+  }) {
+    final primary = theme.primary;
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8.0),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+        decoration: BoxDecoration(
+          color: selected ? primary : primary.withValues(alpha: 0.08),
+          borderRadius: BorderRadius.circular(8.0),
+          border: Border.all(
+            color: selected ? primary : primary.withValues(alpha: 0.3),
+          ),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontFamily: 'Andika New Basic',
+            fontSize: 12.0,
+            fontWeight: FontWeight.w600,
+            color: selected ? Colors.white : primary,
+          ),
+        ),
       ),
     );
   }
@@ -4089,13 +4173,17 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
   }
 
   /// Show saved days picker for a specific date
-  /// Autofill selected dates by randomly assigning different saved days
-  /// to each. The point of saved days is variety — if we applied the same
-  /// one to every slot the feature would be identical to the manual
-  /// "apply saved day" picker.
+  /// Autofill selected dates with saved days.
   ///
-  /// If the user has fewer saved days than selected dates, we shuffle the
-  /// pool and repeat (so dates still get distributed, no gaps).
+  /// Two passes — label is authoritative:
+  ///   Pass 1: for each target date, find saved days tagged with a
+  ///           matching preferred_weekday. If any exist, pick one
+  ///           (randomly if multiple). So "Taco Tuesday" labeled for
+  ///           Monday lands on Mondays, regardless of its name.
+  ///   Pass 2: remaining dates get unlabeled saved days, shuffled.
+  ///           If no unlabeled saved days exist, falls back to the
+  ///           full pool (including labeled ones) to avoid leaving
+  ///           slots empty.
   Future<void> _fillFromSavedDays({
     required List<DateTime> selectedDates,
     required List<MealTyp> mealTypes,
@@ -4124,30 +4212,56 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
       return;
     }
 
-    // Build an assignment list — one saved-day group key per selected date.
-    // Shuffle so order is random; if we have fewer groups than dates, cycle
-    // so every date still gets something.
-    final groupKeys = grouped.keys.toList()..shuffle();
-    final assignments = <String>[];
+    // Split groups into labeled (by weekday 1..7) and unlabeled pools.
+    final Map<int, List<String>> labeledByWeekday = {};
+    final List<String> unlabeledKeys = [];
+    grouped.forEach((key, templates) {
+      final w = templates.first.preferredWeekday;
+      if (w != null && w >= 1 && w <= 7) {
+        labeledByWeekday.putIfAbsent(w, () => []).add(key);
+      } else {
+        unlabeledKeys.add(key);
+      }
+    });
+
+    // Pass 1: assign labeled saved days to matching dates. Track which
+    // dates got assigned so pass 2 skips them.
+    final assignments = <int, String>{}; // index in selectedDates → group key
     for (var i = 0; i < selectedDates.length; i++) {
-      assignments.add(groupKeys[i % groupKeys.length]);
+      final weekday = selectedDates[i].weekday; // 1..7 Mon..Sun
+      final matches = labeledByWeekday[weekday];
+      if (matches != null && matches.isNotEmpty) {
+        // Pick randomly if multiple saved days share the same label.
+        final pick = (matches.toList()..shuffle()).first;
+        assignments[i] = pick;
+      }
     }
-    // One more shuffle so repeated groups aren't stacked at the end.
-    assignments.shuffle();
+
+    // Pass 2: fill unassigned dates. Prefer unlabeled pool; fall back to
+    // full pool if no unlabeled saved days exist.
+    final unassignedIndexes = List.generate(selectedDates.length, (i) => i)
+        .where((i) => !assignments.containsKey(i)).toList();
+    final fallbackPool = unlabeledKeys.isNotEmpty
+        ? (unlabeledKeys.toList()..shuffle())
+        : (grouped.keys.toList()..shuffle());
+    for (var j = 0; j < unassignedIndexes.length; j++) {
+      if (fallbackPool.isEmpty) break;
+      assignments[unassignedIndexes[j]] = fallbackPool[j % fallbackPool.length];
+    }
 
     final allowedTypeNames = mealTypes.map((t) => t.name).toSet();
     int applied = 0;
+    int labeledApplied = 0;
 
     for (var i = 0; i < selectedDates.length; i++) {
       final day = selectedDates[i];
       final groupKey = assignments[i];
+      if (groupKey == null) continue;
       final templatesForGroup = grouped[groupKey]!;
 
-      // Respect the mealTypes checkboxes.
       final filteredTemplates = templatesForGroup.where((t) {
         return t.mealTyp == null || allowedTypeNames.contains(t.mealTyp!.name);
       }).toList();
-
       if (filteredTemplates.isEmpty) continue;
 
       await _applySavedDayToDate(
@@ -4156,6 +4270,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
         templatesForGroup.first.dayTemplateName,
       );
       applied += 1;
+      if (templatesForGroup.first.preferredWeekday == day.weekday) labeledApplied += 1;
     }
 
     _model.mealCache.clear();
@@ -4163,10 +4278,10 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
     await _refreshMealPlans();
 
     if (mounted) {
-      final variety = grouped.length >= selectedDates.length
-          ? '${selectedDates.length} different'
-          : '${grouped.length}';
-      _showSuccessDialog('days filled from $variety saved day${grouped.length == 1 ? '' : 's'}', count: applied);
+      final labeledNote = labeledApplied > 0
+          ? ' ($labeledApplied matched by weekday)'
+          : '';
+      _showSuccessDialog('days filled from your Saved Days$labeledNote', count: applied);
     }
   }
 
