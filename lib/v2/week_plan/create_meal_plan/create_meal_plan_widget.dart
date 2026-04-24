@@ -2099,7 +2099,9 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                     ),
                     SizedBox(height: 16.0),
 
-                    // Empowering note — autofill picks entrees, user owns the sides.
+                    // Source-aware note. Recipe-based sources land entrees
+                    // only (user picks sides). Combo/saved-day sources carry
+                    // their own sides.
                     Container(
                       padding: EdgeInsets.all(12.0),
                       decoration: BoxDecoration(
@@ -2117,9 +2119,15 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                           SizedBox(width: 8.0),
                           Expanded(
                             child: Text(
-                              'Autofill handles the tough call — your entrees. '
-                              'You know what sides your family loves, so we leave '
-                              'those to you.',
+                              selectedSource == 'templates'
+                                  ? 'Templates come ready-made — sides, desserts, '
+                                    'and drinks already paired.'
+                                  : selectedSource == 'saved_days'
+                                    ? 'Saved Days clone the whole day — every meal '
+                                      'slot filled exactly the way you saved it.'
+                                    : 'Autofill handles the tough call — your '
+                                      'entrees. You know what sides your family '
+                                      'loves, so those are yours to add.',
                               style: TextStyle(
                                 fontFamily: 'Andika New Basic',
                                 fontSize: 12.0,
