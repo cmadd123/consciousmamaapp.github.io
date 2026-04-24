@@ -477,20 +477,38 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
       return;
     }
 
-    // Build category lookup: meal type tag → list of recipes
+    // Build category lookup: lowercase meal type tag → list of recipes.
+    // Lowercase both at build and lookup so "Dinner" / "dinner" / "DINNER"
+    // all bucket together.
     final categoryMap = <String, List<MealRecord>>{};
     for (final meal in cookbook) {
-      final tags = meal.mealTyp.split(',').map((s) => s.trim()).where((s) => s.isNotEmpty);
+      final tags = meal.mealTyp
+          .split(',')
+          .map((s) => s.trim().toLowerCase())
+          .where((s) => s.isNotEmpty);
       for (final tag in tags) {
         categoryMap.putIfAbsent(tag, () => []).add(meal);
       }
       if (tags.isEmpty) {
-        categoryMap.putIfAbsent('Any', () => []).add(meal);
+        categoryMap.putIfAbsent('any', () => []).add(meal);
       }
     }
     // Shuffle each bucket for variety
     for (final list in categoryMap.values) {
       list.shuffle();
+    }
+
+    // Predicate: for a main-meal slot (Breakfast/Lunch/Dinner) we want an
+    // entree — a dessert tagged "Dinner" shouldn't slot in. Snack and
+    // other slots pass through without the entree filter.
+    bool passesRoleFilter(MealRecord m, String slotNameLower) {
+      final isMainMealSlot = slotNameLower == 'breakfast'
+          || slotNameLower == 'lunch'
+          || slotNameLower == 'dinner';
+      if (!isMainMealSlot) return true;
+      return m.recipeType == RecipeType.Entree
+          || m.mainOrSides == 'Main'
+          || m.mainOrSides.isEmpty;
     }
 
     // Assign meals greedily: for each empty slot, find a matching recipe within budget
@@ -501,13 +519,14 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
     final usedRecipeIds = <String>{};
 
     for (final slot in emptySlots) {
-      final slotName = slot.value.name;
+      final slotNameLower = slot.value.name.toLowerCase();
 
       // Try to find a matching recipe: prefer category match, then any
       MealRecord? pick;
-      final candidates = categoryMap[slotName] ?? categoryMap['Any'] ?? cookbook;
+      final candidates = categoryMap[slotNameLower] ?? categoryMap['any'] ?? cookbook;
       for (final meal in candidates) {
         if (usedRecipeIds.contains(meal.reference.id)) continue;
+        if (!passesRoleFilter(meal, slotNameLower)) continue;
         if (running + meal.estimatedCost > budget) {
           skippedBudget++;
           continue;
@@ -515,10 +534,11 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
         pick = meal;
         break;
       }
-      // Fallback: try any cookbook recipe not yet used
+      // Fallback: try any cookbook recipe not yet used (still respects role)
       if (pick == null) {
         for (final meal in cookbook) {
           if (usedRecipeIds.contains(meal.reference.id)) continue;
+          if (!passesRoleFilter(meal, slotNameLower)) continue;
           if (running + meal.estimatedCost > budget) {
             skippedBudget++;
             continue;
