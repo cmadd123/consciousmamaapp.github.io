@@ -1766,8 +1766,9 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
     // Track which days to fill — all selected by default
     Set<int> selectedDays = Set<int>.from(List.generate(days.length, (i) => i));
 
-    // Track source selection
-    String selectedSource = 'all'; // 'my_recipes', 'templates', 'discover', 'all'
+    // Track source selection. "My Recipes" is the default since that's
+    // the most common flow — user has a cookbook and wants to fill from it.
+    String selectedSource = 'my_recipes'; // 'my_recipes' | 'templates' | 'saved_days'
 
     showModalBottomSheet<void>(
       context: context,
@@ -2052,21 +2053,9 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                     // Source options
                     _buildSourceOption(
                       context,
-                      icon: Icons.menu_book,
-                      title: 'All Sources',
-                      subtitle: 'Mix of your recipes and templates',
-                      value: 'all',
-                      selectedValue: selectedSource,
-                      onTap: () {
-                        setSheetState(() => selectedSource = 'all');
-                      },
-                    ),
-                    SizedBox(height: 8.0),
-                    _buildSourceOption(
-                      context,
                       icon: Icons.restaurant,
                       title: 'My Recipes',
-                      subtitle: 'Only recipes you created',
+                      subtitle: 'Entrees from your cookbook (you add sides)',
                       value: 'my_recipes',
                       selectedValue: selectedSource,
                       onTap: () {
@@ -2367,7 +2356,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
     List<int>? selectedDays, // List of day indices into the displayed week
     List<DateTime>? selectedDates, // Actual dates to fill (preferred over selectedDays)
     List<MealTyp>? mealTypes,
-    String source = 'all', // 'my_recipes', 'templates', 'discover', 'all'
+    String source = 'my_recipes', // 'my_recipes' | 'templates'
   }) async {
     // Show loading indicator
     showDialog(
