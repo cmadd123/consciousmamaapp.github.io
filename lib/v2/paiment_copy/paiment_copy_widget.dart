@@ -712,47 +712,73 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
     );
   }
 
-  /// iOS CTA — compliant with App Store guideline 3.1.1
+  /// iOS CTA — primary action opens Safari to the subscribe page.
+  /// Allowed under the May 2025 Epic v. Apple injunction (no commission, no
+  /// scare-screen, no anti-steering).
   Widget _buildIOSCTA() {
     return Column(
       children: [
-        // Info card telling users where to subscribe
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.7),
-            borderRadius: BorderRadius.circular(20.0),
-            border: Border.all(color: const Color(0xFFE0E0E0)),
-          ),
-          child: Column(
-            children: [
-              Text(
-                'Subscribe at momrise.app',
-                textAlign: TextAlign.center,
-                style: FlutterFlowTheme.of(context).bodyLarge.override(
-                  fontFamily: 'Andika New Basic',
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 0.0,
-                ),
+        // PRIMARY CTA — opens Safari to subscribe page
+        AnimatedBuilder(
+          animation: _glowAnimation,
+          builder: (context, child) {
+            return Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(28.0),
+                boxShadow: [
+                  BoxShadow(
+                    color: FlutterFlowTheme.of(context)
+                        .primary
+                        .withOpacity(_glowAnimation.value * 0.35),
+                    blurRadius: 12.0 * _glowAnimation.value,
+                    spreadRadius: 2.0 * _glowAnimation.value,
+                  ),
+                ],
               ),
-              const SizedBox(height: 6.0),
-              Text(
-                'Visit momrise.app/subscribe in your browser to start your 7-day free trial. Then come back and tap the button below.',
-                textAlign: TextAlign.center,
-                style: FlutterFlowTheme.of(context).bodySmall.override(
-                  fontFamily: 'Andika New Basic',
-                  color: FlutterFlowTheme.of(context).secondaryText,
-                  fontSize: 13.0,
-                  letterSpacing: 0.0,
-                ),
+              child: child,
+            );
+          },
+          child: FFButtonWidget(
+            onPressed: () async {
+              HapticFeedback.lightImpact();
+              final plan = _model.selectedPayment == 'yearly' ? 'yearly' : 'monthly';
+              final uri = Uri.parse('https://momrise.app/subscribe?plan=$plan');
+              if (await canLaunchUrl(uri)) {
+                await launchUrl(uri, mode: LaunchMode.externalApplication);
+              }
+            },
+            text: 'Start Free Trial on momrise.app',
+            options: FFButtonOptions(
+              width: double.infinity,
+              height: 56.0,
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              color: FlutterFlowTheme.of(context).primary,
+              textStyle: FlutterFlowTheme.of(context).titleMedium.override(
+                fontFamily: 'Andika New Basic',
+                color: Colors.white,
+                fontSize: 18.0,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 0.0,
               ),
-            ],
+              elevation: 3.0,
+              borderSide: const BorderSide(color: Colors.transparent, width: 1.0),
+              borderRadius: BorderRadius.circular(28.0),
+            ),
           ),
         ),
-        const SizedBox(height: 12.0),
-        // "I already subscribed" — verifies subscription in Firestore
+        const SizedBox(height: 8.0),
+        Text(
+          '7-day free trial · Cancel anytime',
+          textAlign: TextAlign.center,
+          style: FlutterFlowTheme.of(context).bodySmall.override(
+            fontFamily: 'Andika New Basic',
+            color: FlutterFlowTheme.of(context).secondaryText,
+            fontSize: 12.0,
+            letterSpacing: 0.0,
+          ),
+        ),
+        const SizedBox(height: 16.0),
+        // SECONDARY — verify Firestore subscription status for users who already subscribed on the web
         FFButtonWidget(
           onPressed: () async {
             final hasSubscription = await hasActiveSubscription();
@@ -776,16 +802,20 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
           text: 'I already subscribed — continue',
           options: FFButtonOptions(
             width: double.infinity,
-            height: 56.0,
-            color: FlutterFlowTheme.of(context).primary,
-            textStyle: FlutterFlowTheme.of(context).titleMedium.override(
+            height: 50.0,
+            color: Colors.transparent,
+            textStyle: FlutterFlowTheme.of(context).bodyMedium.override(
               fontFamily: 'Andika New Basic',
-              color: Colors.white,
-              fontSize: 16.0,
-              fontWeight: FontWeight.w600,
+              color: FlutterFlowTheme.of(context).primary,
+              fontSize: 14.0,
+              fontWeight: FontWeight.w500,
               letterSpacing: 0.0,
             ),
             elevation: 0.0,
+            borderSide: BorderSide(
+              color: FlutterFlowTheme.of(context).primary.withOpacity(0.5),
+              width: 1.5,
+            ),
             borderRadius: BorderRadius.circular(28.0),
           ),
         ),
