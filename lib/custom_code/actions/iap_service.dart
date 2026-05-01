@@ -32,7 +32,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 /// Firestore so existing entitlement checks (hasActiveSubscription)
 /// continue to work unchanged.
 
-const String kIosMonthlyProductId = 'momrise_monthly';
+const String kIosMonthlyProductId = 'momrise_month';
 
 /// Initialize the IAP listener once at app startup.
 /// Streams purchase events for the lifetime of the app.

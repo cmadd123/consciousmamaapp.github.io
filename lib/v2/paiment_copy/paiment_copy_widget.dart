@@ -764,7 +764,7 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
               );
             }
           },
-          text: 'Subscribe via Apple — \$6.99/month',
+          text: 'Start 7-day free trial via Apple',
           options: FFButtonOptions(
             width: double.infinity,
             height: 56.0,
@@ -816,7 +816,7 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
               await launchUrl(uri, mode: LaunchMode.externalApplication);
             }
           },
-          text: 'Subscribe at momrise.app',
+          text: 'Start 7-day free trial at momrise.app',
           options: FFButtonOptions(
             width: double.infinity,
             height: 56.0,
@@ -836,7 +836,7 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
         ),
         const SizedBox(height: 8.0),
         Text(
-          '7-day free trial · Cancel anytime',
+          '\$6.99/month after trial · Cancel anytime',
           textAlign: TextAlign.center,
           style: FlutterFlowTheme.of(context).bodySmall.override(
             fontFamily: 'Andika New Basic',
