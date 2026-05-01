@@ -729,7 +729,7 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
         FFButtonWidget(
           onPressed: () async {
             HapticFeedback.lightImpact();
-            final result = await actions.buyMonthlySubscription();
+            final result = await buyMonthlySubscription();
             if (!mounted) return;
             if (result == 'pending' || result == 'success') {
               // Purchase stream listener will mirror to Firestore; the
