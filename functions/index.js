@@ -1936,7 +1936,16 @@ async function _adjustCreatorCounter(code, field, delta) {
   const db = getFirestore();
   const snap = await db.collection('creators').where('code', '==', code).limit(1).get();
   if (snap.empty) return;
-  await snap.docs[0].ref.update({ [field]: FieldValue.increment(delta) });
+  const ref = snap.docs[0].ref;
+  // Transactional floor at 0. Plain FieldValue.increment(-1) drifts negative
+  // when the creator was created after a follower already had the code set
+  // (the +1 never fired but -1 fires on unfollow), and there's no way to
+  // express "max(0, x + delta)" as a single increment op.
+  await db.runTransaction(async (tx) => {
+    const cur = await tx.get(ref);
+    const next = Math.max(0, (cur.get(field) || 0) + delta);
+    tx.update(ref, { [field]: next });
+  });
 }
 
 function _isActiveSub(data) {

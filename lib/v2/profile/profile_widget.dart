@@ -1046,8 +1046,8 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                       ),
                     ),
                   )),
-                  // Enter Share Code
-                  CascadeItem(index: 6, baseDelayMs: 400, staggerMs: 80, child: Padding(
+                  // Enter Share Code (hidden on Android — Play Console review concerns)
+                  if (!Platform.isAndroid) CascadeItem(index: 6, baseDelayMs: 400, staggerMs: 80, child: Padding(
                     padding:
                         EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),
                     child: Container(

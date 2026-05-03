@@ -2370,8 +2370,11 @@
           }
         }
 
-        $('statPending').textContent = fmtMoney(pending);
-        $('statLifetime').textContent = fmtMoney(lifetime);
+        // Clawbacks stored as negative creator_cents can push these below 0
+        // if refunds exceed earnings — clamp so the strip never shows a
+        // negative dollar figure.
+        $('statPending').textContent = fmtMoney(Math.max(0, pending));
+        $('statLifetime').textContent = fmtMoney(Math.max(0, lifetime));
 
         const thresholdGap = 2500 - pending;
         $('statPendingSub').innerHTML = pending >= 2500
@@ -2789,8 +2792,13 @@
           routinesP,
         ]);
 
-        const followerCount = creatorDoc.data.follower_count || 0;
-        const subscriberCount = creatorDoc.data.subscriber_count || 0;
+        // Counters can drift negative when a creator is created after some
+        // users already have their active_creator_code set — the increment
+        // never fired for those existing followers, but the decrement fires
+        // when they unfollow. Clamp the display so the dashboard never shows
+        // a negative; root cause is fixed in functions/_adjustCreatorCounter.
+        const followerCount = Math.max(0, creatorDoc.data.follower_count || 0);
+        const subscriberCount = Math.max(0, creatorDoc.data.subscriber_count || 0);
 
         const docs = docsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
         const plans = mealPlans.docs.map(d => ({ id: d.id, ...d.data() }));
