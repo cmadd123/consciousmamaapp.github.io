@@ -18,13 +18,16 @@ import 'package:firebase_auth/firebase_auth.dart';
 /// Apple In-App Purchase service for MomRise.
 ///
 /// Minimum-viable integration to satisfy App Store Guideline 3.1.1:
-///   - Single subscription product: `momrise_monthly` ($6.99/mo auto-renewable)
-///   - Set up in App Store Connect → In-App Purchases → Subscriptions
-///   - Web subscription path (Stripe) continues to work for non-iOS users
+///   - Two subscription products in the same App Store Connect group:
+///     `momrise_month` ($6.99/mo) and `momrise_year` ($69.99/yr).
+///     Both auto-renewable, both with a 7-day free-trial introductory
+///     offer for new subscribers.
+///   - Web subscription path (Stripe) continues to work for non-iOS users.
 ///   - On purchase success, the user's Firestore doc is marked subscribed
 ///     using the same fields the web flow writes (subscription_status,
 ///     free_trial_start) so the rest of the app doesn't need to know
-///     which path the user came in on.
+///     which path the user came in on. The plan ('monthly' / 'annual')
+///     is recorded too in case future logic needs to differentiate.
 ///
 /// Architecture is intentionally minimal — no RevenueCat, no server-side
 /// receipt validation. Apple's StoreKit handles trial/cancel/renew. We
@@ -33,6 +36,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 /// continue to work unchanged.
 
 const String kIosMonthlyProductId = 'momrise_month';
+const String kIosAnnualProductId = 'momrise_year';
 
 /// Initialize the IAP listener once at app startup.
 /// Streams purchase events for the lifetime of the app.
@@ -55,11 +59,23 @@ Future<void> initializeIap() async {
 }
 
 /// Trigger a purchase flow for the monthly subscription.
-/// Returns 'success' / 'pending' / 'cancelled' / 'error: <msg>'.
-/// The actual entitlement update happens asynchronously in the
-/// purchase stream listener — callers should treat this as "kicked off"
-/// not "completed."
 Future<String> buyMonthlySubscription() async {
+  return _buyByProductId(kIosMonthlyProductId);
+}
+
+/// Trigger a purchase flow for the annual subscription.
+Future<String> buyAnnualSubscription() async {
+  return _buyByProductId(kIosAnnualProductId);
+}
+
+/// Shared purchase flow. Looks up the product in App Store Connect, kicks
+/// off the buyNonConsumable flow, and surfaces a status string the caller
+/// can render. The actual entitlement update happens asynchronously in
+/// the purchase stream listener — callers should treat the return value
+/// as "kicked off" not "completed."
+///
+/// Returns 'success' / 'pending' / 'cancelled' / 'error: <msg>'.
+Future<String> _buyByProductId(String productId) async {
   if (!Platform.isIOS) return 'error: iOS only';
 
   final available = await InAppPurchase.instance.isAvailable();
@@ -69,7 +85,7 @@ Future<String> buyMonthlySubscription() async {
   // an empty list — usually means the IAP product isn't approved yet, or
   // the bundle ID doesn't match the App Store Connect record.
   final response = await InAppPurchase.instance
-      .queryProductDetails({kIosMonthlyProductId}.toSet());
+      .queryProductDetails({productId}.toSet());
   if (response.notFoundIDs.isNotEmpty) {
     return 'error: product ${response.notFoundIDs.first} not found in App Store Connect';
   }
@@ -123,7 +139,8 @@ Future<void> _handlePurchaseUpdates(
 
 /// Mirror an active Apple subscription into the user's Firestore doc.
 /// Uses the same fields the web Stripe flow writes so the rest of the
-/// app doesn't have to know which payment path the user took.
+/// app doesn't have to know which payment path the user took. Records
+/// 'monthly' or 'annual' based on which product the user bought.
 Future<void> _markSubscribed(PurchaseDetails p) async {
   final user = FirebaseAuth.instance.currentUser;
   if (user == null) {
@@ -131,10 +148,12 @@ Future<void> _markSubscribed(PurchaseDetails p) async {
     return;
   }
 
+  final plan = p.productID == kIosAnnualProductId ? 'annual' : 'monthly';
+
   final docRef = FirebaseFirestore.instance.collection('users').doc(user.uid);
   await docRef.set({
     'subscription_status': 'active',
-    'subscription_plan': 'monthly',
+    'subscription_plan': plan,
     'subscription_source': 'apple_iap',
     'apple_product_id': p.productID,
     'apple_transaction_id': p.purchaseID,
@@ -144,5 +163,5 @@ Future<void> _markSubscribed(PurchaseDetails p) async {
     'free_trial_start': FieldValue.serverTimestamp(),
   }, SetOptions(merge: true));
 
-  debugPrint('[IAP] Firestore marked subscribed for ${user.uid}');
+  debugPrint('[IAP] Firestore marked subscribed ($plan) for ${user.uid}');
 }

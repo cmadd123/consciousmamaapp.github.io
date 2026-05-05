@@ -718,53 +718,116 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
     );
   }
 
-  /// iOS CTA — two equal-weight subscribe options: Apple IAP and web/Stripe.
-  /// Apple Guideline 3.1.1 requires IAP be available alongside any external
-  /// purchase link; both buttons rendered at the same size and style to avoid
-  /// anti-steering review issues.
+  /// iOS CTA — equal-weight subscribe options across Apple IAP (annual + monthly)
+  /// and web/Stripe. Apple Guideline 3.1.1 requires IAP be available alongside
+  /// any external purchase link; Guideline 3.1.2(c) requires a visible
+  /// disclosure block (title, length, price) and functional EULA + privacy
+  /// links inside the purchase flow.
   Widget _buildIOSCTA() {
     return Column(
       children: [
-        // OPTION 1 — Apple IAP (StoreKit). Native subscription flow.
+        // Subscription disclosure block (Apple Guideline 3.1.2(c))
+        // — names, lengths, and prices for both auto-renewing options shown
+        // adjacent to the buy buttons. Renew/cancel language is intentionally
+        // explicit so reviewers see compliance at a glance.
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(12.0),
+          decoration: BoxDecoration(
+            color: const Color(0xFFF8F5F2),
+            borderRadius: BorderRadius.circular(12.0),
+            border: Border.all(color: const Color(0xFFE0E0E0), width: 1.0),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'MomRise Premium',
+                style: FlutterFlowTheme.of(context).bodyMedium.override(
+                  fontFamily: 'Andika New Basic',
+                  fontSize: 13.0,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0.0,
+                ),
+              ),
+              const SizedBox(height: 4.0),
+              Text(
+                'Annual — \$69.99/year (1 year, auto-renewing)\nMonthly — \$6.99/month (1 month, auto-renewing)\n7-day free trial for new subscribers. Cancel anytime in iPhone Settings.',
+                style: FlutterFlowTheme.of(context).bodySmall.override(
+                  fontFamily: 'Andika New Basic',
+                  color: FlutterFlowTheme.of(context).secondaryText,
+                  fontSize: 11.5,
+                  letterSpacing: 0.0,
+                ).copyWith(height: 1.4),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 12.0),
+
+        // OPTION 1A — Apple IAP Annual (highlighted as best value).
+        Stack(
+          clipBehavior: Clip.none,
+          children: [
+            FFButtonWidget(
+              onPressed: () async {
+                HapticFeedback.lightImpact();
+                final result = await buyAnnualSubscription();
+                await _handleIapResult(result);
+              },
+              text: 'Start free trial — \$69.99/year',
+              options: FFButtonOptions(
+                width: double.infinity,
+                height: 56.0,
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                color: FlutterFlowTheme.of(context).primary,
+                textStyle: FlutterFlowTheme.of(context).titleMedium.override(
+                  fontFamily: 'Andika New Basic',
+                  color: Colors.white,
+                  fontSize: 17.0,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0.0,
+                ),
+                elevation: 3.0,
+                borderSide: const BorderSide(color: Colors.transparent, width: 1.0),
+                borderRadius: BorderRadius.circular(28.0),
+              ),
+            ),
+            Positioned(
+              top: -8.0,
+              right: 16.0,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 3.0),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFF7A59),
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                child: Text(
+                  'Save 17% · Best value',
+                  style: FlutterFlowTheme.of(context).bodySmall.override(
+                    fontFamily: 'Andika New Basic',
+                    color: Colors.white,
+                    fontSize: 10.0,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 0.2,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10.0),
+
+        // OPTION 1B — Apple IAP Monthly. Equal-weight CTA, lower visual
+        // emphasis only via copy (price), not size, so anti-steering parity
+        // with the web option is preserved.
         FFButtonWidget(
           onPressed: () async {
             HapticFeedback.lightImpact();
             final result = await buyMonthlySubscription();
-            if (!mounted) return;
-            if (result == 'pending' || result == 'success') {
-              // Purchase stream listener will mirror to Firestore; the
-              // hasActiveSubscription poll catches it within a few seconds.
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: const Text('Purchase started — confirming with Apple...'),
-                  backgroundColor: FlutterFlowTheme.of(context).primary,
-                  behavior: SnackBarBehavior.floating,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                  margin: const EdgeInsets.all(16),
-                ),
-              );
-              // Wait briefly then verify, since the stream commit is async.
-              await Future.delayed(const Duration(seconds: 3));
-              final hasSubscription = await hasActiveSubscription();
-              if (hasSubscription && mounted) {
-                _completeOnboardingAndGoHome();
-              }
-            } else if (result == 'cancelled') {
-              // User dismissed the sheet — silent, no error toast
-            } else {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Purchase failed: ${result.replaceFirst("error: ", "")}'),
-                  backgroundColor: FlutterFlowTheme.of(context).error,
-                  behavior: SnackBarBehavior.floating,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                  margin: const EdgeInsets.all(16),
-                  duration: const Duration(seconds: 5),
-                ),
-              );
-            }
+            await _handleIapResult(result);
           },
-          text: 'Start 7-day free trial via Apple',
+          text: 'Start free trial — \$6.99/month',
           options: FFButtonOptions(
             width: double.infinity,
             height: 56.0,
@@ -784,7 +847,7 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
         ),
         const SizedBox(height: 12.0),
 
-        // Equal-weight separator — keep both options visually balanced
+        // Equal-weight separator — keep web option visually balanced
         Row(
           children: [
             Expanded(child: Container(height: 1, color: const Color(0xFFE0E0E0))),
@@ -832,17 +895,6 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
             elevation: 3.0,
             borderSide: const BorderSide(color: Colors.transparent, width: 1.0),
             borderRadius: BorderRadius.circular(28.0),
-          ),
-        ),
-        const SizedBox(height: 8.0),
-        Text(
-          '\$6.99/month after trial · Cancel anytime',
-          textAlign: TextAlign.center,
-          style: FlutterFlowTheme.of(context).bodySmall.override(
-            fontFamily: 'Andika New Basic',
-            color: FlutterFlowTheme.of(context).secondaryText,
-            fontSize: 12.0,
-            letterSpacing: 0.0,
           ),
         ),
         const SizedBox(height: 16.0),
@@ -939,19 +991,25 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
           ),
         ),
         const SizedBox(height: 16.0),
-        // Terms & Privacy links (required by Apple)
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+        // Required Apple Guideline 3.1.2(c) links — Terms of Use (EULA) +
+        // Privacy Policy must be functional in the binding subscription flow.
+        // We point Terms of Use at Apple's standard EULA (the default reviewers
+        // expect when the app doesn't substitute a custom EULA) and keep our
+        // own Privacy Policy URL.
+        Wrap(
+          alignment: WrapAlignment.center,
+          crossAxisAlignment: WrapCrossAlignment.center,
           children: [
             GestureDetector(
               onTap: () async {
-                final uri = Uri.parse('https://momrise.app/terms');
+                final uri = Uri.parse(
+                    'https://www.apple.com/legal/internet-services/itunes/dev/stdeula/');
                 if (await canLaunchUrl(uri)) {
                   await launchUrl(uri, mode: LaunchMode.externalApplication);
                 }
               },
               child: Text(
-                'Terms of Service',
+                'Terms of Use (EULA)',
                 style: FlutterFlowTheme.of(context).bodySmall.override(
                   fontFamily: 'Andika New Basic',
                   color: FlutterFlowTheme.of(context).secondaryText,
@@ -989,10 +1047,76 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
                 ),
               ),
             ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Text(
+                '·',
+                style: TextStyle(
+                  color: FlutterFlowTheme.of(context).secondaryText,
+                  fontSize: 11.0,
+                ),
+              ),
+            ),
+            GestureDetector(
+              onTap: () async {
+                final uri = Uri.parse('https://momrise.app/terms');
+                if (await canLaunchUrl(uri)) {
+                  await launchUrl(uri, mode: LaunchMode.externalApplication);
+                }
+              },
+              child: Text(
+                'Terms of Service',
+                style: FlutterFlowTheme.of(context).bodySmall.override(
+                  fontFamily: 'Andika New Basic',
+                  color: FlutterFlowTheme.of(context).secondaryText,
+                  fontSize: 11.0,
+                  letterSpacing: 0.0,
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+            ),
           ],
         ),
       ],
     );
+  }
+
+  /// Shared handler for Apple IAP purchase results — surfaces a snackbar
+  /// for each terminal state and routes the user home once the entitlement
+  /// has propagated to Firestore. Called from both annual and monthly buy
+  /// buttons so the UX is identical regardless of plan picked.
+  Future<void> _handleIapResult(String result) async {
+    if (!mounted) return;
+    if (result == 'pending' || result == 'success') {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Purchase started — confirming with Apple...'),
+          backgroundColor: FlutterFlowTheme.of(context).primary,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          margin: const EdgeInsets.all(16),
+        ),
+      );
+      // Stream commit is async; brief wait then verify Firestore mirror.
+      await Future.delayed(const Duration(seconds: 3));
+      final hasSubscription = await hasActiveSubscription();
+      if (hasSubscription && mounted) {
+        _completeOnboardingAndGoHome();
+      }
+    } else if (result == 'cancelled') {
+      // User dismissed the sheet — silent, no error toast
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Purchase failed: ${result.replaceFirst("error: ", "")}'),
+          backgroundColor: FlutterFlowTheme.of(context).error,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          margin: const EdgeInsets.all(16),
+          duration: const Duration(seconds: 5),
+        ),
+      );
+    }
   }
 
   /// Android CTA — full Stripe payment sheet

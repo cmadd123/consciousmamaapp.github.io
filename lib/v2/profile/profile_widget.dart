@@ -10,6 +10,7 @@ import '/v1/pages/childern/children/children_widget.dart';
 import '/v1/profile/delete_user/delete_user_widget.dart';
 import '/v1/profile/profile_edit_pop_up/profile_edit_pop_up_widget.dart';
 import '/v1/profile/profile_edite_email_pop_up/profile_edite_email_pop_up_widget.dart';
+import 'dart:io' show Platform;
 import 'dart:ui';
 import '/index.dart';
 import '/custom_code/actions/index.dart' as actions;

@@ -12,5 +12,5 @@ export 'check_ingredients_match.dart' show checkIngredientsMatch;
 export 'instacart_api_service.dart' show openInstacartShoppingList;
 export 'walmart_api_service.dart' show openWalmartShoppingList;
 export 'stripe_service.dart' show initializeStripe, createSubscription, hasActiveSubscription, cancelSubscription, restorePurchases;
-export 'iap_service.dart' show initializeIap, buyMonthlySubscription, restoreApplePurchases;
+export 'iap_service.dart' show initializeIap, buyMonthlySubscription, buyAnnualSubscription, restoreApplePurchases;
 export 'cleanup_unlabeled_content.dart' show cleanupUnlabeledContent;
