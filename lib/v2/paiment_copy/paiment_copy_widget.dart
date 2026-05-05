@@ -613,8 +613,10 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
 
                         const SizedBox(height: 28.0),
 
-                        // Pricing plans (Android only — iOS has no in-app purchase)
-                        if (!Platform.isIOS) _staggeredEntry(
+                        // Pricing plans — shown on both platforms. On iOS the
+                        // selected plan drives the IAP button below; on Android
+                        // it drives the Stripe payment sheet.
+                        _staggeredEntry(
                           controller: _plansController,
                           slideOffset: 30.0,
                           child: Row(
@@ -718,116 +720,29 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
     );
   }
 
-  /// iOS CTA — equal-weight subscribe options across Apple IAP (annual + monthly)
-  /// and web/Stripe. Apple Guideline 3.1.1 requires IAP be available alongside
-  /// any external purchase link; Guideline 3.1.2(c) requires a visible
-  /// disclosure block (title, length, price) and functional EULA + privacy
-  /// links inside the purchase flow.
+  /// iOS CTA — single Apple IAP button driven by the plan toggle above
+  /// (annual or monthly), plus an equal-weight web subscribe button. The
+  /// inline microtext below the buttons satisfies Apple Guideline 3.1.2(c)
+  /// (subscription title, length, price, renew/cancel language) and the
+  /// Terms of Use (EULA) + Privacy Policy links are rendered at the bottom.
   Widget _buildIOSCTA() {
+    final isYearly = _model.selectedPayment == 'yearly';
+    final priceLine = isYearly
+        ? '7-day free trial, then \$69.99/year. Auto-renews yearly. Cancel anytime in iPhone Settings.'
+        : '7-day free trial, then \$6.99/month. Auto-renews monthly. Cancel anytime in iPhone Settings.';
+
     return Column(
       children: [
-        // Subscription disclosure block (Apple Guideline 3.1.2(c))
-        // — names, lengths, and prices for both auto-renewing options shown
-        // adjacent to the buy buttons. Renew/cancel language is intentionally
-        // explicit so reviewers see compliance at a glance.
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(12.0),
-          decoration: BoxDecoration(
-            color: const Color(0xFFF8F5F2),
-            borderRadius: BorderRadius.circular(12.0),
-            border: Border.all(color: const Color(0xFFE0E0E0), width: 1.0),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'MomRise Premium',
-                style: FlutterFlowTheme.of(context).bodyMedium.override(
-                  fontFamily: 'Andika New Basic',
-                  fontSize: 13.0,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 0.0,
-                ),
-              ),
-              const SizedBox(height: 4.0),
-              Text(
-                'Annual — \$69.99/year (1 year, auto-renewing)\nMonthly — \$6.99/month (1 month, auto-renewing)\n7-day free trial for new subscribers. Cancel anytime in iPhone Settings.',
-                style: FlutterFlowTheme.of(context).bodySmall.override(
-                  fontFamily: 'Andika New Basic',
-                  color: FlutterFlowTheme.of(context).secondaryText,
-                  fontSize: 11.5,
-                  letterSpacing: 0.0,
-                ).copyWith(height: 1.4),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 12.0),
-
-        // OPTION 1A — Apple IAP Annual (highlighted as best value).
-        Stack(
-          clipBehavior: Clip.none,
-          children: [
-            FFButtonWidget(
-              onPressed: () async {
-                HapticFeedback.lightImpact();
-                final result = await buyAnnualSubscription();
-                await _handleIapResult(result);
-              },
-              text: 'Start free trial — \$69.99/year',
-              options: FFButtonOptions(
-                width: double.infinity,
-                height: 56.0,
-                padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                color: FlutterFlowTheme.of(context).primary,
-                textStyle: FlutterFlowTheme.of(context).titleMedium.override(
-                  fontFamily: 'Andika New Basic',
-                  color: Colors.white,
-                  fontSize: 17.0,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 0.0,
-                ),
-                elevation: 3.0,
-                borderSide: const BorderSide(color: Colors.transparent, width: 1.0),
-                borderRadius: BorderRadius.circular(28.0),
-              ),
-            ),
-            Positioned(
-              top: -8.0,
-              right: 16.0,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 3.0),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFFF7A59),
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                child: Text(
-                  'Save 17% · Best value',
-                  style: FlutterFlowTheme.of(context).bodySmall.override(
-                    fontFamily: 'Andika New Basic',
-                    color: Colors.white,
-                    fontSize: 10.0,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 0.2,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 10.0),
-
-        // OPTION 1B — Apple IAP Monthly. Equal-weight CTA, lower visual
-        // emphasis only via copy (price), not size, so anti-steering parity
-        // with the web option is preserved.
+        // Single Apple IAP CTA — buys whichever plan is selected above.
         FFButtonWidget(
           onPressed: () async {
             HapticFeedback.lightImpact();
-            final result = await buyMonthlySubscription();
+            final result = isYearly
+                ? await buyAnnualSubscription()
+                : await buyMonthlySubscription();
             await _handleIapResult(result);
           },
-          text: 'Start free trial — \$6.99/month',
+          text: 'Start 7-day free trial',
           options: FFButtonOptions(
             width: double.infinity,
             height: 56.0,
@@ -845,84 +760,39 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
             borderRadius: BorderRadius.circular(28.0),
           ),
         ),
-        const SizedBox(height: 12.0),
+        const SizedBox(height: 8.0),
 
-        // Equal-weight separator — keep web option visually balanced
-        Row(
-          children: [
-            Expanded(child: Container(height: 1, color: const Color(0xFFE0E0E0))),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12.0),
-              child: Text(
-                'or',
-                style: FlutterFlowTheme.of(context).bodySmall.override(
-                  fontFamily: 'Andika New Basic',
-                  color: FlutterFlowTheme.of(context).secondaryText,
-                  fontSize: 12.0,
-                  letterSpacing: 0.0,
-                ),
-              ),
-            ),
-            Expanded(child: Container(height: 1, color: const Color(0xFFE0E0E0))),
-          ],
+        // Apple Guideline 3.1.2(c) microtext — title/length/price/renew/cancel
+        // surfaced inline so the binding flow shows the disclosure adjacent
+        // to the buy CTA without taking up button-sized real estate.
+        Text(
+          priceLine,
+          textAlign: TextAlign.center,
+          style: FlutterFlowTheme.of(context).bodySmall.override(
+            fontFamily: 'Andika New Basic',
+            color: FlutterFlowTheme.of(context).secondaryText,
+            fontSize: 11.5,
+            letterSpacing: 0.0,
+          ),
         ),
         const SizedBox(height: 12.0),
 
-        // OPTION 2 — web subscribe (existing Stripe flow). Kept at equal
-        // visual weight per Apple anti-steering guidelines.
+        // Web subscribe option — equal-weight outline button so Apple
+        // anti-steering parity is preserved without stacking another solid CTA.
         FFButtonWidget(
           onPressed: () async {
             HapticFeedback.lightImpact();
-            final plan = _model.selectedPayment == 'yearly' ? 'yearly' : 'monthly';
+            final plan = isYearly ? 'yearly' : 'monthly';
             final uri = Uri.parse('https://momrise.app/subscribe?plan=$plan');
             if (await canLaunchUrl(uri)) {
               await launchUrl(uri, mode: LaunchMode.externalApplication);
             }
           },
-          text: 'Start 7-day free trial at momrise.app',
-          options: FFButtonOptions(
-            width: double.infinity,
-            height: 56.0,
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
-            color: FlutterFlowTheme.of(context).primary,
-            textStyle: FlutterFlowTheme.of(context).titleMedium.override(
-              fontFamily: 'Andika New Basic',
-              color: Colors.white,
-              fontSize: 17.0,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 0.0,
-            ),
-            elevation: 3.0,
-            borderSide: const BorderSide(color: Colors.transparent, width: 1.0),
-            borderRadius: BorderRadius.circular(28.0),
-          ),
-        ),
-        const SizedBox(height: 16.0),
-        // SECONDARY — verify Firestore subscription status for users who already subscribed on the web
-        FFButtonWidget(
-          onPressed: () async {
-            final hasSubscription = await hasActiveSubscription();
-            if (hasSubscription) {
-              _completeOnboardingAndGoHome();
-            } else {
-              if (mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: const Text('No active subscription found for this account.'),
-                    backgroundColor: FlutterFlowTheme.of(context).error,
-                    behavior: SnackBarBehavior.floating,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                    margin: const EdgeInsets.all(16),
-                    duration: const Duration(seconds: 4),
-                  ),
-                );
-              }
-            }
-          },
-          text: 'I already subscribed — continue',
+          text: 'Or subscribe at momrise.app',
           options: FFButtonOptions(
             width: double.infinity,
             height: 50.0,
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
             color: Colors.transparent,
             textStyle: FlutterFlowTheme.of(context).bodyMedium.override(
               fontFamily: 'Andika New Basic',
@@ -939,9 +809,10 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
             borderRadius: BorderRadius.circular(28.0),
           ),
         ),
-        const SizedBox(height: 10.0),
         // Restore purchases — checks Firestore (web subscriptions) AND
         // asks Apple to restore any prior IAP purchases on this Apple ID.
+        // This single link replaces the previous "I already subscribed"
+        // button since restore already polls Firestore for web subs.
         GestureDetector(
           onTap: () async {
             // Kick off Apple restore first; the IAP listener will mirror
