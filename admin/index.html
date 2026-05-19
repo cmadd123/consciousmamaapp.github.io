@@ -274,6 +274,7 @@
           <button class="tab-btn" data-tab="taxes" style="background: none; border: none; padding: 10px 16px; font-size: 15px; color: var(--text-muted); border-bottom: 2px solid transparent; margin-bottom: -1px;">Taxes (1099)</button>
           <button class="tab-btn" data-tab="suggestions" style="background: none; border: none; padding: 10px 16px; font-size: 15px; color: var(--text-muted); border-bottom: 2px solid transparent; margin-bottom: -1px;">Suggestions <span id="suggestionBadge" hidden style="background: var(--accent); color: white; border-radius: 999px; padding: 2px 7px; font-size: 11px; margin-left: 4px;">0</span></button>
           <button class="tab-btn" data-tab="brief" style="background: none; border: none; padding: 10px 16px; font-size: 15px; color: var(--text-muted); border-bottom: 2px solid transparent; margin-bottom: -1px;">Brief</button>
+          <button class="tab-btn" data-tab="recipes" style="background: none; border: none; padding: 10px 16px; font-size: 15px; color: var(--text-muted); border-bottom: 2px solid transparent; margin-bottom: -1px;">Recipes</button>
         </div>
 
         <!-- Applications tab -->
@@ -415,6 +416,41 @@
           </div>
           <div id="suggestionList" style="display: flex; flex-direction: column; gap: 12px;">
             <div class="empty"><div class="loader"></div> Loading…</div>
+          </div>
+        </div>
+
+        <!-- Recipes tab (admin-only insight: how creators are adding recipes) -->
+        <div class="tab-panel" id="tabRecipes" hidden>
+          <div class="section-head">
+            <h2>Recipe sources</h2>
+            <button class="btn ghost" id="refreshRecipesBtn">↻ Refresh</button>
+          </div>
+          <p style="color: var(--text-muted); font-size: 13px; margin: -8px 0 16px;">
+            Aggregate breakdown across all recipes in the <code>meal</code> collection.
+            Shows where creators are sourcing recipes from — useful for tracking adoption
+            of the import flows post-launch.
+          </p>
+          <div class="metrics-banner" id="recipesMetrics" style="grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); margin-bottom: 20px;">
+            <div class="metric"><div class="metric-label">Total recipes</div><div class="metric-value" id="rTotal">—</div></div>
+            <div class="metric"><div class="metric-label">Scan (OCR)</div><div class="metric-value" id="rScan">—</div></div>
+            <div class="metric"><div class="metric-label">From URL</div><div class="metric-value" id="rUrl">—</div></div>
+            <div class="metric"><div class="metric-label">Other / manual</div><div class="metric-value" id="rManual">—</div></div>
+          </div>
+          <div style="overflow-x: auto; background: var(--surface); border: 1px solid var(--border); border-radius: 12px;">
+            <table id="recipesByCreatorTable" style="width: 100%; border-collapse: collapse; font-size: 14px;">
+              <thead>
+                <tr style="background: #F9FAFB; text-align: left;">
+                  <th style="padding: 12px 14px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); font-weight: 600; border-bottom: 1px solid var(--border);">Creator</th>
+                  <th style="padding: 12px 14px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); font-weight: 600; border-bottom: 1px solid var(--border); text-align: right;">Total</th>
+                  <th style="padding: 12px 14px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); font-weight: 600; border-bottom: 1px solid var(--border); text-align: right;">Scan</th>
+                  <th style="padding: 12px 14px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); font-weight: 600; border-bottom: 1px solid var(--border); text-align: right;">URL</th>
+                  <th style="padding: 12px 14px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); font-weight: 600; border-bottom: 1px solid var(--border); text-align: right;">Other</th>
+                </tr>
+              </thead>
+              <tbody id="recipesByCreatorBody">
+                <tr><td colspan="5" style="padding: 48px; text-align: center; color: var(--text-muted);"><div class="loader"></div> Click Refresh to load…</td></tr>
+              </tbody>
+            </table>
           </div>
         </div>
         </div><!-- /viewListInner -->
@@ -673,8 +709,98 @@
         if (btn.dataset.tab === 'taxes') loadTaxesView();
         if (btn.dataset.tab === 'suggestions') loadSuggestions();
         if (btn.dataset.tab === 'brief') loadBriefHistory();
+        if (btn.dataset.tab === 'recipes') loadRecipesView();
       });
     });
+
+    // Recipes tab — admin-only insight into where recipes come from.
+    $('refreshRecipesBtn').addEventListener('click', loadRecipesView);
+
+    async function loadRecipesView() {
+      const body = $('recipesByCreatorBody');
+      body.innerHTML = `<tr><td colspan="5" style="padding: 48px; text-align: center; color: var(--text-muted);"><div class="loader"></div> Loading recipe stats…</td></tr>`;
+      try {
+        // Pull every meal doc and every creator doc so we can group + label.
+        // For now this is acceptable since the meal collection is small.
+        // Once it scales we'd want a server-side aggregation (Cloud
+        // Function or scheduled rollup into a stats doc).
+        const [mealsSnap, creatorsSnap] = await Promise.all([
+          getDocs(collection(db, 'meal')),
+          getDocs(collection(db, 'creators')),
+        ]);
+
+        const creatorById = new Map();
+        creatorsSnap.forEach((d) => {
+          creatorById.set(d.id, d.data());
+        });
+
+        const totals = { scan: 0, url: 0, manual: 0 };
+        const byCreator = new Map(); // creator_ref doc id -> { name, scan, url, manual }
+        const noCreator = { name: '(no creator_ref — likely mobile/consumer)', scan: 0, url: 0, manual: 0 };
+
+        mealsSnap.forEach((d) => {
+          const data = d.data();
+          const src = data.source;
+          const bucket = src === 'creator_web_ocr' ? 'scan'
+            : src === 'creator_web_url' ? 'url'
+            : 'manual';
+          totals[bucket]++;
+
+          // Bucket per creator (or no_creator pile).
+          const creatorRef = data.creator_ref;
+          if (creatorRef && typeof creatorRef.id === 'string') {
+            const cid = creatorRef.id;
+            if (!byCreator.has(cid)) {
+              const c = creatorById.get(cid);
+              byCreator.set(cid, {
+                name: c?.name || c?.display_name || c?.code || `(creator ${cid.slice(0, 8)})`,
+                scan: 0, url: 0, manual: 0,
+              });
+            }
+            byCreator.get(cid)[bucket]++;
+          } else {
+            noCreator[bucket]++;
+          }
+        });
+
+        const total = totals.scan + totals.url + totals.manual;
+        $('rTotal').textContent = total;
+        $('rScan').textContent = totals.scan;
+        $('rUrl').textContent = totals.url;
+        $('rManual').textContent = totals.manual;
+
+        // Build sorted creator rows (descending by total).
+        const rows = Array.from(byCreator.values())
+          .map((c) => ({ ...c, total: c.scan + c.url + c.manual }))
+          .filter((c) => c.total > 0)
+          .sort((a, b) => b.total - a.total);
+
+        const noCreatorTotal = noCreator.scan + noCreator.url + noCreator.manual;
+        if (noCreatorTotal > 0) {
+          rows.push({ ...noCreator, total: noCreatorTotal });
+        }
+
+        if (rows.length === 0) {
+          body.innerHTML = `<tr><td colspan="5" style="padding: 48px; text-align: center; color: var(--text-muted);">No recipes in the database yet.</td></tr>`;
+          return;
+        }
+
+        body.innerHTML = rows.map((r) => `
+          <tr>
+            <td style="padding: 12px 14px; border-bottom: 1px solid var(--border); ${r.name.startsWith('(') ? 'color: var(--text-muted); font-style: italic;' : ''}">
+              ${escapeHtml(r.name)}
+            </td>
+            <td style="padding: 12px 14px; border-bottom: 1px solid var(--border); text-align: right; font-variant-numeric: tabular-nums; font-weight: 600;">${r.total}</td>
+            <td style="padding: 12px 14px; border-bottom: 1px solid var(--border); text-align: right; font-variant-numeric: tabular-nums; color: ${r.scan > 0 ? 'var(--text)' : 'var(--text-muted)'};">${r.scan}</td>
+            <td style="padding: 12px 14px; border-bottom: 1px solid var(--border); text-align: right; font-variant-numeric: tabular-nums; color: ${r.url > 0 ? 'var(--text)' : 'var(--text-muted)'};">${r.url}</td>
+            <td style="padding: 12px 14px; border-bottom: 1px solid var(--border); text-align: right; font-variant-numeric: tabular-nums; color: ${r.manual > 0 ? 'var(--text)' : 'var(--text-muted)'};">${r.manual}</td>
+          </tr>
+        `).join('');
+      } catch (e) {
+        console.error('loadRecipesView failed', e);
+        body.innerHTML = `<tr><td colspan="5" style="padding: 48px; text-align: center; color: var(--danger);">Failed to load: ${escapeHtml(e.message)}</td></tr>`;
+      }
+    }
 
     // Monthly creator brief
     $('briefTestBtn').addEventListener('click', () => sendBrief(true));
