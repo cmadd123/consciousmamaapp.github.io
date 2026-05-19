@@ -337,9 +337,69 @@
     .scan-card .rights-attestation .rights-text small { color: var(--text-muted); font-size: 11px; }
     .scan-card button[data-save]:disabled { opacity: 0.4; cursor: not-allowed; }
 
+    /* Recipe library list */
+    .recipe-library { display: flex; flex-direction: column; gap: 8px; }
+    .recipe-library-empty {
+      text-align: center; padding: 32px 24px; color: var(--text-muted);
+      background: var(--surface); border: 1px dashed var(--border); border-radius: 12px;
+      font-size: 14px;
+    }
+    .recipe-row {
+      display: grid; grid-template-columns: 56px 1fr auto; gap: 12px;
+      align-items: center; padding: 10px 12px;
+      background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+      cursor: pointer; transition: border-color 120ms;
+    }
+    .recipe-row:hover { border-color: var(--primary); }
+    .recipe-row.expanded { background: color-mix(in srgb, var(--primary) 4%, var(--surface)); }
+    .recipe-row .row-thumb {
+      width: 56px; height: 56px; border-radius: 8px; overflow: hidden;
+      background: #F3F4F6; display: grid; place-items: center; font-size: 22px;
+    }
+    .recipe-row .row-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .recipe-row .row-body { min-width: 0; }
+    .recipe-row .row-name {
+      font-weight: 600; font-size: 14px; color: var(--text);
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .recipe-row .row-meta {
+      font-size: 12px; color: var(--text-muted); margin-top: 2px;
+      display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
+    }
+    .recipe-row .row-meta .src-pill {
+      font-size: 10px; padding: 2px 7px; border-radius: 6px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .recipe-row .row-meta .src-pill.scan { background: color-mix(in srgb, #10B981 14%, white); color: #047857; }
+    .recipe-row .row-meta .src-pill.url { background: color-mix(in srgb, #3B82F6 14%, white); color: #1d4ed8; }
+    .recipe-row .row-meta .src-pill.other { background: var(--border); color: var(--text-muted); }
+    .recipe-row .row-actions { display: flex; gap: 6px; }
+    .recipe-row .row-actions button {
+      background: none; border: none; color: var(--text-muted);
+      padding: 6px; border-radius: 6px; cursor: pointer;
+      transition: background 120ms, color 120ms;
+    }
+    .recipe-row .row-actions button:hover { background: var(--border); color: var(--text); }
+    .recipe-row .row-actions button.danger:hover { background: color-mix(in srgb, var(--danger) 12%, white); color: var(--danger); }
+    .recipe-detail {
+      grid-column: 1 / -1; padding: 12px 4px 4px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+    }
+    .recipe-detail h4 {
+      margin: 0 0 6px; font-size: 11px; text-transform: uppercase;
+      letter-spacing: 0.06em; color: var(--text-muted);
+    }
+    .recipe-detail ul, .recipe-detail ol { margin: 0; padding-left: 20px; font-size: 13px; line-height: 1.5; }
+    .recipe-detail li { margin-bottom: 3px; }
+    .recipe-detail .attribution {
+      grid-column: 1 / -1; font-size: 12px; color: var(--text-muted); font-style: italic;
+      padding-top: 8px; border-top: 1px solid var(--border);
+    }
+
     @media (max-width: 640px) {
       .scan-card { grid-template-columns: 1fr; }
       .scan-card .thumb { width: 100%; height: 200px; }
+      .recipe-detail { grid-template-columns: 1fr; gap: 14px; }
     }
     .feature-card .feature-primary { font-size: 28px; font-weight: 700; line-height: 1.1; }
     .feature-card .feature-sub { font-size: 13px; color: var(--text-muted); min-height: 1.2em; }
@@ -1189,6 +1249,20 @@
           meal plan from there.
         </p>
 
+        <!-- Your library (existing recipes) -->
+        <div class="scan-section">
+          <div class="scan-section-head">
+            <h3>🗂 Your library</h3>
+            <span class="muted" id="libraryCount"></span>
+          </div>
+          <div id="recipeLibrary" class="recipe-library">
+            <div class="muted" style="padding: 16px; text-align: center;">
+              <div class="loader" style="margin: 0 auto 8px;"></div>
+              Loading your recipes…
+            </div>
+          </div>
+        </div>
+
         <!-- Scan a photo -->
         <div class="scan-section">
           <div class="scan-section-head">
@@ -1854,6 +1928,7 @@
           loadCreatorRoutines();
         } else if (target === 'addRecipes') {
           show('viewAddRecipes');
+          loadRecipeLibrary();
         }
       });
     });
@@ -3617,6 +3692,9 @@
             card.remove();
           });
           toast('Recipe saved');
+          // Refresh the library section so the new recipe appears
+          // immediately at the top of the view.
+          void loadRecipeLibrary();
         } catch (e) {
           console.error(e);
           toast('Save failed: ' + e.message, true);
@@ -3700,6 +3778,147 @@
       if (iso) return (parseInt(iso[1] || 0, 10) * 60) + parseInt(iso[2] || 0, 10);
       const n = parseInt(v, 10);
       return Number.isFinite(n) ? n : 0;
+    }
+
+    // ───────────────────────────────────────────────────────────────
+    // Recipe library: shows the creator's existing recipes at the top
+    // of the Add Recipes view, so saves are visible immediately and
+    // the creator can review / delete from one place.
+    // ───────────────────────────────────────────────────────────────
+    let libraryCache = [];
+
+    async function loadRecipeLibrary() {
+      const listEl = $('recipeLibrary');
+      const countEl = $('libraryCount');
+      if (!listEl || !currentUser) return;
+      try {
+        // Query by user_ref so recipes added from either mobile or web
+        // show up — inclusive view of the creator's whole library.
+        const snap = await getDocs(query(
+          collection(db, 'meal'),
+          where('user_ref', '==', doc(db, 'users', currentUser.uid)),
+        ));
+        const items = [];
+        snap.forEach((d) => items.push({ id: d.id, ref: d.ref, data: d.data() }));
+        items.sort((a, b) => (b.data.created_at?.seconds || 0) - (a.data.created_at?.seconds || 0));
+        libraryCache = items;
+        renderRecipeLibrary(items);
+        countEl.textContent = items.length === 0 ? '' : `${items.length} recipe${items.length === 1 ? '' : 's'}`;
+      } catch (e) {
+        console.error('loadRecipeLibrary failed', e);
+        listEl.innerHTML = `<div class="recipe-library-empty">Couldn't load your library: ${escapeHtml(e.message)}</div>`;
+      }
+    }
+
+    function renderRecipeLibrary(items) {
+      const listEl = $('recipeLibrary');
+      if (items.length === 0) {
+        listEl.innerHTML = `<div class="recipe-library-empty">
+          No recipes yet. Scan a photo or paste a URL below to get started.
+        </div>`;
+        return;
+      }
+      listEl.innerHTML = items.map((it) => {
+        const r = it.data;
+        const src = r.source === 'creator_web_ocr' ? 'scan'
+          : r.source === 'creator_web_url' ? 'url'
+          : 'other';
+        const srcLabel = src === 'scan' ? 'Scan' : src === 'url' ? 'URL' : 'Other';
+        const dateStr = r.created_at?.seconds
+          ? new Date(r.created_at.seconds * 1000).toLocaleDateString()
+          : '';
+        const ingCount = Array.isArray(r.ingredients) ? r.ingredients.length : 0;
+        const stepCount = Array.isArray(r.CookingInstructions) ? r.CookingInstructions.length : 0;
+        const thumbHtml = r.image_url
+          ? `<img src="${escapeHtml(r.image_url)}" alt="" onerror="this.parentElement.innerHTML='📄'">`
+          : '📄';
+        return `
+          <div class="recipe-row" data-id="${escapeHtml(it.id)}">
+            <div class="row-thumb">${thumbHtml}</div>
+            <div class="row-body">
+              <div class="row-name">${escapeHtml(r.recipe_name || 'Untitled recipe')}</div>
+              <div class="row-meta">
+                <span class="src-pill ${src}">${srcLabel}</span>
+                ${dateStr ? `<span>${escapeHtml(dateStr)}</span>` : ''}
+                ${ingCount ? `<span>${ingCount} ingredient${ingCount === 1 ? '' : 's'}</span>` : ''}
+                ${stepCount ? `<span>${stepCount} step${stepCount === 1 ? '' : 's'}</span>` : ''}
+              </div>
+            </div>
+            <div class="row-actions">
+              <button title="Delete recipe" aria-label="Delete recipe" class="danger" data-delete="${escapeHtml(it.id)}">🗑</button>
+            </div>
+          </div>`;
+      }).join('');
+
+      listEl.querySelectorAll('.recipe-row').forEach((row) => {
+        row.addEventListener('click', () => toggleExpand(row));
+      });
+      listEl.querySelectorAll('[data-delete]').forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          void deleteRecipe(btn.dataset.delete);
+        });
+      });
+    }
+
+    function toggleExpand(row) {
+      const id = row.dataset.id;
+      const item = libraryCache.find((x) => x.id === id);
+      if (!item) return;
+      const existing = row.querySelector('.recipe-detail');
+      if (existing) {
+        existing.remove();
+        row.classList.remove('expanded');
+        return;
+      }
+      document.querySelectorAll('.recipe-row.expanded').forEach((r) => {
+        r.classList.remove('expanded');
+        const d = r.querySelector('.recipe-detail');
+        if (d) d.remove();
+      });
+
+      const r = item.data;
+      const ings = Array.isArray(r.ingredients) ? r.ingredients : [];
+      const steps = Array.isArray(r.CookingInstructions) ? r.CookingInstructions : [];
+      const sourceUrl = r.source_url;
+      const attribution = r.attribution;
+      const detail = document.createElement('div');
+      detail.className = 'recipe-detail';
+      detail.innerHTML = `
+        <div>
+          <h4>Ingredients</h4>
+          <ul>${ings.map((s) => `<li>${escapeHtml(s)}</li>`).join('') || '<li>(none)</li>'}</ul>
+        </div>
+        <div>
+          <h4>Instructions</h4>
+          <ol>${steps.map((s) => `<li>${escapeHtml(s)}</li>`).join('') || '<li>(none)</li>'}</ol>
+        </div>
+        ${(attribution || sourceUrl) ? `
+          <div class="attribution">
+            ${attribution ? escapeHtml(attribution) : ''}
+            ${sourceUrl ? ` · <a href="${escapeHtml(sourceUrl)}" target="_blank" rel="noopener">source</a>` : ''}
+          </div>
+        ` : ''}
+      `;
+      row.appendChild(detail);
+      row.classList.add('expanded');
+    }
+
+    async function deleteRecipe(id) {
+      const item = libraryCache.find((x) => x.id === id);
+      if (!item) return;
+      const name = item.data.recipe_name || 'this recipe';
+      if (!confirm(`Delete "${name}"? This can't be undone.`)) return;
+      try {
+        await deleteDoc(item.ref);
+        libraryCache = libraryCache.filter((x) => x.id !== id);
+        renderRecipeLibrary(libraryCache);
+        $('libraryCount').textContent = libraryCache.length === 0 ? '' : `${libraryCache.length} recipe${libraryCache.length === 1 ? '' : 's'}`;
+        toast('Recipe deleted');
+      } catch (e) {
+        console.error(e);
+        toast('Delete failed: ' + e.message, true);
+      }
     }
 
   </script>
