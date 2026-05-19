@@ -1095,8 +1095,8 @@
                 <span class="feature-icon">📸</span>
                 <h3>Add Recipes</h3>
               </div>
-              <div class="feature-primary" style="font-size: 20px;">Quick add</div>
-              <div class="feature-sub">Snap photos or paste URLs</div>
+              <div class="feature-primary" id="featureRecipesPrimary">—</div>
+              <div class="feature-sub" id="featureRecipesSub">&nbsp;</div>
               <div class="feature-cta">Import →</div>
             </button>
           </div>
@@ -1862,6 +1862,7 @@
         show('viewDashboard');
         loadAnalytics();
         loadPayouts();
+        loadRecipeStats();
       });
     });
 
@@ -1913,6 +1914,7 @@
       loadAnalytics();
       loadPayouts();
       loadChangelog();
+      loadRecipeStats();
     });
 
     // --- Changelog ---
@@ -3700,6 +3702,46 @@
       if (iso) return (parseInt(iso[1] || 0, 10) * 60) + parseInt(iso[2] || 0, 10);
       const n = parseInt(v, 10);
       return Number.isFinite(n) ? n : 0;
+    }
+
+    // Recipe library stats — surfaces on the Add Recipes feature card so
+    // creators see at a glance how much they've imported vs added manually.
+    // Counts by source field (scan / URL / unset = manual or pre-import).
+    async function loadRecipeStats() {
+      const primary = $('featureRecipesPrimary');
+      const sub = $('featureRecipesSub');
+      if (!primary || !sub || !currentUser) return;
+      try {
+        // Query by user_ref so recipes added from either mobile or web
+        // count together — gives the full picture of the creator's
+        // library, not just things saved through this dashboard.
+        const snap = await getDocs(query(
+          collection(db, 'meal'),
+          where('user_ref', '==', doc(db, 'users', currentUser.uid)),
+        ));
+        let scan = 0, url = 0, manual = 0;
+        snap.forEach((d) => {
+          const s = d.data().source;
+          if (s === 'creator_web_ocr') scan++;
+          else if (s === 'creator_web_url') url++;
+          else manual++;
+        });
+        const total = scan + url + manual;
+        primary.textContent = total;
+        if (total === 0) {
+          sub.textContent = 'No recipes yet — start importing';
+        } else {
+          const imported = scan + url;
+          const importedLabel = imported > 0
+            ? `${imported} imported (${scan} scan${scan === 1 ? '' : ''} · ${url} url)`
+            : '0 imported';
+          sub.textContent = `${importedLabel} · ${manual} other`;
+        }
+      } catch (e) {
+        console.warn('loadRecipeStats failed', e);
+        primary.textContent = '—';
+        sub.innerHTML = '&nbsp;';
+      }
     }
   </script>
 </body>
