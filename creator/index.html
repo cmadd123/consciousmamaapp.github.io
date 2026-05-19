@@ -250,9 +250,78 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
+    /* Scan recipes tab */
+    .scan-intro { color: var(--text-muted); font-size: 14px; margin-bottom: 16px; max-width: 640px; }
+    .scan-dropzone {
+      border: 2px dashed var(--border); border-radius: 14px;
+      padding: 32px 24px; text-align: center;
+      background: var(--surface);
+      transition: border-color 150ms, background 150ms;
+      cursor: pointer;
+    }
+    .scan-dropzone:hover, .scan-dropzone.dragover {
+      border-color: var(--primary); background: rgba(82,160,151,0.04);
+    }
+    .scan-dropzone input[type=file] { display: none; }
+    .scan-dropzone .icon { font-size: 36px; margin-bottom: 8px; }
+    .scan-dropzone .primary-text { font-weight: 600; color: var(--text); margin-bottom: 4px; }
+    .scan-dropzone .sub-text { color: var(--text-muted); font-size: 13px; }
+
+    .scan-cards { display: flex; flex-direction: column; gap: 14px; margin-top: 20px; }
+    .scan-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+      padding: 16px; display: grid;
+      grid-template-columns: 140px 1fr; gap: 16px;
+    }
+    .scan-card .thumb {
+      width: 140px; height: 140px; border-radius: 10px; overflow: hidden;
+      background: #F3F4F6; display: grid; place-items: center;
+    }
+    .scan-card .thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .scan-card .body { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+    .scan-card .status {
+      display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-muted);
+    }
+    .scan-card .status.error { color: var(--danger); }
+    .scan-card .status.success { color: var(--success); }
+    .scan-card input.recipe-name {
+      font-size: 16px; font-weight: 600; padding: 8px 10px;
+      border: 1px solid var(--border); border-radius: 8px; font-family: inherit;
+    }
+    .scan-card input.recipe-name:focus {
+      outline: 2px solid var(--primary); outline-offset: -1px; border-color: var(--primary);
+    }
+    .scan-card .meta-row {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+    }
+    .scan-card .meta-row label {
+      font-size: 11px; color: var(--text-muted); text-transform: uppercase;
+      letter-spacing: 0.06em; font-weight: 600; display: block; margin-bottom: 4px;
+    }
+    .scan-card .meta-row input {
+      width: 100%; padding: 6px 8px; font-size: 13px; font-family: inherit;
+      border: 1px solid var(--border); border-radius: 6px;
+    }
+    .scan-card textarea {
+      width: 100%; padding: 8px 10px; font-size: 13px; font-family: inherit;
+      border: 1px solid var(--border); border-radius: 8px; resize: vertical; min-height: 80px;
+    }
+    .scan-card textarea:focus {
+      outline: 2px solid var(--primary); outline-offset: -1px; border-color: var(--primary);
+    }
+    .scan-card .field-label {
+      font-size: 11px; color: var(--text-muted); text-transform: uppercase;
+      letter-spacing: 0.06em; font-weight: 600; margin-bottom: 4px;
+    }
+    .scan-card .actions {
+      display: flex; gap: 8px; justify-content: flex-end; margin-top: 4px;
+    }
+
     @media (max-width: 640px) {
       main { padding: 16px; }
       .doc-card { flex-wrap: wrap; }
+      .scan-card { grid-template-columns: 1fr; }
+      .scan-card .thumb { width: 100%; height: 200px; }
     }
   </style>
 </head>
@@ -303,6 +372,7 @@
       <div class="view" id="viewDashboard">
         <div class="tabs">
           <button class="tab active" data-tab="docs">Helpful Docs</button>
+          <button class="tab" data-tab="scan">Scan Recipes</button>
           <button class="tab" data-tab="analytics">Analytics</button>
         </div>
 
@@ -315,6 +385,25 @@
           <div class="doc-list" id="docList">
             <div class="empty"><div class="loader" style="margin: 0 auto 12px;"></div>Loading docs…</div>
           </div>
+        </section>
+
+        <!-- Scan Recipes panel -->
+        <section class="panel" id="panelScan">
+          <div class="section-head">
+            <h2>Scan recipes</h2>
+          </div>
+          <p class="scan-intro">
+            Drop a photo of a cookbook page, a screenshot, a handwritten card, or anything with a recipe on it.
+            Claude reads the page, extracts the ingredients and steps, and lets you review before saving to your library.
+            You can drop several at once — they'll process in parallel.
+          </p>
+          <label class="scan-dropzone" id="scanDropzone">
+            <input type="file" id="scanFileInput" accept="image/*" multiple>
+            <div class="icon">📸</div>
+            <div class="primary-text">Drop photos here, or click to choose</div>
+            <div class="sub-text">JPG or PNG, up to 5MB each. Try 2-3 at a time for the first run.</div>
+          </label>
+          <div class="scan-cards" id="scanCards"></div>
         </section>
 
         <!-- Analytics panel -->
@@ -784,6 +873,219 @@
         console.error(e);
         toast('Analytics load failed: ' + e.message, true);
       }
+    }
+
+    // --- Scan Recipes ---
+    const SCAN_FN_URL = 'https://us-central1-parenting-plus-7szrif.cloudfunctions.net/scanCookbookWithClaude';
+    const MAX_IMAGE_BYTES = 5 * 1024 * 1024; // Claude's vision input cap.
+    let scanCardCounter = 0;
+
+    const scanDropzone = $('scanDropzone');
+    const scanFileInput = $('scanFileInput');
+
+    scanFileInput.addEventListener('change', (e) => {
+      const files = Array.from(e.target.files || []);
+      handleScanFiles(files);
+      // Reset so the same file can be re-selected if needed.
+      e.target.value = '';
+    });
+
+    // Drag-and-drop. The dropzone is a <label> wrapping the file input, so
+    // click-to-pick still works without any extra handler.
+    ['dragenter', 'dragover'].forEach((evt) => {
+      scanDropzone.addEventListener(evt, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        scanDropzone.classList.add('dragover');
+      });
+    });
+    ['dragleave', 'drop'].forEach((evt) => {
+      scanDropzone.addEventListener(evt, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        scanDropzone.classList.remove('dragover');
+      });
+    });
+    scanDropzone.addEventListener('drop', (e) => {
+      const files = Array.from(e.dataTransfer?.files || []).filter(f => f.type.startsWith('image/'));
+      if (files.length) handleScanFiles(files);
+    });
+
+    function handleScanFiles(files) {
+      for (const file of files) {
+        if (file.size > MAX_IMAGE_BYTES) {
+          toast(`${file.name} is too large (max 5MB)`, true);
+          continue;
+        }
+        void processScanFile(file);
+      }
+    }
+
+    async function processScanFile(file) {
+      const cardId = `scanCard_${++scanCardCounter}`;
+      const card = document.createElement('div');
+      card.className = 'scan-card';
+      card.id = cardId;
+      card.innerHTML = `
+        <div class="thumb"><div class="loader"></div></div>
+        <div class="body">
+          <div class="status"><div class="loader"></div> Reading the page…</div>
+        </div>`;
+      $('scanCards').prepend(card);
+
+      try {
+        // Show the image thumbnail immediately so the user has feedback.
+        const objectUrl = URL.createObjectURL(file);
+        card.querySelector('.thumb').innerHTML = `<img src="${objectUrl}" alt="">`;
+
+        // Base64-encode the file for the cloud function.
+        const base64 = await fileToBase64(file);
+
+        const response = await fetch(SCAN_FN_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ data: { imageBase64: base64 } }),
+        });
+        if (!response.ok) throw new Error(`Server error: ${response.status}`);
+        const json = await response.json();
+        const result = json.result;
+        if (!result || result.success !== true) {
+          throw new Error(result?.error || 'Recipe extraction failed');
+        }
+        const recipe = result.recipe || {};
+
+        renderScanCard(card, file, base64, objectUrl, recipe);
+      } catch (e) {
+        console.error(e);
+        card.querySelector('.body').innerHTML = `
+          <div class="status error">
+            ⚠️ ${escapeHtml(e.message || 'Scan failed')}
+          </div>
+          <div class="actions">
+            <button class="btn ghost" data-discard="${cardId}">Remove</button>
+          </div>`;
+        card.querySelector('[data-discard]').addEventListener('click', () => card.remove());
+      }
+    }
+
+    function renderScanCard(card, file, base64, objectUrl, recipe) {
+      const ingredients = Array.isArray(recipe.ingredients) ? recipe.ingredients.join('\n') : '';
+      const instructions = Array.isArray(recipe.instructions) ? recipe.instructions.join('\n') : '';
+      const prep = Number.isFinite(recipe.prepTime) ? recipe.prepTime : 0;
+      const cook = Number.isFinite(recipe.cookTime) ? recipe.cookTime : 0;
+      const servings = Number.isFinite(recipe.servings) ? recipe.servings : 4;
+
+      card.querySelector('.body').innerHTML = `
+        <input class="recipe-name" type="text" value="${escapeHtml(recipe.name || 'Untitled recipe')}" placeholder="Recipe name">
+        <div class="meta-row">
+          <div>
+            <label>Prep (min)</label>
+            <input type="number" class="field-prep" min="0" value="${prep}">
+          </div>
+          <div>
+            <label>Cook (min)</label>
+            <input type="number" class="field-cook" min="0" value="${cook}">
+          </div>
+          <div>
+            <label>Servings</label>
+            <input type="number" class="field-servings" min="1" value="${servings}">
+          </div>
+        </div>
+        <div>
+          <div class="field-label">Ingredients (one per line)</div>
+          <textarea class="field-ingredients" rows="5">${escapeHtml(ingredients)}</textarea>
+        </div>
+        <div>
+          <div class="field-label">Instructions (one step per line)</div>
+          <textarea class="field-instructions" rows="6">${escapeHtml(instructions)}</textarea>
+        </div>
+        <div class="actions">
+          <button class="btn ghost" data-discard>Discard</button>
+          <button class="btn" data-save>Save to library</button>
+        </div>`;
+
+      card.querySelector('[data-discard]').addEventListener('click', () => {
+        URL.revokeObjectURL(objectUrl);
+        card.remove();
+      });
+
+      card.querySelector('[data-save]').addEventListener('click', async () => {
+        const saveBtn = card.querySelector('[data-save]');
+        const discardBtn = card.querySelector('[data-discard]');
+        saveBtn.disabled = true; discardBtn.disabled = true;
+        const originalLabel = saveBtn.textContent;
+        saveBtn.textContent = 'Saving…';
+        try {
+          await saveScanResult(card, file);
+          // Replace card body with a success state and a "Scan another" hint.
+          card.querySelector('.body').innerHTML = `
+            <div class="status success">✓ Saved to your library</div>
+            <div class="actions">
+              <button class="btn ghost" data-dismiss>Done</button>
+            </div>`;
+          card.querySelector('[data-dismiss]').addEventListener('click', () => {
+            URL.revokeObjectURL(objectUrl);
+            card.remove();
+          });
+          toast('Recipe saved');
+        } catch (e) {
+          console.error(e);
+          toast('Save failed: ' + e.message, true);
+          saveBtn.disabled = false; discardBtn.disabled = false;
+          saveBtn.textContent = originalLabel;
+        }
+      });
+    }
+
+    async function saveScanResult(card, file) {
+      const name = card.querySelector('.recipe-name').value.trim() || 'Untitled recipe';
+      const prep = parseInt(card.querySelector('.field-prep').value, 10) || 0;
+      const cook = parseInt(card.querySelector('.field-cook').value, 10) || 0;
+      const servings = parseInt(card.querySelector('.field-servings').value, 10) || 0;
+      const ingredients = card.querySelector('.field-ingredients').value
+        .split('\n').map(s => s.trim()).filter(Boolean);
+      const instructions = card.querySelector('.field-instructions').value
+        .split('\n').map(s => s.trim()).filter(Boolean);
+
+      // Upload the source photo to Storage so the saved recipe has an
+      // image_url. Same path convention as the mobile app's recipe uploads.
+      const path = `recipe_images/${currentUser.uid}/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+      const ref = storageRef(storage, path);
+      await uploadBytes(ref, file, { contentType: file.type || 'image/jpeg' });
+      const imageUrl = await getDownloadURL(ref);
+
+      // MealRecord schema: recipe_name, ingredients[], CookingInstructions[],
+      // prepare_time, image_url, user_ref. Extra cook_time + servings fields
+      // are non-breaking additions — the Flutter MealRecord reader ignores
+      // unknown fields, and consumers that want them can read them.
+      const payload = {
+        recipe_name: name,
+        ingredients,
+        CookingInstructions: instructions,
+        prepare_time: prep,
+        cook_time: cook,
+        servings,
+        image_url: imageUrl,
+        user_ref: doc(db, 'users', currentUser.uid),
+        creator_ref: creatorDoc.ref,
+        source: 'creator_web_ocr',
+        created_at: serverTimestamp(),
+      };
+      await addDoc(collection(db, 'meal'), payload);
+    }
+
+    function fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          // FileReader gives "data:image/jpeg;base64,XXX..." — strip the prefix.
+          const dataUrl = reader.result;
+          const comma = dataUrl.indexOf(',');
+          resolve(comma >= 0 ? dataUrl.slice(comma + 1) : dataUrl);
+        };
+        reader.onerror = () => reject(reader.error || new Error('Failed to read file'));
+        reader.readAsDataURL(file);
+      });
     }
 
     function renderBarChart(containerId, items, unit, emptyText) {
