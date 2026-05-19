@@ -419,6 +419,26 @@
       grid-column: 1 / -1; font-size: 12px; color: var(--text-muted); font-style: italic;
       padding-top: 8px; border-top: 1px solid var(--border);
     }
+    .recipe-detail .detail-edit-bar {
+      grid-column: 1 / -1; display: flex; justify-content: flex-end;
+    }
+    .recipe-edit-form {
+      grid-column: 1 / -1; display: flex; flex-direction: column; gap: 10px;
+    }
+    .recipe-edit-form label {
+      font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--text-muted); font-weight: 600;
+    }
+    .recipe-edit-form input, .recipe-edit-form textarea {
+      padding: 8px 10px; font-size: 13px; font-family: inherit;
+      border: 1px solid var(--border); border-radius: 8px; resize: vertical;
+    }
+    .recipe-edit-form input:focus, .recipe-edit-form textarea:focus {
+      outline: 2px solid var(--primary); outline-offset: -1px; border-color: var(--primary);
+    }
+    .recipe-edit-form .edit-meta-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .recipe-edit-form .edit-meta-row > div { display: flex; flex-direction: column; gap: 4px; }
+    .recipe-edit-form .edit-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px; }
 
     /* Plan builder */
     .plan-meta { display: flex; flex-direction: column; gap: 12px; margin-bottom: 18px; }
@@ -4095,13 +4115,23 @@
         if (d) d.remove();
       });
 
+      const detail = document.createElement('div');
+      detail.className = 'recipe-detail';
+      renderDetailReadonly(detail, item);
+      // In the grid layout the row.expanded becomes a row-flex container
+      // (thumb left, body right). The detail lives inside row-body so it
+      // appears below the name + meta inside the right column.
+      row.querySelector('.row-body').appendChild(detail);
+      row.classList.add('expanded');
+    }
+
+    // Read-only expanded detail — ingredients + instructions + an Edit button.
+    function renderDetailReadonly(detail, item) {
       const r = item.data;
       const ings = Array.isArray(r.ingredients) ? r.ingredients : [];
       const steps = Array.isArray(r.CookingInstructions) ? r.CookingInstructions : [];
       const sourceUrl = r.source_url;
       const attribution = r.attribution;
-      const detail = document.createElement('div');
-      detail.className = 'recipe-detail';
       detail.innerHTML = `
         <div>
           <h4>Ingredients</h4>
@@ -4117,12 +4147,93 @@
             ${sourceUrl ? ` · <a href="${escapeHtml(sourceUrl)}" target="_blank" rel="noopener">source</a>` : ''}
           </div>
         ` : ''}
+        <div class="detail-edit-bar">
+          <button class="btn ghost" data-edit-recipe>✏️ Edit recipe</button>
+        </div>
       `;
-      // In the grid layout the row.expanded becomes a row-flex container
-      // (thumb left, body right). The detail lives inside row-body so it
-      // appears below the name + meta inside the right column.
-      row.querySelector('.row-body').appendChild(detail);
-      row.classList.add('expanded');
+      detail.querySelector('[data-edit-recipe]').addEventListener('click', (e) => {
+        e.stopPropagation(); // don't collapse the expanded row
+        renderDetailEditor(detail, item);
+      });
+    }
+
+    // Editable form — swaps into the expanded detail in place.
+    function renderDetailEditor(detail, item) {
+      const r = item.data;
+      const ingText = Array.isArray(r.ingredients) ? r.ingredients.join('\n') : '';
+      const stepText = Array.isArray(r.CookingInstructions) ? r.CookingInstructions.join('\n') : '';
+      detail.innerHTML = `
+        <form class="recipe-edit-form">
+          <div>
+            <label>Recipe name</label>
+            <input type="text" class="edit-name" value="${escapeHtml(r.recipe_name || '')}" placeholder="Recipe name">
+          </div>
+          <div class="edit-meta-row">
+            <div><label>Prep (min)</label><input type="number" class="edit-prep" min="0" value="${parseInt(r.prepare_time, 10) || 0}"></div>
+            <div><label>Cook (min)</label><input type="number" class="edit-cook" min="0" value="${parseInt(r.cook_time, 10) || 0}"></div>
+            <div><label>Servings</label><input type="number" class="edit-servings" min="1" value="${parseInt(r.servings, 10) || 0}"></div>
+          </div>
+          <div>
+            <label>Ingredients (one per line)</label>
+            <textarea class="edit-ingredients" rows="6">${escapeHtml(ingText)}</textarea>
+          </div>
+          <div>
+            <label>Instructions (one step per line)</label>
+            <textarea class="edit-instructions" rows="7">${escapeHtml(stepText)}</textarea>
+          </div>
+          <div>
+            <label>Attribution</label>
+            <input type="text" class="edit-attribution" value="${escapeHtml(r.attribution || '')}" placeholder="Optional — credit the source">
+          </div>
+          <div class="edit-actions">
+            <button type="button" class="btn ghost" data-edit-cancel>Cancel</button>
+            <button type="submit" class="btn" data-edit-save>Save changes</button>
+          </div>
+        </form>
+      `;
+      const form = detail.querySelector('.recipe-edit-form');
+      // Clicks inside the editor must not bubble to the row's expand toggle.
+      form.addEventListener('click', (e) => e.stopPropagation());
+      form.querySelector('[data-edit-cancel]').addEventListener('click', () => {
+        renderDetailReadonly(detail, item);
+      });
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        await saveRecipeEdit(detail, item, form);
+      });
+    }
+
+    async function saveRecipeEdit(detail, item, form) {
+      const saveBtn = form.querySelector('[data-edit-save]');
+      const cancelBtn = form.querySelector('[data-edit-cancel]');
+      saveBtn.disabled = true; cancelBtn.disabled = true;
+      const orig = saveBtn.textContent;
+      saveBtn.textContent = 'Saving…';
+      try {
+        const patch = {
+          recipe_name: form.querySelector('.edit-name').value.trim() || 'Untitled recipe',
+          prepare_time: parseInt(form.querySelector('.edit-prep').value, 10) || 0,
+          cook_time: parseInt(form.querySelector('.edit-cook').value, 10) || 0,
+          servings: parseInt(form.querySelector('.edit-servings').value, 10) || 0,
+          ingredients: form.querySelector('.edit-ingredients').value
+            .split('\n').map((s) => s.trim()).filter(Boolean),
+          CookingInstructions: form.querySelector('.edit-instructions').value
+            .split('\n').map((s) => s.trim()).filter(Boolean),
+          attribution: form.querySelector('.edit-attribution').value.trim(),
+          updated_at: serverTimestamp(),
+        };
+        await updateDoc(item.ref, patch);
+        // Reflect the change locally so the re-render is accurate without
+        // a refetch. serverTimestamp resolves server-side; harmless here.
+        item.data = { ...item.data, ...patch };
+        renderRecipeLibrary(libraryCache);
+        toast('Recipe updated');
+      } catch (e) {
+        console.error(e);
+        toast('Save failed: ' + e.message, true);
+        saveBtn.disabled = false; cancelBtn.disabled = false;
+        saveBtn.textContent = orig;
+      }
     }
 
     async function deleteRecipe(id) {
