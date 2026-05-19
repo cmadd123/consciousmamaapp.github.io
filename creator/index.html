@@ -386,6 +386,7 @@
     }
     .recipe-row .row-meta .src-pill.scan { background: color-mix(in srgb, #10B981 14%, white); color: #047857; }
     .recipe-row .row-meta .src-pill.url { background: color-mix(in srgb, #3B82F6 14%, white); color: #1d4ed8; }
+    .recipe-row .row-meta .src-pill.manual { background: color-mix(in srgb, #8B5CF6 14%, white); color: #6d28d9; }
     .recipe-row .row-meta .src-pill.other { background: var(--border); color: var(--text-muted); }
     .recipe-row .row-actions {
       position: absolute; top: 8px; right: 8px;
@@ -1321,6 +1322,20 @@
             <button class="btn" id="urlFetchBtn">Fetch recipe</button>
           </div>
           <div class="scan-cards" id="urlCards"></div>
+        </div>
+
+        <!-- Write from scratch -->
+        <div class="scan-section">
+          <div class="scan-section-head">
+            <h3>✍️ Write a recipe</h3>
+            <span class="muted">Type it in yourself</span>
+          </div>
+          <p class="scan-intro">
+            For a recipe that isn't on any website and isn't worth scanning — a handwritten
+            family recipe, something you made up, or one you know by heart.
+          </p>
+          <button class="btn" id="newBlankRecipeBtn">+ New blank recipe</button>
+          <div class="scan-cards" id="manualCards"></div>
         </div>
       </div>
 
@@ -3543,7 +3558,7 @@
         if (!result || result.success !== true) {
           throw new Error(result?.error || 'Recipe extraction failed');
         }
-        renderRecipeCard(card, { file, objectUrl, sourceUrl: null, recipe: result.recipe || {} });
+        renderRecipeCard(card, { origin: 'ocr', file, objectUrl, sourceUrl: null, recipe: result.recipe || {} });
       } catch (e) {
         console.error(e);
         card.querySelector('.body').innerHTML = `
@@ -3551,6 +3566,27 @@
           <div class="actions"><button class="btn ghost" data-discard>Remove</button></div>`;
         card.querySelector('[data-discard]').addEventListener('click', () => card.remove());
       }
+    }
+
+    // --- Write a recipe (manual, from scratch) ---
+    const newBlankRecipeBtn = $('newBlankRecipeBtn');
+    if (newBlankRecipeBtn) {
+      newBlankRecipeBtn.addEventListener('click', () => {
+        const card = document.createElement('div');
+        card.className = 'scan-card';
+        // No photo for a hand-typed recipe — start with the doc placeholder.
+        card.innerHTML = `
+          <div class="thumb"><span style="font-size:36px;">📄</span></div>
+          <div class="body"></div>`;
+        $('manualCards').prepend(card);
+        // Empty recipe object → renderRecipeCard fills the form blank.
+        renderRecipeCard(card, {
+          origin: 'manual', file: null, objectUrl: null, sourceUrl: null, recipe: {},
+        });
+        card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        const nameInput = card.querySelector('.recipe-name');
+        if (nameInput) { nameInput.value = ''; nameInput.focus(); }
+      });
     }
 
     // --- From URL ---
@@ -3615,7 +3651,7 @@
         if (!recipe || !recipe.name) {
           throw new Error("Couldn't extract a recipe. Try a food blog with a printed recipe card.");
         }
-        renderRecipeCard(card, { file: null, objectUrl: null, sourceUrl: url, recipe });
+        renderRecipeCard(card, { origin: 'url', file: null, objectUrl: null, sourceUrl: url, recipe });
       } catch (e) {
         console.error(e);
         card.querySelector('.thumb').innerHTML = '<span style="font-size:32px;">⚠️</span>';
@@ -3626,8 +3662,9 @@
       }
     }
 
-    // Shared editable preview + save logic for both scan and URL paths.
-    function renderRecipeCard(card, { file, objectUrl, sourceUrl, recipe }) {
+    // Shared editable preview + save logic for scan, URL, and manual paths.
+    // origin: 'ocr' | 'url' | 'manual' — determines the saved source field.
+    function renderRecipeCard(card, { origin, file, objectUrl, sourceUrl, recipe }) {
       const ingredients = Array.isArray(recipe.ingredients) ? recipe.ingredients.join('\n') : '';
       const instructions = Array.isArray(recipe.instructions) ? recipe.instructions.join('\n') : '';
       const prep = toMinutes(recipe.prepTime ?? recipe.prep_time);
@@ -3705,7 +3742,7 @@
         const orig = saveBtn.textContent;
         saveBtn.textContent = 'Saving…';
         try {
-          await saveRecipe(card, { file, sourceUrl, imageUrl });
+          await saveRecipe(card, { origin, file, sourceUrl, imageUrl });
           card.querySelector('.body').innerHTML = `
             <div class="status success">✓ Saved to your library</div>
             <div class="actions"><button class="btn ghost" data-dismiss>Done</button></div>`;
@@ -3726,7 +3763,7 @@
       });
     }
 
-    async function saveRecipe(card, { file, sourceUrl, imageUrl }) {
+    async function saveRecipe(card, { origin, file, sourceUrl, imageUrl }) {
       const name = card.querySelector('.recipe-name').value.trim() || 'Untitled recipe';
       const prep = parseInt(card.querySelector('.field-prep').value, 10) || 0;
       const cook = parseInt(card.querySelector('.field-cook').value, 10) || 0;
@@ -3767,7 +3804,7 @@
         image_url: finalImageUrl,
         user_ref: doc(db, 'users', currentUser.uid),
         creator_ref: creatorDoc.ref,
-        source: file ? 'creator_web_ocr' : 'creator_web_url',
+        source: `creator_web_${origin}`,
         ...(sourceUrl ? { source_url: sourceUrl } : {}),
         ...(attribution ? { attribution } : {}),
         // Rights attestation — required checkbox at save time. We stamp
@@ -3844,8 +3881,12 @@
         const r = it.data;
         const src = r.source === 'creator_web_ocr' ? 'scan'
           : r.source === 'creator_web_url' ? 'url'
+          : r.source === 'creator_web_manual' ? 'manual'
           : 'other';
-        const srcLabel = src === 'scan' ? 'Scan' : src === 'url' ? 'URL' : 'Mobile';
+        const srcLabel = src === 'scan' ? 'Scan'
+          : src === 'url' ? 'URL'
+          : src === 'manual' ? 'Written'
+          : 'Mobile';
         const dateStr = r.created_at?.seconds
           ? new Date(r.created_at.seconds * 1000).toLocaleDateString()
           : '';
