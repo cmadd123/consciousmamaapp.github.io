@@ -127,6 +127,17 @@ service cloud.firestore {
         request.resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
     }
 
+    // Creator products — meal plans (and, later, other sellable product
+    // types). Owner-write via user_ref; read open to authenticated users
+    // so followers can browse a creator's catalog.
+    match /creator_products/{productId} {
+      allow read: if isAuthenticated();
+      allow update, delete: if isAuthenticated() &&
+        resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
+      allow create: if isAuthenticated() &&
+        request.resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
+    }
+
     // ─── Users collection ─────────────────────────────────────────
 
     match /users/{userId} {

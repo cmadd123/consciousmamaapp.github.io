@@ -236,6 +236,7 @@
     .feature-card[data-goto="mealPlans"] .feature-icon { background: color-mix(in srgb, #F59E0B 16%, var(--surface)); }
     .feature-card[data-goto="routines"] .feature-icon { background: color-mix(in srgb, #8B5CF6 14%, var(--surface)); }
     .feature-card[data-goto="addRecipes"] .feature-icon { background: color-mix(in srgb, #10B981 14%, var(--surface)); }
+    .feature-card[data-goto="buildPlan"] .feature-icon { background: color-mix(in srgb, #F59E0B 16%, var(--surface)); }
 
     /* Add Recipes view */
     .scan-section { margin-bottom: 28px; }
@@ -419,10 +420,89 @@
       padding-top: 8px; border-top: 1px solid var(--border);
     }
 
+    /* Plan builder */
+    .plan-meta { display: flex; flex-direction: column; gap: 12px; margin-bottom: 18px; }
+    .plan-meta .field { display: flex; flex-direction: column; gap: 4px; }
+    .plan-meta label {
+      font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--text-muted); font-weight: 600;
+    }
+    .plan-meta input, .plan-meta textarea {
+      padding: 9px 12px; font-size: 14px; font-family: inherit;
+      border: 1px solid var(--border); border-radius: 8px; resize: vertical;
+    }
+    .plan-meta input:focus, .plan-meta textarea:focus {
+      outline: 2px solid var(--primary); outline-offset: -1px; border-color: var(--primary);
+    }
+    .plan-day-controls { display: flex; align-items: center; gap: 10px; }
+    .plan-day-controls .btn.ghost { padding: 4px 12px; font-size: 16px; line-height: 1; }
+
+    .plan-grid { display: flex; flex-direction: column; gap: 10px; }
+    .plan-day-row {
+      display: grid; grid-template-columns: 90px 1fr 1fr 1fr; gap: 8px;
+      align-items: stretch;
+    }
+    .plan-day-head {
+      display: flex; align-items: center; font-weight: 700; font-size: 13px;
+      color: var(--text-muted);
+    }
+    .plan-grid .plan-col-head {
+      font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--text-muted); font-weight: 600; padding-bottom: 2px; text-align: center;
+    }
+    .plan-slot {
+      border: 1px dashed var(--border); border-radius: 10px;
+      min-height: 76px; padding: 8px; cursor: pointer;
+      display: flex; align-items: center; gap: 8px;
+      transition: border-color 120ms, background 120ms;
+      background: var(--surface);
+    }
+    .plan-slot:hover { border-color: var(--primary); }
+    .plan-slot.empty {
+      justify-content: center; color: var(--text-muted); font-size: 13px;
+      border-style: dashed;
+    }
+    .plan-slot.filled { border-style: solid; }
+    .plan-slot .slot-thumb {
+      width: 48px; height: 48px; border-radius: 8px; flex-shrink: 0;
+      background: #F3F4F6; display: grid; place-items: center; font-size: 20px;
+      overflow: hidden;
+    }
+    .plan-slot .slot-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .plan-slot .slot-name {
+      font-size: 13px; font-weight: 600; line-height: 1.3; flex: 1; min-width: 0;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .plan-slot .slot-remove {
+      background: none; border: none; color: var(--text-muted); cursor: pointer;
+      font-size: 14px; padding: 2px 4px; flex-shrink: 0; border-radius: 4px;
+    }
+    .plan-slot .slot-remove:hover { background: color-mix(in srgb, var(--danger) 12%, white); color: var(--danger); }
+    .plan-editor-actions {
+      display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px;
+    }
+
+    /* Recipe picker rows (in the modal) */
+    .picker-row {
+      display: flex; align-items: center; gap: 10px; padding: 8px 10px;
+      border: 1px solid var(--border); border-radius: 8px; cursor: pointer;
+      transition: border-color 120ms, background 120ms;
+    }
+    .picker-row:hover { border-color: var(--primary); background: color-mix(in srgb, var(--primary) 4%, var(--surface)); }
+    .picker-row .picker-thumb {
+      width: 40px; height: 40px; border-radius: 6px; flex-shrink: 0;
+      background: #F3F4F6; display: grid; place-items: center; font-size: 16px; overflow: hidden;
+    }
+    .picker-row .picker-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .picker-row .picker-name { font-size: 14px; font-weight: 600; }
+
     @media (max-width: 640px) {
       .scan-card { grid-template-columns: 1fr; }
       .scan-card .thumb { width: 100%; height: 200px; }
       .recipe-detail { grid-template-columns: 1fr; gap: 14px; }
+      .plan-day-row { grid-template-columns: 1fr; }
+      .plan-grid .plan-col-head { display: none; }
+      .plan-slot.empty::before { content: attr(data-meal-label) " — "; }
     }
     .feature-card .feature-primary { font-size: 28px; font-weight: 700; line-height: 1.1; }
     .feature-card .feature-sub { font-size: 13px; color: var(--text-muted); min-height: 1.2em; }
@@ -1182,6 +1262,15 @@
               <div class="feature-sub">Snap photos or paste URLs</div>
               <div class="feature-cta">Import →</div>
             </button>
+            <button class="feature-card" data-goto="buildPlan">
+              <div class="feature-head">
+                <span class="feature-icon">📅</span>
+                <h3>Build a Plan</h3>
+              </div>
+              <div class="feature-primary" style="font-size: 20px;">Meal plans</div>
+              <div class="feature-sub">Turn recipes into a sellable plan</div>
+              <div class="feature-cta">Build →</div>
+            </button>
           </div>
 
           <!-- What's new in MomRise — pulled from /CHANGELOG.md -->
@@ -1336,6 +1425,67 @@
           </p>
           <button class="btn" id="newBlankRecipeBtn">+ New blank recipe</button>
           <div class="scan-cards" id="manualCards"></div>
+        </div>
+      </div>
+
+      <!-- 6c. Build a Plan sub-view -->
+      <div class="view" id="viewBuildPlan">
+        <button class="back-btn" data-back>← Dashboard</button>
+
+        <!-- List mode: existing plans + new -->
+        <div id="planListMode">
+          <div class="section-head">
+            <h2>Your meal plans</h2>
+            <button class="btn" id="newPlanBtn">+ New meal plan</button>
+          </div>
+          <p class="muted" style="margin: 0 0 16px; font-size: 13px;">
+            Build a multi-day plan from recipes in your library. Each plan is a draft until
+            you publish it — publishing + selling comes in a later step.
+          </p>
+          <div id="planList" class="recipe-library">
+            <div class="muted" style="padding: 16px; text-align: center;">
+              <div class="loader" style="margin: 0 auto 8px;"></div> Loading plans…
+            </div>
+          </div>
+        </div>
+
+        <!-- Editor mode: the grid builder -->
+        <div id="planEditorMode" hidden>
+          <button class="back-btn" id="planEditorBack">← Your plans</button>
+          <div class="plan-meta">
+            <div class="field">
+              <label for="planTitle">Plan title</label>
+              <input type="text" id="planTitle" maxlength="80" placeholder="e.g. 5-Day Budget Dinners">
+            </div>
+            <div class="field">
+              <label for="planDesc">Description</label>
+              <textarea id="planDesc" rows="2" maxlength="400" placeholder="What's this plan about? Who's it for?"></textarea>
+            </div>
+            <div class="plan-day-controls">
+              <span class="field-label" style="margin: 0;">Days in plan</span>
+              <button type="button" class="btn ghost" id="planRemoveDay">−</button>
+              <span id="planDayCount" style="font-weight: 700; min-width: 24px; text-align: center;">7</span>
+              <button type="button" class="btn ghost" id="planAddDay">+</button>
+            </div>
+          </div>
+          <div id="planGrid" class="plan-grid"></div>
+          <div class="plan-editor-actions">
+            <button class="btn ghost" id="planCancelBtn">Cancel</button>
+            <button class="btn" id="planSaveBtn">Save plan</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recipe picker modal (used by the plan builder) -->
+      <div class="modal-backdrop" id="recipePickerModal">
+        <div class="modal" style="max-width: 560px;">
+          <h3 id="recipePickerTitle">Pick a recipe</h3>
+          <input type="search" id="recipePickerSearch" placeholder="Search your recipes…"
+                 style="width: 100%; padding: 10px 12px; font-size: 14px; border: 1px solid var(--border); border-radius: 8px; font-family: inherit; margin-bottom: 12px;">
+          <div id="recipePickerList" style="max-height: 50vh; overflow-y: auto; display: flex; flex-direction: column; gap: 6px;"></div>
+          <div class="modal-actions">
+            <button type="button" class="btn ghost" id="recipePickerCancel">Cancel</button>
+          </div>
         </div>
       </div>
 
@@ -1966,6 +2116,10 @@
         } else if (target === 'addRecipes') {
           show('viewAddRecipes');
           loadRecipeLibrary();
+        } else if (target === 'buildPlan') {
+          show('viewBuildPlan');
+          showPlanListMode();
+          loadPlans();
         }
       });
     });
@@ -3986,6 +4140,329 @@
         toast('Delete failed: ' + e.message, true);
       }
     }
+
+    // ───────────────────────────────────────────────────────────────
+    // Meal plan builder. Plans are stored in a generic `creator_products`
+    // collection (type: 'meal_plan') so other product types (PDFs,
+    // physical goods) can slot into the same collection later.
+    //
+    // A plan is a TEMPLATE — relative day indices, not calendar dates.
+    // On follower import (a later phase) the template gets cloned into
+    // dated MealPlanRecords in the follower's account.
+    // ───────────────────────────────────────────────────────────────
+    const PLAN_MEAL_TYPES = [
+      { key: 'breakfast', label: 'Breakfast' },
+      { key: 'lunch', label: 'Lunch' },
+      { key: 'dinner', label: 'Dinner' },
+    ];
+
+    let creatorPlans = [];          // [{id, ref, data}]
+    let editingPlanId = null;       // null = new plan
+    let planDayCount = 7;
+    let planSlots = {};             // { '0_dinner': {recipe_id, recipe_name, image_url} }
+    let pickerTarget = null;        // { dayIndex, mealType }
+    let recipePickerCache = null;   // [{id, recipe_name, image_url}] — lazy-loaded
+
+    function showPlanListMode() {
+      $('planListMode').hidden = false;
+      $('planEditorMode').hidden = true;
+    }
+    function showPlanEditorMode() {
+      $('planListMode').hidden = true;
+      $('planEditorMode').hidden = false;
+    }
+
+    async function loadPlans() {
+      const listEl = $('planList');
+      if (!listEl || !currentUser) return;
+      try {
+        // Single where() — type is filtered client-side to avoid needing
+        // a composite Firestore index. creator_products is small per
+        // creator, so this is cheap.
+        const snap = await getDocs(query(
+          collection(db, 'creator_products'),
+          where('creator_ref', '==', creatorDoc.ref),
+        ));
+        const items = [];
+        snap.forEach((d) => {
+          const data = d.data();
+          if (data.type === 'meal_plan') items.push({ id: d.id, ref: d.ref, data });
+        });
+        items.sort((a, b) => (b.data.updated_at?.seconds || 0) - (a.data.updated_at?.seconds || 0));
+        creatorPlans = items;
+        renderPlanList(items);
+      } catch (e) {
+        console.error('loadPlans failed', e);
+        listEl.innerHTML = `<div class="recipe-library-empty">Couldn't load plans: ${escapeHtml(e.message)}</div>`;
+      }
+    }
+
+    function renderPlanList(items) {
+      const listEl = $('planList');
+      if (items.length === 0) {
+        listEl.innerHTML = `<div class="recipe-library-empty">
+          No meal plans yet. Tap <strong>+ New meal plan</strong> to build your first.
+        </div>`;
+        return;
+      }
+      listEl.innerHTML = items.map((it) => {
+        const p = it.data;
+        const filled = p.slots ? Object.keys(p.slots).length : 0;
+        const thumb = p.cover_image_url
+          ? `<img src="${escapeHtml(p.cover_image_url)}" alt="" onerror="this.parentElement.innerHTML='📅'">`
+          : '📅';
+        return `
+          <div class="recipe-row" data-plan-id="${escapeHtml(it.id)}">
+            <div class="row-thumb">${thumb}</div>
+            <div class="row-body">
+              <div class="row-name">${escapeHtml(p.title || 'Untitled plan')}</div>
+              <div class="row-meta">
+                <span class="src-pill other">Draft</span>
+                <span>${p.day_count || 0} day${(p.day_count || 0) === 1 ? '' : 's'}</span>
+                <span>${filled} meal${filled === 1 ? '' : 's'} filled</span>
+              </div>
+            </div>
+            <div class="row-actions">
+              <button title="Delete plan" aria-label="Delete plan" class="danger" data-plan-delete="${escapeHtml(it.id)}">🗑</button>
+            </div>
+          </div>`;
+      }).join('');
+
+      listEl.querySelectorAll('[data-plan-id]').forEach((row) => {
+        row.addEventListener('click', () => openPlanEditor(row.dataset.planId));
+      });
+      listEl.querySelectorAll('[data-plan-delete]').forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          void deletePlan(btn.dataset.planDelete);
+        });
+      });
+    }
+
+    async function deletePlan(id) {
+      const item = creatorPlans.find((x) => x.id === id);
+      if (!item) return;
+      if (!confirm(`Delete "${item.data.title || 'this plan'}"? This can't be undone.`)) return;
+      try {
+        await deleteDoc(item.ref);
+        creatorPlans = creatorPlans.filter((x) => x.id !== id);
+        renderPlanList(creatorPlans);
+        toast('Plan deleted');
+      } catch (e) {
+        console.error(e);
+        toast('Delete failed: ' + e.message, true);
+      }
+    }
+
+    // --- Plan editor ---
+    function openPlanEditor(planId) {
+      editingPlanId = planId || null;
+      const existing = planId ? creatorPlans.find((x) => x.id === planId) : null;
+      if (existing) {
+        $('planTitle').value = existing.data.title || '';
+        $('planDesc').value = existing.data.description || '';
+        planDayCount = existing.data.day_count || 7;
+        planSlots = { ...(existing.data.slots || {}) };
+      } else {
+        $('planTitle').value = '';
+        $('planDesc').value = '';
+        planDayCount = 7;
+        planSlots = {};
+      }
+      $('planDayCount').textContent = planDayCount;
+      renderPlanGrid();
+      showPlanEditorMode();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function renderPlanGrid() {
+      const grid = $('planGrid');
+      // Column header row.
+      let html = `<div class="plan-day-row">
+        <div class="plan-day-head"></div>
+        ${PLAN_MEAL_TYPES.map((m) => `<div class="plan-col-head">${m.label}</div>`).join('')}
+      </div>`;
+      for (let d = 0; d < planDayCount; d++) {
+        html += `<div class="plan-day-row">
+          <div class="plan-day-head">Day ${d + 1}</div>
+          ${PLAN_MEAL_TYPES.map((m) => {
+            const key = `${d}_${m.key}`;
+            const slot = planSlots[key];
+            if (slot) {
+              const thumb = slot.image_url
+                ? `<img src="${escapeHtml(slot.image_url)}" alt="">`
+                : '🍽';
+              return `<div class="plan-slot filled" data-slot="${key}" data-meal-label="${m.label}">
+                <div class="slot-thumb">${thumb}</div>
+                <div class="slot-name">${escapeHtml(slot.recipe_name || 'Recipe')}</div>
+                <button class="slot-remove" data-slot-remove="${key}" title="Remove">✕</button>
+              </div>`;
+            }
+            return `<div class="plan-slot empty" data-slot="${key}" data-meal-label="${m.label}">+ Add</div>`;
+          }).join('')}
+        </div>`;
+      }
+      grid.innerHTML = html;
+
+      grid.querySelectorAll('.plan-slot').forEach((cell) => {
+        cell.addEventListener('click', (e) => {
+          if (e.target.closest('[data-slot-remove]')) return;
+          const [dayIndex, mealType] = cell.dataset.slot.split('_');
+          openRecipePicker(parseInt(dayIndex, 10), mealType);
+        });
+      });
+      grid.querySelectorAll('[data-slot-remove]').forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          delete planSlots[btn.dataset.slotRemove];
+          renderPlanGrid();
+        });
+      });
+    }
+
+    $('planAddDay').addEventListener('click', () => {
+      if (planDayCount >= 30) { toast('30 days is the max for now', true); return; }
+      planDayCount++;
+      $('planDayCount').textContent = planDayCount;
+      renderPlanGrid();
+    });
+    $('planRemoveDay').addEventListener('click', () => {
+      if (planDayCount <= 1) return;
+      // Drop any slots that belonged to the removed day.
+      const removed = planDayCount - 1;
+      Object.keys(planSlots).forEach((k) => {
+        if (parseInt(k.split('_')[0], 10) === removed) delete planSlots[k];
+      });
+      planDayCount--;
+      $('planDayCount').textContent = planDayCount;
+      renderPlanGrid();
+    });
+
+    $('newPlanBtn').addEventListener('click', () => openPlanEditor(null));
+    $('planEditorBack').addEventListener('click', () => { showPlanListMode(); });
+    $('planCancelBtn').addEventListener('click', () => { showPlanListMode(); });
+
+    // --- Recipe picker modal ---
+    async function openRecipePicker(dayIndex, mealType) {
+      pickerTarget = { dayIndex, mealType };
+      const label = PLAN_MEAL_TYPES.find((m) => m.key === mealType)?.label || 'meal';
+      $('recipePickerTitle').textContent = `Pick a recipe for Day ${dayIndex + 1} · ${label}`;
+      $('recipePickerSearch').value = '';
+      $('recipePickerModal').classList.add('open');
+
+      if (!recipePickerCache) {
+        $('recipePickerList').innerHTML = `<div class="muted" style="text-align:center; padding:24px;"><div class="loader" style="margin:0 auto;"></div></div>`;
+        try {
+          const snap = await getDocs(query(
+            collection(db, 'meal'),
+            where('user_ref', '==', doc(db, 'users', currentUser.uid)),
+          ));
+          recipePickerCache = [];
+          snap.forEach((d) => {
+            const r = d.data();
+            recipePickerCache.push({
+              id: d.id,
+              recipe_name: r.recipe_name || 'Untitled recipe',
+              image_url: r.image_url || '',
+            });
+          });
+          recipePickerCache.sort((a, b) => a.recipe_name.localeCompare(b.recipe_name));
+        } catch (e) {
+          console.error(e);
+          $('recipePickerList').innerHTML = `<div class="muted" style="text-align:center; padding:24px;">Couldn't load recipes: ${escapeHtml(e.message)}</div>`;
+          return;
+        }
+      }
+      renderRecipePicker('');
+    }
+
+    function renderRecipePicker(filter) {
+      const listEl = $('recipePickerList');
+      const f = filter.trim().toLowerCase();
+      const matches = (recipePickerCache || []).filter(
+        (r) => !f || r.recipe_name.toLowerCase().includes(f),
+      );
+      if (matches.length === 0) {
+        listEl.innerHTML = `<div class="muted" style="text-align:center; padding:24px;">
+          ${(recipePickerCache || []).length === 0
+            ? 'No recipes in your library yet. Add some from the Add Recipes screen first.'
+            : 'No recipes match that search.'}
+        </div>`;
+        return;
+      }
+      listEl.innerHTML = matches.map((r) => `
+        <div class="picker-row" data-pick="${escapeHtml(r.id)}">
+          <div class="picker-thumb">${r.image_url ? `<img src="${escapeHtml(r.image_url)}" alt="">` : '🍽'}</div>
+          <div class="picker-name">${escapeHtml(r.recipe_name)}</div>
+        </div>`).join('');
+      listEl.querySelectorAll('[data-pick]').forEach((row) => {
+        row.addEventListener('click', () => {
+          const recipe = recipePickerCache.find((x) => x.id === row.dataset.pick);
+          if (recipe && pickerTarget) {
+            planSlots[`${pickerTarget.dayIndex}_${pickerTarget.mealType}`] = {
+              recipe_id: recipe.id,
+              recipe_name: recipe.recipe_name,
+              image_url: recipe.image_url,
+            };
+            $('recipePickerModal').classList.remove('open');
+            renderPlanGrid();
+          }
+        });
+      });
+    }
+
+    $('recipePickerSearch').addEventListener('input', (e) => renderRecipePicker(e.target.value));
+    $('recipePickerCancel').addEventListener('click', () => $('recipePickerModal').classList.remove('open'));
+    $('recipePickerModal').addEventListener('click', (e) => {
+      if (e.target === $('recipePickerModal')) $('recipePickerModal').classList.remove('open');
+    });
+
+    // --- Save ---
+    $('planSaveBtn').addEventListener('click', async () => {
+      const title = $('planTitle').value.trim();
+      if (!title) { toast('Give the plan a title first', true); return; }
+      const btn = $('planSaveBtn');
+      btn.disabled = true;
+      const orig = btn.textContent;
+      btn.textContent = 'Saving…';
+      try {
+        // Cover image: first filled slot's recipe image, if any.
+        let cover = '';
+        for (let d = 0; d < planDayCount && !cover; d++) {
+          for (const m of PLAN_MEAL_TYPES) {
+            const s = planSlots[`${d}_${m.key}`];
+            if (s && s.image_url) { cover = s.image_url; break; }
+          }
+        }
+        const payload = {
+          creator_ref: creatorDoc.ref,
+          user_ref: doc(db, 'users', currentUser.uid),
+          type: 'meal_plan',
+          title,
+          description: $('planDesc').value.trim(),
+          status: 'draft',
+          day_count: planDayCount,
+          slots: planSlots,
+          cover_image_url: cover,
+          updated_at: serverTimestamp(),
+        };
+        if (editingPlanId) {
+          await updateDoc(doc(db, 'creator_products', editingPlanId), payload);
+        } else {
+          payload.created_at = serverTimestamp();
+          await addDoc(collection(db, 'creator_products'), payload);
+        }
+        toast('Plan saved');
+        showPlanListMode();
+        await loadPlans();
+      } catch (e) {
+        console.error(e);
+        toast('Save failed: ' + e.message, true);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = orig;
+      }
+    });
 
   </script>
 </body>
