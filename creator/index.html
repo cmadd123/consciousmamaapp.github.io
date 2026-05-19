@@ -1471,7 +1471,8 @@
           <div id="planGrid" class="plan-grid"></div>
           <div class="plan-editor-actions">
             <button class="btn ghost" id="planCancelBtn">Cancel</button>
-            <button class="btn" id="planSaveBtn">Save plan</button>
+            <button class="btn ghost" id="planSaveDraftBtn">Save as draft</button>
+            <button class="btn" id="planPublishBtn">Save &amp; publish</button>
           </div>
         </div>
       </div>
@@ -4208,6 +4209,7 @@
       listEl.innerHTML = items.map((it) => {
         const p = it.data;
         const filled = p.slots ? Object.keys(p.slots).length : 0;
+        const isPublished = p.status === 'published';
         const thumb = p.cover_image_url
           ? `<img src="${escapeHtml(p.cover_image_url)}" alt="" onerror="this.parentElement.innerHTML='📅'">`
           : '📅';
@@ -4217,7 +4219,7 @@
             <div class="row-body">
               <div class="row-name">${escapeHtml(p.title || 'Untitled plan')}</div>
               <div class="row-meta">
-                <span class="src-pill other">Draft</span>
+                <span class="src-pill ${isPublished ? 'scan' : 'other'}">${isPublished ? 'Published' : 'Draft'}</span>
                 <span>${p.day_count || 0} day${(p.day_count || 0) === 1 ? '' : 's'}</span>
                 <span>${filled} meal${filled === 1 ? '' : 's'} filled</span>
               </div>
@@ -4417,14 +4419,29 @@
       if (e.target === $('recipePickerModal')) $('recipePickerModal').classList.remove('open');
     });
 
-    // --- Save ---
-    $('planSaveBtn').addEventListener('click', async () => {
+    // --- Save / publish ---
+    function filledSlotCount() {
+      return Object.keys(planSlots).filter((k) => {
+        const day = parseInt(k.split('_')[0], 10);
+        return day < planDayCount; // ignore slots orphaned by day-count shrink
+      }).length;
+    }
+
+    async function savePlan(targetStatus) {
       const title = $('planTitle').value.trim();
       if (!title) { toast('Give the plan a title first', true); return; }
-      const btn = $('planSaveBtn');
-      btn.disabled = true;
-      const orig = btn.textContent;
-      btn.textContent = 'Saving…';
+      // Publishing requires actual content — a follower shouldn't be able
+      // to import an empty plan.
+      if (targetStatus === 'published' && filledSlotCount() === 0) {
+        toast('Add at least one recipe before publishing', true);
+        return;
+      }
+      const draftBtn = $('planSaveDraftBtn');
+      const pubBtn = $('planPublishBtn');
+      draftBtn.disabled = true; pubBtn.disabled = true;
+      const activeBtn = targetStatus === 'published' ? pubBtn : draftBtn;
+      const origLabel = activeBtn.textContent;
+      activeBtn.textContent = 'Saving…';
       try {
         // Cover image: first filled slot's recipe image, if any.
         let cover = '';
@@ -4437,32 +4454,41 @@
         const payload = {
           creator_ref: creatorDoc.ref,
           user_ref: doc(db, 'users', currentUser.uid),
+          // creator_code denormalized so the mobile app can query a
+          // follower's creator's published plans by code directly.
+          creator_code: creatorDoc.data.code || '',
           type: 'meal_plan',
           title,
           description: $('planDesc').value.trim(),
-          status: 'draft',
+          status: targetStatus,
           day_count: planDayCount,
           slots: planSlots,
           cover_image_url: cover,
           updated_at: serverTimestamp(),
         };
+        if (targetStatus === 'published') {
+          payload.published_at = serverTimestamp();
+        }
         if (editingPlanId) {
           await updateDoc(doc(db, 'creator_products', editingPlanId), payload);
         } else {
           payload.created_at = serverTimestamp();
           await addDoc(collection(db, 'creator_products'), payload);
         }
-        toast('Plan saved');
+        toast(targetStatus === 'published' ? 'Plan published' : 'Draft saved');
         showPlanListMode();
         await loadPlans();
       } catch (e) {
         console.error(e);
         toast('Save failed: ' + e.message, true);
       } finally {
-        btn.disabled = false;
-        btn.textContent = orig;
+        draftBtn.disabled = false; pubBtn.disabled = false;
+        activeBtn.textContent = origLabel;
       }
-    });
+    }
+
+    $('planSaveDraftBtn').addEventListener('click', () => void savePlan('draft'));
+    $('planPublishBtn').addEventListener('click', () => void savePlan('published'));
 
   </script>
 </body>
