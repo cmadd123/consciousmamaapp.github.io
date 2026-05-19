@@ -3845,7 +3845,7 @@
         const src = r.source === 'creator_web_ocr' ? 'scan'
           : r.source === 'creator_web_url' ? 'url'
           : 'other';
-        const srcLabel = src === 'scan' ? 'Scan' : src === 'url' ? 'URL' : 'Other';
+        const srcLabel = src === 'scan' ? 'Scan' : src === 'url' ? 'URL' : 'Mobile';
         const dateStr = r.created_at?.seconds
           ? new Date(r.created_at.seconds * 1000).toLocaleDateString()
           : '';
