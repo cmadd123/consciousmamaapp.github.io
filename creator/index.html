@@ -1178,7 +1178,10 @@
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`,
           },
-          body: JSON.stringify({ data: { url } }),
+          // context: 'creator' opts this caller into the creator-path
+          // rules in extractRecipe (currently: Pinterest pins are
+          // refused on this path while consumer mobile keeps them).
+          body: JSON.stringify({ data: { url, context: 'creator' } }),
         });
 
         const json = await response.json().catch(() => null);
