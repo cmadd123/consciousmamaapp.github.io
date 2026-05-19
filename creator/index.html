@@ -337,34 +337,48 @@
     .scan-card .rights-attestation .rights-text small { color: var(--text-muted); font-size: 11px; }
     .scan-card button[data-save]:disabled { opacity: 0.4; cursor: not-allowed; }
 
-    /* Recipe library list */
-    .recipe-library { display: flex; flex-direction: column; gap: 8px; }
+    /* Recipe library — responsive card grid */
+    .recipe-library {
+      display: grid; gap: 14px;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    }
     .recipe-library-empty {
+      grid-column: 1 / -1;
       text-align: center; padding: 32px 24px; color: var(--text-muted);
       background: var(--surface); border: 1px dashed var(--border); border-radius: 12px;
       font-size: 14px;
     }
     .recipe-row {
-      display: grid; grid-template-columns: 56px 1fr auto; gap: 12px;
-      align-items: center; padding: 10px 12px;
-      background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
-      cursor: pointer; transition: border-color 120ms;
+      position: relative;
+      background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+      overflow: hidden; cursor: pointer; transition: border-color 120ms, box-shadow 120ms;
+      display: flex; flex-direction: column;
     }
-    .recipe-row:hover { border-color: var(--primary); }
-    .recipe-row.expanded { background: color-mix(in srgb, var(--primary) 4%, var(--surface)); }
+    .recipe-row:hover { border-color: var(--primary); box-shadow: 0 4px 14px rgba(0,0,0,0.05); }
+    .recipe-row.expanded {
+      grid-column: 1 / -1;
+      background: color-mix(in srgb, var(--primary) 4%, var(--surface));
+      flex-direction: row; align-items: flex-start; gap: 16px; padding: 14px;
+    }
     .recipe-row .row-thumb {
-      width: 56px; height: 56px; border-radius: 8px; overflow: hidden;
-      background: #F3F4F6; display: grid; place-items: center; font-size: 22px;
+      width: 100%; aspect-ratio: 16 / 10;
+      background: #F3F4F6; display: grid; place-items: center; font-size: 36px;
+      overflow: hidden;
+    }
+    .recipe-row.expanded .row-thumb {
+      width: 200px; height: 200px; aspect-ratio: unset; flex-shrink: 0;
+      border-radius: 10px;
     }
     .recipe-row .row-thumb img { width: 100%; height: 100%; object-fit: cover; }
-    .recipe-row .row-body { min-width: 0; }
+    .recipe-row .row-body { padding: 12px 14px; min-width: 0; flex: 1; }
+    .recipe-row.expanded .row-body { padding: 0; }
     .recipe-row .row-name {
-      font-weight: 600; font-size: 14px; color: var(--text);
+      font-weight: 600; font-size: 15px; color: var(--text);
       overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
     }
     .recipe-row .row-meta {
-      font-size: 12px; color: var(--text-muted); margin-top: 2px;
-      display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
+      font-size: 12px; color: var(--text-muted); margin-top: 4px;
+      display: flex; gap: 6px; flex-wrap: wrap; align-items: center;
     }
     .recipe-row .row-meta .src-pill {
       font-size: 10px; padding: 2px 7px; border-radius: 6px; font-weight: 600;
@@ -373,16 +387,24 @@
     .recipe-row .row-meta .src-pill.scan { background: color-mix(in srgb, #10B981 14%, white); color: #047857; }
     .recipe-row .row-meta .src-pill.url { background: color-mix(in srgb, #3B82F6 14%, white); color: #1d4ed8; }
     .recipe-row .row-meta .src-pill.other { background: var(--border); color: var(--text-muted); }
-    .recipe-row .row-actions { display: flex; gap: 6px; }
+    .recipe-row .row-actions {
+      position: absolute; top: 8px; right: 8px;
+      opacity: 0; transition: opacity 120ms;
+    }
+    .recipe-row:hover .row-actions, .recipe-row.expanded .row-actions { opacity: 1; }
     .recipe-row .row-actions button {
-      background: none; border: none; color: var(--text-muted);
-      padding: 6px; border-radius: 6px; cursor: pointer;
+      background: rgba(255,255,255,0.92); border: 1px solid var(--border);
+      color: var(--text-muted); padding: 6px 8px; border-radius: 8px;
+      cursor: pointer; font-size: 14px; line-height: 1;
       transition: background 120ms, color 120ms;
     }
-    .recipe-row .row-actions button:hover { background: var(--border); color: var(--text); }
-    .recipe-row .row-actions button.danger:hover { background: color-mix(in srgb, var(--danger) 12%, white); color: var(--danger); }
+    .recipe-row .row-actions button:hover { background: white; color: var(--text); }
+    .recipe-row .row-actions button.danger:hover {
+      background: color-mix(in srgb, var(--danger) 12%, white); color: var(--danger);
+      border-color: color-mix(in srgb, var(--danger) 40%, var(--border));
+    }
     .recipe-detail {
-      grid-column: 1 / -1; padding: 12px 4px 4px;
+      margin-top: 12px;
       display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
     }
     .recipe-detail h4 {
@@ -3900,7 +3922,10 @@
           </div>
         ` : ''}
       `;
-      row.appendChild(detail);
+      // In the grid layout the row.expanded becomes a row-flex container
+      // (thumb left, body right). The detail lives inside row-body so it
+      // appears below the name + meta inside the right column.
+      row.querySelector('.row-body').appendChild(detail);
       row.classList.add('expanded');
     }
 
