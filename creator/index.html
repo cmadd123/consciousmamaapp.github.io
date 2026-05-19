@@ -267,6 +267,16 @@
     .scan-dropzone .primary-text { font-weight: 600; color: var(--text); margin-bottom: 4px; }
     .scan-dropzone .sub-text { color: var(--text-muted); font-size: 13px; }
 
+    .url-input-row { display: flex; gap: 8px; }
+    .url-input-row input[type=url] {
+      flex: 1; padding: 12px 14px; font-size: 15px; font-family: inherit;
+      border: 1px solid var(--border); border-radius: 10px;
+    }
+    .url-input-row input[type=url]:focus {
+      outline: 2px solid var(--primary); outline-offset: -1px; border-color: var(--primary);
+    }
+    .url-input-row .btn { white-space: nowrap; }
+
     .scan-cards { display: flex; flex-direction: column; gap: 14px; margin-top: 20px; }
     .scan-card {
       background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
@@ -373,6 +383,7 @@
         <div class="tabs">
           <button class="tab active" data-tab="docs">Helpful Docs</button>
           <button class="tab" data-tab="scan">Scan Recipes</button>
+          <button class="tab" data-tab="url">From URL</button>
           <button class="tab" data-tab="analytics">Analytics</button>
         </div>
 
@@ -404,6 +415,27 @@
             <div class="sub-text">JPG or PNG, up to 5MB each. Try 2-3 at a time for the first run.</div>
           </label>
           <div class="scan-cards" id="scanCards"></div>
+        </section>
+
+        <!-- From URL panel -->
+        <section class="panel" id="panelUrl">
+          <div class="section-head">
+            <h2>Import from URL</h2>
+          </div>
+          <p class="scan-intro">
+            Paste a recipe URL from a food blog or recipe site — we'll pull the ingredients
+            and steps automatically, you review and save. Works best for blogs that publish
+            structured recipe data (most do).
+            <br><br>
+            <strong>Heads up:</strong> Instagram, TikTok, and YouTube posts don't expose recipe
+            data, so they won't parse — use the creator's blog link instead. Pinterest pins are
+            also not supported.
+          </p>
+          <div class="url-input-row">
+            <input type="url" id="urlInput" placeholder="https://example.com/recipe" autocomplete="off">
+            <button class="btn" id="urlFetchBtn">Fetch recipe</button>
+          </div>
+          <div class="scan-cards" id="urlCards"></div>
         </section>
 
         <!-- Analytics panel -->
@@ -1086,6 +1118,211 @@
         reader.onerror = () => reject(reader.error || new Error('Failed to read file'));
         reader.readAsDataURL(file);
       });
+    }
+
+    // --- From URL (Import from blog / recipe site) ---
+    const EXTRACT_FN_URL = 'https://us-central1-parenting-plus-7szrif.cloudfunctions.net/extractRecipe';
+    let urlCardCounter = 0;
+
+    const urlInput = $('urlInput');
+    const urlFetchBtn = $('urlFetchBtn');
+
+    urlInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        urlFetchBtn.click();
+      }
+    });
+
+    urlFetchBtn.addEventListener('click', async () => {
+      const url = urlInput.value.trim();
+      if (!url) {
+        toast('Paste a recipe URL first', true);
+        return;
+      }
+      if (!/^https?:\/\//i.test(url)) {
+        toast('URL must start with http:// or https://', true);
+        return;
+      }
+      const button = urlFetchBtn;
+      button.disabled = true;
+      const original = button.textContent;
+      button.textContent = 'Fetching…';
+      urlInput.value = ''; // clear so they can queue another while this one runs
+      try {
+        await processUrlImport(url);
+      } finally {
+        button.disabled = false;
+        button.textContent = original;
+      }
+    });
+
+    async function processUrlImport(url) {
+      const cardId = `urlCard_${++urlCardCounter}`;
+      const card = document.createElement('div');
+      card.className = 'scan-card';
+      card.id = cardId;
+      card.innerHTML = `
+        <div class="thumb"><div class="loader"></div></div>
+        <div class="body">
+          <div class="status"><div class="loader"></div> Fetching ${escapeHtml(url)}…</div>
+        </div>`;
+      $('urlCards').prepend(card);
+
+      try {
+        // extractRecipe requires a Firebase Auth Bearer token.
+        const token = await currentUser.getIdToken();
+        const response = await fetch(EXTRACT_FN_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify({ data: { url } }),
+        });
+
+        const json = await response.json().catch(() => null);
+        // The function returns either:
+        //   { result: { error: "...", message: "..." } } on error, or
+        //   { result: { success: true, recipe: {...} } } on text-input success, or
+        //   the recipe object at top level for URL input (legacy shape).
+        // Try a few unwrapping paths to be robust.
+        if (!response.ok) {
+          const errMsg = json?.result?.message || json?.result?.error || `Server error: ${response.status}`;
+          throw new Error(errMsg);
+        }
+        if (json?.result?.error) {
+          throw new Error(json.result.message || json.result.error);
+        }
+        const recipe =
+          json?.result?.recipe ||
+          (json?.result && json.result.name ? json.result : null) ||
+          (json?.name ? json : null);
+
+        if (!recipe || !recipe.name) {
+          throw new Error("Couldn't extract a recipe from that page. Try a food blog with a printed recipe card.");
+        }
+        renderUrlCard(card, url, recipe);
+      } catch (e) {
+        console.error(e);
+        card.querySelector('.thumb').innerHTML = '<span style="font-size:32px;">⚠️</span>';
+        card.querySelector('.body').innerHTML = `
+          <div class="status error">${escapeHtml(e.message || 'URL import failed')}</div>
+          <div class="actions">
+            <button class="btn ghost" data-discard>Remove</button>
+          </div>`;
+        card.querySelector('[data-discard]').addEventListener('click', () => card.remove());
+      }
+    }
+
+    function renderUrlCard(card, sourceUrl, recipe) {
+      const ingredients = Array.isArray(recipe.ingredients) ? recipe.ingredients.join('\n') : '';
+      const instructions = Array.isArray(recipe.instructions) ? recipe.instructions.join('\n') : '';
+      const prep = toMinutes(recipe.prepTime ?? recipe.prep_time);
+      const cook = toMinutes(recipe.cookTime ?? recipe.cook_time);
+      const servings = parseInt(recipe.servings ?? recipe.recipeYield, 10) || 4;
+      const imageUrl = recipe.imageUrl || recipe.image_url || '';
+
+      card.querySelector('.thumb').innerHTML = imageUrl
+        ? `<img src="${escapeHtml(imageUrl)}" alt="" onerror="this.parentElement.innerHTML='<span style=&quot;font-size:36px;&quot;>📄</span>'">`
+        : '<span style="font-size:36px;">📄</span>';
+
+      card.querySelector('.body').innerHTML = `
+        <input class="recipe-name" type="text" value="${escapeHtml(recipe.name || 'Untitled recipe')}" placeholder="Recipe name">
+        <div class="meta-row">
+          <div>
+            <label>Prep (min)</label>
+            <input type="number" class="field-prep" min="0" value="${prep}">
+          </div>
+          <div>
+            <label>Cook (min)</label>
+            <input type="number" class="field-cook" min="0" value="${cook}">
+          </div>
+          <div>
+            <label>Servings</label>
+            <input type="number" class="field-servings" min="1" value="${servings}">
+          </div>
+        </div>
+        <div>
+          <div class="field-label">Ingredients (one per line)</div>
+          <textarea class="field-ingredients" rows="5">${escapeHtml(ingredients)}</textarea>
+        </div>
+        <div>
+          <div class="field-label">Instructions (one step per line)</div>
+          <textarea class="field-instructions" rows="6">${escapeHtml(instructions)}</textarea>
+        </div>
+        <div style="font-size: 11px; color: var(--text-muted); word-break: break-all;">
+          Source: <a href="${escapeHtml(sourceUrl)}" target="_blank" rel="noopener">${escapeHtml(sourceUrl)}</a>
+        </div>
+        <div class="actions">
+          <button class="btn ghost" data-discard>Discard</button>
+          <button class="btn" data-save>Save to library</button>
+        </div>`;
+
+      card.querySelector('[data-discard]').addEventListener('click', () => card.remove());
+
+      card.querySelector('[data-save]').addEventListener('click', async () => {
+        const saveBtn = card.querySelector('[data-save]');
+        const discardBtn = card.querySelector('[data-discard]');
+        saveBtn.disabled = true; discardBtn.disabled = true;
+        const originalLabel = saveBtn.textContent;
+        saveBtn.textContent = 'Saving…';
+        try {
+          await saveUrlResult(card, sourceUrl, imageUrl);
+          card.querySelector('.body').innerHTML = `
+            <div class="status success">✓ Saved to your library</div>
+            <div class="actions">
+              <button class="btn ghost" data-dismiss>Done</button>
+            </div>`;
+          card.querySelector('[data-dismiss]').addEventListener('click', () => card.remove());
+          toast('Recipe saved');
+        } catch (e) {
+          console.error(e);
+          toast('Save failed: ' + e.message, true);
+          saveBtn.disabled = false; discardBtn.disabled = false;
+          saveBtn.textContent = originalLabel;
+        }
+      });
+    }
+
+    async function saveUrlResult(card, sourceUrl, imageUrl) {
+      const name = card.querySelector('.recipe-name').value.trim() || 'Untitled recipe';
+      const prep = parseInt(card.querySelector('.field-prep').value, 10) || 0;
+      const cook = parseInt(card.querySelector('.field-cook').value, 10) || 0;
+      const servings = parseInt(card.querySelector('.field-servings').value, 10) || 0;
+      const ingredients = card.querySelector('.field-ingredients').value
+        .split('\n').map(s => s.trim()).filter(Boolean);
+      const instructions = card.querySelector('.field-instructions').value
+        .split('\n').map(s => s.trim()).filter(Boolean);
+
+      // Store the source image URL directly (not re-uploaded to Storage).
+      // Trade-off: faster save, but if the source blog deletes the image
+      // it 404s. Acceptable for v1 — most blogs keep recipe images forever.
+      const payload = {
+        recipe_name: name,
+        ingredients,
+        CookingInstructions: instructions,
+        prepare_time: prep,
+        cook_time: cook,
+        servings,
+        image_url: imageUrl || '',
+        source_url: sourceUrl,
+        user_ref: doc(db, 'users', currentUser.uid),
+        creator_ref: creatorDoc.ref,
+        source: 'creator_web_url',
+        created_at: serverTimestamp(),
+      };
+      await addDoc(collection(db, 'meal'), payload);
+    }
+
+    function toMinutes(v) {
+      if (v == null || v === '') return 0;
+      if (typeof v === 'number') return Math.max(0, Math.round(v));
+      // ISO 8601 duration like "PT15M" or "PT1H30M" — common from JSON-LD.
+      const iso = String(v).match(/^PT(?:(\d+)H)?(?:(\d+)M)?$/);
+      if (iso) return (parseInt(iso[1] || 0, 10) * 60) + parseInt(iso[2] || 0, 10);
+      const n = parseInt(v, 10);
+      return Number.isFinite(n) ? n : 0;
     }
 
     function renderBarChart(containerId, items, unit, emptyText) {

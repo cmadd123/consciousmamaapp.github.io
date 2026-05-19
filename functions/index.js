@@ -327,6 +327,28 @@ exports.extractRecipe = onRequest({ secrets: [openaiApiKey, scrapingBeeApiKey] }
     return;
   }
 
+  // Pinterest is intentionally not supported. Pinterest's ToS prohibits
+  // automated scraping, the pinned image belongs to the original
+  // creator (not the pinner), and our creator content terms require
+  // recipes come from the creator's own sources. Refuse pins early
+  // with a friendly suggestion to use the source URL or paste text.
+  if (url) {
+    const urlLower = url.toLowerCase();
+    if (
+      urlLower.includes('pinterest.com') ||
+      urlLower.includes('pin.it') ||
+      urlLower.includes('pinimg.com')
+    ) {
+      response.status(400).json({
+        result: {
+          error: 'pinterest_not_supported',
+          message: "Pinterest pins aren't supported. Try the source blog URL (look for a link in the pin), snap a photo of the recipe, or paste the recipe text directly.",
+        },
+      });
+      return;
+    }
+  }
+
   // If text is provided, use AI to extract recipe from pasted text
   if (text && !url) {
     console.log(`Extracting recipe from pasted text (length: ${text.length})`);
