@@ -315,6 +315,28 @@
     }
     .scan-card .actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 4px; }
 
+    .scan-card input.field-attribution {
+      width: 100%; padding: 8px 10px; font-size: 13px; font-family: inherit;
+      border: 1px solid var(--border); border-radius: 8px;
+    }
+    .scan-card input.field-attribution:focus {
+      outline: 2px solid var(--primary); outline-offset: -1px; border-color: var(--primary);
+    }
+    .scan-card .rights-attestation {
+      display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px;
+      background: color-mix(in srgb, #F59E0B 8%, var(--surface));
+      border: 1px solid color-mix(in srgb, #F59E0B 30%, var(--border));
+      border-radius: 8px; cursor: pointer;
+      font-size: 13px; line-height: 1.4;
+    }
+    .scan-card .rights-attestation input[type=checkbox] {
+      width: 18px; height: 18px; flex-shrink: 0; margin-top: 1px;
+      accent-color: var(--primary);
+    }
+    .scan-card .rights-attestation .rights-text strong { display: block; margin-bottom: 2px; }
+    .scan-card .rights-attestation .rights-text small { color: var(--text-muted); font-size: 11px; }
+    .scan-card button[data-save]:disabled { opacity: 0.4; cursor: not-allowed; }
+
     @media (max-width: 640px) {
       .scan-card { grid-template-columns: 1fr; }
       .scan-card .thumb { width: 100%; height: 200px; }
@@ -3524,6 +3546,16 @@
         card.querySelector('.thumb').innerHTML = '<span style="font-size:36px;">📄</span>';
       }
 
+      // Pre-fill attribution for URL imports with the source domain so
+      // creators don't have to retype it.
+      let suggestedAttribution = '';
+      if (sourceUrl) {
+        try {
+          const host = new URL(sourceUrl).hostname.replace(/^www\./, '');
+          suggestedAttribution = `Adapted from ${host}`;
+        } catch { /* ignore bad URL */ }
+      }
+
       card.querySelector('.body').innerHTML = `
         <input class="recipe-name" type="text" value="${escapeHtml(recipe.name || 'Untitled recipe')}" placeholder="Recipe name">
         <div class="meta-row">
@@ -3539,11 +3571,30 @@
           <div class="field-label">Instructions (one step per line)</div>
           <textarea class="field-instructions" rows="6">${escapeHtml(instructions)}</textarea>
         </div>
+        <div>
+          <div class="field-label">Attribution (optional)</div>
+          <input class="field-attribution" type="text" value="${escapeHtml(suggestedAttribution)}" placeholder="e.g. Adapted from Smitten Kitchen, or original by Aunt Sue">
+        </div>
         ${sourceUrl ? `<div style="font-size: 11px; color: var(--text-muted); word-break: break-all;">Source: <a href="${escapeHtml(sourceUrl)}" target="_blank" rel="noopener">${escapeHtml(sourceUrl)}</a></div>` : ''}
+        <label class="rights-attestation">
+          <input type="checkbox" class="field-rights">
+          <span class="rights-text">
+            <strong>I created this recipe or have permission to share/sell it.</strong>
+            <small>Ingredient lists are free to use, but photos, original wording, and the recipe's creative expression are copyrighted by their author. By checking this you confirm you own or have rights to this content.</small>
+          </span>
+        </label>
         <div class="actions">
           <button class="btn ghost" data-discard>Discard</button>
-          <button class="btn" data-save>Save to library</button>
+          <button class="btn" data-save disabled>Save to library</button>
         </div>`;
+
+      // Gate the save button behind the rights attestation. Required to
+      // shift legal liability to the creator at the moment of save.
+      const rightsCheckbox = card.querySelector('.field-rights');
+      const saveBtnEl = card.querySelector('[data-save]');
+      rightsCheckbox.addEventListener('change', () => {
+        saveBtnEl.disabled = !rightsCheckbox.checked;
+      });
 
       card.querySelector('[data-discard]').addEventListener('click', () => {
         if (objectUrl) URL.revokeObjectURL(objectUrl);
@@ -3584,6 +3635,13 @@
         .split('\n').map(s => s.trim()).filter(Boolean);
       const instructions = card.querySelector('.field-instructions').value
         .split('\n').map(s => s.trim()).filter(Boolean);
+      const attribution = card.querySelector('.field-attribution').value.trim();
+      const rightsAttested = card.querySelector('.field-rights').checked;
+      // Defensive — save button is gated behind the checkbox, but
+      // double-check at the data layer too.
+      if (!rightsAttested) {
+        throw new Error('Confirm you have rights to this recipe before saving.');
+      }
 
       // For scan saves we upload the photo to Storage; for URL saves we
       // keep the source image URL as-is (faster + most blog images are
@@ -3611,6 +3669,12 @@
         creator_ref: creatorDoc.ref,
         source: file ? 'creator_web_ocr' : 'creator_web_url',
         ...(sourceUrl ? { source_url: sourceUrl } : {}),
+        ...(attribution ? { attribution } : {}),
+        // Rights attestation — required checkbox at save time. We stamp
+        // both the boolean and a server timestamp so any future audit can
+        // see when (and against which client version) the creator agreed.
+        rights_attested: true,
+        rights_attested_at: serverTimestamp(),
         created_at: serverTimestamp(),
       };
       await addDoc(collection(db, 'meal'), payload);
