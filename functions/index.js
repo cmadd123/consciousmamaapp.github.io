@@ -328,6 +328,36 @@ exports.extractRecipe = onRequest({ secrets: [openaiApiKey, scrapingBeeApiKey] }
     return;
   }
 
+  // Pinterest is blocked on the *creator* path only (consumer mobile
+  // users keep the pin-import behavior they had). Reasoning:
+  // - Pinterest's ToS prohibits automated scraping regardless of
+  //   commercial intent, so this is a soft legal violation either way.
+  // - The pinned image belongs to the original creator, not the
+  //   pinner — copyright concern.
+  // - The risk multiplies when the importer is publishing or selling
+  //   the result. So on the monetizable creator path we refuse pins;
+  //   on the consumer-personal path we preserve the existing UX and
+  //   accept the lower (but non-zero) risk.
+  // Callers signal intent with data.context = 'creator'. Mobile app
+  // sends no context value and keeps its current behavior unchanged.
+  const fromCreator = data && data.context === 'creator';
+  if (fromCreator && url) {
+    const urlLower = url.toLowerCase();
+    if (
+      urlLower.includes('pinterest.com') ||
+      urlLower.includes('pin.it') ||
+      urlLower.includes('pinimg.com')
+    ) {
+      response.status(400).json({
+        result: {
+          error: 'pinterest_not_supported',
+          message: "Pinterest pins aren't supported on the creator path. Try the source blog URL (look for a link in the pin), snap a photo of the recipe, or paste the recipe text directly.",
+        },
+      });
+      return;
+    }
+  }
+
   // If text is provided, use AI to extract recipe from pasted text
   if (text && !url) {
     console.log(`Extracting recipe from pasted text (length: ${text.length})`);

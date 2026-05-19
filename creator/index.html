@@ -235,6 +235,90 @@
     .feature-card[data-goto="docs"] .feature-icon { background: color-mix(in srgb, #3B82F6 14%, var(--surface)); }
     .feature-card[data-goto="mealPlans"] .feature-icon { background: color-mix(in srgb, #F59E0B 16%, var(--surface)); }
     .feature-card[data-goto="routines"] .feature-icon { background: color-mix(in srgb, #8B5CF6 14%, var(--surface)); }
+    .feature-card[data-goto="addRecipes"] .feature-icon { background: color-mix(in srgb, #10B981 14%, var(--surface)); }
+
+    /* Add Recipes view */
+    .scan-section { margin-bottom: 28px; }
+    .scan-section-head { display: flex; align-items: baseline; gap: 8px; margin-bottom: 6px; }
+    .scan-section-head h3 { margin: 0; font-size: 17px; }
+    .scan-section-head .muted { color: var(--text-muted); font-size: 13px; }
+    .scan-intro { color: var(--text-muted); font-size: 14px; margin-bottom: 14px; max-width: 640px; }
+    .scan-dropzone {
+      display: block;
+      border: 2px dashed var(--border); border-radius: 14px;
+      padding: 28px 24px; text-align: center;
+      background: var(--surface);
+      transition: border-color 150ms, background 150ms;
+      cursor: pointer;
+    }
+    .scan-dropzone:hover, .scan-dropzone.dragover {
+      border-color: var(--primary); background: color-mix(in srgb, var(--primary) 4%, var(--surface));
+    }
+    .scan-dropzone input[type=file] { display: none; }
+    .scan-dropzone .icon { font-size: 32px; margin-bottom: 8px; }
+    .scan-dropzone .primary-text { font-weight: 600; color: var(--text); margin-bottom: 4px; }
+    .scan-dropzone .sub-text { color: var(--text-muted); font-size: 13px; }
+
+    .url-input-row { display: flex; gap: 8px; }
+    .url-input-row input[type=url] {
+      flex: 1; padding: 12px 14px; font-size: 15px; font-family: inherit;
+      border: 1px solid var(--border); border-radius: 10px;
+    }
+    .url-input-row input[type=url]:focus {
+      outline: 2px solid var(--primary); outline-offset: -1px; border-color: var(--primary);
+    }
+    .url-input-row .btn { white-space: nowrap; }
+
+    .scan-cards { display: flex; flex-direction: column; gap: 14px; margin-top: 16px; }
+    .scan-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+      padding: 16px; display: grid;
+      grid-template-columns: 140px 1fr; gap: 16px;
+    }
+    .scan-card .thumb {
+      width: 140px; height: 140px; border-radius: 10px; overflow: hidden;
+      background: #F3F4F6; display: grid; place-items: center;
+    }
+    .scan-card .thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .scan-card .body { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+    .scan-card .status {
+      display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-muted);
+    }
+    .scan-card .status.error { color: var(--danger); }
+    .scan-card .status.success { color: var(--success); }
+    .scan-card input.recipe-name {
+      font-size: 16px; font-weight: 600; padding: 8px 10px;
+      border: 1px solid var(--border); border-radius: 8px; font-family: inherit;
+    }
+    .scan-card input.recipe-name:focus {
+      outline: 2px solid var(--primary); outline-offset: -1px; border-color: var(--primary);
+    }
+    .scan-card .meta-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .scan-card .meta-row label {
+      font-size: 11px; color: var(--text-muted); text-transform: uppercase;
+      letter-spacing: 0.06em; font-weight: 600; display: block; margin-bottom: 4px;
+    }
+    .scan-card .meta-row input {
+      width: 100%; padding: 6px 8px; font-size: 13px; font-family: inherit;
+      border: 1px solid var(--border); border-radius: 6px;
+    }
+    .scan-card textarea {
+      width: 100%; padding: 8px 10px; font-size: 13px; font-family: inherit;
+      border: 1px solid var(--border); border-radius: 8px; resize: vertical; min-height: 80px;
+    }
+    .scan-card textarea:focus {
+      outline: 2px solid var(--primary); outline-offset: -1px; border-color: var(--primary);
+    }
+    .scan-card .field-label {
+      font-size: 11px; color: var(--text-muted); text-transform: uppercase;
+      letter-spacing: 0.06em; font-weight: 600; margin-bottom: 4px;
+    }
+    .scan-card .actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 4px; }
+
+    @media (max-width: 640px) {
+      .scan-card { grid-template-columns: 1fr; }
+      .scan-card .thumb { width: 100%; height: 200px; }
+    }
     .feature-card .feature-primary { font-size: 28px; font-weight: 700; line-height: 1.1; }
     .feature-card .feature-sub { font-size: 13px; color: var(--text-muted); min-height: 1.2em; }
     .feature-card .feature-cta { margin-top: auto; font-size: 13px; color: var(--primary); font-weight: 600; padding-top: 6px; }
@@ -984,6 +1068,15 @@
               <div class="feature-sub" id="featureRoutinesSub">&nbsp;</div>
               <div class="feature-cta">View routines →</div>
             </button>
+            <button class="feature-card" data-goto="addRecipes">
+              <div class="feature-head">
+                <span class="feature-icon">📸</span>
+                <h3>Add Recipes</h3>
+              </div>
+              <div class="feature-primary" style="font-size: 20px;">Quick add</div>
+              <div class="feature-sub">Snap photos or paste URLs</div>
+              <div class="feature-cta">Import →</div>
+            </button>
           </div>
 
           <!-- What's new in MomRise — pulled from /CHANGELOG.md -->
@@ -1059,6 +1152,57 @@
         <div class="analytics-card" style="margin-top: 14px;">
           <h3>Meal plan imports <span class="muted" id="mealSubtitle"></span></h3>
           <div id="mealChart" class="bar-chart"></div>
+        </div>
+      </div>
+
+      <!-- 6b. Add Recipes sub-view (Scan + URL import) -->
+      <div class="view" id="viewAddRecipes">
+        <button class="back-btn" data-back>← Dashboard</button>
+        <div class="section-head">
+          <h2>Add recipes to your library</h2>
+        </div>
+        <p class="muted" style="margin: 0 0 24px; font-size: 14px;">
+          Pull recipes in from anywhere — a cookbook photo, a screenshot, a handwritten card,
+          or a food blog URL. Each scan/import lands in your library and can be shared into a
+          meal plan from there.
+        </p>
+
+        <!-- Scan a photo -->
+        <div class="scan-section">
+          <div class="scan-section-head">
+            <h3>📸 Scan a photo</h3>
+            <span class="muted">Claude reads the page</span>
+          </div>
+          <p class="scan-intro">
+            Drop a cookbook photo, a screenshot, or a handwritten card.
+            Drop several at once — they'll process in parallel.
+          </p>
+          <label class="scan-dropzone" id="scanDropzone">
+            <input type="file" id="scanFileInput" accept="image/*" multiple>
+            <div class="icon">📸</div>
+            <div class="primary-text">Drop photos here, or click to choose</div>
+            <div class="sub-text">JPG or PNG, up to 5MB each.</div>
+          </label>
+          <div class="scan-cards" id="scanCards"></div>
+        </div>
+
+        <!-- From URL -->
+        <div class="scan-section">
+          <div class="scan-section-head">
+            <h3>🔗 From URL</h3>
+            <span class="muted">Food blogs work best</span>
+          </div>
+          <p class="scan-intro">
+            Paste a recipe URL from a food blog. Most blogs publish structured recipe data
+            that imports cleanly.
+            <br><strong>Heads up:</strong> Instagram, TikTok, and Pinterest don't expose recipe
+            data on this path — use the creator's own blog URL or scan a photo instead.
+          </p>
+          <div class="url-input-row">
+            <input type="url" id="urlInput" placeholder="https://example.com/recipe" autocomplete="off">
+            <button class="btn" id="urlFetchBtn">Fetch recipe</button>
+          </div>
+          <div class="scan-cards" id="urlCards"></div>
         </div>
       </div>
 
@@ -1686,6 +1830,8 @@
         } else if (target === 'routines') {
           show('viewRoutines');
           loadCreatorRoutines();
+        } else if (target === 'addRecipes') {
+          show('viewAddRecipes');
         }
       });
     });
@@ -3199,6 +3345,297 @@
         ? '<li class="muted">This routine has no steps yet.</li>'
         : steps.map(s => `<li>${escapeHtml(s)}</li>`).join('');
       $('routineModal').classList.add('open');
+    }
+
+    // ───────────────────────────────────────────────────────────────
+    // Add Recipes: Scan (camera/upload) + From URL (paste blog link).
+    // Both feed into the same meal collection, so creators can pull
+    // recipes from anywhere into a single library.
+    // ───────────────────────────────────────────────────────────────
+    const SCAN_FN_URL = 'https://us-central1-parenting-plus-7szrif.cloudfunctions.net/scanCookbookWithClaude';
+    const EXTRACT_FN_URL = 'https://us-central1-parenting-plus-7szrif.cloudfunctions.net/extractRecipe';
+    const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+    let scanCardCounter = 0;
+    let urlCardCounter = 0;
+
+    // --- Scan a photo ---
+    const scanDropzone = $('scanDropzone');
+    const scanFileInput = $('scanFileInput');
+
+    if (scanDropzone && scanFileInput) {
+      scanFileInput.addEventListener('change', (e) => {
+        const files = Array.from(e.target.files || []);
+        handleScanFiles(files);
+        e.target.value = '';
+      });
+      ['dragenter', 'dragover'].forEach((evt) => {
+        scanDropzone.addEventListener(evt, (e) => {
+          e.preventDefault(); e.stopPropagation();
+          scanDropzone.classList.add('dragover');
+        });
+      });
+      ['dragleave', 'drop'].forEach((evt) => {
+        scanDropzone.addEventListener(evt, (e) => {
+          e.preventDefault(); e.stopPropagation();
+          scanDropzone.classList.remove('dragover');
+        });
+      });
+      scanDropzone.addEventListener('drop', (e) => {
+        const files = Array.from(e.dataTransfer?.files || []).filter(f => f.type.startsWith('image/'));
+        if (files.length) handleScanFiles(files);
+      });
+    }
+
+    function handleScanFiles(files) {
+      for (const file of files) {
+        if (file.size > MAX_IMAGE_BYTES) {
+          toast(`${file.name} is too large (max 5MB)`, true);
+          continue;
+        }
+        void processScanFile(file);
+      }
+    }
+
+    async function processScanFile(file) {
+      const cardId = `scanCard_${++scanCardCounter}`;
+      const card = document.createElement('div');
+      card.className = 'scan-card';
+      card.id = cardId;
+      card.innerHTML = `
+        <div class="thumb"><div class="loader"></div></div>
+        <div class="body">
+          <div class="status"><div class="loader"></div> Reading the page…</div>
+        </div>`;
+      $('scanCards').prepend(card);
+
+      try {
+        const objectUrl = URL.createObjectURL(file);
+        card.querySelector('.thumb').innerHTML = `<img src="${objectUrl}" alt="">`;
+        const base64 = await fileToBase64(file);
+
+        const response = await fetch(SCAN_FN_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ data: { imageBase64: base64 } }),
+        });
+        if (!response.ok) throw new Error(`Server error: ${response.status}`);
+        const json = await response.json();
+        const result = json.result;
+        if (!result || result.success !== true) {
+          throw new Error(result?.error || 'Recipe extraction failed');
+        }
+        renderRecipeCard(card, { file, objectUrl, sourceUrl: null, recipe: result.recipe || {} });
+      } catch (e) {
+        console.error(e);
+        card.querySelector('.body').innerHTML = `
+          <div class="status error">⚠️ ${escapeHtml(e.message || 'Scan failed')}</div>
+          <div class="actions"><button class="btn ghost" data-discard>Remove</button></div>`;
+        card.querySelector('[data-discard]').addEventListener('click', () => card.remove());
+      }
+    }
+
+    // --- From URL ---
+    const urlInput = $('urlInput');
+    const urlFetchBtn = $('urlFetchBtn');
+    if (urlInput && urlFetchBtn) {
+      urlInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') { e.preventDefault(); urlFetchBtn.click(); }
+      });
+      urlFetchBtn.addEventListener('click', async () => {
+        const url = urlInput.value.trim();
+        if (!url) { toast('Paste a recipe URL first', true); return; }
+        if (!/^https?:\/\//i.test(url)) { toast('URL must start with http:// or https://', true); return; }
+        urlFetchBtn.disabled = true;
+        const orig = urlFetchBtn.textContent;
+        urlFetchBtn.textContent = 'Fetching…';
+        urlInput.value = '';
+        try { await processUrlImport(url); }
+        finally { urlFetchBtn.disabled = false; urlFetchBtn.textContent = orig; }
+      });
+    }
+
+    async function processUrlImport(url) {
+      const cardId = `urlCard_${++urlCardCounter}`;
+      const card = document.createElement('div');
+      card.className = 'scan-card';
+      card.id = cardId;
+      card.innerHTML = `
+        <div class="thumb"><div class="loader"></div></div>
+        <div class="body">
+          <div class="status"><div class="loader"></div> Fetching ${escapeHtml(url)}…</div>
+        </div>`;
+      $('urlCards').prepend(card);
+
+      try {
+        // extractRecipe requires a Firebase Auth Bearer token.
+        const token = await currentUser.getIdToken();
+        const response = await fetch(EXTRACT_FN_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          // context: 'creator' opts into the creator-path rules
+          // (currently blocks Pinterest URLs at the function entry).
+          body: JSON.stringify({ data: { url, context: 'creator' } }),
+        });
+        const json = await response.json().catch(() => null);
+        if (!response.ok) {
+          const msg = json?.result?.message || json?.result?.error || `Server error: ${response.status}`;
+          throw new Error(msg);
+        }
+        if (json?.result?.error) {
+          throw new Error(json.result.message || json.result.error);
+        }
+        // Function returns recipe at top-level for URL input, wrapped under
+        // result.recipe for text input. Handle both.
+        const recipe =
+          json?.result?.recipe ||
+          (json?.result && json.result.name ? json.result : null) ||
+          (json?.name ? json : null);
+        if (!recipe || !recipe.name) {
+          throw new Error("Couldn't extract a recipe. Try a food blog with a printed recipe card.");
+        }
+        renderRecipeCard(card, { file: null, objectUrl: null, sourceUrl: url, recipe });
+      } catch (e) {
+        console.error(e);
+        card.querySelector('.thumb').innerHTML = '<span style="font-size:32px;">⚠️</span>';
+        card.querySelector('.body').innerHTML = `
+          <div class="status error">${escapeHtml(e.message || 'URL import failed')}</div>
+          <div class="actions"><button class="btn ghost" data-discard>Remove</button></div>`;
+        card.querySelector('[data-discard]').addEventListener('click', () => card.remove());
+      }
+    }
+
+    // Shared editable preview + save logic for both scan and URL paths.
+    function renderRecipeCard(card, { file, objectUrl, sourceUrl, recipe }) {
+      const ingredients = Array.isArray(recipe.ingredients) ? recipe.ingredients.join('\n') : '';
+      const instructions = Array.isArray(recipe.instructions) ? recipe.instructions.join('\n') : '';
+      const prep = toMinutes(recipe.prepTime ?? recipe.prep_time);
+      const cook = toMinutes(recipe.cookTime ?? recipe.cook_time);
+      const servings = parseInt(recipe.servings ?? recipe.recipeYield, 10) || 4;
+      const imageUrl = recipe.imageUrl || recipe.image_url || '';
+
+      // For URL imports without a base64 photo, prefer the source image
+      // URL as thumbnail. For scan imports, the photo is already shown.
+      if (sourceUrl && imageUrl && !objectUrl) {
+        card.querySelector('.thumb').innerHTML = `<img src="${escapeHtml(imageUrl)}" alt="" onerror="this.parentElement.innerHTML='<span style=&quot;font-size:36px;&quot;>📄</span>'">`;
+      } else if (sourceUrl && !imageUrl) {
+        card.querySelector('.thumb').innerHTML = '<span style="font-size:36px;">📄</span>';
+      }
+
+      card.querySelector('.body').innerHTML = `
+        <input class="recipe-name" type="text" value="${escapeHtml(recipe.name || 'Untitled recipe')}" placeholder="Recipe name">
+        <div class="meta-row">
+          <div><label>Prep (min)</label><input type="number" class="field-prep" min="0" value="${prep}"></div>
+          <div><label>Cook (min)</label><input type="number" class="field-cook" min="0" value="${cook}"></div>
+          <div><label>Servings</label><input type="number" class="field-servings" min="1" value="${servings}"></div>
+        </div>
+        <div>
+          <div class="field-label">Ingredients (one per line)</div>
+          <textarea class="field-ingredients" rows="5">${escapeHtml(ingredients)}</textarea>
+        </div>
+        <div>
+          <div class="field-label">Instructions (one step per line)</div>
+          <textarea class="field-instructions" rows="6">${escapeHtml(instructions)}</textarea>
+        </div>
+        ${sourceUrl ? `<div style="font-size: 11px; color: var(--text-muted); word-break: break-all;">Source: <a href="${escapeHtml(sourceUrl)}" target="_blank" rel="noopener">${escapeHtml(sourceUrl)}</a></div>` : ''}
+        <div class="actions">
+          <button class="btn ghost" data-discard>Discard</button>
+          <button class="btn" data-save>Save to library</button>
+        </div>`;
+
+      card.querySelector('[data-discard]').addEventListener('click', () => {
+        if (objectUrl) URL.revokeObjectURL(objectUrl);
+        card.remove();
+      });
+
+      card.querySelector('[data-save]').addEventListener('click', async () => {
+        const saveBtn = card.querySelector('[data-save]');
+        const discardBtn = card.querySelector('[data-discard]');
+        saveBtn.disabled = true; discardBtn.disabled = true;
+        const orig = saveBtn.textContent;
+        saveBtn.textContent = 'Saving…';
+        try {
+          await saveRecipe(card, { file, sourceUrl, imageUrl });
+          card.querySelector('.body').innerHTML = `
+            <div class="status success">✓ Saved to your library</div>
+            <div class="actions"><button class="btn ghost" data-dismiss>Done</button></div>`;
+          card.querySelector('[data-dismiss]').addEventListener('click', () => {
+            if (objectUrl) URL.revokeObjectURL(objectUrl);
+            card.remove();
+          });
+          toast('Recipe saved');
+        } catch (e) {
+          console.error(e);
+          toast('Save failed: ' + e.message, true);
+          saveBtn.disabled = false; discardBtn.disabled = false;
+          saveBtn.textContent = orig;
+        }
+      });
+    }
+
+    async function saveRecipe(card, { file, sourceUrl, imageUrl }) {
+      const name = card.querySelector('.recipe-name').value.trim() || 'Untitled recipe';
+      const prep = parseInt(card.querySelector('.field-prep').value, 10) || 0;
+      const cook = parseInt(card.querySelector('.field-cook').value, 10) || 0;
+      const servings = parseInt(card.querySelector('.field-servings').value, 10) || 0;
+      const ingredients = card.querySelector('.field-ingredients').value
+        .split('\n').map(s => s.trim()).filter(Boolean);
+      const instructions = card.querySelector('.field-instructions').value
+        .split('\n').map(s => s.trim()).filter(Boolean);
+
+      // For scan saves we upload the photo to Storage; for URL saves we
+      // keep the source image URL as-is (faster + most blog images are
+      // permanent enough for our use case).
+      let finalImageUrl = imageUrl || '';
+      if (file) {
+        const path = `recipe_images/${currentUser.uid}/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+        const ref = storageRef(storage, path);
+        await uploadBytes(ref, file, { contentType: file.type || 'image/jpeg' });
+        finalImageUrl = await getDownloadURL(ref);
+      }
+
+      // MealRecord schema fields (recipe_name, ingredients[],
+      // CookingInstructions[], prepare_time, image_url, user_ref) plus
+      // non-breaking cook_time + servings + source provenance.
+      const payload = {
+        recipe_name: name,
+        ingredients,
+        CookingInstructions: instructions,
+        prepare_time: prep,
+        cook_time: cook,
+        servings,
+        image_url: finalImageUrl,
+        user_ref: doc(db, 'users', currentUser.uid),
+        creator_ref: creatorDoc.ref,
+        source: file ? 'creator_web_ocr' : 'creator_web_url',
+        ...(sourceUrl ? { source_url: sourceUrl } : {}),
+        created_at: serverTimestamp(),
+      };
+      await addDoc(collection(db, 'meal'), payload);
+    }
+
+    function fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const dataUrl = reader.result;
+          const comma = dataUrl.indexOf(',');
+          resolve(comma >= 0 ? dataUrl.slice(comma + 1) : dataUrl);
+        };
+        reader.onerror = () => reject(reader.error || new Error('Failed to read file'));
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function toMinutes(v) {
+      if (v == null || v === '') return 0;
+      if (typeof v === 'number') return Math.max(0, Math.round(v));
+      const iso = String(v).match(/^PT(?:(\d+)H)?(?:(\d+)M)?$/);
+      if (iso) return (parseInt(iso[1] || 0, 10) * 60) + parseInt(iso[2] || 0, 10);
+      const n = parseInt(v, 10);
+      return Number.isFinite(n) ? n : 0;
     }
   </script>
 </body>
