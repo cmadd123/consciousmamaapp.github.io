@@ -356,13 +356,26 @@
       color: var(--text-muted); font-weight: 600;
     }
     .rm-label .rm-hint { text-transform: none; letter-spacing: 0; font-weight: 400; }
-    .rm-select, .rm-tags {
+    .rm-tags {
       width: 100%; padding: 9px 10px; font-size: 14px; font-family: inherit;
       border: 1px solid var(--border); border-radius: 8px;
       background: var(--surface); color: var(--text);
     }
-    .rm-select:focus, .rm-tags:focus {
+    .rm-tags:focus {
       outline: 2px solid var(--primary); outline-offset: -1px; border-color: var(--primary);
+    }
+    /* Single-select pill groups (recipe type, meal type) */
+    .rm-pills { display: flex; flex-wrap: wrap; gap: 6px; }
+    .rm-pill {
+      padding: 6px 13px; border-radius: 999px; cursor: pointer;
+      border: 1px solid var(--border); background: var(--surface);
+      font: inherit; font-size: 13px; color: var(--text-muted);
+      transition: background 120ms, border-color 120ms, color 120ms;
+    }
+    .rm-pill:hover { border-color: var(--primary); }
+    .rm-pill.selected {
+      background: color-mix(in srgb, var(--primary) 14%, var(--surface));
+      border-color: var(--primary); color: var(--primary-dark); font-weight: 600;
     }
     .rm-chips { display: flex; flex-wrap: wrap; gap: 6px; }
     .rm-chip {
@@ -646,8 +659,8 @@
       .scan-card input.recipe-name { padding: 11px 12px; }
       .scan-card .meta-row input { padding: 10px 8px; }
       .recipe-edit-form input, .recipe-edit-form textarea { font-size: 16px; }
-      .rm-select, .rm-tags { font-size: 16px; padding: 11px 12px; }
-      .rm-chip { font-size: 14px; padding: 9px 13px; }
+      .rm-tags { font-size: 16px; padding: 11px 12px; }
+      .rm-chip, .rm-pill { font-size: 14px; padding: 9px 13px; }
       .url-input-row { flex-direction: column; }
       .url-input-row .btn { width: 100%; }
 
@@ -4225,18 +4238,20 @@
       const mt = r.meal_typ || '';
       const allergens = Array.isArray(r.allergens) ? r.allergens : [];
       const tags = Array.isArray(r.tags) ? r.tags.join(', ') : '';
-      const opt = (list, sel) => list.map((t) =>
-        `<option value="${t}"${t === sel ? ' selected' : ''}>${t}</option>`).join('');
+      const pillGroup = (group, list, sel) =>
+        `<div class="rm-pills" data-group="${group}">` +
+        list.map((t) => `<button type="button" class="rm-pill${t === sel ? ' selected' : ''}" data-value="${t}">${t}</button>`).join('') +
+        `</div>`;
       return `
         <div class="rm-block">
           <div class="rm-row">
             <div class="rm-field">
               <span class="rm-label">Recipe type</span>
-              <select class="rm-select meta-recipe-type"><option value="">—</option>${opt(RM_RECIPE_TYPES, rt)}</select>
+              ${pillGroup('recipe-type', RM_RECIPE_TYPES, rt)}
             </div>
             <div class="rm-field">
               <span class="rm-label">Meal type</span>
-              <select class="rm-select meta-meal-type"><option value="">—</option>${opt(RM_MEAL_TYPES, mt)}</select>
+              ${pillGroup('meal-type', RM_MEAL_TYPES, mt)}
             </div>
           </div>
           <div class="rm-field">
@@ -4252,13 +4267,27 @@
         </div>`;
     }
 
+    // Single-select pill groups — click to select, click the active one to clear.
+    function wireRecipeMetaFields(container) {
+      container.querySelectorAll('.rm-pills').forEach((group) => {
+        group.addEventListener('click', (e) => {
+          const pill = e.target.closest('.rm-pill');
+          if (!pill) return;
+          const wasSelected = pill.classList.contains('selected');
+          group.querySelectorAll('.rm-pill').forEach((p) => p.classList.remove('selected'));
+          if (!wasSelected) pill.classList.add('selected');
+        });
+      });
+    }
+
     function readRecipeMetaFields(container) {
-      const val = (sel) => container.querySelector(sel)?.value || '';
+      const pill = (group) =>
+        container.querySelector(`.rm-pills[data-group="${group}"] .rm-pill.selected`)?.dataset.value || '';
       return {
-        recipeType: val('.meta-recipe-type'),
-        mealTyp: val('.meta-meal-type'),
+        recipeType: pill('recipe-type'),
+        mealTyp: pill('meal-type'),
         allergens: [...container.querySelectorAll('.meta-allergen:checked')].map((c) => c.value),
-        tags: val('.meta-tags').split(',').map((s) => s.trim()).filter(Boolean),
+        tags: (container.querySelector('.meta-tags')?.value || '').split(',').map((s) => s.trim()).filter(Boolean),
       };
     }
 
@@ -4337,6 +4366,7 @@
           <button class="btn ghost" data-discard>Discard</button>
           <button class="btn" data-save disabled>Save to library</button>
         </div>`;
+      wireRecipeMetaFields(card);
 
       // Gate the save button behind the rights attestation. Required to
       // shift legal liability to the creator at the moment of save.
@@ -4661,6 +4691,7 @@
           </div>
         </form>
       `;
+      wireRecipeMetaFields(detail);
       const form = detail.querySelector('.recipe-edit-form');
       // Clicks inside the editor must not bubble to the row's expand toggle.
       form.addEventListener('click', (e) => e.stopPropagation());
