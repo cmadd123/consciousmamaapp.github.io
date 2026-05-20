@@ -1809,6 +1809,27 @@ exports.scanCookbookWithClaude = onRequest(
         return;
       }
 
+      // Detect the actual image type from the base64 magic-byte prefix.
+      // The media_type sent to Claude must match the real bytes — the
+      // mobile camera always shoots JPEG, but web uploads can be PNG /
+      // GIF / WebP, and a mismatch makes Claude reject with HTTP 400.
+      let mediaType;
+      if (imageBase64.startsWith('/9j/')) mediaType = 'image/jpeg';
+      else if (imageBase64.startsWith('iVBORw0KGgo')) mediaType = 'image/png';
+      else if (imageBase64.startsWith('R0lGOD')) mediaType = 'image/gif';
+      else if (imageBase64.startsWith('UklGR')) mediaType = 'image/webp';
+      else {
+        // Unknown / unsupported format (e.g. HEIC from an iPhone). Claude
+        // only accepts jpeg/png/gif/webp — fail with a clear message.
+        res.status(400).json({
+          result: {
+            success: false,
+            error: "That image format isn't supported. Use a JPG, PNG, or WebP — or take a screenshot of the recipe and upload that.",
+          },
+        });
+        return;
+      }
+
       const prompt = `Analyze this cookbook/recipe page image and extract the recipe information.
 
 IMPORTANT: Return ONLY a valid JSON object. No markdown, no code blocks, no explanation - just the raw JSON.
@@ -1832,7 +1853,7 @@ If the image is unclear or doesn't contain a recipe, return:
         messages: [{
           role: 'user',
           content: [
-            { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: imageBase64 } },
+            { type: 'image', source: { type: 'base64', media_type: mediaType, data: imageBase64 } },
             { type: 'text', text: prompt },
           ],
         }],
