@@ -338,9 +338,12 @@
 
     /* Recipe library — responsive card grid */
     .recipe-library {
-      display: grid; gap: 14px;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      display: grid; gap: 10px;
+      grid-template-columns: repeat(auto-fill, minmax(165px, 1fr));
     }
+    /* The Add-Recipes library is capped so a long library doesn't bury
+       the import tools below it — scroll within the panel instead. */
+    #recipeLibrary { max-height: 480px; overflow-y: auto; }
     .recipe-library-empty {
       grid-column: 1 / -1;
       text-align: center; padding: 32px 24px; color: var(--text-muted);
@@ -583,6 +586,16 @@
       .scan-card { grid-template-columns: 1fr; }
       .scan-card .thumb { width: 100%; height: 200px; }
       .recipe-detail { grid-template-columns: 1fr; gap: 14px; }
+
+      /* Library: two-up grid, capped shorter. Touch has no hover, so
+         show the delete button always. Expanded card stacks vertically. */
+      .recipe-library { grid-template-columns: 1fr 1fr; }
+      #recipeLibrary { max-height: 420px; }
+      .recipe-row .row-actions { opacity: 1; }
+      .recipe-row.expanded { flex-direction: column; gap: 12px; padding: 12px; }
+      .recipe-row.expanded .row-thumb {
+        width: 100%; height: 180px; aspect-ratio: unset;
+      }
 
       /* Plan grid → stacked day cards. Column-header row is dropped;
          each day becomes a bordered card with its meals listed inside,
@@ -4392,6 +4405,8 @@
       // appears below the name + meta inside the right column.
       row.querySelector('.row-body').appendChild(detail);
       row.classList.add('expanded');
+      // Pull the expanded card into view within the capped library panel.
+      row.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
     // Read-only expanded detail — ingredients + instructions + an Edit button.
