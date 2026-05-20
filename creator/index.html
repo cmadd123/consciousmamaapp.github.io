@@ -618,6 +618,16 @@
       .dz-desktop { display: none; }
       .dz-mobile { display: inline; }
       .scan-dropzone { padding: 20px 16px; }
+
+      /* Dashboard declutter: tighten the feature-card stack so 5 cards
+         aren't a giant scroll, and shrink oversized numbers. */
+      .feature-grid { gap: 10px; margin-bottom: 8px; }
+      .feature-card { padding: 14px 16px; gap: 4px; }
+      .feature-card .feature-icon { width: 34px; height: 34px; font-size: 18px; }
+      .feature-card .feature-primary { font-size: 20px; }
+      .feature-card .feature-cta { padding-top: 4px; }
+      .section-head h2 { font-size: 18px; }
+      .analytics-card, .stat-card { padding: 14px 16px; }
     }
     .feature-card .feature-primary { font-size: 28px; font-weight: 700; line-height: 1.1; }
     .feature-card .feature-sub { font-size: 13px; color: var(--text-muted); min-height: 1.2em; }
