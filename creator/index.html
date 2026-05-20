@@ -575,6 +575,10 @@
     .picker-row .picker-thumb img { width: 100%; height: 100%; object-fit: cover; }
     .picker-row .picker-name { font-size: 14px; font-weight: 600; }
 
+    /* Camera button — hidden on desktop, shown on mobile. */
+    .scan-camera-btn { display: none; }
+    .dz-mobile { display: none; }
+
     @media (max-width: 640px) {
       .scan-card { grid-template-columns: 1fr; }
       .scan-card .thumb { width: 100%; height: 200px; }
@@ -582,6 +586,18 @@
       .plan-day-row { grid-template-columns: 1fr; }
       .plan-grid .plan-col-head { display: none; }
       .plan-slot.empty::before { content: attr(data-meal-label) " — "; }
+
+      /* Scan: lead with a camera button, demote the dropzone copy. */
+      .scan-camera-btn {
+        display: flex; align-items: center; justify-content: center; gap: 8px;
+        width: 100%; padding: 14px; margin-bottom: 10px;
+        background: var(--primary); color: #fff; border-radius: 12px;
+        font-size: 16px; font-weight: 600; cursor: pointer;
+      }
+      .scan-camera-btn input[type=file] { display: none; }
+      .dz-desktop { display: none; }
+      .dz-mobile { display: inline; }
+      .scan-dropzone { padding: 20px 16px; }
     }
     .feature-card .feature-primary { font-size: 28px; font-weight: 700; line-height: 1.1; }
     .feature-card .feature-sub { font-size: 13px; color: var(--text-muted); min-height: 1.2em; }
@@ -1464,11 +1480,20 @@
             Drop a cookbook photo, a screenshot, or a handwritten card.
             Drop several at once — they'll process in parallel.
           </p>
+          <!-- Camera button — mobile only. capture=environment opens the
+               rear camera straight away for snapping a cookbook page. -->
+          <label class="scan-camera-btn" id="scanCameraBtn">
+            <input type="file" id="scanCameraInput" accept="image/*" capture="environment">
+            📸 Take a photo
+          </label>
           <label class="scan-dropzone" id="scanDropzone">
             <input type="file" id="scanFileInput" accept="image/*" multiple>
             <div class="icon">📸</div>
-            <div class="primary-text">Drop photos here, or click to choose</div>
-            <div class="sub-text">JPG or PNG, up to 5MB each.</div>
+            <div class="primary-text">
+              <span class="dz-desktop">Drop photos here, or click to choose</span>
+              <span class="dz-mobile">Choose from your photo library</span>
+            </div>
+            <div class="sub-text">JPG, PNG or WebP, up to 5MB each.</div>
           </label>
           <div class="scan-cards" id="scanCards"></div>
         </div>
@@ -3761,6 +3786,16 @@
     // --- Scan a photo ---
     const scanDropzone = $('scanDropzone');
     const scanFileInput = $('scanFileInput');
+
+    // Mobile camera button — single shot straight from the rear camera.
+    const scanCameraInput = $('scanCameraInput');
+    if (scanCameraInput) {
+      scanCameraInput.addEventListener('change', (e) => {
+        const files = Array.from(e.target.files || []);
+        handleScanFiles(files);
+        e.target.value = '';
+      });
+    }
 
     if (scanDropzone && scanFileInput) {
       scanFileInput.addEventListener('change', (e) => {
