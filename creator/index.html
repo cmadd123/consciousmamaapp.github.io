@@ -510,6 +510,41 @@
       display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px;
     }
 
+    /* Plan preview (follower's-eye view) */
+    .pv-cover {
+      height: 160px; background: linear-gradient(135deg, var(--primary), var(--accent));
+      display: grid; place-items: center;
+    }
+    .pv-cover img { width: 100%; height: 100%; object-fit: cover; }
+    .pv-cover .pv-cover-fallback { font-size: 48px; }
+    .pv-head { padding: 18px 24px 8px; }
+    .pv-head h2 { margin: 0 0 4px; font-size: 22px; }
+    .pv-head .pv-desc { color: var(--text-muted); font-size: 14px; margin: 0 0 8px; }
+    .pv-head .pv-summary {
+      font-size: 12px; color: var(--text-muted); text-transform: uppercase;
+      letter-spacing: 0.05em; font-weight: 600;
+    }
+    .pv-days { padding: 8px 24px 20px; }
+    .pv-day { margin-top: 16px; }
+    .pv-day-label {
+      font-weight: 700; font-size: 14px; color: var(--text);
+      padding-bottom: 6px; border-bottom: 1px solid var(--border); margin-bottom: 8px;
+    }
+    .pv-meal {
+      display: flex; align-items: center; gap: 10px; padding: 6px 0;
+    }
+    .pv-meal .pv-meal-type {
+      font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em;
+      font-weight: 700; color: var(--text-muted); width: 64px; flex-shrink: 0;
+    }
+    .pv-meal .pv-meal-thumb {
+      width: 40px; height: 40px; border-radius: 8px; flex-shrink: 0;
+      background: #F3F4F6; display: grid; place-items: center; font-size: 16px; overflow: hidden;
+    }
+    .pv-meal .pv-meal-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .pv-meal .pv-meal-name { font-size: 14px; font-weight: 500; }
+    .pv-meal.pv-empty .pv-meal-name { color: var(--text-muted); font-style: italic; font-weight: 400; }
+
     /* Recipe picker rows (in the modal) */
     .picker-row {
       display: flex; align-items: center; gap: 10px; padding: 8px 10px;
@@ -1505,9 +1540,20 @@
           </div>
           <div id="planGrid" class="plan-grid"></div>
           <div class="plan-editor-actions">
+            <button class="btn ghost" id="planPreviewBtn" style="margin-right: auto;">👁 Preview</button>
             <button class="btn ghost" id="planCancelBtn">Cancel</button>
             <button class="btn ghost" id="planSaveDraftBtn">Save as draft</button>
             <button class="btn" id="planPublishBtn">Save &amp; publish</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Plan preview modal — shows the plan as a follower would see it -->
+      <div class="modal-backdrop" id="planPreviewModal">
+        <div class="modal" style="max-width: 640px; padding: 0; overflow: hidden;">
+          <div id="planPreviewBody" style="max-height: 82vh; overflow-y: auto;"></div>
+          <div class="modal-actions" style="padding: 14px 24px; border-top: 1px solid var(--border);">
+            <button type="button" class="btn ghost" id="planPreviewClose">Close</button>
           </div>
         </div>
       </div>
@@ -4511,6 +4557,71 @@
     $('newPlanBtn').addEventListener('click', () => openPlanEditor(null));
     $('planEditorBack').addEventListener('click', () => { showPlanListMode(); });
     $('planCancelBtn').addEventListener('click', () => { showPlanListMode(); });
+
+    // --- Plan preview (follower's-eye view of the current editor state) ---
+    $('planPreviewBtn').addEventListener('click', openPlanPreview);
+    $('planPreviewClose').addEventListener('click', () => $('planPreviewModal').classList.remove('open'));
+    $('planPreviewModal').addEventListener('click', (e) => {
+      if (e.target === $('planPreviewModal')) $('planPreviewModal').classList.remove('open');
+    });
+
+    function openPlanPreview() {
+      const title = $('planTitle').value.trim() || 'Untitled plan';
+      const desc = $('planDesc').value.trim();
+      const meals = selectedMealTypes();
+
+      // Cover: first filled slot's image (same rule as savePlan).
+      let cover = '';
+      for (let d = 0; d < planDayCount && !cover; d++) {
+        for (const m of meals) {
+          const s = planSlots[`${d}_${m.key}`];
+          if (s && s.image_url) { cover = s.image_url; break; }
+        }
+      }
+
+      const summary = `${planDayCount} day${planDayCount === 1 ? '' : 's'} · ${meals.map((m) => m.label).join(', ')}`;
+
+      let daysHtml = '';
+      for (let d = 0; d < planDayCount; d++) {
+        let mealsHtml = '';
+        for (const m of meals) {
+          const s = planSlots[`${d}_${m.key}`];
+          if (s) {
+            const thumb = s.image_url ? `<img src="${escapeHtml(s.image_url)}" alt="">` : '🍽';
+            mealsHtml += `<div class="pv-meal">
+              <span class="pv-meal-type">${m.label}</span>
+              <span class="pv-meal-thumb">${thumb}</span>
+              <span class="pv-meal-name">${escapeHtml(s.recipe_name || 'Recipe')}</span>
+            </div>`;
+          } else {
+            mealsHtml += `<div class="pv-meal pv-empty">
+              <span class="pv-meal-type">${m.label}</span>
+              <span class="pv-meal-thumb">–</span>
+              <span class="pv-meal-name">Not set yet</span>
+            </div>`;
+          }
+        }
+        daysHtml += `<div class="pv-day">
+          <div class="pv-day-label">Day ${d + 1}</div>
+          ${mealsHtml}
+        </div>`;
+      }
+
+      $('planPreviewBody').innerHTML = `
+        <div class="pv-cover">
+          ${cover
+            ? `<img src="${escapeHtml(cover)}" alt="" onerror="this.parentElement.innerHTML='<span class=&quot;pv-cover-fallback&quot;>📅</span>'">`
+            : '<span class="pv-cover-fallback">📅</span>'}
+        </div>
+        <div class="pv-head">
+          <h2>${escapeHtml(title)}</h2>
+          ${desc ? `<p class="pv-desc">${escapeHtml(desc)}</p>` : ''}
+          <div class="pv-summary">${escapeHtml(summary)}</div>
+        </div>
+        <div class="pv-days">${daysHtml}</div>
+      `;
+      $('planPreviewModal').classList.add('open');
+    }
 
     // --- Recipe picker modal ---
     async function openRecipePicker(dayIndex, mealType) {
