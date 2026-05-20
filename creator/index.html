@@ -459,9 +459,17 @@
 
     .plan-grid { display: flex; flex-direction: column; gap: 10px; }
     .plan-day-row {
-      display: grid; grid-template-columns: 90px 1fr 1fr 1fr; gap: 8px;
+      display: grid; grid-template-columns: 90px repeat(var(--meal-cols, 3), 1fr); gap: 8px;
       align-items: stretch;
     }
+    .plan-meal-types { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+    .plan-meal-types .field-label { margin: 0; }
+    .plan-meal-types label {
+      display: flex; align-items: center; gap: 6px; font-size: 13px;
+      font-weight: 500; color: var(--text); cursor: pointer; text-transform: none;
+      letter-spacing: normal;
+    }
+    .plan-meal-types input[type=checkbox] { width: 16px; height: 16px; accent-color: var(--primary); }
     .plan-day-head {
       display: flex; align-items: center; font-weight: 700; font-size: 13px;
       color: var(--text-muted);
@@ -1486,6 +1494,13 @@
               <button type="button" class="btn ghost" id="planRemoveDay">−</button>
               <span id="planDayCount" style="font-weight: 700; min-width: 24px; text-align: center;">7</span>
               <button type="button" class="btn ghost" id="planAddDay">+</button>
+            </div>
+            <div class="plan-meal-types">
+              <span class="field-label">Meals covered</span>
+              <label><input type="checkbox" class="plan-mealtype" value="breakfast">Breakfast</label>
+              <label><input type="checkbox" class="plan-mealtype" value="lunch">Lunch</label>
+              <label><input type="checkbox" class="plan-mealtype" value="dinner">Dinner</label>
+              <label><input type="checkbox" class="plan-mealtype" value="snack">Snack</label>
             </div>
           </div>
           <div id="planGrid" class="plan-grid"></div>
@@ -4262,18 +4277,30 @@
     // On follower import (a later phase) the template gets cloned into
     // dated MealPlanRecords in the follower's account.
     // ───────────────────────────────────────────────────────────────
-    const PLAN_MEAL_TYPES = [
+    // Every meal type a plan can include. planMealTypes (state) holds the
+    // subset the current plan actually covers — a dinner-only creator
+    // picks just 'dinner' and the grid renders one column.
+    const PLAN_ALL_MEAL_TYPES = [
       { key: 'breakfast', label: 'Breakfast' },
       { key: 'lunch', label: 'Lunch' },
       { key: 'dinner', label: 'Dinner' },
+      { key: 'snack', label: 'Snack' },
     ];
+    const PLAN_DEFAULT_MEAL_TYPES = ['breakfast', 'lunch', 'dinner'];
 
     let creatorPlans = [];          // [{id, ref, data}]
     let editingPlanId = null;       // null = new plan
     let planDayCount = 7;
+    let planMealTypes = [...PLAN_DEFAULT_MEAL_TYPES]; // selected meal-type keys
     let planSlots = {};             // { '0_dinner': {recipe_id, recipe_name, image_url} }
     let pickerTarget = null;        // { dayIndex, mealType }
     let recipePickerCache = null;   // [{id, recipe_name, image_url}] — lazy-loaded
+
+    // Resolve the {key,label} objects for the currently-selected meal
+    // types, in canonical order (breakfast → lunch → dinner → snack).
+    function selectedMealTypes() {
+      return PLAN_ALL_MEAL_TYPES.filter((m) => planMealTypes.includes(m.key));
+    }
 
     function showPlanListMode() {
       $('planListMode').hidden = false;
@@ -4376,13 +4403,23 @@
         $('planDesc').value = existing.data.description || '';
         planDayCount = existing.data.day_count || 7;
         planSlots = { ...(existing.data.slots || {}) };
+        // Existing plans saved before the meal-type toggle have no
+        // meal_types field — fall back to the original fixed B/L/D set.
+        planMealTypes = Array.isArray(existing.data.meal_types) && existing.data.meal_types.length
+          ? existing.data.meal_types.slice()
+          : [...PLAN_DEFAULT_MEAL_TYPES];
       } else {
         $('planTitle').value = '';
         $('planDesc').value = '';
         planDayCount = 7;
         planSlots = {};
+        planMealTypes = [...PLAN_DEFAULT_MEAL_TYPES];
       }
       $('planDayCount').textContent = planDayCount;
+      // Sync the meal-type checkboxes to planMealTypes.
+      document.querySelectorAll('.plan-mealtype').forEach((cb) => {
+        cb.checked = planMealTypes.includes(cb.value);
+      });
       renderPlanGrid();
       showPlanEditorMode();
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -4390,15 +4427,17 @@
 
     function renderPlanGrid() {
       const grid = $('planGrid');
+      const meals = selectedMealTypes();
+      const colStyle = `style="--meal-cols: ${meals.length}"`;
       // Column header row.
-      let html = `<div class="plan-day-row">
+      let html = `<div class="plan-day-row" ${colStyle}>
         <div class="plan-day-head"></div>
-        ${PLAN_MEAL_TYPES.map((m) => `<div class="plan-col-head">${m.label}</div>`).join('')}
+        ${meals.map((m) => `<div class="plan-col-head">${m.label}</div>`).join('')}
       </div>`;
       for (let d = 0; d < planDayCount; d++) {
-        html += `<div class="plan-day-row">
+        html += `<div class="plan-day-row" ${colStyle}>
           <div class="plan-day-head">Day ${d + 1}</div>
-          ${PLAN_MEAL_TYPES.map((m) => {
+          ${meals.map((m) => {
             const key = `${d}_${m.key}`;
             const slot = planSlots[key];
             if (slot) {
@@ -4451,6 +4490,24 @@
       renderPlanGrid();
     });
 
+    // Meal-type checkboxes — re-render the grid as columns are toggled.
+    // Slots for an unchecked type are kept in memory (re-checking restores
+    // them) and filtered out at save time.
+    document.querySelectorAll('.plan-mealtype').forEach((cb) => {
+      cb.addEventListener('change', () => {
+        if (!cb.checked && planMealTypes.length === 1) {
+          // Don't allow a plan with zero meal types.
+          cb.checked = true;
+          toast('A plan needs at least one meal type', true);
+          return;
+        }
+        planMealTypes = Array.from(document.querySelectorAll('.plan-mealtype'))
+          .filter((x) => x.checked)
+          .map((x) => x.value);
+        renderPlanGrid();
+      });
+    });
+
     $('newPlanBtn').addEventListener('click', () => openPlanEditor(null));
     $('planEditorBack').addEventListener('click', () => { showPlanListMode(); });
     $('planCancelBtn').addEventListener('click', () => { showPlanListMode(); });
@@ -4458,7 +4515,7 @@
     // --- Recipe picker modal ---
     async function openRecipePicker(dayIndex, mealType) {
       pickerTarget = { dayIndex, mealType };
-      const label = PLAN_MEAL_TYPES.find((m) => m.key === mealType)?.label || 'meal';
+      const label = PLAN_ALL_MEAL_TYPES.find((m) => m.key === mealType)?.label || 'meal';
       $('recipePickerTitle').textContent = `Pick a recipe for Day ${dayIndex + 1} · ${label}`;
       $('recipePickerSearch').value = '';
       $('recipePickerModal').classList.add('open');
@@ -4531,11 +4588,17 @@
     });
 
     // --- Save / publish ---
-    function filledSlotCount() {
+    // Slots that are actually part of the plan — within the current day
+    // count AND belonging to a currently-selected meal type. Orphans from
+    // a day-count shrink or a meal-type un-toggle don't count.
+    function liveSlotKeys() {
       return Object.keys(planSlots).filter((k) => {
-        const day = parseInt(k.split('_')[0], 10);
-        return day < planDayCount; // ignore slots orphaned by day-count shrink
-      }).length;
+        const [dayStr, mealType] = k.split('_');
+        return parseInt(dayStr, 10) < planDayCount && planMealTypes.includes(mealType);
+      });
+    }
+    function filledSlotCount() {
+      return liveSlotKeys().length;
     }
 
     async function savePlan(targetStatus) {
@@ -4554,11 +4617,17 @@
       const origLabel = activeBtn.textContent;
       activeBtn.textContent = 'Saving…';
       try {
-        // Cover image: first filled slot's recipe image, if any.
+        // Keep only live slots — drops orphans from a day-count shrink or
+        // a meal-type un-toggle so the saved doc is clean.
+        const liveKeys = liveSlotKeys();
+        const cleanSlots = {};
+        for (const k of liveKeys) cleanSlots[k] = planSlots[k];
+        // Cover image: first filled slot's recipe image, scanning days in
+        // order then selected meal types in order.
         let cover = '';
         for (let d = 0; d < planDayCount && !cover; d++) {
-          for (const m of PLAN_MEAL_TYPES) {
-            const s = planSlots[`${d}_${m.key}`];
+          for (const m of selectedMealTypes()) {
+            const s = cleanSlots[`${d}_${m.key}`];
             if (s && s.image_url) { cover = s.image_url; break; }
           }
         }
@@ -4573,7 +4642,8 @@
           description: $('planDesc').value.trim(),
           status: targetStatus,
           day_count: planDayCount,
-          slots: planSlots,
+          meal_types: planMealTypes.slice(),
+          slots: cleanSlots,
           cover_image_url: cover,
           updated_at: serverTimestamp(),
         };
