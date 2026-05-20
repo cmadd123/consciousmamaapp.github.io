@@ -336,6 +336,49 @@
     .scan-card .rights-attestation .rights-text small { color: var(--text-muted); font-size: 11px; }
     .scan-card button[data-save]:disabled { opacity: 0.4; cursor: not-allowed; }
 
+    /* Recipe classification fields — shared by the create card and the
+       library edit form, so styled standalone (no parent scoping). */
+    .rm-block { display: flex; flex-direction: column; gap: 12px; }
+    .rm-field { display: flex; flex-direction: column; gap: 5px; }
+    .rm-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .rm-label {
+      font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--text-muted); font-weight: 600;
+    }
+    .rm-label .rm-hint { text-transform: none; letter-spacing: 0; font-weight: 400; }
+    .rm-select, .rm-tags {
+      width: 100%; padding: 9px 10px; font-size: 14px; font-family: inherit;
+      border: 1px solid var(--border); border-radius: 8px;
+      background: var(--surface); color: var(--text);
+    }
+    .rm-select:focus, .rm-tags:focus {
+      outline: 2px solid var(--primary); outline-offset: -1px; border-color: var(--primary);
+    }
+    .rm-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+    .rm-chip {
+      display: inline-flex; align-items: center;
+      padding: 6px 11px; border-radius: 999px; cursor: pointer;
+      border: 1px solid var(--border); background: var(--surface);
+      font-size: 13px; color: var(--text-muted);
+      transition: background 120ms, border-color 120ms, color 120ms;
+    }
+    .rm-chip input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+    .rm-chip:hover { border-color: var(--primary); }
+    .rm-chip:has(input:focus-visible) { outline: 2px solid var(--primary); outline-offset: 1px; }
+    .rm-chip:has(input:checked) {
+      background: color-mix(in srgb, var(--primary) 14%, var(--surface));
+      border-color: var(--primary); color: var(--primary-dark); font-weight: 600;
+    }
+    /* Read-only classification summary inside the expanded recipe detail */
+    .rm-summary { grid-column: 1 / -1; display: flex; flex-direction: column; gap: 8px; }
+    .rm-tags-row { display: flex; flex-wrap: wrap; gap: 6px; }
+    .rm-tag {
+      font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 999px;
+      background: color-mix(in srgb, var(--primary) 12%, var(--surface)); color: var(--primary-dark);
+    }
+    .rm-tag.rm-tag-soft { background: var(--bg); color: var(--text-muted); font-weight: 500; }
+    .rm-allergen-line { font-size: 12px; color: var(--text-muted); }
+
     /* Recipe library — responsive card grid */
     .recipe-library {
       display: grid; gap: 10px;
@@ -586,6 +629,17 @@
       .scan-card { grid-template-columns: 1fr; }
       .scan-card .thumb { width: 100%; height: 200px; }
       .recipe-detail { grid-template-columns: 1fr; gap: 14px; }
+
+      /* Recipe forms feel native on mobile: 16px inputs prevent iOS
+         focus-zoom, bigger tap targets, full-width URL controls. */
+      .scan-card input, .scan-card textarea, .scan-card select { font-size: 16px; }
+      .scan-card input.recipe-name { padding: 11px 12px; }
+      .scan-card .meta-row input { padding: 10px 8px; }
+      .recipe-edit-form input, .recipe-edit-form textarea { font-size: 16px; }
+      .rm-select, .rm-tags { font-size: 16px; padding: 11px 12px; }
+      .rm-chip { font-size: 14px; padding: 9px 13px; }
+      .url-input-row { flex-direction: column; }
+      .url-input-row .btn { width: 100%; }
 
       /* Library: two-up grid, capped shorter. Touch has no hover, so
          show the delete button always. Expanded card stacks vertically. */
@@ -4119,6 +4173,70 @@
       }
     }
 
+    // ── Recipe classification fields (recipe type / meal type / allergens
+    //    / tags). Shared markup keeps the create card and the edit form in
+    //    sync; values match the app's RecipeType + MealTyp enums.
+    const RM_RECIPE_TYPES = ['Entree', 'Side', 'Dessert'];
+    const RM_MEAL_TYPES = ['Breakfast', 'Lunch', 'Dinner', 'Snacks'];
+    const RM_ALLERGENS = ['Milk', 'Eggs', 'Peanuts', 'Tree nuts', 'Soy', 'Wheat / Gluten', 'Fish', 'Shellfish', 'Sesame'];
+
+    function recipeMetaFieldsHtml(r = {}) {
+      const rt = r.recipe_type || '';
+      const mt = r.meal_typ || '';
+      const allergens = Array.isArray(r.allergens) ? r.allergens : [];
+      const tags = Array.isArray(r.tags) ? r.tags.join(', ') : '';
+      const opt = (list, sel) => list.map((t) =>
+        `<option value="${t}"${t === sel ? ' selected' : ''}>${t}</option>`).join('');
+      return `
+        <div class="rm-block">
+          <div class="rm-row">
+            <div class="rm-field">
+              <span class="rm-label">Recipe type</span>
+              <select class="rm-select meta-recipe-type"><option value="">—</option>${opt(RM_RECIPE_TYPES, rt)}</select>
+            </div>
+            <div class="rm-field">
+              <span class="rm-label">Meal type</span>
+              <select class="rm-select meta-meal-type"><option value="">—</option>${opt(RM_MEAL_TYPES, mt)}</select>
+            </div>
+          </div>
+          <div class="rm-field">
+            <span class="rm-label">Allergens <span class="rm-hint">— tap any this recipe contains</span></span>
+            <div class="rm-chips">
+              ${RM_ALLERGENS.map((a) => `<label class="rm-chip"><input type="checkbox" class="meta-allergen" value="${a}"${allergens.includes(a) ? ' checked' : ''}><span>${a}</span></label>`).join('')}
+            </div>
+          </div>
+          <div class="rm-field">
+            <span class="rm-label">Tags <span class="rm-hint">— comma separated</span></span>
+            <input type="text" class="rm-tags meta-tags" value="${escapeHtml(tags)}" placeholder="e.g. quick, kid-friendly, freezer-friendly">
+          </div>
+        </div>`;
+    }
+
+    function readRecipeMetaFields(container) {
+      const val = (sel) => container.querySelector(sel)?.value || '';
+      return {
+        recipeType: val('.meta-recipe-type'),
+        mealTyp: val('.meta-meal-type'),
+        allergens: [...container.querySelectorAll('.meta-allergen:checked')].map((c) => c.value),
+        tags: val('.meta-tags').split(',').map((s) => s.trim()).filter(Boolean),
+      };
+    }
+
+    function recipeMetaSummaryHtml(r) {
+      const tags = Array.isArray(r.tags) ? r.tags : [];
+      const allergens = Array.isArray(r.allergens) ? r.allergens : [];
+      const pills = [];
+      if (r.recipe_type) pills.push(`<span class="rm-tag">${escapeHtml(r.recipe_type)}</span>`);
+      if (r.meal_typ) pills.push(`<span class="rm-tag">${escapeHtml(r.meal_typ)}</span>`);
+      tags.forEach((t) => pills.push(`<span class="rm-tag rm-tag-soft">${escapeHtml(t)}</span>`));
+      if (!pills.length && !allergens.length) return '';
+      return `
+        <div class="rm-summary">
+          ${pills.length ? `<div class="rm-tags-row">${pills.join('')}</div>` : ''}
+          ${allergens.length ? `<div class="rm-allergen-line">⚠️ Contains: ${allergens.map(escapeHtml).join(', ')}</div>` : ''}
+        </div>`;
+    }
+
     // Shared editable preview + save logic for scan, URL, and manual paths.
     // origin: 'ocr' | 'url' | 'manual' — determines the saved source field.
     function renderRecipeCard(card, { origin, file, objectUrl, sourceUrl, recipe }) {
@@ -4154,6 +4272,7 @@
           <div><label>Cook (min)</label><input type="number" class="field-cook" min="0" value="${cook}"></div>
           <div><label>Servings</label><input type="number" class="field-servings" min="1" value="${servings}"></div>
         </div>
+        ${recipeMetaFieldsHtml(recipe)}
         <div>
           <div class="field-label">Ingredients (one per line)</div>
           <textarea class="field-ingredients" rows="5">${escapeHtml(ingredients)}</textarea>
@@ -4230,6 +4349,7 @@
       const instructions = card.querySelector('.field-instructions').value
         .split('\n').map(s => s.trim()).filter(Boolean);
       const attribution = card.querySelector('.field-attribution').value.trim();
+      const meta = readRecipeMetaFields(card);
       const rightsAttested = card.querySelector('.field-rights').checked;
       // Defensive — save button is gated behind the checkbox, but
       // double-check at the data layer too.
@@ -4264,6 +4384,11 @@
         source: `creator_web_${origin}`,
         ...(sourceUrl ? { source_url: sourceUrl } : {}),
         ...(attribution ? { attribution } : {}),
+        // Classification — recipe_type / meal_typ match the app's enums.
+        ...(meta.recipeType ? { recipe_type: meta.recipeType } : {}),
+        ...(meta.mealTyp ? { meal_typ: meta.mealTyp } : {}),
+        ...(meta.allergens.length ? { allergens: meta.allergens } : {}),
+        ...(meta.tags.length ? { tags: meta.tags } : {}),
         // Rights attestation — required checkbox at save time. We stamp
         // both the boolean and a server timestamp so any future audit can
         // see when (and against which client version) the creator agreed.
@@ -4425,6 +4550,7 @@
           <h4>Instructions</h4>
           <ol>${steps.map((s) => `<li>${escapeHtml(s)}</li>`).join('') || '<li>(none)</li>'}</ol>
         </div>
+        ${recipeMetaSummaryHtml(r)}
         ${(attribution || sourceUrl) ? `
           <div class="attribution">
             ${attribution ? escapeHtml(attribution) : ''}
@@ -4471,6 +4597,7 @@
             <div><label>Cook (min)</label><input type="number" class="edit-cook" min="0" value="${parseInt(r.cook_time, 10) || 0}"></div>
             <div><label>Servings</label><input type="number" class="edit-servings" min="1" value="${parseInt(r.servings, 10) || 0}"></div>
           </div>
+          ${recipeMetaFieldsHtml(r)}
           <div>
             <label>Ingredients (one per line)</label>
             <textarea class="edit-ingredients" rows="6">${escapeHtml(ingText)}</textarea>
@@ -4552,6 +4679,7 @@
       const orig = saveBtn.textContent;
       saveBtn.textContent = 'Saving…';
       try {
+        const meta = readRecipeMetaFields(form);
         const patch = {
           recipe_name: form.querySelector('.edit-name').value.trim() || 'Untitled recipe',
           image_url: form.querySelector('.edit-image-url').value,
@@ -4563,6 +4691,11 @@
           CookingInstructions: form.querySelector('.edit-instructions').value
             .split('\n').map((s) => s.trim()).filter(Boolean),
           attribution: form.querySelector('.edit-attribution').value.trim(),
+          // Classification — written explicitly so clearing a field sticks.
+          recipe_type: meta.recipeType,
+          meal_typ: meta.mealTyp,
+          allergens: meta.allergens,
+          tags: meta.tags,
           updated_at: serverTimestamp(),
         };
         await updateDoc(item.ref, patch);
