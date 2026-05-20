@@ -323,6 +323,7 @@
       letter-spacing: 0.06em; font-weight: 600; margin-bottom: 4px;
     }
     .scan-card .actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 4px; }
+    .create-photo-btn { display: inline-flex; align-items: center; gap: 7px; }
 
     .scan-card input.field-attribution {
       width: 100%; padding: 8px 10px; font-size: 13px; font-family: inherit;
@@ -377,6 +378,11 @@
       background: color-mix(in srgb, var(--primary) 14%, var(--surface));
       border-color: var(--primary); color: var(--primary-dark); font-weight: 600;
     }
+    /* Meal type gets the warm brand accent so it reads apart from recipe type. */
+    .rm-pills[data-group="meal-type"] .rm-pill.selected {
+      background: color-mix(in srgb, var(--accent) 16%, var(--surface));
+      border-color: var(--accent); color: #9A4A22;
+    }
     .rm-chips { display: flex; flex-wrap: wrap; gap: 6px; }
     .rm-chip {
       display: inline-flex; align-items: center;
@@ -388,9 +394,10 @@
     .rm-chip input { position: absolute; opacity: 0; width: 1px; height: 1px; }
     .rm-chip:hover { border-color: var(--primary); }
     .rm-chip:has(input:focus-visible) { outline: 2px solid var(--primary); outline-offset: 1px; }
+    /* Allergens use a warning amber — colour with meaning, not noise. */
     .rm-chip:has(input:checked) {
-      background: color-mix(in srgb, var(--primary) 14%, var(--surface));
-      border-color: var(--primary); color: var(--primary-dark); font-weight: 600;
+      background: color-mix(in srgb, #F59E0B 16%, var(--surface));
+      border-color: #F59E0B; color: #B45309; font-weight: 600;
     }
     /* Read-only classification summary inside the expanded recipe detail */
     .rm-summary { grid-column: 1 / -1; display: flex; flex-direction: column; gap: 8px; }
@@ -399,17 +406,31 @@
       font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 999px;
       background: color-mix(in srgb, var(--primary) 12%, var(--surface)); color: var(--primary-dark);
     }
+    .rm-tag.rm-tag-meal {
+      background: color-mix(in srgb, var(--accent) 16%, var(--surface)); color: #9A4A22;
+    }
     .rm-tag.rm-tag-soft { background: var(--bg); color: var(--text-muted); font-weight: 500; }
-    .rm-allergen-line { font-size: 12px; color: var(--text-muted); }
+    .rm-allergen-line { font-size: 12px; color: #B45309; }
 
     /* Recipe library — responsive card grid */
     .recipe-library {
       display: grid; gap: 10px;
       grid-template-columns: repeat(auto-fill, minmax(165px, 1fr));
     }
-    /* The Add-Recipes library is capped so a long library doesn't bury
-       the import tools below it — scroll within the panel instead. */
-    #recipeLibrary { max-height: 480px; overflow-y: auto; }
+    #recipeLibrary { margin-top: 12px; }
+    #recipeLibrary[hidden] { display: none; }
+    /* The library collapses by default so it never buries the import
+       tools below it — the creator expands it when they want it. */
+    .library-toggle {
+      display: flex; align-items: center; justify-content: space-between;
+      width: 100%; background: none; border: none; padding: 4px 0;
+      font: inherit; color: var(--text); cursor: pointer;
+    }
+    .library-toggle-head { display: flex; align-items: center; gap: 8px; }
+    .library-toggle-head [data-icon] { color: var(--primary); font-size: 17px; }
+    .library-toggle-title { font-size: 17px; font-weight: 600; }
+    .library-chevron { color: var(--text-muted); font-size: 20px; transition: transform 200ms ease; }
+    .library-toggle[aria-expanded="true"] .library-chevron { transform: rotate(180deg); }
     .recipe-library-empty {
       grid-column: 1 / -1;
       text-align: center; padding: 32px 24px; color: var(--text-muted);
@@ -667,7 +688,6 @@
       /* Library: two-up grid, capped shorter. Touch has no hover, so
          show the delete button always. Expanded card stacks vertically. */
       .recipe-library { grid-template-columns: 1fr 1fr; }
-      #recipeLibrary { max-height: 420px; }
       .recipe-row .row-actions { opacity: 1; }
       .recipe-row.expanded { flex-direction: column; gap: 12px; padding: 12px; }
       .recipe-row.expanded .row-thumb {
@@ -1686,13 +1706,17 @@
           meal plan from there.
         </p>
 
-        <!-- Your library (existing recipes) -->
+        <!-- Your library (existing recipes) — collapsed by default -->
         <div class="scan-section">
-          <div class="scan-section-head">
-            <h3><span data-icon="grid"></span> Your library</h3>
-            <span class="muted" id="libraryCount"></span>
-          </div>
-          <div id="recipeLibrary" class="recipe-library">
+          <button class="library-toggle" id="libraryToggle" type="button" aria-expanded="false">
+            <span class="library-toggle-head">
+              <span data-icon="grid"></span>
+              <span class="library-toggle-title">Your library</span>
+              <span class="muted" id="libraryCount"></span>
+            </span>
+            <span class="library-chevron" data-icon="chevron"></span>
+          </button>
+          <div id="recipeLibrary" class="recipe-library" hidden>
             <div class="muted" style="padding: 16px; text-align: center;">
               <div class="loader" style="margin: 0 auto 8px;"></div>
               Loading your recipes…
@@ -2114,6 +2138,7 @@
         alert: w('<path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4.5M12 17h.01"/>'),
         image: w('<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.6"/><path d="M21 15l-5-5L5 21"/>'),
         check: w('<path d="M20 6 9 17l-5-5"/>'),
+        chevron: w('<path d="M6 9l6 6 6-6"/>'),
       };
     })();
     document.querySelectorAll('[data-icon]').forEach((el) => {
@@ -2545,6 +2570,14 @@
       show('viewStats');
       loadAnalytics();
       loadPayouts();
+    });
+
+    // Recipe library — collapsed by default, expand on demand.
+    $('libraryToggle').addEventListener('click', () => {
+      const lib = $('recipeLibrary');
+      const willExpand = lib.hidden;
+      lib.hidden = !willExpand;
+      $('libraryToggle').setAttribute('aria-expanded', String(willExpand));
     });
     document.querySelectorAll('[data-back]').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -4340,7 +4373,7 @@
       const allergens = Array.isArray(r.allergens) ? r.allergens : [];
       const pills = [];
       if (r.recipe_type) pills.push(`<span class="rm-tag">${escapeHtml(r.recipe_type)}</span>`);
-      if (r.meal_typ) pills.push(`<span class="rm-tag">${escapeHtml(r.meal_typ)}</span>`);
+      if (r.meal_typ) pills.push(`<span class="rm-tag rm-tag-meal">${escapeHtml(r.meal_typ)}</span>`);
       tags.forEach((t) => pills.push(`<span class="rm-tag rm-tag-soft">${escapeHtml(t)}</span>`));
       if (!pills.length && !allergens.length) return '';
       return `
@@ -4380,6 +4413,11 @@
 
       card.querySelector('.body').innerHTML = `
         <input class="recipe-name" type="text" value="${escapeHtml(recipe.name || 'Untitled recipe')}" placeholder="Recipe name">
+        <div class="create-photo">
+          <button type="button" class="btn ghost create-photo-btn">${ICON.camera}<span class="create-photo-label">Add photo</span></button>
+          <input type="file" class="field-photo-input" accept="image/*" style="display:none">
+          <input type="hidden" class="field-image-url" value="${escapeHtml(imageUrl)}">
+        </div>
         <div class="meta-row">
           <div><label>Prep (min)</label><input type="number" class="field-prep" min="0" value="${prep}"></div>
           <div><label>Cook (min)</label><input type="number" class="field-cook" min="0" value="${cook}"></div>
@@ -4411,6 +4449,42 @@
           <button class="btn" data-save disabled>Save to library</button>
         </div>`;
       wireRecipeMetaFields(card);
+
+      // Photo: lets the creator add a pic (manual recipes) or swap the
+      // scanned/imported one. Uploads immediately; .field-image-url is
+      // the source of truth that saveRecipe reads.
+      {
+        const photoBtn = card.querySelector('.create-photo-btn');
+        const photoInput = card.querySelector('.field-photo-input');
+        const imageUrlField = card.querySelector('.field-image-url');
+        const photoLabel = card.querySelector('.create-photo-label');
+        if (objectUrl || imageUrl) photoLabel.textContent = 'Change photo';
+        photoBtn.addEventListener('click', () => photoInput.click());
+        photoInput.addEventListener('change', async (e) => {
+          const f = e.target.files && e.target.files[0];
+          e.target.value = '';
+          if (!f) return;
+          if (f.size > MAX_IMAGE_BYTES) { toast('Image too large (max 5MB)', true); return; }
+          photoLabel.textContent = 'Uploading…';
+          photoBtn.disabled = true;
+          try {
+            const path = `recipe_images/${currentUser.uid}/${Date.now()}_${f.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+            const ref = storageRef(storage, path);
+            await uploadBytes(ref, f, { contentType: f.type || 'image/jpeg' });
+            const url = await getDownloadURL(ref);
+            imageUrlField.value = url;
+            card.querySelector('.thumb').innerHTML = `<img src="${escapeHtml(url)}" alt="">`;
+            photoLabel.textContent = 'Change photo';
+            toast('Photo added');
+          } catch (err) {
+            console.error(err);
+            toast('Upload failed: ' + err.message, true);
+            photoLabel.textContent = imageUrlField.value ? 'Change photo' : 'Add photo';
+          } finally {
+            photoBtn.disabled = false;
+          }
+        });
+      }
 
       // Gate the save button behind the rights attestation. Required to
       // shift legal liability to the creator at the moment of save.
@@ -4472,11 +4546,11 @@
         throw new Error('Confirm you have rights to this recipe before saving.');
       }
 
-      // For scan saves we upload the photo to Storage; for URL saves we
-      // keep the source image URL as-is (faster + most blog images are
-      // permanent enough for our use case).
-      let finalImageUrl = imageUrl || '';
-      if (file) {
+      // Photo precedence: a photo the creator uploaded via the card
+      // (.field-image-url, also pre-filled with a URL import's source
+      // image) wins; otherwise upload the scanned file to Storage.
+      let finalImageUrl = card.querySelector('.field-image-url')?.value || '';
+      if (!finalImageUrl && file) {
         const path = `recipe_images/${currentUser.uid}/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
         const ref = storageRef(storage, path);
         await uploadBytes(ref, file, { contentType: file.type || 'image/jpeg' });
