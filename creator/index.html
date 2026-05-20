@@ -211,6 +211,22 @@
     }
     .back-btn:hover { color: var(--primary); }
 
+    /* Pick-your-code prompt banner on the dashboard */
+    .code-prompt {
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      background: color-mix(in srgb, var(--accent) 12%, var(--surface));
+      border: 1px solid color-mix(in srgb, var(--accent) 40%, var(--border));
+      border-radius: 14px; padding: 14px 18px; margin-bottom: 16px;
+    }
+    .code-prompt[hidden] { display: none; }
+    .code-prompt strong { display: block; font-size: 15px; color: var(--text); }
+    .code-prompt span { font-size: 13px; color: var(--text-muted); }
+    .code-prompt .btn { white-space: nowrap; flex-shrink: 0; }
+    @media (max-width: 640px) {
+      .code-prompt { flex-direction: column; align-items: stretch; }
+      .code-prompt .btn { width: 100%; }
+    }
+
     /* Feature cards — clickable navigation on the overview */
     .feature-grid {
       display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -1362,22 +1378,17 @@
         </div>
       </div>
 
-      <!-- 2b. Pick your creator code (first-time setup) -->
-      <div class="view" id="viewPickCode">
-        <div class="gate" style="max-width: 520px;">
-          <div style="font-size: 44px; margin-bottom: 8px; color: var(--primary);" data-icon="award"></div>
-          <h2>Welcome! Pick your creator code</h2>
-          <p style="margin-bottom: 20px;">This is what your community will enter in the MomRise app to support you. Pick something memorable — 3 to 20 letters or numbers.</p>
-          <input type="text" id="codeInput" maxlength="20" placeholder="HALEY"
-                 autocomplete="off" autocorrect="off" autocapitalize="characters"
-                 style="width: 100%; padding: 14px 16px; font-size: 22px; text-align: center; letter-spacing: 4px; text-transform: uppercase; font-weight: 700; border: 1px solid var(--border); border-radius: 10px; font-family: 'SF Mono', Consolas, monospace; color: var(--primary-dark); margin-bottom: 8px;">
-          <div id="codeMsg" style="font-size: 13px; color: var(--text-muted); min-height: 18px; margin-bottom: 16px;">3–20 characters, letters and numbers only. Can't be changed later without contacting support.</div>
-          <button class="btn" id="saveCodeBtn" style="width: 100%;">Claim this code</button>
-        </div>
-      </div>
-
       <!-- 3. Main dashboard (overview) -->
       <div class="view" id="viewDashboard">
+
+          <!-- Pick-your-code prompt — shown on the dashboard until a code is claimed -->
+          <div class="code-prompt" id="codePrompt" hidden>
+            <div>
+              <strong>Pick your creator code</strong>
+              <span>It's what your community enters to support you — you can't start earning until it's set.</span>
+            </div>
+            <button class="btn" id="codePromptBtn">Choose code</button>
+          </div>
 
           <!-- Getting Started checklist (auto-hides once all steps complete) -->
           <div class="checklist-card" id="checklistCard" hidden>
@@ -1922,6 +1933,20 @@
     </main>
   </div>
 
+  <!-- Pick your creator code modal -->
+  <div class="modal-backdrop" id="pickCodeModal">
+    <div class="modal" style="max-width: 460px; text-align: center;">
+      <div style="font-size: 40px; color: var(--primary); margin-bottom: 2px;" data-icon="award"></div>
+      <h3>Pick your creator code</h3>
+      <p style="color: var(--text-muted); font-size: 14px; margin: 0 0 16px;">This is what your community enters in the MomRise app to support you. Pick something memorable — 3 to 20 letters or numbers.</p>
+      <input type="text" id="codeInput" maxlength="20" placeholder="HALEY"
+             autocomplete="off" autocorrect="off" autocapitalize="characters"
+             style="width: 100%; padding: 14px 16px; font-size: 22px; text-align: center; letter-spacing: 4px; text-transform: uppercase; font-weight: 700; border: 1px solid var(--border); border-radius: 10px; font-family: 'SF Mono', Consolas, monospace; color: var(--primary-dark); margin-bottom: 8px;">
+      <div id="codeMsg" style="font-size: 13px; color: var(--text-muted); min-height: 18px; margin-bottom: 16px;">3–20 letters or numbers. Choose carefully — you can only change your code once a year.</div>
+      <button class="btn" id="saveCodeBtn" style="width: 100%;">Claim this code</button>
+    </div>
+  </div>
+
   <!-- New/Edit doc modal -->
   <div class="modal-backdrop" id="docModal">
     <div class="modal">
@@ -2195,7 +2220,7 @@
       if (ICON[el.dataset.icon]) el.innerHTML = ICON[el.dataset.icon];
     });
     // Views where the creator nav bar should not appear (pre-dashboard flow).
-    const NAV_HIDDEN_VIEWS = new Set(['viewSignIn', 'viewGate', 'viewCodeCelebration', 'viewPickCode']);
+    const NAV_HIDDEN_VIEWS = new Set(['viewSignIn', 'viewGate', 'viewCodeCelebration']);
     // Which nav tab is highlighted for a given view (sub-views map to their parent tab).
     const VIEW_TO_TAB = {
       viewDashboard: 'home', viewDocs: 'home', viewMealPlans: 'home', viewRoutines: 'home',
@@ -2572,6 +2597,14 @@
     $('codeInput').addEventListener('keydown', (e) => {
       if (e.key === 'Enter') { e.preventDefault(); $('saveCodeBtn').click(); }
     });
+    function openPickCodeModal() {
+      $('pickCodeModal').classList.add('open');
+      setTimeout(() => $('codeInput').focus(), 100);
+    }
+    $('codePromptBtn').addEventListener('click', openPickCodeModal);
+    $('pickCodeModal').addEventListener('click', (e) => {
+      if (e.target === $('pickCodeModal')) $('pickCodeModal').classList.remove('open');
+    });
     $('saveCodeBtn').addEventListener('click', async () => {
       const btn = $('saveCodeBtn');
       const val = $('codeInput').value.trim().toUpperCase();
@@ -2587,6 +2620,7 @@
         const call = httpsCallable(functions, 'setCreatorCode');
         const { data } = await call({ code: val });
         creatorDoc.data.code = data.code;
+        $('pickCodeModal').classList.remove('open');
         // Show the celebration first; user clicks "Take me to my dashboard" to proceed.
         showCodeClaimedCelebration(data.code);
       } catch (e) {
@@ -2688,14 +2722,6 @@
         `mailto:creators@momrise.app?subject=${encodeURIComponent(`MomRise creator support — ${code}`)}` +
         `&body=${encodeURIComponent(`Creator: ${name}\nCode: ${code}\nEmail: ${user.email || ''}\n\nHi MomRise team,\n\n`)}`;
 
-      // First-time-sign-in flow: if the code hasn't been set yet, gate
-      // access behind the Pick Your Code screen.
-      if (!creatorDoc.data.code || !creatorDoc.data.code.trim()) {
-        show('viewPickCode');
-        setTimeout(() => $('codeInput').focus(), 100);
-        return;
-      }
-
       show('viewDashboard');
       applyCreatorTheme();
       renderShareKit();
@@ -2703,6 +2729,12 @@
       loadAnalytics();
       loadPayouts();
       loadChangelog();
+
+      // Code creation happens on the dashboard, not as a gate — if the
+      // creator hasn't picked a code yet, prompt them with the modal.
+      if (!creatorDoc.data.code || !creatorDoc.data.code.trim()) {
+        openPickCodeModal();
+      }
     });
 
     // --- Changelog ---
@@ -3054,7 +3086,9 @@
       const code = creatorDoc.data.code || '';
       const name = creatorDoc.data.name || '';
       const shareLink = `https://momrise.app/c/${encodeURIComponent(code)}`;
-      $('shareCode').textContent = code;
+      $('shareCode').textContent = code || 'Not set yet';
+      // The pick-your-code banner shows only until a code is claimed.
+      $('codePrompt').hidden = !!code;
 
       const templates = {
         ig: `I've been using MomRise to plan our family's meals, track milestones, and stay on top of everyone's schedules — finally, one app for all of it.\n\nIf you want to try it, use my code ${code} at checkout and I'll get a cut of your subscription. 7-day free trial — cancel anytime.\n\n${shareLink}\n\n#momlife #mealplanning #parenting`,
