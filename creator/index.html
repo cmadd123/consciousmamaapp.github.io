@@ -239,7 +239,6 @@
       width: 1em; height: 1em; display: inline-block;
       vertical-align: -0.14em; flex-shrink: 0;
     }
-    .scan-section-head h3 svg.ic { color: var(--primary); margin-right: 2px; }
     .scan-dropzone .icon { color: var(--text-muted); }
     .menu-icon { color: var(--text-muted); }
     .top-icon { color: var(--primary); }
@@ -248,10 +247,26 @@
 
     /* Add Recipes view */
     .scan-section { margin-bottom: 28px; }
-    .scan-section-head { display: flex; align-items: baseline; gap: 8px; margin-bottom: 6px; }
-    .scan-section-head h3 { margin: 0; font-size: 17px; }
-    .scan-section-head .muted { color: var(--text-muted); font-size: 13px; }
     .scan-intro { color: var(--text-muted); font-size: 14px; margin-bottom: 14px; max-width: 640px; }
+
+    /* Import method picker — one panel shows at a time */
+    .import-methods { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 22px; }
+    .import-method {
+      flex: 1; min-width: 130px;
+      display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+      padding: 11px 12px; border-radius: 10px;
+      border: 1px solid var(--border); background: var(--surface);
+      font: inherit; font-size: 14px; font-weight: 600; color: var(--text-muted);
+      cursor: pointer;
+      transition: background 120ms, border-color 120ms, color 120ms, transform 90ms ease;
+    }
+    .import-method:hover { border-color: var(--primary); color: var(--text); }
+    .import-method:active { transform: scale(0.97); }
+    .import-method.active {
+      background: color-mix(in srgb, var(--primary) 12%, var(--surface));
+      border-color: var(--primary); color: var(--primary-dark);
+    }
+    .import-panel[hidden] { display: none; }
     .scan-dropzone {
       display: block;
       border: 2px dashed color-mix(in srgb, var(--primary) 38%, var(--border)); border-radius: 14px;
@@ -1703,10 +1718,8 @@
         <div class="section-head">
           <h2>Add recipes to your library</h2>
         </div>
-        <p class="muted" style="margin: 0 0 24px; font-size: 14px;">
-          Pull recipes in from anywhere — a cookbook photo, a screenshot, a handwritten card,
-          or a food blog URL. Each scan/import lands in your library and can be shared into a
-          meal plan from there.
+        <p class="muted" style="margin: 0 0 20px; font-size: 14px;">
+          Scan, paste, or write a recipe — each one lands in your library, ready for a meal plan.
         </p>
 
         <!-- Your library (existing recipes) — collapsed by default -->
@@ -1727,18 +1740,17 @@
           </div>
         </div>
 
+        <!-- Import method picker — one panel shows at a time -->
+        <div class="import-methods" id="importMethods">
+          <button class="import-method active" type="button" data-method="methodScan"><span data-icon="camera"></span> Scan</button>
+          <button class="import-method" type="button" data-method="methodLink"><span data-icon="link"></span> Link</button>
+          <button class="import-method" type="button" data-method="methodPaste"><span data-icon="clipboard"></span> Paste</button>
+          <button class="import-method" type="button" data-method="methodWrite"><span data-icon="pencil"></span> Write</button>
+        </div>
+
         <!-- Scan a photo -->
-        <div class="scan-section">
-          <div class="scan-section-head">
-            <h3><span data-icon="camera"></span> Scan a photo</h3>
-            <span class="muted">Claude reads the page</span>
-          </div>
-          <p class="scan-intro">
-            Drop a cookbook photo, a screenshot, or a handwritten card.
-            Drop several at once — they'll process in parallel.
-          </p>
-          <!-- Camera button — mobile only. capture=environment opens the
-               rear camera straight away for snapping a cookbook page. -->
+        <div class="scan-section import-panel" id="methodScan">
+          <p class="scan-intro">Drop a cookbook photo, screenshot, or handwritten card — several at once is fine.</p>
           <label class="scan-camera-btn" id="scanCameraBtn">
             <input type="file" id="scanCameraInput" accept="image/*" capture="environment">
             <span data-icon="camera"></span> Take a photo
@@ -1756,11 +1768,7 @@
         </div>
 
         <!-- From a recipe blog link -->
-        <div class="scan-section">
-          <div class="scan-section-head">
-            <h3><span data-icon="link"></span> From a link</h3>
-            <span class="muted">Recipe blogs</span>
-          </div>
+        <div class="scan-section import-panel" id="methodLink" hidden>
           <p class="scan-intro">Paste a link to a recipe on a food blog — it imports automatically.</p>
           <div class="url-input-row">
             <input type="url" id="urlInput" placeholder="https://example.com/recipe" autocomplete="off">
@@ -1770,27 +1778,16 @@
         </div>
 
         <!-- Paste recipe text -->
-        <div class="scan-section">
-          <div class="scan-section-head">
-            <h3><span data-icon="clipboard"></span> Paste recipe text</h3>
-            <span class="muted">From a caption or note</span>
-          </div>
-          <p class="scan-intro">Copy a recipe from anywhere — a TikTok or Instagram caption, an email, a note — and Claude turns it into a recipe.</p>
+        <div class="scan-section import-panel" id="methodPaste" hidden>
+          <p class="scan-intro">Paste a recipe from anywhere — a TikTok or Instagram caption, an email, a note — and it becomes a recipe automatically.</p>
           <textarea id="pasteInput" class="paste-input" rows="5" placeholder="Paste the full recipe text here — title, ingredients, and steps."></textarea>
           <button class="btn" id="pasteExtractBtn">Extract recipe</button>
           <div class="scan-cards" id="pasteCards"></div>
         </div>
 
         <!-- Write from scratch -->
-        <div class="scan-section">
-          <div class="scan-section-head">
-            <h3><span data-icon="pencil"></span> Write a recipe</h3>
-            <span class="muted">Type it in yourself</span>
-          </div>
-          <p class="scan-intro">
-            For a recipe that isn't on any website and isn't worth scanning — a handwritten
-            family recipe, something you made up, or one you know by heart.
-          </p>
+        <div class="scan-section import-panel" id="methodWrite" hidden>
+          <p class="scan-intro">For a recipe that isn't online — a handwritten family recipe, or one you know by heart.</p>
           <button class="btn" id="newBlankRecipeBtn">+ New blank recipe</button>
           <div class="scan-cards" id="manualCards"></div>
         </div>
@@ -4379,6 +4376,19 @@
           <div class="actions"><button class="btn ghost" data-discard>Remove</button></div>`;
         card.querySelector('[data-discard]').addEventListener('click', () => card.remove());
       }
+    }
+
+    // --- Import method picker — show one panel at a time ---
+    const importMethods = $('importMethods');
+    if (importMethods) {
+      importMethods.addEventListener('click', (e) => {
+        const btn = e.target.closest('.import-method');
+        if (!btn) return;
+        importMethods.querySelectorAll('.import-method')
+          .forEach((b) => b.classList.toggle('active', b === btn));
+        document.querySelectorAll('.import-panel')
+          .forEach((p) => { p.hidden = p.id !== btn.dataset.method; });
+      });
     }
 
     // ── Recipe classification fields (recipe type / meal type / allergens
