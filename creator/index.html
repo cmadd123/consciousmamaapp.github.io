@@ -1457,7 +1457,7 @@
                       <input type="text" id="shareHeadlineInput" maxlength="50" placeholder="Use my MomRise code">
                     </label>
                   </div>
-                  <canvas id="shareCanvas" width="3240" height="3240" style="max-width: 360px; width: auto; max-height: 560px; border-radius: 12px; display: block; margin: 12px auto 0; background: #E5E7EB;"></canvas>
+                  <canvas id="shareCanvas" width="3240" height="3240" style="max-width: min(360px, 100%); max-height: 60vh; width: auto; height: auto; border-radius: 12px; display: block; margin: 12px auto 0; background: #E5E7EB;"></canvas>
                 </div>
               </div>
             </details>
@@ -1892,10 +1892,13 @@
         <button class="back-btn" data-back>← Dashboard</button>
         <div class="section-head">
           <h2>Shared routines</h2>
-          <button class="btn ghost" id="refreshRoutinesBtn">↻ Refresh</button>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn ghost" id="refreshRoutinesBtn">↻ Refresh</button>
+            <button class="btn" id="newRoutineBtn">+ New routine</button>
+          </div>
         </div>
         <p class="muted" style="margin: 0 0 16px; font-size: 13px;">
-          Routines you've toggled for followers in the MomRise app. Create or edit from the Routines tab in-app.
+          Step-by-step routines you share with your followers — a morning rhythm, a bedtime wind-down, a cleanup checklist.
         </p>
         <div class="routine-grid" id="routineGrid">
           <div class="skeleton-card"><div class="skeleton skeleton-line medium"></div><div class="skeleton skeleton-line short"></div></div>
@@ -1940,6 +1943,31 @@
         <div class="modal-actions">
           <button type="button" class="btn ghost" id="cancelDocBtn">Cancel</button>
           <button type="submit" class="btn" id="saveDocBtn">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- New routine modal -->
+  <div class="modal-backdrop" id="routineFormModal">
+    <div class="modal">
+      <h3>New routine</h3>
+      <form id="routineForm" class="form-grid">
+        <div class="field">
+          <label for="routineNameInput">Routine name</label>
+          <input type="text" id="routineNameInput" required maxlength="80" placeholder="e.g. Calm bedtime routine">
+        </div>
+        <div class="field">
+          <label for="routineEmojiInput">Emoji</label>
+          <input type="text" id="routineEmojiInput" maxlength="4" placeholder="📋" value="📋">
+        </div>
+        <div class="field">
+          <label for="routineStepsInput">Steps — one per line</label>
+          <textarea id="routineStepsInput" rows="7" placeholder="One step per line…"></textarea>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn ghost" id="cancelRoutineFormBtn">Cancel</button>
+          <button type="submit" class="btn" id="saveRoutineBtn">Save routine</button>
         </div>
       </form>
     </div>
@@ -4119,6 +4147,54 @@
         : steps.map(s => `<li>${escapeHtml(s)}</li>`).join('');
       $('routineModal').classList.add('open');
     }
+
+    // --- Create a routine (writes to the shared `routines` collection) ---
+    function closeRoutineForm() { $('routineFormModal').classList.remove('open'); }
+    $('newRoutineBtn').addEventListener('click', () => {
+      $('routineNameInput').value = '';
+      $('routineEmojiInput').value = '📋';
+      $('routineStepsInput').value = '';
+      $('routineFormModal').classList.add('open');
+      setTimeout(() => $('routineNameInput').focus(), 50);
+    });
+    $('cancelRoutineFormBtn').addEventListener('click', closeRoutineForm);
+    $('routineFormModal').addEventListener('click', (e) => {
+      if (e.target === $('routineFormModal')) closeRoutineForm();
+    });
+    $('routineForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = $('routineNameInput').value.trim();
+      const steps = $('routineStepsInput').value
+        .split('\n').map(s => s.trim()).filter(Boolean);
+      if (!name) { toast('Give the routine a name', true); return; }
+      if (steps.length === 0) { toast('Add at least one step', true); return; }
+      const saveBtn = $('saveRoutineBtn');
+      saveBtn.disabled = true;
+      const orig = saveBtn.textContent;
+      saveBtn.textContent = 'Saving…';
+      try {
+        await addDoc(collection(db, 'routines'), {
+          name,
+          emoji: $('routineEmojiInput').value.trim() || '📋',
+          steps,
+          // user_ref must match the creator's own user for the security
+          // rule; it's the same ref loadCreatorRoutines queries by.
+          user_ref: creatorDoc.data.user_ref,
+          shared_with_followers: true,
+          created_at: serverTimestamp(),
+        });
+        closeRoutineForm();
+        toast('Routine saved');
+        celebrate();
+        loadCreatorRoutines();
+      } catch (err) {
+        console.error(err);
+        toast('Save failed: ' + err.message, true);
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.textContent = orig;
+      }
+    });
 
     // ───────────────────────────────────────────────────────────────
     // Add Recipes: Scan (camera/upload) + From URL (paste blog link).
