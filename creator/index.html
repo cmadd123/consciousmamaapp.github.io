@@ -235,8 +235,6 @@
     .feature-card[data-goto="docs"] .feature-icon { background: color-mix(in srgb, #3B82F6 14%, var(--surface)); }
     .feature-card[data-goto="mealPlans"] .feature-icon { background: color-mix(in srgb, #F59E0B 16%, var(--surface)); }
     .feature-card[data-goto="routines"] .feature-icon { background: color-mix(in srgb, #8B5CF6 14%, var(--surface)); }
-    .feature-card[data-goto="addRecipes"] .feature-icon { background: color-mix(in srgb, #10B981 14%, var(--surface)); }
-    .feature-card[data-goto="buildPlan"] .feature-icon { background: color-mix(in srgb, #F59E0B 16%, var(--surface)); }
 
     /* Add Recipes view */
     .scan-section { margin-bottom: 28px; }
@@ -840,7 +838,7 @@
     .checklist-action.ghost { background: transparent; color: var(--primary); border: 1px solid var(--primary); }
 
     /* Earnings strip */
-    .earnings-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 20px; }
+    .earnings-strip { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
 
     /* Earnings over-time spark chart */
     .spark-chart { display: flex; align-items: flex-end; gap: 6px; height: 140px; padding: 8px 0 4px; }
@@ -1013,6 +1011,65 @@
       main { padding: 16px; }
       .doc-card { flex-wrap: wrap; }
     }
+
+    /* Creator tab nav — desktop top strip, mobile bottom bar */
+    .creator-nav {
+      display: flex;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .creator-nav[hidden] { display: none; }
+    .nav-tab {
+      flex: 1;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      background: none; border: none;
+      padding: 14px 8px;
+      font: inherit; font-size: 14px; font-weight: 600;
+      color: var(--text-muted);
+      border-bottom: 2px solid transparent;
+      transition: color 120ms, border-color 120ms, background 120ms;
+    }
+    .nav-tab .nav-tab-icon { font-size: 16px; }
+    .nav-tab:hover { color: var(--text); background: color-mix(in srgb, var(--primary) 5%, var(--surface)); }
+    .nav-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+    /* Compact key-stats band on Home — taps through to the Stats tab */
+    .stat-band {
+      display: flex; align-items: center; gap: 8px;
+      width: 100%; text-align: left; font: inherit;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 14px; padding: 14px 20px; margin-bottom: 16px;
+      cursor: pointer; transition: transform 120ms, border-color 120ms, box-shadow 120ms;
+    }
+    .stat-band:hover { transform: translateY(-2px); border-color: var(--primary); box-shadow: 0 6px 20px rgba(0,0,0,0.06); }
+    .stat-band-item { display: flex; flex-direction: column; gap: 2px; padding-right: 28px; }
+    .stat-band-item + .stat-band-item { border-left: 1px solid var(--border); padding-left: 28px; }
+    .stat-band-value { font-size: 22px; font-weight: 700; color: var(--text); line-height: 1.1; }
+    .stat-band-label { font-size: 12px; color: var(--text-muted); }
+    .stat-band-cta { margin-left: auto; font-size: 13px; color: var(--primary); font-weight: 600; }
+
+    @media (max-width: 640px) {
+      .creator-nav {
+        position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
+        border-bottom: none; border-top: 1px solid var(--border);
+        padding-bottom: env(safe-area-inset-bottom);
+        box-shadow: 0 -4px 16px -8px rgba(0,0,0,0.16);
+      }
+      .nav-tab {
+        flex-direction: column; gap: 3px;
+        padding: 8px 4px 6px; font-size: 11px;
+        border-bottom: none; border-top: 2px solid transparent;
+      }
+      .nav-tab .nav-tab-icon { font-size: 21px; }
+      .nav-tab.active { border-top-color: var(--primary); }
+      .earnings-strip { grid-template-columns: 1fr; }
+      .stat-band { flex-wrap: wrap; padding: 12px 14px; }
+      .stat-band-item { flex: 1; padding-right: 10px; }
+      .stat-band-item + .stat-band-item { padding-left: 10px; }
+      .stat-band-value { font-size: 18px; }
+      .stat-band-cta { margin-left: 0; width: 100%; padding-top: 8px; margin-top: 4px; border-top: 1px solid var(--border); }
+      main { padding-bottom: 88px; }
+    }
   </style>
 </head>
 <body>
@@ -1037,6 +1094,21 @@
         </div>
       </div>
     </header>
+
+    <nav class="creator-nav" id="creatorNav" hidden>
+      <button class="nav-tab" data-tab="home" data-view="viewDashboard">
+        <span class="nav-tab-icon">🏠</span><span class="nav-tab-label">Home</span>
+      </button>
+      <button class="nav-tab" data-tab="recipes" data-view="viewAddRecipes">
+        <span class="nav-tab-icon">📸</span><span class="nav-tab-label">Recipes</span>
+      </button>
+      <button class="nav-tab" data-tab="plans" data-view="viewBuildPlan">
+        <span class="nav-tab-icon">📅</span><span class="nav-tab-label">Plans</span>
+      </button>
+      <button class="nav-tab" data-tab="stats" data-view="viewStats">
+        <span class="nav-tab-icon">📊</span><span class="nav-tab-label">Stats</span>
+      </button>
+    </nav>
 
     <main>
       <!-- 1. Sign-in view -->
@@ -1142,6 +1214,23 @@
             <ul class="checklist" id="checklistItems"></ul>
           </div>
 
+          <!-- Compact key-stats band — full detail lives on the Stats tab -->
+          <button class="stat-band" id="statBand">
+            <div class="stat-band-item">
+              <span class="stat-band-value" id="bandFollowers">—</span>
+              <span class="stat-band-label">Followers</span>
+            </div>
+            <div class="stat-band-item">
+              <span class="stat-band-value" id="bandSubscribers">—</span>
+              <span class="stat-band-label">Subscribers</span>
+            </div>
+            <div class="stat-band-item">
+              <span class="stat-band-value" id="bandPending">$0.00</span>
+              <span class="stat-band-label">Pending payout</span>
+            </div>
+            <span class="stat-band-cta">View stats →</span>
+          </button>
+
           <!-- Share kit -->
           <div class="share-card">
             <div class="share-head">
@@ -1210,6 +1299,57 @@
               </div>
             </details>
           </div>
+
+          <!-- Your content — feature cards, clickable -->
+          <div class="section-head section-head-simple" style="margin-top: 28px;">
+            <h2>Your content</h2>
+          </div>
+          <div class="feature-grid">
+            <button class="feature-card" data-goto="docs">
+              <div class="feature-head">
+                <span class="feature-icon">📄</span>
+                <h3>Helpful Docs</h3>
+              </div>
+              <div class="feature-primary" id="featureDocsPrimary">—</div>
+              <div class="feature-sub" id="featureDocsSub">&nbsp;</div>
+              <div class="feature-cta">Manage docs →</div>
+            </button>
+            <button class="feature-card" data-goto="mealPlans">
+              <div class="feature-head">
+                <span class="feature-icon">🍽️</span>
+                <h3>Meal Plans</h3>
+              </div>
+              <div class="feature-primary" id="featureMealsPrimary">—</div>
+              <div class="feature-sub" id="featureMealsSub">&nbsp;</div>
+              <div class="feature-cta">View plans →</div>
+            </button>
+            <button class="feature-card" data-goto="routines">
+              <div class="feature-head">
+                <span class="feature-icon">📋</span>
+                <h3>Routines</h3>
+              </div>
+              <div class="feature-primary" id="featureRoutinesPrimary">—</div>
+              <div class="feature-sub" id="featureRoutinesSub">&nbsp;</div>
+              <div class="feature-cta">View routines →</div>
+            </button>
+          </div>
+
+          <!-- What's new in MomRise — pulled from /CHANGELOG.md -->
+          <div class="section-head section-head-simple" style="margin-top: 28px;">
+            <h2>What's new in the app</h2>
+          </div>
+          <div id="changelogWrap" style="background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 18px 20px;">
+            <div id="changelogList" style="display: flex; flex-direction: column; gap: 16px;">
+              <div class="skeleton-row"><div class="skeleton-lines"><div class="skeleton skeleton-line medium"></div><div class="skeleton skeleton-line long"></div></div></div>
+            </div>
+            <div id="changelogToggle" hidden style="margin-top: 12px; text-align: center;">
+              <button type="button" class="btn ghost" id="changelogToggleBtn">See all updates</button>
+            </div>
+          </div>
+      </div>
+
+      <!-- 3b. Stats tab — finance, performance, analytics -->
+      <div class="view" id="viewStats">
 
           <!-- Finance -->
           <div class="section-head">
@@ -1343,71 +1483,6 @@
                   <div class="retention-caption" id="conversionCaption">Followers who became subscribers</div>
                 </div>
               </div>
-            </div>
-          </div>
-
-          <!-- Your content — feature cards, clickable -->
-          <div class="section-head section-head-simple" style="margin-top: 28px;">
-            <h2>Your content</h2>
-          </div>
-          <div class="feature-grid">
-            <button class="feature-card" data-goto="docs">
-              <div class="feature-head">
-                <span class="feature-icon">📄</span>
-                <h3>Helpful Docs</h3>
-              </div>
-              <div class="feature-primary" id="featureDocsPrimary">—</div>
-              <div class="feature-sub" id="featureDocsSub">&nbsp;</div>
-              <div class="feature-cta">Manage docs →</div>
-            </button>
-            <button class="feature-card" data-goto="mealPlans">
-              <div class="feature-head">
-                <span class="feature-icon">🍽️</span>
-                <h3>Meal Plans</h3>
-              </div>
-              <div class="feature-primary" id="featureMealsPrimary">—</div>
-              <div class="feature-sub" id="featureMealsSub">&nbsp;</div>
-              <div class="feature-cta">View plans →</div>
-            </button>
-            <button class="feature-card" data-goto="routines">
-              <div class="feature-head">
-                <span class="feature-icon">📋</span>
-                <h3>Routines</h3>
-              </div>
-              <div class="feature-primary" id="featureRoutinesPrimary">—</div>
-              <div class="feature-sub" id="featureRoutinesSub">&nbsp;</div>
-              <div class="feature-cta">View routines →</div>
-            </button>
-            <button class="feature-card" data-goto="addRecipes">
-              <div class="feature-head">
-                <span class="feature-icon">📸</span>
-                <h3>Add Recipes</h3>
-              </div>
-              <div class="feature-primary" style="font-size: 20px;">Quick add</div>
-              <div class="feature-sub">Snap photos or paste URLs</div>
-              <div class="feature-cta">Import →</div>
-            </button>
-            <button class="feature-card" data-goto="buildPlan">
-              <div class="feature-head">
-                <span class="feature-icon">📅</span>
-                <h3>Build a Plan</h3>
-              </div>
-              <div class="feature-primary" style="font-size: 20px;">Meal plans</div>
-              <div class="feature-sub">Turn recipes into a sellable plan</div>
-              <div class="feature-cta">Build →</div>
-            </button>
-          </div>
-
-          <!-- What's new in MomRise — pulled from /CHANGELOG.md -->
-          <div class="section-head section-head-simple" style="margin-top: 28px;">
-            <h2>What's new in the app</h2>
-          </div>
-          <div id="changelogWrap" style="background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 18px 20px;">
-            <div id="changelogList" style="display: flex; flex-direction: column; gap: 16px;">
-              <div class="skeleton-row"><div class="skeleton-lines"><div class="skeleton skeleton-line medium"></div><div class="skeleton skeleton-line long"></div></div></div>
-            </div>
-            <div id="changelogToggle" hidden style="margin-top: 12px; text-align: center;">
-              <button type="button" class="btn ghost" id="changelogToggleBtn">See all updates</button>
             </div>
           </div>
       </div>
@@ -1888,9 +1963,26 @@
 
     // DOM
     const $ = (id) => document.getElementById(id);
+    // Views where the creator nav bar should not appear (pre-dashboard flow).
+    const NAV_HIDDEN_VIEWS = new Set(['viewSignIn', 'viewGate', 'viewCodeCelebration', 'viewPickCode']);
+    // Which nav tab is highlighted for a given view (sub-views map to their parent tab).
+    const VIEW_TO_TAB = {
+      viewDashboard: 'home', viewDocs: 'home', viewMealPlans: 'home', viewRoutines: 'home',
+      viewAddRecipes: 'recipes', viewBuildPlan: 'plans', viewStats: 'stats',
+    };
     const show = (id) => {
       document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
       $(id).classList.add('active');
+      const nav = $('creatorNav');
+      if (NAV_HIDDEN_VIEWS.has(id)) {
+        nav.hidden = true;
+      } else {
+        nav.hidden = false;
+        const activeTab = VIEW_TO_TAB[id] || 'home';
+        nav.querySelectorAll('.nav-tab').forEach(t => {
+          t.classList.toggle('active', t.dataset.tab === activeTab);
+        });
+      }
     };
     const toast = (msg, danger = false) => {
       const el = $('toast');
@@ -2280,21 +2372,39 @@
         } else if (target === 'routines') {
           show('viewRoutines');
           loadCreatorRoutines();
-        } else if (target === 'addRecipes') {
-          show('viewAddRecipes');
-          loadRecipeLibrary();
-        } else if (target === 'buildPlan') {
-          show('viewBuildPlan');
-          showPlanListMode();
-          loadPlans();
         }
       });
+    });
+
+    // Compact stat band on Home → jump to the full Stats tab.
+    $('statBand').addEventListener('click', () => {
+      show('viewStats');
+      loadAnalytics();
+      loadPayouts();
     });
     document.querySelectorAll('[data-back]').forEach(btn => {
       btn.addEventListener('click', () => {
         show('viewDashboard');
         loadAnalytics();
         loadPayouts();
+      });
+    });
+
+    // Tab navigation — the persistent creator nav bar.
+    $('creatorNav').querySelectorAll('.nav-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        const view = tab.dataset.view;
+        show(view);
+        if (view === 'viewDashboard' || view === 'viewStats') {
+          // loadAnalytics refreshes both the Home feature-card counts and the Stats charts.
+          loadAnalytics();
+          loadPayouts();
+        } else if (view === 'viewAddRecipes') {
+          loadRecipeLibrary();
+        } else if (view === 'viewBuildPlan') {
+          showPlanListMode();
+          loadPlans();
+        }
       });
     });
 
@@ -2975,6 +3085,7 @@
         // if refunds exceed earnings — clamp so the strip never shows a
         // negative dollar figure.
         $('statPending').textContent = fmtMoney(Math.max(0, pending));
+        $('bandPending').textContent = fmtMoney(Math.max(0, pending));
         $('statLifetime').textContent = fmtMoney(Math.max(0, lifetime));
 
         const thresholdGap = 2500 - pending;
@@ -3412,6 +3523,8 @@
         // Top-level stats (Followers, Subscribers only — content counts live on the cards)
         $('statFollowers').textContent = followerCount;
         $('statSubscribers').textContent = subscriberCount;
+        $('bandFollowers').textContent = followerCount;
+        $('bandSubscribers').textContent = subscriberCount;
 
         const draftDocs = docs.length - publishedDocs.length;
         const activePlans = plans.filter(p => p.is_active).length;
