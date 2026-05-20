@@ -439,6 +439,14 @@
     .recipe-edit-form .edit-meta-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
     .recipe-edit-form .edit-meta-row > div { display: flex; flex-direction: column; gap: 4px; }
     .recipe-edit-form .edit-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px; }
+    .recipe-edit-photo { display: flex; gap: 12px; align-items: flex-start; }
+    .recipe-edit-photo .edit-photo-thumb {
+      width: 72px; height: 72px; border-radius: 8px; flex-shrink: 0;
+      background: #F3F4F6; display: grid; place-items: center; font-size: 24px;
+      overflow: hidden; border: 1px solid var(--border);
+    }
+    .recipe-edit-photo .edit-photo-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .recipe-edit-photo .edit-photo-actions { display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
 
     /* Plan builder */
     .plan-meta { display: flex; flex-direction: column; gap: 12px; margin-bottom: 18px; }
@@ -456,6 +464,14 @@
     }
     .plan-day-controls { display: flex; align-items: center; gap: 10px; }
     .plan-day-controls .btn.ghost { padding: 4px 12px; font-size: 16px; line-height: 1; }
+    .plan-cover-row { display: flex; gap: 12px; align-items: flex-start; }
+    .plan-cover-thumb {
+      width: 88px; height: 88px; border-radius: 10px; flex-shrink: 0;
+      background: #F3F4F6; display: grid; place-items: center; font-size: 28px;
+      overflow: hidden; border: 1px solid var(--border);
+    }
+    .plan-cover-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .plan-cover-actions { display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
 
     .plan-grid { display: flex; flex-direction: column; gap: 10px; }
     .plan-day-row {
@@ -1523,6 +1539,20 @@
             <div class="field">
               <label for="planDesc">Description</label>
               <textarea id="planDesc" rows="2" maxlength="400" placeholder="What's this plan about? Who's it for?"></textarea>
+            </div>
+            <div class="field">
+              <label>Cover image</label>
+              <div class="plan-cover-row">
+                <div class="plan-cover-thumb" id="planCoverThumb"></div>
+                <div class="plan-cover-actions">
+                  <label class="btn ghost" id="planCoverUploadLabel">
+                    <span id="planCoverUploadText">Upload cover</span>
+                    <input type="file" id="planCoverInput" accept="image/*" style="display:none">
+                  </label>
+                  <button type="button" class="btn ghost" id="planCoverClear" hidden>Use auto instead</button>
+                  <div class="muted" style="font-size: 11px;">Optional — defaults to your first recipe's photo.</div>
+                </div>
+              </div>
             </div>
             <div class="plan-day-controls">
               <span class="field-label" style="margin: 0;">Days in plan</span>
@@ -4229,6 +4259,20 @@
             <label>Recipe name</label>
             <input type="text" class="edit-name" value="${escapeHtml(r.recipe_name || '')}" placeholder="Recipe name">
           </div>
+          <div>
+            <label>Photo</label>
+            <div class="recipe-edit-photo">
+              <div class="edit-photo-thumb"></div>
+              <div class="edit-photo-actions">
+                <label class="btn ghost edit-photo-upload-label">
+                  <span class="edit-photo-text">Upload photo</span>
+                  <input type="file" class="edit-photo-input" accept="image/*" style="display:none">
+                </label>
+                <button type="button" class="btn ghost edit-photo-remove" hidden>Remove</button>
+              </div>
+            </div>
+            <input type="hidden" class="edit-image-url" value="${escapeHtml(r.image_url || '')}">
+          </div>
           <div class="edit-meta-row">
             <div><label>Prep (min)</label><input type="number" class="edit-prep" min="0" value="${parseInt(r.prepare_time, 10) || 0}"></div>
             <div><label>Cook (min)</label><input type="number" class="edit-cook" min="0" value="${parseInt(r.cook_time, 10) || 0}"></div>
@@ -4262,6 +4306,50 @@
         e.preventDefault();
         await saveRecipeEdit(detail, item, form);
       });
+
+      // Photo: the hidden .edit-image-url input is the source of truth;
+      // upload sets it to a fresh Storage URL, remove clears it.
+      const imageInput = form.querySelector('.edit-image-url');
+      const photoThumb = form.querySelector('.edit-photo-thumb');
+      const photoText = form.querySelector('.edit-photo-text');
+      const photoRemove = form.querySelector('.edit-photo-remove');
+      function syncEditPhoto() {
+        const url = imageInput.value;
+        if (url) {
+          photoThumb.innerHTML = `<img src="${escapeHtml(url)}" alt="">`;
+          photoText.textContent = 'Change photo';
+          photoRemove.hidden = false;
+        } else {
+          photoThumb.innerHTML = '🍽';
+          photoText.textContent = 'Upload photo';
+          photoRemove.hidden = true;
+        }
+      }
+      syncEditPhoto();
+      photoRemove.addEventListener('click', () => { imageInput.value = ''; syncEditPhoto(); });
+      form.querySelector('.edit-photo-input').addEventListener('change', async (e) => {
+        const file = e.target.files && e.target.files[0];
+        e.target.value = '';
+        if (!file) return;
+        if (file.size > MAX_IMAGE_BYTES) { toast('Image too large (max 5MB)', true); return; }
+        const label = form.querySelector('.edit-photo-upload-label');
+        photoText.textContent = 'Uploading…';
+        label.style.pointerEvents = 'none';
+        try {
+          const path = `recipe_images/${currentUser.uid}/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+          const ref = storageRef(storage, path);
+          await uploadBytes(ref, file, { contentType: file.type || 'image/jpeg' });
+          imageInput.value = await getDownloadURL(ref);
+          syncEditPhoto();
+          toast('Photo uploaded');
+        } catch (err) {
+          console.error(err);
+          toast('Upload failed: ' + err.message, true);
+          syncEditPhoto();
+        } finally {
+          label.style.pointerEvents = '';
+        }
+      });
     }
 
     async function saveRecipeEdit(detail, item, form) {
@@ -4273,6 +4361,7 @@
       try {
         const patch = {
           recipe_name: form.querySelector('.edit-name').value.trim() || 'Untitled recipe',
+          image_url: form.querySelector('.edit-image-url').value,
           prepare_time: parseInt(form.querySelector('.edit-prep').value, 10) || 0,
           cook_time: parseInt(form.querySelector('.edit-cook').value, 10) || 0,
           servings: parseInt(form.querySelector('.edit-servings').value, 10) || 0,
@@ -4339,6 +4428,7 @@
     let planDayCount = 7;
     let planMealTypes = [...PLAN_DEFAULT_MEAL_TYPES]; // selected meal-type keys
     let planSlots = {};             // { '0_dinner': {recipe_id, recipe_name, image_url} }
+    let planCoverUrl = null;        // custom uploaded cover; null = auto-derive from first recipe
     let pickerTarget = null;        // { dayIndex, mealType }
     let recipePickerCache = null;   // [{id, recipe_name, image_url}] — lazy-loaded
 
@@ -4454,14 +4544,17 @@
         planMealTypes = Array.isArray(existing.data.meal_types) && existing.data.meal_types.length
           ? existing.data.meal_types.slice()
           : [...PLAN_DEFAULT_MEAL_TYPES];
+        planCoverUrl = existing.data.custom_cover_url || null;
       } else {
         $('planTitle').value = '';
         $('planDesc').value = '';
         planDayCount = 7;
         planSlots = {};
         planMealTypes = [...PLAN_DEFAULT_MEAL_TYPES];
+        planCoverUrl = null;
       }
       $('planDayCount').textContent = planDayCount;
+      renderPlanCoverThumb();
       // Sync the meal-type checkboxes to planMealTypes.
       document.querySelectorAll('.plan-mealtype').forEach((cb) => {
         cb.checked = planMealTypes.includes(cb.value);
@@ -4558,6 +4651,50 @@
     $('planEditorBack').addEventListener('click', () => { showPlanListMode(); });
     $('planCancelBtn').addEventListener('click', () => { showPlanListMode(); });
 
+    // --- Plan cover image ---
+    function renderPlanCoverThumb() {
+      const thumb = $('planCoverThumb');
+      if (!thumb) return;
+      if (planCoverUrl) {
+        thumb.innerHTML = `<img src="${escapeHtml(planCoverUrl)}" alt="">`;
+        $('planCoverClear').hidden = false;
+        $('planCoverUploadText').textContent = 'Change cover';
+      } else {
+        thumb.innerHTML = '📅';
+        $('planCoverClear').hidden = true;
+        $('planCoverUploadText').textContent = 'Upload cover';
+      }
+    }
+    $('planCoverInput').addEventListener('change', async (e) => {
+      const file = e.target.files && e.target.files[0];
+      e.target.value = '';
+      if (!file) return;
+      if (file.size > MAX_IMAGE_BYTES) { toast('Image too large (max 5MB)', true); return; }
+      const txt = $('planCoverUploadText');
+      const label = $('planCoverUploadLabel');
+      const origTxt = txt.textContent;
+      txt.textContent = 'Uploading…';
+      label.style.pointerEvents = 'none';
+      try {
+        const path = `plan_covers/${currentUser.uid}/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+        const ref = storageRef(storage, path);
+        await uploadBytes(ref, file, { contentType: file.type || 'image/jpeg' });
+        planCoverUrl = await getDownloadURL(ref);
+        renderPlanCoverThumb();
+        toast('Cover uploaded');
+      } catch (err) {
+        console.error(err);
+        toast('Upload failed: ' + err.message, true);
+        txt.textContent = origTxt;
+      } finally {
+        label.style.pointerEvents = '';
+      }
+    });
+    $('planCoverClear').addEventListener('click', () => {
+      planCoverUrl = null;
+      renderPlanCoverThumb();
+    });
+
     // --- Plan preview (follower's-eye view of the current editor state) ---
     $('planPreviewBtn').addEventListener('click', openPlanPreview);
     $('planPreviewClose').addEventListener('click', () => $('planPreviewModal').classList.remove('open'));
@@ -4570,8 +4707,8 @@
       const desc = $('planDesc').value.trim();
       const meals = selectedMealTypes();
 
-      // Cover: first filled slot's image (same rule as savePlan).
-      let cover = '';
+      // Cover: custom upload wins; else first filled slot's image.
+      let cover = planCoverUrl || '';
       for (let d = 0; d < planDayCount && !cover; d++) {
         for (const m of meals) {
           const s = planSlots[`${d}_${m.key}`];
@@ -4733,9 +4870,9 @@
         const liveKeys = liveSlotKeys();
         const cleanSlots = {};
         for (const k of liveKeys) cleanSlots[k] = planSlots[k];
-        // Cover image: first filled slot's recipe image, scanning days in
-        // order then selected meal types in order.
-        let cover = '';
+        // Effective cover: custom upload wins; else first filled slot's
+        // recipe image, scanning days then selected meal types in order.
+        let cover = planCoverUrl || '';
         for (let d = 0; d < planDayCount && !cover; d++) {
           for (const m of selectedMealTypes()) {
             const s = cleanSlots[`${d}_${m.key}`];
@@ -4756,6 +4893,9 @@
           meal_types: planMealTypes.slice(),
           slots: cleanSlots,
           cover_image_url: cover,
+          // Empty string (not omitted) when cleared, so updateDoc on an
+          // existing plan actually removes a previously-set custom cover.
+          custom_cover_url: planCoverUrl || '',
           updated_at: serverTimestamp(),
         };
         if (targetStatus === 'published') {
