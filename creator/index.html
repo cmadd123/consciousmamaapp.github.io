@@ -254,9 +254,9 @@
     .scan-intro { color: var(--text-muted); font-size: 14px; margin-bottom: 14px; max-width: 640px; }
     .scan-dropzone {
       display: block;
-      border: 2px dashed var(--border); border-radius: 14px;
+      border: 2px dashed color-mix(in srgb, var(--primary) 38%, var(--border)); border-radius: 14px;
       padding: 28px 24px; text-align: center;
-      background: var(--surface);
+      background: color-mix(in srgb, var(--primary) 6%, var(--surface));
       transition: border-color 150ms, background 150ms;
       cursor: pointer;
     }
@@ -280,9 +280,11 @@
 
     .scan-cards { display: flex; flex-direction: column; gap: 14px; margin-top: 16px; }
     .scan-card {
-      background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
-      padding: 16px; display: grid;
+      background: color-mix(in srgb, var(--primary) 5%, var(--surface));
+      border: 1px solid color-mix(in srgb, var(--primary) 20%, var(--border));
+      border-radius: 14px; padding: 16px; display: grid;
       grid-template-columns: 140px 1fr; gap: 16px;
+      box-shadow: 0 6px 22px -12px rgba(42, 111, 103, 0.22);
     }
     .scan-card .thumb {
       width: 140px; height: 140px; border-radius: 10px; overflow: hidden;
@@ -378,11 +380,6 @@
       background: color-mix(in srgb, var(--primary) 14%, var(--surface));
       border-color: var(--primary); color: var(--primary-dark); font-weight: 600;
     }
-    /* Meal type gets the warm brand accent so it reads apart from recipe type. */
-    .rm-pills[data-group="meal-type"] .rm-pill.selected {
-      background: color-mix(in srgb, var(--accent) 16%, var(--surface));
-      border-color: var(--accent); color: #9A4A22;
-    }
     .rm-chips { display: flex; flex-wrap: wrap; gap: 6px; }
     .rm-chip {
       display: inline-flex; align-items: center;
@@ -394,10 +391,9 @@
     .rm-chip input { position: absolute; opacity: 0; width: 1px; height: 1px; }
     .rm-chip:hover { border-color: var(--primary); }
     .rm-chip:has(input:focus-visible) { outline: 2px solid var(--primary); outline-offset: 1px; }
-    /* Allergens use a warning amber — colour with meaning, not noise. */
     .rm-chip:has(input:checked) {
-      background: color-mix(in srgb, #F59E0B 16%, var(--surface));
-      border-color: #F59E0B; color: #B45309; font-weight: 600;
+      background: color-mix(in srgb, var(--primary) 14%, var(--surface));
+      border-color: var(--primary); color: var(--primary-dark); font-weight: 600;
     }
     /* Read-only classification summary inside the expanded recipe detail */
     .rm-summary { grid-column: 1 / -1; display: flex; flex-direction: column; gap: 8px; }
@@ -406,11 +402,8 @@
       font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 999px;
       background: color-mix(in srgb, var(--primary) 12%, var(--surface)); color: var(--primary-dark);
     }
-    .rm-tag.rm-tag-meal {
-      background: color-mix(in srgb, var(--accent) 16%, var(--surface)); color: #9A4A22;
-    }
     .rm-tag.rm-tag-soft { background: var(--bg); color: var(--text-muted); font-weight: 500; }
-    .rm-allergen-line { font-size: 12px; color: #B45309; }
+    .rm-allergen-line { font-size: 12px; color: var(--text-muted); }
 
     /* Recipe library — responsive card grid */
     .recipe-library {
@@ -4373,7 +4366,7 @@
       const allergens = Array.isArray(r.allergens) ? r.allergens : [];
       const pills = [];
       if (r.recipe_type) pills.push(`<span class="rm-tag">${escapeHtml(r.recipe_type)}</span>`);
-      if (r.meal_typ) pills.push(`<span class="rm-tag rm-tag-meal">${escapeHtml(r.meal_typ)}</span>`);
+      if (r.meal_typ) pills.push(`<span class="rm-tag">${escapeHtml(r.meal_typ)}</span>`);
       tags.forEach((t) => pills.push(`<span class="rm-tag rm-tag-soft">${escapeHtml(t)}</span>`));
       if (!pills.length && !allergens.length) return '';
       return `
