@@ -228,13 +228,23 @@
     .feature-card .feature-head { display: flex; align-items: center; gap: 12px; }
     .feature-card .feature-head h3 { margin: 0; font-size: 15px; font-weight: 600; }
     .feature-card .feature-icon {
-      font-size: 22px; width: 40px; height: 40px; display: grid; place-items: center;
-      border-radius: 10px; background: color-mix(in srgb, var(--primary) 10%, var(--surface)); flex-shrink: 0;
+      font-size: 21px; width: 40px; height: 40px; display: grid; place-items: center;
+      border-radius: 10px; background: color-mix(in srgb, var(--primary) 10%, var(--surface));
+      color: var(--primary); flex-shrink: 0;
     }
-    /* Type-tinted icon badges */
-    .feature-card[data-goto="docs"] .feature-icon { background: color-mix(in srgb, #3B82F6 14%, var(--surface)); }
-    .feature-card[data-goto="mealPlans"] .feature-icon { background: color-mix(in srgb, #F59E0B 16%, var(--surface)); }
-    .feature-card[data-goto="routines"] .feature-icon { background: color-mix(in srgb, #8B5CF6 14%, var(--surface)); }
+
+    /* Line icons — monochrome SVGs that inherit currentColor. The brand
+       teal and a muted grey are the only two icon colours. */
+    svg.ic {
+      width: 1em; height: 1em; display: inline-block;
+      vertical-align: -0.14em; flex-shrink: 0;
+    }
+    .scan-section-head h3 svg.ic { color: var(--primary); margin-right: 2px; }
+    .scan-dropzone .icon { color: var(--text-muted); }
+    .menu-icon { color: var(--text-muted); }
+    .top-icon { color: var(--primary); }
+    .celebrate-icon { color: var(--primary); }
+    .celebrate-step-icon { color: var(--primary); }
 
     /* Add Recipes view */
     .scan-section { margin-bottom: 28px; }
@@ -1153,27 +1163,27 @@
           <span class="caret">▾</span>
         </button>
         <div class="profile-menu" id="profileMenu" role="menu" aria-labelledby="profileTrigger">
-          <button id="settingsBtn" role="menuitem"><span class="menu-icon">⚙️</span> Profile settings</button>
-          <button id="suggestionBtn" role="menuitem"><span class="menu-icon">💡</span> Send a suggestion</button>
-          <a id="supportLink" href="mailto:creators@momrise.app" role="menuitem"><span class="menu-icon">✉️</span> Contact support</a>
+          <button id="settingsBtn" role="menuitem"><span class="menu-icon" data-icon="user"></span> Profile settings</button>
+          <button id="suggestionBtn" role="menuitem"><span class="menu-icon" data-icon="bulb"></span> Send a suggestion</button>
+          <a id="supportLink" href="mailto:creators@momrise.app" role="menuitem"><span class="menu-icon" data-icon="mail"></span> Contact support</a>
           <div class="divider"></div>
-          <button id="signOutBtn" class="danger" role="menuitem"><span class="menu-icon">↪</span> Sign out</button>
+          <button id="signOutBtn" class="danger" role="menuitem"><span class="menu-icon" data-icon="logout"></span> Sign out</button>
         </div>
       </div>
     </header>
 
     <nav class="creator-nav" id="creatorNav" hidden>
       <button class="nav-tab" data-tab="home" data-view="viewDashboard">
-        <span class="nav-tab-icon">🏠</span><span class="nav-tab-label">Home</span>
+        <span class="nav-tab-icon" data-icon="home"></span><span class="nav-tab-label">Home</span>
       </button>
       <button class="nav-tab" data-tab="recipes" data-view="viewAddRecipes">
-        <span class="nav-tab-icon">📸</span><span class="nav-tab-label">Recipes</span>
+        <span class="nav-tab-icon" data-icon="camera"></span><span class="nav-tab-label">Recipes</span>
       </button>
       <button class="nav-tab" data-tab="plans" data-view="viewBuildPlan">
-        <span class="nav-tab-icon">📅</span><span class="nav-tab-label">Plans</span>
+        <span class="nav-tab-icon" data-icon="calendar"></span><span class="nav-tab-label">Plans</span>
       </button>
       <button class="nav-tab" data-tab="stats" data-view="viewStats">
-        <span class="nav-tab-icon">📊</span><span class="nav-tab-label">Stats</span>
+        <span class="nav-tab-icon" data-icon="chart"></span><span class="nav-tab-label">Stats</span>
       </button>
     </nav>
 
@@ -1219,28 +1229,28 @@
         <div class="celebrate-wrap">
           <canvas id="confettiCanvas"></canvas>
           <div class="celebrate-card">
-            <div class="celebrate-icon">🎉</div>
+            <div class="celebrate-icon" data-icon="award"></div>
             <h1 class="celebrate-h1">You're a MomRise creator, <span id="celebrateName">there</span>!</h1>
             <p class="celebrate-sub">Your code is locked in.</p>
             <div class="celebrate-code" id="celebrateCode">—</div>
             <p class="celebrate-helper">Here's what's waiting for you:</p>
             <div class="celebrate-tour">
               <div class="celebrate-step">
-                <div class="celebrate-step-icon">💳</div>
+                <div class="celebrate-step-icon" data-icon="card"></div>
                 <div>
                   <div class="celebrate-step-title">Connect your bank</div>
                   <div class="celebrate-step-sub">In Finance — takes 2 minutes via Stripe.</div>
                 </div>
               </div>
               <div class="celebrate-step">
-                <div class="celebrate-step-icon">📣</div>
+                <div class="celebrate-step-icon" data-icon="share"></div>
                 <div>
                   <div class="celebrate-step-title">Grab your share kit</div>
                   <div class="celebrate-step-sub">Pre-written posts and a downloadable graphic with your code.</div>
                 </div>
               </div>
               <div class="celebrate-step">
-                <div class="celebrate-step-icon">📊</div>
+                <div class="celebrate-step-icon" data-icon="chart"></div>
                 <div>
                   <div class="celebrate-step-title">Watch your stats grow</div>
                   <div class="celebrate-step-sub">Followers, subscribers, and earnings update in real time.</div>
@@ -1255,7 +1265,7 @@
       <!-- 2b. Pick your creator code (first-time setup) -->
       <div class="view" id="viewPickCode">
         <div class="gate" style="max-width: 520px;">
-          <div style="font-size: 44px; margin-bottom: 8px;">🎉</div>
+          <div style="font-size: 44px; margin-bottom: 8px; color: var(--primary);" data-icon="award"></div>
           <h2>Welcome! Pick your creator code</h2>
           <p style="margin-bottom: 20px;">This is what your community will enter in the MomRise app to support you. Pick something memorable — 3 to 20 letters or numbers.</p>
           <input type="text" id="codeInput" maxlength="20" placeholder="HALEY"
@@ -1374,7 +1384,7 @@
           <div class="feature-grid">
             <button class="feature-card" data-goto="docs">
               <div class="feature-head">
-                <span class="feature-icon">📄</span>
+                <span class="feature-icon" data-icon="file"></span>
                 <h3>Helpful Docs</h3>
               </div>
               <div class="feature-primary" id="featureDocsPrimary">—</div>
@@ -1383,7 +1393,7 @@
             </button>
             <button class="feature-card" data-goto="mealPlans">
               <div class="feature-head">
-                <span class="feature-icon">🍽️</span>
+                <span class="feature-icon" data-icon="plate"></span>
                 <h3>Meal Plans</h3>
               </div>
               <div class="feature-primary" id="featureMealsPrimary">—</div>
@@ -1392,7 +1402,7 @@
             </button>
             <button class="feature-card" data-goto="routines">
               <div class="feature-head">
-                <span class="feature-icon">📋</span>
+                <span class="feature-icon" data-icon="list"></span>
                 <h3>Routines</h3>
               </div>
               <div class="feature-primary" id="featureRoutinesPrimary">—</div>
@@ -1631,7 +1641,7 @@
         <!-- Your library (existing recipes) -->
         <div class="scan-section">
           <div class="scan-section-head">
-            <h3>🗂 Your library</h3>
+            <h3><span data-icon="grid"></span> Your library</h3>
             <span class="muted" id="libraryCount"></span>
           </div>
           <div id="recipeLibrary" class="recipe-library">
@@ -1645,7 +1655,7 @@
         <!-- Scan a photo -->
         <div class="scan-section">
           <div class="scan-section-head">
-            <h3>📸 Scan a photo</h3>
+            <h3><span data-icon="camera"></span> Scan a photo</h3>
             <span class="muted">Claude reads the page</span>
           </div>
           <p class="scan-intro">
@@ -1656,11 +1666,11 @@
                rear camera straight away for snapping a cookbook page. -->
           <label class="scan-camera-btn" id="scanCameraBtn">
             <input type="file" id="scanCameraInput" accept="image/*" capture="environment">
-            📸 Take a photo
+            <span data-icon="camera"></span> Take a photo
           </label>
           <label class="scan-dropzone" id="scanDropzone">
             <input type="file" id="scanFileInput" accept="image/*" multiple>
-            <div class="icon">📸</div>
+            <div class="icon" data-icon="camera"></div>
             <div class="primary-text">
               <span class="dz-desktop">Drop photos here, or click to choose</span>
               <span class="dz-mobile">Choose from your photo library</span>
@@ -1673,7 +1683,7 @@
         <!-- From URL -->
         <div class="scan-section">
           <div class="scan-section-head">
-            <h3>🔗 From URL</h3>
+            <h3><span data-icon="link"></span> From URL</h3>
             <span class="muted">Food blogs work best</span>
           </div>
           <p class="scan-intro">
@@ -1692,7 +1702,7 @@
         <!-- Write from scratch -->
         <div class="scan-section">
           <div class="scan-section-head">
-            <h3>✍️ Write a recipe</h3>
+            <h3><span data-icon="pencil"></span> Write a recipe</h3>
             <span class="muted">Type it in yourself</span>
           </div>
           <p class="scan-intro">
@@ -2030,6 +2040,36 @@
 
     // DOM
     const $ = (id) => document.getElementById(id);
+
+    // ── Icon set — monochrome line SVGs (Feather-style), one stroke colour
+    //    via currentColor. Replaces the emoji icons across the dashboard.
+    const ICON = (() => {
+      const w = (inner) => `<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${inner}</svg>`;
+      return {
+        home: w('<path d="M3 10.2 12 3l9 7.2V21H3z"/><path d="M9 21v-7h6v7"/>'),
+        camera: w('<path d="M3 8a2 2 0 0 1 2-2h2.5L9 4h6l1.5 2H19a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><circle cx="12" cy="13" r="3.5"/>'),
+        calendar: w('<rect x="3" y="4.5" width="18" height="16.5" rx="2"/><path d="M3 9.5h18M8 3v3M16 3v3"/>'),
+        chart: w('<path d="M6 21v-7M12 21V3M18 21v-10"/>'),
+        user: w('<path d="M20 21v-1.5a4.5 4.5 0 0 0-4.5-4.5h-7A4.5 4.5 0 0 0 4 19.5V21"/><circle cx="12" cy="7.5" r="4"/>'),
+        bulb: w('<path d="M12 2.5a6.5 6.5 0 0 0-3.9 11.7c.5.4.9 1.1.9 1.8V17h6v-1c0-.7.4-1.4.9-1.8A6.5 6.5 0 0 0 12 2.5z"/><path d="M9.5 20h5M10.5 22.5h3"/>'),
+        mail: w('<rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="M3 6.5 12 13l9-6.5"/>'),
+        logout: w('<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/>'),
+        card: w('<rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="M2.5 10h19"/>'),
+        share: w('<circle cx="18" cy="5" r="2.6"/><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="19" r="2.6"/><path d="M8.3 10.8 15.7 6.2M8.3 13.2l7.4 4.6"/>'),
+        file: w('<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M8.5 13h7M8.5 17h7"/>'),
+        plate: w('<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="3.5"/>'),
+        list: w('<path d="M8 6h12M8 12h12M8 18h12"/><path d="M3.6 6h.01M3.6 12h.01M3.6 18h.01"/>'),
+        grid: w('<rect x="3.5" y="3.5" width="7" height="7" rx="1"/><rect x="13.5" y="3.5" width="7" height="7" rx="1"/><rect x="13.5" y="13.5" width="7" height="7" rx="1"/><rect x="3.5" y="13.5" width="7" height="7" rx="1"/>'),
+        link: w('<path d="M9 17H7.5a5.5 5.5 0 0 1 0-11H9M15 6.5h1.5a5.5 5.5 0 0 1 0 11H15"/><path d="M8 12h8"/>'),
+        pencil: w('<path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/>'),
+        award: w('<circle cx="12" cy="9" r="6"/><path d="M8.6 14 7 22l5-2.8L17 22l-1.6-8"/>'),
+        alert: w('<path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4.5M12 17h.01"/>'),
+        image: w('<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.6"/><path d="M21 15l-5-5L5 21"/>'),
+      };
+    })();
+    document.querySelectorAll('[data-icon]').forEach((el) => {
+      if (ICON[el.dataset.icon]) el.innerHTML = ICON[el.dataset.icon];
+    });
     // Views where the creator nav bar should not appear (pre-dashboard flow).
     const NAV_HIDDEN_VIEWS = new Set(['viewSignIn', 'viewGate', 'viewCodeCelebration', 'viewPickCode']);
     // Which nav tab is highlighted for a given view (sub-views map to their parent tab).
@@ -3626,11 +3666,11 @@
         const hasTopMeal = topMeal && (topMeal.download_count || 0) > 0;
         $('topContent').hidden = !hasTopDoc && !hasTopMeal;
         $('topDocCallout').innerHTML = hasTopDoc
-          ? `<span class="top-icon">🏆</span><span class="top-text"><b>Top doc:</b> ${escapeHtml(topDoc.title || 'Untitled')} <span class="muted">· ${topDoc.view_count} view${topDoc.view_count === 1 ? '' : 's'}</span></span>`
+          ? `<span class="top-icon">${ICON.award}</span><span class="top-text"><b>Top doc:</b> ${escapeHtml(topDoc.title || 'Untitled')} <span class="muted">· ${topDoc.view_count} view${topDoc.view_count === 1 ? '' : 's'}</span></span>`
           : '';
         $('topDocCallout').style.display = hasTopDoc ? '' : 'none';
         $('topMealCallout').innerHTML = hasTopMeal
-          ? `<span class="top-icon">🥇</span><span class="top-text"><b>Top meal plan:</b> ${escapeHtml(topMeal.title || 'Untitled')} <span class="muted">· ${topMeal.download_count} import${topMeal.download_count === 1 ? '' : 's'}</span></span>`
+          ? `<span class="top-icon">${ICON.award}</span><span class="top-text"><b>Top meal plan:</b> ${escapeHtml(topMeal.title || 'Untitled')} <span class="muted">· ${topMeal.download_count} import${topMeal.download_count === 1 ? '' : 's'}</span></span>`
           : '';
         $('topMealCallout').style.display = hasTopMeal ? '' : 'none';
 
@@ -3818,7 +3858,7 @@
         if (plans.length === 0) {
           grid.innerHTML = `
             <div class="empty">
-              <div style="font-size: 36px; margin-bottom: 10px;">🍽️</div>
+              <div style="font-size: 36px; margin-bottom: 10px; color: var(--text-muted);">${ICON.plate}</div>
               <div style="font-weight: 600; margin-bottom: 4px;">No meal plans shared yet</div>
               <div style="font-size: 13px;">Publish a meal plan from the MomRise app to see it here.</div>
             </div>`;
@@ -3934,7 +3974,7 @@
         if (routines.length === 0) {
           grid.innerHTML = `
             <div class="empty">
-              <div style="font-size: 36px; margin-bottom: 10px;">📋</div>
+              <div style="font-size: 36px; margin-bottom: 10px; color: var(--text-muted);">${ICON.list}</div>
               <div style="font-weight: 600; margin-bottom: 4px;">No routines shared yet</div>
               <div style="font-size: 13px;">Toggle "Share with followers" on any routine in the MomRise app.</div>
             </div>`;
@@ -4073,7 +4113,7 @@
       } catch (e) {
         console.error(e);
         card.querySelector('.body').innerHTML = `
-          <div class="status error">⚠️ ${escapeHtml(e.message || 'Scan failed')}</div>
+          <div class="status error">${ICON.alert} ${escapeHtml(e.message || 'Scan failed')}</div>
           <div class="actions"><button class="btn ghost" data-discard>Remove</button></div>`;
         card.querySelector('[data-discard]').addEventListener('click', () => card.remove());
       }
@@ -4085,9 +4125,9 @@
       newBlankRecipeBtn.addEventListener('click', () => {
         const card = document.createElement('div');
         card.className = 'scan-card';
-        // No photo for a hand-typed recipe — start with the doc placeholder.
+        // No photo for a hand-typed recipe — start with the image placeholder.
         card.innerHTML = `
-          <div class="thumb"><span style="font-size:36px;">📄</span></div>
+          <div class="thumb"><span style="font-size:36px;color:var(--text-muted);">${ICON.image}</span></div>
           <div class="body"></div>`;
         $('manualCards').prepend(card);
         // Empty recipe object → renderRecipeCard fills the form blank.
@@ -4165,7 +4205,7 @@
         renderRecipeCard(card, { origin: 'url', file: null, objectUrl: null, sourceUrl: url, recipe });
       } catch (e) {
         console.error(e);
-        card.querySelector('.thumb').innerHTML = '<span style="font-size:32px;">⚠️</span>';
+        card.querySelector('.thumb').innerHTML = `<span style="font-size:32px;color:var(--text-muted);">${ICON.alert}</span>`;
         card.querySelector('.body').innerHTML = `
           <div class="status error">${escapeHtml(e.message || 'URL import failed')}</div>
           <div class="actions"><button class="btn ghost" data-discard>Remove</button></div>`;
@@ -4233,7 +4273,7 @@
       return `
         <div class="rm-summary">
           ${pills.length ? `<div class="rm-tags-row">${pills.join('')}</div>` : ''}
-          ${allergens.length ? `<div class="rm-allergen-line">⚠️ Contains: ${allergens.map(escapeHtml).join(', ')}</div>` : ''}
+          ${allergens.length ? `<div class="rm-allergen-line">${ICON.alert} Contains: ${allergens.map(escapeHtml).join(', ')}</div>` : ''}
         </div>`;
     }
 
@@ -4250,9 +4290,9 @@
       // For URL imports without a base64 photo, prefer the source image
       // URL as thumbnail. For scan imports, the photo is already shown.
       if (sourceUrl && imageUrl && !objectUrl) {
-        card.querySelector('.thumb').innerHTML = `<img src="${escapeHtml(imageUrl)}" alt="" onerror="this.parentElement.innerHTML='<span style=&quot;font-size:36px;&quot;>📄</span>'">`;
+        card.querySelector('.thumb').innerHTML = `<img src="${escapeHtml(imageUrl)}" alt="" onerror="this.remove()">`;
       } else if (sourceUrl && !imageUrl) {
-        card.querySelector('.thumb').innerHTML = '<span style="font-size:36px;">📄</span>';
+        card.querySelector('.thumb').innerHTML = `<span style="font-size:36px;color:var(--text-muted);">${ICON.image}</span>`;
       }
 
       // Pre-fill attribution for URL imports with the source domain so
@@ -4475,8 +4515,8 @@
         const ingCount = Array.isArray(r.ingredients) ? r.ingredients.length : 0;
         const stepCount = Array.isArray(r.CookingInstructions) ? r.CookingInstructions.length : 0;
         const thumbHtml = r.image_url
-          ? `<img src="${escapeHtml(r.image_url)}" alt="" onerror="this.parentElement.innerHTML='📄'">`
-          : '📄';
+          ? `<img src="${escapeHtml(r.image_url)}" alt="">`
+          : ICON.image;
         return `
           <div class="recipe-row" data-id="${escapeHtml(it.id)}">
             <div class="row-thumb">${thumbHtml}</div>
@@ -4497,6 +4537,11 @@
 
       listEl.querySelectorAll('.recipe-row').forEach((row) => {
         row.addEventListener('click', () => toggleExpand(row));
+      });
+      // Broken recipe photo (e.g. a rotted blog image URL) → fall back
+      // to the line-icon placeholder.
+      listEl.querySelectorAll('.row-thumb img').forEach((img) => {
+        img.addEventListener('error', () => { img.parentElement.innerHTML = ICON.image; });
       });
       listEl.querySelectorAll('[data-delete]').forEach((btn) => {
         btn.addEventListener('click', (e) => {
@@ -4640,7 +4685,7 @@
           photoText.textContent = 'Change photo';
           photoRemove.hidden = false;
         } else {
-          photoThumb.innerHTML = '🍽';
+          photoThumb.innerHTML = ICON.image;
           photoText.textContent = 'Upload photo';
           photoRemove.hidden = true;
         }
@@ -4811,8 +4856,8 @@
         const filled = p.slots ? Object.keys(p.slots).length : 0;
         const isPublished = p.status === 'published';
         const thumb = p.cover_image_url
-          ? `<img src="${escapeHtml(p.cover_image_url)}" alt="" onerror="this.parentElement.innerHTML='📅'">`
-          : '📅';
+          ? `<img src="${escapeHtml(p.cover_image_url)}" alt="" onerror="this.remove()">`
+          : ICON.calendar;
         return `
           <div class="recipe-row" data-plan-id="${escapeHtml(it.id)}">
             <div class="row-thumb">${thumb}</div>
@@ -4910,7 +4955,7 @@
             if (slot) {
               const thumb = slot.image_url
                 ? `<img src="${escapeHtml(slot.image_url)}" alt="">`
-                : '🍽';
+                : ICON.image;
               return `<div class="plan-slot filled" data-slot="${key}" data-meal-label="${m.label}">
                 <span class="slot-meal-label">${m.label}</span>
                 <div class="slot-thumb">${thumb}</div>
@@ -4992,7 +5037,7 @@
         $('planCoverClear').hidden = false;
         $('planCoverUploadText').textContent = 'Change cover';
       } else {
-        thumb.innerHTML = '📅';
+        thumb.innerHTML = ICON.calendar;
         $('planCoverClear').hidden = true;
         $('planCoverUploadText').textContent = 'Upload cover';
       }
@@ -5056,7 +5101,7 @@
         for (const m of meals) {
           const s = planSlots[`${d}_${m.key}`];
           if (s) {
-            const thumb = s.image_url ? `<img src="${escapeHtml(s.image_url)}" alt="">` : '🍽';
+            const thumb = s.image_url ? `<img src="${escapeHtml(s.image_url)}" alt="">` : ICON.image;
             mealsHtml += `<div class="pv-meal">
               <span class="pv-meal-type">${m.label}</span>
               <span class="pv-meal-thumb">${thumb}</span>
@@ -5079,8 +5124,8 @@
       $('planPreviewBody').innerHTML = `
         <div class="pv-cover">
           ${cover
-            ? `<img src="${escapeHtml(cover)}" alt="" onerror="this.parentElement.innerHTML='<span class=&quot;pv-cover-fallback&quot;>📅</span>'">`
-            : '<span class="pv-cover-fallback">📅</span>'}
+            ? `<img src="${escapeHtml(cover)}" alt="" onerror="this.remove()">`
+            : `<span class="pv-cover-fallback">${ICON.calendar}</span>`}
         </div>
         <div class="pv-head">
           <h2>${escapeHtml(title)}</h2>
@@ -5142,7 +5187,7 @@
       }
       listEl.innerHTML = matches.map((r) => `
         <div class="picker-row" data-pick="${escapeHtml(r.id)}">
-          <div class="picker-thumb">${r.image_url ? `<img src="${escapeHtml(r.image_url)}" alt="">` : '🍽'}</div>
+          <div class="picker-thumb">${r.image_url ? `<img src="${escapeHtml(r.image_url)}" alt="">` : ICON.image}</div>
           <div class="picker-name">${escapeHtml(r.recipe_name)}</div>
         </div>`).join('');
       listEl.querySelectorAll('[data-pick]').forEach((row) => {
