@@ -1414,7 +1414,7 @@
               <div>
                 <div class="section-head-simple"><h2 style="font-size: 16px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; border-left-width: 2px;">Your code</h2></div>
                 <div class="share-code" id="shareCode">—</div>
-                <div class="share-helper">Tap any button to copy. Anyone who enters this code earns you 50% of their subscription.</div>
+                <div class="share-helper">Tap any button to copy. Anyone who enters this code earns you a percentage of their subscription.</div>
               </div>
               <div class="share-actions">
                 <button class="btn" id="copyCodeBtn" style="min-width: 150px;">Copy code</button>
@@ -1556,7 +1556,7 @@
             </div>
           </div>
           <div class="empty empty-finance" id="financeEmpty">
-            Connect your bank to start earning 50% of every subscription from your followers.
+            Connect your bank to start earning a percentage of every subscription from your followers.
           </div>
 
           <!-- Performance -->
@@ -2984,9 +2984,11 @@
       $('celebrateContinueBtn').onclick = () => {
         show('viewDashboard');
         applyCreatorTheme();
+        renderShareKit();
         subscribeDocs();
         loadAnalytics();
         loadPayouts();
+        loadChangelog();
       };
     }
 
@@ -3228,7 +3230,7 @@
       y = pillY + pillH + gapBelow;
       ctx.fillStyle = '#2A6F67';
       ctx.font = `bold ${40 * s}px Inter, system-ui, sans-serif`;
-      ctx.fillText('Earn me 50% when you join', W / 2, y);
+      ctx.fillText('Earn me a percentage when you join', W / 2, y);
 
       y += 50 * s;
       ctx.fillStyle = '#5D4E60';
@@ -3294,7 +3296,7 @@
           const btn = $('financeContinueBtn');
           if (btn) btn.addEventListener('click', () => startConnectOnboarding(btn));
         } else {
-          $('financeEmpty').innerHTML = 'Connect your bank to start earning 50% of every subscription from your followers. <button class="checklist-action" id="financeConnectBtn">Connect your bank</button>';
+          $('financeEmpty').innerHTML = 'Connect your bank to start earning a percentage of every subscription from your followers. <button class="checklist-action" id="financeConnectBtn">Connect your bank</button>';
           const btn = $('financeConnectBtn');
           if (btn) btn.addEventListener('click', () => startConnectOnboarding(btn));
         }
@@ -3682,8 +3684,13 @@
         {
           id: 'meal',
           label: 'Publish your first meal plan',
-          sub: ctx.mealPlansPublished > 0 ? `${ctx.mealPlansPublished} published` : 'Publish from the MomRise app',
+          sub: ctx.mealPlansPublished > 0
+            ? `${ctx.mealPlansPublished} published`
+            : 'Build a multi-day plan in the Plans tab',
           done: ctx.mealPlansPublished > 0,
+          action: !ctx.mealPlansPublished
+            ? { label: 'Build a plan', handler: () => { show('viewBuildPlan'); showPlanListMode(); loadPlans(); } }
+            : null,
         },
         {
           id: 'share',
@@ -3743,12 +3750,13 @@
           }
         })();
 
-        const [docsSnap, mealPlans, routinesSnap] = await Promise.all([
+        const [docsSnap, mealPlans, routinesSnap, productsSnap] = await Promise.all([
           getDocs(query(collection(db, 'app_content'), where('creator_ref', '==', creatorDoc.ref))),
           getDocs(query(collection(db, 'creator_content'),
             where('creator_code', '==', creatorDoc.data.code),
             where('type', '==', 'meal_plan'))),
           routinesP,
+          getDocs(query(collection(db, 'creator_products'), where('creator_ref', '==', creatorDoc.ref))),
         ]);
 
         // Counters can drift negative when a creator is created after some
@@ -3762,6 +3770,11 @@
         const docs = docsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
         const plans = mealPlans.docs.map(d => ({ id: d.id, ...d.data() }));
         const routines = routinesSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+        // Meal plans built + published from the web Plans tab (creator_products),
+        // separate from the app-published ones above.
+        const webPlansPublished = productsSnap.docs
+          .map(d => d.data())
+          .filter(p => p.type === 'meal_plan' && p.status === 'published').length;
 
         const publishedDocs = docs.filter(d => d.is_published === true);
         const totalViews = docs.reduce((s, d) => s + (d.view_count || 0), 0);
@@ -3797,7 +3810,7 @@
           : (lowCents === highCents ? fmtMoney(highCents) : `${fmtMoney(lowCents)} – ${fmtMoney(highCents)}`);
         $('statMrrSub').innerHTML = subscriberCount > 0
           ? `<span class="muted">${subscriberCount} sub${subscriberCount === 1 ? '' : 's'} · low = all yearly, high = all monthly</span>`
-          : '<span class="muted">Based on $6.99/mo or $69.99/yr · 50% share</span>';
+          : '<span class="muted">Based on $6.99/mo or $69.99/yr · your share</span>';
 
         // Top content callouts — hide card if nothing to show.
         const topDoc = publishedDocs.slice().sort((a, b) => (b.view_count || 0) - (a.view_count || 0))[0];
@@ -3849,7 +3862,7 @@
         renderChecklist({
           onboarded: connectStatusCache?.onboarded,
           docsPublished: publishedDocs.length,
-          mealPlansPublished: plans.length,
+          mealPlansPublished: plans.length + webPlansPublished,
         });
 
         // Audience over time (reads daily snapshots subcollection).
