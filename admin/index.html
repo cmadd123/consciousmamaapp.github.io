@@ -304,6 +304,7 @@
               <input type="search" id="creatorSearch" placeholder="Search name, code, niche…"
                      style="padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border); background: white; font-size: 14px; font-family: inherit; width: 240px;">
               <button class="btn ghost" id="refreshCreatorsBtn">↻ Refresh</button>
+              <button class="btn" id="newCreatorBtn">+ New creator</button>
             </div>
           </div>
           <div style="overflow-x: auto; background: var(--surface); border: 1px solid var(--border); border-radius: 12px;">
@@ -537,6 +538,28 @@
     </div>
   </div>
 
+  <!-- Manual creator creation modal (testing / troubleshooting) -->
+  <div class="modal-backdrop" id="createCreatorModal">
+    <div class="modal">
+      <h3>Create a creator manually</h3>
+      <p>For testing and troubleshooting. Links a creator profile to an existing MomRise account by email — they pick their code on their first dashboard visit. No application, no welcome email.</p>
+      <label style="display:block; font-size:13px; font-weight:600; margin-bottom:4px;">Email</label>
+      <input type="email" id="ccEmail" placeholder="creator@example.com"
+             style="width:100%; padding:10px 12px; border:1px solid var(--border); border-radius:8px; font-size:14px; font-family:inherit; margin-bottom:12px;">
+      <label style="display:block; font-size:13px; font-weight:600; margin-bottom:4px;">Name</label>
+      <input type="text" id="ccName" placeholder="Haley Maddox"
+             style="width:100%; padding:10px 12px; border:1px solid var(--border); border-radius:8px; font-size:14px; font-family:inherit; margin-bottom:12px;">
+      <label style="display:block; font-size:13px; font-weight:600; margin-bottom:4px;">Test password <span style="color:var(--text-muted); font-weight:400;">(optional)</span></label>
+      <input type="text" id="ccPassword" placeholder="Leave blank for a real creator"
+             style="width:100%; padding:10px 12px; border:1px solid var(--border); border-radius:8px; font-size:14px; font-family:inherit; margin-bottom:4px;">
+      <p style="font-size:12px; margin:0;">Only set a password to spin up a test account when no MomRise account exists for that email. Real creators must already have an account.</p>
+      <div class="modal-actions">
+        <button class="btn ghost" id="cancelCreateCreatorBtn">Cancel</button>
+        <button class="btn" id="confirmCreateCreatorBtn">Create creator</button>
+      </div>
+    </div>
+  </div>
+
   <div class="toast" id="toast"></div>
 
   <script type="module">
@@ -674,6 +697,43 @@
     // List
     $('refreshBtn').addEventListener('click', () => { loadApplications(); loadAggregateMetrics(); });
     $('refreshCreatorsBtn').addEventListener('click', loadCreators);
+
+    // Manual creator creation — testing / troubleshooting.
+    $('newCreatorBtn').addEventListener('click', () => {
+      $('ccEmail').value = '';
+      $('ccName').value = '';
+      $('ccPassword').value = '';
+      $('createCreatorModal').classList.add('open');
+    });
+    $('cancelCreateCreatorBtn').addEventListener('click',
+      () => $('createCreatorModal').classList.remove('open'));
+    $('createCreatorModal').addEventListener('click', (e) => {
+      if (e.target === $('createCreatorModal')) $('createCreatorModal').classList.remove('open');
+    });
+    $('confirmCreateCreatorBtn').addEventListener('click', async () => {
+      const email = $('ccEmail').value.trim();
+      const name = $('ccName').value.trim();
+      const password = $('ccPassword').value;
+      if (!email) { toast('Email is required', true); return; }
+      const btn = $('confirmCreateCreatorBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="loader"></span> Creating…';
+      try {
+        const call = httpsCallable(functions, 'adminCreateCreator');
+        const res = await call({ email, name, password: password || undefined });
+        $('createCreatorModal').classList.remove('open');
+        toast(res.data && res.data.createdUser
+          ? 'Creator created — test account spun up too.'
+          : 'Creator created.');
+        loadCreators();
+      } catch (e) {
+        console.error(e);
+        toast(e.message || 'Could not create creator', true);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Create creator';
+      }
+    });
     $('pendingCalloutBtn').addEventListener('click', () => {
       // Jump to Applications tab + Pending filter
       const appsTab = document.querySelector('.tab-btn[data-tab="applications"]');

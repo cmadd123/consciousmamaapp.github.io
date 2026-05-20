@@ -2327,9 +2327,87 @@ function _renderCreatorWelcomeEmail(name) {
 </html>`;
 }
 
-// Called by the creator from their dashboard on first sign-in to claim
-// their code. Validates format + uniqueness, verifies caller owns the
-// creator doc, and writes atomically.
+// Admin-only: create a creator profile directly, without an application.
+// For testing/troubleshooting. Links to an existing MomRise user by
+// email; if there's no account and a password is supplied, spins up a
+// test user. Mirrors approveCreatorApplication's creator-doc shape and
+// free-forever comp, but sends no welcome email.
+exports.adminCreateCreator = onCall(async (request) => {
+  _requireAdmin(request);
+  const { email, name, password } = request.data || {};
+  if (!email || typeof email !== 'string') {
+    throw new HttpsError('invalid-argument', 'email required');
+  }
+  const cleanEmail = email.trim().toLowerCase();
+  const db = getFirestore();
+  const auth = getAuth();
+
+  // Resolve the Firebase user — or, with a password, create a test one.
+  let uid;
+  let createdUser = false;
+  try {
+    uid = (await auth.getUserByEmail(cleanEmail)).uid;
+  } catch (err) {
+    if (err.code === 'auth/user-not-found') {
+      if (!password) {
+        throw new HttpsError('failed-precondition',
+          `No MomRise account for ${cleanEmail}. Have them sign up first, or pass a password to create a test account.`);
+      }
+      uid = (await auth.createUser({ email: cleanEmail, password, emailVerified: false })).uid;
+      createdUser = true;
+    } else {
+      throw err;
+    }
+  }
+
+  // One creator profile per user.
+  const existing = await db.collection('creators')
+    .where('user_ref', '==', db.doc(`users/${uid}`))
+    .limit(1).get();
+  if (!existing.empty) {
+    throw new HttpsError('already-exists',
+      `This user already has a creator profile (code ${existing.docs[0].data().code || '(not set)'}).`);
+  }
+
+  const creatorRef = db.collection('creators').doc();
+  const batch = db.batch();
+  batch.set(creatorRef, {
+    name: (name || '').trim() || cleanEmail,
+    code: '', // Creator picks their own code on first dashboard visit.
+    user_ref: db.doc(`users/${uid}`),
+    is_active: true,
+    country: 'US',
+    bio: '',
+    niche: '',
+    avatar_url: '',
+    follower_count: 0,
+    subscriber_count: 0,
+    lifetime_payout_cents: 0,
+    theme_primary: '#52A097',
+    theme_secondary: '#D7F2EB',
+    theme_accent: '#EE8B60',
+    theme_font: '',
+    theme_font_url: '',
+    stripe_connect_onboarded: false,
+    created_at: FieldValue.serverTimestamp(),
+    created_manually: true,
+    created_by: request.auth.token.email,
+  });
+  // Same free-forever comp an approved creator gets.
+  batch.set(db.doc(`users/${uid}`), {
+    is_comped: true,
+    subscription_source: 'creator_comp',
+    subscription_status: 'active',
+    current_period_end: new Date('2099-12-31T00:00:00Z'),
+    comped_at: FieldValue.serverTimestamp(),
+    comped_by: request.auth.token.email,
+    comped_reason: 'creator_program_manual',
+  }, { merge: true });
+  await batch.commit();
+
+  return { ok: true, creatorId: creatorRef.id, uid, createdUser };
+});
+
 // Called by the creator to update their own profile (name, bio, niche,
 // theme_primary). Scope is narrow — the code, stripe fields, and
 // counters are off-limits.
