@@ -278,6 +278,15 @@
     }
     .url-input-row .btn { white-space: nowrap; }
 
+    .paste-input {
+      width: 100%; display: block; font-family: inherit; font-size: 16px;
+      padding: 12px 14px; border: 1px solid var(--border); border-radius: 10px;
+      resize: vertical; min-height: 100px; margin-bottom: 10px;
+    }
+    .paste-input:focus {
+      outline: 2px solid var(--primary); outline-offset: -1px; border-color: var(--primary);
+    }
+
     .scan-cards { display: flex; flex-direction: column; gap: 14px; margin-top: 16px; }
     .scan-card {
       background: color-mix(in srgb, var(--primary) 5%, var(--surface));
@@ -469,6 +478,7 @@
     .recipe-row .row-meta .src-pill.scan { background: color-mix(in srgb, #10B981 14%, white); color: #047857; }
     .recipe-row .row-meta .src-pill.url { background: color-mix(in srgb, #3B82F6 14%, white); color: #1d4ed8; }
     .recipe-row .row-meta .src-pill.manual { background: color-mix(in srgb, #8B5CF6 14%, white); color: #6d28d9; }
+    .recipe-row .row-meta .src-pill.text { background: color-mix(in srgb, var(--primary) 15%, white); color: var(--primary-dark); }
     .recipe-row .row-meta .src-pill.other { background: var(--border); color: var(--text-muted); }
     .recipe-row .row-actions {
       position: absolute; top: 8px; right: 8px;
@@ -1745,23 +1755,30 @@
           <div class="scan-cards" id="scanCards"></div>
         </div>
 
-        <!-- From URL -->
+        <!-- From a recipe blog link -->
         <div class="scan-section">
           <div class="scan-section-head">
-            <h3><span data-icon="link"></span> From URL</h3>
-            <span class="muted">Food blogs work best</span>
+            <h3><span data-icon="link"></span> From a link</h3>
+            <span class="muted">Recipe blogs</span>
           </div>
-          <p class="scan-intro">
-            Paste a recipe URL from a food blog. Most blogs publish structured recipe data
-            that imports cleanly.
-            <br><strong>Heads up:</strong> Instagram, TikTok, and Pinterest don't expose recipe
-            data on this path — use the creator's own blog URL or scan a photo instead.
-          </p>
+          <p class="scan-intro">Paste a link to a recipe on a food blog — it imports automatically.</p>
           <div class="url-input-row">
             <input type="url" id="urlInput" placeholder="https://example.com/recipe" autocomplete="off">
             <button class="btn" id="urlFetchBtn">Fetch recipe</button>
           </div>
           <div class="scan-cards" id="urlCards"></div>
+        </div>
+
+        <!-- Paste recipe text -->
+        <div class="scan-section">
+          <div class="scan-section-head">
+            <h3><span data-icon="clipboard"></span> Paste recipe text</h3>
+            <span class="muted">From a caption or note</span>
+          </div>
+          <p class="scan-intro">Copy a recipe from anywhere — a TikTok or Instagram caption, an email, a note — and Claude turns it into a recipe.</p>
+          <textarea id="pasteInput" class="paste-input" rows="5" placeholder="Paste the full recipe text here — title, ingredients, and steps."></textarea>
+          <button class="btn" id="pasteExtractBtn">Extract recipe</button>
+          <div class="scan-cards" id="pasteCards"></div>
         </div>
 
         <!-- Write from scratch -->
@@ -2132,6 +2149,7 @@
         image: w('<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.6"/><path d="M21 15l-5-5L5 21"/>'),
         check: w('<path d="M20 6 9 17l-5-5"/>'),
         chevron: w('<path d="M6 9l6 6 6-6"/>'),
+        clipboard: w('<rect x="8" y="3" width="8" height="4" rx="1.5"/><path d="M16 5h2a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2"/>'),
       };
     })();
     document.querySelectorAll('[data-icon]').forEach((el) => {
@@ -4296,6 +4314,73 @@
       }
     }
 
+    // --- Paste recipe text ---
+    // Same extractRecipe function as URL import, just text instead of a
+    // URL — covers recipes that live in a TikTok/Instagram caption.
+    let pasteCardCounter = 0;
+    const pasteInput = $('pasteInput');
+    const pasteExtractBtn = $('pasteExtractBtn');
+    if (pasteInput && pasteExtractBtn) {
+      pasteExtractBtn.addEventListener('click', async () => {
+        const text = pasteInput.value.trim();
+        if (text.length < 30) { toast('Paste the full recipe text first', true); return; }
+        pasteExtractBtn.disabled = true;
+        const orig = pasteExtractBtn.textContent;
+        pasteExtractBtn.textContent = 'Extracting…';
+        pasteInput.value = '';
+        try { await processTextImport(text); }
+        finally { pasteExtractBtn.disabled = false; pasteExtractBtn.textContent = orig; }
+      });
+    }
+
+    async function processTextImport(text) {
+      const card = document.createElement('div');
+      card.className = 'scan-card';
+      card.id = `pasteCard_${++pasteCardCounter}`;
+      card.innerHTML = `
+        <div class="thumb"><div class="loader"></div></div>
+        <div class="body">
+          <div class="status"><div class="loader"></div> Reading your recipe…</div>
+        </div>`;
+      $('pasteCards').prepend(card);
+
+      try {
+        const token = await currentUser.getIdToken();
+        const response = await fetch(EXTRACT_FN_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify({ data: { text, context: 'creator' } }),
+        });
+        const json = await response.json().catch(() => null);
+        if (!response.ok) {
+          const msg = json?.result?.message || json?.result?.error || `Server error: ${response.status}`;
+          throw new Error(msg);
+        }
+        if (json?.result?.error) {
+          throw new Error(json.result.message || json.result.error);
+        }
+        const recipe =
+          json?.result?.recipe ||
+          (json?.result && json.result.name ? json.result : null) ||
+          (json?.name ? json : null);
+        if (!recipe || !recipe.name) {
+          throw new Error("Couldn't read a recipe from that text. Make sure it includes a title, ingredients, and steps.");
+        }
+        card.querySelector('.thumb').innerHTML = `<span style="font-size:36px;color:var(--text-muted);">${ICON.image}</span>`;
+        renderRecipeCard(card, { origin: 'text', file: null, objectUrl: null, sourceUrl: null, recipe });
+      } catch (e) {
+        console.error(e);
+        card.querySelector('.thumb').innerHTML = `<span style="font-size:32px;color:var(--text-muted);">${ICON.alert}</span>`;
+        card.querySelector('.body').innerHTML = `
+          <div class="status error">${escapeHtml(e.message || 'Text import failed')}</div>
+          <div class="actions"><button class="btn ghost" data-discard>Remove</button></div>`;
+        card.querySelector('[data-discard]').addEventListener('click', () => card.remove());
+      }
+    }
+
     // ── Recipe classification fields (recipe type / meal type / allergens
     //    / tags). Shared markup keeps the create card and the edit form in
     //    sync; values match the app's RecipeType + MealTyp enums.
@@ -4645,10 +4730,12 @@
         const r = it.data;
         const src = r.source === 'creator_web_ocr' ? 'scan'
           : r.source === 'creator_web_url' ? 'url'
+          : r.source === 'creator_web_text' ? 'text'
           : r.source === 'creator_web_manual' ? 'manual'
           : 'other';
         const srcLabel = src === 'scan' ? 'Scan'
           : src === 'url' ? 'URL'
+          : src === 'text' ? 'Pasted'
           : src === 'manual' ? 'Written'
           : 'Mobile';
         const dateStr = r.created_at?.seconds
