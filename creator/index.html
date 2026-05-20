@@ -522,6 +522,8 @@
       font-size: 14px; padding: 2px 4px; flex-shrink: 0; border-radius: 4px;
     }
     .plan-slot .slot-remove:hover { background: color-mix(in srgb, var(--danger) 12%, white); color: var(--danger); }
+    /* Per-slot meal label — only shown on mobile (desktop has column heads). */
+    .slot-meal-label { display: none; }
     .plan-editor-actions {
       display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px;
     }
@@ -583,9 +585,27 @@
       .scan-card { grid-template-columns: 1fr; }
       .scan-card .thumb { width: 100%; height: 200px; }
       .recipe-detail { grid-template-columns: 1fr; gap: 14px; }
-      .plan-day-row { grid-template-columns: 1fr; }
-      .plan-grid .plan-col-head { display: none; }
-      .plan-slot.empty::before { content: attr(data-meal-label) " — "; }
+
+      /* Plan grid → stacked day cards. Column-header row is dropped;
+         each day becomes a bordered card with its meals listed inside,
+         every slot labeled with its meal type. */
+      .plan-grid { gap: 12px; }
+      .plan-grid .plan-day-row:first-child { display: none; }
+      .plan-day-row {
+        display: block;
+        border: 1px solid var(--border); border-radius: 12px;
+        padding: 10px 12px 12px; background: var(--surface);
+      }
+      .plan-day-head {
+        font-size: 14px; font-weight: 700; color: var(--text);
+        padding-bottom: 8px; margin-bottom: 4px; border-bottom: 1px solid var(--border);
+      }
+      .plan-slot { margin-top: 8px; flex-wrap: wrap; min-height: 0; }
+      .slot-meal-label {
+        display: block; width: 100%;
+        font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em;
+        font-weight: 700; color: var(--text-muted); margin-bottom: 4px;
+      }
 
       /* Scan: lead with a camera button, demote the dropzone copy. */
       .scan-camera-btn {
@@ -4614,17 +4634,23 @@
           ${meals.map((m) => {
             const key = `${d}_${m.key}`;
             const slot = planSlots[key];
+            // slot-meal-label is hidden on desktop (the column header
+            // does that job) and shown on mobile where rows are stacked.
             if (slot) {
               const thumb = slot.image_url
                 ? `<img src="${escapeHtml(slot.image_url)}" alt="">`
                 : '🍽';
               return `<div class="plan-slot filled" data-slot="${key}" data-meal-label="${m.label}">
+                <span class="slot-meal-label">${m.label}</span>
                 <div class="slot-thumb">${thumb}</div>
                 <div class="slot-name">${escapeHtml(slot.recipe_name || 'Recipe')}</div>
                 <button class="slot-remove" data-slot-remove="${key}" title="Remove">✕</button>
               </div>`;
             }
-            return `<div class="plan-slot empty" data-slot="${key}" data-meal-label="${m.label}">+ Add</div>`;
+            return `<div class="plan-slot empty" data-slot="${key}" data-meal-label="${m.label}">
+              <span class="slot-meal-label">${m.label}</span>
+              <span class="slot-add-text">+ Add</span>
+            </div>`;
           }).join('')}
         </div>`;
       }
