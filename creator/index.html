@@ -4369,14 +4369,14 @@
       }
 
       // MealRecord schema fields (recipe_name, ingredients[],
-      // CookingInstructions[], prepare_time, image_url, user_ref) plus
-      // non-breaking cook_time + servings + source provenance.
+      // CookingInstructions[], prepare_time, cooking_time, image_url,
+      // user_ref) plus non-breaking servings + source provenance.
       const payload = {
         recipe_name: name,
         ingredients,
         CookingInstructions: instructions,
         prepare_time: prep,
-        cook_time: cook,
+        cooking_time: cook,
         servings,
         image_url: finalImageUrl,
         user_ref: doc(db, 'users', currentUser.uid),
@@ -4594,7 +4594,7 @@
           </div>
           <div class="edit-meta-row">
             <div><label>Prep (min)</label><input type="number" class="edit-prep" min="0" value="${parseInt(r.prepare_time, 10) || 0}"></div>
-            <div><label>Cook (min)</label><input type="number" class="edit-cook" min="0" value="${parseInt(r.cook_time, 10) || 0}"></div>
+            <div><label>Cook (min)</label><input type="number" class="edit-cook" min="0" value="${parseInt(r.cooking_time ?? r.cook_time, 10) || 0}"></div>
             <div><label>Servings</label><input type="number" class="edit-servings" min="1" value="${parseInt(r.servings, 10) || 0}"></div>
           </div>
           ${recipeMetaFieldsHtml(r)}
@@ -4684,7 +4684,7 @@
           recipe_name: form.querySelector('.edit-name').value.trim() || 'Untitled recipe',
           image_url: form.querySelector('.edit-image-url').value,
           prepare_time: parseInt(form.querySelector('.edit-prep').value, 10) || 0,
-          cook_time: parseInt(form.querySelector('.edit-cook').value, 10) || 0,
+          cooking_time: parseInt(form.querySelector('.edit-cook').value, 10) || 0,
           servings: parseInt(form.querySelector('.edit-servings').value, 10) || 0,
           ingredients: form.querySelector('.edit-ingredients').value
             .split('\n').map((s) => s.trim()).filter(Boolean),
