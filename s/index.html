@@ -139,11 +139,11 @@
       var customScheme = 'momrise://shared/' + code;
 
       if (isAndroid()) {
-        // Android Intent URL: tries the app, falls back to store/message
-        // TODO: Update package name and fallback URL when Play Store listing is live
-        var intentUrl = 'intent://shared/' + code +
-          '#Intent;scheme=momrise;package=com.momrise.app;end';
-        window.location.href = intentUrl;
+        // MomRise isn't on Android yet — show "coming soon" rather than firing
+        // a deep link that would dead-end at a missing Play Store listing.
+        // When the Play Store listing is live, restore an intent:// URL here.
+        document.getElementById('status').innerHTML =
+          'MomRise is coming to Android soon! Open this link on an iPhone to import the shared content.';
       } else if (isIOS()) {
         // iOS: try the app's custom scheme. If the app opens, the page goes
         // to the background and we cancel the fallback. Otherwise, send the
@@ -179,6 +179,9 @@
       if (!isAndroid()) {
         document.getElementById('appStoreLink').style.display = 'inline';
         document.getElementById('storeComingSoon').style.display = 'none';
+      } else {
+        // No Android app yet — the open button would just dead-end.
+        document.getElementById('openBtn').style.display = 'none';
       }
 
       // Auto-try opening the app
