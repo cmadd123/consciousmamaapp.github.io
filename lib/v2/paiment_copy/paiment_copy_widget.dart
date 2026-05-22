@@ -556,6 +556,55 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
                       children: [
                         const SizedBox(height: 8.0),
 
+                        // Warm trial-ended framing — only when the free
+                        // week has lapsed. Reassures rather than cold-pitches.
+                        if (_trialExpired)
+                          _staggeredEntry(
+                            controller: _headerController,
+                            child: Container(
+                              width: double.infinity,
+                              margin: const EdgeInsets.only(bottom: 24.0),
+                              padding: const EdgeInsets.all(20.0),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.7),
+                                borderRadius: BorderRadius.circular(16.0),
+                              ),
+                              child: Column(
+                                children: [
+                                  Text(
+                                    'Your free week\'s complete 🌱',
+                                    textAlign: TextAlign.center,
+                                    style: FlutterFlowTheme.of(context)
+                                        .headlineSmall
+                                        .override(
+                                          fontFamily: 'Andika New Basic',
+                                          fontSize: 22.0,
+                                          fontWeight: FontWeight.bold,
+                                          letterSpacing: 0.0,
+                                        ),
+                                  ),
+                                  const SizedBox(height: 10.0),
+                                  Text(
+                                    'You\'ve made a beautiful start. Pick up right '
+                                    'where you left off — your plans, milestones, '
+                                    'and family calendar are all still here, '
+                                    'waiting for you.',
+                                    textAlign: TextAlign.center,
+                                    style: FlutterFlowTheme.of(context)
+                                        .bodyMedium
+                                        .override(
+                                          fontFamily: 'Andika New Basic',
+                                          fontSize: 15.0,
+                                          letterSpacing: 0.0,
+                                          color: FlutterFlowTheme.of(context)
+                                              .secondaryText,
+                                        ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+
                         // Header: Logo + title
                         _staggeredEntry(
                           controller: _headerController,
