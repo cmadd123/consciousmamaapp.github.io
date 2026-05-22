@@ -127,7 +127,7 @@ class ReviewService {
     try {
       if (await _inAppReview.isAvailable()) {
         await _inAppReview.openStoreListing(
-          appStoreId: '6740000000', // TODO: replace with real App Store ID once live
+          appStoreId: '6758357382',
         );
       }
     } catch (_) {
