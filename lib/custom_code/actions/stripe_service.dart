@@ -140,10 +140,56 @@ Future<String> createSubscription({
   }
 }
 
+/// Check if the current user is on the "premium exempt" list — a
+/// small Firestore collection of email addresses (and optionally
+/// UIDs) that should be treated as paid subscribers forever, no
+/// matter what subscription_status says. Used to grant lifetime
+/// free access to founders, reviewers, family, and a handful of
+/// hand-picked influencers.
+///
+/// Doc lookup tries (in order):
+///   1. premium_exempt/{uid}      — bulletproof, survives email changes
+///   2. premium_exempt/{email}    — easy to add before the user exists
+///                                  (lowercased; ignores Gmail dots/+)
+///
+/// Returns false on any error so a Firestore outage can't accidentally
+/// strip premium from a paying customer.
+Future<bool> isUserPremiumExempt() async {
+  try {
+    final user = currentUser;
+    if (user == null) return false;
+    final col = FirebaseFirestore.instance.collection('premium_exempt');
+
+    // Try by UID first — most robust (survives email changes + Apple
+    // Sign-In with "Hide My Email" relay addresses).
+    final byUid = await col.doc(user.uid).get();
+    if (byUid.exists) return true;
+
+    // Then by email. Lowercased. We don't strip Gmail dots / + tags
+    // here — keep the doc-id == the email the user typed, simplest
+    // possible mental model for the admin maintaining the list.
+    final email = user.email?.trim().toLowerCase();
+    if (email != null && email.isNotEmpty) {
+      final byEmail = await col.doc(email).get();
+      if (byEmail.exists) return true;
+    }
+    return false;
+  } catch (e) {
+    debugPrint('Premium exempt: lookup failed - $e');
+    return false;
+  }
+}
+
 /// Check if user has active subscription
 ///
-/// Returns true if user has 'trialing' or 'active' subscription
+/// Returns true if the user is on the premium-exempt list OR has a
+/// 'trialing' / 'active' subscription_status on their user doc.
 Future<bool> hasActiveSubscription() async {
+  // Exempt check first — short-circuits the subscription read for
+  // reviewers / founders so they're premium even if they've never
+  // touched the IAP flow.
+  if (await isUserPremiumExempt()) return true;
+
   try {
     final userSnapshot = await FirebaseFirestore.instance
         .collection('users')

@@ -320,6 +320,20 @@ service cloud.firestore {
       allow delete: if false;
     }
 
+    // ─── Premium-exempt list ──────────────────────────────────────
+    // Hand-picked Firebase users (founders, reviewers, beta testers)
+    // who get free-forever premium access. Doc IDs are lowercased
+    // emails or UIDs. The app reads this from hasActiveSubscription
+    // + the home-paywall gate; doc body is irrelevant (existence is
+    // the signal). Writes are admin-only — done via Console or service
+    // account, never from the app. See PREMIUM_EXEMPT.md for the
+    // current list + maintenance flow.
+
+    match /premium_exempt/{docId} {
+      allow read: if isAuthenticated();
+      allow write: if false;
+    }
+
     // ─── Default deny ─────────────────────────────────────────────
     match /{document=**} {
       allow read, write: if false;

@@ -4,6 +4,7 @@ import '/backend/schema/enums/enums.dart';
 import '/components/home_nav_bar_widget.dart';
 import '/components/parent_circle_widget.dart';
 import '/services/review_service.dart';
+import '/custom_code/actions/index.dart' as actions;
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/custom_functions.dart' as functions;
@@ -405,6 +406,14 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
       if (!userSnapshot.exists) return;
       final userData = userSnapshot.data() as Map<String, dynamic>?;
       if (userData == null) return;
+
+      // Premium-exempt users (founders, reviewers, hand-picked
+      // accounts in the premium_exempt collection) get treated as
+      // subscribed and skip the trial gate entirely. See
+      // stripe_service.isUserPremiumExempt for the lookup.
+      if (await actions.isUserPremiumExempt()) {
+        return;
+      }
 
       // Check if user has active subscription
       final subscriptionStatus = userData['subscription_status'] as String?;
