@@ -79,6 +79,25 @@
     }
     .cta:hover { background: var(--primary-dark); }
     .cta-sub { text-align: center; font-size: 13px; color: var(--text-muted); margin: 0 0 8px; }
+    .howto {
+      margin-top: 20px;
+      padding: 14px 16px;
+      background: color-mix(in srgb, var(--primary) 6%, white);
+      border: 1px solid color-mix(in srgb, var(--primary) 18%, var(--border));
+      border-radius: 12px;
+      text-align: left;
+    }
+    .howto-title { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; color: var(--primary-dark); margin-bottom: 8px; }
+    .howto ol { margin: 0; padding-left: 18px; font-size: 13px; line-height: 1.6; color: var(--text); }
+    .howto ol li { margin-bottom: 4px; }
+    .howto code {
+      font-family: 'SF Mono', Consolas, monospace;
+      background: var(--surface);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 700;
+      color: var(--primary-dark);
+    }
     .fine {
       margin-top: 26px; padding-top: 18px; border-top: 1px solid var(--border);
       font-size: 12px; color: var(--text-muted); line-height: 1.6; text-align: center;
@@ -140,6 +159,14 @@
       </div>
       <a id="pCta" class="cta" href="/" target="_blank" rel="noopener">Start my 7-day free trial</a>
       <p class="cta-sub">Cancel anytime · $6.99/mo or $69.99/yr after trial</p>
+      <div class="howto">
+        <div class="howto-title">How to get the credit to <span id="howtoName">this creator</span></div>
+        <ol>
+          <li>Tap <strong>Start my 7-day free trial</strong> above.</li>
+          <li>Download MomRise from the App Store and sign up.</li>
+          <li>On the trial screen, tap <strong>Got a creator code?</strong> and enter <code id="howtoCode">—</code></li>
+        </ol>
+      </div>
       <div class="fine">
         <span class="disclosure-pill">Paid partnership</span>
         <p id="pDisclosureName" style="margin: 0;">
@@ -185,6 +212,8 @@
         if (bio && bio !== niche) { $('pBio').textContent = bio; $('pBio').hidden = false; }
         $('pCode').textContent = c.code;
         $('pFine').textContent = firstName;
+        $('howtoName').textContent = firstName;
+        $('howtoCode').textContent = c.code;
         $('pCta').href = `/?c=${encodeURIComponent(c.code)}`;
 
         // Update tab + OG tags for sharing

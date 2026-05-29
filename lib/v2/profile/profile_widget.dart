@@ -15,6 +15,7 @@ import 'dart:ui';
 import '/index.dart';
 import '/custom_code/actions/index.dart' as actions;
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -53,6 +54,143 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
     _model.dispose();
 
     super.dispose();
+  }
+
+  /// Show the creator-code entry dialog and write the attribution to the
+  /// user's doc via setActiveCreatorCode. Surfaces real error messages
+  /// back to the user (wrong code, self-attribution, etc.) so the failure
+  /// mode is debuggable in the field — not a generic "something went wrong."
+  Future<void> _openCreatorCodeDialog() async {
+    final codeController = TextEditingController();
+    final result = await showDialog<String>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Text(
+          'Add Creator Code',
+          style: FlutterFlowTheme.of(context).bodyMedium.override(
+                fontFamily: 'Andika New Basic',
+                fontSize: 20.0,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 0.0,
+              ),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              "Did a friend or creator share MomRise with you? Enter their code and they'll get credit for your subscription.",
+              style: FlutterFlowTheme.of(context).bodySmall.override(
+                    fontFamily: 'Andika New Basic',
+                    color: FlutterFlowTheme.of(context).secondaryText,
+                    fontSize: 13.0,
+                    letterSpacing: 0.0,
+                  ),
+            ),
+            const SizedBox(height: 16.0),
+            TextField(
+              controller: codeController,
+              textCapitalization: TextCapitalization.characters,
+              maxLength: 20,
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp(r'[A-Za-z0-9]')),
+              ],
+              style: FlutterFlowTheme.of(context).bodyLarge.override(
+                    fontFamily: 'Andika New Basic',
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 3.0,
+                  ),
+              textAlign: TextAlign.center,
+              decoration: InputDecoration(
+                hintText: 'CODE',
+                hintStyle: TextStyle(
+                  color: FlutterFlowTheme.of(context)
+                      .secondaryText
+                      .withOpacity(0.4),
+                  letterSpacing: 3.0,
+                ),
+                filled: true,
+                fillColor: FlutterFlowTheme.of(context).primaryBackground,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(14.0),
+                  borderSide: BorderSide.none,
+                ),
+                counterText: '',
+              ),
+              autofocus: true,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(null),
+            child: Text(
+              'Cancel',
+              style: TextStyle(
+                color: FlutterFlowTheme.of(context).secondaryText,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              final code = codeController.text.trim().toUpperCase();
+              if (code.length >= 3 && code.length <= 20) {
+                Navigator.of(dialogContext).pop(code);
+              }
+            },
+            child: Text(
+              'Apply',
+              style: TextStyle(
+                color: FlutterFlowTheme.of(context).primary,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+    codeController.dispose();
+    if (result == null || result.isEmpty || !mounted) return;
+
+    try {
+      final callable = FirebaseFunctions.instance
+          .httpsCallable('setActiveCreatorCode');
+      final response = await callable.call({'code': result});
+      final data = Map<String, dynamic>.from(response.data as Map);
+      final creatorName = data['creator_name'] as String? ?? 'the creator';
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              "Thanks — $creatorName will get credit when you subscribe.",
+            ),
+            backgroundColor: FlutterFlowTheme.of(context).primary,
+            duration: const Duration(seconds: 4),
+          ),
+        );
+      }
+    } on FirebaseFunctionsException catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.message ?? "We couldn't apply that code."),
+            backgroundColor: FlutterFlowTheme.of(context).error,
+            duration: const Duration(seconds: 4),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Couldn't apply the code. Try again in a moment."),
+            backgroundColor: FlutterFlowTheme.of(context).error,
+            duration: const Duration(seconds: 4),
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -1039,6 +1177,68 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                               child: Icon(
                                 Icons.arrow_forward_ios,
                                 color: FlutterFlowTheme.of(context).secondaryText,
+                                size: 18.0,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  )),
+                  // Add Creator Code — manual attribution entry for users who
+                  // came in via a creator's share link but missed the auto-
+                  // attribution (or saw the code via screenshot / SMS / etc.).
+                  // Writes users/{uid}.active_creator_code so subscription
+                  // events credit the right creator. Cross-platform because
+                  // this is metadata only (no user-generated content).
+                  CascadeItem(index: 5, baseDelayMs: 400, staggerMs: 80, child: Padding(
+                    padding:
+                        EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),
+                    child: Container(
+                      width: double.infinity,
+                      height: 60.0,
+                      decoration: BoxDecoration(
+                        color: FlutterFlowTheme.of(context).secondaryBackground,
+                        borderRadius: BorderRadius.circular(14.0),
+                      ),
+                      child: InkWell(
+                        splashColor: Colors.transparent,
+                        focusColor: Colors.transparent,
+                        hoverColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                        onTap: () => _openCreatorCodeDialog(),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
+                                  child: Icon(
+                                    Icons.card_giftcard,
+                                    color: FlutterFlowTheme.of(context).primary,
+                                    size: 24.0,
+                                  ),
+                                ),
+                                Text(
+                                  'Add Creator Code',
+                                  style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                    fontFamily: 'Andika New Basic',
+                                    fontSize: 16.0,
+                                    letterSpacing: 0.0,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Padding(
+                              padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
+                              child: Icon(
+                                Icons.arrow_forward_ios,
+                                color: FlutterFlowTheme.of(context).primaryText,
                                 size: 18.0,
                               ),
                             ),

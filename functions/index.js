@@ -2514,6 +2514,71 @@ exports.setCreatorCode = onCall(async (request) => {
   return { ok: true, code: cleaned };
 });
 
+// ── Follower-side attribution: write the creator code a user came in on ──
+//
+// Called from the iOS paywall + Settings entry fields ("Got a creator code?").
+// Validates the code exists, blocks self-attribution, and writes
+// `users/{uid}.active_creator_code = CODE` so the IAP / Stripe webhooks can
+// credit the right creator when the user subscribes.
+//
+// Repeat attribution: allowed (user can change which creator they're
+// attributed to before subscribing). Once a subscription exists, the
+// active_creator_code at INVOICE time is what gets credited — we don't
+// retroactively re-route earnings.
+exports.setActiveCreatorCode = onCall(async (request) => {
+  if (!request.auth) throw new HttpsError('unauthenticated', 'Sign in required');
+  const { code } = request.data || {};
+  if (!code || typeof code !== 'string') {
+    throw new HttpsError('invalid-argument', 'Code required');
+  }
+  const cleaned = code.trim().toUpperCase();
+  if (!/^[A-Z0-9]{3,20}$/.test(cleaned)) {
+    throw new HttpsError(
+      'invalid-argument',
+      'Code must be 3-20 letters or numbers (A-Z, 0-9).',
+    );
+  }
+
+  const db = getFirestore();
+  const uid = request.auth.uid;
+
+  // Find the creator behind this code. Use the public-facing collection
+  // shape (creators/*.code) so we read the same source of truth the
+  // dashboard writes to via setCreatorCode.
+  const creatorSnap = await db.collection('creators')
+    .where('code', '==', cleaned)
+    .limit(1)
+    .get();
+  if (creatorSnap.empty) {
+    throw new HttpsError(
+      'not-found',
+      `We couldn't find a creator with code "${cleaned}". Double-check the spelling — codes are 3-20 letters or numbers.`,
+    );
+  }
+  const creator = creatorSnap.docs[0].data();
+  const creatorName = creator.name || 'A MomRise creator';
+
+  // Block self-attribution. A creator can't earn from their own subscription.
+  // user_ref is stored as a DocumentReference; compare by id.
+  if (creator.user_ref?.id === uid) {
+    throw new HttpsError(
+      'failed-precondition',
+      "You can't use your own creator code — that's why we built the dashboard.",
+    );
+  }
+
+  await db.collection('users').doc(uid).set({
+    active_creator_code: cleaned,
+    active_creator_code_set_at: FieldValue.serverTimestamp(),
+  }, { merge: true });
+
+  return {
+    ok: true,
+    code: cleaned,
+    creator_name: creatorName,
+  };
+});
+
 // ── Creator data export (GDPR-style "give me my data") ──────
 exports.exportCreatorData = onCall(async (request) => {
   if (!request.auth) throw new HttpsError('unauthenticated', 'Sign in required');

@@ -8,6 +8,7 @@ import '/custom_code/actions/index.dart';
 import '/v2/auth/demo_data_notifier.dart';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/scheduler.dart';
@@ -145,6 +146,143 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
       opacity: fadeAnim,
       child: SlideTransition(position: slideAnim, child: child),
     );
+  }
+
+  /// Show the creator-code entry dialog and write attribution to the user's
+  /// doc via setActiveCreatorCode. Mirrors the Settings entry — same call,
+  /// same error semantics, so a user who enters their code here vs Settings
+  /// gets identical behavior. See profile_widget.dart for the twin.
+  Future<void> _openCreatorCodeDialog() async {
+    final codeController = TextEditingController();
+    final result = await showDialog<String>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Text(
+          'Add Creator Code',
+          style: FlutterFlowTheme.of(context).bodyMedium.override(
+                fontFamily: 'Andika New Basic',
+                fontSize: 20.0,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 0.0,
+              ),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              "Did a friend or creator share MomRise with you? Enter their code and they'll get credit for your subscription.",
+              style: FlutterFlowTheme.of(context).bodySmall.override(
+                    fontFamily: 'Andika New Basic',
+                    color: FlutterFlowTheme.of(context).secondaryText,
+                    fontSize: 13.0,
+                    letterSpacing: 0.0,
+                  ),
+            ),
+            const SizedBox(height: 16.0),
+            TextField(
+              controller: codeController,
+              textCapitalization: TextCapitalization.characters,
+              maxLength: 20,
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp(r'[A-Za-z0-9]')),
+              ],
+              style: FlutterFlowTheme.of(context).bodyLarge.override(
+                    fontFamily: 'Andika New Basic',
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 3.0,
+                  ),
+              textAlign: TextAlign.center,
+              decoration: InputDecoration(
+                hintText: 'CODE',
+                hintStyle: TextStyle(
+                  color: FlutterFlowTheme.of(context)
+                      .secondaryText
+                      .withOpacity(0.4),
+                  letterSpacing: 3.0,
+                ),
+                filled: true,
+                fillColor: FlutterFlowTheme.of(context).primaryBackground,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(14.0),
+                  borderSide: BorderSide.none,
+                ),
+                counterText: '',
+              ),
+              autofocus: true,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(null),
+            child: Text(
+              'Cancel',
+              style: TextStyle(
+                color: FlutterFlowTheme.of(context).secondaryText,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              final code = codeController.text.trim().toUpperCase();
+              if (code.length >= 3 && code.length <= 20) {
+                Navigator.of(dialogContext).pop(code);
+              }
+            },
+            child: Text(
+              'Apply',
+              style: TextStyle(
+                color: FlutterFlowTheme.of(context).primary,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+    codeController.dispose();
+    if (result == null || result.isEmpty || !mounted) return;
+
+    try {
+      final callable = FirebaseFunctions.instance
+          .httpsCallable('setActiveCreatorCode');
+      final response = await callable.call({'code': result});
+      final data = Map<String, dynamic>.from(response.data as Map);
+      final creatorName = data['creator_name'] as String? ?? 'the creator';
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              "Thanks — $creatorName will get credit when you subscribe.",
+            ),
+            backgroundColor: FlutterFlowTheme.of(context).primary,
+            duration: const Duration(seconds: 4),
+          ),
+        );
+      }
+    } on FirebaseFunctionsException catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.message ?? "We couldn't apply that code."),
+            backgroundColor: FlutterFlowTheme.of(context).error,
+            duration: const Duration(seconds: 4),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Couldn't apply the code. Try again in a moment."),
+            backgroundColor: FlutterFlowTheme.of(context).error,
+            duration: const Duration(seconds: 4),
+          ),
+        );
+      }
+    }
   }
 
   Future<void> _completeOnboardingAndGoHome() async {
@@ -901,6 +1039,26 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
           },
           child: Text(
             'Restore purchases',
+            style: FlutterFlowTheme.of(context).bodySmall.override(
+              fontFamily: 'Andika New Basic',
+              color: FlutterFlowTheme.of(context).secondaryText,
+              fontSize: 13.0,
+              letterSpacing: 0.0,
+              decoration: TextDecoration.underline,
+            ),
+          ),
+        ),
+        const SizedBox(height: 12.0),
+        // Creator-code entry — small text link that opens the same dialog
+        // used in Settings. This catches users who came in via a creator
+        // share link and didn't get auto-attributed (manual recovery path
+        // until the deferred deep link integration ships). Not a payment
+        // method — just attribution metadata — so it stays inside Apple's
+        // 3.1.1 guidance without triggering anti-steering review.
+        GestureDetector(
+          onTap: () => _openCreatorCodeDialog(),
+          child: Text(
+            'Got a creator code?',
             style: FlutterFlowTheme.of(context).bodySmall.override(
               fontFamily: 'Andika New Basic',
               color: FlutterFlowTheme.of(context).secondaryText,
