@@ -46,6 +46,27 @@ function loadAppleRoots() {
   return APPLE_ROOT_DERS;
 }
 
+// Decode the middle (payload) segment of a JWS without verifying the
+// signature, just to read the `data.environment` field. We need this to
+// pick the right verifier because the library binds env at construction
+// and the env field is NOT exposed at the HTTP body level — it's inside
+// the signed payload. Falls back to Production if anything looks off so
+// real production traffic still flows in the unlikely event of a parse
+// blip.
+function peekJwsEnvironment(signedPayload) {
+  try {
+    const parts = String(signedPayload).split('.');
+    if (parts.length !== 3) return 'Production';
+    const payloadB64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+    const padded = payloadB64 + '='.repeat((4 - (payloadB64.length % 4)) % 4);
+    const json = Buffer.from(padded, 'base64').toString('utf8');
+    const obj = JSON.parse(json);
+    return obj.data?.environment === 'Sandbox' ? 'Sandbox' : 'Production';
+  } catch (_) {
+    return 'Production';
+  }
+}
+
 // Separate verifier per environment because the library binds env at
 // construction time. Production notifications and Sandbox notifications
 // have different signing chains.
@@ -93,12 +114,13 @@ exports.appleNotification = onRequest(
     }
 
     try {
-      // Decode the outer notification envelope. Library verifies the
-      // JWS chain (Apple-signed → CA root) and rejects tampered or
-      // expired notifications.
-      const envEnv = req.body?.environment === 'Sandbox'
-        ? 'Sandbox'
-        : 'Production';
+      // The environment field lives INSIDE the signed JWS payload, not
+      // at the top level of req.body. Peek at the unverified payload to
+      // pick the right verifier — the library binds env at construction
+      // and rejects with INVALID_ENVIRONMENT if the decoded payload's
+      // env doesn't match the verifier's. Safe to read unverified
+      // because we still verify the full signature below.
+      const envEnv = peekJwsEnvironment(signedPayload);
       const v = getVerifier(envEnv);
       const decoded = await v.verifyAndDecodeNotification(signedPayload);
 
