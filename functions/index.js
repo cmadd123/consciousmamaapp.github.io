@@ -1422,6 +1422,11 @@ exports.createSubscription = stripeFunctions.createSubscription;
 exports.cancelSubscription = stripeFunctions.cancelSubscription;
 exports.restorePurchases = stripeFunctions.restorePurchases;
 exports.stripeWebhook = stripeFunctions.stripeWebhook;
+
+// Apple App Store Server Notifications V2 — the iOS twin of stripeWebhook.
+// Credits creator_earnings on iOS subscription / renewal / refund events.
+const appleIapFunctions = require('./apple_iap_functions');
+exports.appleNotification = appleIapFunctions.appleNotification;
 exports.createCreatorOnboardingLink = stripeFunctions.createCreatorOnboardingLink;
 exports.createCreatorDashboardLink = stripeFunctions.createCreatorDashboardLink;
 exports.getCreatorConnectStatus = stripeFunctions.getCreatorConnectStatus;

@@ -14,6 +14,7 @@ import 'dart:io';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:uuid/uuid.dart';
 
 /// Apple In-App Purchase service for MomRise.
 ///
@@ -93,8 +94,22 @@ Future<String> _buyByProductId(String productId) async {
     return 'error: no product details returned';
   }
 
+  // Resolve the appAccountToken — a UUID that travels with the
+  // transaction and shows up in App Store Server Notifications as
+  // `appAccountToken`. This is how the server-side webhook maps an
+  // Apple transaction back to a Firebase user (and from there, to
+  // the user's active_creator_code for revenue-share crediting).
+  //
+  // Stored once per user in users/{uid}.apple_app_account_token so
+  // re-subs and renewals reuse the same token. Without this, the
+  // webhook has no reliable way to match Apple events to our users.
+  final appAccountToken = await _ensureAppAccountToken();
+
   final product = response.productDetails.first;
-  final purchaseParam = PurchaseParam(productDetails: product);
+  final purchaseParam = PurchaseParam(
+    productDetails: product,
+    applicationUserName: appAccountToken,
+  );
 
   try {
     final ok = await InAppPurchase.instance
@@ -103,6 +118,26 @@ Future<String> _buyByProductId(String productId) async {
   } catch (e) {
     return 'error: ${e.toString()}';
   }
+}
+
+/// Resolve the user's appAccountToken UUID. Creates one if missing.
+/// Apple requires this to be a valid UUID string; non-UUID values are
+/// silently stripped from receipts, breaking server-side attribution.
+Future<String?> _ensureAppAccountToken() async {
+  final user = FirebaseAuth.instance.currentUser;
+  if (user == null) return null;
+
+  final docRef = FirebaseFirestore.instance.collection('users').doc(user.uid);
+  final snap = await docRef.get();
+  final existing = snap.data()?['apple_app_account_token'] as String?;
+  if (existing != null && existing.isNotEmpty) return existing;
+
+  final token = const Uuid().v4();
+  await docRef.set(
+    {'apple_app_account_token': token},
+    SetOptions(merge: true),
+  );
+  return token;
 }
 
 /// Restore previously-purchased subscriptions. Surfaces results via the

@@ -18,7 +18,8 @@
     "@sendgrid/mail": "^8.1.4",
     "stripe": "^17.4.0",
     "openai": "^4.73.0",
-    "moment-timezone": "^0.5.45"
+    "moment-timezone": "^0.5.45",
+    "@apple/app-store-server-library": "^1.4.0"
   },
   "devDependencies": {
     "firebase-functions-test": "^3.3.0"
