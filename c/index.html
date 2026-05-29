@@ -179,6 +179,10 @@
   <script>
     // Public Cloud Function — returns only safe fields for the given code.
     const PUBLIC_PROFILE_URL = 'https://us-central1-parenting-plus-7szrif.cloudfunctions.net/getPublicCreatorProfile';
+    // Deferred-attribution endpoint — records the visit so the app can
+    // claim the creator code on first launch without the user typing it.
+    // ~60-75% capture vs Branch's 85-95%; free vs $140/mo.
+    const RECORD_ATTRIBUTION_URL = 'https://us-central1-parenting-plus-7szrif.cloudfunctions.net/recordPendingAttribution';
 
     const $ = (id) => document.getElementById(id);
 
@@ -214,6 +218,25 @@
         $('pFine').textContent = firstName;
         $('howtoName').textContent = firstName;
         $('howtoCode').textContent = c.code;
+
+        // Fire-and-forget: record the visit so the iOS app can claim
+        // the attribution on first launch. Server IP-matches against
+        // the device fingerprint within 24h. No-op if the user already
+        // had the app and clicked through; the app-side claim is gated
+        // on active_creator_code being unset.
+        try {
+          fetch(RECORD_ATTRIBUTION_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              code: c.code,
+              screen: window.screen.width + 'x' + window.screen.height,
+              language: navigator.language || '',
+              timezone_offset_minutes: new Date().getTimezoneOffset() * -1,
+            }),
+            keepalive: true,
+          }).catch(() => {});
+        } catch (_) {}
         $('pCta').href = `/?c=${encodeURIComponent(c.code)}`;
 
         // Update tab + OG tags for sharing

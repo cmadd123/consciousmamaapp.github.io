@@ -9,6 +9,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'auth/firebase_auth/firebase_user_provider.dart';
+import 'custom_code/actions/attribution_claim.dart';
 import 'auth/firebase_auth/auth_util.dart';
 
 import 'backend/backend.dart';
@@ -154,6 +155,12 @@ class _MyAppState extends State<MyApp> {
           } catch (_) {
             _appStateNotifier.onboardingCompleted = false;
           }
+
+          // Fire-and-forget: try to claim a pending creator-code
+          // attribution. Catches users who clicked momrise.app/c/{code}
+          // before installing. No-op when the user already has a code
+          // set (manual entry took precedence). See attribution_claim.dart.
+          unawaited(tryClaimDeferredAttribution());
         }
 
         // Handle pending deep links after user is logged in

@@ -1427,6 +1427,14 @@ exports.stripeWebhook = stripeFunctions.stripeWebhook;
 // Credits creator_earnings on iOS subscription / renewal / refund events.
 const appleIapFunctions = require('./apple_iap_functions');
 exports.appleNotification = appleIapFunctions.appleNotification;
+
+// "Poor man's Branch" — self-hosted deferred deep linking. Web /c/{code}
+// page POSTs a device fingerprint to recordPendingAttribution; the app
+// claims the match on first launch via claimAttribution. See
+// creator_attribution_match.js for the design rationale.
+const creatorAttributionMatch = require('./creator_attribution_match');
+exports.recordPendingAttribution = creatorAttributionMatch.recordPendingAttribution;
+exports.claimAttribution = creatorAttributionMatch.claimAttribution;
 exports.createCreatorOnboardingLink = stripeFunctions.createCreatorOnboardingLink;
 exports.createCreatorDashboardLink = stripeFunctions.createCreatorDashboardLink;
 exports.getCreatorConnectStatus = stripeFunctions.getCreatorConnectStatus;
