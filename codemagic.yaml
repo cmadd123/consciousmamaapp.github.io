@@ -31,7 +31,10 @@ workflows:
           # If the most recent commit touches only website/backend files,
           # set CM_BUILD_SKIP so every subsequent step exits early. Saves
           # Codemagic minutes on commits that don't change the Flutter app.
-          CHANGED=$(git log --name-only --pretty=format: -1 HEAD | grep -v '^$' | sort -u || true)
+          # Look at the last 10 commits, not just HEAD — a push of multiple
+          # commits (e.g. app change + version bump) was being mis-skipped
+          # when the tip commit only touched a website-skipped file.
+          CHANGED=$(git log --name-only --pretty=format: -10 HEAD | grep -v '^$' | sort -u || true)
           if [ -z "$CHANGED" ]; then
             echo "No file list available — running full build"
             exit 0
@@ -146,7 +149,10 @@ workflows:
     scripts:
       - name: Detect website-only commit (skip to save build minutes)
         script: |
-          CHANGED=$(git log --name-only --pretty=format: -1 HEAD | grep -v '^$' | sort -u || true)
+          # Look at the last 10 commits, not just HEAD — a push of multiple
+          # commits (e.g. app change + version bump) was being mis-skipped
+          # when the tip commit only touched a website-skipped file.
+          CHANGED=$(git log --name-only --pretty=format: -10 HEAD | grep -v '^$' | sort -u || true)
           if [ -z "$CHANGED" ]; then
             echo "No file list available — running full build"
             exit 0
