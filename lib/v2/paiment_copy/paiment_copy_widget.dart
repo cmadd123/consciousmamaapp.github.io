@@ -6,6 +6,8 @@ import '/flutter_flow/flutter_flow_widgets.dart';
 import '/index.dart';
 import '/custom_code/actions/index.dart';
 import '/v2/auth/demo_data_notifier.dart';
+import '/v2/auth/creator_code_prompt_sheet.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
@@ -117,7 +119,40 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
       Future.delayed(const Duration(milliseconds: 550), () {
         if (mounted) _ctaController.forward();
       });
+
+      // Show the creator-code prompt once entrances have settled, but
+      // only if the user has no active_creator_code yet. The v2 signup
+      // flow lands directly here (skips WelcomeCelebration), so this is
+      // the highest-visibility attribution capture point in the funnel.
+      Future.delayed(const Duration(milliseconds: 900), () {
+        if (mounted) _maybeShowCreatorCodePrompt();
+      });
     });
+  }
+
+  Future<void> _maybeShowCreatorCodePrompt() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+    try {
+      final snap = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+      final code = snap.data()?['active_creator_code'] as String?;
+      if (code != null && code.isNotEmpty) return;
+    } catch (_) {
+      return; // fail silent — user can still use the "Got a creator code?" link
+    }
+    if (!mounted) return;
+    await showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (_) => const CreatorCodePromptSheet(),
+    );
   }
 
   @override
@@ -1159,30 +1194,13 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
     );
   }
 
-  /// Shared handler for Apple IAP purchase results — surfaces a snackbar
-  /// for each terminal state and routes the user home once the entitlement
-  /// has propagated to Firestore. Called from both annual and monthly buy
-  /// buttons so the UX is identical regardless of plan picked.
-  ///
-  /// At this point Apple has already returned (buyNonConsumable resolved),
-  /// so 'pending' really means "Apple confirmed, we're waiting for the
-  /// purchase stream to land in Firestore." Hence the "Activating..." copy
-  /// rather than the old misleading "Confirming with Apple" text.
+  /// Shared handler for Apple IAP purchase results — silently waits for
+  /// the entitlement to propagate from Apple → purchase stream → Firestore,
+  /// then routes home. Apple's own native sheet already shows the user a
+  /// confirmation; an in-app snackbar on top is duplicate noise.
   Future<void> _handleIapResult(String result) async {
     if (!mounted) return;
     if (result == 'pending' || result == 'success') {
-      final messenger = ScaffoldMessenger.of(context);
-      final activatingSnack = messenger.showSnackBar(
-        SnackBar(
-          content: const Text('Activating your subscription…'),
-          backgroundColor: FlutterFlowTheme.of(context).primary,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          margin: const EdgeInsets.all(16),
-          duration: const Duration(seconds: 20),
-        ),
-      );
-
       // Poll for the entitlement to land. Sandbox is usually under 3s;
       // production occasionally takes 10s+ behind a flaky network.
       bool active = false;
@@ -1192,7 +1210,6 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
         active = await hasActiveSubscription();
         if (active) break;
       }
-      activatingSnack.close();
       if (!mounted) return;
 
       if (active) {
