@@ -5,7 +5,16 @@ const { defineString, defineSecret } = require('firebase-functions/params');
 const { getFirestore, FieldValue } = require('firebase-admin/firestore');
 const stripe = require('stripe');
 
-const CREATOR_REV_SHARE = 0.5;
+// Default creator rev share. Overridden per creator via creator.rev_share
+// (number in (0, 1]). Kept in sync with apple_iap_functions.js — both
+// files use the same default and the same per-creator override field.
+const DEFAULT_CREATOR_REV_SHARE = 0.5;
+
+function getCreatorRevShare(creator) {
+  const v = creator?.rev_share;
+  if (typeof v === 'number' && v > 0 && v <= 1) return v;
+  return DEFAULT_CREATOR_REV_SHARE;
+}
 const PAYOUT_MIN_CENTS = 2500;
 const CREATOR_ONBOARD_RETURN_URL = 'https://momrise.app/creator/?connect=done';
 const CREATOR_ONBOARD_REFRESH_URL = 'https://momrise.app/creator/?connect=refresh';
@@ -675,7 +684,8 @@ async function recordCreatorEarning(invoice) {
     .get();
   if (!existing.empty) return;
 
-  const creatorCents = Math.round(invoice.amount_paid * CREATOR_REV_SHARE);
+  const revShare = getCreatorRevShare(creator);
+  const creatorCents = Math.round(invoice.amount_paid * revShare);
   await db.collection('creator_earnings').add({
     creator_ref: creatorDoc.ref,
     creator_code: creatorCode,
@@ -684,6 +694,7 @@ async function recordCreatorEarning(invoice) {
     charge_id: invoice.charge || null,
     gross_cents: invoice.amount_paid,
     creator_cents: creatorCents,
+    rev_share: revShare,
     currency: invoice.currency || 'usd',
     period_start: invoice.period_start ? new Date(invoice.period_start * 1000) : null,
     period_end: invoice.period_end ? new Date(invoice.period_end * 1000) : null,
@@ -712,7 +723,12 @@ async function recordRefundClawback(charge) {
     .get();
   if (!existingClawback.empty) return;
 
-  const refundCreatorCents = Math.round(refunded * CREATOR_REV_SHARE);
+  // Use the rev_share stored on the original earning row so refunds
+  // mirror what was actually paid, even if the creator's rate has been
+  // adjusted since the original transaction. Falls back to the default
+  // for legacy rows that pre-date per-creator rates.
+  const refundRevShare = earning.rev_share || DEFAULT_CREATOR_REV_SHARE;
+  const refundCreatorCents = Math.round(refunded * refundRevShare);
   await db.collection('creator_earnings').add({
     creator_ref: earning.creator_ref,
     creator_code: earning.creator_code,
@@ -721,6 +737,7 @@ async function recordRefundClawback(charge) {
     charge_id: charge.id,
     gross_cents: -refunded,
     creator_cents: -refundCreatorCents,
+    rev_share: refundRevShare,
     currency: charge.currency || 'usd',
     payout_status: 'pending',
     created_at: FieldValue.serverTimestamp(),

@@ -26,9 +26,16 @@ const {
 const fs = require('fs');
 const path = require('path');
 
-// Creator rev share — kept in sync with stripe_functions.js. If this
-// ever diverges from CREATOR_REV_SHARE there, audit both files.
-const CREATOR_REV_SHARE = 0.5;
+// Default creator rev share. Overridden per creator via creator.rev_share
+// (number in (0, 1]). Kept in sync with stripe_functions.js — both files
+// use the same default and the same per-creator override field.
+const DEFAULT_CREATOR_REV_SHARE = 0.5;
+
+function getCreatorRevShare(creator) {
+  const v = creator?.rev_share;
+  if (typeof v === 'number' && v > 0 && v <= 1) return v;
+  return DEFAULT_CREATOR_REV_SHARE;
+}
 
 const BUNDLE_ID = 'com.momrise.app';
 const APPLE_APP_ID = 6758357382; // momrise.app App Store ID
@@ -306,7 +313,8 @@ async function recordAppleEarning(txInfo, notificationType, subtype) {
     );
     return;
   }
-  const creatorCents = Math.round(grossCents * CREATOR_REV_SHARE);
+  const revShare = getCreatorRevShare(creator);
+  const creatorCents = Math.round(grossCents * revShare);
 
   await db.collection('creator_earnings').add({
     creator_ref: creatorDoc.ref,
@@ -317,6 +325,7 @@ async function recordAppleEarning(txInfo, notificationType, subtype) {
     product_id: txInfo.productId,
     gross_cents: grossCents,
     creator_cents: creatorCents,
+    rev_share: revShare,
     currency: (txInfo.currency || 'USD').toLowerCase(),
     period_start: txInfo.purchaseDate
       ? new Date(txInfo.purchaseDate)
@@ -382,6 +391,7 @@ async function recordAppleRefundClawback(txInfo) {
     product_id: earning.product_id || null,
     gross_cents: -earning.gross_cents,
     creator_cents: -earning.creator_cents,
+    rev_share: earning.rev_share || DEFAULT_CREATOR_REV_SHARE,
     currency: earning.currency || 'usd',
     payout_status: 'pending',
     created_at: FieldValue.serverTimestamp(),
