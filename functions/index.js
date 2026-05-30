@@ -2326,7 +2326,7 @@ function _renderCreatorWelcomeEmail(name) {
         <li style="margin: 10px 0;">Sign in at <a href="https://momrise.app/creator/" style="color: #52A097;">momrise.app/creator/</a> with the same email you used on your application. Your dashboard will load automatically.</li>
         <li style="margin: 10px 0;"><strong>Pick your creator code.</strong> On first sign-in you'll choose a code (3–20 letters or numbers) — this is what your community enters to earn you a share of their subscriptions. Pick something memorable.</li>
         <li style="margin: 10px 0;"><strong>Connect your bank through Stripe</strong> (2–3 minutes). That's how we pay you your revenue share.</li>
-        <li style="margin: 10px 0;">Start sharing your code with your community. Anyone who subscribes using it earns you a percentage of their subscription, every month they stay.</li>
+        <li style="margin: 10px 0;">Start sharing your code with your community — our <a href="https://momrise.app/creator/playbook/" style="color: #52A097;">creator playbook</a> covers exactly what works (and what doesn't) for promoting parenting apps. Read it before your first post.</li>
       </ol>
 
       <p style="margin: 24px 0 8px;">Payouts run on the 1st of each month, minimum $25. Everything's in your dashboard — follower count, earnings, content performance.</p>

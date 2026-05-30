@@ -113,6 +113,7 @@ function _renderEarningEmail({ firstName, amountStr, sourceLabel, creatorCode })
       <div style="text-align: center;">
         <a href="https://momrise.app/creator/" style="display: inline-block; background: #52A097; color: white; padding: 12px 24px; border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 15px;">Open creator dashboard →</a>
       </div>
+      <p style="margin: 22px 0 0; font-size: 13px; color: #6B7280; text-align: center;">Trying to figure out what content actually drives codes? Our <a href="https://momrise.app/creator/playbook/" style="color: #52A097; font-weight: 500;">creator playbook</a> has the data-backed answers.</p>
     </div>
     <div style="padding: 12px 32px 24px; text-align: center; font-size: 12px; color: #9CA3AF;">
       You're getting this because you have an active creator account on MomRise.

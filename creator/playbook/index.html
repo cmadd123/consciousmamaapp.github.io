@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Creator Playbook — MomRise</title>
+  <meta name="description" content="A field-tested, evidence-backed playbook for creators promoting MomRise.">
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #52A097;
+      --primary-dark: #2A6F67;
+      --accent: #EE8B60;
+      --surface: #FFFFFF;
+      --text: #1F2937;
+      --text-muted: #6B7280;
+      --border: #E5E7EB;
+      --code-bg: #F3F4F6;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; padding: 0;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      color: var(--text);
+      background: linear-gradient(180deg, #D7F2EB 0%, #FFE9E1 100%);
+      min-height: 100vh;
+      line-height: 1.65;
+    }
+    a { color: var(--primary-dark); }
+    main { max-width: 720px; margin: 0 auto; padding: 40px 20px 80px; }
+
+    .back {
+      display: inline-block;
+      margin-bottom: 18px;
+      font-size: 13px;
+      color: var(--primary-dark);
+      text-decoration: none;
+    }
+    .back:hover { text-decoration: underline; }
+
+    .hero {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .hero .pill {
+      display: inline-block;
+      background: color-mix(in srgb, var(--primary) 12%, var(--surface));
+      color: var(--primary-dark);
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 12px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+    .hero h1 {
+      margin: 0 0 8px;
+      font-size: 32px;
+      letter-spacing: -0.01em;
+    }
+    .hero p {
+      margin: 0 auto;
+      max-width: 540px;
+      color: var(--text-muted);
+      font-size: 15.5px;
+    }
+
+    .card {
+      background: var(--surface);
+      border-radius: 18px;
+      padding: 28px 30px;
+      box-shadow: 0 16px 40px -20px rgba(0,0,0,0.18);
+      margin-bottom: 22px;
+    }
+    @media (max-width: 520px) {
+      .card { padding: 22px 20px; }
+    }
+
+    h2 {
+      font-size: 22px;
+      letter-spacing: -0.005em;
+      margin: 0 0 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    h2 .num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+      background: color-mix(in srgb, var(--primary) 12%, var(--surface));
+      color: var(--primary-dark);
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+    h3 {
+      font-size: 16px;
+      margin: 22px 0 8px;
+      color: var(--text);
+    }
+    p { margin: 0 0 14px; font-size: 15.5px; }
+    ul, ol { padding-left: 20px; margin: 8px 0 16px; }
+    li { margin-bottom: 8px; font-size: 15.5px; }
+    .lede { font-size: 17px; color: var(--text); margin-bottom: 18px; }
+    .muted { color: var(--text-muted); font-size: 13.5px; }
+
+    .stat-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+      margin: 18px 0 8px;
+    }
+    .stat {
+      background: color-mix(in srgb, var(--primary) 6%, var(--surface));
+      border: 1px solid color-mix(in srgb, var(--primary) 18%, var(--border));
+      border-radius: 12px;
+      padding: 14px 16px;
+    }
+    .stat .num {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--primary-dark);
+      line-height: 1.2;
+      margin-bottom: 4px;
+    }
+    .stat .label {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .quote {
+      border-left: 4px solid var(--primary);
+      background: color-mix(in srgb, var(--primary) 6%, var(--surface));
+      padding: 14px 16px;
+      border-radius: 0 10px 10px 0;
+      margin: 18px 0;
+      font-size: 16px;
+      font-style: italic;
+      color: var(--text);
+    }
+
+    .template {
+      position: relative;
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px 14px 16px;
+      margin: 10px 0 18px;
+      font-size: 14.5px;
+      line-height: 1.6;
+    }
+    .template-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+    .copy-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 5px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: inherit;
+      text-transform: none;
+      letter-spacing: 0;
+    }
+    .copy-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary-dark);
+    }
+    .copy-btn.copied {
+      background: color-mix(in srgb, var(--primary) 10%, var(--surface));
+      color: var(--primary-dark);
+      border-color: var(--primary);
+    }
+    .template-body {
+      white-space: pre-wrap;
+      color: var(--text);
+    }
+
+    .do-dont {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin: 18px 0;
+    }
+    @media (max-width: 520px) {
+      .do-dont { grid-template-columns: 1fr; }
+    }
+    .do, .dont {
+      border-radius: 12px;
+      padding: 14px 16px;
+      font-size: 14px;
+    }
+    .do {
+      background: color-mix(in srgb, #10B981 10%, var(--surface));
+      border: 1px solid color-mix(in srgb, #10B981 30%, var(--border));
+    }
+    .dont {
+      background: color-mix(in srgb, #EF4444 8%, var(--surface));
+      border: 1px solid color-mix(in srgb, #EF4444 28%, var(--border));
+    }
+    .do strong, .dont strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .do strong { color: #10B981; }
+    .dont strong { color: #EF4444; }
+    .do ul, .dont ul { margin: 0; padding-left: 18px; }
+    .do li, .dont li { font-size: 13.5px; margin-bottom: 4px; }
+
+    .arc {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+      margin: 18px 0;
+    }
+    @media (max-width: 600px) {
+      .arc { grid-template-columns: 1fr; }
+    }
+    .arc-step {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      position: relative;
+    }
+    .arc-step .badge {
+      display: inline-block;
+      background: var(--primary);
+      color: white;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      padding: 3px 10px;
+      border-radius: 999px;
+      margin-bottom: 8px;
+    }
+    .arc-step h4 { margin: 0 0 6px; font-size: 15px; }
+    .arc-step p { margin: 0; font-size: 13.5px; color: var(--text-muted); }
+
+    .toc {
+      background: color-mix(in srgb, var(--primary) 4%, var(--surface));
+      border: 1px solid color-mix(in srgb, var(--primary) 16%, var(--border));
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin: 0 0 24px;
+    }
+    .toc-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 700;
+      color: var(--primary-dark);
+      margin-bottom: 10px;
+    }
+    .toc ol {
+      margin: 0;
+      padding-left: 20px;
+      font-size: 14px;
+      line-height: 1.9;
+    }
+    .toc a { color: var(--text); text-decoration: none; }
+    .toc a:hover { color: var(--primary-dark); text-decoration: underline; }
+
+    .source-note {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-style: italic;
+      margin-top: 8px;
+    }
+
+    .pov-box {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      border-radius: 14px;
+      padding: 24px 26px;
+      margin: 18px 0;
+      text-align: center;
+    }
+    .pov-box .label {
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      opacity: 0.85;
+      margin-bottom: 8px;
+    }
+    .pov-box .quote-text {
+      font-size: 20px;
+      font-weight: 600;
+      font-style: italic;
+      letter-spacing: -0.005em;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <a class="back" href="/creator/">← Back to dashboard</a>
+
+    <div class="hero">
+      <span class="pill">Creator program</span>
+      <h1>MomRise Creator Playbook</h1>
+      <p>What actually works for promoting a parenting app to moms — backed by data, not vibes. Designed to be skimmable on your phone between feedings.</p>
+    </div>
+
+    <div class="toc">
+      <div class="toc-label">In this playbook</div>
+      <ol>
+        <li><a href="#sixty">The 60-second version</a></li>
+        <li><a href="#pov">What MomRise stands for</a></li>
+        <li><a href="#authentic">Why authentic content beats polished (by 10x)</a></li>
+        <li><a href="#format">Reels, Stories, carousels — which to use when</a></li>
+        <li><a href="#arc">The 3-touch campaign arc</a></li>
+        <li><a href="#captions">Caption templates you can steal</a></li>
+        <li><a href="#disclose">FTC disclosure done right</a></li>
+        <li><a href="#shoot">Pre-shoot checklist</a></li>
+        <li><a href="#measure">What success looks like</a></li>
+        <li><a href="#avoid">Things that quietly kill conversions</a></li>
+      </ol>
+    </div>
+
+    <!-- 1. The 60-second version -->
+    <div class="card" id="sixty">
+      <h2><span class="num">1</span>The 60-second version</h2>
+      <p class="lede">If you only read one section:</p>
+      <ul>
+        <li><strong>Make content that looks like a real Tuesday morning</strong>, not a brand commercial. UGC-style content converts ~10x better than polished.</li>
+        <li><strong>Spread your campaign across 3 touchpoints</strong> over 2-3 weeks — one Reel, one carousel, one Story arc. Single posts die.</li>
+        <li><strong>Disclose paid partnership prominently</strong> at the top of every post. Hidden disclosures hurt trust; clear ones help it.</li>
+        <li><strong>Use your code, not just a link</strong> — codes get entered later (in app, in settings) when links would have been forgotten.</li>
+        <li><strong>Be honest about why you actually like MomRise.</strong> Specifics outperform superlatives every single time.</li>
+      </ul>
+    </div>
+
+    <!-- 2. POV -->
+    <div class="card" id="pov">
+      <h2><span class="num">2</span>What MomRise stands for</h2>
+      <p>You'll make better content if you know our worldview. We're not "another parenting app." Here's the line:</p>
+      <div class="pov-box">
+        <div class="label">Our point of view</div>
+        <div class="quote-text">"Mom first — because when she's not drowning, the family rises."</div>
+      </div>
+      <p>Most apps treat the kid as the user and the mom as the operator. We don't. <strong>The mom is the user.</strong> The whole family benefits as a result, but the product is designed around her sanity, her time, her brain space. That's the angle that resonates and converts.</p>
+      <p>When you talk about MomRise, you're not selling features — you're participating in a conversation about whether moms get to be the main character in their own story. A Reel that opens with "<em>this is for every mom who's been told to put herself last</em>" and then shows MomRise hits harder than a 30-second feature walkthrough.</p>
+    </div>
+
+    <!-- 3. Authentic content -->
+    <div class="card" id="authentic">
+      <h2><span class="num">3</span>Why authentic content beats polished (by 10x)</h2>
+      <p>The biggest finding in influencer marketing data: <strong>content that looks like a real customer made it on her phone outperforms polished brand content by roughly 10x on conversion rate.</strong></p>
+      <div class="stat-row">
+        <div class="stat">
+          <div class="num">~10x</div>
+          <div class="label">UGC-style conversion lift over polished brand content (Emplifi, 2025)</div>
+        </div>
+        <div class="stat">
+          <div class="num">4x</div>
+          <div class="label">Higher CTR for UGC ads vs traditional</div>
+        </div>
+        <div class="stat">
+          <div class="num">~50%</div>
+          <div class="label">Lower cost-per-click for UGC ads</div>
+        </div>
+      </div>
+      <h3>What this looks like in practice</h3>
+      <div class="do-dont">
+        <div class="do">
+          <strong>Yes</strong>
+          <ul>
+            <li>Handheld, phone camera, real kitchen lighting</li>
+            <li>You talking to the lens like a friend</li>
+            <li>Background sounds (kid yelling, dishwasher) — leave them in</li>
+            <li>Native iOS/Android captions</li>
+            <li>One take, light edits</li>
+          </ul>
+        </div>
+        <div class="dont">
+          <strong>No</strong>
+          <ul>
+            <li>Ring light, tripod, color graded</li>
+            <li>Scripted voiceover</li>
+            <li>Brand fonts and lower thirds</li>
+            <li>Studio-quality audio</li>
+            <li>Anything that looks like an ad</li>
+          </ul>
+        </div>
+      </div>
+      <p>This is counterintuitive — your instinct is to make your post <em>look professional</em>. Resist that. The 10x conversion advantage is real and consistent across studies.</p>
+      <p class="source-note">Sources: Emplifi Q3 2025, Social Media Today, InBeat creator content benchmarks.</p>
+    </div>
+
+    <!-- 4. Format -->
+    <div class="card" id="format">
+      <h2><span class="num">4</span>Reels, Stories, carousels — which to use when</h2>
+      <p>Each format has a job. Mixing them is what separates campaigns that work from posts that disappear.</p>
+      <div class="stat-row">
+        <div class="stat">
+          <div class="num">2x</div>
+          <div class="label">Reels reach vs static/carousels (Metricool 2025)</div>
+        </div>
+        <div class="stat">
+          <div class="num">+12%</div>
+          <div class="label">Carousels engagement vs Reels (CreatorsJet study)</div>
+        </div>
+        <div class="stat">
+          <div class="num">High</div>
+          <div class="label">Stories conversion intent — link sticker enabled</div>
+        </div>
+      </div>
+      <h3>Reels — for reach</h3>
+      <p>Reels hit non-followers. They're how new people find you. Lead with the emotional hook in the first 1.5 seconds (kid screaming, you opening fridge with that look) — pivot to MomRise as the relief. 15-30s ideal.</p>
+
+      <h3>Stories — for conversion</h3>
+      <p>Stories only reach existing followers, but conversion intent is highest because they're warm. Use the <strong>link sticker</strong> with your code link (<code>momrise.app/c/yourcode</code>). 3-frame story arcs work best: setup → MomRise reveal → CTA.</p>
+
+      <h3>Carousels — for saves &amp; long-tail engagement</h3>
+      <p>Carousels live in the algorithm longer because Insta shows them again to people who didn't swipe last time. Use them for "lists" (e.g., "My 7 mom toolkit must-haves — #4 is MomRise"). Save rate is what to optimize for, not likes.</p>
+
+      <h3>Single static posts — skip</h3>
+      <p>Single static posts are functionally dead for app promo in 2026. Don't waste them.</p>
+      <p class="source-note">Sources: Metricool x HypeAuditor 2025 Instagram Content Playbook, CreatorsJet 10,000-post study.</p>
+    </div>
+
+    <!-- 5. Campaign arc -->
+    <div class="card" id="arc">
+      <h2><span class="num">5</span>The 3-touch campaign arc</h2>
+      <p>One post and out doesn't work. Seven posts in a row is too much (audiences perceive over-commercialization). The sweet spot for a creator campaign is <strong>3 touches spread over 2-3 weeks</strong>, each in a different format.</p>
+      <div class="arc">
+        <div class="arc-step">
+          <div class="badge">Week 1</div>
+          <h4>Announce</h4>
+          <p>One Reel. The emotional moment + MomRise as relief. "Here's what's been saving me this week."</p>
+        </div>
+        <div class="arc-step">
+          <div class="badge">Week 2</div>
+          <h4>Demo</h4>
+          <p>One carousel or Story arc. Show the specific feature you actually use. "Here's how I meal-plan in 5 min on a Sunday."</p>
+        </div>
+        <div class="arc-step">
+          <div class="badge">Week 3</div>
+          <h4>Testimonial</h4>
+          <p>One Story or short Reel. "Two weeks in — here's what's changed." Code goes here, big and obvious.</p>
+        </div>
+      </div>
+      <p class="source-note">Why 3 and not 7: peer-reviewed work (Tandfonline 2024) on sponsored-post frequency found excess frequency triggers perceived over-commercialization. The "Rule of 7" you may have heard about traces back to 1930s movie marketing — not modern research.</p>
+    </div>
+
+    <!-- 6. Caption templates -->
+    <div class="card" id="captions">
+      <h2><span class="num">6</span>Caption templates you can steal</h2>
+      <p>Plug-and-play. Replace the bracketed parts. Tap "Copy" to grab the whole thing.</p>
+
+      <h3>Reel caption — "vulnerable moment"</h3>
+      <div class="template">
+        <div class="template-header">
+          <span>Reel</span>
+          <button class="copy-btn" data-copy="vulnerable">Copy</button>
+        </div>
+        <div class="template-body" id="vulnerable">#ad Paid partnership with @momrise
+
+The moment that breaks me every day is [5pm, when everyone's hungry and I'm spent].
+
+I'm not exaggerating when I say MomRise has changed [the meal planning panic]. It's not magic — it's just [my whole week's meals planned in 5 min on Sunday].
+
+Code [YOURCODE] for a free trial — link in bio. Tell me if you try it 🤍</div>
+      </div>
+
+      <h3>Carousel caption — "the list"</h3>
+      <div class="template">
+        <div class="template-header">
+          <span>Carousel</span>
+          <button class="copy-btn" data-copy="list">Copy</button>
+        </div>
+        <div class="template-body" id="list">#ad Paid partnership with @momrise
+
+7 things actually in my mom toolkit right now (swipe →)
+
+Saving these so I can look back when this season ends.
+
+#4 is the only one I'd say has made a real difference. Code [YOURCODE] if you want to try MomRise too — link in bio.
+
+Which one do you swear by? 👇</div>
+      </div>
+
+      <h3>Story arc — 3 frames</h3>
+      <div class="template">
+        <div class="template-header">
+          <span>Story · Frame 1 (setup)</span>
+          <button class="copy-btn" data-copy="story1">Copy</button>
+        </div>
+        <div class="template-body" id="story1">[Photo: open fridge, looking defeated]
+
+"It's 5pm again. Send help."
+
+(Add a poll sticker: "have you been here today? yes / so much yes")</div>
+      </div>
+      <div class="template">
+        <div class="template-header">
+          <span>Story · Frame 2 (MomRise reveal)</span>
+          <button class="copy-btn" data-copy="story2">Copy</button>
+        </div>
+        <div class="template-body" id="story2">[Screen record: opening MomRise → tapping on tonight's meal]
+
+"This is what I'm actually doing now. Took me 5 min last Sunday to plan the whole week."
+
+(Tag @momrise)</div>
+      </div>
+      <div class="template">
+        <div class="template-header">
+          <span>Story · Frame 3 (CTA)</span>
+          <button class="copy-btn" data-copy="story3">Copy</button>
+        </div>
+        <div class="template-body" id="story3">[Big text on screen: Code YOURCODE for a free trial]
+
+"Paid partnership. I genuinely use this app and it's worth the trial."
+
+(Add link sticker pointing to momrise.app/c/yourcode)</div>
+      </div>
+
+      <h3>The "two-week update" Reel</h3>
+      <div class="template">
+        <div class="template-header">
+          <span>Reel — week 3 testimonial</span>
+          <button class="copy-btn" data-copy="update">Copy</button>
+        </div>
+        <div class="template-body" id="update">#ad Paid partnership with @momrise
+
+Two weeks ago I told you I was trying MomRise. Update:
+
+[Specific result — "I haven't stared at the fridge at 5pm once" / "I logged 4 milestones this week I would've forgotten"]
+
+The thing I didn't expect: [the calendar lets me see all the family stuff together and that alone was worth it].
+
+Trying it free for 7 days: code [YOURCODE], link in bio.</div>
+      </div>
+    </div>
+
+    <!-- 7. Disclosure -->
+    <div class="card" id="disclose">
+      <h2><span class="num">7</span>FTC disclosure done right</h2>
+      <p>You have to disclose paid partnerships. Most creators do this wrong — they bury <code>#ad</code> mid-caption with 20 hashtags. This is the worst of both worlds: it doesn't protect you legally and it makes your audience trust you less.</p>
+      <p><strong>The data is counterintuitive but consistent:</strong> prominent disclosure doesn't hurt conversion. The FTC's own eye-tracking study found clear "Paid partnership" labels at the top of posts caught attention without driving avoidance, and academic work shows transparent endorsement actually <em>increases</em> creator credibility.</p>
+
+      <h3>How to disclose properly</h3>
+      <ul>
+        <li><strong>Use Instagram's built-in branded content tool</strong> — toggle on the "Paid partnership with @momrise" tag (Settings → Business tools → Branded content). This is literally a free toggle and it's the safest option.</li>
+        <li><strong>Also put it in the first 1-3 lines of your caption.</strong> Don't bury it.</li>
+        <li><strong>On Stories: use the "Paid partnership" sticker</strong> when you tag us.</li>
+        <li><strong>Acceptable hashtags:</strong> <code>#ad</code>, <code>#sponsored</code>, <code>#paidpartnership</code>. Avoid <code>#sp</code>, <code>#partner</code>, <code>#thanks</code> — the FTC has explicitly said these are not enough.</li>
+      </ul>
+      <p class="source-note">Sources: FTC "Blurred Lines" eye-tracking study, FTC Endorsement Guides, 2025 creator enforcement updates.</p>
+    </div>
+
+    <!-- 8. Pre-shoot checklist -->
+    <div class="card" id="shoot">
+      <h2><span class="num">8</span>Pre-shoot checklist</h2>
+      <p>Five things that make UGC-style content land. None of them require equipment.</p>
+      <ol>
+        <li><strong>Light from a window, not a ring light.</strong> Natural daylight is the look. Film with the window in front of you (lighting your face), not behind.</li>
+        <li><strong>Phone at chest height, not over your head.</strong> The "looking down" angle reads as ad-y. Eye-level to slightly-above is conversational.</li>
+        <li><strong>Open with the hook in the first 1.5 seconds.</strong> The kid yelling, the fridge being empty, the meltdown moment. Audiences scroll if you set up.</li>
+        <li><strong>Show MomRise on your phone screen for at least 2 seconds.</strong> A screen recording over your face cam works great. People need to see the actual product to remember it.</li>
+        <li><strong>End with the code and a specific ask</strong> — not "link in bio if you want." Try "Code [YOURCODE] for a free trial. If you try it, tell me what you make for dinner first." Asking for a reply boosts your algo signal.</li>
+      </ol>
+    </div>
+
+    <!-- 9. Measure -->
+    <div class="card" id="measure">
+      <h2><span class="num">9</span>What success looks like</h2>
+      <p>Honest numbers, not vanity metrics:</p>
+      <div class="stat-row">
+        <div class="stat">
+          <div class="num">2-5%</div>
+          <div class="label">Of your reach entering your code within 30 days = solid</div>
+        </div>
+        <div class="stat">
+          <div class="num">30%+</div>
+          <div class="label">Trial-to-paid conversion (we handle this; you bring the trial starts)</div>
+        </div>
+        <div class="stat">
+          <div class="num">$2-3.50</div>
+          <div class="label">Earned per monthly sub, depending on your rate</div>
+        </div>
+      </div>
+      <h3>Where to track</h3>
+      <ul>
+        <li><strong>Your MomRise dashboard</strong> at <a href="/creator/">momrise.app/creator/</a> shows code redemptions, earnings, and which weeks performed best.</li>
+        <li><strong>Instagram Insights</strong> — for any sponsored content, the metrics that matter are <em>saves, shares,</em> and <em>profile visits</em>. Likes are noise; saves are intent.</li>
+        <li><strong>Email us</strong> at <a href="mailto:creators@momrise.app">creators@momrise.app</a> with screenshots of any top performers — we want to learn what works and share it back.</li>
+      </ul>
+    </div>
+
+    <!-- 10. Avoid -->
+    <div class="card" id="avoid">
+      <h2><span class="num">10</span>Things that quietly kill conversions</h2>
+      <ul>
+        <li><strong>Generic enthusiasm.</strong> "I love this app!!" without a specific moment = no conversion. Always anchor in a specific use ("the milestone tracker for my 18-month-old").</li>
+        <li><strong>Posting once and bailing.</strong> Your audience needs 3 touches to remember a code. One Reel and out is wasted effort.</li>
+        <li><strong>Cross-promoting competing apps in the same window.</strong> Mom audiences notice. It reads as "anyone with a check" and tanks your trust.</li>
+        <li><strong>Hiding the disclosure.</strong> Doesn't help conversion, doesn't protect you. Always lose-lose.</li>
+        <li><strong>Polished commercial vibes.</strong> The 10x stat is real. Resist the instinct to make it look professional.</li>
+        <li><strong>Telling people the price.</strong> Let MomRise's paywall do that. Your job is "you should check this out" — not "it costs $X." The trial removes the price barrier anyway.</li>
+        <li><strong>Sharing your link without your code.</strong> Codes work in the app even when links don't survive copy-paste. Always mention both.</li>
+      </ul>
+    </div>
+
+    <div class="card" style="text-align: center;">
+      <p style="margin: 0; font-size: 14px; color: var(--text-muted);">Questions? Wins? Anything we should add to this playbook?<br>Email <a href="mailto:creators@momrise.app">creators@momrise.app</a> — we read everything.</p>
+    </div>
+  </main>
+
+  <script>
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const targetId = btn.getAttribute('data-copy');
+        const el = document.getElementById(targetId);
+        if (!el) return;
+        try {
+          await navigator.clipboard.writeText(el.textContent.trim());
+          const orig = btn.textContent;
+          btn.textContent = 'Copied ✓';
+          btn.classList.add('copied');
+          setTimeout(() => {
+            btn.textContent = orig;
+            btn.classList.remove('copied');
+          }, 1500);
+        } catch (_) { /* ignore */ }
+      });
+    });
+  </script>
+</body>
+</html>
