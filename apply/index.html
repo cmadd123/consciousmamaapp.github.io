@@ -163,6 +163,11 @@
           <textarea name="pitch" required maxlength="600" placeholder="Tell us a bit about why you'd recommend MomRise to your community…"></textarea>
         </label>
 
+        <label style="flex-direction: row; align-items: flex-start; gap: 10px; font-weight: 400; font-size: 13.5px; line-height: 1.55; color: var(--text); cursor: pointer; padding: 6px 2px;">
+          <input type="checkbox" name="agreement_accepted" required style="width: 18px; height: 18px; margin-top: 2px; accent-color: var(--primary); flex-shrink: 0;">
+          <span>I agree to the <a href="/creator/agreement.html" target="_blank" rel="noopener" style="color: var(--primary); font-weight: 500;">MomRise Creator Agreement</a>.</span>
+        </label>
+
         <button class="btn" id="submitBtn" type="submit">Submit application</button>
         <div class="foot">We'll review and get back to you within a few days. Questions? <a href="mailto:creators@momrise.app">creators@momrise.app</a></div>
       </form>
@@ -230,6 +235,9 @@
         status: 'new',
         referrer: document.referrer || null,
         user_agent: navigator.userAgent || null,
+        agreement_accepted: true, // checkbox is `required`, so we can't be here without it
+        agreement_version: 'v1',  // creator/agreement.html — bump when revising
+        agreement_accepted_at: serverTimestamp(),
         submitted_at: serverTimestamp(),
       };
 
