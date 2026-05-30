@@ -33,6 +33,15 @@ const CREATOR_REV_SHARE = 0.5;
 const BUNDLE_ID = 'com.momrise.app';
 const APPLE_APP_ID = 6758357382; // momrise.app App Store ID
 
+// Apple's price field is sometimes null in sandbox (and historically
+// wasn't on every transaction in production either). Look up by product
+// ID as the primary source so earnings always write at the right amount;
+// fall back to the signed price only if we don't recognize the product.
+const PRODUCT_PRICES_CENTS = {
+  'momrise_month': 699,   // $6.99
+  'momrise_year': 6999,   // $69.99
+};
+
 // Apple Root CA G3 — vendored as a DER cert next to this file. Source:
 //   https://www.apple.com/certificateauthority/AppleRootCA-G3.cer
 // The library accepts DER-encoded Buffer/Uint8Array of trusted root
@@ -280,15 +289,20 @@ async function recordAppleEarning(txInfo, notificationType, subtype) {
     return;
   }
 
-  // Apple's price field is in millionths of the local currency unit
-  // (per docs). Convert to cents to match the Stripe path's `gross_cents`.
-  // Currency assumed USD for now — extend when we add multi-currency.
-  const grossCents = txInfo.price != null
-    ? Math.round(txInfo.price / 10000) // millionths → cents
-    : 0;
+  // Resolve price. Prefer our product-ID table (deterministic, always
+  // present); fall back to Apple's signed price field (milliunits — $6.99
+  // = 6990 milliunits, divide by 10 for cents). The signed price is
+  // sometimes null on sandbox transactions and historically wasn't on
+  // every production transaction either, so the table is the safer floor.
+  const productId = txInfo.productId;
+  let grossCents = PRODUCT_PRICES_CENTS[productId] || 0;
+  if (grossCents === 0 && txInfo.price != null) {
+    grossCents = Math.round(txInfo.price / 10);
+  }
   if (grossCents <= 0) {
     console.warn(
-      `[apple_iap] tx ${transactionId} has no price — refund or free trial?`,
+      `[apple_iap] tx ${transactionId} no price (product=${productId}, ` +
+        `signed_price=${txInfo.price}) — free trial / unknown product?`,
     );
     return;
   }
