@@ -18,6 +18,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -1109,6 +1110,19 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                         hoverColor: Colors.transparent,
                         highlightColor: Colors.transparent,
                         onTap: () async {
+                          // iOS subscriptions are managed by Apple — we
+                          // can't cancel them server-side. Route the user
+                          // to the system subscription manager. Stripe-
+                          // based subs (web / Android) still go through
+                          // the Cloud Function.
+                          if (Platform.isIOS) {
+                            await launchUrl(
+                              Uri.parse(
+                                  'https://apps.apple.com/account/subscriptions'),
+                              mode: LaunchMode.externalApplication,
+                            );
+                            return;
+                          }
                           final confirm = await showDialog<bool>(
                             context: context,
                             builder: (context) => AlertDialog(

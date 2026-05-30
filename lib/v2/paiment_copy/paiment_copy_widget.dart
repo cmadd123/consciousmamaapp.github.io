@@ -1163,23 +1163,53 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
   /// for each terminal state and routes the user home once the entitlement
   /// has propagated to Firestore. Called from both annual and monthly buy
   /// buttons so the UX is identical regardless of plan picked.
+  ///
+  /// At this point Apple has already returned (buyNonConsumable resolved),
+  /// so 'pending' really means "Apple confirmed, we're waiting for the
+  /// purchase stream to land in Firestore." Hence the "Activating..." copy
+  /// rather than the old misleading "Confirming with Apple" text.
   Future<void> _handleIapResult(String result) async {
     if (!mounted) return;
     if (result == 'pending' || result == 'success') {
-      ScaffoldMessenger.of(context).showSnackBar(
+      final messenger = ScaffoldMessenger.of(context);
+      final activatingSnack = messenger.showSnackBar(
         SnackBar(
-          content: const Text('Purchase started — confirming with Apple...'),
+          content: const Text('Activating your subscription…'),
           backgroundColor: FlutterFlowTheme.of(context).primary,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           margin: const EdgeInsets.all(16),
+          duration: const Duration(seconds: 20),
         ),
       );
-      // Stream commit is async; brief wait then verify Firestore mirror.
-      await Future.delayed(const Duration(seconds: 3));
-      final hasSubscription = await hasActiveSubscription();
-      if (hasSubscription && mounted) {
+
+      // Poll for the entitlement to land. Sandbox is usually under 3s;
+      // production occasionally takes 10s+ behind a flaky network.
+      bool active = false;
+      for (var i = 0; i < 15; i++) {
+        await Future.delayed(const Duration(seconds: 1));
+        if (!mounted) return;
+        active = await hasActiveSubscription();
+        if (active) break;
+      }
+      activatingSnack.close();
+      if (!mounted) return;
+
+      if (active) {
         _completeOnboardingAndGoHome();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text(
+              'We couldn’t confirm your subscription yet. Tap Restore Purchases or try again.',
+            ),
+            backgroundColor: FlutterFlowTheme.of(context).error,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            margin: const EdgeInsets.all(16),
+            duration: const Duration(seconds: 6),
+          ),
+        );
       }
     } else if (result == 'cancelled') {
       // User dismissed the sheet — silent, no error toast
