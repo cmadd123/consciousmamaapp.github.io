@@ -473,6 +473,7 @@
             <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); font-weight: 600; margin-bottom: 12px;">Admin actions</div>
             <div style="display: flex; flex-wrap: wrap; gap: 10px;">
               <button class="btn ghost" id="cdEditCodeBtn">Edit code</button>
+              <button class="btn ghost" id="cdEditRevShareBtn">Edit rev share</button>
               <button class="btn ghost" id="cdResendWelcomeBtn">Resend welcome email</button>
               <button class="btn ghost" id="cdToggleActiveBtn">—</button>
               <a class="btn ghost" id="cdStripeLink" href="https://dashboard.stripe.com/connect/accounts" target="_blank" rel="noopener">Open Stripe →</a>
@@ -491,6 +492,23 @@
           <div class="modal-actions">
             <button class="btn ghost" id="cancelEditCodeBtn">Cancel</button>
             <button class="btn" id="confirmEditCodeBtn">Save new code</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Edit rev share modal -->
+      <div class="modal-backdrop" id="editRevShareModal">
+        <div class="modal">
+          <h3>Edit rev share</h3>
+          <p>Percentage of gross revenue this creator earns on subscriptions credited to their code. Applies to NEW earnings only; existing rows keep the rate that was active when they were logged.</p>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <input type="number" id="editRevShareInput" min="1" max="100" step="1" style="width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 16px; font-weight: 600;">
+            <span style="font-size: 20px; font-weight: 600; color: var(--text-muted);">%</span>
+          </div>
+          <div style="font-size: 12px; color: var(--text-muted); margin-top: 6px;">Whole numbers 1–100. Default is 50%.</div>
+          <div class="modal-actions">
+            <button class="btn ghost" id="cancelEditRevShareBtn">Cancel</button>
+            <button class="btn" id="confirmEditRevShareBtn">Save rev share</button>
           </div>
         </div>
       </div>
@@ -1204,6 +1222,9 @@
         ['Lifetime earnings', `$${((c._lifetime || 0) / 100).toFixed(2)}`],
         ['Last payout', c.last_payout_cents ? `$${(c.last_payout_cents / 100).toFixed(2)} on ${c.last_payout_at?.toDate?.()?.toLocaleDateString() || '—'}` : '<span style="color: var(--text-muted);">None yet</span>'],
         ['Stripe Connect', stripeLine],
+        ['Rev share', typeof c.rev_share === 'number'
+          ? `<strong>${Math.round(c.rev_share * 100)}%</strong> <span style="color: var(--text-muted);">· custom</span>`
+          : `<strong>50%</strong> <span style="color: var(--text-muted);">· default</span>`],
         ['Theme color', c.theme_primary ? `<span style="display:inline-block;width:14px;height:14px;border-radius:3px;background:${esc(c.theme_primary)};vertical-align:-3px;margin-right:6px;"></span><code>${esc(c.theme_primary)}</code>` : '<span style="color: var(--text-muted);">default</span>'],
         ['Created', c.created_at?.toDate?.()?.toLocaleString() || '—'],
         ['Creator doc', `<code style="font-size: 11px; color: var(--text-muted);">${c.id}</code>`],
@@ -1223,6 +1244,7 @@
       tBtn.onclick = () => handleToggleActive(c, !isActive);
 
       $('cdEditCodeBtn').onclick = () => openEditCodeModal(c);
+      $('cdEditRevShareBtn').onclick = () => openEditRevShareModal(c);
       $('cdResendWelcomeBtn').onclick = () => handleResendWelcome(c);
 
       show('viewCreatorDetail');
@@ -1270,6 +1292,41 @@
       $('confirmEditCodeBtn').onclick = () => handleEditCode(c);
     }
     $('cancelEditCodeBtn').addEventListener('click', () => $('editCodeModal').classList.remove('open'));
+    $('cancelEditRevShareBtn').addEventListener('click', () => $('editRevShareModal').classList.remove('open'));
+
+    function openEditRevShareModal(c) {
+      const currentPct = typeof c.rev_share === 'number'
+        ? Math.round(c.rev_share * 100)
+        : 50;
+      $('editRevShareInput').value = currentPct;
+      $('editRevShareModal').classList.add('open');
+      $('editRevShareInput').focus();
+      $('editRevShareInput').select();
+      $('confirmEditRevShareBtn').onclick = () => handleEditRevShare(c);
+    }
+
+    async function handleEditRevShare(c) {
+      const pct = Number($('editRevShareInput').value);
+      if (!Number.isFinite(pct) || pct < 1 || pct > 100) {
+        toast('Rev share must be a whole number 1–100.', true);
+        return;
+      }
+      const v = pct / 100;
+      const btn = $('confirmEditRevShareBtn');
+      btn.disabled = true; btn.textContent = 'Saving…';
+      try {
+        const call = httpsCallable(functions, 'adminSetCreatorRevShare');
+        await call({ creatorId: c.id, revShare: v });
+        toast(`Rev share set to ${pct}%.`);
+        c.rev_share = v;
+        $('editRevShareModal').classList.remove('open');
+        openCreatorDetail(c);
+      } catch (e) {
+        toast('Failed: ' + (e.message || 'unknown error'), true);
+      } finally {
+        btn.disabled = false; btn.textContent = 'Save rev share';
+      }
+    }
     $('editCodeInput')?.addEventListener('input', (e) => {
       e.target.value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
     });

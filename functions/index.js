@@ -2734,6 +2734,35 @@ exports.adminUpdateCreatorCode = onCall(async (request) => {
   return { ok: true, code: cleaned };
 });
 
+// Override a creator's rev share. Affects every NEW earning event after
+// the change — past earning rows store their own rev_share so refunds
+// keep mirroring the rate that was actually paid. Field is a number in
+// (0, 1] where 0.5 = 50% to the creator. Read by Apple IAP + Stripe
+// webhooks via getCreatorRevShare() in functions/{apple_iap,stripe}_*.js.
+exports.adminSetCreatorRevShare = onCall(async (request) => {
+  _requireAdmin(request);
+  const { creatorId, revShare } = request.data || {};
+  if (!creatorId) {
+    throw new HttpsError('invalid-argument', 'creatorId required');
+  }
+  const v = Number(revShare);
+  if (!Number.isFinite(v) || v <= 0 || v > 1) {
+    throw new HttpsError(
+      'invalid-argument',
+      'revShare must be a number in (0, 1] — e.g. 0.5 for 50%.',
+    );
+  }
+  const db = getFirestore();
+  const creatorSnap = await db.collection('creators').doc(creatorId).get();
+  if (!creatorSnap.exists) throw new HttpsError('not-found', 'Creator not found');
+  await db.collection('creators').doc(creatorId).update({
+    rev_share: v,
+    rev_share_changed_by_admin_at: FieldValue.serverTimestamp(),
+    rev_share_changed_by: request.auth.token.email,
+  });
+  return { ok: true, rev_share: v };
+});
+
 // Re-send the welcome email to a creator (e.g., they lost it).
 exports.adminResendWelcomeEmail = onCall(
   { secrets: [sendgridApiKey] },
