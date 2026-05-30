@@ -681,6 +681,7 @@
           ));
           for (const d of earningsSnap.docs) {
             const e = d.data();
+            if (e.environment === 'Sandbox') continue;
             const paidAt = e.paid_at?.toDate?.();
             if (paidAt && paidAt >= monthStart) {
               paidThisMonth += e.creator_cents || 0;
@@ -1057,6 +1058,7 @@
           const earningsSnap = await getDocs(query(collection(db, 'creator_earnings'), where('payout_status', '==', 'paid')));
           for (const d of earningsSnap.docs) {
             const e = d.data();
+            if (e.environment === 'Sandbox') continue;
             const paidAt = e.paid_at?.toDate?.();
             if (!paidAt || paidAt < yearStart) continue;
             const path = e.creator_ref?.path || '';
@@ -1128,6 +1130,7 @@
           const earningsSnap = await getDocs(collection(db, 'creator_earnings'));
           for (const d of earningsSnap.docs) {
             const e = d.data();
+            if (e.environment === 'Sandbox') continue;
             if (e.kind !== 'earning' && e.kind !== 'clawback') continue;
             const path = e.creator_ref?.path || '';
             earningsByCreator.set(path, (earningsByCreator.get(path) || 0) + (e.creator_cents || 0));

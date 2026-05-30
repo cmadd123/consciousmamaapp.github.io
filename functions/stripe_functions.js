@@ -701,6 +701,10 @@ async function recordCreatorEarning(invoice) {
     payout_status: 'pending',
     created_at: FieldValue.serverTimestamp(),
     kind: 'earning',
+    environment: 'Production', // Stripe has no sandbox concept here; tag
+                               // so the payout/dashboard filters can apply
+                               // a single `environment == 'Production'`
+                               // query across both payment sources.
   });
 }
 
@@ -743,6 +747,7 @@ async function recordRefundClawback(charge) {
     created_at: FieldValue.serverTimestamp(),
     kind: 'clawback',
     source_earning_ref: existingEarning.docs[0].ref,
+    environment: 'Production',
   });
 }
 
@@ -768,6 +773,12 @@ exports.runCreatorPayouts = onSchedule(
     const buckets = new Map();
     for (const doc of pendingSnap.docs) {
       const d = doc.data();
+      // Skip sandbox earnings entirely. Apple-IAP sandbox rows carry
+      // environment: 'Sandbox'; everything else (legacy + Stripe +
+      // Apple-Production) treated as production. Legacy rows from
+      // before this field shipped default to production so they still
+      // pay out.
+      if (d.environment === 'Sandbox') continue;
       const key = d.creator_code;
       if (!buckets.has(key)) buckets.set(key, { docs: [], total: 0, creatorRef: d.creator_ref });
       const bucket = buckets.get(key);

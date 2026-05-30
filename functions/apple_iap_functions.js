@@ -194,14 +194,14 @@ exports.appleNotification = onRequest(
         'OFFER_REDEEMED',
       ]);
       if (earningTypes.has(notificationType) && txInfo) {
-        await recordAppleEarning(txInfo, notificationType, subtype);
+        await recordAppleEarning(txInfo, notificationType, subtype, envEnv);
       }
 
       // Refund events: Apple yanks money back, sometimes weeks after
       // the original transaction. Create a clawback row.
       const refundTypes = new Set(['REFUND']);
       if (refundTypes.has(notificationType) && txInfo) {
-        await recordAppleRefundClawback(txInfo);
+        await recordAppleRefundClawback(txInfo, envEnv);
       }
 
       // Everything else (EXPIRED, DID_CHANGE_RENEWAL_STATUS, etc.) we
@@ -219,7 +219,7 @@ exports.appleNotification = onRequest(
   },
 );
 
-async function recordAppleEarning(txInfo, notificationType, subtype) {
+async function recordAppleEarning(txInfo, notificationType, subtype, environment) {
   const db = getFirestore();
   const transactionId = txInfo.transactionId;
   const originalTransactionId = txInfo.originalTransactionId;
@@ -339,6 +339,7 @@ async function recordAppleEarning(txInfo, notificationType, subtype) {
     source: 'apple_iap',
     apple_notification_type: notificationType,
     apple_subtype: subtype,
+    environment, // 'Production' or 'Sandbox' — payouts filter on this
   });
 
   console.log(
@@ -347,7 +348,7 @@ async function recordAppleEarning(txInfo, notificationType, subtype) {
   );
 }
 
-async function recordAppleRefundClawback(txInfo) {
+async function recordAppleRefundClawback(txInfo, environment) {
   const db = getFirestore();
   const transactionId = txInfo.transactionId;
 
@@ -398,6 +399,7 @@ async function recordAppleRefundClawback(txInfo) {
     kind: 'clawback',
     source: 'apple_iap',
     source_earning_ref: earningSnap.docs[0].ref,
+    environment, // 'Production' or 'Sandbox'
   });
 
   console.log(

@@ -1435,6 +1435,11 @@ exports.appleNotification = appleIapFunctions.appleNotification;
 const creatorAttributionMatch = require('./creator_attribution_match');
 exports.recordPendingAttribution = creatorAttributionMatch.recordPendingAttribution;
 exports.claimAttribution = creatorAttributionMatch.claimAttribution;
+
+// Email a creator every time a new earning lands in their ledger.
+// Sandbox + clawback rows are filtered out at the trigger level.
+const creatorNotifications = require('./creator_notifications');
+exports.notifyOnCreatorEarning = creatorNotifications.notifyOnCreatorEarning;
 exports.createCreatorOnboardingLink = stripeFunctions.createCreatorOnboardingLink;
 exports.createCreatorDashboardLink = stripeFunctions.createCreatorDashboardLink;
 exports.getCreatorConnectStatus = stripeFunctions.getCreatorConnectStatus;

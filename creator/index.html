@@ -3349,6 +3349,10 @@
         const byUser = new Map(); // userPath -> Set of "YYYY-MM" they paid in
         for (const d of snap.docs) {
           const e = d.data();
+          // Hide sandbox earnings from the creator-facing dashboard so
+          // internal IAP test runs don't pollute a real creator's view.
+          // Legacy rows (no environment field) are treated as production.
+          if (e.environment === 'Sandbox') continue;
           if (e.payout_status === 'pending') pending += e.creator_cents;
           if (e.kind === 'earning' || e.kind === 'clawback') lifetime += e.creator_cents;
 
@@ -4533,6 +4537,17 @@
     //    sync; values match the app's RecipeType + MealTyp enums.
     const RM_RECIPE_TYPES = ['Entree', 'Side', 'Dessert'];
     const RM_MEAL_TYPES = ['Breakfast', 'Lunch', 'Dinner', 'Snacks'];
+
+    // Map a recipe's classification type to the slot-entry role the mobile
+    // importer buckets on. Un-classified recipes default to 'entree' so a
+    // multi-recipe slot still resolves a main.
+    function roleFromRecipeType(recipeType) {
+      switch ((recipeType || '').toLowerCase()) {
+        case 'side': return 'side';
+        case 'dessert': return 'dessert';
+        default: return 'entree';
+      }
+    }
     const RM_ALLERGENS = ['Milk', 'Eggs', 'Peanuts', 'Tree nuts', 'Soy', 'Wheat / Gluten', 'Fish', 'Shellfish', 'Sesame'];
 
     function recipeMetaFieldsHtml(r = {}) {
@@ -5288,7 +5303,10 @@
         $('planDesc').value = existing.data.description || '';
         planDayCount = existing.data.day_count || 7;
         // Normalize slots to arrays — plans saved before multi-recipe slots
-        // stored one recipe per slot as a bare object.
+        // stored one recipe per slot as a bare object. Legacy entries also
+        // predate the `role` field; they're copied through as-is (no role)
+        // and the mobile importer falls back to the recipe's own type or
+        // an entree/side default, so old plans keep working.
         planSlots = {};
         for (const [k, v] of Object.entries(existing.data.slots || {})) {
           planSlots[k] = Array.isArray(v) ? v.slice() : [v];
@@ -5565,6 +5583,9 @@
               id: d.id,
               recipe_name: r.recipe_name || 'Untitled recipe',
               image_url: r.image_url || '',
+              // recipe_type ('Entree'|'Side'|'Dessert') drives the slot
+              // entry's role; may be absent on un-classified recipes.
+              recipe_type: r.recipe_type || '',
             });
           });
           recipePickerCache.sort((a, b) => a.recipe_name.localeCompare(b.recipe_name));
@@ -5611,6 +5632,10 @@
             recipe_id: recipe.id,
             recipe_name: recipe.recipe_name,
             image_url: recipe.image_url,
+            // role lets the mobile importer bucket a multi-recipe slot
+            // into entree/side/dessert. Defaults to 'entree' when the
+            // recipe has no classification type.
+            role: roleFromRecipeType(recipe.recipe_type),
           });
           $('recipePickerModal').classList.remove('open');
           renderPlanGrid();
