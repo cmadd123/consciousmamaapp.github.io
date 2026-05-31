@@ -235,6 +235,64 @@
     .copy-btn.copied { background: color-mix(in srgb, var(--primary) 10%, var(--surface)); color: var(--primary-dark); border-color: var(--primary); }
     .template-body { white-space: pre-wrap; color: var(--text); }
 
+    /* Schedule timeline */
+    .schedule {
+      margin: 12px 0 4px;
+      border-left: 2px solid color-mix(in srgb, var(--primary) 28%, var(--border));
+      padding-left: 4px;
+    }
+    .sched-row {
+      display: grid;
+      grid-template-columns: 110px 1fr;
+      gap: 14px;
+      padding: 12px 0 12px 14px;
+      border-bottom: 1px dashed color-mix(in srgb, var(--primary) 14%, var(--border));
+      position: relative;
+    }
+    .sched-row:last-child { border-bottom: none; }
+    .sched-row::before {
+      content: '';
+      position: absolute;
+      left: -8px;
+      top: 18px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--surface);
+      border: 2px solid color-mix(in srgb, var(--primary) 40%, var(--border));
+    }
+    .sched-row.primary::before {
+      background: var(--accent);
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 18%, transparent);
+    }
+    .sched-day {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      padding-top: 2px;
+    }
+    .sched-row.primary .sched-day { color: #C45F2D; }
+    .sched-action {}
+    .sched-title {
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--text);
+      margin-bottom: 3px;
+    }
+    .sched-row.primary .sched-title { color: var(--primary-dark); }
+    .sched-desc {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    @media (max-width: 480px) {
+      .sched-row { grid-template-columns: 1fr; gap: 4px; padding-left: 14px; }
+      .sched-row::before { top: 8px; }
+    }
+
     .dont-list { padding-left: 0; list-style: none; margin: 0; }
     .dont-list li {
       padding: 8px 0 8px 26px;
@@ -329,14 +387,72 @@
     <!-- Section 4: First post matters most -->
     <div class="card">
       <h2>Your first post sets the campaign's velocity</h2>
-      <p>The very first paid post in the arc is the highest-leverage one. Get it right or the next two underperform.</p>
+      <p>The launch Reel is the highest-leverage post in the arc. Get it right or the next two underperform.</p>
       <ul>
-        <li><strong>Warm up first.</strong> Drop 2-3 normal posts in your voice the week before the paid Reel lands. Algorithms penalize sudden ad posts on quiet accounts; audiences scroll faster on them.</li>
+        <li><strong>Warm up first.</strong> Drop 2-3 normal posts in your voice the week before the launch Reel lands. Algorithms penalize sudden sponsored posts on quiet accounts; audiences scroll faster on them.</li>
         <li><strong>First touch is a Reel, not a Story.</strong> Reels can reach non-followers — biggest possible audience pull. Stories come later in the arc.</li>
         <li><strong>Frame it as a moment, not an announcement.</strong> Bad: <em>"I partnered with @momrise!"</em> Better: <em>"Here's how I planned 4 schedules this week in 8 minutes."</em></li>
         <li><strong>First 2 hours decide everything.</strong> Post when your audience is most active (Insights → "When followers are most active"), reply to every comment, share to your own Story within the first hour. Don't edit or delete after posting — kills algorithm trust.</li>
         <li><strong>Reference a specific moment</strong> — Sunday-night planning marathon, mid-week schedule pile-up, 5pm pivot. Generic "motherhood is busy" gives weeks 2 and 3 nowhere to refer back to.</li>
       </ul>
+    </div>
+
+    <!-- Section 5: Sample schedule -->
+    <div class="card">
+      <h2>A sample 3-week schedule</h2>
+      <p>A shape, not a script. Move things around to fit your normal posting rhythm and the times your audience is actually on Instagram.</p>
+      <div class="schedule">
+        <div class="sched-row">
+          <div class="sched-day">Days −7 to −1</div>
+          <div class="sched-action">
+            <div class="sched-title">Warm up</div>
+            <div class="sched-desc">2-3 normal posts in your voice. No mention of MomRise yet. The point is to make the algorithm see you're an active account before any sponsored content lands.</div>
+          </div>
+        </div>
+        <div class="sched-row primary">
+          <div class="sched-day">Day 1</div>
+          <div class="sched-action">
+            <div class="sched-title">★ Launch Reel</div>
+            <div class="sched-desc">The pressure-moment Reel. Code in the caption. The whole campaign hinges on this one.</div>
+          </div>
+        </div>
+        <div class="sched-row">
+          <div class="sched-day">Days 3-5</div>
+          <div class="sched-action">
+            <div class="sched-title">Story arc</div>
+            <div class="sched-desc">Recap the Reel for followers who missed it. Add a poll sticker tied to the moment ("does anyone else?").</div>
+          </div>
+        </div>
+        <div class="sched-row primary">
+          <div class="sched-day">Day 8</div>
+          <div class="sched-action">
+            <div class="sched-title">★ Carousel demo</div>
+            <div class="sched-desc">"7 things in my mom toolkit" or "how I plan a week in 5 min" — show it in your hand. Code in the caption.</div>
+          </div>
+        </div>
+        <div class="sched-row">
+          <div class="sched-day">Days 10-12</div>
+          <div class="sched-action">
+            <div class="sched-title">Story update</div>
+            <div class="sched-desc">One quick Story arc — feature you're actually using this week. Link sticker pointing to your code.</div>
+          </div>
+        </div>
+        <div class="sched-row primary">
+          <div class="sched-day">Day 15</div>
+          <div class="sched-action">
+            <div class="sched-title">★ Results Reel</div>
+            <div class="sched-desc">"Two weeks in — here's what changed." Specific outcome, not vague enthusiasm. Code in caption.</div>
+          </div>
+        </div>
+        <div class="sched-row">
+          <div class="sched-day">Days 17-19</div>
+          <div class="sched-action">
+            <div class="sched-title">Final story arc</div>
+            <div class="sched-desc">Code reminder + a question that invites replies. Replies in the closing window keep the campaign visible in your followers' feeds longer.</div>
+          </div>
+        </div>
+      </div>
+      <p style="margin-top: 14px; font-size: 13px; color: var(--text-muted);">3 primary touches (★) + 3 lighter Story arcs + warm-up. Stories reinforce the primary posts — they're not equal-weight ad drops.</p>
     </div>
 
     <!-- Section 5: Steal captions -->
