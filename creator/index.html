@@ -1293,6 +1293,9 @@
       <button class="nav-tab" data-tab="home" data-view="viewDashboard">
         <span class="nav-tab-icon" data-icon="home"></span><span class="nav-tab-label">Home</span>
       </button>
+      <a class="nav-tab" href="/creator/playbook/">
+        <span class="nav-tab-icon" data-icon="clipboard"></span><span class="nav-tab-label">Playbook</span>
+      </a>
       <button class="nav-tab" data-tab="recipes" data-view="viewAddRecipes">
         <span class="nav-tab-icon" data-icon="camera"></span><span class="nav-tab-label">Recipes</span>
       </button>
@@ -3702,6 +3705,20 @@
       // ctx: { onboarded, docsPublished, mealPlansPublished, codeShared }
       const items = [
         { id: 'account', label: 'Create your creator account', done: true },
+        {
+          id: 'playbook',
+          label: 'Read the creator playbook (5 min)',
+          sub: 'What actually works promoting MomRise — data-backed.',
+          done: !!localStorage.getItem(`checklist_playbook_done_${creatorDoc.id}`),
+          action: !localStorage.getItem(`checklist_playbook_done_${creatorDoc.id}`) ? {
+            label: 'Open',
+            handler: () => {
+              localStorage.setItem(`checklist_playbook_done_${creatorDoc.id}`, '1');
+              window.open('/creator/playbook/', '_blank', 'noopener');
+              renderChecklist(ctx);
+            },
+          } : null,
+        },
         {
           id: 'connect',
           label: 'Connect your bank for payouts',
