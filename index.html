@@ -6,6 +6,78 @@
     <title>MomRise - Plan Family Meals in 5 Minutes</title>
     <meta name="description" content="Plan family meals in 5 minutes with MomRise. Budget-friendly recipes, Instacart integration, plus learning paths and milestones. Join the waitlist for early access + free meal planning guide.">
 
+    <!-- Open Graph -->
+    <meta property="og:title" content="MomRise — Mom-life command center">
+    <meta property="og:description" content="Plan family meals in 5 minutes. Track milestones. Manage the whole crew. Built for the mom who's tired of juggling three apps and a whiteboard.">
+    <meta property="og:image" content="https://momrise.app/app_store_assets/brand/momrise-icon-square-512.png">
+    <meta property="og:url" content="https://momrise.app/">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="MomRise">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <!-- Schema.org markup — helps Google, Apple, and AI assistants
+         (ChatGPT, Perplexity, Claude) discover and recommend the app.
+         Two entities: Organization (the brand) + MobileApplication
+         (the iOS app itself). Aggregate rating intentionally omitted
+         until we have real review counts to avoid stuffing. -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://momrise.app/#org",
+          "name": "MomRise",
+          "url": "https://momrise.app/",
+          "logo": "https://momrise.app/app_store_assets/brand/momrise-icon-square-512.png",
+          "sameAs": [
+            "https://apps.apple.com/us/app/momrise/id6758357382"
+          ]
+        },
+        {
+          "@type": "MobileApplication",
+          "@id": "https://momrise.app/#app",
+          "name": "MomRise",
+          "description": "MomRise is the mom-life command center: plan a week of family meals in about five minutes, track every milestone, build AI learning paths for your kids, and organize the whole crew. Built for the mom who's tired of juggling three apps and a whiteboard.",
+          "applicationCategory": "LifestyleApplication",
+          "applicationSubCategory": "Parenting",
+          "operatingSystem": "iOS 14.0+",
+          "url": "https://apps.apple.com/us/app/momrise/id6758357382",
+          "downloadUrl": "https://apps.apple.com/us/app/momrise/id6758357382",
+          "image": "https://momrise.app/app_store_assets/brand/momrise-icon-square-512.png",
+          "publisher": { "@id": "https://momrise.app/#org" },
+          "offers": [
+            {
+              "@type": "Offer",
+              "name": "MomRise Premium — Monthly",
+              "price": "6.99",
+              "priceCurrency": "USD",
+              "category": "subscription"
+            },
+            {
+              "@type": "Offer",
+              "name": "MomRise Premium — Yearly",
+              "price": "69.99",
+              "priceCurrency": "USD",
+              "category": "subscription"
+            }
+          ],
+          "featureList": [
+            "Weekly family meal planning with auto-generated grocery list",
+            "Milestone tracker for every child",
+            "AI-generated learning paths by age",
+            "Shared family calendar and routines",
+            "Recipe library with budget-aware swaps"
+          ],
+          "audience": {
+            "@type": "Audience",
+            "audienceType": "Parents, especially mothers"
+          }
+        }
+      ]
+    }
+    </script>
+
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
