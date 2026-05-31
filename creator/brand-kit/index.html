@@ -119,6 +119,35 @@
     }
     .logo-card.dark .label { color: rgba(255,255,255,0.7); }
 
+    .logo-split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      margin-top: 14px;
+    }
+    .logo-split-light, .logo-split-dark {
+      padding: 32px 20px 16px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+    .logo-split-light { background: var(--surface); }
+    .logo-split-dark { background: var(--primary-dark); }
+    .logo-split-light img, .logo-split-dark img {
+      width: 96px; height: 96px; border-radius: 22px;
+    }
+    .logo-split-tag {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
     .lockup {
       display: inline-flex;
       align-items: center;
@@ -329,23 +358,19 @@
     <div class="card">
       <h2>Logo</h2>
       <p>Use the rounded-square icon. Don't crop it, don't change the corner radius, don't put it inside another shape.</p>
-      <div class="logo-row">
-        <div class="logo-card">
+      <div class="logo-split">
+        <div class="logo-split-light">
           <img src="/app_store_assets/brand/momrise-icon-square-512.png" alt="MomRise icon on light">
-          <div class="name">Icon · on light</div>
-          <div class="label">Default — use on warm/white backgrounds</div>
-          <div class="download-row" style="justify-content: center; margin-top: 12px;">
-            <a class="download" href="/app_store_assets/brand/momrise-icon-square-512.png" download="momrise-icon.png">↓ PNG · 512px</a>
-          </div>
+          <div class="logo-split-tag">on light</div>
         </div>
-        <div class="logo-card dark">
+        <div class="logo-split-dark">
           <img src="/app_store_assets/brand/momrise-icon-square-512.png" alt="MomRise icon on dark">
-          <div class="name">Icon · on dark</div>
-          <div class="label">For overlaid stickers, video lower-thirds</div>
-          <div class="download-row" style="justify-content: center; margin-top: 12px;">
-            <a class="download" href="/app_store_assets/brand/momrise-icon-square-512.png" download="momrise-icon.png">↓ PNG · 512px</a>
-          </div>
+          <div class="logo-split-tag" style="color: rgba(255,255,255,0.7);">on dark</div>
         </div>
+      </div>
+      <p class="muted" style="text-align: center; margin: 14px 0 8px;">Same file in both. The icon works on any background — don't recolor it or remove the rounded corners.</p>
+      <div class="download-row" style="justify-content: center;">
+        <a class="download" href="/app_store_assets/brand/momrise-icon-square-512.png" download="momrise-icon.png">↓ Icon PNG · 512px</a>
       </div>
       <p style="margin-top: 18px;">When you need it inline with text — like in a Story or sign-off:</p>
       <div class="logo-card" style="text-align: left;">
