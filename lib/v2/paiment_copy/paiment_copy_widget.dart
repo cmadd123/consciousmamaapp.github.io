@@ -120,13 +120,17 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
         if (mounted) _ctaController.forward();
       });
 
-      // Show the creator-code prompt once entrances have settled, but
-      // only if the user has no active_creator_code yet. The v2 signup
-      // flow lands directly here (skips WelcomeCelebration), so this is
-      // the highest-visibility attribution capture point in the funnel.
-      Future.delayed(const Duration(milliseconds: 900), () {
-        if (mounted) _maybeShowCreatorCodePrompt();
-      });
+      // DISABLED FOR NOW (re-enable when real creators are onboarded):
+      // Surfacing "Did a creator share MomRise with you?" to every new
+      // signup before any real creators exist creates FOMO/confusion
+      // ("am I supposed to know one?"). Paywall link + Settings tile
+      // stay live so anyone who DOES have a code can enter it. The
+      // _maybeShowCreatorCodePrompt() method below stays in the file,
+      // ready to wire back up by uncommenting the Future.delayed below.
+      //
+      // Future.delayed(const Duration(milliseconds: 900), () {
+      //   if (mounted) _maybeShowCreatorCodePrompt();
+      // });
     });
   }
 

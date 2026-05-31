@@ -142,15 +142,19 @@ class _WelcomeCelebrationWidgetState extends State<WelcomeCelebrationWidget>
   /// here drives more of Haley's revenue than any other single screen.
   Future<void> _showCreatorCodePromptThenContinue() async {
     if (!mounted) return;
-    await showModalBottomSheet<void>(
-      context: context,
-      backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (sheetContext) => const CreatorCodePromptSheet(),
-    );
+    // DISABLED FOR NOW (re-enable when real creators are onboarded):
+    // The bottom sheet creates FOMO for users who don't know any
+    // creator. Uncomment the showModalBottomSheet call to bring it back.
+    //
+    // await showModalBottomSheet<void>(
+    //   context: context,
+    //   backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
+    //   isScrollControlled: true,
+    //   shape: const RoundedRectangleBorder(
+    //     borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+    //   ),
+    //   builder: (sheetContext) => const CreatorCodePromptSheet(),
+    // );
     if (!mounted) return;
     context.goNamedAuth('paimentCopy', mounted);
   }
