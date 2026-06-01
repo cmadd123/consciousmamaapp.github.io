@@ -1210,6 +1210,7 @@
     .stat-band-value { font-size: 22px; font-weight: 700; color: var(--text); line-height: 1.1; }
     .stat-band-label { font-size: 12px; color: var(--text-muted); }
     .stat-band-cta { margin-left: auto; font-size: 13px; color: var(--primary); font-weight: 600; }
+    .info-tip { cursor: help; color: var(--text-muted); opacity: 0.7; font-size: 0.9em; margin-left: 2px; }
 
     @media (max-width: 640px) {
       .creator-nav {
@@ -3355,6 +3356,11 @@
           where('creator_ref', '==', creatorDoc.ref),
         ));
         let pending = 0, lifetime = 0;
+        let pendingEligible = 0, pendingHoldback = 0;
+        // Earnings need to be 30 days old before they're swept into a
+        // payout cycle (matches the holdback in runCreatorPayouts).
+        const HOLDBACK_DAYS = 30;
+        const holdbackCutoff = Date.now() - HOLDBACK_DAYS * 24 * 60 * 60 * 1000;
         const byMonth = new Map();
         const byUser = new Map(); // userPath -> Set of "YYYY-MM" they paid in
         for (const d of snap.docs) {
@@ -3363,7 +3369,15 @@
           // internal IAP test runs don't pollute a real creator's view.
           // Legacy rows (no environment field) are treated as production.
           if (e.environment === 'Sandbox') continue;
-          if (e.payout_status === 'pending') pending += e.creator_cents;
+          if (e.payout_status === 'pending') {
+            pending += e.creator_cents;
+            const createdAtMs = e.created_at?.toMillis?.() || 0;
+            if (createdAtMs > 0 && createdAtMs <= holdbackCutoff) {
+              pendingEligible += e.creator_cents;
+            } else {
+              pendingHoldback += e.creator_cents;
+            }
+          }
           if (e.kind === 'earning' || e.kind === 'clawback') lifetime += e.creator_cents;
 
           const ts = e.created_at?.toDate?.() || new Date();
@@ -3379,18 +3393,29 @@
         }
 
         // Clawbacks stored as negative creator_cents can push these below 0
-        // if refunds exceed earnings — clamp so the strip never shows a
+        // if refunds exceed earnings. Clamp so the strip never shows a
         // negative dollar figure.
-        $('statPending').textContent = fmtMoney(Math.max(0, pending));
-        $('bandPending').textContent = fmtMoney(Math.max(0, pending));
+        const eligibleDisplay = Math.max(0, pendingEligible);
+        const holdbackDisplay = Math.max(0, pendingHoldback);
+        const pendingDisplay = Math.max(0, pending);
+        $('statPending').textContent = fmtMoney(pendingDisplay);
+        $('bandPending').textContent = fmtMoney(pendingDisplay);
         $('statLifetime').textContent = fmtMoney(Math.max(0, lifetime));
 
-        const thresholdGap = 2500 - pending;
-        $('statPendingSub').innerHTML = pending >= 2500
-          ? '<span class="up">Ready for next payout</span>'
-          : thresholdGap > 0
-            ? `<span class="muted">${fmtMoney(thresholdGap)} to $25 minimum</span>`
-            : '';
+        // Sub-line shows the eligible vs holdback split when there's a
+        // holdback portion, otherwise the existing threshold messaging.
+        const thresholdGap = 2500 - pendingEligible;
+        if (holdbackDisplay > 0) {
+          $('statPendingSub').innerHTML = pendingEligible >= 2500
+            ? `<span class="up">${fmtMoney(eligibleDisplay)} ready · ${fmtMoney(holdbackDisplay)} in 30-day hold <span class="info-tip" title="Earnings become eligible for payout 30 days after they're credited, so refunds can settle first. The 30-day hold portion will roll into your next eligible payout as it ages.">ⓘ</span></span>`
+            : `<span class="muted">${fmtMoney(eligibleDisplay)} eligible · ${fmtMoney(holdbackDisplay)} in 30-day hold <span class="info-tip" title="Earnings become eligible for payout 30 days after they're credited, so refunds can settle first. The 30-day hold portion will roll into your next eligible payout as it ages.">ⓘ</span></span>`;
+        } else {
+          $('statPendingSub').innerHTML = pendingEligible >= 2500
+            ? '<span class="up">Ready for next payout</span>'
+            : thresholdGap > 0
+              ? `<span class="muted">${fmtMoney(thresholdGap)} to $25 minimum</span>`
+              : '';
+        }
 
         const lastPayoutCents = creatorDoc.data.last_payout_cents || 0;
         const lastPayoutAt = creatorDoc.data.last_payout_at;

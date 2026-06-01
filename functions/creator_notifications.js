@@ -66,6 +66,7 @@ exports.notifyOnCreatorEarning = onDocumentCreated(
           amountStr,
           sourceLabel,
           creatorCode: e.creator_code || '',
+          eligibleDate: _formatEligibleDate(e.created_at),
         }),
       });
       console.log(
@@ -183,7 +184,23 @@ function _renderPayoutEmail({ firstName, amountStr, lifetimeStr }) {
 </html>`;
 }
 
-function _renderEarningEmail({ firstName, amountStr, sourceLabel, creatorCode }) {
+// Format the payout-eligible date for an earning. Earnings need to be 30
+// days old before they're swept into a payout cycle (the holdback in
+// runCreatorPayouts). Returns a human-readable date string the creator
+// email can show ("June 30, 2026").
+function _formatEligibleDate(createdAt) {
+  try {
+    const created = createdAt?.toDate?.() || new Date();
+    const eligible = new Date(created.getTime() + 30 * 24 * 60 * 60 * 1000);
+    return eligible.toLocaleDateString('en-US', {
+      year: 'numeric', month: 'long', day: 'numeric',
+    });
+  } catch (_) {
+    return 'about 30 days from now';
+  }
+}
+
+function _renderEarningEmail({ firstName, amountStr, sourceLabel, creatorCode, eligibleDate }) {
   const esc = (s) =>
     String(s || '').replace(/[<>&]/g, (c) => ({
       '<': '&lt;',
@@ -209,8 +226,8 @@ function _renderEarningEmail({ firstName, amountStr, sourceLabel, creatorCode })
     </div>
     <div style="padding: 28px 32px;">
       <p style="margin: 0 0 16px; font-size: 16px; color: #1F2937;">Hey ${esc(firstName)},</p>
-      <p style="margin: 0 0 16px; font-size: 16px; color: #1F2937;">A new subscription was credited to your code <strong style="color: #2A6F67;">${esc(creatorCode)}</strong>. Your share — <strong>${esc(amountStr)}</strong> — has been added to your pending balance.</p>
-      <p style="margin: 0 0 24px; font-size: 14px; color: #6B7280;">Payouts run on the 1st of each month once your pending balance hits $25.</p>
+      <p style="margin: 0 0 16px; font-size: 16px; color: #1F2937;">A new subscription was credited to your code <strong style="color: #2A6F67;">${esc(creatorCode)}</strong>. Your share, <strong>${esc(amountStr)}</strong>, has been added to your pending balance.</p>
+      <p style="margin: 0 0 8px; font-size: 14px; color: #6B7280;">Payouts run on the 1st of each month once your pending balance hits $25. Earnings become payout-eligible 30 days after they're credited, so this one is eligible starting <strong style="color: #2A6F67;">${esc(eligibleDate)}</strong>.</p>
       <div style="text-align: center;">
         <a href="https://momrise.app/creator/" style="display: inline-block; background: #52A097; color: white; padding: 12px 24px; border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 15px;">Open creator dashboard →</a>
       </div>

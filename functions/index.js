@@ -2330,7 +2330,8 @@ function _renderCreatorWelcomeEmail(name) {
         <li style="margin: 10px 0;">Start sharing your code with your community — our <a href="https://momrise.app/creator/playbook/" style="color: #52A097;">creator playbook</a> covers exactly what works (and what doesn't) for promoting parenting apps. Read it before your first post.</li>
       </ol>
 
-      <p style="margin: 24px 0 8px;">Payouts run on the 1st of each month, minimum $25. Everything's in your dashboard — follower count, earnings, content performance.</p>
+      <p style="margin: 24px 0 8px;">Payouts run on the 1st of each month, $25 minimum, for earnings that are at least 30 days old. The 30-day hold gives refunds time to settle before money moves. Your dashboard always shows both your eligible balance and what's still in the hold window.</p>
+      <p style="margin: 16px 0 8px;">Everything else (follower count, earnings, content performance) is in your dashboard too.</p>
 
       <div style="text-align: center; margin: 32px 0 16px;">
         <a href="https://momrise.app/creator/" style="display: inline-block; background: #52A097; color: white !important; text-decoration: none; padding: 14px 36px; border-radius: 10px; font-weight: 600; font-size: 15px;">Go to your dashboard →</a>
