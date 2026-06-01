@@ -257,9 +257,9 @@ Example format:
 
   // 🕓 Step 5 — Base date and time
   final startDate = DateTime.parse(currentDate);
-  final timeParts = preferredTime.split(":");
-  final baseHour = int.tryParse(timeParts[0]) ?? 18;
-  final baseMinute = int.tryParse(timeParts[1]) ?? 0;
+  final parsed = _parsePreferredTime(preferredTime);
+  final baseHour = parsed.$1;
+  final baseMinute = parsed.$2;
 
   final firstTaskDate = DateTime(
     startDate.year,
@@ -326,5 +326,48 @@ Example format:
       "was_skipped": false,
       "lesson_order": i + 1,
     });
+  }
+}
+
+// Parse a preferredTime string into (hour, minute). The UI passes one of:
+//   - "09:00 AM" / "07:30 PM"  (12-hour with AM/PM, from create_learning_path_bottom_sheet)
+//   - "09:00" / "18:30"        (24-hour, from older flows)
+//   - "Morning" / "Afternoon" / "Evening"  (bucket fallback, from legacy step4 flow)
+// PM times were silently becoming AM and minutes were being nulled because the
+// original split-on-colon path can't handle the " AM"/" PM" suffix.
+(int, int) _parsePreferredTime(String preferredTime) {
+  final trimmed = preferredTime.trim();
+  final upper = trimmed.toUpperCase();
+
+  // 12-hour with AM/PM, e.g. "09:00 AM", "7:30 PM"
+  final ampmMatch = RegExp(r'^(\d{1,2}):(\d{2})\s*(AM|PM)$').firstMatch(upper);
+  if (ampmMatch != null) {
+    int hour = int.parse(ampmMatch.group(1)!);
+    final minute = int.parse(ampmMatch.group(2)!);
+    final isPm = ampmMatch.group(3) == 'PM';
+    if (hour == 12) hour = 0; // 12 AM = 00, 12 PM handled below
+    if (isPm) hour += 12;
+    return (hour, minute);
+  }
+
+  // 24-hour, e.g. "09:00", "18:30"
+  final h24Match = RegExp(r'^(\d{1,2}):(\d{2})$').firstMatch(trimmed);
+  if (h24Match != null) {
+    return (
+      int.parse(h24Match.group(1)!).clamp(0, 23),
+      int.parse(h24Match.group(2)!).clamp(0, 59),
+    );
+  }
+
+  // Bucket fallback (legacy step4 widget passes "Morning"/"Afternoon"/"Evening")
+  switch (upper) {
+    case 'MORNING':
+      return (9, 0);
+    case 'AFTERNOON':
+      return (14, 0);
+    case 'EVENING':
+      return (18, 0);
+    default:
+      return (18, 0);
   }
 }

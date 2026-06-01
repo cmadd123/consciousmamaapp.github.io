@@ -2,6 +2,7 @@ import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
 import '/components/custom_date_time_picker.dart';
 import '/components/parent_circle_widget.dart';
+import '/custom_code/actions/notification_service.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
@@ -788,9 +789,8 @@ class _AddEventWidgetState extends State<AddEventWidget> {
                             }
 
                             if (_model.selectedDate != null) {
-                              await EventAndTaskRecord.collection
-                                  .doc()
-                                  .set(createEventAndTaskRecordData(
+                              final eventRef = EventAndTaskRecord.collection.doc();
+                              await eventRef.set(createEventAndTaskRecordData(
                                     selectedChild: _model.selectedChild ?? FFAppState().selectedChildForMilestone,
                                     selectedChildren: _model.selectedChildren.toList(),
                                     name: _model.textController1.text,
@@ -803,6 +803,24 @@ class _AddEventWidgetState extends State<AddEventWidget> {
                                     assignedToMom: _model.assignedToMom,
                                     assignedToDad: _model.assignedToDad,
                                   ));
+
+                              // Schedule a 15-min-before reminder. Notification id is derived
+                              // from the doc id so we can cancel/reschedule deterministically
+                              // if the event is edited or deleted later. Fire-and-forget — a
+                              // failed schedule must not block event creation.
+                              try {
+                                await notificationService.initialize();
+                                await notificationService.scheduleCalendarReminder(
+                                  notificationId: eventRef.id.hashCode & 0x7fffffff,
+                                  eventName: _model.textController1.text,
+                                  eventTime: _model.selectedDate!,
+                                  minutesBefore: 15,
+                                  eventId: eventRef.id,
+                                );
+                              } catch (e) {
+                                debugPrint('Failed to schedule calendar reminder: $e');
+                              }
+
                               FFAppState().todocash = true;
                               safeSetState(() {});
 

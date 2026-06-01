@@ -270,6 +270,200 @@ These are the items where MomRise currently loses head-to-head. Ship these and y
 
 ---
 
+## Tier 6 — Grocery affiliate revenue stream (the second engine)
+
+This is what makes $10K total MRR achievable at **~600-700 active subs** instead of ~3,200 (subscription-only). Three engines, not one. The strategy: route each user to the affiliate path that matches her real shopping habit, not force everyone through IC.
+
+**Three-engine unit economics:**
+| Engine | Rate | Attribution | Status |
+|---|---|---|---|
+| Instacart | 5% on full cart | 7-day | **Live** (URL pattern), Impact contract signed |
+| Walmart Affiliate | 1% on grocery | 3-day | Code exists (`walmart_api_service.dart`), not surfaced |
+| Amazon Associates | 1% on grocery + **$3/Prime trial signup** | 24-hour, cart-wide | Not built |
+
+**Blended per-active-sub: ~$12-14/mo affiliate revenue** (see 6.7 for the math). The Prime bounty is the strongest per-event revenue we have — $3/signup ≈ $300 of grocery commission equivalent.
+
+**What we are NOT doing:**
+- **Northfork middleware** — pricing estimated at $25K-$50K/yr minimum (their customer list is all enterprise: Walmart, Kroger, Tasty/BuzzFeed). At 1% Walmart commission, we'd need $200K-$400K/mo attributed GMV just to break even on the fee. Math doesn't work for our scale.
+- **Spoonacular middleware** ($29-149/mo) — unnecessary since each retailer has a native affiliate path.
+- **Walmart Commerce API** — enterprise approval, slow, uncertain. Not pursuing.
+
+---
+
+### 6.1 — Instacart (primary engine, 5%)
+**Status:** Live via URL pattern. `instacart_affiliate_service.dart` builds search-param URLs against an Impact-tagged base URL in Remote Config. User taps "Shop using Instacart" → Instacart's site renders a pre-filled shopping list view → one-tap add-to-cart → checkout. Attribution validated with Lila Santos (Mar 2026).
+
+**Optional upgrade — full Shoppable Recipes API (2-3 weeks):**
+- Replace URL pattern with backend POST to IDP Shoppable Recipes endpoint
+- Gains: better SKU match accuracy (quantity, unit, brand preference), per-recipe analytics, stable shopping list IDs
+- Costs: 2-3 weeks engineering, requires Cloud Function infrastructure
+- **Gate on real data:** if match accuracy is hurting conversion in first 4 weeks (check by tapping the button and inspecting Instacart's matches against the original recipe), do the upgrade. If matches look reasonable, defer indefinitely.
+
+**Surface CTAs everywhere (7-day attribution requires saturation):**
+- "Order ingredients" on every recipe view, not just grocery list page
+- Inside cooking-mode footer (anticipates "I'm out of X")
+- Weekly meal-plan summary card
+
+---
+
+### 6.2 — Walmart (secondary engine, 1%)
+**Status:** `walmart_api_service.dart` exists (188 lines) using Walmart Affiliate API directly. Currently not prominently surfaced — the IC button dominates the UX.
+
+**Effort:** 3-5 days to add a "Shop at Walmart" CTA with preference-aware routing (see 6.4).
+
+**Plan:**
+- Walmart Affiliate API returns product search URLs tagged with our affiliate ID → user lands on Walmart, manually adds each item to cart (higher friction than IC, but it works)
+- Surface "Shop at Walmart" button for users whose `preferred_retailer` is Walmart
+- Keep IC button as secondary option even for Walmart-primary users (some will use IC for convenience orders)
+- 3-day attribution window — shorter than IC's 7-day, so CTAs still need to be near the purchase decision
+
+**Why DIY, not Northfork:** Northfork's middleware (which would give IC-style pre-filled carts at Walmart) is out of budget by ~10x. Existing affiliate-link code earns the same 1% commission at zero ongoing cost. Lower-quality UX, but it serves the cohort we'd otherwise leave on the table.
+
+---
+
+### 6.3 — Amazon (tertiary engine — Prime bounty + specialty)
+**Status:** Not built. Amazon Associates account assumed available (standard Amazon affiliate signup, no approval gate).
+
+**Effort:** 1 week for affiliate links + Prime trial CTA flow.
+
+**Plan:**
+- **Prime bounty (~$3 per Prime free-trial signup):** The actual prize. Gentle CTA on Whole Foods / Amazon Fresh recipe paths — "Try Prime free, get Whole Foods delivery free for 30 days." Best per-event affiliate revenue available to us.
+- **Specialty item affiliate links:** Spices, ethnic ingredients, specific brands the recipe calls for that Walmart/IC don't reliably stock. 1% commission, but Amazon is often the only natural source.
+- **Equipment / one-time purchases:** Stockpot, slow cooker, baby food maker, cookbook. Some kitchen categories pay 3-4%.
+- **24-hour cookie window** — short. But **cart-wide attribution within that 24h** is the saving grace — anything user adds to cart within the window earns us, not just the linked product.
+
+**Why NOT primary cart:** 1% rate same as Walmart but with shorter cookie. Doesn't beat IC's 5%/7-day. Complement, not engine.
+
+**What we are NOT doing:** Treating Amazon Fresh as a primary grocery cart. Alcohol affiliate (0% — Amazon excludes it).
+
+---
+
+### 6.4 — User preference detection in onboarding (the routing layer)
+**Status:** Not started. The layer that makes the three-engine strategy actually work.
+
+**Effort:** 3-5 days
+
+**Plan:**
+- Add one onboarding question: "Where do you usually grocery shop?" Options: Aldi, Publix, Kroger, Costco, Walmart, Target, Whole Foods, Other
+- Store as `preferred_retailer` on user profile
+- Route recipe-cart CTAs by retailer:
+  - **IC-compatible answer** (Aldi, Publix, Kroger, Costco, Whole Foods, Sprouts) → IC button prominent
+  - **Walmart answer** → Walmart button prominent, IC button secondary (still offered for convenience orders)
+  - **Target answer** → Target affiliate (if/when we add it), IC fallback
+  - **Other / no preference** → IC as default
+- Show ALL options in a "more shopping options" expand — don't lock users into one path
+- Allow change in settings later
+
+**Why this matters:** Sending Walmart-primary moms to IC's higher prices burns trust and won't convert. Hiding the IC button from IC-compatible users loses revenue. Detect the habit, match the path.
+
+**Expected impact:** Per-click conversion rate goes up materially (less bounce from "this isn't where I shop"). Blended affiliate revenue per active sub climbs from theoretical single-engine $6-7/mo to multi-engine $12-14/mo.
+
+---
+
+### 6.5 — Per-cohort attribution dashboard (internal)
+**Status:** Not started. Critical for negotiation in 6.6 and for measuring whether the 6.4 routing layer is actually improving conversion.
+
+**Effort:** 1-2 weeks
+
+**Plan:**
+- Instrument every cart open (IC, Walmart, Amazon) with `user_id`, `retailer`, `recipe_id`, timestamp, `preferred_retailer` (for routing accuracy measurement), `cart_value` (when reported back), order_status (new vs returning customer where available)
+- Internal admin view (`admin/grocery-attribution.html`) showing:
+  - Monthly attributed GMV split by retailer
+  - Conversion rate per retailer (click → order)
+  - Routing accuracy: % of clicks where chosen retailer matches preferred_retailer (sanity check on 6.4)
+  - AOV per cohort (recipe-led carts should beat IC's ~$95 site-wide avg)
+  - New-to-Instacart customer rate (critical IC metric — they pay extra for these)
+  - Repeat-cart rate at 30/60/90 days
+  - Prime bounty conversions
+  - IC+ membership conversion rate (separate revenue line)
+- Tag each recipe with cuisine, prep time, cost-tier → figure out which recipe types drive the highest-value carts
+
+**Why:** When we ask Lila for a rate increase at month 4-6, this is the data she'll want. And before then, we need it to know if the 6.4 routing layer is doing what we expect.
+
+---
+
+### 6.6 — Instacart commission rate negotiation (relationship, not engineering)
+**Status:** Confirmed via signed Impact.com contract: **5% flat on Order Placed, 5% flat on New User Activation, 7-day attribution, no CPA bonus.** Partner manager is Lila Santos (developers@instacart.com).
+
+**Effort:** Quarterly check-ins, not a sprint
+
+**Plan:**
+- **Months 1-3 post-launch:** Ship integration, instrument cohort dashboard, do NOT ask for a rate increase. Build a track record. Keep Lila in the loop on milestones (first 100 orders, first $1K GMV, etc.) — relationship maintenance, not asking.
+- **Month ~4** (or when monthly attributed GMV hits a meaningful threshold): First negotiation ask. Bring:
+  - New-to-IC customer rate (likely above their site avg — moms are stickier converters)
+  - Monthly attributed GMV trend
+  - AOV proof (recipe-led carts > IC site avg of ~$95)
+  - Repeat-order rate at 30/60/90 days
+- **Realistic stretch ceiling for IDP partners:** ~7-10% revshare. The widely-quoted "up to 15%" rate is the **Influencer/Creator track** — a different Instacart program with different terms, not available to IDP integrators. No published case study shows an IDP app cracking 5%, so anything above is best-effort estimation.
+- **Months 8-12:** Leverage point — credible threat of integrating a competitor (Shipt, Kroger, etc.) makes IC defensive about losing the volume. Don't bluff; have the integration scoped before asking.
+
+**Confirmed:** Rate changes are 1:1 negotiated via Impact contract amendment. No published tier table. No first-person disclosures from any IDP partner of a successful rate increase — we'd be in early territory if it works.
+
+**Open question:** Whether a CPA bonus on new-to-IC orders is negotiable separately from revshare. The standard Affiliate/Publisher track ships with $10 CPA but IDP does not. Adding CPA may be an easier first ask than raising revshare.
+
+---
+
+### 6.7 — Real grocery cart data + three-engine revenue model
+**Why this section exists:** Earlier modeling assumed $90/week carts AND treated Instacart as the only revenue engine. Both were wrong. USDA Food Plans data corrects cart size; the three-engine model (6.1-6.4) corrects per-sub revenue upward.
+
+**USDA Food Plans (Jan 2026, monthly cost per family):**
+| Family size | Thrifty | Low-Cost | Moderate | Liberal |
+|---|---|---|---|---|
+| 3-4 ppl | $230-275/wk | $290-340/wk | $360-420/wk | $440-525/wk |
+| 5-6 ppl | $310-375/wk | $390-465/wk | $480-560/wk | $590-700/wk |
+
+**Haley (target archetype, family of 6):** $1,000+/mo confirmed → ~$230/wk → sitting in the **Thrifty** band. Disciplined shopper using Aldi + Publix, not the average.
+
+**Three-engine revenue model:**
+- Average MomRise mom (family of 4-5, mixed stores): ~$300-400/wk = ~$1,300-1,700/mo grocery spend
+- If 30-40% flows through affiliate paths, attributable monthly GMV per active sub = ~$400-600
+- Retailer cohort split (corrected — Southeast/Aldi/Publix coverage is bigger than first estimated):
+  - **IC-compatible (Aldi, Publix, Kroger, Costco, Whole Foods, etc.) — ~40-50% of base:** 5% × ~$500/mo attributed = **~$25/mo per sub**
+  - **Walmart-primary — ~40-50% of base:** 1% × ~$400/mo attributed = **~$4/mo per sub**
+  - **No affiliate path (Trader Joe's, Sprouts not on IC, local stores) — ~5-10%:** $0
+- **Amazon (cross-cutting, not retailer-exclusive):**
+  - Prime bounty ~$3 per signup. Assume 30% of subs sign up for Prime trial via our CTA over 6 months → averaged ~$1.50/sub/mo
+  - Specialty item commissions ~1% on ~$50/mo cart × 40% conversion = ~$0.20/sub/mo
+  - Combined Amazon contribution: ~$1.70/sub/mo
+- **Blended across all active subs: ~$12-14/mo per active sub** in affiliate revenue
+- **At ~600-700 active subs:** ~$8K affiliate alone, on top of subscription revenue, gets us to $10K total MRR
+
+**Math sanity:** Earlier $6-7/mo estimate assumed single-engine (IC only) and underweighted IC-compatible cohort. Three-engine + corrected cohort split roughly doubles per-sub revenue.
+
+---
+
+### 6.8 — Pricing reframe (defer until launch data)
+**Status:** Considered, deliberately deferred.
+
+**Question:** Lower sub price + raise creator share so creator earns same $ at lower price tag, while affiliate revenue picks up the gap?
+
+**Math sketch:**
+- Current: $4.99/mo sub, creator earns ~$X
+- Hypothetical: $2.99/mo sub, raised creator %, creator earns same $X, MomRise net is lower BUT volume goes up + affiliate per-sub revenue (~$12-14/mo blended in the three-engine model) starts to compete with the sub margin difference
+- Break-even threshold: depends on real affiliate flow-through rate. More compelling now with the corrected $12-14/mo number than at the earlier single-engine $6-7/mo estimate, but still gated on real measured data.
+
+**Why we're NOT doing this yet:**
+1. Lowering sub price is permanent (raising it later = churn)
+2. We have zero real conversion data at $4.99 yet — could be converting fine
+3. Affiliate per-sub revenue is modeled, not measured — need 3 months of post-launch data to know the true number
+4. Creator program value prop ("earn $X/sub") gets harder to message if % keeps moving
+
+**When to revisit:** Month 4-6 post-launch, after we have real conversion-rate-at-$4.99 + real affiliate-per-sub data from the three-engine model.
+
+---
+
+### 6.9 — Open action items (launch week)
+
+- [ ] **Connect bank account to Impact.com** for IC affiliate payouts (separate from Stripe Connect — Impact handles affiliate payouts independently)
+- [ ] **Verify Impact dashboard** is tracking clicks and orders since launch this week. 7-day attribution means first signal lands ~2 weeks post-launch; if zero clicks at week 1, attribution may be misconfigured
+- [ ] **Inspect IC match quality** — tap "Shop using Instacart" on 5-10 real recipes, check whether ingredients map to reasonable products. If matches look bad, prioritize 6.1's optional Shoppable Recipes API upgrade
+- [ ] **Verify `walmart_api_service.dart` still works** post-Apple-launch — last touched months ago, may need a smoke test before 6.2 surfacing
+
+---
+
 ## Update log
 
 - **2026-05-31** — Roadmap created. Tier 1 import + utilities most urgent. Tier 3.1 Baby Mode is the moat.
+- **2026-06-01** — Added Tier 6 (grocery affiliate revenue stream). Walmart path corrected (Northfork middleware, 1% not 4%). IC commission negotiation playbook scoped. Real cart data from USDA + Haley's spend replaces earlier $90/wk under-estimate. Pricing reframe deferred to month 4-6 pending real launch data.
+- **2026-06-01 (later)** — Confirmed IC rate via signed Impact.com contract: 5% flat on both Order Placed and New User Activation, 7-day attribution, no CPA bonus. Corrected negotiation ceiling from "8-12%" speculation to "~7-10% best-effort, no public IDP precedent." Corrected per-sub blended affiliate revenue from $10-15/mo down to ~$6-7/mo. Corrected $10K MRR target from ~770 subs to ~1,100-1,200 subs. Added 6.7 open action items (Impact bank connection, re-ping Lila, verify Impact dashboard).
+- **2026-06-01 (Tier 6 rewrite to three-engine model)** — Northfork dropped (pricing ~$25K-$50K/yr, math doesn't work at our scale). Spoonacular dropped (unnecessary middleware). New structure: 6.1 IC primary (URL pattern already shipped, full API as optional upgrade gated on real match-quality data), 6.2 Walmart secondary via existing `walmart_api_service.dart` (no Northfork), 6.3 Amazon tertiary (Prime $3 bounty + specialty items), 6.4 user preference detection in onboarding (the routing layer). Corrected cohort split — IC-compatible cohort is ~40-50% of base (was estimated 15%) since Aldi/Publix/Kroger/Costco are all on IC. Three-engine blended revenue: ~$12-14/mo per active sub. Updated $10K MRR target to ~600-700 active subs.

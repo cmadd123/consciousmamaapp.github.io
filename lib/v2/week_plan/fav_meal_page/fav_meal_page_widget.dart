@@ -1368,7 +1368,16 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                             hoverColor: Colors.transparent,
                                             highlightColor: Colors.transparent,
                                             onTap: () async {
-                                              context.safePop();
+                                              // safePop() falls back to go('/') which is the
+                                              // unauthenticated WelcomeEnhanced page — sends an
+                                              // authenticated user into the walkthrough and the
+                                              // next-step arrow there logs them out. Route to
+                                              // HomeHybrid instead when there's nothing to pop.
+                                              if (context.canPop()) {
+                                                context.pop();
+                                              } else {
+                                                context.goNamed(HomeHybridWidget.routeName);
+                                              }
                                             },
                                             child: Icon(
                                               Icons.arrow_back,
@@ -1715,6 +1724,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                           children: [
                                             {'label': 'Entree', 'emoji': '🍽️'},
                                             {'label': 'Side', 'emoji': '🥗'},
+                                            {'label': 'Snack', 'emoji': '🍿'},
                                             {'label': 'Dessert', 'emoji': '🍰'},
                                           ].map((recipeType) {
                                             final label = recipeType['label']!;
@@ -2010,7 +2020,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                                   .where((e) =>
                                                       e.mainOrSides == 'Main' ||
                                                       e.recipeType == RecipeType.Entree ||
-                                                      (e.mainOrSides.isEmpty && e.recipeType != RecipeType.Side && e.recipeType != RecipeType.Dessert))
+                                                      (e.mainOrSides.isEmpty && e.recipeType != RecipeType.Side && e.recipeType != RecipeType.Snack && e.recipeType != RecipeType.Dessert))
                                                   .toList();
                                             } else if (_model.categoryFilter == 'Side') {
                                               // Recipe Type: Side
@@ -2018,6 +2028,13 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                                   .where((e) =>
                                                       e.mainOrSides == 'Side' ||
                                                       e.recipeType == RecipeType.Side)
+                                                  .toList();
+                                            } else if (_model.categoryFilter == 'Snack') {
+                                              // Recipe Type: Snack
+                                              filtered = activeRecipes
+                                                  .where((e) =>
+                                                      e.mainOrSides == 'Snack' ||
+                                                      e.recipeType == RecipeType.Snack)
                                                   .toList();
                                             } else if (_model.categoryFilter == 'Dessert') {
                                               // Recipe Type: Dessert
@@ -2275,6 +2292,8 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                                                       // Recipe type chip
                                                                       if (containerVarItem.recipeType == RecipeType.Side || containerVarItem.mainOrSides == 'Side') {
                                                                         recipeTypeChips.add(_buildRecipeChip('Side', Color(0xFF4A90D9)));
+                                                                      } else if (containerVarItem.recipeType == RecipeType.Snack || containerVarItem.mainOrSides == 'Snack') {
+                                                                        recipeTypeChips.add(_buildRecipeChip('Snack', Color(0xFFFF9800)));
                                                                       } else if (containerVarItem.recipeType == RecipeType.Dessert || containerVarItem.mainOrSides == 'Dessert') {
                                                                         recipeTypeChips.add(_buildRecipeChip('Dessert', Color(0xFFE91E63)));
                                                                       }

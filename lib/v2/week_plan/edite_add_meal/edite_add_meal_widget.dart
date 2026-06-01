@@ -102,9 +102,11 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
             .cast<String>();
 
         // Initialize selectedCategories from existing meal data
-        // Add recipe type (Entree/Side/Dessert) — check both recipeType and mainOrSides
+        // Add recipe type (Entree/Side/Snack/Dessert) — check both recipeType and mainOrSides
         if (widget!.editCookingMeal!.recipeType == RecipeType.Side || widget!.editCookingMeal!.mainOrSides == 'Side') {
           _model.selectedCategories.add('Side');
+        } else if (widget!.editCookingMeal!.recipeType == RecipeType.Snack || widget!.editCookingMeal!.mainOrSides == 'Snack') {
+          _model.selectedCategories.add('Snack');
         } else if (widget!.editCookingMeal!.recipeType == RecipeType.Dessert || widget!.editCookingMeal!.mainOrSides == 'Dessert') {
           _model.selectedCategories.add('Dessert');
         } else {
@@ -345,6 +347,9 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
       } else if (_model.selectedCategories.contains('Side')) {
         mainOrSidesValue = 'Side';
         recipeTypeValue = RecipeType.Side;
+      } else if (_model.selectedCategories.contains('Snack')) {
+        mainOrSidesValue = 'Snack';
+        recipeTypeValue = RecipeType.Snack;
       } else if (_model.selectedCategories.contains('Dessert')) {
         mainOrSidesValue = 'Dessert';
         recipeTypeValue = RecipeType.Dessert;
@@ -1240,6 +1245,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                               children: [
                                 {'label': 'Entree', 'emoji': '🍖'},
                                 {'label': 'Side', 'emoji': '🥗'},
+                                {'label': 'Snack', 'emoji': '🍿'},
                                 {'label': 'Dessert', 'emoji': '🍰'},
                               ].map((recipeType) {
                                 final label = recipeType['label']!;
@@ -1249,7 +1255,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                   onTap: () {
                                     setState(() {
                                       // Remove all other recipe types first (single selection)
-                                      _model.selectedCategories.removeWhere((c) => ['Entree', 'Side', 'Dessert'].contains(c));
+                                      _model.selectedCategories.removeWhere((c) => ['Entree', 'Side', 'Snack', 'Dessert'].contains(c));
                                       // Then add the selected one
                                       _model.selectedCategories.add(label);
                                     });
@@ -2397,7 +2403,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
 
                                   // Validate categories
                                   final mealTypes = _model.selectedCategories.where((c) => ['Breakfast', 'Lunch', 'Dinner', 'Snacks'].contains(c)).toList();
-                                  final recipeTypes = _model.selectedCategories.where((c) => ['Entree', 'Side', 'Dessert'].contains(c)).toList();
+                                  final recipeTypes = _model.selectedCategories.where((c) => ['Entree', 'Side', 'Snack', 'Dessert'].contains(c)).toList();
 
                                   if (mealTypes.isEmpty) {
                                     ScaffoldMessenger.of(context).showSnackBar(
@@ -2414,7 +2420,7 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                     if (recipeTypes.isEmpty) {
                                       ScaffoldMessenger.of(context).showSnackBar(
                                         SnackBar(
-                                          content: Text('Please select a recipe type (Entree, Side, or Dessert)'),
+                                          content: Text('Please select a recipe type (Entree, Side, Snack, or Dessert)'),
                                           backgroundColor: Colors.red,
                                         ),
                                       );
@@ -2452,11 +2458,14 @@ class _EditeAddMealWidgetState extends State<EditeAddMealWidget> {
                                             } else if (_model.selectedCategories.contains('Side')) {
                                               mainOrSidesValue = 'Side';
                                               recipeTypeValue = RecipeType.Side;
+                                            } else if (_model.selectedCategories.contains('Snack')) {
+                                              mainOrSidesValue = 'Snack';
+                                              recipeTypeValue = RecipeType.Snack;
                                             } else if (_model.selectedCategories.contains('Dessert')) {
                                               mainOrSidesValue = 'Dessert';
                                               recipeTypeValue = RecipeType.Dessert;
                                             } else {
-                                              // Default if only Snacks selected (no recipe type)
+                                              // Default if only Snacks meal-type selected (no recipe type)
                                               mainOrSidesValue = 'Main';
                                               recipeTypeValue = RecipeType.Entree;
                                             }

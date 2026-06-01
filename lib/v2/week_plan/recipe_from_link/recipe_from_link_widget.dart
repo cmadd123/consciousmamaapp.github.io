@@ -470,6 +470,9 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
         case 'Side':
           recipeTypeEnum = RecipeType.Side;
           break;
+        case 'Snack':
+          recipeTypeEnum = RecipeType.Snack;
+          break;
         case 'Dessert':
           recipeTypeEnum = RecipeType.Dessert;
           break;
@@ -1634,6 +1637,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                               children: [
                                 {'label': 'Entree', 'emoji': '🍖'},
                                 {'label': 'Side', 'emoji': '🥗'},
+                                {'label': 'Snack', 'emoji': '🍿'},
                                 {'label': 'Dessert', 'emoji': '🍰'},
                               ].map((recipeType) {
                                 final label = recipeType['label']!;
