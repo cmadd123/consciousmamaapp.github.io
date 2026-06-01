@@ -3,6 +3,7 @@ import '/backend/backend.dart';
 import '/components/animated_press_widget.dart';
 import '/components/custom_date_time_picker.dart';
 import '/components/parent_circle_widget.dart';
+import '/custom_code/actions/notification_service.dart';
 import '/flutter_flow/flutter_flow_drop_down.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -301,6 +302,45 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
       });
     }
   }
+
+  // Deterministic notification id derived from the Firestore doc id. Used so we
+  // can cancel/reschedule on edit or delete without keeping a separate mapping.
+  // & 0x7fffffff keeps it inside Int32 positive range which the notifications
+  // plugin requires.
+  int _notifIdFor(DocumentReference ref) => ref.id.hashCode & 0x7fffffff;
+
+  // Schedule a 15-min-before local reminder for an event. Fire-and-forget by
+  // design: notification failures must not block event creation/update — the
+  // ledger write is the source of truth, the notification is best-effort.
+  Future<void> _scheduleReminderFor(
+    DocumentReference ref,
+    String name,
+    DateTime when,
+  ) async {
+    try {
+      await notificationService.initialize();
+      await notificationService.scheduleCalendarReminder(
+        notificationId: _notifIdFor(ref),
+        eventName: name,
+        eventTime: when,
+        minutesBefore: 15,
+        eventId: ref.id,
+      );
+    } catch (e) {
+      debugPrint('[calendar-reminder] schedule failed for ${ref.id}: $e');
+    }
+  }
+
+  // Cancel a scheduled reminder. Safe to call even if nothing was ever
+  // scheduled — the underlying plugin no-ops on unknown ids.
+  Future<void> _cancelReminderFor(DocumentReference ref) async {
+    try {
+      await notificationService.cancelCalendarReminder(_notifIdFor(ref));
+    } catch (e) {
+      debugPrint('[calendar-reminder] cancel failed for ${ref.id}: $e');
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -1825,6 +1865,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                               // Delete all of them (no progress updates to avoid errors)
                                               for (final event in allRecurring) {
                                                 try {
+                                                  await _cancelReminderFor(event.reference);
                                                   await event.reference.delete();
                                                 } catch (deleteError) {
                                                   debugPrint('Error deleting single event: $deleteError');
@@ -2092,6 +2133,16 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                 assignedToDad: _model.assignToDad,
                               ));
 
+                              // Reschedule reminder: time and/or name may have changed.
+                              await _cancelReminderFor(widget.editTaskEvent!);
+                              if (_model.selectedDate != null) {
+                                await _scheduleReminderFor(
+                                  widget.editTaskEvent!,
+                                  _model.nameController.text,
+                                  _model.selectedDate!,
+                                );
+                              }
+
                               // Explicitly clear selected_child if no children assigned
                               // (.withoutNulls strips null values, so we must delete manually)
                               if (_model.selectedChildren.isEmpty) {
@@ -2152,6 +2203,16 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                         'selected_child': FieldValue.delete(),
                                       });
                                     }
+
+                                    // Reschedule reminder for this instance (name may have changed; date didn't)
+                                    await _cancelReminderFor(event.reference);
+                                    if (event.date != null) {
+                                      await _scheduleReminderFor(
+                                        event.reference,
+                                        _model.nameController.text,
+                                        event.date!,
+                                      );
+                                    }
                                   }
                                   debugPrint('Updated ${futureEvents.length} recurring instances');
                                 }
@@ -2160,6 +2221,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                   // Changed from recurring to non-recurring: Delete all future instances
                                   debugPrint('Converting recurring to non-recurring: deleting future instances');
                                   for (final event in futureEvents) {
+                                    await _cancelReminderFor(event.reference);
                                     await event.reference.delete();
                                   }
                                   debugPrint('Deleted ${futureEvents.length} future recurring instances');
@@ -2169,6 +2231,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                   debugPrint('Deleting ${futureEvents.length} old instances and regenerating with new pattern');
 
                                   for (final event in futureEvents) {
+                                    await _cancelReminderFor(event.reference);
                                     await event.reference.delete();
                                   }
 
@@ -2200,7 +2263,8 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                           if (instanceDate.isAfter(startDate.subtract(Duration(days: 1)))) {
                                             debugPrint('  Creating instance: ${instanceDate.toString().split(' ')[0]} (${_getDayName(dayOfWeek)})');
 
-                                            await EventAndTaskRecord.collection.doc().set(createEventAndTaskRecordData(
+                                            final instanceRef = EventAndTaskRecord.collection.doc();
+                                            await instanceRef.set(createEventAndTaskRecordData(
                                               description: _model.descriptionController.text,
                                               name: _model.nameController.text,
                                               isrecurring: true,
@@ -2220,6 +2284,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                               assignedToMom: _model.assignToMom,
                                               assignedToDad: _model.assignToDad,
                                             ));
+                                            await _scheduleReminderFor(instanceRef, _model.nameController.text, instanceDate);
                                           } else {
                                             debugPrint('  Skipping past date: ${instanceDate.toString().split(' ')[0]} (${_getDayName(dayOfWeek)})');
                                           }
@@ -2247,7 +2312,8 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                         );
                                       }
 
-                                      await EventAndTaskRecord.collection.doc().set(createEventAndTaskRecordData(
+                                      final instanceRef = EventAndTaskRecord.collection.doc();
+                                      await instanceRef.set(createEventAndTaskRecordData(
                                         description: _model.descriptionController.text,
                                         name: _model.nameController.text,
                                         isrecurring: true,
@@ -2267,6 +2333,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                         assignedToMom: _model.assignToMom,
                                         assignedToDad: _model.assignToDad,
                                       ));
+                                      await _scheduleReminderFor(instanceRef, _model.nameController.text, nextDate);
                                     }
                                   }
                                   debugPrint('Regenerated $count instances with new ${_model.recurringPattern} pattern');
@@ -2291,7 +2358,8 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                           final instanceDate = currentWeekStart.add(Duration(days: daysToAdd));
 
                                           if (instanceDate.isAfter(startDate.subtract(Duration(days: 1)))) {
-                                            await EventAndTaskRecord.collection.doc().set(createEventAndTaskRecordData(
+                                            final instanceRef = EventAndTaskRecord.collection.doc();
+                                            await instanceRef.set(createEventAndTaskRecordData(
                                               description: _model.descriptionController.text,
                                               name: _model.nameController.text,
                                               isrecurring: true,
@@ -2311,6 +2379,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                               assignedToMom: _model.assignToMom,
                                               assignedToDad: _model.assignToDad,
                                             ));
+                                            await _scheduleReminderFor(instanceRef, _model.nameController.text, instanceDate);
                                           }
                                         }
                                         currentWeekStart = currentWeekStart.add(Duration(days: 7));
@@ -2334,7 +2403,8 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                         );
                                       }
 
-                                      await EventAndTaskRecord.collection.doc().set(createEventAndTaskRecordData(
+                                      final instanceRef = EventAndTaskRecord.collection.doc();
+                                      await instanceRef.set(createEventAndTaskRecordData(
                                         description: _model.descriptionController.text,
                                         name: _model.nameController.text,
                                         isrecurring: true,
@@ -2354,6 +2424,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                         assignedToMom: _model.assignToMom,
                                         assignedToDad: _model.assignToDad,
                                       ));
+                                      await _scheduleReminderFor(instanceRef, _model.nameController.text, nextDate);
                                     }
                                   }
                                   debugPrint('Generated $count new recurring instances');
@@ -2382,9 +2453,8 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                               // Create the initial task/event
                               // For Custom Weekly, skip initial creation - the recurring generation handles all instances
                               if (_model.recurringPattern != 'Custom Weekly') {
-                                await EventAndTaskRecord.collection
-                                    .doc()
-                                    .set(createEventAndTaskRecordData(
+                                final newRef = EventAndTaskRecord.collection.doc();
+                                await newRef.set(createEventAndTaskRecordData(
                                       description: _model.descriptionController.text,
                                       name: _model.nameController.text,
                                       isrecurring: _model.recurringPattern != null && _model.recurringPattern != 'None',
@@ -2404,6 +2474,13 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                       assignedToMom: _model.assignToMom,
                                       assignedToDad: _model.assignToDad,
                                     ));
+                                if (_model.selectedDate != null) {
+                                  await _scheduleReminderFor(
+                                    newRef,
+                                    _model.nameController.text,
+                                    _model.selectedDate!,
+                                  );
+                                }
                               } else {
                                 debugPrint('Skipping initial event creation for Custom Weekly (all instances handled by recurring generation)');
                               }
@@ -2456,7 +2533,8 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                       if (instanceDate.isAfter(startDate.subtract(Duration(days: 1)))) {
                                         debugPrint('  Creating instance: ${instanceDate.toString().split(' ')[0]} (${_getDayName(dayOfWeek)})');
 
-                                        await EventAndTaskRecord.collection.doc().set(createEventAndTaskRecordData(
+                                        final instanceRef = EventAndTaskRecord.collection.doc();
+                                        await instanceRef.set(createEventAndTaskRecordData(
                                           description: _model.descriptionController.text,
                                           name: _model.nameController.text,
                                           isrecurring: true,
@@ -2476,6 +2554,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                           assignedToMom: _model.assignToMom,
                                           assignedToDad: _model.assignToDad,
                                         ));
+                                        await _scheduleReminderFor(instanceRef, _model.nameController.text, instanceDate);
 
                                         successCount++;
 
@@ -2515,7 +2594,8 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
 
                                   debugPrint('  Creating instance ${i + 1}/$count: ${nextDate.toString().split(' ')[0]}');
 
-                                  await EventAndTaskRecord.collection.doc().set(createEventAndTaskRecordData(
+                                  final instanceRef = EventAndTaskRecord.collection.doc();
+                                  await instanceRef.set(createEventAndTaskRecordData(
                                     description: _model.descriptionController.text,
                                     name: _model.nameController.text,
                                     isrecurring: true,
@@ -2535,6 +2615,7 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
                                     assignedToMom: _model.assignToMom,
                                     assignedToDad: _model.assignToDad,
                                   ));
+                                  await _scheduleReminderFor(instanceRef, _model.nameController.text, nextDate);
 
                                   successCount++;
 
