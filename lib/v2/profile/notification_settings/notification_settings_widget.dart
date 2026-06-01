@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
@@ -421,6 +423,54 @@ class _NotificationSettingsWidgetState
                                     color: FlutterFlowTheme.of(context).alternate,
                                   ),
                                   borderRadius: BorderRadius.circular(25.0),
+                                ),
+                              ),
+                            ),
+
+                            const SizedBox(height: 12.0),
+
+                            // Debug: dump notification-service runtime state.
+                            // Surfaces timezone resolution + currently-scheduled
+                            // notifications so we can diagnose silent
+                            // scheduling failures. Intentionally subtle so
+                            // it's not user-facing noise.
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                              child: TextButton(
+                                onPressed: () async {
+                                  await actions.notificationService.initialize();
+                                  final state = await actions.notificationService
+                                      .debugNotificationState();
+                                  if (!mounted) return;
+                                  showDialog<void>(
+                                    context: context,
+                                    builder: (ctx) => AlertDialog(
+                                      title: const Text('Notification debug'),
+                                      content: SingleChildScrollView(
+                                        child: SelectableText(
+                                          const JsonEncoder.withIndent('  ')
+                                              .convert(state),
+                                          style: const TextStyle(
+                                            fontFamily: 'Courier',
+                                            fontSize: 11,
+                                          ),
+                                        ),
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () => Navigator.pop(ctx),
+                                          child: const Text('Close'),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                                child: Text(
+                                  'Show notification debug info',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: FlutterFlowTheme.of(context).secondaryText,
+                                  ),
                                 ),
                               ),
                             ),

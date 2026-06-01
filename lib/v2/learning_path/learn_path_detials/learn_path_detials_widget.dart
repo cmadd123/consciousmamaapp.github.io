@@ -112,106 +112,256 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget>
     });
   }
 
-  // Show edit learning path dialog
+  // Show edit learning path dialog. Lets the user change title, description,
+  // AND the daily lesson time. Changing the time updates every task on this
+  // path (preserving each task's date, changing only hour/minute).
   void _showEditLearningPathDialog(BuildContext context, LearningPathRecord learningPath) {
     final titleController = TextEditingController(text: learningPath.title);
     final descriptionController = TextEditingController(text: learningPath.description);
 
+    // Read existing preferred_time off the raw doc data (not surfaced on the
+    // typed record). Default to 5:30 PM if absent or unparseable — rare,
+    // affects only paths created before preferred_time was being saved.
+    final existingTimeStr = learningPath.snapshotData['preferred_time'] as String?;
+    TimeOfDay selectedTime =
+        _parsePreferredTimeStr(existingTimeStr) ?? const TimeOfDay(hour: 17, minute: 30);
+
     showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(
-          'Edit Learning Path',
-          style: FlutterFlowTheme.of(context).titleMedium.override(
-            fontFamily: 'Andika New Basic',
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: titleController,
-                decoration: InputDecoration(
-                  labelText: 'Title',
-                  labelStyle: FlutterFlowTheme.of(context).bodyMedium.override(
-                    fontFamily: 'Andika New Basic',
-                    color: FlutterFlowTheme.of(context).secondaryText,
-                  ),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: FlutterFlowTheme.of(context).primary),
-                  ),
-                ),
-                style: FlutterFlowTheme.of(context).bodyMedium.override(
-                  fontFamily: 'Andika New Basic',
-                ),
-              ),
-              SizedBox(height: 16),
-              TextField(
-                controller: descriptionController,
-                decoration: InputDecoration(
-                  labelText: 'Description',
-                  labelStyle: FlutterFlowTheme.of(context).bodyMedium.override(
-                    fontFamily: 'Andika New Basic',
-                    color: FlutterFlowTheme.of(context).secondaryText,
-                  ),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: FlutterFlowTheme.of(context).primary),
-                  ),
-                ),
-                style: FlutterFlowTheme.of(context).bodyMedium.override(
-                  fontFamily: 'Andika New Basic',
-                ),
-                maxLines: 3,
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: Text(
-              'Cancel',
-              style: FlutterFlowTheme.of(context).bodyMedium.override(
-                fontFamily: 'Andika New Basic',
-                color: FlutterFlowTheme.of(context).secondaryText,
-              ),
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDialogState) => AlertDialog(
+          title: Text(
+            'Edit Learning Path',
+            style: FlutterFlowTheme.of(context).titleMedium.override(
+              fontFamily: 'Andika New Basic',
+              fontWeight: FontWeight.w600,
             ),
           ),
-          TextButton(
-            onPressed: () async {
-              // Update the learning path
-              await learningPath.reference.update({
-                'title': titleController.text,
-                'description': descriptionController.text,
-              });
-              Navigator.pop(ctx);
-              if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Learning path updated'),
-                    backgroundColor: FlutterFlowTheme.of(context).primary,
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: titleController,
+                  decoration: InputDecoration(
+                    labelText: 'Title',
+                    labelStyle: FlutterFlowTheme.of(context).bodyMedium.override(
+                      fontFamily: 'Andika New Basic',
+                      color: FlutterFlowTheme.of(context).secondaryText,
+                    ),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: FlutterFlowTheme.of(context).primary),
+                    ),
                   ),
-                );
-              }
-            },
-            child: Text(
-              'Save',
-              style: FlutterFlowTheme.of(context).bodyMedium.override(
-                fontFamily: 'Andika New Basic',
-                color: FlutterFlowTheme.of(context).primary,
-                fontWeight: FontWeight.w600,
-              ),
+                  style: FlutterFlowTheme.of(context).bodyMedium.override(
+                    fontFamily: 'Andika New Basic',
+                  ),
+                ),
+                SizedBox(height: 16),
+                TextField(
+                  controller: descriptionController,
+                  decoration: InputDecoration(
+                    labelText: 'Description',
+                    labelStyle: FlutterFlowTheme.of(context).bodyMedium.override(
+                      fontFamily: 'Andika New Basic',
+                      color: FlutterFlowTheme.of(context).secondaryText,
+                    ),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: FlutterFlowTheme.of(context).primary),
+                    ),
+                  ),
+                  style: FlutterFlowTheme.of(context).bodyMedium.override(
+                    fontFamily: 'Andika New Basic',
+                  ),
+                  maxLines: 3,
+                ),
+                SizedBox(height: 16),
+                // Time picker row. Tapping opens showTimePicker; the chosen
+                // time is shown in the label and applied to every task on save.
+                InkWell(
+                  onTap: () async {
+                    final picked = await showTimePicker(
+                      context: ctx,
+                      initialTime: selectedTime,
+                    );
+                    if (picked != null) {
+                      setDialogState(() => selectedTime = picked);
+                    }
+                  },
+                  borderRadius: BorderRadius.circular(12),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: FlutterFlowTheme.of(context).secondaryText.withOpacity(0.3),
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.access_time_outlined,
+                          color: FlutterFlowTheme.of(context).primary,
+                          size: 20,
+                        ),
+                        SizedBox(width: 12),
+                        Text(
+                          'Lesson time: ${selectedTime.format(ctx)}',
+                          style: FlutterFlowTheme.of(context).bodyMedium.override(
+                            fontFamily: 'Andika New Basic',
+                          ),
+                        ),
+                        Spacer(),
+                        Icon(
+                          Icons.chevron_right,
+                          color: FlutterFlowTheme.of(context).secondaryText,
+                          size: 18,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(height: 6),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 4),
+                  child: Text(
+                    'Changing the time updates every lesson on this path.',
+                    style: FlutterFlowTheme.of(context).bodySmall.override(
+                      fontFamily: 'Andika New Basic',
+                      color: FlutterFlowTheme.of(context).secondaryText,
+                      fontSize: 11,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
-        ],
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: Text(
+                'Cancel',
+                style: FlutterFlowTheme.of(context).bodyMedium.override(
+                  fontFamily: 'Andika New Basic',
+                  color: FlutterFlowTheme.of(context).secondaryText,
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: () async {
+                final newTimeStr = _formatTimeOfDayAsString(selectedTime);
+
+                // 1. Update path-level fields
+                await learningPath.reference.update({
+                  'title': titleController.text,
+                  'description': descriptionController.text,
+                  'preferred_time': newTimeStr,
+                });
+
+                // 2. Update every task on this path. Preserve each task's date,
+                //    overwrite hour/minute. We do these sequentially rather than
+                //    batched because the lesson count is small (≤14) and inline
+                //    error logging is easier than a batch failure.
+                try {
+                  final tasksSnap = await FirebaseFirestore.instance
+                      .collection('learning_path_tasks')
+                      .where('program_ref', isEqualTo: learningPath.reference)
+                      .get();
+                  for (final taskDoc in tasksSnap.docs) {
+                    final data = taskDoc.data();
+                    final ts = data['task_time'];
+                    DateTime? currentTime;
+                    if (ts is Timestamp) currentTime = ts.toDate();
+                    if (currentTime == null) continue;
+                    final newDateTime = DateTime(
+                      currentTime.year,
+                      currentTime.month,
+                      currentTime.day,
+                      selectedTime.hour,
+                      selectedTime.minute,
+                    );
+                    await taskDoc.reference.update({
+                      'task_time': Timestamp.fromDate(newDateTime),
+                    });
+                  }
+                } catch (e) {
+                  debugPrint('Failed to update task times: $e');
+                }
+
+                Navigator.pop(ctx);
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Learning path updated'),
+                      backgroundColor: FlutterFlowTheme.of(context).primary,
+                    ),
+                  );
+                }
+              },
+              child: Text(
+                'Save',
+                style: FlutterFlowTheme.of(context).bodyMedium.override(
+                  fontFamily: 'Andika New Basic',
+                  color: FlutterFlowTheme.of(context).primary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
+  }
+
+  // Parse a stored preferred_time string into a TimeOfDay. Handles the three
+  // shapes the create flow has saved over time: 12-hour "07:30 PM", 24-hour
+  // "19:30", and the legacy bucket strings (Morning/Afternoon/Evening).
+  TimeOfDay? _parsePreferredTimeStr(String? s) {
+    if (s == null || s.isEmpty) return null;
+    final trimmed = s.trim();
+    final upper = trimmed.toUpperCase();
+
+    final ampm = RegExp(r'^(\d{1,2}):(\d{2})\s*(AM|PM)$').firstMatch(upper);
+    if (ampm != null) {
+      int hour = int.parse(ampm.group(1)!);
+      final minute = int.parse(ampm.group(2)!);
+      final isPm = ampm.group(3) == 'PM';
+      if (hour == 12) hour = 0;
+      if (isPm) hour += 12;
+      return TimeOfDay(hour: hour, minute: minute);
+    }
+
+    final h24 = RegExp(r'^(\d{1,2}):(\d{2})$').firstMatch(trimmed);
+    if (h24 != null) {
+      return TimeOfDay(
+        hour: int.parse(h24.group(1)!).clamp(0, 23),
+        minute: int.parse(h24.group(2)!).clamp(0, 59),
+      );
+    }
+
+    switch (upper) {
+      case 'MORNING':
+        return const TimeOfDay(hour: 9, minute: 0);
+      case 'AFTERNOON':
+        return const TimeOfDay(hour: 14, minute: 0);
+      case 'EVENING':
+        return const TimeOfDay(hour: 18, minute: 0);
+    }
+    return null;
+  }
+
+  // Format a TimeOfDay as "h:mm AM" / "h:mm PM" for storage. Matches the
+  // format used by create_learning_path_bottom_sheet so build_learning_path's
+  // parser handles it without needing changes.
+  String _formatTimeOfDayAsString(TimeOfDay t) {
+    final hour12 = t.hour == 0 ? 12 : (t.hour > 12 ? t.hour - 12 : t.hour);
+    final minute = t.minute.toString().padLeft(2, '0');
+    final ampm = t.hour < 12 ? 'AM' : 'PM';
+    return '$hour12:$minute $ampm';
   }
 
   // Build the celebration overlay

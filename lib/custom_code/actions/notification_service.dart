@@ -39,13 +39,38 @@ class NotificationService {
   static const String keyQuietHoursEnd = 'notification_quiet_end';
 
   /// Initialize the notification service
+  // Cached timezone diagnostic info — populated by initialize(). Surfaced
+  // via debugNotificationState() so a developer can read it from the in-app
+  // notification settings page. Used to diagnose the silent-scheduling-fail
+  // class of bugs where zonedSchedule queues against the wrong wall clock
+  // because FlutterTimezone returned a name tz.getLocation can't parse.
+  String? _lastTimezoneName;
+  String? _lastTimezoneError;
+
   Future<void> initialize() async {
     if (_isInitialized) return;
 
-    // Initialize timezone
+    // Initialize timezone. Wrapped because FlutterTimezone has been seen to
+    // return non-IANA names ("EST" instead of "America/New_York") on some
+    // iOS versions — tz.getLocation throws on those and the prior code let
+    // the exception kill initialize(), which meant zonedSchedule was being
+    // called against UTC for some users. Now we fall back to UTC explicitly
+    // and surface the error via debugNotificationState() for diagnosis.
     tz_data.initializeTimeZones();
-    final String timeZoneName = await FlutterTimezone.getLocalTimezone();
-    tz.setLocalLocation(tz.getLocation(timeZoneName));
+    try {
+      final String timeZoneName = await FlutterTimezone.getLocalTimezone();
+      _lastTimezoneName = timeZoneName;
+      tz.setLocalLocation(tz.getLocation(timeZoneName));
+      debugPrint('[notif-service] timezone set to $timeZoneName');
+    } catch (e) {
+      _lastTimezoneError = e.toString();
+      _lastTimezoneName ??= 'UTC (fallback)';
+      debugPrint(
+        '[notif-service] failed to set timezone, falling back to UTC. '
+        'Scheduled notifications may fire at wrong wall-clock time. Error: $e',
+      );
+      // tz.local stays at default UTC. Better than crashing init.
+    }
 
     // Android initialization
     const AndroidInitializationSettings androidSettings =
@@ -278,7 +303,7 @@ class NotificationService {
       learningNotificationId + notificationId,
       '📚 Learning Time for $childName!',
       taskName,
-      tz.TZDateTime.from(scheduledTime, tz.local),
+      _toUtcTzDateTime(scheduledTime),
       NotificationDetails(
         android: AndroidNotificationDetails(
           learningChannelId,
@@ -334,7 +359,7 @@ class NotificationService {
       calendarNotificationId + notificationId,
       '📅 Coming Up',
       '$eventName in $minutesBefore minutes',
-      tz.TZDateTime.from(reminderTime, tz.local),
+      _toUtcTzDateTime(reminderTime),
       NotificationDetails(
         android: AndroidNotificationDetails(
           calendarChannelId,
@@ -375,7 +400,7 @@ class NotificationService {
       calendarNotificationId + notificationId,
       title,
       body,
-      tz.TZDateTime.from(fireAt, tz.local),
+      _toUtcTzDateTime(fireAt),
       NotificationDetails(
         android: AndroidNotificationDetails(
           calendarChannelId,
@@ -485,6 +510,48 @@ class NotificationService {
   // the same base id so cancelEventReminders can find them.
   int _eventMorningId(int baseId) => (baseId ^ 0x40000000) & 0x7fffffff;
   int _eventFallbackId(int baseId) => (baseId ^ 0x20000000) & 0x7fffffff;
+
+  // Convert a Dart DateTime (system-local) to a TZDateTime in UTC by routing
+  // through DateTime.toUtc(). This bypasses the tz.local global, which has
+  // been observed silently wrong on some iOS devices when FlutterTimezone
+  // returns a name the tz package can't resolve. Same absolute instant
+  // either way, but this version doesn't depend on tz.local being correct.
+  tz.TZDateTime _toUtcTzDateTime(DateTime dt) {
+    final utc = dt.toUtc();
+    return tz.TZDateTime.utc(
+      utc.year,
+      utc.month,
+      utc.day,
+      utc.hour,
+      utc.minute,
+      utc.second,
+    );
+  }
+
+  /// Snapshot of notification-service runtime state for in-app debugging.
+  /// Surfaced by the Notification Settings debug view so we can diagnose
+  /// silent-scheduling-fail bugs without needing device logs.
+  Future<Map<String, dynamic>> debugNotificationState() async {
+    final pending = await _notifications.pendingNotificationRequests();
+    return {
+      'initialized': _isInitialized,
+      'timezone_name': _lastTimezoneName ?? '(unset)',
+      'timezone_error': _lastTimezoneError ?? '(none)',
+      'tz_local_now': tz.TZDateTime.now(tz.local).toString(),
+      'dart_now_local': DateTime.now().toString(),
+      'dart_now_utc': DateTime.now().toUtc().toString(),
+      'pending_count': pending.length,
+      'pending': pending
+          .take(20)
+          .map((p) => {
+                'id': p.id,
+                'title': p.title,
+                'body': p.body,
+                'payload': p.payload,
+              })
+          .toList(),
+    };
+  }
 
   // Format a DateTime as "h:mm a" (e.g. "10:30 AM") for inclusion in
   // notification bodies. Avoids pulling in intl just for one call.
@@ -643,35 +710,30 @@ class NotificationService {
     }
   }
 
-  /// Get next instance of a specific time (for daily scheduling)
+  /// Get next instance of a specific time (for daily scheduling). Uses Dart's
+  /// system-local DateTime then routes through _toUtcTzDateTime so we don't
+  /// depend on tz.local being correctly set.
   tz.TZDateTime _nextInstanceOfTime(int hour, int minute) {
-    final now = tz.TZDateTime.now(tz.local);
-    var scheduled = tz.TZDateTime(tz.local, now.year, now.month, now.day, hour, minute);
-
+    final now = DateTime.now();
+    var scheduled = DateTime(now.year, now.month, now.day, hour, minute);
     if (scheduled.isBefore(now)) {
       scheduled = scheduled.add(const Duration(days: 1));
     }
-
-    return scheduled;
+    return _toUtcTzDateTime(scheduled);
   }
 
   /// Get next instance of a specific weekday and time (for weekly scheduling).
   /// [weekday] uses Dart convention: 1=Monday ... 7=Sunday.
   tz.TZDateTime _nextInstanceOfDayAndTime(int weekday, int hour, int minute) {
-    final now = tz.TZDateTime.now(tz.local);
-    var scheduled = tz.TZDateTime(tz.local, now.year, now.month, now.day, hour, minute);
-
-    // Advance to the target weekday
+    final now = DateTime.now();
+    var scheduled = DateTime(now.year, now.month, now.day, hour, minute);
     while (scheduled.weekday != weekday) {
       scheduled = scheduled.add(const Duration(days: 1));
     }
-
-    // If that day/time has already passed this week, move to next week
     if (scheduled.isBefore(now)) {
       scheduled = scheduled.add(const Duration(days: 7));
     }
-
-    return scheduled;
+    return _toUtcTzDateTime(scheduled);
   }
 
   /// Cancel all notifications
