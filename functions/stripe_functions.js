@@ -766,11 +766,24 @@ exports.runCreatorPayouts = onSchedule(
   async () => {
     const stripeClient = stripe(stripeSecretKey.value().replace(/[\s\r\n]+/g, ''));
 
+    // 30-day holdback on payout eligibility. Apple deposits IAP revenue
+    // to the platform account roughly 30-45 days after the close of each
+    // fiscal month. Without this hold the platform would owe creators
+    // money it hasn't received yet — a real working-capital crunch as
+    // the program scales. The holdback aligns creator payouts to Apple's
+    // own settlement cycle. Industry standard: Patreon ~5 days, Substack
+    // 30 days, Amazon Associates 60 days, Apple Affiliate 60 days.
+    // 30 days is the user-friendly end of the band while still covering
+    // Apple's deposit lag.
+    const PAYOUT_HOLDBACK_DAYS = 30;
+    const holdbackCutoffMs = Date.now() - PAYOUT_HOLDBACK_DAYS * 24 * 60 * 60 * 1000;
+
     const pendingSnap = await db.collection('creator_earnings')
       .where('payout_status', '==', 'pending')
       .get();
 
     const buckets = new Map();
+    let heldBackCount = 0;
     for (const doc of pendingSnap.docs) {
       const d = doc.data();
       // Skip sandbox earnings entirely. Apple-IAP sandbox rows carry
@@ -779,11 +792,24 @@ exports.runCreatorPayouts = onSchedule(
       // before this field shipped default to production so they still
       // pay out.
       if (d.environment === 'Sandbox') continue;
+      // Apply the 30-day holdback. Rows younger than this stay pending
+      // and become eligible on the next monthly cron run. Applies to
+      // both earnings and clawbacks — recent refund clawbacks delay
+      // until the matching earning age is met. Net balances always
+      // reconcile over time.
+      const createdAtMs = d.created_at?.toMillis?.() || 0;
+      if (createdAtMs === 0 || createdAtMs > holdbackCutoffMs) {
+        heldBackCount++;
+        continue;
+      }
       const key = d.creator_code;
       if (!buckets.has(key)) buckets.set(key, { docs: [], total: 0, creatorRef: d.creator_ref });
       const bucket = buckets.get(key);
       bucket.docs.push(doc);
       bucket.total += d.creator_cents;
+    }
+    if (heldBackCount > 0) {
+      console.log(`Held back ${heldBackCount} pending rows (younger than ${PAYOUT_HOLDBACK_DAYS} days)`);
     }
 
     for (const [code, bucket] of buckets) {
