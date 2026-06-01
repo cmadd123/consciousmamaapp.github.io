@@ -45,6 +45,7 @@ const EMAILS = [
   "jennifer.hostetter@gmail.com",
   "marianne_vigor_34@yahoo.com",
   "vdv95@hotmail.com",
+  "angelinamdriver6819@gmail.com",
 ];
 
 async function main() {
