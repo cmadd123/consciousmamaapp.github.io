@@ -46,6 +46,12 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
   // Quote visibility state
   bool _showQuote = true;
 
+  // Today's-events card visibility state (Tier 4.5 in-app banner).
+  // Mirrors the quote-dismiss pattern: the card is dismissible per-day with
+  // an X, and rolls back open at the next midnight. Stored as a yyyy-M-d
+  // string in SharedPreferences under 'events_card_dismissed_date'.
+  bool _showEventsCard = true;
+
   // Track todos being completed for fade animation
   final Set<String> _completingTodos = {};
 
@@ -82,6 +88,9 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
 
       // Check if quote was dismissed today
       await _checkQuoteDismissed();
+
+      // Check if today's-events card was dismissed today
+      await _checkEventsCardDismissed();
 
       // Load parent info from user doc and check free trial expiry
       if (currentUserReference != null) {
@@ -388,6 +397,36 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
     if (mounted) {
       setState(() {
         _showQuote = false;
+      });
+    }
+  }
+
+  /// Check whether the Today's-events card was dismissed today. Same shape
+  /// as _checkQuoteDismissed — the key just stores the date the user dismissed,
+  /// and on a new day the card automatically rolls back into view.
+  Future<void> _checkEventsCardDismissed() async {
+    final prefs = await SharedPreferences.getInstance();
+    final dismissedDate = prefs.getString('events_card_dismissed_date');
+    final today = DateTime.now();
+    final todayString = '${today.year}-${today.month}-${today.day}';
+
+    if (mounted) {
+      setState(() {
+        _showEventsCard = dismissedDate != todayString;
+      });
+    }
+  }
+
+  /// Save that the events card was dismissed today.
+  Future<void> _dismissEventsCard() async {
+    final prefs = await SharedPreferences.getInstance();
+    final today = DateTime.now();
+    final todayString = '${today.year}-${today.month}-${today.day}';
+    await prefs.setString('events_card_dismissed_date', todayString);
+
+    if (mounted) {
+      setState(() {
+        _showEventsCard = false;
       });
     }
   }
@@ -945,6 +984,12 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
             final totalItems = events.length;
             final hasItems = totalItems > 0;
 
+            // Tier 4.5 banner behavior: hidden entirely when there are no
+            // events today (the empty "No events today" state was noisy) and
+            // when the user has dismissed the card for the day. The card
+            // rolls back open at midnight via _checkEventsCardDismissed.
+            if (!hasItems || !_showEventsCard) return const SizedBox.shrink();
+
             return InkWell(
               onTap: () => Navigator.of(context).push(
                 PageRouteBuilder(
@@ -1023,6 +1068,20 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                           ),
                         ],
                         const Spacer(),
+                        // Dismiss-for-today X — hides this card until midnight
+                        InkWell(
+                          onTap: _dismissEventsCard,
+                          borderRadius: BorderRadius.circular(14.0),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 4.0),
+                            child: Icon(
+                              Icons.close_rounded,
+                              color: FlutterFlowTheme.of(context).secondaryText,
+                              size: 18.0,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 4.0),
                         // Add Event button - just plus icon
                         InkWell(
                           onTap: () => context.pushNamed(

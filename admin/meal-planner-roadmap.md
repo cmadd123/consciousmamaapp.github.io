@@ -221,6 +221,28 @@ These are the items where MomRise currently loses head-to-head. Ship these and y
 
 ---
 
+### 4.5 — "Today's events" home card (in-app calendar banner)
+**Status:** Not started. Complement to the 2.2.5 calendar push notifications — for moments when the mom has the app open and wants a glance-able view.
+
+**Effort:** 2-3 days
+
+**Plan:**
+- New card on the home page (between Today's Meals and the rest of the day's content) that lists today's calendar events at a glance
+- Displays event title + time, sorted chronologically, max ~3-5 lines (more behind a "show all" tap)
+- Tappable card → routes into the Calendar tab
+- Dismissible per-day via an X in the corner; resets at next midnight
+- Hidden entirely if there are no events today (don't show an empty state — it's noise)
+
+**Why:** Push notifications are good for when the app is closed (8 AM brief + 15-min before). When she's already in the app, a quiet always-there card is better than an interrupting toast or modal. Matches the "warm, not yelling" brand voice — chosen over Option B (slide-in floating banner) and Option C (bottom-sheet on launch) because both feel more invasive for daily use.
+
+**Out of scope for v1:**
+- Per-event reminder rescheduling from the card
+- Multi-day forecast ("Tomorrow:" section)
+- Custom dismiss durations (just per-day for now)
+- Per-child filtering on the card (filter lives in Calendar tab)
+
+---
+
 ## Tier 5 — Pre-launch / launch polish (not features)
 
 ### 5.1 — App Store screenshots (designer-produced)
@@ -467,3 +489,4 @@ This is what makes $10K total MRR achievable at **~600-700 active subs** instead
 - **2026-06-01** — Added Tier 6 (grocery affiliate revenue stream). Walmart path corrected (Northfork middleware, 1% not 4%). IC commission negotiation playbook scoped. Real cart data from USDA + Haley's spend replaces earlier $90/wk under-estimate. Pricing reframe deferred to month 4-6 pending real launch data.
 - **2026-06-01 (later)** — Confirmed IC rate via signed Impact.com contract: 5% flat on both Order Placed and New User Activation, 7-day attribution, no CPA bonus. Corrected negotiation ceiling from "8-12%" speculation to "~7-10% best-effort, no public IDP precedent." Corrected per-sub blended affiliate revenue from $10-15/mo down to ~$6-7/mo. Corrected $10K MRR target from ~770 subs to ~1,100-1,200 subs. Added 6.7 open action items (Impact bank connection, re-ping Lila, verify Impact dashboard).
 - **2026-06-01 (Tier 6 rewrite to three-engine model)** — Northfork dropped (pricing ~$25K-$50K/yr, math doesn't work at our scale). Spoonacular dropped (unnecessary middleware). New structure: 6.1 IC primary (URL pattern already shipped, full API as optional upgrade gated on real match-quality data), 6.2 Walmart secondary via existing `walmart_api_service.dart` (no Northfork), 6.3 Amazon tertiary (Prime $3 bounty + specialty items), 6.4 user preference detection in onboarding (the routing layer). Corrected cohort split — IC-compatible cohort is ~40-50% of base (was estimated 15%) since Aldi/Publix/Kroger/Costco are all on IC. Three-engine blended revenue: ~$12-14/mo per active sub. Updated $10K MRR target to ~600-700 active subs.
+- **2026-06-01 (Tier 4.5 added)** — In-app "Today's events" home card queued for 2.3.0. Complement to the calendar push notifications shipped in 2.2.5. Chose always-visible dismissible card over slide-in toast (too invasive on cooking-mode) and bottom-sheet on launch (gets annoying after a week).
