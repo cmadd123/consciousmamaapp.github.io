@@ -804,17 +804,18 @@ class _AddEventWidgetState extends State<AddEventWidget> {
                                     assignedToDad: _model.assignedToDad,
                                   ));
 
-                              // Schedule a 15-min-before reminder. Notification id is derived
-                              // from the doc id so we can cancel/reschedule deterministically
-                              // if the event is edited or deleted later. Fire-and-forget — a
-                              // failed schedule must not block event creation.
+                              // Schedule the full reminder set: 15-min-before, 8 AM morning
+                              // brief, and a 2-min-from-now fallback if both of those are
+                              // already in the past. Notification ids are derived from the
+                              // doc id so they can be cancelled deterministically later.
+                              // Fire-and-forget — a failed schedule must not block event
+                              // creation.
                               try {
                                 await notificationService.initialize();
-                                await notificationService.scheduleCalendarReminder(
+                                await notificationService.scheduleEventReminders(
                                   notificationId: eventRef.id.hashCode & 0x7fffffff,
                                   eventName: _model.textController1.text,
                                   eventTime: _model.selectedDate!,
-                                  minutesBefore: 15,
                                   eventId: eventRef.id,
                                 );
                               } catch (e) {

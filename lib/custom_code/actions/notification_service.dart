@@ -357,9 +357,142 @@ class NotificationService {
     );
   }
 
+  /// Schedule a calendar notification at a specific absolute time.
+  /// Used for morning briefs and immediate fallbacks. Lower-level than
+  /// scheduleCalendarReminder, which always computes fireAt from minutesBefore.
+  Future<void> scheduleCalendarAt({
+    required int notificationId,
+    required String title,
+    required String body,
+    required DateTime fireAt,
+    String? eventId,
+  }) async {
+    if (!await _isSettingEnabled(keyCalendarRemindersEnabled)) return;
+    if (fireAt.isBefore(DateTime.now())) return;
+    if (await _isInQuietHours(fireAt)) return;
+
+    await _notifications.zonedSchedule(
+      calendarNotificationId + notificationId,
+      title,
+      body,
+      tz.TZDateTime.from(fireAt, tz.local),
+      NotificationDetails(
+        android: AndroidNotificationDetails(
+          calendarChannelId,
+          'Calendar Reminders',
+          channelDescription: 'Event and task reminders',
+          importance: Importance.high,
+          priority: Priority.high,
+          icon: '@mipmap/ic_launcher',
+        ),
+        iOS: const DarwinNotificationDetails(
+          presentAlert: true,
+          presentBadge: true,
+          presentSound: true,
+        ),
+      ),
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+      payload: 'calendar:$eventId',
+    );
+  }
+
   /// Cancel a specific calendar reminder
   Future<void> cancelCalendarReminder(int notificationId) async {
     await _notifications.cancel(calendarNotificationId + notificationId);
+  }
+
+  /// Schedule a full set of reminders for an event:
+  ///   1. 15 minutes before (the standard "leaving soon" ping)
+  ///   2. 8 AM the day of the event (a morning brief so users see what's
+  ///      coming when they wake up)
+  ///   3. A fallback ping ~2 minutes from now IF both of the above are
+  ///      already in the past at schedule time (e.g., user is creating an
+  ///      event at 4:00 PM for 4:10 PM — 15-min-before is gone, 8 AM is
+  ///      gone). Without this, tight-timing events fire zero reminders.
+  ///
+  /// Each variant uses a different notification id derived from the base
+  /// [notificationId] so cancelEventReminders can clean them up later.
+  Future<void> scheduleEventReminders({
+    required int notificationId,
+    required String eventName,
+    required DateTime eventTime,
+    String? eventId,
+  }) async {
+    if (!await _isSettingEnabled(keyCalendarRemindersEnabled)) return;
+    final now = DateTime.now();
+
+    bool scheduledBefore = false;
+    bool scheduledMorning = false;
+
+    // 1) 15 minutes before
+    final beforeAt = eventTime.subtract(const Duration(minutes: 15));
+    if (beforeAt.isAfter(now) && !(await _isInQuietHours(beforeAt))) {
+      await scheduleCalendarAt(
+        notificationId: notificationId,
+        title: '📅 Coming Up',
+        body: '$eventName in 15 minutes',
+        fireAt: beforeAt,
+        eventId: eventId,
+      );
+      scheduledBefore = true;
+    }
+
+    // 2) 8 AM morning brief on the event date. Skip if morning has passed
+    //    OR if 8 AM is within 15 minutes of the event (would feel redundant).
+    final morningAt = DateTime(eventTime.year, eventTime.month, eventTime.day, 8, 0);
+    if (morningAt.isAfter(now) &&
+        morningAt.isBefore(eventTime.subtract(const Duration(minutes: 15))) &&
+        !(await _isInQuietHours(morningAt))) {
+      await scheduleCalendarAt(
+        notificationId: _eventMorningId(notificationId),
+        title: '☀️ Today on your calendar',
+        body: '$eventName at ${_formatEventTime(eventTime)}',
+        fireAt: morningAt,
+        eventId: eventId,
+      );
+      scheduledMorning = true;
+    }
+
+    // 3) Fallback. Only if neither above is scheduled AND event is still
+    //    in the future. Picks ~2 min from now to give the OS time to
+    //    register without the event firing first.
+    if (!scheduledBefore && !scheduledMorning && eventTime.isAfter(now)) {
+      final fallbackAt = now.add(const Duration(minutes: 2));
+      if (fallbackAt.isBefore(eventTime) && !(await _isInQuietHours(fallbackAt))) {
+        final minutesUntil = eventTime.difference(now).inMinutes;
+        await scheduleCalendarAt(
+          notificationId: _eventFallbackId(notificationId),
+          title: '📅 Coming Up Soon',
+          body: '$eventName in about $minutesUntil minutes',
+          fireAt: fallbackAt,
+          eventId: eventId,
+        );
+      }
+    }
+  }
+
+  /// Cancel all three reminder variants for an event. Safe to call even if
+  /// nothing was scheduled — the plugin no-ops on unknown ids.
+  Future<void> cancelEventReminders(int notificationId) async {
+    await cancelCalendarReminder(notificationId);
+    await cancelCalendarReminder(_eventMorningId(notificationId));
+    await cancelCalendarReminder(_eventFallbackId(notificationId));
+  }
+
+  // Notification-id variants for the three reminder kinds, all derived from
+  // the same base id so cancelEventReminders can find them.
+  int _eventMorningId(int baseId) => (baseId ^ 0x40000000) & 0x7fffffff;
+  int _eventFallbackId(int baseId) => (baseId ^ 0x20000000) & 0x7fffffff;
+
+  // Format a DateTime as "h:mm a" (e.g. "10:30 AM") for inclusion in
+  // notification bodies. Avoids pulling in intl just for one call.
+  String _formatEventTime(DateTime t) {
+    final hour12 = t.hour == 0 ? 12 : (t.hour > 12 ? t.hour - 12 : t.hour);
+    final minute = t.minute.toString().padLeft(2, '0');
+    final ampm = t.hour < 12 ? 'AM' : 'PM';
+    return '$hour12:$minute $ampm';
   }
 
   // ============ ENCOURAGEMENT ============

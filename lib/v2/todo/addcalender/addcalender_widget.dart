@@ -303,15 +303,15 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
     }
   }
 
-  // Deterministic notification id derived from the Firestore doc id. Used so we
-  // can cancel/reschedule on edit or delete without keeping a separate mapping.
-  // & 0x7fffffff keeps it inside Int32 positive range which the notifications
-  // plugin requires.
+  // Deterministic base notification id from the Firestore doc id — &
+  // 0x7fffffff keeps it inside Int32 positive range. NotificationService's
+  // scheduleEventReminders/cancelEventReminders derive the three variants
+  // (before-event, morning-brief, fallback) from this base.
   int _notifIdFor(DocumentReference ref) => ref.id.hashCode & 0x7fffffff;
 
-  // Schedule a 15-min-before local reminder for an event. Fire-and-forget by
-  // design: notification failures must not block event creation/update — the
-  // ledger write is the source of truth, the notification is best-effort.
+  // Schedule the full set of reminders for an event (15-min-before, 8 AM
+  // morning brief, and a 2-min-from-now fallback if both are in the past).
+  // Fire-and-forget by design — the Firestore write is the source of truth.
   Future<void> _scheduleReminderFor(
     DocumentReference ref,
     String name,
@@ -319,11 +319,10 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
   ) async {
     try {
       await notificationService.initialize();
-      await notificationService.scheduleCalendarReminder(
+      await notificationService.scheduleEventReminders(
         notificationId: _notifIdFor(ref),
         eventName: name,
         eventTime: when,
-        minutesBefore: 15,
         eventId: ref.id,
       );
     } catch (e) {
@@ -331,11 +330,11 @@ class _AddcalenderWidgetState extends State<AddcalenderWidget> {
     }
   }
 
-  // Cancel a scheduled reminder. Safe to call even if nothing was ever
-  // scheduled — the underlying plugin no-ops on unknown ids.
+  // Cancel all reminder variants for an event. Safe to call even if nothing
+  // was scheduled — the plugin no-ops on unknown ids.
   Future<void> _cancelReminderFor(DocumentReference ref) async {
     try {
-      await notificationService.cancelCalendarReminder(_notifIdFor(ref));
+      await notificationService.cancelEventReminders(_notifIdFor(ref));
     } catch (e) {
       debugPrint('[calendar-reminder] cancel failed for ${ref.id}: $e');
     }
