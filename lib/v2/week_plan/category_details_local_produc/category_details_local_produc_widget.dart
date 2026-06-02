@@ -831,6 +831,7 @@ class _CategoryDetailsLocalProducWidgetState
                                         _buildSectionHeader('Ingredients', Icons.kitchen),
                                         SizedBox(height: 12.0),
                                         _buildIngredientsCard(context),
+                                        _buildOrderIngredientsCTA(context),
                                       ],
                                     ),
                                   ),
@@ -854,6 +855,7 @@ class _CategoryDetailsLocalProducWidgetState
                                 _buildSectionHeader('Ingredients', Icons.kitchen),
                                 SizedBox(height: 12.0),
                                 _buildIngredientsCard(context),
+                                _buildOrderIngredientsCTA(context),
                                 SizedBox(height: 24.0),
                                 _buildSectionHeader('Instructions', Icons.format_list_numbered),
                                 SizedBox(height: 12.0),
@@ -1236,6 +1238,131 @@ class _CategoryDetailsLocalProducWidgetState
                   ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  // "Order ingredients" CTA shown directly below the ingredients card on
+  // the recipe detail view. Recipe detail is the peak-intent moment — the
+  // user has decided "I'm making this" — so it's the highest-leverage
+  // single placement for an IC tap. Adds every ingredient to the user's
+  // grocery list, then routes to the grocery list page where the existing
+  // Instacart button does the actual handoff. Mirrors the existing "Grocery"
+  // action button's behavior but with explicit IC branding so the path to
+  // delivery reads instantly.
+  Widget _buildOrderIngredientsCTA(BuildContext context) {
+    final ingredients = widget.itemDetails?.ingredients.toList() ?? [];
+    if (ingredients.isEmpty) return const SizedBox.shrink();
+
+    // Match the IC button styling used on the grocery list page so the
+    // visual association is immediate.
+    const instacartGreen = Color(0xFF003D29);
+    const instacartCarrot = Color(0xFFFF6B00);
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 12.0),
+      child: InkWell(
+        onTap: () async {
+          final messenger = ScaffoldMessenger.of(context);
+          for (final ingredient in ingredients) {
+            await FFAppState().addToUserGroceryList(ingredient);
+          }
+          if (mounted) {
+            messenger.showSnackBar(
+              SnackBar(
+                content: Text(
+                  'Added ${ingredients.length} ingredients to your grocery list',
+                ),
+                backgroundColor: instacartGreen,
+                behavior: SnackBarBehavior.floating,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                duration: const Duration(seconds: 2),
+              ),
+            );
+            context.pushNamed(
+              AddToGroceryWidget.routeName,
+              queryParameters: {
+                'skipToList': serializeParam(true, ParamType.bool),
+              }.withoutNulls,
+            );
+          }
+        },
+        borderRadius: BorderRadius.circular(14.0),
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 12.0),
+          decoration: BoxDecoration(
+            color: instacartGreen,
+            borderRadius: BorderRadius.circular(14.0),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    const Icon(
+                      Icons.shopping_cart_rounded,
+                      color: instacartGreen,
+                      size: 16.0,
+                    ),
+                    Positioned(
+                      top: 5,
+                      right: 6,
+                      child: Container(
+                        width: 6,
+                        height: 6,
+                        decoration: const BoxDecoration(
+                          color: instacartCarrot,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 12.0),
+              const Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Order these ingredients',
+                      style: TextStyle(
+                        fontFamily: 'Andika New Basic',
+                        color: Colors.white,
+                        fontSize: 14.0,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    SizedBox(height: 1.0),
+                    Text(
+                      'Send to Instacart',
+                      style: TextStyle(
+                        fontFamily: 'Andika New Basic',
+                        color: Colors.white70,
+                        fontSize: 11.0,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Icon(
+                Icons.chevron_right_rounded,
+                color: Colors.white70,
+                size: 20.0,
+              ),
+            ],
+          ),
         ),
       ),
     );
