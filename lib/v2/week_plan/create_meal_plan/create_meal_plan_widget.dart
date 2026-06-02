@@ -229,6 +229,111 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
     );
   }
 
+  // Full-width "Shop this week's groceries" CTA on the meal-plan header.
+  // Routes to AddToGroceryWidget with isWeekly=true so every meal planned
+  // for the week's ingredients are pre-aggregated into one grocery list,
+  // ready for the existing Instacart button there. The biggest single
+  // affiliate-revenue lever per the meal-planner roadmap: turns per-recipe
+  // ~$30 carts into bundled ~$150-300 weekly carts.
+  Widget _buildShopThisWeekCTA(BuildContext context) {
+    // Instacart brand colors (matched to the IC button on the grocery list
+    // page so the visual association is immediate).
+    const instacartGreen = Color(0xFF003D29);
+    const instacartCarrot = Color(0xFFFF6B00);
+
+    return InkWell(
+      onTap: () {
+        context.pushNamed(
+          AddToGroceryWidget.routeName,
+          queryParameters: {
+            'isWeekly': serializeParam(true, ParamType.bool),
+          }.withoutNulls,
+        );
+      },
+      borderRadius: BorderRadius.circular(14.0),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
+        decoration: BoxDecoration(
+          color: instacartGreen,
+          borderRadius: BorderRadius.circular(14.0),
+          boxShadow: [
+            BoxShadow(
+              color: instacartGreen.withOpacity(0.28),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  const Icon(
+                    Icons.shopping_cart_rounded,
+                    color: instacartGreen,
+                    size: 18.0,
+                  ),
+                  Positioned(
+                    top: 6,
+                    right: 7,
+                    child: Container(
+                      width: 7,
+                      height: 7,
+                      decoration: const BoxDecoration(
+                        color: instacartCarrot,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 12.0),
+            const Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Shop this week's groceries",
+                    style: TextStyle(
+                      fontFamily: 'Andika New Basic',
+                      color: Colors.white,
+                      fontSize: 15.0,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  SizedBox(height: 2.0),
+                  Text(
+                    'Send the whole list to Instacart',
+                    style: TextStyle(
+                      fontFamily: 'Andika New Basic',
+                      color: Colors.white70,
+                      fontSize: 12.0,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Icon(
+              Icons.chevron_right_rounded,
+              color: Colors.white70,
+              size: 22.0,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildBudgetBar(BuildContext context, double totalCost) {
     final budget = FFAppState().mealPlanBudget;
     final hasBudget = budget > 0;
@@ -3410,6 +3515,13 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                             )),
                                           ],
                                         ),
+                                        // Full-width "Shop this week's groceries" CTA.
+                                        // Routes to the grocery list with isWeekly=true so
+                                        // it auto-aggregates every meal planned for the
+                                        // week — turns per-recipe carts into bundle carts.
+                                        // Single biggest revenue lever per the roadmap.
+                                        const SizedBox(height: 14.0),
+                                        _buildShopThisWeekCTA(context),
                                       ],
                                     ),
                                   ),
