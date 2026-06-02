@@ -1,4 +1,5 @@
 // Recipe import from URL with Pinterest error handling
+import 'dart:convert';
 import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
 import '/backend/cloud_functions/cloud_functions.dart';
@@ -8,6 +9,7 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/flutter_flow/custom_icons.dart';
+import '/flutter_flow/upload_data.dart';
 import '/v2/cong_for_a_new_meal/cong_for_a_new_meal_widget.dart';
 import 'dart:ui';
 import '/index.dart';
@@ -15,6 +17,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'recipe_from_link_model.dart';
@@ -172,6 +175,166 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
     }
   }
 
+  // Whether a photo-import scan is in flight. Drives the spinner inside the
+  // "Import from photo" CTA.
+  bool _isScanning = false;
+
+  /// Import a recipe from a photo (screenshot of Instagram, cookbook page,
+  /// magazine, handwritten card — anything). Same flow as the existing
+  /// _scanCookbookPage in edite_add_meal_widget.dart, surfaced here so users
+  /// who land on the recipe-import page have a path that works for
+  /// Instagram (which has no public API) and any platform whose URL doesn't
+  /// expose recipe data.
+  Future<void> _importFromPhoto() async {
+    final mediaSource = await showModalBottomSheet<String>(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (sheetContext) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 40,
+                  height: 4,
+                  margin: const EdgeInsets.only(bottom: 20),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                const Text(
+                  'Import from photo',
+                  style: TextStyle(
+                    fontFamily: 'Andika New Basic',
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF333333),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                ListTile(
+                  leading: Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: FlutterFlowTheme.of(sheetContext).primary.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Icon(Icons.camera_alt,
+                        color: FlutterFlowTheme.of(sheetContext).primary),
+                  ),
+                  title: const Text('Take a photo',
+                      style: TextStyle(
+                          fontFamily: 'Andika New Basic',
+                          fontWeight: FontWeight.w500)),
+                  subtitle: const Text('Snap a cookbook page or magazine',
+                      style: TextStyle(
+                          fontFamily: 'Andika New Basic',
+                          fontSize: 12,
+                          color: Colors.grey)),
+                  onTap: () => Navigator.pop(sheetContext, 'camera'),
+                ),
+                ListTile(
+                  leading: Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: FlutterFlowTheme.of(sheetContext).primary.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Icon(Icons.photo_library,
+                        color: FlutterFlowTheme.of(sheetContext).primary),
+                  ),
+                  title: const Text('Choose a screenshot',
+                      style: TextStyle(
+                          fontFamily: 'Andika New Basic',
+                          fontWeight: FontWeight.w500)),
+                  subtitle: const Text(
+                      'Works for Instagram, Pinterest, anywhere',
+                      style: TextStyle(
+                          fontFamily: 'Andika New Basic',
+                          fontSize: 12,
+                          color: Colors.grey)),
+                  onTap: () => Navigator.pop(sheetContext, 'gallery'),
+                ),
+                const SizedBox(height: 10),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+
+    if (mediaSource == null) return;
+
+    final selectedMedia = await selectMedia(
+      maxWidth: 2048.00,
+      maxHeight: 2048.00,
+      imageQuality: 95,
+      mediaSource: mediaSource == 'camera'
+          ? MediaSource.camera
+          : MediaSource.photoGallery,
+    );
+
+    if (selectedMedia == null || selectedMedia.isEmpty) return;
+
+    setState(() {
+      _isScanning = true;
+      _model.errorMessage = null;
+    });
+
+    try {
+      final imageBytes = selectedMedia.first.bytes;
+      final imageBase64 = base64Encode(imageBytes);
+
+      // Call the same Cloud Function the edit/add meal scan flow uses —
+      // single source of truth for image-to-recipe extraction (Claude vision).
+      const projectRegion = 'us-central1';
+      const projectId = 'parenting-plus-7szrif';
+      final url =
+          'https://$projectRegion-$projectId.cloudfunctions.net/scanCookbookWithClaude';
+
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'data': {'imageBase64': imageBase64}
+        }),
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception('Server error: ${response.statusCode}');
+      }
+
+      final result = jsonDecode(response.body);
+      final resultData = result['result'] as Map<String, dynamic>?;
+      if (resultData == null) {
+        throw Exception('Invalid response from server');
+      }
+      if (resultData['success'] != true) {
+        throw Exception(resultData['error'] ?? 'Failed to read recipe from photo');
+      }
+
+      final recipeData = resultData['recipe'] as Map<String, dynamic>;
+      setState(() {
+        _model.populateFromRecipe(recipeData);
+        _autoDetectCategories(recipeData);
+        _isScanning = false;
+      });
+    } catch (e) {
+      debugPrint('Photo import error: $e');
+      setState(() {
+        _isScanning = false;
+        _model.errorMessage =
+            "Couldn't read the recipe from that photo. Try a clearer shot, or use the URL/paste options above.";
+      });
+    }
+  }
+
   /// Extract recipe from URL using cloud function
   Future<void> _extractRecipe() async {
     final url = _model.urlTextFieldTextController?.text.trim() ?? '';
@@ -274,8 +437,19 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
           } else {
             _model.errorMessage = 'Couldn\'t extract a recipe from this pin. Pinterest pins with a website link work best.\n\nTap "Paste Text" to add the recipe manually.';
           }
-        } else if (url.contains('instagram.com') || url.contains('tiktok.com') || url.contains('facebook.com')) {
-          _model.errorMessage = 'Social media posts don\'t share recipe data. Try finding the recipe on the creator\'s blog.';
+        } else if (url.contains('instagram.com') || url.contains('facebook.com')) {
+          // Instagram has no public API for arbitrary creator posts (Meta
+          // deprecated oEmbed in 2020 and the Graph API only returns the
+          // authenticated user's own content). Route the user to the screenshot
+          // path — works for any post type (Reel, post, Story, carousel) and
+          // is legally safe since the user did the capture.
+          _model.errorMessage =
+              "Instagram doesn't share recipe data through their API. Two ways around it: screenshot the post and use 'Import from photo', or copy the recipe caption and tap 'Paste Text' below.";
+        } else if (url.contains('tiktok.com')) {
+          // TikTok normally succeeds via oEmbed in the backend. If we hit this
+          // branch the network call itself failed (no internet, DNS, etc.).
+          _model.errorMessage =
+              "Couldn't reach TikTok. Check your connection and try again, or screenshot the video and use 'Import from photo'.";
         } else if (url.contains('youtube.com') || url.contains('youtu.be')) {
           _model.errorMessage = 'Video pages don\'t share recipe data. Check the video description for a link to the full recipe.';
         } else if (url.contains('etsy.com') || url.contains('amazon.com') || url.contains('walmart.com')) {
@@ -758,7 +932,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                         child: Text(
                           _model.isPasteMode
                               ? 'Copy a recipe from any website or message and paste it here — we will organize it for you'
-                              : 'Works best with recipe blogs. Sites like Instagram, TikTok, and Etsy don\'t share recipe data.',
+                              : "Works with recipe blogs and TikTok links. For Instagram or anywhere else, screenshot the recipe and use 'Import from photo'.",
                           textAlign: TextAlign.center,
                           style: FlutterFlowTheme.of(context).bodySmall.override(
                                 fontFamily: 'Andika New Basic',
@@ -766,6 +940,90 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                                 fontSize: 12.0,
                                 letterSpacing: 0.0,
                               ),
+                        ),
+                      ),
+                    // "Import from photo" CTA — wires the existing
+                    // scanCookbookWithClaude OCR into this page so users have
+                    // a path for Instagram (no public API) and anything else
+                    // whose URL doesn't expose recipe data.
+                    if (!_model.hasExtracted)
+                      Padding(
+                        padding: const EdgeInsetsDirectional.fromSTEB(16.0, 14.0, 16.0, 0.0),
+                        child: InkWell(
+                          onTap: _isScanning ? null : _importFromPhoto,
+                          borderRadius: BorderRadius.circular(14.0),
+                          child: Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 12.0),
+                            decoration: BoxDecoration(
+                              color: FlutterFlowTheme.of(context).primary.withOpacity(0.08),
+                              borderRadius: BorderRadius.circular(14.0),
+                              border: Border.all(
+                                color: FlutterFlowTheme.of(context).primary.withOpacity(0.3),
+                                width: 1.0,
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 32,
+                                  height: 32,
+                                  decoration: BoxDecoration(
+                                    color: FlutterFlowTheme.of(context).primary.withOpacity(0.15),
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                  child: _isScanning
+                                      ? Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2.0,
+                                            color: FlutterFlowTheme.of(context).primary,
+                                          ),
+                                        )
+                                      : Icon(
+                                          Icons.camera_alt_outlined,
+                                          color: FlutterFlowTheme.of(context).primary,
+                                          size: 18.0,
+                                        ),
+                                ),
+                                const SizedBox(width: 12.0),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        _isScanning
+                                            ? 'Reading the recipe...'
+                                            : 'Import from photo',
+                                        style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                              fontFamily: 'Andika New Basic',
+                                              fontSize: 14.0,
+                                              fontWeight: FontWeight.w600,
+                                              color: FlutterFlowTheme.of(context).primaryText,
+                                              letterSpacing: 0.0,
+                                            ),
+                                      ),
+                                      const SizedBox(height: 1.0),
+                                      Text(
+                                        'Works for Instagram, Pinterest, cookbooks, handwritten notes',
+                                        style: FlutterFlowTheme.of(context).bodySmall.override(
+                                              fontFamily: 'Andika New Basic',
+                                              fontSize: 11.0,
+                                              color: const Color(0x801B1F26),
+                                            ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                if (!_isScanning)
+                                  Icon(
+                                    Icons.chevron_right_rounded,
+                                    color: FlutterFlowTheme.of(context).primary,
+                                    size: 20.0,
+                                  ),
+                              ],
+                            ),
+                          ),
                         ),
                       ),
                     // Visual share flow - show when URL field is empty and not extracted (URL mode only)

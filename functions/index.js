@@ -378,6 +378,45 @@ exports.extractRecipe = onRequest({ secrets: [openaiApiKey, scrapingBeeApiKey] }
 
   console.log(`Extracting recipe from URL: ${url}`);
 
+  // TikTok shortcut: use the official oEmbed API rather than scraping the
+  // page. TikTok's URL serves a JS-rendered SPA that has no recipe content
+  // in the initial HTML anyway, but their oEmbed endpoint is public, no-auth,
+  // and explicitly sanctioned for embed widgets. Returns the caption in the
+  // `title` field, which we then feed to the existing AI text parser.
+  if (url.includes('tiktok.com')) {
+    console.log('TikTok URL detected — calling oEmbed');
+    try {
+      const recipe = await extractRecipeFromTikTok(url, openaiApiKey.value());
+      if (recipe && recipe.name) {
+        console.log(`TikTok recipe extracted: ${recipe.name}`);
+        await addCostEstimate(recipe, openaiApiKey.value());
+        response.status(200).json({ result: recipe });
+        return;
+      }
+      // Caption was empty or too short to parse — most likely the recipe
+      // lives in the video voiceover, not the caption. Guide user to the
+      // screenshot path (existing OCR via scanCookbookWithClaude).
+      response.status(404).json({
+        result: {
+          error: 'TIKTOK_NO_RECIPE_IN_CAPTION',
+          message:
+            "This TikTok's recipe might be in the voiceover, not the caption. Try a screenshot of the video — we can read the recipe right from the image.",
+        },
+      });
+      return;
+    } catch (tiktokError) {
+      console.error(`TikTok oEmbed failed: ${tiktokError.message}`);
+      response.status(404).json({
+        result: {
+          error: 'TIKTOK_FETCH_FAILED',
+          message:
+            "Couldn't load this TikTok. It might be private, deleted, or the link's wrong. Try a screenshot instead.",
+        },
+      });
+      return;
+    }
+  }
+
   try {
     // Try direct fetch first (free), fall back to ScrapingBee on failure
     let html;
@@ -1336,6 +1375,47 @@ async function estimateRecipeCost(ingredients, apiKey) {
     req.write(requestBody);
     req.end();
   });
+}
+
+// Extract a recipe from a TikTok URL via the public oEmbed API. Sanctioned
+// access (no auth, no scraping, no ToS gray area). Returns null when the
+// caption is too short to plausibly contain a recipe — caller surfaces a
+// "try a screenshot" fallback in that case.
+//
+// Reference: https://developers.tiktok.com/doc/embed-videos (oEmbed section)
+async function extractRecipeFromTikTok(url, openaiKey) {
+  const oembedUrl = `https://www.tiktok.com/oembed?url=${encodeURIComponent(url)}`;
+  console.log(`Calling TikTok oEmbed: ${oembedUrl}`);
+
+  const raw = await fetchUrl(oembedUrl);
+  let data;
+  try {
+    data = JSON.parse(raw);
+  } catch (parseErr) {
+    throw new Error(`TikTok oEmbed returned non-JSON response: ${parseErr.message}`);
+  }
+
+  // oEmbed `title` is the caption + author handle concatenated. That's the
+  // recipe text we feed to the LLM. `author_name` and `thumbnail_url` are
+  // used to decorate the result so the recipe card shows the creator + image.
+  const caption = (data.title || '').trim();
+  console.log(`TikTok caption length: ${caption.length} chars, author: ${data.author_name || 'unknown'}`);
+
+  // Heuristic: under 50 chars, no recipe is plausibly encoded. Caller will
+  // route to the screenshot path.
+  if (caption.length < 50) {
+    return null;
+  }
+
+  const recipe = await extractRecipeFromTextWithAI(caption, openaiKey);
+  if (recipe) {
+    recipe.imageUrl = recipe.imageUrl || data.thumbnail_url || '';
+    recipe.sourceUrl = url;
+    if (data.author_name) {
+      recipe.source = data.author_name;
+    }
+  }
+  return recipe;
 }
 
 async function extractRecipeFromTextWithAI(text, apiKey) {
