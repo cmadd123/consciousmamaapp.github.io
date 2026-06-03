@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 /// Gates app-store review prompts to the right moments.
 ///
@@ -121,17 +123,45 @@ class ReviewService {
     } catch (_) {}
   }
 
-  /// Always opens the store listing, bypassing Apple's frequency cap.
+  /// Always opens the App Store review screen, bypassing Apple's frequency cap.
   /// Use this from Settings → "Rate MomRise" so fans can always leave a review.
+  ///
+  /// We deliberately bypass `in_app_review.openStoreListing()`. That method
+  /// uses an `itms-apps://...` deep link which iOS sometimes refuses with a
+  /// misleading "app is not available in your region" error — even when the
+  /// app IS available in the user's region and the App Store ID is correct.
+  /// The error is more common in the first 72 hours after a fresh release.
+  ///
+  /// The https://apps.apple.com URL goes through Apple's web routing layer
+  /// instead of the deep-link scheme — it always resolves correctly, and the
+  /// `action=write-review` query param jumps straight to the rating screen.
+  ///
+  /// If that fails too, we fall back to the momrise.app/review/ page which
+  /// has store buttons for both iOS and Android.
   static Future<void> openStoreListing() async {
+    const appStoreUrl =
+        'https://apps.apple.com/app/id6758357382?action=write-review';
+    const fallbackUrl = 'https://momrise.app/review/';
+
     try {
-      if (await _inAppReview.isAvailable()) {
-        await _inAppReview.openStoreListing(
-          appStoreId: '6758357382',
-        );
+      final uri = Uri.parse(appStoreUrl);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+        return;
       }
-    } catch (_) {
-      // Silent — nothing useful to tell the user.
+    } catch (e) {
+      debugPrint('[review] App Store URL launch failed: $e');
+    }
+
+    // Final fallback: open the hosted review page so the user has a path even
+    // if iOS can't resolve the App Store URL for some reason.
+    try {
+      await launchUrl(
+        Uri.parse(fallbackUrl),
+        mode: LaunchMode.externalApplication,
+      );
+    } catch (e) {
+      debugPrint('[review] Fallback URL launch failed: $e');
     }
   }
 }

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rate MomRise</title>
+  <meta name="description" content="Leave a review for MomRise on the App Store or Google Play.">
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <meta property="og:title" content="Rate MomRise">
+  <meta property="og:description" content="Help other moms find MomRise — leave a review on the App Store.">
+  <meta property="og:image" content="https://momrise.app/icon-512.png">
+  <style>
+    :root {
+      --primary: #52A097;
+      --primary-dark: #2A6F67;
+      --surface: #FFFFFF;
+      --text: #1F2937;
+      --text-muted: #6B7280;
+      --border: #E5E7EB;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; padding: 0;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      color: var(--text);
+      background: linear-gradient(180deg, #D7F2EB 0%, #FFE9E1 100%);
+      min-height: 100vh;
+    }
+    main { max-width: 520px; margin: 0 auto; padding: 60px 20px 80px; }
+    .card {
+      background: var(--surface);
+      border-radius: 22px;
+      padding: 40px 32px 36px;
+      box-shadow: 0 20px 50px -24px rgba(0,0,0,0.22);
+      text-align: center;
+    }
+    .pill {
+      display: inline-block;
+      background: color-mix(in srgb, var(--primary) 12%, var(--surface));
+      color: var(--primary-dark);
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 12px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    h1 {
+      font-size: 28px;
+      letter-spacing: -0.01em;
+      margin: 0 0 12px;
+    }
+    .lead {
+      color: var(--text);
+      font-size: 16px;
+      line-height: 1.55;
+      margin: 0 0 32px;
+    }
+    .stars {
+      font-size: 26px;
+      letter-spacing: 4px;
+      margin: 0 0 24px;
+      color: #F5B82E;
+    }
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      width: 100%;
+      padding: 16px 20px;
+      border-radius: 14px;
+      font-size: 16px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: transform 0.08s ease, box-shadow 0.2s ease;
+      box-shadow: 0 8px 20px -10px rgba(0,0,0,0.25);
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn-apple {
+      background: #000;
+      color: #fff;
+      margin-bottom: 14px;
+    }
+    .btn-google {
+      background: #fff;
+      color: var(--text);
+      border: 1.5px solid var(--border);
+    }
+    .btn-icon {
+      width: 22px;
+      height: 22px;
+      flex-shrink: 0;
+    }
+    .or {
+      color: var(--text-muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin: 8px 0;
+    }
+    .why {
+      background: color-mix(in srgb, var(--primary) 7%, var(--surface));
+      border: 1px solid color-mix(in srgb, var(--primary) 18%, var(--border));
+      border-radius: 14px;
+      padding: 18px 20px;
+      margin: 30px 0 0;
+      font-size: 14px;
+      color: var(--text);
+      line-height: 1.55;
+      text-align: left;
+    }
+    .why strong { color: var(--primary-dark); }
+    .foot {
+      text-align: center;
+      margin-top: 26px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .foot a { color: var(--primary-dark); text-decoration: none; }
+    .foot a:hover { text-decoration: underline; }
+    .android-note {
+      display: block;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: -8px;
+      margin-bottom: 18px;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="card">
+      <span class="pill">Rate MomRise</span>
+      <h1>Help other moms find us</h1>
+      <p class="lead">Your review tells other moms whether MomRise is worth trying. Three minutes of yours can save them weeks of meal-planning chaos.</p>
+      <div class="stars">★ ★ ★ ★ ★</div>
+
+      <a class="btn btn-apple" href="https://apps.apple.com/app/id6758357382?action=write-review">
+        <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M17.05 12.5c0-2.7 2.2-4 2.3-4.05-1.25-1.85-3.2-2.1-3.9-2.1-1.65-.15-3.2 1-4.05 1-.85 0-2.15-.95-3.55-.9-1.8.05-3.5 1.1-4.4 2.7-1.9 3.3-.5 8.2 1.35 10.85.9 1.3 2 2.75 3.4 2.7 1.35-.05 1.9-.9 3.55-.9 1.65 0 2.1.9 3.55.85 1.45-.05 2.4-1.35 3.3-2.65 1.05-1.5 1.45-3 1.5-3.05-.05 0-2.85-1.1-2.85-4.4zM14.4 4.7c.75-.9 1.25-2.15 1.1-3.4-1.1.05-2.4.7-3.15 1.6-.7.8-1.3 2.1-1.15 3.3 1.2.1 2.45-.6 3.2-1.5z"/>
+        </svg>
+        Rate on the App Store
+      </a>
+
+      <a class="btn btn-google" href="https://play.google.com/store/apps/details?id=com.momrise.app">
+        <svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="#34A853" d="M3.6 21V3l9.5 9z"/>
+          <path fill="#FBBC04" d="M16.6 14.4l-3.5-2.4 3.5-2.4 4.5 2.4z"/>
+          <path fill="#EA4335" d="M3.6 21l9.5-9 3.5 3.4z"/>
+          <path fill="#4285F4" d="M3.6 3l9.5 9 3.5-3.4z"/>
+        </svg>
+        Rate on Google Play
+      </a>
+      <span class="android-note">Google Play release coming soon. The link won't open yet — App Store is live now.</span>
+
+      <div class="why">
+        <strong>Why your review matters.</strong> MomRise is brand new, and reviews are the single biggest signal moms look at before installing a new app. Five sincere stars from someone who's actually used it does more than any ad we could run.
+      </div>
+
+      <div class="foot">
+        Trouble with the buttons? Email <a href="mailto:hi@momrise.app">hi@momrise.app</a> and we'll send you a direct link.
+      </div>
+    </div>
+  </main>
+</body>
+</html>
