@@ -8,6 +8,7 @@
     "list": "node approve-creator.js"
   },
   "dependencies": {
-    "firebase-admin": "^12.1.0"
+    "firebase-admin": "^12.1.0",
+    "stripe": "^22.2.0"
   }
 }

@@ -1040,6 +1040,56 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
                                   ),
                             ),
                           ),
+                        if (item.needsReview)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 4.0),
+                            child: GestureDetector(
+                              onTap: () {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      item.reviewReason.isNotEmpty
+                                          ? item.reviewReason
+                                          : "We weren't sure how to combine this — tap edit to fix.",
+                                    ),
+                                    duration: const Duration(seconds: 4),
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8.0, vertical: 3.0),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFFFF1E1),
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  border: Border.all(
+                                    color: const Color(0xFFE9A87C),
+                                    width: 1.0,
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: const [
+                                    Icon(
+                                      Icons.error_outline_rounded,
+                                      size: 12.0,
+                                      color: Color(0xFFB76A2A),
+                                    ),
+                                    SizedBox(width: 4.0),
+                                    Text(
+                                      'Review',
+                                      style: TextStyle(
+                                        fontFamily: 'Andika New Basic',
+                                        color: Color(0xFFB76A2A),
+                                        fontSize: 11.0,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
                       ],
                     ),
                   ),

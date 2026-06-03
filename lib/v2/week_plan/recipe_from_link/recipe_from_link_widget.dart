@@ -932,7 +932,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                         child: Text(
                           _model.isPasteMode
                               ? 'Copy a recipe from any website or message and paste it here — we will organize it for you'
-                              : "Works with recipe blogs and TikTok links. For Instagram or anywhere else, screenshot the recipe and use 'Import from photo'.",
+                              : "Works with recipe blogs and TikTok video links. For Instagram, screenshot the recipe and use 'Import from photo' below.",
                           textAlign: TextAlign.center,
                           style: FlutterFlowTheme.of(context).bodySmall.override(
                                 fontFamily: 'Andika New Basic',
@@ -940,6 +940,48 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                                 fontSize: 12.0,
                                 letterSpacing: 0.0,
                               ),
+                        ),
+                      ),
+                    // "Instagram coming soon" pill — sets expectation upfront
+                    // so users don't try pasting an Instagram URL and bounce
+                    // off the "doesn't work yet" error. Shown only on the
+                    // link tab (paste tab works fine with copied IG captions).
+                    if (!_model.hasExtracted && !_model.isPasteMode)
+                      Padding(
+                        padding: const EdgeInsetsDirectional.fromSTEB(16.0, 12.0, 16.0, 0.0),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFFE9E1),
+                            borderRadius: BorderRadius.circular(10.0),
+                            border: Border.all(
+                              color: const Color(0xFFFFB89A),
+                              width: 1.0,
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(
+                                Icons.schedule_rounded,
+                                size: 14.0,
+                                color: Color(0xFF8B5A3C),
+                              ),
+                              const SizedBox(width: 6.0),
+                              Flexible(
+                                child: Text(
+                                  'Instagram link import coming soon. Screenshot Instagram posts for now.',
+                                  style: FlutterFlowTheme.of(context).bodySmall.override(
+                                        fontFamily: 'Andika New Basic',
+                                        color: const Color(0xFF8B5A3C),
+                                        fontSize: 12.0,
+                                        fontWeight: FontWeight.w500,
+                                        letterSpacing: 0.0,
+                                      ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     // "Import from photo" CTA — wires the existing

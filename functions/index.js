@@ -247,6 +247,37 @@ To unsubscribe, email hello@momrise.app
 );
 
 // ── Recipe Extraction Function ──────────────────────
+
+// Shared guidance injected into every recipe-extraction prompt. Two goals:
+//   1) Anchor generic terms to the SKU shoppers usually buy, so the grocery
+//      list and Instacart submission collapse cleanly. ("flour" alone makes
+//      the dedupe step guess; "all-purpose flour" is unambiguous.)
+//   2) Surface ambiguity to the user instead of guessing. Any ingredient the
+//      model genuinely can't disambiguate goes in confidence_flags with a
+//      one-line reason, and the UI shows a "review" badge on that row.
+const RECIPE_SPECIFICITY_RULES = `
+INGREDIENT SPECIFICITY (very important for grocery deduplication):
+When the source recipe uses a generic term, output the most common shopper-default specific form. This prevents duplicate buys at checkout.
+- "flour"        -> "all-purpose flour"
+- "sugar"        -> "granulated sugar"
+- "brown sugar"  -> "light brown sugar"
+- "butter"       -> "salted butter"
+- "milk"         -> "whole milk"
+- "rice"         -> "long-grain white rice"
+- "oil"          -> "vegetable oil"  (unless the recipe clearly implies olive/sesame/etc.)
+- "onion"        -> "yellow onion"
+- "salt"         -> "kosher salt"
+- "eggs"         -> "large eggs"
+- "cheese"       -> keep specific (cheddar, mozzarella, parmesan); if truly generic, output "shredded cheddar cheese"
+- "broth/stock"  -> "low-sodium chicken broth" unless beef/veg is clearly implied
+- "vinegar"      -> "distilled white vinegar"
+- "pasta"        -> keep the called-out shape (spaghetti, penne...); if generic, output "spaghetti"
+If the recipe is EXPLICIT about a different form (e.g. "unsalted butter", "cake flour", "2% milk"), keep what it says — don't override the recipe.
+
+CONFIDENCE FLAGS (optional output field):
+Add a "confidence_flags" array for any ingredient where you had to guess and a wrong guess would change what the shopper buys. Each entry: { "ingredient": "<the exact string you emitted>", "reason": "<one short sentence>" }. Examples worth flagging: ambiguous cheese ("cheese" with no type hint), ambiguous oil if the cuisine doesn't make it obvious, a quantity you couldn't parse, a recipe that mixes US and metric units inconsistently. Skip the field entirely (or leave empty) when nothing is ambiguous. Be sparing — only flag when the call genuinely affects the grocery run.
+`.trim();
+
 // HTTP request function to extract recipe from URL
 // This uses onRequest to bypass App Check (matching the Flutter code expectation)
 async function addCostEstimate(recipe, apiKey) {
@@ -397,26 +428,28 @@ exports.extractRecipe = onRequest({ secrets: [openaiApiKey, scrapingBeeApiKey] }
         response.status(200).json({ result: recipe });
         return;
       }
-      // Recipe object is null in two cases the extractor signals:
+      // Recipe object is null in three cases the extractor signals:
       //   - empty/short caption (voiceover-only video)
-      //   - photo carousel (oEmbed doesn't support /photo/ posts)
-      // Both route to the screenshot fallback. Message is generic enough to
-      // cover both without needing the caller to distinguish.
-      response.status(404).json({
+      //   - photo carousel without recipe text on the cover slide
+      //   - any other oEmbed / OCR failure path
+      // Status 200 (not 4xx) so makeCloudCall on the client passes the
+      // body through to the error-handler that uses `result.message`
+      // instead of falling through to the URL-pattern catch block.
+      response.status(200).json({
         result: {
           error: 'TIKTOK_NO_RECIPE_IN_CAPTION',
           message:
-            "We couldn't read a recipe from this TikTok. The recipe might be in the voiceover, or this is a photo post we can't import directly. Try a screenshot of it — we can read the recipe right from the image.",
+            "We couldn't read a recipe from this TikTok. The recipe might be in the voiceover, or this is a photo post we can't read directly. Try a screenshot of it — tap 'Import from photo' below.",
         },
       });
       return;
     } catch (tiktokError) {
       console.error(`TikTok oEmbed failed: ${tiktokError.message}`);
-      response.status(404).json({
+      response.status(200).json({
         result: {
           error: 'TIKTOK_FETCH_FAILED',
           message:
-            "Couldn't load this TikTok. It might be private, deleted, or the link's wrong. Try a screenshot instead.",
+            "Couldn't load this TikTok. It might be private, deleted, or the link's wrong. Try a screenshot instead — tap 'Import from photo' below.",
         },
       });
       return;
@@ -1073,7 +1106,8 @@ async function extractRecipeWithAI(html, sourceUrl, apiKey) {
   "instructions": ["step 1", "step 2", ...],
   "servings": "number of servings",
   "prepTime": 15,
-  "cookTime": 30
+  "cookTime": 30,
+  "confidence_flags": []
 }
 
 Important:
@@ -1083,6 +1117,8 @@ Important:
 - prepTime and cookTime must be integers in MINUTES (not strings, not ISO durations). Use 0 if not found.
 - Do not include any text outside the JSON
 - Return empty strings/arrays if data not found
+
+${RECIPE_SPECIFICITY_RULES}
 
 Webpage content:
 ${truncatedHtml}`;
@@ -1190,14 +1226,17 @@ Return ONLY valid JSON with the CORRECTED recipe in this exact structure:
   "servings": "4",
   "prepTime": ${recipe.prepTime || 0},
   "cookTime": ${recipe.cookTime || 0},
-  "sourceUrl": "${recipe.sourceUrl}"
+  "sourceUrl": "${recipe.sourceUrl}",
+  "confidence_flags": []
 }
 
 CRITICAL:
 - Split combined instruction steps into separate array items
 - Each instruction should be ONE action/step only
 - Do not combine multiple steps into one string
-- Clean up servings format`;
+- Clean up servings format
+
+${RECIPE_SPECIFICITY_RULES}`;
 
   const requestBody = JSON.stringify({
     model: 'gpt-4o-mini',
@@ -1317,12 +1356,15 @@ async function extractRecipeFromImageWithAI(imageUrl, apiKey) {
   "instructions": ["step 1", "step 2"],
   "servings": "number if visible",
   "prepTime": 15,
-  "cookTime": 30
+  "cookTime": 30,
+  "confidence_flags": []
 }
 
 prepTime and cookTime must be integers in MINUTES (0 if not visible).
 If the image is just a food photo with no recipe text, return {"error": "no recipe found"}.
-Return ONLY valid JSON.`
+Return ONLY valid JSON.
+
+${RECIPE_SPECIFICITY_RULES}`
           },
           {
             type: 'image_url',
@@ -1461,12 +1503,38 @@ async function extractRecipeFromTikTok(url, openaiKey) {
   const cleanUrl = canonicalUrl.split('?')[0];
 
   // TikTok oEmbed only supports /video/ posts. /photo/ carousels return
-  // HTTP 400 with no useful info. Detect and short-circuit so the caller
-  // can route the user to the screenshot path immediately rather than
-  // wasting a network round-trip.
+  // HTTP 400 with no useful info. Instead of immediate failure, fetch the
+  // post page, pull the og:image (which TikTok populates with the first
+  // slide's image), and OCR it with Claude vision. Recipe-style photo
+  // posts almost always put the ingredients/instructions on the first slide
+  // as legible text, so this hits ~50-60% of cases. When OCR finds nothing
+  // useful, fall through to the standard "try a screenshot" fallback.
   if (cleanUrl.includes('/photo/')) {
-    console.log(`TikTok photo post detected, oEmbed not supported: ${cleanUrl}`);
-    return null;
+    console.log(`TikTok photo post — attempting og:image OCR fallback: ${cleanUrl}`);
+    try {
+      const html = await fetchUrl(cleanUrl);
+      const ogImageMatch = html.match(
+        /<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i,
+      );
+      if (!ogImageMatch) {
+        console.log('No og:image found on TikTok photo page');
+        return null;
+      }
+      const coverImageUrl = ogImageMatch[1].replace(/&amp;/g, '&');
+      console.log(`Found cover image, calling vision OCR: ${coverImageUrl}`);
+      const recipe = await extractRecipeFromImageWithAI(coverImageUrl, openaiKey);
+      if (recipe && recipe.name && recipe.ingredients && recipe.ingredients.length > 0) {
+        recipe.imageUrl = recipe.imageUrl || coverImageUrl;
+        recipe.sourceUrl = url;
+        console.log(`TikTok photo OCR succeeded: ${recipe.name} (${recipe.ingredients.length} ingredients)`);
+        return recipe;
+      }
+      console.log('OCR returned no usable recipe from TikTok photo cover');
+      return null;
+    } catch (e) {
+      console.error(`TikTok photo OCR failed: ${e.message}`);
+      return null;
+    }
   }
 
   const oembedUrl = `https://www.tiktok.com/oembed?url=${encodeURIComponent(cleanUrl)}`;
@@ -1516,7 +1584,8 @@ async function extractRecipeFromTextWithAI(text, apiKey) {
   "instructions": ["step 1", "step 2", ...],
   "servings": "number of servings if mentioned",
   "prepTime": 15,
-  "cookTime": 30
+  "cookTime": 30,
+  "confidence_flags": []
 }
 
 PASTED TEXT:
@@ -1528,7 +1597,9 @@ CRITICAL:
 - Parse all instructions/steps into separate array items
 - Each instruction should be ONE step only
 - prepTime and cookTime must be integers in MINUTES. Use 0 if not mentioned.
-- Return only valid JSON, no markdown formatting`;
+- Return only valid JSON, no markdown formatting
+
+${RECIPE_SPECIFICITY_RULES}`;
 
   const requestBody = JSON.stringify({
     model: 'gpt-4o-mini',
@@ -1579,6 +1650,220 @@ CRITICAL:
     req.write(requestBody);
     req.end();
   });
+}
+
+// ── Grocery List Dedup / Normalization ───────────────
+// One LLM pass that:
+//   • collapses synonyms (flour + all-purpose flour -> one row)
+//   • converts between compatible units (tbsp -> cup, oz -> lb) and sums
+//   • picks the most-specific canonical form so Instacart matches the
+//     right SKU (a generic "flour" matches everything, which is exactly
+//     how we ended up ordering all-purpose flour twice — see Jun 2026 bug)
+//   • flags items it can't confidently merge so the UI can show a "review"
+//     badge instead of silently picking wrong
+//
+// Called at two points from the client:
+//   1) grocery list build (after meal plan composes) — clean the list shown
+//   2) Instacart submit — defensive re-run in case the user edited the list
+//
+// The function is idempotent on already-clean input — re-running won't
+// shrink or rename rows that are already canonical.
+//
+// Request body: { items: [{ name, quantity, unit }, ...] }
+// Response:    { items: [{ name, quantity, unit, needs_review, review_reason, merged_from }, ...] }
+exports.dedupGroceryList = onRequest({ secrets: [openaiApiKey] }, async (request, response) => {
+  response.set('Access-Control-Allow-Origin', '*');
+  response.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  response.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  if (request.method === 'OPTIONS') { response.status(204).send(''); return; }
+  if (request.method !== 'POST') {
+    response.status(405).json({ result: { error: 'Method not allowed' } });
+    return;
+  }
+
+  // Auth: match extractRecipe pattern.
+  const authHeader = request.headers.authorization;
+  let uid = null;
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    try {
+      const token = authHeader.split('Bearer ')[1];
+      const decoded = await getAuth().verifyIdToken(token);
+      uid = decoded.uid;
+    } catch (e) {
+      console.error('dedupGroceryList auth failed:', e.message);
+    }
+  }
+  if (!uid) {
+    response.status(401).json({ result: { error: 'Authentication required' } });
+    return;
+  }
+  if (!checkRateLimit(uid)) {
+    response.status(429).json({ result: { error: 'Rate limit exceeded. Try again later.' } });
+    return;
+  }
+
+  const items = request.body?.data?.items;
+  if (!Array.isArray(items)) {
+    response.status(400).json({ result: { error: 'items must be an array' } });
+    return;
+  }
+  if (items.length === 0) {
+    response.json({ result: { items: [] } });
+    return;
+  }
+  // Hard cap to keep latency + token cost bounded. A typical week's
+  // grocery list is ~30 rows; anything above 80 is almost certainly a
+  // client bug or attacker probe.
+  if (items.length > 80) {
+    response.status(400).json({ result: { error: 'too many items (max 80)' } });
+    return;
+  }
+
+  try {
+    const cleaned = await dedupGroceryListWithAI(items, openaiApiKey.value());
+    response.json({ result: { items: cleaned } });
+  } catch (e) {
+    console.error('dedupGroceryList failed:', e.message);
+    // Fail open: return original items unchanged so the user's flow isn't
+    // blocked by an LLM hiccup. Better to ship an un-deduped list than
+    // a 500.
+    response.json({ result: { items, error: e.message } });
+  }
+});
+
+async function dedupGroceryListWithAI(items, apiKey) {
+  apiKey = (apiKey || '').trim();
+  if (!apiKey) throw new Error('Missing OpenAI key');
+
+  // Send only the structured fields. Stripping anything else (isChecked,
+  // originalText) keeps the prompt focused and the JSON parse predictable.
+  const compactItems = items.map((it, i) => ({
+    i,
+    name: String(it.name || '').trim(),
+    quantity: typeof it.quantity === 'number' ? it.quantity : Number(it.quantity) || 0,
+    unit: String(it.unit || '').trim(),
+  })).filter((it) => it.name.length > 0);
+
+  const systemPrompt = 'You are a grocery list deduplication assistant. You combine duplicate items (including synonyms like "flour" + "all-purpose flour"), convert between compatible cooking units to sum quantities, and pick the most shopper-specific canonical name for each grocery row. Return ONLY valid JSON, no prose.';
+
+  const userPrompt = `Here is a grocery list. Each input row has an integer index, a name, a numeric quantity, and a unit string.
+
+INPUT:
+${JSON.stringify(compactItems)}
+
+TASK:
+1. Group rows that refer to the same SKU a shopper would buy. This includes synonyms and generic/specific variants:
+   - "flour" + "all-purpose flour"  -> one row, name "all-purpose flour"
+   - "sugar" + "granulated sugar"    -> one row, name "granulated sugar"
+   - "butter" + "salted butter"      -> one row, name "salted butter"
+   - "milk" + "whole milk"           -> one row, name "whole milk"
+   - "egg" + "eggs" + "large eggs"   -> one row, name "large eggs"
+   - "onion" + "yellow onion"        -> one row, name "yellow onion"
+   - Different cheeses, different oils, different vinegars stay SEPARATE (cheddar != mozzarella, olive oil != vegetable oil). When in doubt, keep separate and flag.
+2. For each group, sum quantities, converting compatible units (tsp/tbsp/cup, oz/lb, ml/L, g/kg). Pick the most natural display unit:
+   - >= 4 tbsp of a dry good -> cups
+   - >= 16 oz -> lb
+   - >= 8 tbsp of butter -> sticks (1 stick = 8 tbsp)
+   - small amounts of spice/extract -> teaspoons
+   Round display quantities to nearest 1/4 unit when within 5%.
+3. If two rows have incompatible units (one is "cup", another is "package"), keep them as ONE row but set needs_review=true with reason "incompatible units — please verify quantity".
+4. If a row is too generic for confident Instacart matching (e.g. "cheese" with no type, "oil" with no type when cuisine is ambiguous), keep it as one row but set needs_review=true with a short reason.
+5. needs_review=false unless flagged; review_reason omitted unless needs_review=true.
+6. merged_from is the array of input indices that combined into this output row.
+
+OUTPUT (return EXACTLY this JSON shape — an object with a single key "items"):
+{
+  "items": [
+    {
+      "name": "all-purpose flour",
+      "quantity": 3.5,
+      "unit": "cup",
+      "needs_review": false,
+      "merged_from": [0, 4]
+    },
+    {
+      "name": "olive oil",
+      "quantity": 2,
+      "unit": "tablespoon",
+      "needs_review": true,
+      "review_reason": "couldn't determine if 'oil' meant olive — please confirm",
+      "merged_from": [2]
+    }
+  ]
+}
+
+Rules:
+- Preserve every input row in some output group. merged_from must cover all input indices exactly once across all output rows.
+- Do not invent quantities. If an input row had quantity 0 and unit "", output quantity 0 and unit "".
+- Names lowercase. Singular when possible ("large egg" not "large eggs" — UI handles pluralization).
+- Be conservative on merges. If you're not sure two rows are the same SKU, keep separate.`;
+
+  const requestBody = JSON.stringify({
+    model: 'gpt-4o-mini',
+    messages: [
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: userPrompt },
+    ],
+    temperature: 0.1,
+    max_tokens: 2000,
+    response_format: { type: 'json_object' },
+  });
+
+  const raw = await new Promise((resolve, reject) => {
+    const req = https.request('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Length': Buffer.byteLength(requestBody),
+      },
+    }, (res) => {
+      let data = '';
+      res.on('data', (chunk) => { data += chunk; });
+      res.on('end', () => {
+        if (res.statusCode !== 200) {
+          reject(new Error(`OpenAI ${res.statusCode}: ${data.substring(0, 200)}`));
+          return;
+        }
+        resolve(data);
+      });
+    });
+    req.on('error', reject);
+    req.setTimeout(20000, () => {
+      req.destroy();
+      reject(new Error('OpenAI timeout'));
+    });
+    req.write(requestBody);
+    req.end();
+  });
+
+  const response = JSON.parse(raw);
+  const content = response.choices?.[0]?.message?.content;
+  if (!content) throw new Error('No content in OpenAI response');
+  const parsed = JSON.parse(content);
+  const out = Array.isArray(parsed.items) ? parsed.items : [];
+
+  // Sanity-check: every input index should appear in some merged_from.
+  // If the LLM dropped rows, append them as-is rather than losing them.
+  const seen = new Set();
+  for (const row of out) {
+    for (const idx of (row.merged_from || [])) seen.add(idx);
+  }
+  const missing = compactItems.filter((it) => !seen.has(it.i));
+  if (missing.length > 0) {
+    console.warn(`dedupGroceryList: LLM dropped ${missing.length} rows; appending as-is.`);
+    for (const m of missing) {
+      out.push({
+        name: m.name,
+        quantity: m.quantity,
+        unit: m.unit,
+        needs_review: true,
+        review_reason: 'lost during dedup — please verify',
+        merged_from: [m.i],
+      });
+    }
+  }
+  return out;
 }
 
 // ── Stripe Subscription Functions ───────────────────
