@@ -34,7 +34,8 @@ const auth = admin.auth();
 const EMAILS = [
   "ashanator92@gmail.com",
   "audreyrsamuelson@gmail.com",
-  "collinjmaddox@gmail.com",
+  // collinjmaddox@gmail.com removed 2026-06-02 — running full IAP flow E2E
+  // with the real Apple ID. Add back later if needed.
   "dls4christ17@gmail.com",
   "nikkizmuller@gmail.com",
   "caranw12@gmail.com",

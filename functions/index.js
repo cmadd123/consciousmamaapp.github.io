@@ -383,6 +383,10 @@ exports.extractRecipe = onRequest({ secrets: [openaiApiKey, scrapingBeeApiKey] }
   // in the initial HTML anyway, but their oEmbed endpoint is public, no-auth,
   // and explicitly sanctioned for embed widgets. Returns the caption in the
   // `title` field, which we then feed to the existing AI text parser.
+  //
+  // IMPORTANT: TikTok's oEmbed only supports VIDEO posts (/video/...). PHOTO
+  // carousel posts (/photo/...) return HTTP 400. We detect the photo case
+  // after resolving the URL and surface a specific "use a screenshot" error.
   if (url.includes('tiktok.com')) {
     console.log('TikTok URL detected — calling oEmbed');
     try {
@@ -393,14 +397,16 @@ exports.extractRecipe = onRequest({ secrets: [openaiApiKey, scrapingBeeApiKey] }
         response.status(200).json({ result: recipe });
         return;
       }
-      // Caption was empty or too short to parse — most likely the recipe
-      // lives in the video voiceover, not the caption. Guide user to the
-      // screenshot path (existing OCR via scanCookbookWithClaude).
+      // Recipe object is null in two cases the extractor signals:
+      //   - empty/short caption (voiceover-only video)
+      //   - photo carousel (oEmbed doesn't support /photo/ posts)
+      // Both route to the screenshot fallback. Message is generic enough to
+      // cover both without needing the caller to distinguish.
       response.status(404).json({
         result: {
           error: 'TIKTOK_NO_RECIPE_IN_CAPTION',
           message:
-            "This TikTok's recipe might be in the voiceover, not the caption. Try a screenshot of the video — we can read the recipe right from the image.",
+            "We couldn't read a recipe from this TikTok. The recipe might be in the voiceover, or this is a photo post we can't import directly. Try a screenshot of it — we can read the recipe right from the image.",
         },
       });
       return;
@@ -681,6 +687,56 @@ function extractPinterestSourceUrl(html) {
 }
 
 // Helper: Fetch URL with redirect following
+// Follow HTTP redirects without downloading the response body. Returns the
+// final URL after the redirect chain settles. Used to resolve TikTok short
+// links (tiktok.com/t/XXX) to canonical URLs that oEmbed accepts. Separate
+// from fetchUrl because fetchUrl downloads the body and discards the final
+// URL — for redirect resolution we want the URL but not the bytes.
+function resolveRedirectUrl(url, redirectCount = 0) {
+  return new Promise((resolve, reject) => {
+    if (redirectCount > 5) {
+      resolve(url);
+      return;
+    }
+    const protocol = url.startsWith('https') ? https : http;
+    const request = protocol.request(
+      url,
+      {
+        method: 'GET',
+        headers: {
+          'User-Agent':
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+          'Accept': '*/*',
+        },
+      },
+      (response) => {
+        if (
+          response.statusCode >= 300 &&
+          response.statusCode < 400 &&
+          response.headers.location
+        ) {
+          let redirectUrl = response.headers.location;
+          if (redirectUrl.startsWith('/')) {
+            const urlObj = new URL(url);
+            redirectUrl = `${urlObj.protocol}//${urlObj.host}${redirectUrl}`;
+          }
+          response.destroy();
+          resolve(resolveRedirectUrl(redirectUrl, redirectCount + 1));
+        } else {
+          response.destroy();
+          resolve(url);
+        }
+      },
+    );
+    request.on('error', reject);
+    request.setTimeout(8000, () => {
+      request.destroy();
+      reject(new Error('Redirect resolve timed out'));
+    });
+    request.end();
+  });
+}
+
 function fetchUrl(url, redirectCount = 0) {
   return new Promise((resolve, reject) => {
     if (redirectCount > 5) {
@@ -1384,7 +1440,36 @@ async function estimateRecipeCost(ingredients, apiKey) {
 //
 // Reference: https://developers.tiktok.com/doc/embed-videos (oEmbed section)
 async function extractRecipeFromTikTok(url, openaiKey) {
-  const oembedUrl = `https://www.tiktok.com/oembed?url=${encodeURIComponent(url)}`;
+  // TikTok's share button hands users a short link like tiktok.com/t/XXXX,
+  // which oEmbed rejects with HTTP 400 — it only accepts the canonical
+  // /@user/video/ID or /@user/photo/ID URL. Resolve the short link by
+  // following its redirect chain, then strip query params, before calling
+  // oEmbed. Skip the resolve step for URLs that already look canonical.
+  let canonicalUrl = url;
+  const needsResolve = url.includes('/t/');
+  if (needsResolve) {
+    try {
+      canonicalUrl = await resolveRedirectUrl(url);
+      console.log(`TikTok short link resolved: ${url} -> ${canonicalUrl}`);
+    } catch (e) {
+      console.warn(`Couldn't resolve TikTok short link, trying as-is: ${e.message}`);
+    }
+  }
+
+  // Strip query params — TikTok appends tracking params that sometimes
+  // confuse oEmbed even on canonical URLs.
+  const cleanUrl = canonicalUrl.split('?')[0];
+
+  // TikTok oEmbed only supports /video/ posts. /photo/ carousels return
+  // HTTP 400 with no useful info. Detect and short-circuit so the caller
+  // can route the user to the screenshot path immediately rather than
+  // wasting a network round-trip.
+  if (cleanUrl.includes('/photo/')) {
+    console.log(`TikTok photo post detected, oEmbed not supported: ${cleanUrl}`);
+    return null;
+  }
+
+  const oembedUrl = `https://www.tiktok.com/oembed?url=${encodeURIComponent(cleanUrl)}`;
   console.log(`Calling TikTok oEmbed: ${oembedUrl}`);
 
   const raw = await fetchUrl(oembedUrl);
