@@ -309,9 +309,92 @@
       color: #EF4444;
       font-weight: 700;
     }
+
+    /* Creator tab nav — matches the dashboard nav so users keep the
+       same top-strip / bottom-bar across sub-pages. Dashboard-only views
+       (Home/Recipes/Plans/Stats) link back to /creator/ with a hash so
+       the dashboard can route to the right tab. */
+    .creator-nav {
+      display: flex;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      max-width: 100%;
+    }
+    .nav-tab {
+      flex: 1;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      background: none; border: none;
+      padding: 14px 8px;
+      font: inherit; font-size: 14px; font-weight: 600;
+      color: var(--text-muted);
+      border-bottom: 2px solid transparent;
+      transition: color 120ms, border-color 120ms, background 120ms;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .nav-tab .nav-tab-icon { font-size: 16px; display: inline-flex; align-items: center; }
+    .nav-tab .nav-tab-icon svg { width: 18px; height: 18px; }
+    .nav-tab:hover { color: var(--text); background: color-mix(in srgb, var(--primary) 5%, var(--surface)); }
+    .nav-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+    @media (max-width: 640px) {
+      .creator-nav {
+        position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
+        border-bottom: none; border-top: 1px solid var(--border);
+        padding-bottom: env(safe-area-inset-bottom);
+        box-shadow: 0 -4px 16px -8px rgba(0,0,0,0.16);
+      }
+      .nav-tab {
+        flex-direction: column; gap: 3px;
+        padding: 8px 4px 6px; font-size: 11px;
+        border-bottom: none; border-top: 2px solid transparent;
+      }
+      .nav-tab .nav-tab-icon svg { width: 22px; height: 22px; }
+      .nav-tab.active { border-top-color: var(--primary); }
+      main { padding-bottom: 88px; }
+    }
   </style>
 </head>
 <body>
+  <nav class="creator-nav">
+    <a class="nav-tab" href="/creator/#home">
+      <span class="nav-tab-icon" data-icon="home"></span><span class="nav-tab-label">Home</span>
+    </a>
+    <a class="nav-tab active" href="/creator/playbook/">
+      <span class="nav-tab-icon" data-icon="clipboard"></span><span class="nav-tab-label">Playbook</span>
+    </a>
+    <a class="nav-tab" href="/creator/brand-kit/">
+      <span class="nav-tab-icon" data-icon="grid"></span><span class="nav-tab-label">Brand kit</span>
+    </a>
+    <a class="nav-tab" href="/creator/#recipes">
+      <span class="nav-tab-icon" data-icon="camera"></span><span class="nav-tab-label">Recipes</span>
+    </a>
+    <a class="nav-tab" href="/creator/#plans">
+      <span class="nav-tab-icon" data-icon="calendar"></span><span class="nav-tab-label">Plans</span>
+    </a>
+    <a class="nav-tab" href="/creator/#stats">
+      <span class="nav-tab-icon" data-icon="chart"></span><span class="nav-tab-label">Stats</span>
+    </a>
+  </nav>
+  <script>
+    // Inline icon hydration — keeps the playbook page standalone (no
+    // dependency on the dashboard's larger JS). Same SVG glyphs as
+    // /creator/index.html's ICON object so the nav reads identically.
+    (function () {
+      const w = (inner) => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + inner + '</svg>';
+      const ICON = {
+        home: w('<path d="M3 10.2 12 3l9 7.2V21H3z"/><path d="M9 21v-7h6v7"/>'),
+        camera: w('<path d="M3 8a2 2 0 0 1 2-2h2.5L9 4h6l1.5 2H19a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><circle cx="12" cy="13" r="3.5"/>'),
+        calendar: w('<rect x="3" y="4.5" width="18" height="16.5" rx="2"/><path d="M3 9.5h18M8 3v3M16 3v3"/>'),
+        chart: w('<path d="M6 21v-7M12 21V3M18 21v-10"/>'),
+        grid: w('<rect x="3.5" y="3.5" width="7" height="7" rx="1"/><rect x="13.5" y="3.5" width="7" height="7" rx="1"/><rect x="13.5" y="13.5" width="7" height="7" rx="1"/><rect x="3.5" y="13.5" width="7" height="7" rx="1"/>'),
+        clipboard: w('<rect x="8" y="3" width="8" height="4" rx="1.5"/><path d="M16 5h2a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2"/>'),
+      };
+      document.querySelectorAll('[data-icon]').forEach((el) => {
+        if (ICON[el.dataset.icon]) el.innerHTML = ICON[el.dataset.icon];
+      });
+    })();
+  </script>
   <main>
     <a class="back" href="/creator/">← Back to dashboard</a>
 

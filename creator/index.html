@@ -2741,6 +2741,25 @@
       loadPayouts();
       loadChangelog();
 
+      // Hash-based routing for cross-page nav links from /creator/playbook/
+      // and /creator/brand-kit/. Those pages link back here with hashes
+      // like #recipes or #plans; resolve to the matching dashboard tab.
+      const HASH_TO_VIEW = {
+        '#home': 'viewDashboard',
+        '#recipes': 'viewAddRecipes',
+        '#plans': 'viewBuildPlan',
+        '#stats': 'viewStats',
+      };
+      const initialHash = window.location.hash;
+      if (initialHash && HASH_TO_VIEW[initialHash]) {
+        const targetTab = document.querySelector(
+          `#creatorNav .nav-tab[data-view="${HASH_TO_VIEW[initialHash]}"]`,
+        );
+        if (targetTab) targetTab.click();
+        // Clear the hash so future deep links to the same view re-fire correctly.
+        history.replaceState(null, '', window.location.pathname + window.location.search);
+      }
+
       // Code creation happens on the dashboard, not as a gate — if the
       // creator hasn't picked a code yet, prompt them with the modal.
       if (!creatorDoc.data.code || !creatorDoc.data.code.trim()) {

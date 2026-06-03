@@ -615,7 +615,12 @@ exports.getCreatorConnectStatus = onCall(
 
     const stripeClient = stripe(stripeSecretKey.value().replace(/[\s\r\n]+/g, ''));
     const account = await stripeClient.accounts.retrieve(creator.stripe_connect_account_id);
-    const onboarded = account.details_submitted && account.charges_enabled;
+    // We create Express accounts with `capabilities: { transfers: { requested: true } }`
+    // only — never charges. So `account.charges_enabled` is always false even
+    // for fully-onboarded creators. The right "they're done with Stripe" signal
+    // for a payouts-only platform is `payouts_enabled`, which flips true once
+    // Stripe has verified their bank + identity and they can receive transfers.
+    const onboarded = !!(account.details_submitted && account.payouts_enabled);
 
     await creatorSnap.docs[0].ref.update({
       stripe_connect_onboarded: onboarded,
@@ -642,7 +647,11 @@ async function syncConnectAccount(account) {
     .get();
   if (snap.empty) return;
   await snap.docs[0].ref.update({
-    stripe_connect_onboarded: !!(account.details_submitted && account.charges_enabled),
+    // Express accounts are transfers-only (we never requested the charges
+    // capability), so charges_enabled stays false even after full onboarding.
+    // Use payouts_enabled as the "done" signal — it flips true once Stripe
+    // verifies bank + identity.
+    stripe_connect_onboarded: !!(account.details_submitted && account.payouts_enabled),
     stripe_connect_charges_enabled: !!account.charges_enabled,
     stripe_connect_payouts_enabled: !!account.payouts_enabled,
   });
