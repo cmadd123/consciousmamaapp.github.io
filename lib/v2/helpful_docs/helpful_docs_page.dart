@@ -2,6 +2,7 @@ import 'dart:io';  // For File picker
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:http/http.dart' as http;
@@ -542,9 +543,20 @@ class _HelpfulDocsPageState extends State<HelpfulDocsPage> {
                     HapticFeedback.mediumImpact();
 
                     try {
-                      // Upload PDF to Firebase Storage
+                      // Upload PDF to Firebase Storage. Path scoped to the
+                      // uploader's uid so the storage rule can enforce
+                      // ownership. 10MB cap + application/pdf enforced
+                      // server-side. See firebase/storage.rules.
+                      final uid = FirebaseAuth.instance.currentUser?.uid;
+                      if (uid == null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Sign in required to upload.')),
+                        );
+                        setSheetState(() => isUploading = false);
+                        return;
+                      }
                       final fileName = '${DateTime.now().millisecondsSinceEpoch}_${selectedFile!.name}';
-                      final storageRef = FirebaseStorage.instance.ref().child('helpful_docs/$fileName');
+                      final storageRef = FirebaseStorage.instance.ref().child('helpful_docs/$uid/$fileName');
 
                       final file = File(selectedFile!.path!);
                       final uploadTask = await storageRef.putFile(file);

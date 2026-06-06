@@ -2945,7 +2945,10 @@
         }
 
         if (file) {
-          const path = `helpful_docs/${creatorDoc.id}/${Date.now()}_${file.name}`;
+          // Path keyed on the auth uid (not the creator doc id) so the
+          // storage rule can enforce `request.auth.uid == userId`. Storage
+          // rule also caps at 10MB and requires application/pdf.
+          const path = `helpful_docs/${auth.currentUser.uid}/${Date.now()}_${file.name}`;
           const ref = storageRef(storage, path);
           await uploadBytes(ref, file, { contentType: 'application/pdf' });
           const url = await getDownloadURL(ref);
