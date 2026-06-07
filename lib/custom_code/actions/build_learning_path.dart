@@ -106,9 +106,16 @@ EXAMPLES OF GOOD if_resistant VALUES:
 - "If they want to do it differently, let them! As long as they're engaging, flexibility helps them feel in control."
 - "If they refuse to start, try changing the environment - move to a different room, go outside, or try during bath time."
 
-Return ONLY a valid JSON array. No markdown, no explanation, just the JSON.
+Return ONLY a valid JSON object with this exact shape:
+{
+  "path_title": "A short, grammatically-natural title for the program (4-8 words). Rewrite the user's challenge so it reads as a clean noun phrase or gerund — e.g., user wrote 'rides bicycle without training wheels' → path_title 'Riding a bike without training wheels'. DO NOT just echo the challenge verbatim.",
+  "path_summary": "ONE sentence summarizing the program for the parent. Naturally weave in the number of lessons, what skill the child will learn, and the practice rhythm. Example: 'A 9-day program to help your 6-year-old learn to ride a bike without training wheels, practicing every day at 9:00 AM.' Make sure the verb forms are correct — never say 'help your child rides bicycle' or other ungrammatical concatenations.",
+  "tasks": [ ... the array of lessons described below ... ]
+}
 
-Example format:
+No markdown, no explanation, just the JSON object.
+
+Example format for the tasks array:
 [
   {
     "title": "Getting Familiar",
@@ -198,7 +205,11 @@ Example format:
   String content = data['choices'][0]['message']['content'];
 
   // 🧩 Step 3 — Clean and Fix JSON if needed
+  // New shape (preferred): { path_title, path_summary, tasks: [...] }
+  // Fallback shape (old): [...] (raw task array, no AI-generated summary)
   List<dynamic> tasks = [];
+  String? aiPathTitle;
+  String? aiPathSummary;
   try {
     String cleanResponse = content
         .replaceAll(RegExp(r'```json', caseSensitive: false), '')
@@ -206,22 +217,30 @@ Example format:
         .replaceAll('\n', ' ')
         .trim();
 
-    if (!cleanResponse.trim().endsWith(']')) {
-      cleanResponse = cleanResponse.trim();
-      if (cleanResponse.endsWith(',')) {
-        cleanResponse = cleanResponse.substring(0, cleanResponse.length - 1);
-      }
-      cleanResponse = "$cleanResponse]";
-    }
-
     cleanResponse = cleanResponse.replaceAll(RegExp(r',\s*]'), ']');
     cleanResponse = cleanResponse.replaceAll(RegExp(r',\s*}'), '}');
 
     final decoded = jsonDecode(cleanResponse);
-    if (decoded is! List || decoded.isEmpty) {
+    if (decoded is List) {
+      // Legacy shape — bare array. No AI summary; we'll fall back to the
+      // hand-rolled template below.
+      tasks = decoded;
+    } else if (decoded is Map<String, dynamic>) {
+      final maybeTasks = decoded['tasks'];
+      if (maybeTasks is! List || maybeTasks.isEmpty) {
+        throw Exception("AI response had no 'tasks' array.");
+      }
+      tasks = maybeTasks;
+      final t = decoded['path_title'];
+      if (t is String && t.trim().isNotEmpty) aiPathTitle = t.trim();
+      final s = decoded['path_summary'];
+      if (s is String && s.trim().isNotEmpty) aiPathSummary = s.trim();
+    } else {
+      throw Exception("AI returned unexpected JSON type.");
+    }
+    if (tasks.isEmpty) {
       throw Exception("AI did not return a valid non-empty task list.");
     }
-    tasks = decoded;
   } catch (e) {
     throw Exception(
         "❌ Failed to parse AI response: $e\n\nRaw content:\n$content");
@@ -270,19 +289,32 @@ Example format:
   );
 
   // 🧱 Step 6 — Create learning path with better title
-  // Extract a cleaner title from the challenge description
-  String pathTitle = challengeDescription;
-  if (pathTitle.toLowerCase().startsWith("my child needs help with ")) {
-    pathTitle = pathTitle.substring(25);
-  } else if (pathTitle.toLowerCase().startsWith("my child ")) {
-    pathTitle = pathTitle.substring(9);
+  // Prefer the AI-generated path_title; fall back to a string-surgery
+  // derivation from the user's challenge description if the AI didn't
+  // supply one (legacy array-shape response).
+  String pathTitle;
+  if (aiPathTitle != null) {
+    pathTitle = aiPathTitle;
+  } else {
+    pathTitle = challengeDescription;
+    if (pathTitle.toLowerCase().startsWith("my child needs help with ")) {
+      pathTitle = pathTitle.substring(25);
+    } else if (pathTitle.toLowerCase().startsWith("my child ")) {
+      pathTitle = pathTitle.substring(9);
+    }
+    pathTitle = pathTitle[0].toUpperCase() + pathTitle.substring(1);
   }
-  // Capitalize first letter
-  pathTitle = pathTitle[0].toUpperCase() + pathTitle.substring(1);
+
+  // Description follows the same priority — AI-generated grammatically-clean
+  // sentence first, hand-rolled template as backstop. The template can read
+  // awkwardly when pathTitle is third-person-present-tense ("rides bicycle")
+  // because it gets concatenated as "help your child with rides bicycle".
+  final pathDescription = aiPathSummary ??
+      "A ${tasks.length}-day program to help your $ageString with ${pathTitle.toLowerCase()}. Practice ${frequency.toLowerCase()} at ${preferredTime.replaceFirst(RegExp(r'^0'), '')}.";
 
   final programRef = await db.collection("learning_path").add({
     "title": pathTitle,
-    "description": "A ${tasks.length}-day program to help your $ageString with ${pathTitle.toLowerCase()}. Practice ${frequency.toLowerCase()} at ${preferredTime.replaceFirst(RegExp(r'^0'), '')}.",
+    "description": pathDescription,
     "challenge": challengeDescription,
     "child_age": ageStringDisplay,
     "created_at": Timestamp.now(),
