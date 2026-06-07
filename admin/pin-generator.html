@@ -189,6 +189,13 @@
             <option value="Side">Side</option>
           </select>
         </div>
+        <div class="filter-group">
+          <label for="trackingToggle" title="Pinterest's spam classifier on new domains can flag URLs with tracking parameters. Leave OFF until Rich Pin domain approval comes through.">URL tracking</label>
+          <label style="display:flex; align-items:center; gap:6px; font-size:14px; padding:8px 0;">
+            <input type="checkbox" id="trackingToggle">
+            <span style="color:var(--text-muted); font-size:12px;">?src=pinterest&amp;board=…</span>
+          </label>
+        </div>
         <div class="summary" id="summary"></div>
       </div>
 
@@ -272,6 +279,15 @@
 
     function buildPinUrl(recipe, docId) {
       const slug = slugFor(recipe, docId);
+      // URL params disabled by default — Pinterest's spam classifier on
+      // new domains/accounts treats tracking-laden URLs as marketing
+      // automation. The board dropdown still drives the human's pick;
+      // tracking comes from Pinterest's referrer + their own analytics.
+      // Flip the "include tracking params" toggle if you've established
+      // a clean Pinterest reputation and want per-board attribution.
+      if (!$('trackingToggle').checked) {
+        return `https://momrise.app/r/${slug}/`;
+      }
       const board = $('boardSelect').value;
       const params = new URLSearchParams({ src: 'pinterest' });
       if (board) params.set('board', board);
@@ -346,6 +362,7 @@
     $('searchInput').addEventListener('input', render);
     $('typeSelect').addEventListener('change', render);
     $('boardSelect').addEventListener('change', render);
+    $('trackingToggle').addEventListener('change', render);
 
     async function loadRecipes() {
       const snap = await getDocs(query(collection(db, 'meal'), where('is_curated', '==', true)));
