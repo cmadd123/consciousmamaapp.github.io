@@ -306,6 +306,7 @@
     <a href="#now">Right now</a>
     <a href="#bootstrap">Bootstrap (week 1)</a>
     <a href="#weekly">Weekly rhythm</a>
+    <a href="#tiktok">TikTok</a>
     <a href="#parts">Parts bin</a>
     <a href="#pin">Pin batch</a>
     <a href="#tools">Tools</a>
@@ -436,7 +437,8 @@ hands-chopping-onion.mp4</div>
           <ul>
             <li>Scroll MomRise IG: does the one post look right?</li>
             <li>Check Pinterest: pin is live? Don't expect impressions yet — week 1 is flat.</li>
-            <li>Add today's date to a tracking sheet (Drive): IG followers, IG post views, Pinterest impressions, Pinterest saves. Update weekly.</li>
+            <li>TikTok (after Business Account setup): is the first post live? Watch-through %?</li>
+            <li>Add today's date to a tracking sheet (Drive): IG followers + post views, Pinterest impressions + saves, TikTok followers + watch-through, App Store Connect campaign attributions (ct=pinterest-* and ct=tiktok-*). Update weekly.</li>
           </ul>
         </div>
       </section>
@@ -448,12 +450,7 @@ hands-chopping-onion.mp4</div>
 
         <div class="card">
           <h3>One filming + editing session <span class="micro-budget">2 hrs</span></h3>
-          <p>Pick a recipe. Film a Cook With Me Reel using the Day 5 setup.</p>
-          <p><strong>Outputs from one session</strong>:</p>
-          <ul>
-            <li>1 finished Reel → posts to MomRise IG that week</li>
-            <li>Cooking B-roll cuts → 2-3 hands-only clips for the creator library</li>
-          </ul>
+          <p>Pick a recipe. Film a Cook With Me Reel using the Day 5 setup. <strong>One Reel master cross-posts to BOTH MomRise IG and MomRise TikTok</strong> — see <a href="#tiktok">TikTok playbook</a> for the upload workflow.</p>
         </div>
 
         <div class="card">
@@ -480,53 +477,117 @@ hands-chopping-onion.mp4</div>
 
         <div class="card">
           <h3>Asset library refresh <span class="micro-budget">15 min, end of week</span></h3>
-          <p>Drop the week's hands-only B-roll cuts into Firebase Storage. Save the week's finished Reel. Update <code>caption snippets</code> if a hook worked unusually well.</p>
+          <p>Save the week's finished Reel master to Firebase Storage as an updated "example finished post" reference for creators. Update <code>caption snippets</code> in the library manifest if a hook worked unusually well. <strong>No more hands-only B-roll cuts</strong> — creators were unlikely to use someone else's kitchen footage anyway.</p>
+        </div>
+      </section>
+
+      <!-- TikTok -->
+      <section id="tiktok">
+        <h2>TikTok playbook <span class="budget">Same filming, second platform</span></h2>
+        <p class="section-lede">Adds TikTok without doubling production. One filming session → cross-posts to IG + TikTok.</p>
+
+        <div class="card">
+          <h3>One-time setup: Verified Business Account <span class="micro-budget">15 min</span></h3>
+          <p>Personal/Creator accounts CAN'T put app-store links in bio (TikTok blocks them with "Action cannot be completed"). Business Account is the only sanctioned path.</p>
+          <ol>
+            <li>TikTok app → Settings → Manage Account → "Switch to Business Account"</li>
+            <li>Category: Food &amp; Beverage</li>
+            <li>Bio website URL: <code>apps.apple.com/app/id6758357382?ct=tiktok-brand&amp;mt=8</code></li>
+          </ol>
+          <p>For per-creator codes, same pattern with <code>ct=tiktok-{CODE}</code> — DM Collin to provision these. App Store Connect Analytics → Acquisition shows installs attributed by campaign (24-hour window).</p>
+          <div class="callout warn">
+            <strong>Never put <code>momrise.app</code> in the TikTok bio link.</strong> Pinterest blocked the domain as spam (it's under 6 months old). TikTok may have a similar classifier — the <code>apps.apple.com</code> URL sidesteps the question.
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Cadence <span class="micro-budget">3-4 posts/week</span></h3>
+          <p>Buffer's 11.4M-post regression (Jan 2026): median views per post DROP above 5/week. More posts = more viral-lottery shots, not better typical performance.</p>
+          <p><strong>The "post daily or the algorithm kills you" thing is a myth.</strong> No documented frequency penalty. 3-4/week sustainable beats 7/week burnout.</p>
+        </div>
+
+        <div class="card">
+          <h3>Style: natural beats polished <span class="micro-budget">good news</span></h3>
+          <p>TikTok's 2026 Next Trend Report (their own primary doc) explicitly says <em>"the era of polished perfection is fading"</em> — audiences want unfiltered, BTS, real-process content.</p>
+          <p><strong>Implication for filming</strong>: phone-shot, natural lighting, face-on-camera, your voice. NOT studio-lit B-roll with music beds + voiceover. "Authentic" doesn't mean low-effort — hook strength, audio clarity, and lighting still matter; the aesthetic just needs to read spontaneous.</p>
+        </div>
+
+        <div class="card">
+          <h3>The cross-posting workflow <span class="micro-budget">save 10+ min/post</span></h3>
+          <p>Export ONE master from CapCut. Upload to BOTH platforms. Two rules:</p>
+          <ul>
+            <li><strong>No watermarks.</strong> If you save the IG version FROM IG to your camera roll, the IG logo is baked into that file — gets downranked on TikTok. Always upload from the original CapCut master, never from a downloaded copy.</li>
+            <li><strong>Audio</strong> depends on the content type:
+              <ul>
+                <li><strong>Cook With Me Reels (your voice talking)</strong>: audio IS your voice — bakes into the master. No swap. Upload same file to both platforms.</li>
+                <li><strong>B-roll / music-bed content (no voice)</strong>: export MUTED. At upload on TikTok, browse the Commercial Music Library and pick a trending sound. At upload on IG, do the same in IG's library. Two different sounds, one master file. ~30 sec extra per platform.</li>
+              </ul>
+            </li>
+          </ul>
+          <p>Why this matters: TikTok's July 2025 Music ToS requires Business Accounts to use the in-app library (TikTok-only licensing). Platform-native audio also gets the algorithmic discoverability boost.</p>
+        </div>
+
+        <div class="card">
+          <h3>First 4 TikTok posts <span class="micro-budget">test set</span></h3>
+          <ol>
+            <li><strong>Cook With Me</strong> — POV cooking, your standard format. Same Reel as IG. Your voiceover, your face, your script.</li>
+            <li><strong>"I import all my recipes from TikTok now"</strong> — Hands-on-phone demo. Show the share-from-TikTok flow. 15s. Hook in the first 1-2 seconds.</li>
+            <li><strong>"How I plan a week of dinners in 8 minutes"</strong> — Real-time screen recording of you using MomRise, with light voiceover. Slow pacing is fine — the value is showing it really takes 8 min.</li>
+            <li><strong>Stitch a viral mom-food TikTok</strong> — Find a "what do I make for dinner?" post in your FYP. Stitch with "Here's what I did" → demo MomRise finding a recipe. Native to the platform, leverages someone else's reach.</li>
+          </ol>
+          <p>After these 4: check TikTok analytics → which got watch-through above 65%? That's the format signal. Make more of that.</p>
+        </div>
+
+        <div class="card">
+          <h3>What NOT to do</h3>
+          <ul>
+            <li>Don't save an IG Reel from inside IG, then re-upload to TikTok. IG watermark = downranked.</li>
+            <li>Don't post 7x/week forcing it. Median per-post views drop above 5/week.</li>
+            <li>Don't shoot studio-style B-roll with stock music. Reads as "ad" — penalty under the Reali-TEA pattern.</li>
+            <li>Don't drag external music (Epidemic Sound, etc.) into CapCut and bake it into the master. Use platform-native audio at upload time.</li>
+          </ul>
         </div>
       </section>
 
       <!-- Parts bin -->
       <section id="parts">
-        <h2>The parts bin — first 10 filming targets</h2>
-        <p class="section-lede">Have these in the library by end of week 2.</p>
+        <h2>The parts bin — what's actually high-leverage</h2>
+        <p class="section-lede">Earlier draft of this list spec'd hands-only kitchen B-roll. Cut. Creators won't use someone else's kitchen footage — TikTok's Reali-TEA pattern + creators already filming their own hands means it goes unused. Below is what's actually worth building.</p>
 
-        <h3 style="font-size: 15px; margin: 6px 0;">App screen recordings (no audio) — 5 clips</h3>
-        <p style="font-size: 13.5px; color: var(--text-muted); margin: 0 0 10px;">Covered in Day 4. Re-record any that came out shaky.</p>
-
-        <h3 style="font-size: 15px; margin: 14px 0 6px;">Cook With Me face-on Reels — 2 finished examples</h3>
-        <div class="parts-grid" style="margin-bottom: 14px;">
-          <div class="part">
-            <div class="part-name">Simple weeknight meal</div>
-            <div class="part-desc">15-min dinner. Reels-friendly.</div>
-          </div>
-          <div class="part">
-            <div class="part-name">"Kids actually ate this"</div>
-            <div class="part-desc">A win — picky kid, parent relief.</div>
-          </div>
+        <div class="card">
+          <h3>App screen recordings <span class="micro-budget">5 clips · the meat</span></h3>
+          <p>Covered in <a href="#bootstrap">Day 4</a>. <strong>This is the high-leverage content</strong> — creators can't shoot the share-extension flow on their own phone without it looking janky. Re-record any that came out shaky.</p>
+          <p>Live in <a href="/creator/library/">creator/library/</a> for creators to grab.</p>
         </div>
 
-        <h3 style="font-size: 15px; margin: 14px 0 6px;">B-roll (hands-only, reusable) — 5 short clips</h3>
-        <p style="font-size: 13.5px; color: var(--text-muted); margin: 0 0 10px;">Film during the Cook With Me session — point the phone at the action.</p>
-        <div class="parts-grid">
-          <div class="part">
-            <div class="part-name">Hands chopping onion</div>
-            <div class="part-desc">3-4s. Universal filler.</div>
-          </div>
-          <div class="part">
-            <div class="part-name">Pan sizzling</div>
-            <div class="part-desc">3-4s. Any protein. Sensory hook.</div>
-          </div>
-          <div class="part">
-            <div class="part-name">Pouring olive oil</div>
-            <div class="part-desc">2-3s. Caption: "pour it on."</div>
-          </div>
-          <div class="part">
-            <div class="part-name">Spices added</div>
-            <div class="part-desc">2-3s. Color + motion.</div>
-          </div>
-          <div class="part">
-            <div class="part-name">Finished plated dish</div>
-            <div class="part-desc">4-5s overhead. Closer / reveal.</div>
-          </div>
+        <div class="card">
+          <h3>Example "finished Reel" reference <span class="micro-budget">1 polished Cook With Me</span></h3>
+          <p>Your best Cook With Me Reel, uploaded to the library as <strong>"What a finished MomRise post looks like."</strong> Creators see the shape, pattern-match. One reference video &gt; five generic B-roll cuts.</p>
+          <p>Swap this out when a noticeably better Reel ships — keep one current reference, not a graveyard.</p>
+        </div>
+
+        <div class="card">
+          <h3>App-feature cheat sheet <span class="micro-budget">1 page · which screens demo well</span></h3>
+          <p>Add this as a section on the library page so creators know what to shoot:</p>
+          <ul>
+            <li><strong>Share-extension flow</strong> — most "wow" moment</li>
+            <li><strong>Recipe → grocery list</strong> — quick, satisfying</li>
+            <li><strong>Grocery → Instacart</strong> — conversion magic</li>
+            <li><strong>Weekly meal plan view</strong> — the planning surface</li>
+            <li><strong>Adding a family member</strong> — humanizing</li>
+          </ul>
+          <p>One framing tip per entry (e.g., "center the phone, tilt slightly so overhead light doesn't wash out the screen").</p>
+        </div>
+
+        <div class="card">
+          <h3>Brand graphics + end-card templates <span class="micro-budget">2-3 Canva files</span></h3>
+          <p>For creators wrapping their Reels with a clean MomRise outro:</p>
+          <ul>
+            <li>1000×1500 vertical end-card (MomRise logo, "Code [CODE] in bio")</li>
+            <li>Square version for IG carousels</li>
+            <li>A "title card" template — creator types in recipe name, exports, uses as opening frame</li>
+          </ul>
+          <p>Upload PNGs to Firebase Storage; add to library manifest.</p>
         </div>
       </section>
 
