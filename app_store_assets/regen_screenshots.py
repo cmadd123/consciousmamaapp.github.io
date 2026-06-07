@@ -37,7 +37,10 @@ SHOTS = [
      "Every recipe,", "anywhere, saved."),
     ("1000004278.png", "03_meal_plan",
      "Plan the week.", "Hit the budget."),
-    ("1000004281.png", "04_calendar",
+    # Use the older shot (1000004257) instead of 1000004281 — that one
+    # has populated event dots all month, 3pm playdate (not 12am), and
+    # all kid filters active. Reads way more like a real, used calendar.
+    ("1000004257.png", "04_calendar",
      "Never miss a playdate", "or the pediatrician."),
     ("1000004280.png", "05_milestones",
      "Every first,", "remembered."),
