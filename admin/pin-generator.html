@@ -197,8 +197,8 @@
             <option value="Side">Side</option>
           </select>
         </div>
-        <div class="filter-group">
-          <label for="trackingToggle" title="Pinterest's spam classifier on new domains can flag URLs with tracking parameters. Leave OFF until Rich Pin domain approval comes through.">URL tracking</label>
+        <div class="filter-group" id="trackingFilterGroup" hidden>
+          <label for="trackingToggle" title="Add ?src=pinterest&board=... query params to the Recipe page URL for our own analytics. Only useful when Destination is set to Recipe page (App Store uses Apple's own ct= parameter instead).">URL tracking</label>
           <label style="display:flex; align-items:center; gap:6px; font-size:14px; padding:8px 0;">
             <input type="checkbox" id="trackingToggle">
             <span style="color:var(--text-muted); font-size:12px;">?src=pinterest&amp;board=…</span>
@@ -387,7 +387,11 @@
     $('typeSelect').addEventListener('change', render);
     $('boardSelect').addEventListener('change', render);
     $('trackingToggle').addEventListener('change', render);
-    $('destSelect').addEventListener('change', render);
+    $('destSelect').addEventListener('change', () => {
+      // URL tracking toggle is only meaningful for Recipe-page destination.
+      $('trackingFilterGroup').hidden = $('destSelect').value !== 'recipe';
+      render();
+    });
 
     async function loadRecipes() {
       const snap = await getDocs(query(collection(db, 'meal'), where('is_curated', '==', true)));
