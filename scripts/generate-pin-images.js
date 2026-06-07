@@ -71,13 +71,32 @@ function nameForOverlay(name) {
 //   - Pink brand accent matches the app gradient + creator dashboard.
 //   - Optional cook-time chip top-right — provides recipe info even
 //     without Rich Pin display.
+function sourceHost(url) {
+  try {
+    return new URL(String(url)).hostname.replace(/^www\./, '');
+  } catch {
+    return '';
+  }
+}
+
 function buildPinHtml(recipe) {
   const name = escapeHtml(nameForOverlay(recipe.recipe_name));
   const image = escapeHtml(recipe.image_url || '');
   const cookTime = Math.round(Number(recipe.cooking_time) || 0);
   const prepTime = Math.round(Number(recipe.prepare_time) || 0);
   const total = cookTime + prepTime;
-  const timeChip = total > 0 ? `${total} min` : '';
+  // Format: <60 min stays "X min", 60+ becomes "X h" or "X h Y min".
+  // Slow-cooker recipes routinely run 4-6 hours so we MUST roll over.
+  const timeChip = (() => {
+    if (total <= 0) return '';
+    if (total < 60) return `${total} min`;
+    const h = Math.floor(total / 60);
+    const m = total % 60;
+    if (m === 0) return `${h} h`;
+    if (m === 30) return `${h}½ h`;
+    return `${h} h ${m} min`;
+  })();
+  const credit = escapeHtml(sourceHost(recipe.source_url));
 
   return `<!DOCTYPE html>
 <html>
@@ -89,62 +108,37 @@ function buildPinHtml(recipe) {
   body {
     width: 1000px; height: 1500px; overflow: hidden;
     font-family: 'Inter', system-ui, sans-serif;
-    position: relative;
   }
+  /* Magazine layout: photo on top, MomRise-controlled brand area below.
+     The photo keeps its natural framing — whatever watermark the source
+     site has stays where it lands, serving as inline photo attribution.
+     Our brand area is a clean MomRise-owned space underneath. */
   .pin {
     width: 1000px; height: 1500px;
+    display: flex; flex-direction: column;
+    background: linear-gradient(180deg, #FFF8F0 0%, #FDEAE2 100%);
+  }
+  .photo-section {
+    width: 1000px; height: 880px;
     position: relative;
-    background: #2A2A2A;
+    overflow: hidden;
+    background-color: #EEE;
   }
   .photo {
-    /* Slight zoom + center crop trims ~10% off each edge, killing most
-       corner watermarks recipe blogs stamp on their images. */
-    position: absolute;
-    top: -8%; left: -8%; right: -8%; bottom: -8%;
+    position: absolute; inset: 0;
     background-image: url('${image}');
     background-size: cover;
     background-position: center;
   }
-  .darken {
-    position: absolute; inset: 0;
-    background:
-      /* Top + bottom gradient covers banner-style watermarks */
-      linear-gradient(180deg,
-        rgba(0,0,0,0.62) 0%,
-        rgba(0,0,0,0.10) 30%,
-        rgba(0,0,0,0.10) 60%,
-        rgba(0,0,0,0.88) 100%),
-      /* Corner vignette covers stamp-style watermarks */
-      radial-gradient(ellipse at center, rgba(0,0,0,0) 55%, rgba(0,0,0,0.35) 100%);
+  /* Subtle bottom fade so the white brand area meets the photo cleanly */
+  .photo-fade {
+    position: absolute; left: 0; right: 0; bottom: 0; height: 80px;
+    background: linear-gradient(180deg, rgba(255,248,240,0) 0%, rgba(255,248,240,1) 100%);
   }
-
-  /* Top-left brand mark */
-  .brand {
-    position: absolute;
-    top: 56px;
-    left: 56px;
-    display: flex; align-items: center; gap: 12px;
-    color: white;
-  }
-  .brand-dot {
-    width: 14px; height: 14px;
-    background: #E97A8C;
-    border-radius: 50%;
-    box-shadow: 0 0 0 4px rgba(233, 122, 140, 0.25);
-  }
-  .brand-word {
-    font-family: 'Inter';
-    font-weight: 700;
-    font-size: 26px;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-  }
-
-  /* Top-right time chip */
+  /* Time chip, top-right of the photo */
   .time-chip {
     position: absolute;
-    top: 56px;
-    right: 56px;
+    top: 40px; right: 40px;
     background: white;
     color: #2A2A2A;
     font-family: 'Inter';
@@ -152,92 +146,106 @@ function buildPinHtml(recipe) {
     font-size: 22px;
     padding: 12px 22px;
     border-radius: 999px;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.20);
     letter-spacing: 0.02em;
-    box-shadow: 0 6px 24px rgba(0,0,0,0.18);
   }
 
-  /* Recipe name overlay — top third, big serif */
-  .title-wrap {
-    position: absolute;
-    left: 56px;
-    right: 56px;
-    top: 220px;
-    text-align: left;
+  /* Brand area below the photo */
+  .info {
+    flex: 1;
+    padding: 36px 60px 40px;
+    display: flex; flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .brand-row {
+    display: flex; align-items: center; gap: 10px;
+    color: #5D4E60;
+  }
+  .brand-dot {
+    width: 11px; height: 11px;
+    background: #E97A8C;
+    border-radius: 50%;
+  }
+  .brand-word {
+    font-family: 'Inter';
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+  .divider {
+    width: 70px; height: 3px;
+    background: #E97A8C;
+    border-radius: 2px;
+    margin: 22px 0 18px;
   }
   .title {
     font-family: 'Playfair Display';
     font-weight: 900;
-    font-size: 92px;
-    line-height: 1.05;
-    color: white;
+    font-size: 64px;
+    line-height: 1.06;
+    color: #2A2A2A;
     letter-spacing: -0.01em;
-    text-shadow: 0 6px 24px rgba(0,0,0,0.45);
-    /* shrink for long names */
-    font-size: clamp(56px, 92px, 92px);
+    margin-bottom: 28px;
   }
-  /* Smaller for very long titles */
-  .title.long  { font-size: 72px; line-height: 1.07; }
-  .title.xlong { font-size: 56px; line-height: 1.10; }
+  .title.long  { font-size: 52px; }
+  .title.xlong { font-size: 42px; }
 
-  /* Bottom CTA pill */
-  .cta {
-    position: absolute;
-    left: 0; right: 0;
-    bottom: 100px;
-    display: flex; flex-direction: column; align-items: center; gap: 16px;
-  }
-  .cta-label {
-    color: white;
-    font-family: 'Inter';
-    font-weight: 600;
-    font-size: 22px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    opacity: 0.9;
-  }
   .cta-pill {
     background: #E97A8C;
     color: white;
     font-family: 'Inter';
     font-weight: 700;
-    font-size: 36px;
-    padding: 20px 56px;
+    font-size: 28px;
+    padding: 18px 44px;
     border-radius: 999px;
-    box-shadow: 0 14px 40px rgba(233, 122, 140, 0.45);
+    box-shadow: 0 12px 30px rgba(233, 122, 140, 0.32);
     letter-spacing: 0.01em;
+    margin-bottom: 14px;
   }
   .cta-foot {
-    color: white;
+    color: #6B5D6E;
     font-family: 'Inter';
     font-weight: 500;
-    font-size: 22px;
-    opacity: 0.85;
-    margin-top: 8px;
+    font-size: 18px;
     letter-spacing: 0.01em;
+  }
+
+  /* Photo credit — small attribution line at the very bottom. Always
+     visible regardless of whether the source's watermark is on the photo. */
+  .credit {
+    position: absolute;
+    bottom: 18px; left: 0; right: 0;
+    text-align: center;
+    font-family: 'Inter';
+    font-weight: 500;
+    font-size: 14px;
+    color: #9B8FA0;
+    letter-spacing: 0.04em;
   }
 </style>
 </head>
 <body>
   <div class="pin">
-    <div class="photo"></div>
-    <div class="darken"></div>
-
-    <div class="brand">
-      <div class="brand-dot"></div>
-      <div class="brand-word">MomRise</div>
+    <div class="photo-section">
+      <div class="photo"></div>
+      <div class="photo-fade"></div>
+      ${timeChip ? `<div class="time-chip">${timeChip}</div>` : ''}
     </div>
 
-    ${timeChip ? `<div class="time-chip">${timeChip}</div>` : ''}
-
-    <div class="title-wrap">
+    <div class="info">
+      <div class="brand-row">
+        <div class="brand-dot"></div>
+        <div class="brand-word">MomRise</div>
+      </div>
+      <div class="divider"></div>
       <h1 class="title ${name.length > 55 ? 'xlong' : (name.length > 35 ? 'long' : '')}">${name}</h1>
+      <div class="cta-pill">Save in MomRise</div>
+      <div class="cta-foot">Mom-centered meal planner · 7-day free trial</div>
     </div>
 
-    <div class="cta">
-      <div class="cta-label">Save in</div>
-      <div class="cta-pill">MomRise</div>
-      <div class="cta-foot">Free meal-plan app · 7-day trial</div>
-    </div>
+    ${credit ? `<div class="credit">Photo: ${credit}</div>` : ''}
   </div>
 </body>
 </html>`;
@@ -283,9 +291,13 @@ function buildPinHtml(recipe) {
     const html = buildPinHtml(recipe);
 
     try {
-      await page.setContent(html, { waitUntil: 'networkidle0', timeout: 20000 });
-      // Tiny extra wait to ensure fonts have rendered.
-      await new Promise((r) => setTimeout(r, 250));
+      // 'load' is more tolerant of slow recipe-blog images than 'networkidle0'.
+      // Some hosts dribble bytes over many seconds; networkidle0 trips its
+      // timeout even when the image loaded fine. Fonts + Google CSS finish
+      // well before the photo, so we add a 1.2s settle wait + a polling
+      // check on the background image's actual load state.
+      await page.setContent(html, { waitUntil: 'load', timeout: 45000 });
+      await new Promise((r) => setTimeout(r, 1200));
       const outPath = path.join(outDir, `${slug}.png`);
       await page.screenshot({
         path: outPath,
