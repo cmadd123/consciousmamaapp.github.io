@@ -37,7 +37,7 @@ SHOTS = [
      "Every recipe,", "anywhere, saved."),
     ("1000004278.png", "03_meal_plan",
      "Plan the week.", "Hit the budget."),
-    ("calendar.png", "04_calendar",
+    ("1000004286.png", "04_calendar",
      "Never miss a playdate", "or the pediatrician."),
     ("1000004280.png", "05_milestones",
      "Every first,", "remembered."),
