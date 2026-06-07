@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Creator Library — MomRise</title>
+  <meta name="description" content="Captions, B-roll clips, brand elements, and FTC reference — everything creators need to post about MomRise.">
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #52A097;
+      --primary-dark: #2A6F67;
+      --accent: #EE8B60;
+      --warm-start: #D7F2EB;
+      --warm-end:   #FFE9E1;
+      --surface: #FFFFFF;
+      --text: #1F2937;
+      --text-muted: #6B7280;
+      --border: #E5E7EB;
+      --success: #10B981;
+      --warning: #F59E0B;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; padding: 0;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      color: var(--text);
+      background: linear-gradient(180deg, var(--warm-start) 0%, var(--warm-end) 100%);
+      background-attachment: fixed;
+      min-height: 100vh;
+      line-height: 1.55;
+    }
+    a { color: var(--primary-dark); }
+
+    /* Creator nav (mirrors brand-kit / playbook). */
+    .creator-nav {
+      display: flex;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      max-width: 100%;
+    }
+    .nav-tab {
+      flex: 1;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      background: none; border: none;
+      padding: 14px 8px;
+      font: inherit; font-size: 14px; font-weight: 600;
+      color: var(--text-muted);
+      border-bottom: 2px solid transparent;
+      text-decoration: none;
+    }
+    .nav-tab .nav-tab-icon svg { width: 18px; height: 18px; }
+    .nav-tab:hover { color: var(--text); background: color-mix(in srgb, var(--primary) 5%, var(--surface)); }
+    .nav-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+    @media (max-width: 640px) {
+      .creator-nav {
+        position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
+        border-bottom: none; border-top: 1px solid var(--border);
+        padding-bottom: env(safe-area-inset-bottom);
+        box-shadow: 0 -4px 16px -8px rgba(0,0,0,0.16);
+      }
+      .nav-tab {
+        flex-direction: column; gap: 3px;
+        padding: 8px 4px 6px; font-size: 11px;
+        border-bottom: none; border-top: 2px solid transparent;
+      }
+      .nav-tab .nav-tab-icon svg { width: 22px; height: 22px; }
+      .nav-tab.active { border-top-color: var(--primary); }
+      main { padding-bottom: 88px; }
+    }
+
+    main {
+      max-width: 880px;
+      margin: 0 auto;
+      padding: 32px 24px 64px;
+    }
+    h1 { font-size: 32px; margin: 0 0 8px; }
+    .lede { color: var(--text-muted); margin: 0 0 32px; }
+
+    section {
+      margin-bottom: 40px;
+    }
+    section h2 {
+      font-size: 22px;
+      margin: 0 0 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    section h2 .badge {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--warning) 18%, white);
+      color: #92400E;
+    }
+    section h2 .badge.required {
+      background: color-mix(in srgb, #EF4444 18%, white);
+      color: #991B1B;
+    }
+    section .section-lede {
+      color: var(--text-muted);
+      font-size: 14px;
+      margin: 0 0 16px;
+    }
+
+    /* Snippet cards */
+    .snippet {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+      position: relative;
+    }
+    .snippet-text {
+      font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 13.5px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      margin: 0;
+      padding-right: 96px;
+    }
+    .snippet button {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 6px 12px;
+      font: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .snippet button:hover { background: var(--primary-dark); }
+    .snippet button.copied { background: var(--success); }
+
+    /* FTC callout */
+    .ftc-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .ftc-card h3 { margin: 0 0 8px; font-size: 16px; }
+    .ftc-card p { margin: 0 0 12px; font-size: 14px; color: var(--text-muted); }
+    .ftc-row {
+      display: grid;
+      grid-template-columns: 140px 1fr auto;
+      gap: 12px;
+      align-items: start;
+      padding: 12px 0;
+      border-top: 1px solid var(--border);
+    }
+    .ftc-row:first-of-type { border-top: none; }
+    .ftc-row .field {
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--text);
+    }
+    .ftc-row code {
+      background: color-mix(in srgb, var(--warm-start) 50%, white);
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 12.5px;
+      display: inline-block;
+      word-break: break-word;
+    }
+    .ftc-row button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 4px 10px;
+      font: inherit;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      height: fit-content;
+    }
+    .ftc-row button.copied { background: var(--success); }
+
+    /* Video grid */
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+    }
+    .video-tile {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .video-tile video {
+      width: 100%;
+      aspect-ratio: 9/16;
+      object-fit: cover;
+      background: #f0f0f0;
+      display: block;
+    }
+    .video-tile .meta {
+      padding: 10px 12px;
+    }
+    .video-tile .title { font-weight: 600; font-size: 14px; margin: 0 0 2px; }
+    .video-tile .desc { font-size: 12px; color: var(--text-muted); margin: 0; }
+
+    /* Empty state */
+    .empty {
+      background: var(--surface);
+      border: 1px dashed var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      color: var(--text-muted);
+      font-size: 14px;
+      text-align: center;
+    }
+    .empty strong { color: var(--text); }
+
+    /* Resource list */
+    .resource-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .resource-list li {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+    }
+    .resource-list li .desc {
+      color: var(--text-muted);
+      font-size: 12.5px;
+      display: block;
+      margin-top: 2px;
+    }
+    .resource-list a {
+      background: var(--primary);
+      color: white !important;
+      text-decoration: none !important;
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .resource-list a:hover { background: var(--primary-dark); }
+
+    /* Toast */
+    .toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+      background: var(--text); color: white;
+      padding: 10px 18px; border-radius: 8px;
+      font-size: 13px; font-weight: 500;
+      opacity: 0; transition: opacity 200ms;
+      z-index: 100;
+    }
+    .toast.show { opacity: 1; }
+    @media (max-width: 640px) { .toast { bottom: 100px; } }
+
+    @media (max-width: 600px) {
+      .ftc-row { grid-template-columns: 1fr; }
+      .ftc-row button { justify-self: start; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="creator-nav">
+    <a class="nav-tab" href="/creator/#home">
+      <span class="nav-tab-icon" data-icon="home"></span><span class="nav-tab-label">Home</span>
+    </a>
+    <a class="nav-tab" href="/creator/playbook/">
+      <span class="nav-tab-icon" data-icon="clipboard"></span><span class="nav-tab-label">Playbook</span>
+    </a>
+    <a class="nav-tab" href="/creator/brand-kit/">
+      <span class="nav-tab-icon" data-icon="grid"></span><span class="nav-tab-label">Brand kit</span>
+    </a>
+    <a class="nav-tab active" href="/creator/library/">
+      <span class="nav-tab-icon" data-icon="folder"></span><span class="nav-tab-label">Library</span>
+    </a>
+    <a class="nav-tab" href="/creator/#recipes">
+      <span class="nav-tab-icon" data-icon="camera"></span><span class="nav-tab-label">Recipes</span>
+    </a>
+  </nav>
+  <script>
+    (function () {
+      const w = (inner) => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + inner + '</svg>';
+      const ICON = {
+        home: w('<path d="M3 10.2 12 3l9 7.2V21H3z"/><path d="M9 21v-7h6v7"/>'),
+        camera: w('<path d="M3 8a2 2 0 0 1 2-2h2.5L9 4h6l1.5 2H19a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><circle cx="12" cy="13" r="3.5"/>'),
+        grid: w('<rect x="3.5" y="3.5" width="7" height="7" rx="1"/><rect x="13.5" y="3.5" width="7" height="7" rx="1"/><rect x="13.5" y="13.5" width="7" height="7" rx="1"/><rect x="3.5" y="13.5" width="7" height="7" rx="1"/>'),
+        clipboard: w('<rect x="8" y="3" width="8" height="4" rx="1.5"/><path d="M16 5h2a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2"/>'),
+        folder: w('<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>'),
+      };
+      document.querySelectorAll('[data-icon]').forEach((el) => {
+        if (ICON[el.dataset.icon]) el.innerHTML = ICON[el.dataset.icon];
+      });
+    })();
+  </script>
+
+  <main>
+    <h1>Creator Library</h1>
+    <p class="lede">
+      Everything you need to post about MomRise: captions with FTC disclosure baked in, app demo clips, B-roll, and brand graphics. Pull what you want, drop it in your Reel, post.
+    </p>
+
+    <!-- FTC required reference -->
+    <section>
+      <h2>FTC reference <span class="badge required">Required on every post</span></h2>
+      <p class="section-lede">
+        These three pieces are non-negotiable on any post featuring MomRise. Skip any one and we both have FTC exposure.
+      </p>
+      <div class="ftc-card">
+        <div class="ftc-row">
+          <div class="field">Caption opener<br><small style="color:var(--text-muted);font-weight:400;">First line of your caption</small></div>
+          <code id="ftc-caption">#ad Affiliate of @momrise — code [CODE] supports my channel (free for you).</code>
+          <button data-copy="ftc-caption">Copy</button>
+        </div>
+        <div class="ftc-row">
+          <div class="field">Reel overlay<br><small style="color:var(--text-muted);font-weight:400;">Persistent on-screen text</small></div>
+          <code id="ftc-overlay">Paid partnership · #ad</code>
+          <button data-copy="ftc-overlay">Copy</button>
+        </div>
+        <div class="ftc-row">
+          <div class="field">Paid Partnership label<br><small style="color:var(--text-muted);font-weight:400;">Instagram setting</small></div>
+          <code>Settings → Creator → Branded Content → tag @momrise</code>
+          <span></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Caption snippets -->
+    <section>
+      <h2>Caption snippets</h2>
+      <p class="section-lede">
+        Each one starts with FTC disclosure already in place. Pick one, swap <code>[CODE]</code> with your code, customize in your voice.
+      </p>
+      <div id="caption-snippets"></div>
+    </section>
+
+    <!-- App screen recordings -->
+    <section>
+      <h2>App demos <span class="badge">Splice into your Reels</span></h2>
+      <p class="section-lede">
+        Short, no-audio screen recordings showing the app in action. Your voiceover narrates, this footage is the visual.
+      </p>
+      <div id="app-demos"></div>
+    </section>
+
+    <!-- B-roll -->
+    <section>
+      <h2>B-roll</h2>
+      <p class="section-lede">
+        Hands-only cooking clips you can drop into any recipe Reel. No face, no identifiable kitchen — works for any creator.
+      </p>
+      <div id="b-roll"></div>
+    </section>
+
+    <!-- Brand elements -->
+    <section>
+      <h2>Brand elements</h2>
+      <p class="section-lede">
+        Logo, lower-third stickers, Canva templates. Drop them into your edits so MomRise looks consistent across creators.
+      </p>
+      <div id="brand-elements"></div>
+    </section>
+
+    <!-- Examples -->
+    <section>
+      <h2>Examples</h2>
+      <p class="section-lede">
+        Reels other creators have posted using this library. Use them as format reference.
+      </p>
+      <div id="examples"></div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast">Copied</div>
+
+  <script type="module">
+    import { LIBRARY_MANIFEST, CAPTION_SNIPPETS } from './manifest.js';
+
+    const $ = (id) => document.getElementById(id);
+    const esc = (s) => String(s || '').replace(/[<>&"]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));
+    const toast = (msg) => {
+      const t = $('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 1800);
+    };
+
+    // ----- Caption snippets -----
+    const snippetsHtml = CAPTION_SNIPPETS.map((s, i) => `
+      <div class="snippet">
+        <button data-snippet="${i}">Copy</button>
+        <p class="snippet-text">${esc(s)}</p>
+      </div>
+    `).join('');
+    $('caption-snippets').innerHTML = snippetsHtml || '<div class="empty">Caption snippets coming soon.</div>';
+
+    // ----- Video grid renderer -----
+    function renderVideos(targetId, items, emptyMsg) {
+      const target = $(targetId);
+      if (!items || items.length === 0) {
+        target.innerHTML = `<div class="empty"><strong>${esc(emptyMsg)}</strong><br>First batch lands once Haley films them. Check back this week.</div>`;
+        return;
+      }
+      target.innerHTML = `<div class="video-grid">${items.map(item => `
+        <div class="video-tile">
+          <video controls preload="metadata" playsinline${item.poster ? ` poster="${esc(item.poster)}"` : ''}>
+            <source src="${esc(item.url)}" type="video/mp4">
+          </video>
+          <div class="meta">
+            <p class="title">${esc(item.title)}</p>
+            ${item.duration ? `<p class="desc">${item.duration}s${item.note ? ' · ' + esc(item.note) : ''}</p>` : ''}
+            ${item.note && !item.duration ? `<p class="desc">${esc(item.note)}</p>` : ''}
+          </div>
+        </div>
+      `).join('')}</div>`;
+    }
+
+    // ----- Resource list renderer -----
+    function renderResources(targetId, items, emptyMsg) {
+      const target = $(targetId);
+      if (!items || items.length === 0) {
+        target.innerHTML = `<div class="empty"><strong>${esc(emptyMsg)}</strong></div>`;
+        return;
+      }
+      target.innerHTML = `<ul class="resource-list">${items.map(item => `
+        <li>
+          <div>
+            <strong>${esc(item.title)}</strong>
+            ${item.description ? `<span class="desc">${esc(item.description)}</span>` : ''}
+          </div>
+          <a href="${esc(item.url)}" target="_blank" rel="noopener">${esc(item.cta || 'Open')}</a>
+        </li>
+      `).join('')}</ul>`;
+    }
+
+    renderVideos('app-demos', LIBRARY_MANIFEST.appDemos, 'No app demos yet');
+    renderVideos('b-roll', LIBRARY_MANIFEST.bRoll, 'No B-roll yet');
+    renderResources('brand-elements', LIBRARY_MANIFEST.brandElements, 'No brand elements yet');
+    renderResources('examples', LIBRARY_MANIFEST.examples, 'No examples yet');
+
+    // ----- Copy buttons -----
+    function bindCopy(getText, button) {
+      button.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(getText());
+          button.classList.add('copied');
+          button.textContent = 'Copied';
+          setTimeout(() => {
+            button.classList.remove('copied');
+            button.textContent = 'Copy';
+          }, 1600);
+          toast('Copied to clipboard');
+        } catch {
+          toast('Copy failed — select manually');
+        }
+      });
+    }
+
+    document.querySelectorAll('button[data-snippet]').forEach((btn) => {
+      bindCopy(() => CAPTION_SNIPPETS[parseInt(btn.dataset.snippet, 10)], btn);
+    });
+    document.querySelectorAll('button[data-copy]').forEach((btn) => {
+      bindCopy(() => document.getElementById(btn.dataset.copy).textContent, btn);
+    });
+  </script>
+</body>
+</html>

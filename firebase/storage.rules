@@ -36,6 +36,16 @@ service firebase.storage {
                        || (request.resource.size < 5 * 1024 * 1024
                            && request.resource.contentType.matches('image/.*')));
     }
+    // Creator asset library — videos, brand graphics, and other assets
+    // Haley produces for creators to pull and remix. Reads are public so
+    // the library page can play videos inline without auth. Writes require
+    // auth (admin SDK from upload scripts) and stay locked from clients —
+    // assets are admin-curated, not user-contributed.
+    match /creator_library/{allPaths=**} {
+      allow read: if true;
+      allow write: if false;
+    }
+
     // Meal-plan cover images from the plan builder. Same constraints.
     match /plan_covers/{userId}/{allPaths=**} {
       allow read: if true;

@@ -26,8 +26,9 @@ rhythm in the next section.
   website," Pinterest gives you a unique verification token (either a TXT
   DNS record or an HTML meta tag). **DM Collin the token** — he adds it
   to momrise.app and you click verify. ~5 min round-trip.
-- [ ] **Google Drive folder** at the top level: `MomRise Creator Library`.
-  Make 5 subfolders matching the parts-bin layout (see Day 3 below).
+- [ ] **Firebase Console** access — Collin already added you. Sign in at
+  console.firebase.google.com → MomRise. Bookmark the **Storage** tab —
+  this is where you'll upload videos for the Creator Library.
 - [ ] **Canva account** (free tier is fine). Bookmark the link.
 - [ ] **CapCut on your phone** (free). This is the video editor — easier
   than Reels' built-in editor and free.
@@ -54,24 +55,33 @@ description (Pinterest cares about board descriptions for SEO):
 - "Quick, kid-approved dinners I actually make on weeknights" — style
 - Keyword stuffing reads spammy. Write like a human.
 
-### Day 3 — Drive folder structure (20 min)
+### Day 3 — Storage folder (5 min)
 
-Inside `MomRise Creator Library`, create:
+In Firebase Console → Storage, the `creator_library/` folder already
+exists (publicly readable, admin-write only — Collin set up the rule).
+
+You don't need to create subfolders. When you upload a video, just name
+it descriptively:
 
 ```
-/1 — App screen recordings
-/2 — Brand elements
-/3 — Caption snippets
-/4 — B-roll (reusable cooking shots)
-/5 — Tier 1 examples (finished Reels for creators to reference)
+share-tiktok-to-momrise.mp4
+recipe-to-grocery-list.mp4
+hands-chopping-onion.mp4
 ```
 
-These will fill in over weeks 1-4. Don't try to fill them today.
+After upload, click the file → copy the access URL (starts with
+`https://firebasestorage.googleapis.com/...`) → paste it into
+`creator/library/manifest.js` with a title and duration. Push the
+repo. The Creator Library page picks it up on next load.
+
+Live URL: **momrise.app/creator/library/** — that's what creators see.
 
 ### Day 4 — The 5 screen recordings (30 min, the easiest day)
 
 Open MomRise on your phone. Hit record-screen. Do each of these once,
-slowly. Save each as a separate clip. Trim with CapCut. Drop in folder 1.
+slowly. Save each as a separate clip. Trim with CapCut. Upload to
+Firebase Storage at `creator_library/{filename}.mp4`, then add a row to
+`creator/library/manifest.js` per the instructions on Day 3.
 
 | Clip name | What to record | Target length |
 |---|---|---|
@@ -122,9 +132,10 @@ Post (5 min):
 > free" in captions; it implies a benefit the code doesn't actually
 > provide. Honest framing only.
 
-Save the final `.mp4` to `/5 — Tier 1 examples/` in Drive. This is now
-the reference creators can watch when they're trying to figure out the
-format.
+Once posted, copy the Reel's IG URL. Open
+`creator/library/manifest.js`, add an entry under `examples:` with the
+URL, your handle, and a one-line description. Commit + push. The Creator
+Library's "Examples" section now shows your Reel as a format reference.
 
 ### Day 6 — One bootstrap pin (30 min)
 

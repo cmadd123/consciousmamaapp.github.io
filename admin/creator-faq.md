@@ -12,9 +12,10 @@ copy-paste or a tap-here step.
 ## 🚀 Just want to post — what do I do?
 
 **Q: Where do I get content to use?**
-The MomRise Creator Library: **[Drive link]**
-Find the folder for the type of post you want (app demo, recipe, meal
-plan). Pull the clips you like. Splice them into your Reel.
+The MomRise Creator Library: **momrise.app/creator/library/**
+All the captions, app demo clips, B-roll, and brand graphics live here.
+Caption snippets have copy buttons. Videos play inline — tap and watch
+right on the page, then download what you want.
 
 **Q: What do I write in the caption?**
 Copy this, replace `[CODE]`:
@@ -256,7 +257,7 @@ EVERY POST:
   ☐ Invite @momrise as Collab BEFORE publishing
 
 CONTENT:
-  ☐ Library: [Drive link]
+  ☐ Library: momrise.app/creator/library/
   ☐ Formats that work: WIEIAD, Cook With Me, App demo
   ☐ 15-60s, vertical, your voiceover wins
 
