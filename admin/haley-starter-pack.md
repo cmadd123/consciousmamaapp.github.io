@@ -118,7 +118,7 @@ Edit (30 min in CapCut):
 - Add the on-screen text overlay: `Paid partnership · #ad` in the top-right,
   visible the whole time
 - Add captions (CapCut autocaptions, then proofread)
-- Trim to 30-45 seconds total
+- Trim to 20-30 seconds — sweet spot for TikTok, still works for IG (single master cross-posts)
 
 Post (5 min):
 - Caption: `#ad Affiliate of @momrise — import recipes from TikTok in
