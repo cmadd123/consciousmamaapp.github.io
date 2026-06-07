@@ -233,7 +233,7 @@ at the start of your caption/description on every platform. Add the same
 on-screen text overlay on any video.
 
 **Q: My code isn't working — what do I do?**
-DM @momrise or email collinjmaddox@gmail.com — we'll check the
+DM @momrise or email support@momrise.app — we'll check the
 configuration and resend if needed. Usually a typo issue or the code
 wasn't activated yet.
 

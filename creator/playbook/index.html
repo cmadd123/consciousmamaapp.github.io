@@ -337,14 +337,16 @@
     .nav-tab:hover { color: var(--text); background: color-mix(in srgb, var(--primary) 5%, var(--surface)); }
     .nav-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
 
-    @media (max-width: 640px) {
+    @media (max-width: 720px) {
       .creator-nav {
         position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
         border-bottom: none; border-top: 1px solid var(--border);
         padding-bottom: env(safe-area-inset-bottom);
         box-shadow: 0 -4px 16px -8px rgba(0,0,0,0.16);
+        overflow-x: auto;
       }
       .nav-tab {
+        flex: 0 0 auto; min-width: 72px;
         flex-direction: column; gap: 3px;
         padding: 8px 4px 6px; font-size: 11px;
         border-bottom: none; border-top: 2px solid transparent;
