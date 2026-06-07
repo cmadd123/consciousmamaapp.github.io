@@ -321,9 +321,13 @@
       const description = dest === 'appstore'
         ? `Plan your week of meals in MomRise. Recipe imports + grocery list in one tap. Free 7-day trial.`
         : `${recipe.recipe_name} — plan it in one tap with MomRise.`;
+      // Prefer the magazine-style pin we generated (1000x1500, MomRise
+       // brand area, source attribution baked in). Falls back to the
+       // source blog's image_url if the magazine version hasn't been
+       // uploaded yet (see scripts/upload-pin-images.js).
       const params = new URLSearchParams({
         url,
-        media: recipe.image_url || '',
+        media: recipe.magazine_pin_url || recipe.image_url || '',
         description,
       });
       return `https://www.pinterest.com/pin/create/button/?${params.toString()}`;

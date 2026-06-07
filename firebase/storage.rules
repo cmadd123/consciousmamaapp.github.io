@@ -46,6 +46,15 @@ service firebase.storage {
       allow write: if false;
     }
 
+    // Pinterest pin images — 1000x1500 magazine-layout PNGs Haley uses
+    // via the pin generator. Same access model as creator_library:
+    // public reads (Pinterest must fetch the image when Haley pins),
+    // admin-only writes via the upload-pin-images.js script.
+    match /pins/{allPaths=**} {
+      allow read: if true;
+      allow write: if false;
+    }
+
     // Meal-plan cover images from the plan builder. Same constraints.
     match /plan_covers/{userId}/{allPaths=**} {
       allow read: if true;
