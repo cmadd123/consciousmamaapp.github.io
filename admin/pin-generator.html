@@ -170,6 +170,14 @@
     <div class="view" id="viewList">
       <div class="filters">
         <div class="filter-group">
+          <label for="destSelect">Destination</label>
+          <select id="destSelect">
+            <option value="appstore" selected>App Store (Apple)</option>
+            <option value="playstore" disabled>Google Play — coming soon</option>
+            <option value="recipe">Recipe page (momrise.app/r/…)</option>
+          </select>
+        </div>
+        <div class="filter-group">
           <label for="boardSelect">Pinterest board (tags the URL)</label>
           <select id="boardSelect"></select>
         </div>
@@ -277,28 +285,44 @@
     }
     const slugFor = (recipe, docId) => `${kebab(recipe.recipe_name)}-${docId.slice(-6)}`;
 
+    // App Store ID for MomRise. Apple's `ct` parameter shows up in
+    // App Store Connect → Analytics → Acquisition → Sources, so we can
+    // attribute Pinterest installs without needing a landing page.
+    const IOS_APP_ID = '6758357382';
+
     function buildPinUrl(recipe, docId) {
       const slug = slugFor(recipe, docId);
-      // URL params disabled by default — Pinterest's spam classifier on
-      // new domains/accounts treats tracking-laden URLs as marketing
-      // automation. The board dropdown still drives the human's pick;
-      // tracking comes from Pinterest's referrer + their own analytics.
-      // Flip the "include tracking params" toggle if you've established
-      // a clean Pinterest reputation and want per-board attribution.
+      const dest = $('destSelect').value;
+      const board = $('boardSelect').value || 'unboarded';
+
+      if (dest === 'appstore') {
+        // App Store direct link — bypasses momrise.app entirely. Pinterest
+        // doesn't block apps.apple.com. ct= surfaces in App Analytics.
+        const ct = `pinterest-${board}`.slice(0, 40); // Apple caps at 40 chars
+        return `https://apps.apple.com/app/id${IOS_APP_ID}?ct=${encodeURIComponent(ct)}`;
+      }
+
+      // Recipe page mode — for future use once Pinterest unblocks the
+      // momrise.app domain (currently caught by their new-domain spam
+      // classifier per 2026 community reports).
       if (!$('trackingToggle').checked) {
         return `https://momrise.app/r/${slug}/`;
       }
-      const board = $('boardSelect').value;
       const params = new URLSearchParams({ src: 'pinterest' });
-      if (board) params.set('board', board);
+      if (board && board !== 'unboarded') params.set('board', board);
       return `https://momrise.app/r/${slug}/?${params.toString()}`;
     }
 
     function pinterestSaveUrl(recipe, docId) {
-      const recipeUrl = buildPinUrl(recipe, docId);
-      const description = `${recipe.recipe_name} — plan it in one tap with MomRise.`;
+      const url = buildPinUrl(recipe, docId);
+      const dest = $('destSelect').value;
+      // Description framing depends on destination so we're not
+      // bait-and-switching Pinterest searchers.
+      const description = dest === 'appstore'
+        ? `Plan your week of meals in MomRise. Recipe imports + grocery list in one tap. Free 7-day trial.`
+        : `${recipe.recipe_name} — plan it in one tap with MomRise.`;
       const params = new URLSearchParams({
-        url: recipeUrl,
+        url,
         media: recipe.image_url || '',
         description,
       });
@@ -363,6 +387,7 @@
     $('typeSelect').addEventListener('change', render);
     $('boardSelect').addEventListener('change', render);
     $('trackingToggle').addEventListener('change', render);
+    $('destSelect').addEventListener('change', render);
 
     async function loadRecipes() {
       const snap = await getDocs(query(collection(db, 'meal'), where('is_curated', '==', true)));
