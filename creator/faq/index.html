@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Creator FAQ — MomRise</title>
+  <meta name="description" content="Every 'wait, how do I…' question for MomRise creators. Posting, FTC compliance, payouts, and edge cases.">
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #52A097;
+      --primary-dark: #2A6F67;
+      --accent: #EE8B60;
+      --warm-start: #D7F2EB;
+      --warm-end:   #FFE9E1;
+      --surface: #FFFFFF;
+      --text: #1F2937;
+      --text-muted: #6B7280;
+      --border: #E5E7EB;
+      --success: #10B981;
+      --warning: #F59E0B;
+      --danger: #EF4444;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; padding: 0;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      color: var(--text);
+      background: linear-gradient(180deg, var(--warm-start) 0%, var(--warm-end) 100%);
+      background-attachment: fixed;
+      min-height: 100vh;
+      line-height: 1.55;
+    }
+    a { color: var(--primary-dark); }
+
+    /* Creator nav */
+    .creator-nav {
+      display: flex;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      max-width: 100%;
+    }
+    .nav-tab {
+      flex: 1;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      background: none; border: none;
+      padding: 14px 8px;
+      font: inherit; font-size: 14px; font-weight: 600;
+      color: var(--text-muted);
+      border-bottom: 2px solid transparent;
+      text-decoration: none;
+    }
+    .nav-tab .nav-tab-icon svg { width: 18px; height: 18px; }
+    .nav-tab:hover { color: var(--text); background: color-mix(in srgb, var(--primary) 5%, var(--surface)); }
+    .nav-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+    @media (max-width: 720px) {
+      .creator-nav {
+        position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
+        border-bottom: none; border-top: 1px solid var(--border);
+        padding-bottom: env(safe-area-inset-bottom);
+        box-shadow: 0 -4px 16px -8px rgba(0,0,0,0.16);
+        overflow-x: auto;
+      }
+      .nav-tab {
+        flex: 0 0 auto; min-width: 72px;
+        flex-direction: column; gap: 3px;
+        padding: 8px 4px 6px; font-size: 11px;
+        border-bottom: none; border-top: 2px solid transparent;
+      }
+      .nav-tab .nav-tab-icon svg { width: 22px; height: 22px; }
+      .nav-tab.active { border-top-color: var(--primary); }
+      main { padding-bottom: 88px; }
+    }
+
+    main {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 32px 24px 64px;
+    }
+    h1 { font-size: 32px; margin: 0 0 8px; }
+    .lede {
+      color: var(--text-muted);
+      margin: 0 0 16px;
+      font-size: 16px;
+    }
+    .lede-hint {
+      color: var(--text-muted);
+      margin: 0 0 36px;
+      font-size: 14px;
+      font-style: italic;
+    }
+
+    /* Table of contents */
+    .toc {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px 20px;
+      margin-bottom: 32px;
+    }
+    .toc-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin: 0 0 10px;
+    }
+    .toc ul { list-style: none; margin: 0; padding: 0; }
+    .toc li { margin: 4px 0; }
+    .toc a {
+      color: var(--text);
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 500;
+    }
+    .toc a:hover { color: var(--primary); }
+
+    section {
+      margin-bottom: 40px;
+      scroll-margin-top: 16px;
+    }
+    section h2 {
+      font-size: 22px;
+      margin: 0 0 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    section h2 .badge {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      padding: 3px 8px;
+      border-radius: 999px;
+    }
+    section h2 .badge.required {
+      background: color-mix(in srgb, #EF4444 18%, white);
+      color: #991B1B;
+    }
+    section h2 .badge.time {
+      background: color-mix(in srgb, var(--warning) 18%, white);
+      color: #92400E;
+    }
+    .section-lede {
+      color: var(--text-muted);
+      font-size: 14px;
+      margin: 0 0 18px;
+    }
+
+    .q-block {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px 20px;
+      margin-bottom: 12px;
+    }
+    .q-block h3 {
+      font-size: 16px;
+      margin: 0 0 8px;
+      color: var(--text);
+    }
+    .q-block p {
+      margin: 0 0 10px;
+      font-size: 14.5px;
+      color: var(--text);
+    }
+    .q-block p:last-child { margin-bottom: 0; }
+    .q-block ol, .q-block ul {
+      margin: 8px 0 10px;
+      padding-left: 22px;
+      font-size: 14.5px;
+    }
+    .q-block li { margin-bottom: 4px; }
+    .q-block code {
+      background: color-mix(in srgb, var(--warm-start) 50%, white);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'Inter', sans-serif;
+      font-size: 13.5px;
+      font-weight: 600;
+    }
+
+    .codeblock {
+      background: color-mix(in srgb, var(--warm-start) 35%, white);
+      border: 1px solid color-mix(in srgb, var(--primary) 22%, var(--border));
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin: 12px 0;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      line-height: 1.55;
+      color: var(--text);
+      white-space: pre-wrap;
+    }
+
+    .callout {
+      border-left: 4px solid var(--primary);
+      background: color-mix(in srgb, var(--warm-start) 30%, white);
+      padding: 14px 18px;
+      border-radius: 0 8px 8px 0;
+      margin: 14px 0;
+      font-size: 14px;
+    }
+    .callout.warn { border-left-color: var(--warning); background: color-mix(in srgb, #FEF3C7 60%, white); }
+    .callout strong { color: var(--text); }
+
+    /* Table styling for the disclosure terminology */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 14px 0;
+      font-size: 13.5px;
+    }
+    table th, table td {
+      padding: 10px 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    table th {
+      font-weight: 700;
+      color: var(--text-muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    table td:first-child { font-weight: 600; }
+
+    /* One-card summary at the end */
+    .one-card {
+      background: var(--surface);
+      border: 2px solid var(--primary);
+      border-radius: 14px;
+      padding: 20px 24px;
+      margin-top: 24px;
+    }
+    .one-card h2 {
+      margin-top: 0;
+      color: var(--primary-dark);
+    }
+    .checklist {
+      list-style: none;
+      padding: 0;
+      margin: 8px 0 0;
+    }
+    .checklist li {
+      padding: 6px 0;
+      font-size: 14.5px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .checklist li::before {
+      content: "☐";
+      color: var(--primary);
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .checklist-section {
+      font-weight: 700;
+      color: var(--primary-dark);
+      margin: 16px 0 4px;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+  </style>
+</head>
+<body>
+  <nav class="creator-nav">
+    <a class="nav-tab" href="/creator/#home">
+      <span class="nav-tab-icon" data-icon="home"></span><span class="nav-tab-label">Home</span>
+    </a>
+    <a class="nav-tab" href="/creator/playbook/">
+      <span class="nav-tab-icon" data-icon="clipboard"></span><span class="nav-tab-label">Playbook</span>
+    </a>
+    <a class="nav-tab" href="/creator/brand-kit/">
+      <span class="nav-tab-icon" data-icon="grid"></span><span class="nav-tab-label">Brand kit</span>
+    </a>
+    <a class="nav-tab" href="/creator/library/">
+      <span class="nav-tab-icon" data-icon="folder"></span><span class="nav-tab-label">Library</span>
+    </a>
+    <a class="nav-tab active" href="/creator/faq/">
+      <span class="nav-tab-icon" data-icon="help"></span><span class="nav-tab-label">FAQ</span>
+    </a>
+    <a class="nav-tab" href="/creator/#recipes">
+      <span class="nav-tab-icon" data-icon="camera"></span><span class="nav-tab-label">Recipes</span>
+    </a>
+    <a class="nav-tab" href="/creator/#plans">
+      <span class="nav-tab-icon" data-icon="calendar"></span><span class="nav-tab-label">Plans</span>
+    </a>
+    <a class="nav-tab" href="/creator/#stats">
+      <span class="nav-tab-icon" data-icon="chart"></span><span class="nav-tab-label">Stats</span>
+    </a>
+  </nav>
+  <script>
+    (function () {
+      const w = (inner) => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + inner + '</svg>';
+      const ICON = {
+        home: w('<path d="M3 10.2 12 3l9 7.2V21H3z"/><path d="M9 21v-7h6v7"/>'),
+        camera: w('<path d="M3 8a2 2 0 0 1 2-2h2.5L9 4h6l1.5 2H19a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><circle cx="12" cy="13" r="3.5"/>'),
+        calendar: w('<rect x="3" y="4.5" width="18" height="16.5" rx="2"/><path d="M3 9.5h18M8 3v3M16 3v3"/>'),
+        chart: w('<path d="M6 21v-7M12 21V3M18 21v-10"/>'),
+        grid: w('<rect x="3.5" y="3.5" width="7" height="7" rx="1"/><rect x="13.5" y="3.5" width="7" height="7" rx="1"/><rect x="13.5" y="13.5" width="7" height="7" rx="1"/><rect x="3.5" y="13.5" width="7" height="7" rx="1"/>'),
+        clipboard: w('<rect x="8" y="3" width="8" height="4" rx="1.5"/><path d="M16 5h2a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2"/>'),
+        folder: w('<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>'),
+        help: w('<circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 0 1 5 0c0 1.5-2.5 2-2.5 4"/><circle cx="12" cy="17" r="0.5" fill="currentColor"/>'),
+      };
+      document.querySelectorAll('[data-icon]').forEach((el) => {
+        if (ICON[el.dataset.icon]) el.innerHTML = ICON[el.dataset.icon];
+      });
+    })();
+  </script>
+
+  <main>
+    <h1>Creator FAQ</h1>
+    <p class="lede">
+      You're a MomRise creator. You earn 50% of every yearly subscription someone buys after using your code. This page answers every "wait, how do I…" question.
+    </p>
+    <p class="lede-hint">Skim the headings, jump to your question. Each answer ends with a copy-paste or a tap-here step.</p>
+
+    <div class="toc">
+      <div class="toc-title">Jump to</div>
+      <ul>
+        <li><a href="#post">🚀 Just want to post — what do I do?</a></li>
+        <li><a href="#setup">🛠️ One-time setup (10 min, once)</a></li>
+        <li><a href="#performs">📊 What posts perform best?</a></li>
+        <li><a href="#money">💰 How does the money work?</a></li>
+        <li><a href="#tier2">🎁 Tier 2 — custom content from MomRise</a></li>
+        <li><a href="#ftc">⚖️ FTC rules (required, 5 min)</a></li>
+        <li><a href="#edge">🆘 Edge cases</a></li>
+        <li><a href="#card">📌 One-card summary</a></li>
+      </ul>
+    </div>
+
+    <!-- POST -->
+    <section id="post">
+      <h2>🚀 Just want to post — what do I do?</h2>
+
+      <div class="q-block">
+        <h3>Where do I get content to use?</h3>
+        <p>The MomRise Creator Library: <strong><a href="/creator/library/">momrise.app/creator/library/</a></strong></p>
+        <p>All the captions, app demo clips, B-roll, and brand graphics live there. Caption snippets have copy buttons. Videos play inline — tap and watch right on the page, then download what you want.</p>
+      </div>
+
+      <div class="q-block">
+        <h3>What do I write in the caption?</h3>
+        <p>Copy this, replace <code>[CODE]</code>:</p>
+        <div class="codeblock">#ad Affiliate of @momrise — code [CODE] supports my channel (free for you).
+
+[your own thought / story / hook]</div>
+        <p>The first line is required (FTC). Everything else is your voice.</p>
+        <div class="callout">
+          <strong>About the code:</strong> using your code doesn't change anything for the person typing it in — the 7-day free trial is universal and there's no discount. The code is pure attribution: when someone subscribes after entering it, that's how MomRise knows your 50% rev share kicks in. Frame it honestly. Don't promise a discount or "free trial via code" — the trial is universal regardless.
+        </div>
+      </div>
+
+      <div class="q-block">
+        <h3>What goes on the video?</h3>
+        <p>For Reels, you need text on-screen that says <strong>"Paid partnership · #ad"</strong>. It needs to be visible the WHOLE time, not just at the start. Easiest: small text in the top-right corner of the video.</p>
+      </div>
+
+      <div class="q-block">
+        <h3>How long should the Reel be?</h3>
+        <p>15–30 seconds usually wins. Go up to 60 if the recipe needs it.</p>
+      </div>
+
+      <div class="q-block">
+        <h3>Do I need to film something fancy?</h3>
+        <p>No. The library has app B-roll you can splice in. Your face + voiceover + one of the library clips is enough. Phone-shot is great.</p>
+      </div>
+    </section>
+
+    <!-- SETUP -->
+    <section id="setup">
+      <h2>🛠️ One-time setup <span class="badge time">10 min · once</span></h2>
+
+      <div class="q-block">
+        <h3>How do I turn on Paid Partnership for MomRise?</h3>
+        <ol>
+          <li>Open Instagram → Settings → Creator → Branded Content</li>
+          <li>"Approved business partners" → Add → search <strong>@momrise</strong> → invite</li>
+          <li>We approve from our end (we'll DM you when done)</li>
+          <li>Now when you post, you can toggle "Paid Partnership" → tag @momrise</li>
+        </ol>
+        <p>This is <strong>required</strong> by Instagram any time you're compensated in any form, including rev share. One-time. Don't skip it.</p>
+      </div>
+
+      <div class="q-block">
+        <h3>I'm on a personal Instagram account — can I still do this?</h3>
+        <p>You need to switch to a <strong>Business</strong> or <strong>Creator</strong> account first. It's free, takes 2 minutes, no follower drop. Settings → Account → "Switch to Professional Account."</p>
+        <p>If you're not willing to switch, you can still post about MomRise — but you can't tag Paid Partnership or do Collab posts. We'd strongly suggest switching.</p>
+      </div>
+
+      <div class="q-block">
+        <h3>How do I do a Collab post?</h3>
+        <ol>
+          <li>Compose your post (Reel, Feed post, or carousel — NOT Stories)</li>
+          <li>On the screen where you tag people, look for <strong>"Invite Collaborator"</strong></li>
+          <li>Search <strong>@momrise</strong>, tap to invite</li>
+          <li>Hit Share</li>
+        </ol>
+        <div class="callout warn">
+          <strong>Critical:</strong> do this BEFORE you publish, NOT after. After you publish, the post starts showing in your audience first — adding us later doesn't get us in front of our audience early. The whole point of Collab is the algorithmic push to both audiences at once; that only happens if we're invited before publish.
+        </div>
+      </div>
+
+      <div class="q-block">
+        <h3>What if I forgot to add MomRise as Collab before publishing?</h3>
+        <p>The post stays great in your audience. We just can't get the joint distribution. Two fallbacks:</p>
+        <ul>
+          <li>DM us the post — we'll repost to our feed and tag you (small bump, but better than nothing)</li>
+          <li>For your next post, set a reminder to add Collab <em>before</em> hitting Share</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- PERFORMS -->
+    <section id="performs">
+      <h2>📊 What posts perform best?</h2>
+
+      <div class="q-block">
+        <h3>What format should I shoot?</h3>
+        <p>These three are the highest performers for food/parenting content:</p>
+        <ul>
+          <li><strong>"What I Feed My Kids This Week"</strong> — carousel or Reel, 5–7 meals</li>
+          <li><strong>"Cook With Me"</strong> — full POV of one recipe, casual voiceover</li>
+          <li><strong>"Pulling a Recipe from TikTok into MomRise"</strong> — your phone, 30s, shows the share extension working</li>
+        </ul>
+        <p>Pull the matching app B-roll from the library, splice it where it helps.</p>
+      </div>
+
+      <div class="q-block">
+        <h3>Should I use trending audio or my own voice?</h3>
+        <p>Voiceover usually outperforms trending audio for cooking content because it's more personal. Trending audio is fine for hook moments (the first 3s) but voiceover the rest. The library has an "Audio tracks that have worked" note if you want suggestions.</p>
+      </div>
+
+      <div class="q-block">
+        <h3>When should I post?</h3>
+        <p>Whenever your audience is most active — you probably already know this better than us. If you don't, IG's Insights tab shows it: Settings → Creator → Insights → Audience → Most Active Times.</p>
+      </div>
+
+      <div class="q-block">
+        <h3>How often should I post about MomRise?</h3>
+        <p>2–4 times per month is plenty. Spread it out. Don't make your feed a MomRise commercial — your audience comes for YOU. MomRise is one of the things you happen to use.</p>
+      </div>
+
+      <div class="q-block">
+        <h3>Should I host the Collab, or should MomRise host it?</h3>
+        <p><strong>You host it.</strong> Instagram pushes Collab posts into the host's audience first, and your audience is the bigger pool. So you compose the post in your account, invite @momrise, we accept.</p>
+        <p><em>The only exception:</em> if MomRise produces a custom Reel for you — that's the Tier 2 thing below — Haley will tell you how to handle it when she sends the file.</p>
+      </div>
+    </section>
+
+    <!-- MONEY -->
+    <section id="money">
+      <h2>💰 How does the money work?</h2>
+
+      <div class="q-block">
+        <h3>How do I earn?</h3>
+        <p>Every yearly subscription bought using your code gives you <strong>50% of the gross</strong> (after Apple/Stripe processing). Recurring renewals count too as long as the customer stays subscribed.</p>
+      </div>
+
+      <div class="q-block">
+        <h3>When do I get paid?</h3>
+        <p>Monthly payouts on the 1st, via Stripe to your bank. We hold each earning for 30 days from when it was credited (Stripe industry standard — covers the refund window). Minimum payout: $25. Anything below rolls to next month.</p>
+      </div>
+
+      <div class="q-block">
+        <h3>How do I see my earnings?</h3>
+        <p>Sign in at <strong><a href="/creator/">momrise.app/creator/</a></strong> with the email tied to your creator profile. Your dashboard shows pending balance, paid balance, and a breakdown by transaction.</p>
+      </div>
+
+      <div class="q-block">
+        <h3>How do I connect my bank account for payouts?</h3>
+        <p>On the creator dashboard: tap "Connect your bank." This sends you through Stripe's secure onboarding (it's not us collecting your bank info — Stripe handles it). Takes about 5 minutes.</p>
+      </div>
+    </section>
+
+    <!-- TIER 2 -->
+    <section id="tier2">
+      <h2>🎁 Tier 2 — when MomRise makes content FOR you</h2>
+
+      <div class="q-block">
+        <h3>What's Tier 2?</h3>
+        <p>If you drive ≥5 yearly subs in a 30-day window, you unlock Tier 2: Haley edits a finished Reel for you. You film one short selfie clip; she produces the whole thing styled to match your existing feed; you post it.</p>
+      </div>
+
+      <div class="q-block">
+        <h3>How do I get there?</h3>
+        <p>Just post and drive subs. The threshold is automatic — when you hit it, Haley DMs you.</p>
+      </div>
+
+      <div class="q-block">
+        <h3>Do I have to use the Tier 2 Reel?</h3>
+        <p>No, it's an offer. You can decline, suggest changes, ask for a different angle. We'd rather you post nothing than post something that doesn't feel like you.</p>
+      </div>
+    </section>
+
+    <!-- FTC -->
+    <section id="ftc">
+      <h2>⚖️ The FTC stuff <span class="badge required">Required reading · 5 min</span></h2>
+
+      <div class="q-block">
+        <h3>Why do I need #ad AND Paid Partnership AND on-screen text?</h3>
+        <p>The FTC requires disclosure to be <strong>clear and conspicuous</strong>. Instagram's Paid Partnership label is for transparency, but it's not enough on its own per FTC rules. Together they cover both Instagram's rules and the FTC's:</p>
+        <ul>
+          <li><strong>Paid Partnership label</strong> → Instagram's requirement</li>
+          <li><strong><code>#ad</code> at start of caption</strong> → FTC's caption requirement</li>
+          <li><strong>On-screen text overlay</strong> → FTC's video requirement (visual endorsements need visual disclosures)</li>
+        </ul>
+        <p>You need all three for paid content (including rev-share). Skip any one and you're exposed.</p>
+      </div>
+
+      <div class="q-block">
+        <h3>What language is safe? What should I avoid?</h3>
+        <table>
+          <thead>
+            <tr><th>Word</th><th>Safe?</th><th>Why</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>#ad</code></td><td>Yes (required)</td><td>FTC-validated</td></tr>
+            <tr><td><code>Affiliate</code> / <code>Affiliate of</code></td><td>Yes</td><td>Clear, FTC-validated</td></tr>
+            <tr><td><code>Partner</code> / <code>Paid partnership</code></td><td>Yes</td><td>Matches IG's labels</td></tr>
+            <tr><td><code>Sponsored</code></td><td>Yes</td><td>Standard term</td></tr>
+            <tr><td><code>In collaboration with</code></td><td>Pair with <code>#ad</code></td><td>OK with disclosure</td></tr>
+            <tr><td><code>Ambassador</code></td><td>Only with <code>#ad</code></td><td>FTC has flagged it as ambiguous alone</td></tr>
+            <tr><td><em>"Just love this app!" (no disclosure)</em></td><td><strong>NO</strong></td><td>FTC violation if compensated</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="q-block">
+        <h3>What happens if I forget the disclosure on one post?</h3>
+        <p>Fix it: edit the caption to add <code>#ad Affiliate of @momrise</code> at the start. Add the on-screen text in a Story re-share if you can't re-export the Reel. For Reels you've published already without overlay — leave them up but fix going forward. We'd rather you correct than panic-delete.</p>
+      </div>
+
+      <div class="q-block">
+        <h3>Are MomRise and I both responsible?</h3>
+        <p>Yes. The FTC has gone after both creators and brands when disclosure fails. We protect each other by making sure the disclosure is in every post. That's why the disclosure is non-negotiable, not a stylistic preference.</p>
+      </div>
+    </section>
+
+    <!-- EDGE -->
+    <section id="edge">
+      <h2>🆘 Other edge cases</h2>
+
+      <div class="q-block">
+        <h3>Can I post about MomRise on Stories?</h3>
+        <p>Yes, but Stories don't support Collab posts (it's a real Instagram limitation, not us being picky). Disclosure rules still apply — add a text sticker saying <code>#ad</code> or <code>Paid partnership</code> to any Story featuring MomRise.</p>
+      </div>
+
+      <div class="q-block">
+        <h3>Can I edit my caption after I've posted?</h3>
+        <p>Yes. IG lets you edit captions any time. If you forgot the disclosure, edit immediately. The Collab tag itself usually can't be added after publish (and even if it could, the algorithm has already started — see Collab question above).</p>
+      </div>
+
+      <div class="q-block">
+        <h3>Can I share MomRise on TikTok / YouTube / Pinterest too?</h3>
+        <p>Yes, encouraged. Same rules: <code>#ad Affiliate of @momrise — code [CODE]</code> at the start of your caption/description on every platform. Add the same on-screen text overlay on any video.</p>
+      </div>
+
+      <div class="q-block">
+        <h3>My code isn't working — what do I do?</h3>
+        <p>DM <strong>@momrise</strong> or email <strong>collinjmaddox@gmail.com</strong> — we'll check the configuration and resend if needed. Usually a typo issue or the code wasn't activated yet.</p>
+      </div>
+
+      <div class="q-block">
+        <h3>How do I leave the program?</h3>
+        <p>DM us, no hard feelings. Your earned payouts get processed normally through the next payout cycle. We deactivate the code so no future charges run through it.</p>
+      </div>
+    </section>
+
+    <!-- ONE-CARD -->
+    <section id="card">
+      <h2>📌 The one-card summary</h2>
+      <p class="section-lede">Bookmark this. Open it while you post.</p>
+      <div class="one-card">
+        <div class="checklist-section">Every post</div>
+        <ul class="checklist">
+          <li>Caption first line: <code>#ad Affiliate of @momrise — code [CODE] supports my channel (free for you)</code></li>
+          <li>Toggle Paid Partnership → tag @momrise</li>
+          <li>For Reels: text overlay <code>"Paid partnership · #ad"</code> full duration</li>
+          <li>Invite @momrise as Collab BEFORE publishing</li>
+        </ul>
+
+        <div class="checklist-section">Content</div>
+        <ul class="checklist">
+          <li>Library: <a href="/creator/library/">momrise.app/creator/library/</a></li>
+          <li>Formats that work: WIEIAD, Cook With Me, App demo</li>
+          <li>15–60s, vertical, your voiceover wins</li>
+        </ul>
+
+        <div class="checklist-section">Payout</div>
+        <ul class="checklist">
+          <li>Dashboard: <a href="/creator/">momrise.app/creator/</a></li>
+          <li>Monthly on the 1st, $25 minimum</li>
+          <li>30-day hold from credit date</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

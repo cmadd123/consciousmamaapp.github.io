@@ -369,8 +369,17 @@
     <a class="nav-tab" href="/creator/library/">
       <span class="nav-tab-icon" data-icon="folder"></span><span class="nav-tab-label">Library</span>
     </a>
+    <a class="nav-tab" href="/creator/faq/">
+      <span class="nav-tab-icon" data-icon="help"></span><span class="nav-tab-label">FAQ</span>
+    </a>
     <a class="nav-tab" href="/creator/#recipes">
       <span class="nav-tab-icon" data-icon="camera"></span><span class="nav-tab-label">Recipes</span>
+    </a>
+    <a class="nav-tab" href="/creator/#plans">
+      <span class="nav-tab-icon" data-icon="calendar"></span><span class="nav-tab-label">Plans</span>
+    </a>
+    <a class="nav-tab" href="/creator/#stats">
+      <span class="nav-tab-icon" data-icon="chart"></span><span class="nav-tab-label">Stats</span>
     </a>
     <a class="nav-tab" href="/creator/#plans">
       <span class="nav-tab-icon" data-icon="calendar"></span><span class="nav-tab-label">Plans</span>
@@ -393,6 +402,7 @@
         grid: w('<rect x="3.5" y="3.5" width="7" height="7" rx="1"/><rect x="13.5" y="3.5" width="7" height="7" rx="1"/><rect x="13.5" y="13.5" width="7" height="7" rx="1"/><rect x="3.5" y="13.5" width="7" height="7" rx="1"/>'),
         clipboard: w('<rect x="8" y="3" width="8" height="4" rx="1.5"/><path d="M16 5h2a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2"/>'),
         folder: w('<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>'),
+        help: w('<circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 0 1 5 0c0 1.5-2.5 2-2.5 4"/><circle cx="12" cy="17" r="0.5" fill="currentColor"/>'),
       };
       document.querySelectorAll('[data-icon]').forEach((el) => {
         if (ICON[el.dataset.icon]) el.innerHTML = ICON[el.dataset.icon];
