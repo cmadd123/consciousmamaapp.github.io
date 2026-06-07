@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MomRise · Pin Generator</title>
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #52A097;
+      --primary-dark: #2A6F67;
+      --accent: #EE8B60;
+      --pin-red: #E60023;
+      --bg: #F9FAFB;
+      --surface: #FFFFFF;
+      --text: #1F2937;
+      --text-muted: #6B7280;
+      --border: #E5E7EB;
+      --success: #10B981;
+      --danger: #EF4444;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; padding: 0;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      color: var(--text); background: var(--bg); min-height: 100vh;
+    }
+    button { cursor: pointer; font-family: inherit; }
+    a { color: var(--primary); }
+
+    header.topbar {
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      padding: 12px 24px; display: flex; align-items: center; justify-content: space-between;
+    }
+    .brand { font-weight: 700; display: flex; align-items: center; gap: 8px; }
+    .brand a { color: var(--text); text-decoration: none; }
+    .user-chip { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--text-muted); }
+    .user-chip .signout { color: var(--text-muted); background: none; border: none; padding: 6px; font-size: 14px; }
+    .user-chip .signout:hover { color: var(--danger); }
+
+    main { max-width: 1200px; margin: 0 auto; padding: 24px; width: 100%; }
+
+    .view { display: none; }
+    .view.active { display: block; }
+
+    .gate {
+      max-width: 420px; margin: 80px auto; padding: 32px; background: var(--surface);
+      border: 1px solid var(--border); border-radius: 12px; text-align: center;
+    }
+    .gate h1 { margin: 0 0 8px; font-size: 22px; }
+    .gate p { color: var(--text-muted); margin: 8px 0 20px; }
+    .gate .btn {
+      background: var(--text); color: white; padding: 12px 24px;
+      border: none; border-radius: 8px; font-weight: 600; font-size: 15px;
+    }
+
+    /* Filters bar */
+    .filters {
+      display: flex; gap: 12px; align-items: center; margin-bottom: 20px; flex-wrap: wrap;
+      background: var(--surface); padding: 16px; border-radius: 12px; border: 1px solid var(--border);
+    }
+    .filters label {
+      font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--text-muted); font-weight: 600;
+    }
+    .filters select, .filters input {
+      font-family: inherit; font-size: 14px;
+      padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px;
+      background: white; color: var(--text);
+    }
+    .filters input[type="search"] { min-width: 240px; }
+    .filter-group { display: flex; flex-direction: column; gap: 4px; }
+
+    .summary {
+      font-size: 13px; color: var(--text-muted); margin-left: auto;
+    }
+
+    /* Recipe grid */
+    .grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+    .card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+      overflow: hidden; display: flex; flex-direction: column;
+    }
+    .card-image {
+      width: 100%; aspect-ratio: 2/3; background: #f0f0f0;
+      object-fit: cover; display: block;
+    }
+    .card-body { padding: 14px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+    .card-name { font-weight: 600; font-size: 15px; line-height: 1.3; margin: 0; }
+    .card-meta { font-size: 12px; color: var(--text-muted); }
+    .card-url {
+      font-size: 11px; color: var(--text-muted); word-break: break-all;
+      background: var(--bg); padding: 6px 8px; border-radius: 6px; font-family: monospace;
+    }
+
+    .card-actions {
+      display: flex; gap: 6px; margin-top: auto;
+    }
+    .card-actions button, .card-actions a {
+      flex: 1; padding: 8px 10px; border-radius: 8px; font-size: 12px;
+      font-weight: 600; text-align: center; text-decoration: none;
+      border: 1px solid var(--border); background: white; color: var(--text);
+      transition: all 0.15s;
+    }
+    .card-actions button:hover, .card-actions a:hover {
+      background: var(--bg);
+    }
+    .card-actions .primary {
+      background: var(--pin-red); color: white; border-color: var(--pin-red);
+    }
+    .card-actions .primary:hover {
+      background: #C8001E; border-color: #C8001E;
+    }
+
+    .empty {
+      text-align: center; padding: 48px 24px; color: var(--text-muted);
+      background: var(--surface); border-radius: 12px; border: 1px dashed var(--border);
+    }
+
+    .toast {
+      position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+      background: #111827; color: white; padding: 12px 20px; border-radius: 8px;
+      font-size: 14px; font-weight: 500; pointer-events: none; opacity: 0;
+      transition: opacity 0.2s; z-index: 1000;
+    }
+    .toast.show { opacity: 1; }
+
+    @media (max-width: 600px) {
+      main { padding: 16px; }
+      .filters { padding: 12px; }
+      .filters input[type="search"] { min-width: 100%; }
+      .grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><a href="/admin/">MomRise Admin</a> · Pin Generator</div>
+    <div class="user-chip" id="userChip" style="display:none;">
+      <span id="userName"></span>
+      <button class="signout" id="signOutBtn" title="Sign out">⎋</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- Sign-in gate -->
+    <div class="view" id="viewSignIn">
+      <div class="gate">
+        <h1>Pin Generator</h1>
+        <p>Sign in with the MomRise admin Google account.</p>
+        <button class="btn" id="googleSignInBtn">Sign in with Google</button>
+      </div>
+    </div>
+
+    <div class="view" id="viewGate">
+      <div class="gate">
+        <h1>No access</h1>
+        <p>This account isn't on the pin-generator allowlist. Ping Collin to add you.</p>
+        <button class="btn" id="gateSignOutBtn">Sign out</button>
+      </div>
+    </div>
+
+    <!-- Main list -->
+    <div class="view" id="viewList">
+      <div class="filters">
+        <div class="filter-group">
+          <label for="boardSelect">Pinterest board (tags the URL)</label>
+          <select id="boardSelect"></select>
+        </div>
+        <div class="filter-group">
+          <label for="searchInput">Search</label>
+          <input type="search" id="searchInput" placeholder="Recipe name…">
+        </div>
+        <div class="filter-group">
+          <label for="typeSelect">Meal type</label>
+          <select id="typeSelect">
+            <option value="">All</option>
+            <option value="Breakfast">Breakfast</option>
+            <option value="Lunch">Lunch</option>
+            <option value="Dinner">Dinner</option>
+            <option value="Snacks">Snacks</option>
+            <option value="Dessert">Dessert</option>
+            <option value="Side">Side</option>
+          </select>
+        </div>
+        <div class="summary" id="summary"></div>
+      </div>
+
+      <div class="grid" id="grid"></div>
+      <div class="empty" id="emptyState" style="display:none;">
+        No recipes match your filters.
+      </div>
+    </div>
+  </main>
+
+  <div class="toast" id="toast"></div>
+
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+    import { getAuth, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup }
+      from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+    import { getFirestore, collection, query, where, getDocs }
+      from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBucTVaWpYhDYScTpQ4JH9XdJgCBFmbHWk",
+      authDomain: "parenting-plus-7szrif.firebaseapp.com",
+      projectId: "parenting-plus-7szrif",
+      storageBucket: "parenting-plus-7szrif.appspot.com",
+      messagingSenderId: "67449654316",
+      appId: "1:67449654316:web:88be5e06e598d56dd55589",
+    };
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const ALLOWED_EMAILS = [
+      'collinjmaddox@gmail.com',
+      'haley.hostetter@gmail.com',
+    ];
+
+    // Boards mirror Haley's starter pack — keep in sync.
+    const BOARDS = [
+      { slug: 'easy-toddler-dinners', name: 'Easy Toddler Dinners' },
+      { slug: 'sheet-pan-family-meals', name: 'Sheet Pan Family Meals' },
+      { slug: 'lunchbox-ideas-picky-eaters', name: 'Lunchbox Ideas for Picky Eaters' },
+      { slug: '30-minute-mom-recipes', name: '30-Minute Mom Recipes' },
+      { slug: 'make-ahead-freezer-meals', name: 'Make-Ahead Freezer Meals' },
+      { slug: 'healthy-meal-prep-busy-moms', name: 'Healthy Meal Prep for Busy Moms' },
+      { slug: 'kid-friendly-snacks-no-sugar', name: 'Kid-Friendly Snacks Without Sugar' },
+      { slug: 'weeknight-dinner-ideas-families', name: 'Weeknight Dinner Ideas for Families' },
+      { slug: 'one-pan-recipes-tired-moms', name: 'One-Pan Recipes for Tired Moms' },
+      { slug: 'family-breakfast-ideas', name: 'Family Breakfast Ideas' },
+    ];
+
+    const $ = (id) => document.getElementById(id);
+    const esc = (s) => String(s || '').replace(/[<>&"]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));
+    const toast = (msg) => {
+      const el = $('toast');
+      el.textContent = msg;
+      el.classList.add('show');
+      setTimeout(() => el.classList.remove('show'), 2500);
+    };
+
+    let allRecipes = [];
+
+    // Populate board picker
+    BOARDS.forEach((b, i) => {
+      const opt = document.createElement('option');
+      opt.value = b.slug;
+      opt.textContent = b.name;
+      $('boardSelect').appendChild(opt);
+    });
+
+    // Slug must match the script's slugFor: kebab(name) + '-' + last 6 of docId
+    function kebab(s) {
+      return String(s || '')
+        .toLowerCase()
+        .replace(/[^\w\s-]/g, '')
+        .trim()
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .slice(0, 60);
+    }
+    const slugFor = (recipe, docId) => `${kebab(recipe.recipe_name)}-${docId.slice(-6)}`;
+
+    function buildPinUrl(recipe, docId) {
+      const slug = slugFor(recipe, docId);
+      const board = $('boardSelect').value;
+      const params = new URLSearchParams({ src: 'pinterest' });
+      if (board) params.set('board', board);
+      return `https://momrise.app/r/${slug}/?${params.toString()}`;
+    }
+
+    function pinterestSaveUrl(recipe, docId) {
+      const recipeUrl = buildPinUrl(recipe, docId);
+      const description = `${recipe.recipe_name} — plan it in one tap with MomRise.`;
+      const params = new URLSearchParams({
+        url: recipeUrl,
+        media: recipe.image_url || '',
+        description,
+      });
+      return `https://www.pinterest.com/pin/create/button/?${params.toString()}`;
+    }
+
+    function render() {
+      const grid = $('grid');
+      const search = $('searchInput').value.trim().toLowerCase();
+      const type = $('typeSelect').value;
+
+      const filtered = allRecipes.filter((r) => {
+        if (search && !r.recipe_name.toLowerCase().includes(search)) return false;
+        if (type && !(r.meal_typ || '').includes(type)) return false;
+        return true;
+      });
+
+      $('summary').textContent = `${filtered.length} / ${allRecipes.length} recipes`;
+
+      if (filtered.length === 0) {
+        grid.innerHTML = '';
+        $('emptyState').style.display = 'block';
+        return;
+      }
+      $('emptyState').style.display = 'none';
+
+      grid.innerHTML = filtered.map((r) => {
+        const slug = slugFor(r, r.id);
+        const url = buildPinUrl(r, r.id);
+        const pinUrl = pinterestSaveUrl(r, r.id);
+        return `
+          <div class="card">
+            ${r.image_url ? `<img class="card-image" src="${esc(r.image_url)}" alt="" loading="lazy">` : `<div class="card-image"></div>`}
+            <div class="card-body">
+              <h3 class="card-name">${esc(r.recipe_name)}</h3>
+              <div class="card-meta">${esc(r.meal_typ || '—')}</div>
+              <div class="card-url">${esc(url)}</div>
+              <div class="card-actions">
+                <button data-url="${esc(url)}" data-action="copy">Copy URL</button>
+                <a href="${esc(r.image_url || '#')}" target="_blank" rel="noopener">Image</a>
+                <a class="primary" href="${esc(pinUrl)}" target="_blank" rel="noopener">Pin it</a>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // Wire copy buttons
+      grid.querySelectorAll('button[data-action="copy"]').forEach((btn) => {
+        btn.addEventListener('click', async () => {
+          try {
+            await navigator.clipboard.writeText(btn.dataset.url);
+            toast('URL copied');
+          } catch {
+            toast('Copy failed — select the URL manually');
+          }
+        });
+      });
+    }
+
+    $('searchInput').addEventListener('input', render);
+    $('typeSelect').addEventListener('change', render);
+    $('boardSelect').addEventListener('change', render);
+
+    async function loadRecipes() {
+      const snap = await getDocs(query(collection(db, 'meal'), where('is_curated', '==', true)));
+      allRecipes = snap.docs
+        .map((d) => ({ id: d.id, ...d.data() }))
+        .filter((r) => r.recipe_name && Array.isArray(r.ingredients) && r.ingredients.length > 0 && Array.isArray(r.CookingInstructions) && r.CookingInstructions.length > 0)
+        .sort((a, b) => a.recipe_name.localeCompare(b.recipe_name));
+      render();
+    }
+
+    // Auth wiring
+    $('googleSignInBtn').addEventListener('click', async () => {
+      try { await signInWithPopup(auth, new GoogleAuthProvider()); }
+      catch (e) { toast('Sign-in failed'); }
+    });
+    const doSignOut = () => signOut(auth);
+    $('signOutBtn').addEventListener('click', doSignOut);
+    $('gateSignOutBtn').addEventListener('click', doSignOut);
+
+    const show = (id) => {
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      $(id).classList.add('active');
+    };
+
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        $('userChip').style.display = 'none';
+        show('viewSignIn');
+        return;
+      }
+      if (!ALLOWED_EMAILS.includes((user.email || '').toLowerCase())) {
+        $('userChip').style.display = 'none';
+        show('viewGate');
+        return;
+      }
+      $('userChip').style.display = 'flex';
+      $('userName').textContent = user.displayName || user.email;
+      show('viewList');
+      loadRecipes();
+    });
+  </script>
+</body>
+</html>
