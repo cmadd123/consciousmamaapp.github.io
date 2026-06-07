@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Haley · MomRise Social</title>
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #52A097;
+      --primary-dark: #2A6F67;
+      --accent: #EE8B60;
+      --warm-start: #D7F2EB;
+      --warm-end:   #FFE9E1;
+      --surface: #FFFFFF;
+      --text: #1F2937;
+      --text-muted: #6B7280;
+      --border: #E5E7EB;
+      --success: #10B981;
+      --warning: #F59E0B;
+      --danger: #EF4444;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; padding: 0;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      color: var(--text);
+      background: linear-gradient(180deg, var(--warm-start) 0%, var(--warm-end) 100%);
+      background-attachment: fixed;
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+    button { cursor: pointer; font-family: inherit; }
+    a { color: var(--primary-dark); }
+
+    header.topbar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .brand-line { font-weight: 700; font-size: 15px; }
+    .brand-line .dot {
+      display: inline-block;
+      width: 10px; height: 10px;
+      background: var(--accent);
+      border-radius: 50%;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+    .user-chip { font-size: 13px; color: var(--text-muted); display: flex; align-items: center; gap: 10px; }
+    .user-chip button { background: none; border: none; color: var(--text-muted); padding: 4px 6px; font-size: 16px; }
+    .user-chip button:hover { color: var(--danger); }
+
+    /* Section nav (sticks below topbar) */
+    nav.section-nav {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 20px;
+      display: flex;
+      gap: 4px;
+      position: sticky;
+      top: 47px;
+      z-index: 50;
+      overflow-x: auto;
+    }
+    nav.section-nav a {
+      flex-shrink: 0;
+      padding: 11px 12px;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-decoration: none;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+    }
+    nav.section-nav a:hover { color: var(--text); }
+    nav.section-nav a.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+    .view { display: none; }
+    .view.active { display: block; }
+
+    main { max-width: 760px; margin: 0 auto; padding: 24px 20px 64px; }
+
+    /* Gate views */
+    .gate {
+      max-width: 420px; margin: 80px auto; padding: 32px; background: var(--surface);
+      border: 1px solid var(--border); border-radius: 12px; text-align: center;
+    }
+    .gate h1 { margin: 0 0 8px; font-size: 22px; }
+    .gate p { color: var(--text-muted); margin: 8px 0 20px; }
+    .gate .btn {
+      background: var(--text); color: white; padding: 12px 24px;
+      border: none; border-radius: 8px; font-weight: 600; font-size: 15px;
+    }
+
+    /* Hero */
+    h1.title {
+      font-size: 30px;
+      margin: 0 0 6px;
+      letter-spacing: -0.01em;
+    }
+    .lede { color: var(--text-muted); margin: 0 0 28px; font-size: 15px; }
+
+    /* Section headers */
+    section { margin-bottom: 44px; scroll-margin-top: 92px; }
+    section h2 {
+      font-size: 22px;
+      margin: 0 0 6px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    section h2 .budget {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--warm-start) 70%, white);
+    }
+    .section-lede { color: var(--text-muted); font-size: 14px; margin: 0 0 18px; }
+
+    /* Cards */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px 20px;
+      margin-bottom: 12px;
+    }
+    .card h3 {
+      font-size: 16px;
+      margin: 0 0 4px;
+    }
+    .card h3 .micro-budget {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-left: 8px;
+    }
+    .card p { margin: 0 0 8px; font-size: 14px; color: var(--text); }
+    .card p:last-child { margin-bottom: 0; }
+    .card ul, .card ol {
+      margin: 6px 0 8px;
+      padding-left: 22px;
+      font-size: 14px;
+    }
+    .card li { margin-bottom: 5px; }
+    .card code {
+      background: color-mix(in srgb, var(--warm-start) 50%, white);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      font-size: 13px;
+    }
+    .codeblock {
+      background: color-mix(in srgb, var(--warm-start) 35%, white);
+      border: 1px solid color-mix(in srgb, var(--primary) 22%, var(--border));
+      border-radius: 8px;
+      padding: 12px 14px;
+      margin: 10px 0;
+      font-family: 'Inter', sans-serif;
+      font-size: 13.5px;
+      line-height: 1.5;
+      color: var(--text);
+      white-space: pre-wrap;
+    }
+    .callout {
+      border-left: 4px solid var(--primary);
+      background: color-mix(in srgb, var(--warm-start) 30%, white);
+      padding: 12px 16px;
+      border-radius: 0 8px 8px 0;
+      margin: 12px 0;
+      font-size: 13.5px;
+    }
+    .callout.warn { border-left-color: var(--warning); background: color-mix(in srgb, #FEF3C7 60%, white); }
+    .callout strong { color: var(--text); }
+
+    /* Tools table */
+    table.tools {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 4px 0 0;
+      font-size: 13.5px;
+    }
+    table.tools th, table.tools td {
+      padding: 10px 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    table.tools th {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    table.tools td:first-child { font-weight: 600; }
+
+    /* Parts bin grid */
+    .parts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 10px;
+      margin: 4px 0 0;
+    }
+    .part {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+    }
+    .part .part-name { font-weight: 700; font-size: 14px; margin-bottom: 3px; }
+    .part .part-desc { font-size: 12.5px; color: var(--text-muted); line-height: 1.45; }
+
+    /* Top quick-card */
+    .quick-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px 22px;
+      margin-bottom: 32px;
+      box-shadow: 0 8px 28px -16px rgba(0,0,0,0.18);
+    }
+    .quick-card .qc-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--primary-dark);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 6px;
+    }
+    .quick-card h2 { font-size: 19px; margin: 0 0 6px; }
+    .quick-card p { font-size: 14px; color: var(--text); margin: 0 0 12px; }
+    .quick-card .qc-actions {
+      display: flex; gap: 10px; flex-wrap: wrap;
+    }
+    .qc-btn {
+      background: var(--primary);
+      color: white !important;
+      text-decoration: none !important;
+      border-radius: 8px;
+      padding: 10px 18px;
+      font-weight: 700;
+      font-size: 14px;
+    }
+    .qc-btn.secondary {
+      background: transparent;
+      color: var(--primary-dark) !important;
+      border: 1px solid var(--border);
+    }
+
+    /* One-card */
+    .one-card {
+      background: var(--surface);
+      border: 2px solid var(--primary);
+      border-radius: 14px;
+      padding: 18px 20px;
+      margin-top: 16px;
+    }
+    .one-card h2 { margin-top: 0; color: var(--primary-dark); }
+    .one-card .group-h {
+      font-weight: 700;
+      color: var(--primary-dark);
+      margin: 14px 0 4px;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .one-card ul { list-style: none; padding: 0; margin: 0; }
+    .one-card li { padding: 5px 0; font-size: 14px; display: flex; align-items: flex-start; gap: 10px; }
+    .one-card li::before { content: "☐"; color: var(--primary); font-weight: 700; flex-shrink: 0; }
+
+    @media (max-width: 600px) {
+      main { padding: 16px 14px 64px; }
+      h1.title { font-size: 26px; }
+      .quick-card { padding: 16px; }
+      .codeblock { font-size: 13px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand-line"><span class="dot"></span>Haley · MomRise Social</div>
+    <div class="user-chip" id="userChip" style="display:none;">
+      <span id="userName"></span>
+      <button id="signOutBtn" title="Sign out">⎋</button>
+    </div>
+  </header>
+
+  <!-- Section nav: only visible when authed -->
+  <nav class="section-nav" id="sectionNav" style="display:none;">
+    <a href="#now">Right now</a>
+    <a href="#bootstrap">Bootstrap (week 1)</a>
+    <a href="#weekly">Weekly rhythm</a>
+    <a href="#parts">Parts bin</a>
+    <a href="#pin">Pin batch</a>
+    <a href="#tools">Tools</a>
+    <a href="#escalate">When to ping Collin</a>
+  </nav>
+
+  <main>
+    <!-- Sign-in -->
+    <div class="view active" id="viewSignIn">
+      <div class="gate">
+        <h1>Haley's Playbook</h1>
+        <p>Sign in with your Google account.</p>
+        <button class="btn" id="googleSignInBtn">Sign in with Google</button>
+      </div>
+    </div>
+
+    <div class="view" id="viewGate">
+      <div class="gate">
+        <h1>No access</h1>
+        <p>This page is just for Collin and Haley.</p>
+        <button class="btn" id="gateSignOutBtn">Sign out</button>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="view" id="viewContent">
+      <h1 class="title">Running MomRise's social</h1>
+      <p class="lede">Specific. Ordered. No strategy fluff. Three workstreams (MomRise IG, Pinterest, Creator Library) sharing one filming session per week.</p>
+
+      <!-- Right now -->
+      <section id="now">
+        <div class="quick-card">
+          <div class="qc-label">Right now</div>
+          <h2>Are you done with Bootstrap?</h2>
+          <p>If not — start with Day 1 below. If yes — jump to Weekly rhythm.</p>
+          <div class="qc-actions">
+            <a class="qc-btn" href="#bootstrap">Bootstrap →</a>
+            <a class="qc-btn secondary" href="#weekly">Weekly rhythm →</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Bootstrap -->
+      <section id="bootstrap">
+        <h2>Bootstrap <span class="budget">Week 1 · ~5 hrs</span></h2>
+        <p class="section-lede">Foundations first. After this week you switch to the weekly rhythm.</p>
+
+        <div class="card">
+          <h3>Day 1 — Accounts <span class="micro-budget">30 min</span></h3>
+          <ul>
+            <li><strong>MomRise IG</strong>: confirm it's <strong>Professional / Creator</strong> mode (Settings → Account → Switch to Professional → "Creator"). Required for Collab posts + Insights.</li>
+            <li><strong>MomRise Pinterest</strong>: set up at business.pinterest.com. When you click "Claim your website," DM Collin the verification token — he commits it to momrise.app, you click verify. ~5 min round-trip.</li>
+            <li><strong>Firebase Console</strong>: bookmark <a href="https://console.firebase.google.com">console.firebase.google.com</a> → MomRise → Storage tab. That's where you'll upload videos.</li>
+            <li><strong>Canva</strong> (free tier). Bookmark.</li>
+            <li><strong>CapCut</strong> on your phone (free). This is the video editor — better than Reels' built-in.</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>Day 2 — Pinterest boards <span class="micro-budget">45 min</span></h3>
+          <p>Create these 10 boards. Names are deliberate — these phrases come from Pinterest's autocomplete and they rank where generic names don't.</p>
+          <ul>
+            <li>Easy Toddler Dinners</li>
+            <li>Sheet Pan Family Meals</li>
+            <li>Lunchbox Ideas for Picky Eaters</li>
+            <li>30-Minute Mom Recipes</li>
+            <li>Make-Ahead Freezer Meals</li>
+            <li>Healthy Meal Prep for Busy Moms</li>
+            <li>Kid-Friendly Snacks Without Sugar</li>
+            <li>Weeknight Dinner Ideas for Families</li>
+            <li>One-Pan Recipes for Tired Moms</li>
+            <li>Family Breakfast Ideas</li>
+          </ul>
+          <p>Don't pin anything yet. Just create the boards with a 1-sentence description each — Pinterest weights board descriptions for SEO. Style: <em>"Quick, kid-approved dinners I actually make on weeknights."</em> Avoid keyword stuffing.</p>
+        </div>
+
+        <div class="card">
+          <h3>Day 3 — Storage folder <span class="micro-budget">5 min</span></h3>
+          <p>Firebase Console → Storage → <code>creator_library/</code> folder already exists (publicly readable, admin-write only).</p>
+          <p>When you upload a video, just name it descriptively — no subfolders needed:</p>
+          <div class="codeblock">share-tiktok-to-momrise.mp4
+recipe-to-grocery-list.mp4
+hands-chopping-onion.mp4</div>
+          <p>After upload: click the file → copy the access URL (starts with <code>https://firebasestorage.googleapis.com/...</code>) → paste into <code>creator/library/manifest.js</code> with a title and duration. Push the repo. The Creator Library at <a href="/creator/library/">momrise.app/creator/library/</a> picks it up on next load.</p>
+        </div>
+
+        <div class="card">
+          <h3>Day 4 — Five app screen recordings <span class="micro-budget">30 min</span></h3>
+          <p>The easiest day. Open MomRise, hit record-screen, do each of these once slowly. Trim in CapCut. <strong>No audio</strong> — creators will voice-over.</p>
+          <ul>
+            <li><code>share-tiktok-to-momrise.mp4</code> — 7-10s. Open TikTok, tap share, choose MomRise, recipe lands.</li>
+            <li><code>recipe-to-grocery-list.mp4</code> — 8-10s. Open a recipe, "add to grocery list," watch it appear.</li>
+            <li><code>grocery-to-instacart.mp4</code> — 6-8s. Grocery list → "Send to Instacart" → Instacart opens with items.</li>
+            <li><code>meal-plan-week.mp4</code> — 5-7s. Scroll through one week of the meal plan view.</li>
+            <li><code>family-setup.mp4</code> — 8-10s. Quick demo of adding a child or family member.</li>
+          </ul>
+          <p>Upload each to Firebase Storage as you finish, add to <code>creator/library/manifest.js</code>.</p>
+        </div>
+
+        <div class="card">
+          <h3>Day 5 — Cook With Me Reel <span class="micro-budget">90 min</span></h3>
+          <p>Film one full recipe Reel. This becomes the first MomRise IG post AND the first "example" file creators can reference.</p>
+          <p><strong>Setup (10 min)</strong>: pick a recipe from an existing creator's TikTok, import it via the share extension. Phone on a tripod or stack of books, eye-level. Daylight if possible.</p>
+          <p><strong>Film (45 min for a 45s Reel)</strong>:</p>
+          <ul>
+            <li>3-5s hook: "I import all my recipes from TikTok now"</li>
+            <li>Cut to the share-from-TikTok screen recording you already shot</li>
+            <li>You cooking the recipe: 5-6 short cuts</li>
+            <li>3s outro: "Recipe imported from @[creator]. Code [CODE] in bio."</li>
+          </ul>
+          <p><strong>Edit (30 min in CapCut)</strong>:</p>
+          <ul>
+            <li>Add on-screen overlay <code>Paid partnership · #ad</code> in the top-right, visible the whole time</li>
+            <li>Auto-captions, proofread</li>
+            <li>Trim to 30-45 seconds</li>
+          </ul>
+          <p><strong>Post (5 min)</strong>: caption goes <code>#ad Affiliate of @momrise — import recipes from TikTok in one tap. Recipe by @[creator]. Code [CODE] in bio.</code></p>
+          <p>Save the final mp4 to Firebase Storage and add to manifest under "Examples" so creators can watch it as a format reference.</p>
+        </div>
+
+        <div class="card">
+          <h3>Day 6 — One bootstrap pin <span class="micro-budget">30 min</span></h3>
+          <p>A placeholder until the recipe pin generator workflow kicks in. Pull a still frame from Day 5's Reel, make a 1000×1500 Canva design with recipe name big at top + small MomRise mark, save as <code>pin-template-001.png</code>. Pin to 2 of your boards with a 1-sentence description.</p>
+        </div>
+
+        <div class="card">
+          <h3>Day 7 — Review <span class="micro-budget">20 min</span></h3>
+          <ul>
+            <li>Scroll MomRise IG: does the one post look right?</li>
+            <li>Check Pinterest: pin is live? Don't expect impressions yet — week 1 is flat.</li>
+            <li>Add today's date to a tracking sheet (Drive): IG followers, IG post views, Pinterest impressions, Pinterest saves. Update weekly.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Weekly -->
+      <section id="weekly">
+        <h2>Weekly rhythm <span class="budget">~3-4 hrs/wk</span></h2>
+        <p class="section-lede">Front-load on one day if that's easier than spreading.</p>
+
+        <div class="card">
+          <h3>One filming + editing session <span class="micro-budget">2 hrs</span></h3>
+          <p>Pick a recipe. Film a Cook With Me Reel using the Day 5 setup.</p>
+          <p><strong>Outputs from one session</strong>:</p>
+          <ul>
+            <li>1 finished Reel → posts to MomRise IG that week</li>
+            <li>Cooking B-roll cuts → 2-3 hands-only clips for the creator library</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>Pin batch <span class="micro-budget">~30 min/week</span></h3>
+          <p>Once Collin's recipe page generator is live (it is), the pin generator at <a href="/admin/pin-generator.html">momrise.app/admin/pin-generator.html</a> drives this. Pin every recipe Collin flags as <code>is_curated</code> once, to its best-matching board.</p>
+          <p><strong>Volume is not the goal.</strong> A correctly-pinned 30 unique recipes beats 200 recycled pins.</p>
+          <p><strong>Monthly re-pinning</strong>: look at which pins earned saves/clicks. Winners get re-pinned to 1-2 adjacent boards with a new image angle. Kill losers — don't try to revive with re-pins.</p>
+        </div>
+
+        <div class="card">
+          <h3>One IG post per week <span class="micro-budget">already filmed</span></h3>
+          <p>Aim for <strong>Tuesday or Thursday evening</strong> — these tend to be highest-engagement for parenting content. Not a rule, just a starting hypothesis.</p>
+        </div>
+
+        <div class="card">
+          <h3>Alternate-week variation <span class="micro-budget">1 hr</span></h3>
+          <p>Every other week, instead of a Cook With Me Reel, post one of:</p>
+          <ul>
+            <li>"What I Feed My Toddler This Week" carousel (7 meal photos + final slide is MomRise weekly plan screenshot)</li>
+            <li>"Pulling a recipe from TikTok into MomRise" 30-second demo Reel</li>
+            <li>Behind-the-scenes "how I pick recipes for the week"</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>Asset library refresh <span class="micro-budget">15 min, end of week</span></h3>
+          <p>Drop the week's hands-only B-roll cuts into Firebase Storage. Save the week's finished Reel. Update <code>caption snippets</code> if a hook worked unusually well.</p>
+        </div>
+      </section>
+
+      <!-- Parts bin -->
+      <section id="parts">
+        <h2>The parts bin — first 10 filming targets</h2>
+        <p class="section-lede">Have these in the library by end of week 2.</p>
+
+        <h3 style="font-size: 15px; margin: 6px 0;">App screen recordings (no audio) — 5 clips</h3>
+        <p style="font-size: 13.5px; color: var(--text-muted); margin: 0 0 10px;">Covered in Day 4. Re-record any that came out shaky.</p>
+
+        <h3 style="font-size: 15px; margin: 14px 0 6px;">Cook With Me face-on Reels — 2 finished examples</h3>
+        <div class="parts-grid" style="margin-bottom: 14px;">
+          <div class="part">
+            <div class="part-name">Simple weeknight meal</div>
+            <div class="part-desc">15-min dinner. Reels-friendly.</div>
+          </div>
+          <div class="part">
+            <div class="part-name">"Kids actually ate this"</div>
+            <div class="part-desc">A win — picky kid, parent relief.</div>
+          </div>
+        </div>
+
+        <h3 style="font-size: 15px; margin: 14px 0 6px;">B-roll (hands-only, reusable) — 5 short clips</h3>
+        <p style="font-size: 13.5px; color: var(--text-muted); margin: 0 0 10px;">Film during the Cook With Me session — point the phone at the action.</p>
+        <div class="parts-grid">
+          <div class="part">
+            <div class="part-name">Hands chopping onion</div>
+            <div class="part-desc">3-4s. Universal filler.</div>
+          </div>
+          <div class="part">
+            <div class="part-name">Pan sizzling</div>
+            <div class="part-desc">3-4s. Any protein. Sensory hook.</div>
+          </div>
+          <div class="part">
+            <div class="part-name">Pouring olive oil</div>
+            <div class="part-desc">2-3s. Caption: "pour it on."</div>
+          </div>
+          <div class="part">
+            <div class="part-name">Spices added</div>
+            <div class="part-desc">2-3s. Color + motion.</div>
+          </div>
+          <div class="part">
+            <div class="part-name">Finished plated dish</div>
+            <div class="part-desc">4-5s overhead. Closer / reveal.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Pin -->
+      <section id="pin">
+        <h2>Pin batch workflow</h2>
+        <p class="section-lede">The recipe pin generator is your friend.</p>
+
+        <div class="card">
+          <h3>Use this URL</h3>
+          <p><a href="/admin/pin-generator.html" target="_blank">momrise.app/admin/pin-generator.html</a></p>
+          <p>Two tabs in your browser:</p>
+          <ul>
+            <li><strong>Tab 1</strong>: Pinterest, logged in as MomRise (shared creds)</li>
+            <li><strong>Tab 2</strong>: pin generator, signed in with your Google account (you're allowlisted)</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>Per-pin flow</h3>
+          <ol>
+            <li>Pick a board from the dropdown — tags the URL with the right tracking</li>
+            <li>Find a recipe (search "chicken" to narrow, or scroll the corpus)</li>
+            <li>Click the red <strong>Pin it</strong> button on the recipe card</li>
+            <li>Pinterest popup opens with image + URL + description pre-filled</li>
+            <li>Pick the matching board on Pinterest, hit Save</li>
+            <li>Back to pin generator, next recipe — different board if it fits a different category</li>
+          </ol>
+          <p>About 10-15 seconds per pin. 60 recipes = ~15-20 min total.</p>
+        </div>
+
+        <div class="card">
+          <h3>Important: destination is the App Store</h3>
+          <p>Pinterest's spam classifier blocks new momrise.app domains. We're using the App Store destination on pins until that block lifts (~6 months from domain age).</p>
+          <p>The pin generator defaults to App Store. Leave it.</p>
+          <div class="callout warn">
+            <strong>Don't manually paste links to momrise.app</strong> on Pinterest in the meantime — they'll get flagged as spam. Use the pin generator for everything.
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Pace yourself</h3>
+          <p>Pin no more than 10-15/day. Pinterest's anti-spam likes a human cadence; rapid-fire pinning on a new account looks like marketing automation. 5-10 seconds between pins reads as natural.</p>
+        </div>
+      </section>
+
+      <!-- Tools -->
+      <section id="tools">
+        <h2>Tools — one-time setup</h2>
+        <table class="tools">
+          <thead>
+            <tr><th>Tool</th><th>For</th><th>Setup</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Phone camera</td><td>Filming Reels + B-roll</td><td>—</td></tr>
+            <tr><td><strong>CapCut</strong> (iOS/Android)</td><td>Video editing, captions, overlay text</td><td>Install, sign in</td></tr>
+            <tr><td><strong>Canva</strong> (web)</td><td>Pin design, brand graphics</td><td>Sign up, save a 1000×1500 template</td></tr>
+            <tr><td>Firebase Console</td><td>Upload videos to creator library</td><td>Already on the allowlist</td></tr>
+            <tr><td>Pinterest Trends</td><td>Find what's searched in the niche</td><td>Bookmark <a href="https://trends.pinterest.com">trends.pinterest.com</a></td></tr>
+            <tr><td>IG Insights</td><td>Track post performance</td><td>Already in your IG settings</td></tr>
+          </tbody>
+        </table>
+        <p style="margin-top: 12px; font-size: 13.5px; color: var(--text-muted);">Upgrades to consider in month 2-3 only if you feel the need: small ring light (~$20), Tailwind Pinterest scheduler (~$15/mo if you scale past 10 pins/week).</p>
+      </section>
+
+      <!-- Escalate -->
+      <section id="escalate">
+        <h2>When to ping Collin</h2>
+
+        <div class="card">
+          <p><strong>DO ping for</strong>:</p>
+          <ul>
+            <li>A creator asks about money (payouts, earnings, code issues)</li>
+            <li>A creator wants to leave the program</li>
+            <li>Stripe / Apple support emails about anything financial</li>
+            <li>You're more than 30 min over the time budget on any step</li>
+            <li>Firebase Storage folder is full or messy and you want it reorganized</li>
+            <li>Pinterest says "blocked" on a manual pin attempt</li>
+          </ul>
+          <p><strong>DON'T ping for</strong>:</p>
+          <ul>
+            <li>Picking which recipes to film</li>
+            <li>Pin colors and layouts</li>
+            <li>Whether to post on Tuesday or Wednesday</li>
+            <li>Writing caption variations</li>
+          </ul>
+        </div>
+
+        <!-- One-card summary -->
+        <div class="one-card">
+          <h2>📌 Print this</h2>
+          <div class="group-h">Weekly (3-4 hours)</div>
+          <ul>
+            <li>Film 1 Cook With Me Reel → IG + library example</li>
+            <li>Pin batch via pin generator → ~30 min</li>
+            <li>Save B-roll cuts to Firebase Storage → library refresh</li>
+            <li>Update weekly metrics row</li>
+          </ul>
+          <div class="group-h">Every IG post</div>
+          <ul>
+            <li>Caption first line: <code>#ad Affiliate of @momrise — code [CODE]</code></li>
+            <li>Paid Partnership toggle ON, tag @momrise</li>
+            <li>Reel overlay: <code>Paid partnership · #ad</code> full duration</li>
+          </ul>
+          <div class="group-h">Every pin</div>
+          <ul>
+            <li>Use the pin generator (App Store destination)</li>
+            <li>One board per pin — never spam-pin</li>
+            <li>Max 10-15 pins/day</li>
+          </ul>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+    import { getAuth, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup }
+      from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBucTVaWpYhDYScTpQ4JH9XdJgCBFmbHWk",
+      authDomain: "parenting-plus-7szrif.firebaseapp.com",
+      projectId: "parenting-plus-7szrif",
+      storageBucket: "parenting-plus-7szrif.appspot.com",
+      messagingSenderId: "67449654316",
+      appId: "1:67449654316:web:88be5e06e598d56dd55589",
+    };
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const ALLOWED = ['collinjmaddox@gmail.com', 'haley.hostetter@gmail.com'];
+
+    const $ = (id) => document.getElementById(id);
+    const show = (id) => {
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      $(id).classList.add('active');
+    };
+
+    $('googleSignInBtn').addEventListener('click', async () => {
+      try { await signInWithPopup(auth, new GoogleAuthProvider()); }
+      catch (e) { console.error(e); }
+    });
+    $('signOutBtn').addEventListener('click', () => signOut(auth));
+    $('gateSignOutBtn').addEventListener('click', () => signOut(auth));
+
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        $('userChip').style.display = 'none';
+        $('sectionNav').style.display = 'none';
+        show('viewSignIn');
+        return;
+      }
+      if (!ALLOWED.includes((user.email || '').toLowerCase())) {
+        $('userChip').style.display = 'none';
+        $('sectionNav').style.display = 'none';
+        show('viewGate');
+        return;
+      }
+      $('userChip').style.display = 'flex';
+      $('userName').textContent = user.displayName || user.email;
+      $('sectionNav').style.display = 'flex';
+      show('viewContent');
+    });
+
+    // Active-link tracking on scroll
+    const navLinks = document.querySelectorAll('nav.section-nav a');
+    const sections = Array.from(navLinks).map(a => document.querySelector(a.getAttribute('href')));
+    function updateActive() {
+      let active = sections[0];
+      for (const s of sections) {
+        if (!s) continue;
+        const top = s.getBoundingClientRect().top;
+        if (top - 100 < 0) active = s;
+      }
+      navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + active.id));
+    }
+    window.addEventListener('scroll', updateActive, { passive: true });
+    updateActive();
+  </script>
+</body>
+</html>
