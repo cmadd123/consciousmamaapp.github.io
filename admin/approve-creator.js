@@ -118,11 +118,11 @@ Next steps:
    account you use for MomRise. Your dashboard will load automatically.
 
 2. Connect your bank through Stripe (takes 2-3 minutes). This is how we
-   pay you your 50% share.
+   pay your rev share each month.
 
 3. Share your code — ${code} — with your community. Every follower who
-   subscribes using this code earns you half their subscription for as
-   long as they stay.
+   subscribes using this code earns you a share of their subscription
+   for as long as they stay. Your specific rate is on your dashboard.
 
 Payouts run on the 1st of every month, minimum $25. Full details in
 your dashboard.
