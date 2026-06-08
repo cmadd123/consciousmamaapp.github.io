@@ -295,14 +295,9 @@
 <body>
   <header class="topbar">
     <div class="brand-line"><span class="dot"></span>Haley · MomRise Social</div>
-    <div class="user-chip" id="userChip" style="display:none;">
-      <span id="userName"></span>
-      <button id="signOutBtn" title="Sign out">⎋</button>
-    </div>
   </header>
 
-  <!-- Section nav: only visible when authed -->
-  <nav class="section-nav" id="sectionNav" style="display:none;">
+  <nav class="section-nav">
     <a href="#now">Right now</a>
     <a href="#bootstrap">Bootstrap (week 1)</a>
     <a href="#weekly">Weekly rhythm</a>
@@ -314,25 +309,8 @@
   </nav>
 
   <main>
-    <!-- Sign-in -->
-    <div class="view active" id="viewSignIn">
-      <div class="gate">
-        <h1>Haley's Playbook</h1>
-        <p>Sign in with your Google account.</p>
-        <button class="btn" id="googleSignInBtn">Sign in with Google</button>
-      </div>
-    </div>
-
-    <div class="view" id="viewGate">
-      <div class="gate">
-        <h1>No access</h1>
-        <p>This page is just for Collin and Haley.</p>
-        <button class="btn" id="gateSignOutBtn">Sign out</button>
-      </div>
-    </div>
-
     <!-- Content -->
-    <div class="view" id="viewContent">
+    <div id="viewContent">
       <h1 class="title">Running MomRise's social</h1>
       <p class="lede">Specific. Ordered. No strategy fluff. Three workstreams (MomRise IG, Pinterest, Creator Library) sharing one filming session per week.</p>
 
@@ -719,54 +697,10 @@ hands-chopping-onion.mp4</div>
     </div>
   </main>
 
-  <script type="module">
-    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-    import { getAuth, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup }
-      from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyBucTVaWpYhDYScTpQ4JH9XdJgCBFmbHWk",
-      authDomain: "parenting-plus-7szrif.firebaseapp.com",
-      projectId: "parenting-plus-7szrif",
-      storageBucket: "parenting-plus-7szrif.appspot.com",
-      messagingSenderId: "67449654316",
-      appId: "1:67449654316:web:88be5e06e598d56dd55589",
-    };
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const ALLOWED = ['collinjmaddox@gmail.com', 'haley.hostetter@gmail.com'];
-
-    const $ = (id) => document.getElementById(id);
-    const show = (id) => {
-      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-      $(id).classList.add('active');
-    };
-
-    $('googleSignInBtn').addEventListener('click', async () => {
-      try { await signInWithPopup(auth, new GoogleAuthProvider()); }
-      catch (e) { console.error(e); }
-    });
-    $('signOutBtn').addEventListener('click', () => signOut(auth));
-    $('gateSignOutBtn').addEventListener('click', () => signOut(auth));
-
-    onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        $('userChip').style.display = 'none';
-        $('sectionNav').style.display = 'none';
-        show('viewSignIn');
-        return;
-      }
-      if (!ALLOWED.includes((user.email || '').toLowerCase())) {
-        $('userChip').style.display = 'none';
-        $('sectionNav').style.display = 'none';
-        show('viewGate');
-        return;
-      }
-      $('userChip').style.display = 'flex';
-      $('userName').textContent = user.displayName || user.email;
-      $('sectionNav').style.display = 'flex';
-      show('viewContent');
-    });
+  <script>
+    // Auth gate removed — page is public. Haley was having trouble signing
+    // in and the content here is tactical guidance, not sensitive (no
+    // credentials, no private data, just process docs).
 
     // Active-link tracking on scroll
     const navLinks = document.querySelectorAll('nav.section-nav a');
