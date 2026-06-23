@@ -16,6 +16,7 @@ import '/flutter_flow/lat_lng.dart';
 import '/flutter_flow/place.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import 'serialization_util.dart';
+import '/custom_code/actions/analytics_service.dart';
 
 import '/index.dart';
 import '/components/animated_splash_screen.dart';
@@ -94,6 +95,8 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
       debugLogDiagnostics: true,
       refreshListenable: appStateNotifier,
       navigatorKey: appNavigatorKey,
+      // Tags every page automatically (screen_view events) for app-health tracking.
+      observers: [analyticsService.observer],
       redirect: (context, state) {
         // Don't redirect while still loading (splash screen)
         if (appStateNotifier.loading) return null;

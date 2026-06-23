@@ -16,6 +16,7 @@ import 'backend/backend.dart';
 import 'backend/firebase/firebase_config.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import 'flutter_flow/flutter_flow_util.dart';
+import 'v2/seasonal/independence_day_overlay.dart';
 import 'flutter_flow/internationalization.dart';
 import 'flutter_flow/nav/nav.dart';
 import 'flutter_flow/share_intent_handler.dart';
@@ -281,6 +282,8 @@ class _MyAppState extends State<MyApp> {
         ),
       ),
       themeMode: _themeMode,
+      builder: (context, child) =>
+          IndependenceDayOverlay(child: child ?? const SizedBox.shrink()),
       routerConfig: _router,
     );
   }
