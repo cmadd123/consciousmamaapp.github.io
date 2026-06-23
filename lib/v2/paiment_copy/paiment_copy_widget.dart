@@ -1,4 +1,5 @@
 import '/auth/firebase_auth/auth_util.dart';
+import '/custom_code/actions/analytics_service.dart';
 import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -345,6 +346,7 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
       // Only set free_trial_start if not already set (don't reset on re-onboarding)
       if (userData == null || userData['free_trial_start'] == null) {
         updateData['free_trial_start'] = FieldValue.serverTimestamp();
+        analyticsService.logSubscriptionStart(tier: 'free_trial', value: 0.0);
       }
       await currentUserReference!.update(updateData);
     }
@@ -377,6 +379,8 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
       final result = await createSubscription(planType: planType);
 
       if (result == 'success') {
+        // TODO: set real prices (monthly/yearly) for accurate revenue value
+        analyticsService.logSubscriptionStart(tier: planType, value: planType == 'yearly' ? 69.99 : 6.99);
         // Payment sheet completed successfully - Show success screen
         if (mounted) {
           setState(() {

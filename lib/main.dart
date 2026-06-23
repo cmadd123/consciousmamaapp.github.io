@@ -153,6 +153,8 @@ class _MyAppState extends State<MyApp> {
           try {
             final userDoc = await UsersRecord.getDocumentOnce(currentUserReference!);
             _appStateNotifier.onboardingCompleted = userDoc.onboardingCompleted;
+            // Tie all analytics to this user (cross-device + segmentation).
+            unawaited(analyticsService.setUserId(currentUserReference!.id));
           } catch (_) {
             _appStateNotifier.onboardingCompleted = false;
           }
