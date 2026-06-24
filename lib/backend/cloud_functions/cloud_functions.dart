@@ -47,8 +47,8 @@ Future<Map<String, dynamic>> makeCloudCall(
   String callName,
   Map<String, dynamic> input,
 ) async {
-  // Use HTTP endpoint for extractRecipe to bypass App Check
-  if (callName == 'extractRecipe') {
+  // Use HTTP endpoint for onRequest functions that bypass App Check.
+  if (callName == 'extractRecipe' || callName == 'dedupGroceryList') {
     return makeHttpCloudCall(callName, input);
   }
 

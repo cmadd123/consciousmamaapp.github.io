@@ -2,6 +2,7 @@ import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
 import '/components/custom_date_time_picker.dart';
 import '/components/parent_circle_widget.dart';
+import '/custom_code/actions/notification_service.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
@@ -782,9 +783,8 @@ class _AddEventWidgetState extends State<AddEventWidget> {
                             }
 
                             if (_model.selectedDate != null) {
-                              await EventAndTaskRecord.collection
-                                  .doc()
-                                  .set(createEventAndTaskRecordData(
+                              final eventRef = EventAndTaskRecord.collection.doc();
+                              await eventRef.set(createEventAndTaskRecordData(
                                     selectedChild: _model.selectedChild ?? FFAppState().selectedChildForMilestone,
                                     selectedChildren: _model.selectedChildren.toList(),
                                     name: _model.textController1.text,
@@ -797,6 +797,25 @@ class _AddEventWidgetState extends State<AddEventWidget> {
                                     assignedToMom: _model.assignedToMom,
                                     assignedToDad: _model.assignedToDad,
                                   ));
+
+                              // Schedule the full reminder set: 15-min-before, 8 AM morning
+                              // brief, and a 2-min-from-now fallback if both of those are
+                              // already in the past. Notification ids are derived from the
+                              // doc id so they can be cancelled deterministically later.
+                              // Fire-and-forget — a failed schedule must not block event
+                              // creation.
+                              try {
+                                await notificationService.initialize();
+                                await notificationService.scheduleEventReminders(
+                                  notificationId: eventRef.id.hashCode & 0x7fffffff,
+                                  eventName: _model.textController1.text,
+                                  eventTime: _model.selectedDate!,
+                                  eventId: eventRef.id,
+                                );
+                              } catch (e) {
+                                debugPrint('Failed to schedule calendar reminder: $e');
+                              }
+
                               FFAppState().todocash = true;
                               safeSetState(() {});
 

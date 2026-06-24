@@ -92,14 +92,17 @@
     <div class="store-links">
       <p style="color: #888; font-size: 13px; margin-top: 8px;">
         Don't have MomRise yet?<br>
-        <!-- TODO: Update these links after app store launch -->
-        <a href="#" id="storeLink" style="display:none;" target="_blank"></a>
+        <a href="https://apps.apple.com/app/id6758357382" id="appStoreLink"
+           style="display:none;" target="_blank" rel="noopener">Download on the App Store</a>
         <span id="storeComingSoon">Coming soon to app stores!</span>
       </p>
     </div>
   </div>
 
   <script>
+    // MomRise App Store listing (Apple ID 6758357382).
+    var APP_STORE_URL = 'https://apps.apple.com/app/id6758357382';
+
     // Extract share code from URL path or query parameter
     function getShareCode() {
       var params = new URLSearchParams(window.location.search);
@@ -136,19 +139,22 @@
       var customScheme = 'momrise://shared/' + code;
 
       if (isAndroid()) {
-        // Android Intent URL: tries the app, falls back to store/message
-        // TODO: Update package name and fallback URL when Play Store listing is live
-        var intentUrl = 'intent://shared/' + code +
-          '#Intent;scheme=momrise;package=com.momrise.app;end';
-        window.location.href = intentUrl;
+        // MomRise isn't on Android yet — show "coming soon" rather than firing
+        // a deep link that would dead-end at a missing Play Store listing.
+        // When the Play Store listing is live, restore an intent:// URL here.
+        document.getElementById('status').innerHTML =
+          'MomRise is coming to Android soon! Open this link on an iPhone to import the shared content.';
       } else if (isIOS()) {
-        // iOS: try custom scheme
-        window.location.href = customScheme;
-        setTimeout(function() {
-          // TODO: Once on App Store, redirect to App Store link here instead of showing message
-          document.getElementById('status').innerHTML =
-            'If the app didn\'t open, make sure MomRise is installed.';
+        // iOS: try the app's custom scheme. If the app opens, the page goes
+        // to the background and we cancel the fallback. Otherwise, send the
+        // user to the App Store to install MomRise.
+        var iosFallback = setTimeout(function() {
+          window.location.href = APP_STORE_URL;
         }, 1500);
+        document.addEventListener('visibilitychange', function() {
+          if (document.hidden) clearTimeout(iosFallback);
+        });
+        window.location.href = customScheme;
       } else {
         // Desktop
         document.getElementById('status').innerHTML =
@@ -166,6 +172,16 @@
         document.getElementById('status').textContent = 'Invalid share link.';
         document.getElementById('openBtn').style.display = 'none';
         return;
+      }
+
+      // Show the App Store link to anyone not on Android (iOS + desktop).
+      // Android keeps "coming soon" until its Play Store listing is live.
+      if (!isAndroid()) {
+        document.getElementById('appStoreLink').style.display = 'inline';
+        document.getElementById('storeComingSoon').style.display = 'none';
+      } else {
+        // No Android app yet — the open button would just dead-end.
+        document.getElementById('openBtn').style.display = 'none';
       }
 
       // Auto-try opening the app

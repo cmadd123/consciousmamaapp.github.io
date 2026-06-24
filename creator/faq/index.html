@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Posting Cheat Sheet — MomRise Creator</title>
+  <meta name="description" content="Everything you need to post about MomRise. Copy-paste captions, FTC overlay, library link.">
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #52A097;
+      --primary-dark: #2A6F67;
+      --accent: #EE8B60;
+      --warm-start: #D7F2EB;
+      --warm-end:   #FFE9E1;
+      --surface: #FFFFFF;
+      --text: #1F2937;
+      --text-muted: #6B7280;
+      --border: #E5E7EB;
+      --success: #10B981;
+      --warning: #F59E0B;
+      --danger: #EF4444;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; padding: 0;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      color: var(--text);
+      background: linear-gradient(180deg, var(--warm-start) 0%, var(--warm-end) 100%);
+      background-attachment: fixed;
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+    a { color: var(--primary-dark); }
+
+    /* Creator nav */
+    .creator-nav {
+      display: flex;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      max-width: 100%;
+    }
+    .nav-tab {
+      flex: 1;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      background: none; border: none;
+      padding: 14px 8px;
+      font: inherit; font-size: 14px; font-weight: 600;
+      color: var(--text-muted);
+      border-bottom: 2px solid transparent;
+      text-decoration: none;
+    }
+    .nav-tab .nav-tab-icon svg { width: 18px; height: 18px; }
+    .nav-tab:hover { color: var(--text); background: color-mix(in srgb, var(--primary) 5%, var(--surface)); }
+    .nav-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+    @media (max-width: 720px) {
+      .creator-nav {
+        position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
+        border-bottom: none; border-top: 1px solid var(--border);
+        padding-bottom: env(safe-area-inset-bottom);
+        box-shadow: 0 -4px 16px -8px rgba(0,0,0,0.16);
+        overflow-x: auto;
+      }
+      .nav-tab {
+        flex: 0 0 auto; min-width: 72px;
+        flex-direction: column; gap: 3px;
+        padding: 8px 4px 6px; font-size: 11px;
+        border-bottom: none; border-top: 2px solid transparent;
+      }
+      .nav-tab .nav-tab-icon svg { width: 22px; height: 22px; }
+      .nav-tab.active { border-top-color: var(--primary); }
+      main { padding-bottom: 88px; }
+    }
+
+    main {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 32px 20px 64px;
+    }
+
+    /* Hero */
+    .hero h1 {
+      font-size: 30px;
+      margin: 0 0 4px;
+      letter-spacing: -0.01em;
+    }
+    .hero .sub {
+      color: var(--text-muted);
+      margin: 0 0 28px;
+      font-size: 15px;
+    }
+
+    /* Steps */
+    .steps {
+      display: flex; flex-direction: column;
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+    .step {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px 20px;
+      position: relative;
+    }
+    .step-head {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 10px;
+    }
+    .step-num {
+      width: 28px; height: 28px;
+      background: var(--primary);
+      color: white;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    .step-title {
+      font-weight: 700;
+      font-size: 16px;
+    }
+    .step-hint {
+      color: var(--text-muted);
+      font-size: 13px;
+      margin-left: auto;
+    }
+    .copy-box {
+      background: color-mix(in srgb, var(--warm-start) 40%, white);
+      border: 1px solid color-mix(in srgb, var(--primary) 22%, var(--border));
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 14.5px;
+      line-height: 1.45;
+      white-space: pre-wrap;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .copy-box .copy-text { flex: 1; min-width: 0; word-break: break-word; }
+    .copy-box .copy-btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 6px 12px;
+      font: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      flex-shrink: 0;
+      align-self: stretch;
+    }
+    .copy-box .copy-btn:hover { background: var(--primary-dark); }
+    .copy-box .copy-btn.copied { background: var(--success); }
+    .step-aside {
+      color: var(--text-muted);
+      font-size: 13px;
+      margin: 8px 0 0;
+    }
+    .step-aside code {
+      background: color-mix(in srgb, var(--warm-start) 50%, white);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+    }
+
+    /* Quick links */
+    .quick-links {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin: 12px 0 32px;
+    }
+    .quick-links a {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      text-decoration: none;
+      color: var(--text);
+      transition: border-color 0.15s, transform 0.15s;
+    }
+    .quick-links a:hover {
+      border-color: var(--primary);
+      transform: translateY(-1px);
+    }
+    .quick-links .ql-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 4px;
+    }
+    .quick-links .ql-name {
+      font-size: 15px;
+      font-weight: 600;
+    }
+    @media (max-width: 560px) {
+      .quick-links { grid-template-columns: 1fr; }
+    }
+
+    /* Format cards */
+    .section-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin: 0 0 12px;
+    }
+    .formats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .format {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 14px;
+    }
+    .format-emoji { font-size: 22px; margin-bottom: 6px; }
+    .format-name { font-weight: 700; font-size: 14.5px; margin-bottom: 4px; }
+    .format-desc { font-size: 12.5px; color: var(--text-muted); line-height: 1.4; }
+    @media (max-width: 560px) { .formats { grid-template-columns: 1fr; gap: 8px; } }
+
+    .quick-tips {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 32px;
+    }
+    .quick-tips ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .quick-tips li {
+      padding: 4px 0;
+      font-size: 14px;
+    }
+    .quick-tips li strong { color: var(--text); }
+    .quick-tips li .label {
+      display: inline-block;
+      min-width: 78px;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    /* Done banner */
+    .done {
+      background: color-mix(in srgb, var(--success) 12%, white);
+      border: 1px solid color-mix(in srgb, var(--success) 32%, var(--border));
+      border-radius: 14px;
+      padding: 18px 20px;
+      margin-bottom: 32px;
+      display: flex; align-items: center; gap: 14px;
+    }
+    .done-check {
+      width: 36px; height: 36px;
+      background: var(--success);
+      color: white;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .done-text { font-size: 15px; font-weight: 500; line-height: 1.4; }
+    .done-text strong { color: var(--text); }
+
+    /* Details / FAQ collapse */
+    .more-h {
+      font-size: 18px;
+      font-weight: 700;
+      margin: 28px 0 12px;
+      color: var(--text);
+    }
+    details {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin-bottom: 8px;
+      overflow: hidden;
+    }
+    details summary {
+      padding: 14px 18px;
+      font-weight: 600;
+      font-size: 14.5px;
+      cursor: pointer;
+      list-style: none;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    details summary::after {
+      content: "+";
+      font-size: 20px;
+      color: var(--text-muted);
+      font-weight: 400;
+      transition: transform 0.15s;
+    }
+    details[open] summary::after { content: "−"; }
+    details summary::-webkit-details-marker { display: none; }
+    details .detail-body {
+      padding: 0 18px 16px;
+      font-size: 14px;
+      color: var(--text);
+      line-height: 1.55;
+    }
+    details .detail-body p { margin: 0 0 10px; }
+    details .detail-body p:last-child { margin: 0; }
+    details .detail-body ol, details .detail-body ul {
+      margin: 6px 0 10px; padding-left: 22px;
+    }
+    details .detail-body li { margin-bottom: 4px; }
+    details .detail-body code {
+      background: color-mix(in srgb, var(--warm-start) 50%, white);
+      padding: 1px 6px; border-radius: 4px;
+      font-family: 'Inter', sans-serif; font-weight: 600;
+    }
+    details .detail-body table {
+      width: 100%; border-collapse: collapse;
+      font-size: 13.5px;
+      margin: 8px 0 0;
+    }
+    details .detail-body table th, details .detail-body table td {
+      padding: 8px 10px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    details .detail-body table th {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    details .detail-body table td:first-child { font-weight: 600; }
+    details .detail-body .warn {
+      background: color-mix(in srgb, var(--warning) 14%, white);
+      border-left: 3px solid var(--warning);
+      padding: 10px 12px;
+      border-radius: 0 6px 6px 0;
+      margin: 8px 0;
+      font-size: 13.5px;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+      background: var(--text); color: white;
+      padding: 10px 18px; border-radius: 8px;
+      font-size: 13px;
+      opacity: 0; transition: opacity 200ms;
+      z-index: 100;
+    }
+    .toast.show { opacity: 1; }
+    @media (max-width: 720px) { .toast { bottom: 100px; } }
+  </style>
+</head>
+<body>
+  <nav class="creator-nav">
+    <a class="nav-tab" href="/creator/#home"><span class="nav-tab-icon" data-icon="home"></span><span class="nav-tab-label">Home</span></a>
+    <a class="nav-tab" href="/creator/playbook/"><span class="nav-tab-icon" data-icon="clipboard"></span><span class="nav-tab-label">Playbook</span></a>
+    <a class="nav-tab" href="/creator/brand-kit/"><span class="nav-tab-icon" data-icon="grid"></span><span class="nav-tab-label">Brand kit</span></a>
+    <a class="nav-tab" href="/creator/library/"><span class="nav-tab-icon" data-icon="folder"></span><span class="nav-tab-label">Library</span></a>
+    <a class="nav-tab active" href="/creator/faq/"><span class="nav-tab-icon" data-icon="help"></span><span class="nav-tab-label">Cheat sheet</span></a>
+    <a class="nav-tab" href="/creator/#recipes"><span class="nav-tab-icon" data-icon="camera"></span><span class="nav-tab-label">Recipes</span></a>
+    <a class="nav-tab" href="/creator/#plans"><span class="nav-tab-icon" data-icon="calendar"></span><span class="nav-tab-label">Plans</span></a>
+    <a class="nav-tab" href="/creator/#stats"><span class="nav-tab-icon" data-icon="chart"></span><span class="nav-tab-label">Stats</span></a>
+  </nav>
+  <script>
+    (function () {
+      const w = (inner) => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + inner + '</svg>';
+      const ICON = {
+        home: w('<path d="M3 10.2 12 3l9 7.2V21H3z"/><path d="M9 21v-7h6v7"/>'),
+        camera: w('<path d="M3 8a2 2 0 0 1 2-2h2.5L9 4h6l1.5 2H19a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><circle cx="12" cy="13" r="3.5"/>'),
+        calendar: w('<rect x="3" y="4.5" width="18" height="16.5" rx="2"/><path d="M3 9.5h18M8 3v3M16 3v3"/>'),
+        chart: w('<path d="M6 21v-7M12 21V3M18 21v-10"/>'),
+        grid: w('<rect x="3.5" y="3.5" width="7" height="7" rx="1"/><rect x="13.5" y="3.5" width="7" height="7" rx="1"/><rect x="13.5" y="13.5" width="7" height="7" rx="1"/><rect x="3.5" y="13.5" width="7" height="7" rx="1"/>'),
+        clipboard: w('<rect x="8" y="3" width="8" height="4" rx="1.5"/><path d="M16 5h2a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2"/>'),
+        folder: w('<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>'),
+        help: w('<circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 0 1 5 0c0 1.5-2.5 2-2.5 4"/><circle cx="12" cy="17" r="0.5" fill="currentColor"/>'),
+      };
+      document.querySelectorAll('[data-icon]').forEach((el) => {
+        if (ICON[el.dataset.icon]) el.innerHTML = ICON[el.dataset.icon];
+      });
+    })();
+  </script>
+
+  <main>
+    <div class="hero">
+      <h1>Posting cheat sheet</h1>
+      <p class="sub">What to shoot, what to say, what to tag. Strategy details in the <a href="/creator/playbook/">Playbook</a>.</p>
+    </div>
+
+    <p class="section-label">What to shoot</p>
+    <div class="formats">
+      <div class="format">
+        <div class="format-emoji">🍳</div>
+        <div class="format-name">Cook With Me</div>
+        <div class="format-desc">POV cooking one recipe. 15–30s. Voiceover.</div>
+      </div>
+      <div class="format">
+        <div class="format-emoji">📅</div>
+        <div class="format-name">Week in Meals</div>
+        <div class="format-desc">5–7 dinners from your week. Reel or carousel.</div>
+      </div>
+      <div class="format">
+        <div class="format-emoji">📱</div>
+        <div class="format-name">App Demo</div>
+        <div class="format-desc">Show the share-from-TikTok flow. 15s, phone-in-hand.</div>
+      </div>
+    </div>
+    <div class="quick-tips">
+      <ul>
+        <li><span class="label">Hook</span> <strong>Open with a moment</strong>, not an announcement. "5pm and I have nothing planned" &gt; "Hey guys!"</li>
+        <li><span class="label">Length</span> <strong>15–30s wins.</strong> 60s only if the recipe needs it.</li>
+        <li><span class="label">Voice</span> <strong>Yours, not trending audio.</strong> Voiceover converts better for cooking content.</li>
+        <li><span class="label">Format</span> <strong>Reel first</strong> (reaches non-followers). Stories for warm conversion. Carousels for saves.</li>
+        <li><span class="label">Cadence</span> <strong>2–4 posts/month.</strong> Don't turn your feed into a MomRise commercial. <a href="/creator/playbook/#schedule">See the 3-week schedule →</a></li>
+      </ul>
+    </div>
+
+    <p class="section-label">What to say + tag</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-head">
+          <div class="step-num">1</div>
+          <div class="step-title">Caption opener</div>
+          <div class="step-hint">first line</div>
+        </div>
+        <div class="copy-box" data-copy-text="#ad Affiliate of @momrise — code [CODE] supports my channel (free for you).">
+          <span class="copy-text">#ad Affiliate of @momrise — code [CODE] supports my channel (free for you).</span>
+          <button class="copy-btn">Copy</button>
+        </div>
+        <p class="step-aside">Swap <code>[CODE]</code> with yours. Then write your own caption underneath in your voice.</p>
+      </div>
+
+      <div class="step">
+        <div class="step-head">
+          <div class="step-num">2</div>
+          <div class="step-title">Reel overlay text</div>
+          <div class="step-hint">on the video itself</div>
+        </div>
+        <div class="copy-box" data-copy-text="Paid partnership · #ad">
+          <span class="copy-text">Paid partnership · #ad</span>
+          <button class="copy-btn">Copy</button>
+        </div>
+        <p class="step-aside">Add as a text sticker on your Reel. Top-right corner. Visible the entire video, not just the first second.</p>
+      </div>
+
+      <div class="step">
+        <div class="step-head">
+          <div class="step-num">3</div>
+          <div class="step-title">Paid Partnership label</div>
+          <div class="step-hint">tag on each post</div>
+        </div>
+        <p class="step-aside" style="margin-top: 0;">
+          When you compose the post, toggle <strong>Paid Partnership</strong> → tag <strong>@momrise</strong>.
+          <br>One-time setup needed first <a href="#setup-paid-partnership">(walk me through it ↓)</a>.
+        </p>
+      </div>
+    </div>
+
+    <div class="done">
+      <div class="done-check">✓</div>
+      <div class="done-text">
+        <strong>That's it.</strong> Post your Reel like you would normally. Disclosure handled.
+      </div>
+    </div>
+
+    <div class="quick-links">
+      <a href="/creator/library/">
+        <span class="ql-label">Get content</span>
+        <span class="ql-name">Library →</span>
+      </a>
+      <a href="/creator/">
+        <span class="ql-label">Earnings</span>
+        <span class="ql-name">Dashboard →</span>
+      </a>
+      <a href="/creator/playbook/">
+        <span class="ql-label">Strategy</span>
+        <span class="ql-name">Playbook →</span>
+      </a>
+    </div>
+
+    <h2 class="more-h">More questions</h2>
+
+    <details id="setup-paid-partnership">
+      <summary>How do I set up Paid Partnership tagging? (one-time)</summary>
+      <div class="detail-body">
+        <ol>
+          <li>Instagram → Settings → Creator → Branded Content</li>
+          <li>"Approved business partners" → Add → search <strong>@momrise</strong> → invite</li>
+          <li>We approve from our end (we'll DM you when done)</li>
+          <li>Done — you'll see "Paid Partnership" as a toggle when composing any post.</li>
+        </ol>
+        <p>Required by Instagram any time you're compensated (including rev share). One-time.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>I'm on a personal Instagram — can I still do this?</summary>
+      <div class="detail-body">
+        <p>You need to switch to a <strong>Business</strong> or <strong>Creator</strong> account. Free, 2 minutes, no follower drop. Settings → Account → "Switch to Professional Account."</p>
+        <p>If you don't switch, you can still post about MomRise but you can't tag Paid Partnership or do Collab posts. Strongly suggest switching.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>How do I do a Collab post with @momrise?</summary>
+      <div class="detail-body">
+        <ol>
+          <li>Compose your post (Reel, Feed post, or carousel — NOT Stories)</li>
+          <li>On the "Tag people" screen, find <strong>"Invite Collaborator"</strong></li>
+          <li>Search <strong>@momrise</strong>, invite</li>
+          <li>Hit Share</li>
+        </ol>
+        <div class="warn"><strong>Critical:</strong> invite BEFORE you publish, not after. Adding the Collab after publish doesn't get us into your audience early — that's the whole point.</div>
+      </div>
+    </details>
+
+    <details>
+      <summary>What if I forgot to add MomRise as Collab before publishing?</summary>
+      <div class="detail-body">
+        <p>The post stays great in your audience. We just can't get the joint distribution. Two fallbacks:</p>
+        <ul>
+          <li>DM us the post — we'll repost to our feed and tag you</li>
+          <li>Next post: set a reminder to invite Collab BEFORE hitting Share</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>About the code — does it give my followers anything?</summary>
+      <div class="detail-body">
+        <p>No. The 7-day free trial is universal and there's no discount. Your code is pure attribution: when someone subscribes after entering it, that's how your rev share kicks in.</p>
+        <p>Frame it honestly. Don't promise a discount or "free trial via code" — the trial is universal.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>How does the money actually work?</summary>
+      <div class="detail-body">
+        <ul>
+          <li><strong>Earn:</strong> a share of every yearly subscription bought after using your code (your specific rate is on your dashboard). Renewals count.</li>
+          <li><strong>Get paid:</strong> Monthly on the 1st, via Stripe to your bank.</li>
+          <li><strong>Minimum payout:</strong> $25. Below that rolls to next month.</li>
+          <li><strong>30-day hold:</strong> Each earning is held 30 days before payout (refund window — Stripe standard).</li>
+        </ul>
+        <p>See balance + history on your <a href="/creator/">dashboard</a>.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>What format performs best?</summary>
+      <div class="detail-body">
+        <p><strong>On Instagram</strong> — three formats, three jobs:</p>
+        <ul>
+          <li><strong>Reels</strong> reach non-followers. Your launch post should be a Reel.</li>
+          <li><strong>Stories</strong> convert your existing followers (link sticker, code on screen).</li>
+          <li><strong>Carousels</strong> earn saves and the algorithm re-shows them for weeks.</li>
+        </ul>
+        <p><strong>On TikTok</strong> — short vertical video is the main game. Stitches and Duets are your "react/respond" mechanics (similar use to IG's quote-and-share but with the original creator's frame visible). No real Stories analog.</p>
+        <p>Full strategy is in the <a href="/creator/playbook/">Playbook</a>. TL;DR: post 2-4x per month per platform, mix formats where they exist, lead with a high-pressure moment not an announcement.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>What's different on TikTok vs Instagram?</summary>
+      <div class="detail-body">
+        <p>The big stuff transfers — authentic content wins, platform-native audio gets boosted, 3-4 posts/week sweet spot, voiceover-led works on both. Here's the handful that actually differs:</p>
+        <table>
+          <thead>
+            <tr><th>Dimension</th><th>Instagram</th><th>TikTok</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Sweet-spot length</td><td>30-60s Reels</td><td>15-30s, especially for new accounts</td></tr>
+            <tr><td>Hook window</td><td>First ~3s</td><td>First 1-2s — faster swipe-away</td></tr>
+            <tr><td>Hashtags</td><td>Diminished since 2024 (focus on captions)</td><td>Still meaningful algorithmic input</td></tr>
+            <tr><td>Collab mechanic</td><td>"Invite Collaborator" splits the post between profiles</td><td>Stitch / Duet (reaction-based, not co-host)</td></tr>
+            <tr><td>Branded content tag</td><td>Paid Partnership toggle (formal)</td><td>Branded Content toggle (same idea, different UI)</td></tr>
+          </tbody>
+        </table>
+        <p>What this means for you in practice: write a faster hook for TikTok, lean on hashtags there but not on IG, and use Stitch/Duet on TikTok where you'd use Collab on IG.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Audio — should I bake music into my edit, or add it on the platform?</summary>
+      <div class="detail-body">
+        <p><strong>Add it on the platform.</strong> When you upload to IG or TikTok, pick a sound from their in-app audio library — don't drag music files into CapCut as a baked-in track.</p>
+        <p><strong>Two reasons</strong>:</p>
+        <ul>
+          <li><strong>Discoverability</strong>: platform-native sounds get an algorithmic boost — recent benchmarks show ~48-68% more TikTok views and ~33% more IG reach vs. imported audio. Same sound being used across videos creates a content graph; your post enters it.</li>
+          <li><strong>Licensing</strong>: TikTok's July 2025 Music ToS requires Business/brand-affiliated content to use TikTok's Commercial Music Library — and that license is TikTok-only. If you bake CML audio into a CapCut master and cross-post to IG, you're exposed.</li>
+        </ul>
+        <p><strong>If your video has your voice talking</strong>: your voice IS your audio — keep it baked in. The "swap audio per platform" rule is for music-bed/B-roll content without voiceover.</p>
+        <p><strong>If you're cross-posting</strong>: export the master MUTED, upload to TikTok → pick sound from Commercial Music Library. Upload same master to IG → pick from IG's library. Two different sounds, one master file. ~30 sec extra per platform.</p>
+        <p><strong>What NOT to do</strong>:</p>
+        <ul>
+          <li>Don't drag Epidemic Sound / YouTube licensed audio / Spotify rips into CapCut — no algorithmic boost, plus licensing exposure</li>
+          <li>Don't save a Reel from inside IG to your camera roll then upload to TikTok — the IG watermark bakes in and gets you downranked on TikTok</li>
+          <li>Don't rely on pitch/crop "evasion" tricks — TikTok's audio fingerprinting is robust to those</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>FTC rules — the full version</summary>
+      <div class="detail-body">
+        <p>The three things on the cheat sheet above (<code>#ad</code> opener, on-screen overlay, Paid Partnership label) are all required because Instagram and the FTC have different requirements:</p>
+        <ul>
+          <li>Paid Partnership label → Instagram's requirement</li>
+          <li><code>#ad</code> at start of caption → FTC's caption requirement</li>
+          <li>On-screen text overlay → FTC's video requirement (visual endorsements need visual disclosures)</li>
+        </ul>
+        <p>Skip any one and we're both exposed. The FTC has gone after both creators and brands when disclosure fails.</p>
+        <p><strong>Safe disclosure words</strong>: <code>#ad</code> · <code>Affiliate</code> · <code>Partner</code> · <code>Paid partnership</code> · <code>Sponsored</code></p>
+        <p><strong>Avoid alone</strong>: <code>Ambassador</code> (only with <code>#ad</code>) · plain text with no disclosure</p>
+        <p>If you forgot disclosure on a past post: edit the caption to add <code>#ad Affiliate of @momrise</code> at the start. Don't delete — fix and move on.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Edge cases — Stories, TikTok, code issues, leaving the program</summary>
+      <div class="detail-body">
+        <p><strong>Stories:</strong> yes, post away. No Collab tag (Stories don't support it). Add a text sticker saying <code>#ad</code> or <code>Paid partnership</code>.</p>
+        <p><strong>Editing captions after posting:</strong> yes, IG allows. If you forgot disclosure, edit immediately.</p>
+        <p><strong>TikTok / YouTube / Pinterest:</strong> encouraged. Same rules — <code>#ad Affiliate of @momrise — code [CODE]</code> at the start, plus on-screen text for video.</p>
+        <p><strong>Code not working:</strong> DM <strong>@momrise</strong> or email <a href="mailto:support@momrise.app">support@momrise.app</a>.</p>
+        <p><strong>Leaving the program:</strong> DM us. Earned payouts process normally; we deactivate the code so no future charges run through it.</p>
+      </div>
+    </details>
+  </main>
+
+  <div class="toast" id="toast">Copied</div>
+
+  <script>
+    const toast = (msg) => {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 1800);
+    };
+    document.querySelectorAll('.copy-box').forEach((box) => {
+      const btn = box.querySelector('.copy-btn');
+      if (!btn) return;
+      btn.addEventListener('click', async () => {
+        const text = box.dataset.copyText || box.textContent.trim();
+        try {
+          await navigator.clipboard.writeText(text);
+          btn.classList.add('copied');
+          btn.textContent = 'Copied';
+          setTimeout(() => {
+            btn.classList.remove('copied');
+            btn.textContent = 'Copy';
+          }, 1600);
+          toast('Copied to clipboard');
+        } catch {
+          toast('Copy failed — select manually');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

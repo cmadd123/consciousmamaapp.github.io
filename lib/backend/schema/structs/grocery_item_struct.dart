@@ -20,12 +20,16 @@ class GroceryItemStruct extends FFFirebaseStruct {
     String? name,
     String? originalText,
     bool? isChecked,
+    bool? needsReview,
+    String? reviewReason,
     FirestoreUtilData firestoreUtilData = const FirestoreUtilData(),
   })  : _quantity = quantity,
         _unit = unit,
         _name = name,
         _originalText = originalText,
         _isChecked = isChecked,
+        _needsReview = needsReview,
+        _reviewReason = reviewReason,
         super(firestoreUtilData);
 
   // "quantity" field - numeric amount (e.g., 2.0 for "2 cups")
@@ -64,6 +68,22 @@ class GroceryItemStruct extends FFFirebaseStruct {
   set isChecked(bool? val) => _isChecked = val;
 
   bool hasIsChecked() => _isChecked != null;
+
+  // "needsReview" - LLM dedup pass flagged this row as uncertain (ambiguous
+  // ingredient, incompatible units it couldn't reconcile, etc.). UI shows
+  // a review badge so the user can fix it before checkout.
+  bool? _needsReview;
+  bool get needsReview => _needsReview ?? false;
+  set needsReview(bool? val) => _needsReview = val;
+
+  bool hasNeedsReview() => _needsReview != null;
+
+  // "reviewReason" - one-line explanation paired with needsReview.
+  String? _reviewReason;
+  String get reviewReason => _reviewReason ?? '';
+  set reviewReason(String? val) => _reviewReason = val;
+
+  bool hasReviewReason() => _reviewReason != null && _reviewReason!.isNotEmpty;
 
   /// Returns a display string like "2 cups flour" or just "flour" if no quantity
   String get displayText {
@@ -674,6 +694,8 @@ class GroceryItemStruct extends FFFirebaseStruct {
         name: data['name'] as String?,
         originalText: data['originalText'] as String?,
         isChecked: data['isChecked'] as bool?,
+        needsReview: data['needsReview'] as bool?,
+        reviewReason: data['reviewReason'] as String?,
       );
 
   static GroceryItemStruct? maybeFromMap(dynamic data) => data is Map
@@ -686,6 +708,8 @@ class GroceryItemStruct extends FFFirebaseStruct {
         'name': _name,
         'originalText': _originalText,
         'isChecked': _isChecked,
+        'needsReview': _needsReview,
+        'reviewReason': _reviewReason,
       }.withoutNulls;
 
   @override
@@ -695,6 +719,8 @@ class GroceryItemStruct extends FFFirebaseStruct {
         'name': serializeParam(_name, ParamType.String),
         'originalText': serializeParam(_originalText, ParamType.String),
         'isChecked': serializeParam(_isChecked, ParamType.bool),
+        'needsReview': serializeParam(_needsReview, ParamType.bool),
+        'reviewReason': serializeParam(_reviewReason, ParamType.String),
       }.withoutNulls;
 
   static GroceryItemStruct fromSerializableMap(Map<String, dynamic> data) =>
@@ -704,6 +730,8 @@ class GroceryItemStruct extends FFFirebaseStruct {
         name: deserializeParam(data['name'], ParamType.String, false),
         originalText: deserializeParam(data['originalText'], ParamType.String, false),
         isChecked: deserializeParam(data['isChecked'], ParamType.bool, false),
+        needsReview: deserializeParam(data['needsReview'], ParamType.bool, false),
+        reviewReason: deserializeParam(data['reviewReason'], ParamType.String, false),
       );
 
   @override
@@ -716,11 +744,21 @@ class GroceryItemStruct extends FFFirebaseStruct {
         unit == other.unit &&
         name == other.name &&
         originalText == other.originalText &&
-        isChecked == other.isChecked;
+        isChecked == other.isChecked &&
+        needsReview == other.needsReview &&
+        reviewReason == other.reviewReason;
   }
 
   @override
-  int get hashCode => const ListEquality().hash([quantity, unit, name, originalText, isChecked]);
+  int get hashCode => const ListEquality().hash([
+        quantity,
+        unit,
+        name,
+        originalText,
+        isChecked,
+        needsReview,
+        reviewReason,
+      ]);
 }
 
 GroceryItemStruct createGroceryItemStruct({
@@ -729,6 +767,8 @@ GroceryItemStruct createGroceryItemStruct({
   String? name,
   String? originalText,
   bool? isChecked,
+  bool? needsReview,
+  String? reviewReason,
   Map<String, dynamic> fieldValues = const {},
   bool clearUnsetFields = true,
   bool create = false,
@@ -740,6 +780,8 @@ GroceryItemStruct createGroceryItemStruct({
       name: name,
       originalText: originalText,
       isChecked: isChecked,
+      needsReview: needsReview,
+      reviewReason: reviewReason,
       firestoreUtilData: FirestoreUtilData(
         clearUnsetFields: clearUnsetFields,
         create: create,

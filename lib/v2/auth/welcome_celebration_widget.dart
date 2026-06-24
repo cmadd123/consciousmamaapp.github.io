@@ -1,3 +1,4 @@
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
@@ -5,6 +6,7 @@ import 'package:provider/provider.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/v2/auth/demo_data_notifier.dart';
+import '/v2/auth/creator_code_prompt_sheet.dart';
 import '/components/celebration_animation.dart';
 import 'welcome_celebration_model.dart';
 export 'welcome_celebration_model.dart';
@@ -109,11 +111,14 @@ class _WelcomeCelebrationWidgetState extends State<WelcomeCelebrationWidget>
         if (mounted) _subtitleController.forward();
       });
 
-      // Auto-navigate to paywall after 3 seconds
-      Future.delayed(const Duration(milliseconds: 3000), () {
-        if (mounted) {
-          context.goNamedAuth('paimentCopy', mounted);
-        }
+      // Auto-show the creator-code prompt at 2.6s — the celebration
+      // animations finish around 2.5s so the bottom sheet lands as the
+      // user starts looking around. After the sheet resolves (or is
+      // dismissed) we continue to the paywall. Total budget pre-paywall
+      // stays ~3-5s depending on whether the user enters a code.
+      Future.delayed(const Duration(milliseconds: 2600), () async {
+        if (!mounted) return;
+        await _showCreatorCodePromptThenContinue();
       });
     });
   }
@@ -127,6 +132,31 @@ class _WelcomeCelebrationWidgetState extends State<WelcomeCelebrationWidget>
     _glowController.dispose();
     _model.dispose();
     super.dispose();
+  }
+
+  /// Show the creator-code prompt as a non-dismissible-by-tap-outside
+  /// bottom sheet, then continue to the paywall regardless of the
+  /// outcome. This is the highest-visibility attribution capture point
+  /// in the funnel — landed users actually look at the bottom sheet
+  /// because the welcome animation just finished. Conversion experience
+  /// here drives more of Haley's revenue than any other single screen.
+  Future<void> _showCreatorCodePromptThenContinue() async {
+    if (!mounted) return;
+    // DISABLED FOR NOW (re-enable when real creators are onboarded):
+    // The bottom sheet creates FOMO for users who don't know any
+    // creator. Uncomment the showModalBottomSheet call to bring it back.
+    //
+    // await showModalBottomSheet<void>(
+    //   context: context,
+    //   backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
+    //   isScrollControlled: true,
+    //   shape: const RoundedRectangleBorder(
+    //     borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+    //   ),
+    //   builder: (sheetContext) => const CreatorCodePromptSheet(),
+    // );
+    if (!mounted) return;
+    context.goNamedAuth('paimentCopy', mounted);
   }
 
   String _greeting() {

@@ -8,11 +8,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
 import 'auth/firebase_auth/firebase_user_provider.dart';
+import 'custom_code/actions/attribution_claim.dart';
 import 'auth/firebase_auth/auth_util.dart';
 
 import 'backend/backend.dart';
 import 'backend/firebase/firebase_config.dart';
 import 'flutter_flow/flutter_flow_util.dart';
+import 'v2/seasonal/independence_day_overlay.dart';
 import 'flutter_flow/internationalization.dart';
 import 'flutter_flow/share_intent_handler.dart';
 import 'flutter_flow/deep_link_handler.dart';
@@ -150,9 +152,17 @@ class _MyAppState extends State<MyApp> {
           try {
             final userDoc = await UsersRecord.getDocumentOnce(currentUserReference!);
             _appStateNotifier.onboardingCompleted = userDoc.onboardingCompleted;
+            // Tie all analytics to this user (cross-device + segmentation).
+            unawaited(analyticsService.setUserId(currentUserReference!.id));
           } catch (_) {
             _appStateNotifier.onboardingCompleted = false;
           }
+
+          // Fire-and-forget: try to claim a pending creator-code
+          // attribution. Catches users who clicked momrise.app/c/{code}
+          // before installing. No-op when the user already has a code
+          // set (manual entry took precedence). See attribution_claim.dart.
+          unawaited(tryClaimDeferredAttribution());
         }
 
         // Handle pending deep links after user is logged in
@@ -273,6 +283,8 @@ class _MyAppState extends State<MyApp> {
         ),
       ),
       themeMode: _themeMode,
+      builder: (context, child) =>
+          IndependenceDayOverlay(child: child ?? const SizedBox.shrink()),
       routerConfig: _router,
     );
   }

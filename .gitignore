@@ -74,6 +74,12 @@ ios/Runner/GoogleService-Info.plist
 *.cer
 *.certSigningRequest
 
+# Exception: Apple's public root CA cert, used by the App Store Server
+# Notifications webhook (functions/apple_iap_functions.js) to verify
+# JWS signatures. Public trust anchor, not a developer key — safe to
+# commit so deploys are self-contained.
+!functions/apple_root_ca_g3.cer
+
 # Environment variables
 .env
 .env.*

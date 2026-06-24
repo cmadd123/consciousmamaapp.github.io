@@ -58,9 +58,9 @@
 		<key>LSRequiresIPhoneOS</key>
 		<true/>
 		<key>NSCameraUsageDescription</key>
-		<string>In order to take a picture or video, this app requires permission to access the camera.</string>
+		<string>MomRise uses your camera to capture recipe photos, meal pictures, and your child's milestone moments to save in their personalized timeline.</string>
 		<key>NSPhotoLibraryUsageDescription</key>
-		<string>In order to upload data, this app requires permission to access the photo library.</string>
+		<string>MomRise needs access to your photos so you can pick existing pictures of recipes, meals, or your child's milestones to add to their personalized timeline.</string>
 		<key>UILaunchStoryboardName</key>
 		<string>LaunchScreen</string>
 		<key>UIMainStoryboardFile</key>

@@ -4,6 +4,8 @@ import '/backend/schema/enums/enums.dart';
 import '/components/home_nav_bar_widget.dart';
 import '/v2/creator/creator_theme_wrapper.dart';
 import '/components/parent_circle_widget.dart';
+import '/services/review_service.dart';
+import '/custom_code/actions/index.dart' as actions;
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/index.dart';
@@ -398,9 +400,19 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
       final userData = userSnapshot.data();
       if (userData == null) return;
 
+      // Premium-exempt users (founders, reviewers, hand-picked
+      // accounts in the premium_exempt collection) get treated as
+      // subscribed and skip the trial gate entirely. See
+      // stripe_service.isUserPremiumExempt for the lookup.
+      if (await actions.isUserPremiumExempt()) {
+        return;
+      }
+
       // Check if user has active subscription
       final subscriptionStatus = userData['subscription_status'] as String?;
       if (subscriptionStatus == 'trialing' || subscriptionStatus == 'active') {
+        // Fire-and-forget: asks for review 3 days into paid subscription.
+        ReviewService.onAppStartWithActiveSubscription(status: subscriptionStatus ?? '');
         return; // Subscribed, no gate needed
       }
 
@@ -414,9 +426,49 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
         if (mounted) {
           context.goNamed(PaimentCopyWidget.routeName);
         }
+      } else if (daysSinceStart >= 5) {
+        // Trial still active but in its last 2 days — show a gentle,
+        // non-blocking heads-up. Throttled to once per calendar day.
+        await _maybeShowTrialEndingNotice(7 - daysSinceStart);
       }
     } catch (e) {
       debugPrint('Error checking free trial expiry: $e');
+    }
+  }
+
+  /// Shows a friendly, non-blocking SnackBar letting the mom know her free
+  /// week is wrapping up. Throttled with SharedPreferences so it appears at
+  /// most once per calendar day.
+  Future<void> _maybeShowTrialEndingNotice(int daysLeft) async {
+    try {
+      if (daysLeft < 1) return;
+
+      final prefs = await SharedPreferences.getInstance();
+      final today = DateTime.now();
+      final todayString = '${today.year}-${today.month}-${today.day}';
+
+      if (prefs.getString('trial_ending_notice_date') == todayString) {
+        return; // Already shown today.
+      }
+      await prefs.setString('trial_ending_notice_date', todayString);
+
+      if (!mounted) return;
+      final dayWord = daysLeft == 1 ? 'day' : 'days';
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Your free week ends in $daysLeft $dayWord. We hope you\'re loving MomRise 💛',
+            style: const TextStyle(fontFamily: 'Andika New Basic'),
+          ),
+          backgroundColor: FlutterFlowTheme.of(context).primary,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          margin: const EdgeInsets.all(16),
+          duration: const Duration(seconds: 5),
+        ),
+      );
+    } catch (e) {
+      debugPrint('Error showing trial ending notice: $e');
     }
   }
 
@@ -885,6 +937,10 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
 
             final totalItems = events.length;
             final hasItems = totalItems > 0;
+
+            // The Today's Events card is a permanent fixture on the home
+            // page — it always renders, even with no events (the header
+            // shows "No events today"), so the calendar is never missing.
 
             return InkWell(
               onTap: () => Navigator.of(context).push(

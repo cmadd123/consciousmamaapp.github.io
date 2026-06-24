@@ -8,9 +8,60 @@ service firebase.storage {
       allow read: if true;
       allow write: if request.auth.uid == userId;
     }
-    match /helpful_docs/{allPaths=**} {
+    match /creator_avatars/{userId}/{allPaths=**} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow write: if request.auth.uid == userId
+                   && (request.resource == null
+                       || (request.resource.size < 3 * 1024 * 1024
+                           && request.resource.contentType.matches('image/.*')));
+    }
+    // Helpful Docs PDFs. Path is scoped to the uploader's uid so users can
+    // only write under their own folder — prevents one signed-in user from
+    // uploading to or deleting another creator's docs. Reads stay public
+    // because the download URLs are shared with end-users (the app reads
+    // pdf_url directly from app_content). 10MB cap, application/pdf only.
+    match /helpful_docs/{userId}/{allPaths=**} {
+      allow read: if true;
+      allow write: if request.auth.uid == userId
+                   && (request.resource == null
+                       || (request.resource.size < 10 * 1024 * 1024
+                           && request.resource.contentType == 'application/pdf'));
+    }
+    // Recipe photos uploaded from the web creator dashboard — OCR scans
+    // and recipe-edit photo changes. Owner-write, images only, 5MB cap.
+    match /recipe_images/{userId}/{allPaths=**} {
+      allow read: if true;
+      allow write: if request.auth.uid == userId
+                   && (request.resource == null
+                       || (request.resource.size < 5 * 1024 * 1024
+                           && request.resource.contentType.matches('image/.*')));
+    }
+    // Creator asset library — videos, brand graphics, and other assets
+    // Haley produces for creators to pull and remix. Reads are public so
+    // the library page can play videos inline without auth. Writes require
+    // auth (admin SDK from upload scripts) and stay locked from clients —
+    // assets are admin-curated, not user-contributed.
+    match /creator_library/{allPaths=**} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Pinterest pin images — 1000x1500 magazine-layout PNGs Haley uses
+    // via the pin generator. Same access model as creator_library:
+    // public reads (Pinterest must fetch the image when Haley pins),
+    // admin-only writes via the upload-pin-images.js script.
+    match /pins/{allPaths=**} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Meal-plan cover images from the plan builder. Same constraints.
+    match /plan_covers/{userId}/{allPaths=**} {
+      allow read: if true;
+      allow write: if request.auth.uid == userId
+                   && (request.resource == null
+                       || (request.resource.size < 5 * 1024 * 1024
+                           && request.resource.contentType.matches('image/.*')));
     }
     // Creator-uploaded custom fonts. Publicly readable so the follower
     // runtime can download them; writable only by authed users (we

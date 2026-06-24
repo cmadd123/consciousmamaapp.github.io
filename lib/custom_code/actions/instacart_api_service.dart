@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 import 'instacart_affiliate_service.dart';
+import 'dedup_grocery_list.dart';
 
 /// Instacart Developer Platform API Service
 ///
@@ -34,13 +35,28 @@ Future<String> openInstacartShoppingList(
   }
 
   // Filter to unchecked items with names
-  final items = groceryItems
+  var items = groceryItems
       .where((item) => !item.isChecked && item.name.isNotEmpty)
       .toList();
 
   if (items.isEmpty) {
     debugPrint('Instacart API: No items to send');
     return 'No unchecked items to send';
+  }
+
+  // Defensive dedup right before submit. Catches anything that slipped past
+  // the grocery-list-build dedup (manual edits, recipes added later, etc.).
+  // Fail-open: returns the original list on any error, never blocks checkout.
+  // See functions/index.js -> dedupGroceryList for the LLM pass that does
+  // the synonym collapse + unit conversion.
+  try {
+    final beforeCount = items.length;
+    items = await dedupGroceryList(items);
+    if (items.length != beforeCount) {
+      debugPrint('Instacart submit: dedup pass $beforeCount -> ${items.length} rows');
+    }
+  } catch (e) {
+    debugPrint('Instacart submit: dedup pass threw, using original list: $e');
   }
 
   // Determine API base URL

@@ -93,6 +93,15 @@ class MealComboRecord extends FirestoreRecord {
   String get dayTemplateName => _dayTemplateName ?? '';
   bool hasDayTemplateName() => _dayTemplateName != null && _dayTemplateName!.isNotEmpty;
 
+  // "preferred_weekdays" field - list of ISO weekdays (1=Mon..7=Sun).
+  // Empty/missing = "no preference, fill any day." Multiple entries mean
+  // this saved day is eligible for any of those weekdays in autofill.
+  // Also reads legacy single-int `preferred_weekday` field so early
+  // single-select docs still work.
+  List<int> _preferredWeekdays = const [];
+  List<int> get preferredWeekdays => _preferredWeekdays;
+  bool hasPreferredWeekdays() => _preferredWeekdays.isNotEmpty;
+
   void _initializeFields() {
     _name = snapshotData['name'] as String?;
     _entreeRef = snapshotData['entree_ref'] as DocumentReference?;
@@ -113,6 +122,20 @@ class MealComboRecord extends FirestoreRecord {
     _createdTime = snapshotData['created_time'] as DateTime?;
     _dayTemplateGroup = snapshotData['day_template_group'] as String?;
     _dayTemplateName = snapshotData['day_template_name'] as String?;
+    // Multi-select preferred weekdays; fall back to legacy single-int field.
+    final rawList = snapshotData['preferred_weekdays'];
+    if (rawList is List) {
+      _preferredWeekdays = rawList
+          .whereType<num>()
+          .map((n) => n.toInt())
+          .where((i) => i >= 1 && i <= 7)
+          .toList();
+    } else {
+      final legacy = castToType<int>(snapshotData['preferred_weekday']);
+      _preferredWeekdays = (legacy != null && legacy >= 1 && legacy <= 7)
+          ? [legacy]
+          : const [];
+    }
   }
 
   static CollectionReference get collection =>

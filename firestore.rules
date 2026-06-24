@@ -127,6 +127,17 @@ service cloud.firestore {
         request.resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
     }
 
+    // Creator products — meal plans (and, later, other sellable product
+    // types). Owner-write via user_ref; read open to authenticated users
+    // so followers can browse a creator's catalog.
+    match /creator_products/{productId} {
+      allow read: if isAuthenticated();
+      allow update, delete: if isAuthenticated() &&
+        resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
+      allow create: if isAuthenticated() &&
+        request.resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
+    }
+
     // ─── Users collection ─────────────────────────────────────────
 
     match /users/{userId} {
@@ -156,6 +167,17 @@ service cloud.firestore {
         request.resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
       allow update, delete: if isAuthenticated() &&
         resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
+    }
+
+    // ─── Creator metric snapshots (daily history) ─────────────────
+    // Written only by the snapshotCreatorMetrics Cloud Function. The
+    // creator can read their own subcollection; everyone else is denied.
+
+    match /creators/{creatorId}/snapshots/{date} {
+      allow read: if isAuthenticated() &&
+        get(/databases/$(database)/documents/creators/$(creatorId)).data.user_ref ==
+          /databases/$(database)/documents/users/$(request.auth.uid);
+      allow write: if false;
     }
 
     // ─── Creator-published content (meal plans, templates, etc.) ─
@@ -237,12 +259,79 @@ service cloud.firestore {
       );
     }
 
+    // ─── Creator earnings ledger (read-only from client) ─────────
+    // Written only by Cloud Functions (admin SDK bypasses these rules).
+    // Creator can read their own earnings by filtering on creator_ref.
+
+    match /creator_earnings/{earningId} {
+      allow read: if isAuthenticated() && (
+        // Admin dashboard reads all creators' earnings for the aggregate view
+        request.auth.token.email == 'collinjmaddox@gmail.com' ||
+        // Creator reads their own earnings
+        (resource.data.creator_ref != null &&
+         get(resource.data.creator_ref).data.user_ref ==
+           /databases/$(database)/documents/users/$(request.auth.uid))
+      );
+      allow write: if false;
+    }
+
+    // ─── Creator applications ─────────────────────────────────────
+    // Public create (the /apply/ form posts anonymously). Read allowed
+    // for the admin so the /admin/ dashboard can list pending apps.
+    // Writes (approve/reject/status changes) go through Cloud
+    // Functions which use the admin SDK and bypass these rules.
+
+    function isAdmin() {
+      return request.auth != null &&
+        request.auth.token.email == 'collinjmaddox@gmail.com';
+    }
+
+    match /creator_applications/{appId} {
+      allow create: if true;
+      allow read: if isAdmin();
+      allow update, delete: if false;
+    }
+
     // ─── Waitlist (public create, no reads) ───────────────────────
     // Landing page POSTs here; Cloud Function updates email_sent.
 
     match /waitlist/{waitlistId} {
       allow create: if true;
       allow read, update, delete: if false;
+    }
+
+    // ─── Creator briefs (admin-only read; writes via Cloud Function) ─
+    match /creator_briefs/{briefId} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
+
+    // ─── Creator suggestions ─────────────────────────────────────
+    // Any signed-in creator can submit feedback. Anonymous submissions
+    // omit creator/user refs entirely so the admin literally can't see
+    // who it came from. Only admins can read or update status.
+
+    match /creator_suggestions/{suggestionId} {
+      allow create: if request.auth != null &&
+        request.resource.data.body is string &&
+        request.resource.data.body.size() > 0 &&
+        request.resource.data.body.size() <= 2000;
+      allow read, update: if isAdmin();
+      allow delete: if false;
+    }
+
+    // ─── Premium-exempt list ──────────────────────────────────────
+    // Hand-picked Firebase users (founders, reviewers, beta testers)
+    // who get free-forever premium access. Doc IDs are lowercased
+    // emails or UIDs. The app reads this from hasActiveSubscription
+    // + the home-paywall gate; doc body is irrelevant (existence is
+    // the signal). Writes are admin-only — done via Console or service
+    // account, never from the app. See PREMIUM_EXEMPT.md for the
+    // current list + maintenance flow.
+
+    match /premium_exempt/{docId} {
+      allow read: if isAuthenticated();
+      allow write: if false;
     }
 
     // ─── Default deny ─────────────────────────────────────────────

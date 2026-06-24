@@ -204,6 +204,39 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
           isCombo: false,
           recipeData: recipe,
         ));
+      } else {
+        // Creator-plan slot: a list of recipes under `recipes`. A slot can
+        // hold a main plus sides/desserts. Importing each recipe on its
+        // own would let the meal-plan dedup drop everything but the first,
+        // so a multi-recipe slot is treated as a single combo.
+        final slotRecipes = (mealData['recipes'] as List<dynamic>? ?? [])
+            .whereType<Map<String, dynamic>>()
+            .toList();
+        if (slotRecipes.length == 1) {
+          final only = slotRecipes.first;
+          recipes.add(_SelectableRecipe(
+            id: 'recipe_$index',
+            name: only['recipe_name'] ?? 'Unknown Recipe',
+            imageUrl: only['image_url'] as String?,
+            mealType: mealTypeStr,
+            dayOffset: dateOffset,
+            isCombo: false,
+            recipeData: only,
+          ));
+        } else if (slotRecipes.length > 1) {
+          final comboData = _buildComboFromSlotRecipes(slotRecipes);
+          final entree = comboData['entree'] as Map<String, dynamic>?;
+          recipes.add(_SelectableRecipe(
+            id: 'combo_$index',
+            name: entree?['recipe_name'] as String? ?? 'Meal',
+            imageUrl: entree?['image_url'] as String?,
+            mealType: mealTypeStr,
+            dayOffset: dateOffset,
+            isCombo: true,
+            recipeData: entree ?? {},
+            comboData: comboData,
+          ));
+        }
       }
       index++;
     }
@@ -211,6 +244,74 @@ class _ImportSharedContentWidgetState extends State<ImportSharedContentWidget> {
     _recipes = recipes;
     // Expand all days by default
     _expandedDays = dayOffsets;
+  }
+
+  /// Resolve a slot recipe's role for combo bucketing. Priority:
+  /// (1) the slot entry's `role`, (2) the recipe's own classification
+  /// type. Returns null when neither is present so the caller can apply
+  /// a positional fallback.
+  String? _resolveSlotRole(Map<String, dynamic> recipe) {
+    final raw = (recipe['role'] ?? recipe['recipe_type']) as String?;
+    if (raw == null) return null;
+    switch (raw.toLowerCase()) {
+      case 'entree':
+        return 'entree';
+      case 'side':
+        return 'side';
+      case 'dessert':
+        return 'dessert';
+      default:
+        return null;
+    }
+  }
+
+  /// Bucket a multi-recipe creator-plan slot into the
+  /// `{name, entree, sides, desserts}` shape `_addComboToMealPlan` and
+  /// `_createComboInCookbook` expect. A combo needs exactly one entree:
+  /// if none resolves, the first recipe is promoted; extra entrees are
+  /// demoted to sides.
+  Map<String, dynamic> _buildComboFromSlotRecipes(
+      List<Map<String, dynamic>> slotRecipes) {
+    Map<String, dynamic>? entree;
+    final sides = <Map<String, dynamic>>[];
+    final desserts = <Map<String, dynamic>>[];
+
+    for (var i = 0; i < slotRecipes.length; i++) {
+      final recipe = slotRecipes[i];
+      // Fallback when no role/type: first recipe is the entree, rest sides.
+      final role = _resolveSlotRole(recipe) ?? (i == 0 ? 'entree' : 'side');
+      switch (role) {
+        case 'dessert':
+          desserts.add(recipe);
+          break;
+        case 'side':
+          sides.add(recipe);
+          break;
+        case 'entree':
+        default:
+          if (entree == null) {
+            entree = recipe;
+          } else {
+            // Multiple entrees — keep the first, treat the rest as sides.
+            sides.add(recipe);
+          }
+          break;
+      }
+    }
+
+    // Guarantee an entree even if every recipe bucketed elsewhere.
+    if (entree == null && slotRecipes.isNotEmpty) {
+      entree = slotRecipes.first;
+      sides.remove(entree);
+      desserts.remove(entree);
+    }
+
+    return <String, dynamic>{
+      'name': entree?['recipe_name'] as String?,
+      'entree': entree,
+      'sides': sides,
+      'desserts': desserts,
+    };
   }
 
   int get _selectedCount => _recipes.where((r) => r.isSelected).length;

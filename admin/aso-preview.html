@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MomRise — App Store Screenshot Preview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #52A097;
+      --primary-dark: #2A6F67;
+      --accent: #EE8B60;
+      --warm-start: #D7F2EB;
+      --warm-end:   #FFE9E1;
+      --text: #1F2937;
+      --text-muted: #6B7280;
+      --surface: #FFFFFF;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; padding: 32px 16px 80px;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: #F3F4F6;
+      color: var(--text);
+      line-height: 1.55;
+    }
+    h1 {
+      font-size: 26px;
+      margin: 0 0 4px;
+      text-align: center;
+      letter-spacing: -0.01em;
+    }
+    .subtitle {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 14px;
+      max-width: 520px;
+      margin: 0 auto 36px;
+    }
+    h2 {
+      font-size: 17px;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      max-width: 1200px;
+      margin: 40px auto 16px;
+      padding: 0 8px;
+    }
+
+    /* iPhone-shape screenshot frame (9 : 19.5 = 1290 x 2796 ratio) */
+    .shots {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 8px;
+    }
+    .shot {
+      aspect-ratio: 9 / 19.5;
+      border-radius: 24px;
+      overflow: hidden;
+      background: linear-gradient(180deg, var(--warm-start) 0%, var(--warm-end) 100%);
+      box-shadow: 0 12px 30px -10px rgba(0,0,0,0.25), inset 0 0 0 4px rgba(255,255,255,0.6);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    .shot-label {
+      text-align: center;
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin: 10px 0 4px;
+    }
+    .caption-band {
+      padding: 28px 18px 18px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .caption {
+      font-size: clamp(18px, 2.4vw, 28px);
+      font-weight: 800;
+      color: var(--primary-dark);
+      letter-spacing: -0.015em;
+      line-height: 1.15;
+    }
+    .sub-caption {
+      font-size: clamp(11px, 1.2vw, 13px);
+      color: var(--text-muted);
+      margin-top: 8px;
+      font-weight: 500;
+    }
+    .device-mockup {
+      flex: 1;
+      background: var(--surface);
+      margin: 0 16px 16px;
+      border-radius: 22px;
+      box-shadow: 0 8px 22px -8px rgba(0,0,0,0.2);
+      padding: 14px 14px 18px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .device-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #F3F4F6;
+    }
+    .device-header .icon {
+      width: 26px; height: 26px;
+      border-radius: 7px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+      display: grid; place-items: center;
+      font-size: 14px; color: white; font-weight: 800;
+    }
+    .device-header .brand {
+      font-size: 12px; font-weight: 700; color: var(--text);
+    }
+    .device-header .day {
+      margin-left: auto;
+      font-size: 9px; color: var(--text-muted); text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .meals { flex: 1; padding-top: 8px; display: flex; flex-direction: column; gap: 6px; }
+    .meal {
+      display: flex; align-items: center; gap: 6px;
+      background: #FAFAFA;
+      border: 1px solid #F3F4F6;
+      border-radius: 8px;
+      padding: 7px 8px;
+      font-size: 10px;
+    }
+    .meal .label {
+      font-size: 8px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      font-weight: 700;
+      width: 30px;
+      flex-shrink: 0;
+    }
+    .meal .name {
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--text);
+      flex: 1;
+    }
+    .meal .swap {
+      font-size: 9px;
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .variant-photo .device-mockup {
+      background: linear-gradient(135deg, #FFD9C8 0%, #FFB088 60%, #F5A56B 100%);
+      position: relative;
+      display: grid;
+      place-items: center;
+    }
+    .variant-photo .device-mockup::after {
+      content: '👩‍🍼';
+      font-size: 60px;
+      filter: drop-shadow(0 6px 12px rgba(0,0,0,0.15));
+    }
+
+    .variant-illus .device-mockup {
+      background: linear-gradient(180deg, var(--warm-start), white);
+      display: grid; place-items: center;
+    }
+    .variant-illus .device-mockup::after {
+      content: '🤍';
+      font-size: 56px;
+    }
+
+    .variant-bottom .caption-band { order: 2; padding: 14px 18px 24px; }
+    .variant-bottom .device-mockup { order: 1; margin-top: 16px; margin-bottom: 12px; }
+
+    .variant-float {
+      position: relative;
+    }
+    .variant-float .caption-band {
+      position: absolute;
+      top: 12%;
+      left: 18%;
+      right: 18%;
+      padding: 12px 14px;
+      background: rgba(255,255,255,0.86);
+      backdrop-filter: blur(8px);
+      border-radius: 12px;
+      z-index: 2;
+    }
+    .variant-float .caption { font-size: clamp(16px, 1.8vw, 22px); }
+    .variant-float .device-mockup { margin-top: 16px; flex: 1; }
+
+    .pros-cons {
+      max-width: 1200px;
+      margin: 36px auto 0;
+      padding: 0 8px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+    }
+    .pc-card {
+      background: white;
+      border-radius: 12px;
+      padding: 16px 18px;
+      box-shadow: 0 4px 12px -6px rgba(0,0,0,0.08);
+    }
+    .pc-card h3 {
+      margin: 0 0 6px;
+      font-size: 14px;
+      color: var(--primary-dark);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .pc-card p { margin: 0; font-size: 13px; color: var(--text); }
+    .pc-card .verdict {
+      margin-top: 8px;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+    .pc-card .verdict.good { color: #10B981; }
+    .pc-card .verdict.bad { color: #EF4444; }
+
+    .search-preview {
+      max-width: 720px;
+      margin: 40px auto 0;
+      padding: 0 16px;
+    }
+    .search-card {
+      background: white;
+      border-radius: 14px;
+      padding: 18px 20px;
+      box-shadow: 0 6px 18px -8px rgba(0,0,0,0.12);
+    }
+    .search-row {
+      display: flex; align-items: flex-start; gap: 14px;
+    }
+    .app-icon {
+      width: 62px; height: 62px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+      flex-shrink: 0;
+      display: grid; place-items: center;
+      color: white; font-weight: 800; font-size: 28px;
+    }
+    .app-meta { flex: 1; }
+    .app-name { font-size: 15px; font-weight: 700; color: var(--text); }
+    .app-subtitle { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+    .get-btn {
+      background: #007AFF;
+      color: white;
+      font-weight: 600;
+      font-size: 13px;
+      padding: 5px 14px;
+      border-radius: 999px;
+      border: none;
+      flex-shrink: 0;
+    }
+    .search-thumbs {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      margin-top: 14px;
+    }
+    .search-thumb {
+      aspect-ratio: 9 / 19.5;
+      border-radius: 8px;
+      background: linear-gradient(180deg, var(--warm-start) 0%, var(--warm-end) 100%);
+      padding: 10px 6px 4px;
+      text-align: center;
+      font-size: 8px;
+      font-weight: 800;
+      color: var(--primary-dark);
+      line-height: 1.1;
+      overflow: hidden;
+      position: relative;
+    }
+    .search-thumb .mini-ui {
+      position: absolute;
+      bottom: 6px; left: 6px; right: 6px;
+      height: 60%;
+      background: white;
+      border-radius: 6px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .search-thumb.t2 .mini-ui, .search-thumb.t3 .mini-ui { background: white; }
+    .search-thumb.t2 { background: linear-gradient(135deg, #FFD9C8 0%, #F5A56B 100%); color: white; }
+    .search-thumb.t2 .mini-ui { display: none; }
+  </style>
+</head>
+<body>
+  <nav aria-label="MomRise tools" style="background:#fff;border-bottom:1px solid #E5E7EB;padding:8px 16px;display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-family:'Inter',system-ui,sans-serif;">
+    <span style="font-size:12px;color:#6B7280;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-right:2px;">Go to</span>
+    <a href="/admin/" style="font-size:13px;font-weight:500;color:#6B7280;text-decoration:none;padding:6px 11px;border-radius:8px;border:1px solid #E5E7EB;background:#F9FAFB;">Admin</a>
+    <a href="/admin/pin-generator.html" style="font-size:13px;font-weight:500;color:#6B7280;text-decoration:none;padding:6px 11px;border-radius:8px;border:1px solid #E5E7EB;background:#F9FAFB;">Pin Generator</a>
+    <a href="/admin/aso-preview.html" style="font-size:13px;font-weight:600;color:#52A097;text-decoration:none;padding:6px 11px;border-radius:8px;border:1px solid #52A097;background:#EAF5F3;">ASO Preview</a>
+    <a href="/creator/" style="font-size:13px;font-weight:500;color:#6B7280;text-decoration:none;padding:6px 11px;border-radius:8px;border:1px solid #E5E7EB;background:#F9FAFB;">Creator Dashboard</a>
+    <a href="/apply/" style="font-size:13px;font-weight:500;color:#6B7280;text-decoration:none;padding:6px 11px;border-radius:8px;border:1px solid #E5E7EB;background:#F9FAFB;">Creator Apply</a>
+    <a href="/review/" style="font-size:13px;font-weight:500;color:#6B7280;text-decoration:none;padding:6px 11px;border-radius:8px;border:1px solid #E5E7EB;background:#F9FAFB;">Reviews</a>
+    <a href="/subscribe.html" style="font-size:13px;font-weight:500;color:#6B7280;text-decoration:none;padding:6px 11px;border-radius:8px;border:1px solid #E5E7EB;background:#F9FAFB;">Subscribe</a>
+    <a href="/" style="font-size:13px;font-weight:500;color:#6B7280;text-decoration:none;padding:6px 11px;border-radius:8px;border:1px solid #E5E7EB;background:#F9FAFB;">Website</a>
+  </nav>
+  <h1>MomRise — Screenshot 1 Variants</h1>
+  <p class="subtitle">
+    All portrait, all top-stacked captions (except where shown for comparison).
+    These are mockups for direction — your designer would produce the real assets at 1290×2796.
+  </p>
+
+  <h2>Top-stacked candidates (recommended pattern)</h2>
+  <div class="shots">
+
+    <!-- Variant A: text-only band + UI inset -->
+    <div class="shot">
+      <div class="caption-band">
+        <div class="caption">Mom life,<br>finally organized.</div>
+        <div class="sub-caption">Meals · routines · milestones — in one place</div>
+      </div>
+      <div class="device-mockup">
+        <div class="device-header">
+          <div class="icon">M</div>
+          <div class="brand">MomRise</div>
+          <div class="day">Tue · Week of Mar 3</div>
+        </div>
+        <div class="meals">
+          <div class="meal"><span class="label">B</span><span class="name">Oats + berries</span></div>
+          <div class="meal"><span class="label">L</span><span class="name">Lentil soup</span></div>
+          <div class="meal"><span class="label">D</span><span class="name">Chicken stir-fry</span><span class="swap">swap</span></div>
+        </div>
+      </div>
+      <div class="shot-label">A · benefit headline + UI</div>
+    </div>
+
+    <!-- Variant B: shorter punchier -->
+    <div class="shot">
+      <div class="caption-band">
+        <div class="caption">Less chaos.<br>More presence.</div>
+        <div class="sub-caption">Built around the mom, not the calendar</div>
+      </div>
+      <div class="device-mockup">
+        <div class="device-header">
+          <div class="icon">M</div>
+          <div class="brand">MomRise</div>
+          <div class="day">Today</div>
+        </div>
+        <div class="meals">
+          <div class="meal"><span class="label">B</span><span class="name">Greek yogurt</span></div>
+          <div class="meal"><span class="label">L</span><span class="name">Veggie wraps</span></div>
+          <div class="meal"><span class="label">D</span><span class="name">Pasta + meatballs</span></div>
+        </div>
+      </div>
+      <div class="shot-label">B · POV-led, two-line</div>
+    </div>
+
+    <!-- Variant C: lifestyle photo + caption (Headspace pattern) -->
+    <div class="shot variant-photo">
+      <div class="caption-band">
+        <div class="caption">Mom first.<br>Family rises.</div>
+        <div class="sub-caption">The command center for mom-life</div>
+      </div>
+      <div class="device-mockup"></div>
+      <div class="shot-label">C · lifestyle hero (no UI)</div>
+    </div>
+
+    <!-- Variant D: illustrated character (Headspace-style) -->
+    <div class="shot variant-illus">
+      <div class="caption-band">
+        <div class="caption">For the mom<br>holding it all.</div>
+        <div class="sub-caption">A warmer way to manage family life</div>
+      </div>
+      <div class="device-mockup"></div>
+      <div class="shot-label">D · illustrated hero (no UI)</div>
+    </div>
+
+  </div>
+
+  <h2>Anti-patterns (don't ship these — for comparison)</h2>
+  <div class="shots">
+
+    <!-- Bottom-stacked — underperforms -->
+    <div class="shot variant-bottom">
+      <div class="caption-band">
+        <div class="caption">Mom life,<br>finally organized.</div>
+      </div>
+      <div class="device-mockup">
+        <div class="device-header">
+          <div class="icon">M</div>
+          <div class="brand">MomRise</div>
+          <div class="day">Today</div>
+        </div>
+        <div class="meals">
+          <div class="meal"><span class="label">B</span><span class="name">Oats + berries</span></div>
+          <div class="meal"><span class="label">L</span><span class="name">Lentil soup</span></div>
+          <div class="meal"><span class="label">D</span><span class="name">Chicken stir-fry</span></div>
+        </div>
+      </div>
+      <div class="shot-label">✗ bottom-stacked — −15-25% CR</div>
+    </div>
+
+    <!-- Floating caption over UI -->
+    <div class="shot variant-float">
+      <div class="caption-band">
+        <div class="caption">Mom life,<br>finally organized.</div>
+      </div>
+      <div class="device-mockup" style="margin-top: 60px;">
+        <div class="device-header">
+          <div class="icon">M</div>
+          <div class="brand">MomRise</div>
+          <div class="day">Today</div>
+        </div>
+        <div class="meals">
+          <div class="meal"><span class="label">B</span><span class="name">Oats + berries</span></div>
+          <div class="meal"><span class="label">L</span><span class="name">Lentil soup</span></div>
+          <div class="meal"><span class="label">D</span><span class="name">Chicken stir-fry</span></div>
+        </div>
+      </div>
+      <div class="shot-label">✗ floating caption — kills contrast</div>
+    </div>
+
+  </div>
+
+  <div class="pros-cons">
+    <div class="pc-card">
+      <h3>A — Benefit + UI</h3>
+      <p>Safest. Shows what the app does immediately. Best when the meal-planner UI is genuinely the headline feature.</p>
+      <div class="verdict good">Best starting bet</div>
+    </div>
+    <div class="pc-card">
+      <h3>B — POV-led</h3>
+      <p>Differentiates more. Reads as positioning, not features. May convert better with mom-niche audience but riskier on cold traffic.</p>
+      <div class="verdict good">Strong A/B challenger</div>
+    </div>
+    <div class="pc-card">
+      <h3>C — Lifestyle hero</h3>
+      <p>Headspace / Calm pattern. Real photo of a mom + caption, NO UI shown. Highest emotional pull, lowest "what is this" clarity.</p>
+      <div class="verdict">Test late, not first</div>
+    </div>
+    <div class="pc-card">
+      <h3>D — Illustrated hero</h3>
+      <p>Brand-distinctive, scalable, no photoshoot needed. Pairs with the gradient palette. Won the original Headspace battle.</p>
+      <div class="verdict good">High-leverage if executed well</div>
+    </div>
+  </div>
+
+  <h2>App Store search-result preview (icon + first 3 thumbnails)</h2>
+  <div class="search-preview">
+    <div class="search-card">
+      <div class="search-row">
+        <div class="app-icon">M</div>
+        <div class="app-meta">
+          <div class="app-name">MomRise</div>
+          <div class="app-subtitle">Lifestyle</div>
+        </div>
+        <button class="get-btn">GET</button>
+      </div>
+      <div class="search-thumbs">
+        <div class="search-thumb t1">
+          Mom life,<br>finally organized.
+          <div class="mini-ui"></div>
+        </div>
+        <div class="search-thumb t2">
+          A week of meals<br>in minutes.
+        </div>
+        <div class="search-thumb t3">
+          Recipes your<br>family will eat.
+          <div class="mini-ui"></div>
+        </div>
+      </div>
+    </div>
+    <p style="font-size: 12.5px; color: var(--text-muted); text-align: center; margin-top: 14px;">
+      ~91% of users never scroll past these three thumbnails in Search. They are the entire conversion surface.
+    </p>
+  </div>
+
+</body>
+</html>

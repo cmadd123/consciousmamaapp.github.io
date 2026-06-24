@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Creator Playbook · MomRise</title>
+  <meta name="description" content="The condensed, evidence-backed playbook for creators promoting MomRise.">
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #52A097;
+      --primary-dark: #2A6F67;
+      --accent: #EE8B60;
+      --surface: #FFFFFF;
+      --text: #1F2937;
+      --text-muted: #6B7280;
+      --border: #E5E7EB;
+      --code-bg: #F3F4F6;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; padding: 0;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      color: var(--text);
+      background: linear-gradient(180deg, #D7F2EB 0%, #FFE9E1 100%);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+    a { color: var(--primary-dark); }
+    main { max-width: 680px; margin: 0 auto; padding: 36px 20px 60px; }
+
+    .back {
+      display: inline-block;
+      margin-bottom: 14px;
+      font-size: 13px;
+      color: var(--primary-dark);
+      text-decoration: none;
+    }
+    .back:hover { text-decoration: underline; }
+
+    .hero { text-align: center; margin-bottom: 22px; }
+    .hero .pill {
+      display: inline-block;
+      background: color-mix(in srgb, var(--primary) 12%, var(--surface));
+      color: var(--primary-dark);
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 12px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .hero h1 {
+      margin: 0 0 6px;
+      font-size: 30px;
+      letter-spacing: -0.01em;
+    }
+    .hero p {
+      margin: 0 auto;
+      max-width: 500px;
+      color: var(--text-muted);
+      font-size: 15px;
+    }
+
+    .card {
+      background: var(--surface);
+      border-radius: 16px;
+      padding: 24px 26px;
+      box-shadow: 0 12px 32px -18px rgba(0,0,0,0.18);
+      margin-bottom: 18px;
+    }
+    @media (max-width: 520px) {
+      .card { padding: 20px 18px; }
+    }
+
+    h2 {
+      font-size: 19px;
+      letter-spacing: -0.005em;
+      margin: 0 0 12px;
+    }
+    p { margin: 0 0 12px; font-size: 15px; }
+    ul { padding-left: 20px; margin: 6px 0 0; }
+    li { margin-bottom: 6px; font-size: 14.5px; }
+    .muted { color: var(--text-muted); font-size: 12.5px; }
+    .source {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      font-style: italic;
+      margin-top: 10px;
+      margin-bottom: 0;
+    }
+
+    .pov {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      border-radius: 14px;
+      padding: 22px 24px;
+      margin-bottom: 18px;
+      text-align: center;
+    }
+    .pov .label {
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      opacity: 0.85;
+      margin-bottom: 6px;
+    }
+    .pov .text {
+      font-size: 18px;
+      font-weight: 600;
+      font-style: italic;
+      margin-bottom: 8px;
+    }
+    .pov .sub {
+      font-size: 13px;
+      opacity: 0.92;
+      max-width: 480px;
+      margin: 0 auto;
+      font-style: normal;
+    }
+
+    .formats {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+      margin: 14px 0 4px;
+    }
+    @media (max-width: 540px) {
+      .formats { grid-template-columns: 1fr; }
+    }
+    .fmt {
+      background: color-mix(in srgb, var(--primary) 6%, var(--surface));
+      border: 1px solid color-mix(in srgb, var(--primary) 18%, var(--border));
+      border-radius: 10px;
+      padding: 12px 14px;
+    }
+    .fmt .name {
+      font-weight: 700;
+      color: var(--primary-dark);
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+    .fmt .job {
+      font-size: 13px;
+      color: var(--text);
+      line-height: 1.45;
+    }
+
+    .big-stat {
+      background: color-mix(in srgb, var(--accent) 12%, var(--surface));
+      border-left: 4px solid var(--accent);
+      padding: 14px 18px;
+      border-radius: 0 10px 10px 0;
+      margin: 14px 0 8px;
+    }
+    .big-stat .num {
+      font-size: 26px;
+      font-weight: 800;
+      color: #C45F2D;
+      line-height: 1.1;
+    }
+    .big-stat .text {
+      font-size: 13.5px;
+      color: var(--text);
+      margin-top: 4px;
+    }
+
+    .arc {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+      margin: 12px 0 4px;
+    }
+    @media (max-width: 540px) {
+      .arc { grid-template-columns: 1fr; }
+    }
+    .arc-step {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+    }
+    .arc-step .badge {
+      display: inline-block;
+      background: var(--primary);
+      color: white;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      padding: 2px 9px;
+      border-radius: 999px;
+      margin-bottom: 6px;
+    }
+    .arc-step h4 { margin: 0 0 4px; font-size: 14.5px; }
+    .arc-step p { margin: 0; font-size: 12.5px; color: var(--text-muted); line-height: 1.45; }
+
+    .template {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin: 8px 0 14px;
+      font-size: 13.5px;
+      line-height: 1.55;
+    }
+    .template-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+    .copy-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 9px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-family: inherit;
+      text-transform: none;
+      letter-spacing: 0;
+    }
+    .copy-btn:hover { border-color: var(--primary); color: var(--primary-dark); }
+    .copy-btn.copied { background: color-mix(in srgb, var(--primary) 10%, var(--surface)); color: var(--primary-dark); border-color: var(--primary); }
+    .template-body { white-space: pre-wrap; color: var(--text); }
+
+    /* Schedule timeline */
+    .schedule {
+      margin: 12px 0 4px;
+      border-left: 2px solid color-mix(in srgb, var(--primary) 28%, var(--border));
+      padding-left: 4px;
+    }
+    .sched-row {
+      display: grid;
+      grid-template-columns: 110px 1fr;
+      gap: 14px;
+      padding: 12px 0 12px 14px;
+      border-bottom: 1px dashed color-mix(in srgb, var(--primary) 14%, var(--border));
+      position: relative;
+    }
+    .sched-row:last-child { border-bottom: none; }
+    .sched-row::before {
+      content: '';
+      position: absolute;
+      left: -8px;
+      top: 18px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--surface);
+      border: 2px solid color-mix(in srgb, var(--primary) 40%, var(--border));
+    }
+    .sched-row.primary::before {
+      background: var(--accent);
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 18%, transparent);
+    }
+    .sched-day {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      padding-top: 2px;
+    }
+    .sched-row.primary .sched-day { color: #C45F2D; }
+    .sched-action {}
+    .sched-title {
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--text);
+      margin-bottom: 3px;
+    }
+    .sched-row.primary .sched-title { color: var(--primary-dark); }
+    .sched-desc {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    @media (max-width: 480px) {
+      .sched-row { grid-template-columns: 1fr; gap: 4px; padding-left: 14px; }
+      .sched-row::before { top: 8px; }
+    }
+
+    .dont-list { padding-left: 0; list-style: none; margin: 0; }
+    .dont-list li {
+      padding: 8px 0 8px 26px;
+      position: relative;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+    }
+    .dont-list li:last-child { border-bottom: none; }
+    .dont-list li::before {
+      content: '✗';
+      position: absolute;
+      left: 4px;
+      top: 8px;
+      color: #EF4444;
+      font-weight: 700;
+    }
+
+    /* Creator tab nav — matches the dashboard nav so users keep the
+       same top-strip / bottom-bar across sub-pages. Dashboard-only views
+       (Home/Recipes/Plans/Stats) link back to /creator/ with a hash so
+       the dashboard can route to the right tab. */
+    .creator-nav {
+      display: flex;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      max-width: 100%;
+    }
+    .nav-tab {
+      flex: 1;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      background: none; border: none;
+      padding: 14px 8px;
+      font: inherit; font-size: 14px; font-weight: 600;
+      color: var(--text-muted);
+      border-bottom: 2px solid transparent;
+      transition: color 120ms, border-color 120ms, background 120ms;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .nav-tab .nav-tab-icon { font-size: 16px; display: inline-flex; align-items: center; }
+    .nav-tab .nav-tab-icon svg { width: 18px; height: 18px; }
+    .nav-tab:hover { color: var(--text); background: color-mix(in srgb, var(--primary) 5%, var(--surface)); }
+    .nav-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+    @media (max-width: 720px) {
+      .creator-nav {
+        position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
+        border-bottom: none; border-top: 1px solid var(--border);
+        padding-bottom: env(safe-area-inset-bottom);
+        box-shadow: 0 -4px 16px -8px rgba(0,0,0,0.16);
+        overflow-x: auto;
+      }
+      .nav-tab {
+        flex: 0 0 auto; min-width: 72px;
+        flex-direction: column; gap: 3px;
+        padding: 8px 4px 6px; font-size: 11px;
+        border-bottom: none; border-top: 2px solid transparent;
+      }
+      .nav-tab .nav-tab-icon svg { width: 22px; height: 22px; }
+      .nav-tab.active { border-top-color: var(--primary); }
+      main { padding-bottom: 88px; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="creator-nav">
+    <a class="nav-tab" href="/creator/#home">
+      <span class="nav-tab-icon" data-icon="home"></span><span class="nav-tab-label">Home</span>
+    </a>
+    <a class="nav-tab active" href="/creator/playbook/">
+      <span class="nav-tab-icon" data-icon="clipboard"></span><span class="nav-tab-label">Playbook</span>
+    </a>
+    <a class="nav-tab" href="/creator/brand-kit/">
+      <span class="nav-tab-icon" data-icon="grid"></span><span class="nav-tab-label">Brand kit</span>
+    </a>
+    <a class="nav-tab" href="/creator/library/">
+      <span class="nav-tab-icon" data-icon="folder"></span><span class="nav-tab-label">Library</span>
+    </a>
+    <a class="nav-tab" href="/creator/faq/">
+      <span class="nav-tab-icon" data-icon="help"></span><span class="nav-tab-label">Cheat sheet</span>
+    </a>
+    <a class="nav-tab" href="/creator/#recipes">
+      <span class="nav-tab-icon" data-icon="camera"></span><span class="nav-tab-label">Recipes</span>
+    </a>
+    <a class="nav-tab" href="/creator/#plans">
+      <span class="nav-tab-icon" data-icon="calendar"></span><span class="nav-tab-label">Plans</span>
+    </a>
+    <a class="nav-tab" href="/creator/#stats">
+      <span class="nav-tab-icon" data-icon="chart"></span><span class="nav-tab-label">Stats</span>
+    </a>
+    <a class="nav-tab" href="/creator/#plans">
+      <span class="nav-tab-icon" data-icon="calendar"></span><span class="nav-tab-label">Plans</span>
+    </a>
+    <a class="nav-tab" href="/creator/#stats">
+      <span class="nav-tab-icon" data-icon="chart"></span><span class="nav-tab-label">Stats</span>
+    </a>
+  </nav>
+  <script>
+    // Inline icon hydration — keeps the playbook page standalone (no
+    // dependency on the dashboard's larger JS). Same SVG glyphs as
+    // /creator/index.html's ICON object so the nav reads identically.
+    (function () {
+      const w = (inner) => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + inner + '</svg>';
+      const ICON = {
+        home: w('<path d="M3 10.2 12 3l9 7.2V21H3z"/><path d="M9 21v-7h6v7"/>'),
+        camera: w('<path d="M3 8a2 2 0 0 1 2-2h2.5L9 4h6l1.5 2H19a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><circle cx="12" cy="13" r="3.5"/>'),
+        calendar: w('<rect x="3" y="4.5" width="18" height="16.5" rx="2"/><path d="M3 9.5h18M8 3v3M16 3v3"/>'),
+        chart: w('<path d="M6 21v-7M12 21V3M18 21v-10"/>'),
+        grid: w('<rect x="3.5" y="3.5" width="7" height="7" rx="1"/><rect x="13.5" y="3.5" width="7" height="7" rx="1"/><rect x="13.5" y="13.5" width="7" height="7" rx="1"/><rect x="3.5" y="13.5" width="7" height="7" rx="1"/>'),
+        clipboard: w('<rect x="8" y="3" width="8" height="4" rx="1.5"/><path d="M16 5h2a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2"/>'),
+        folder: w('<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>'),
+        help: w('<circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 0 1 5 0c0 1.5-2.5 2-2.5 4"/><circle cx="12" cy="17" r="0.5" fill="currentColor"/>'),
+      };
+      document.querySelectorAll('[data-icon]').forEach((el) => {
+        if (ICON[el.dataset.icon]) el.innerHTML = ICON[el.dataset.icon];
+      });
+    })();
+  </script>
+  <main>
+    <a class="back" href="/creator/">← Back to dashboard</a>
+
+    <div class="hero">
+      <span class="pill">Creator program</span>
+      <h1>Creator Playbook</h1>
+      <p>What actually works when you talk about MomRise.</p>
+    </div>
+
+    <!-- POV -->
+    <div class="pov">
+      <div class="text">"Mom's the engine. We're the toolkit."</div>
+      <div class="sub">She just needs better tools.</div>
+    </div>
+
+    <div class="card" style="background: color-mix(in srgb, var(--primary) 7%, var(--surface)); border: 1px solid color-mix(in srgb, var(--primary) 22%, var(--border));">
+      <p style="margin: 0; font-size: 14.5px;"><strong>Works on TikTok too.</strong> 90% of what's below applies to both Instagram and TikTok — same authenticity rules, same platform-audio rules, same 3-4 posts/week sweet spot. The handful of TikTok-specific differences (hook length, hashtags, Collab equivalent) are on the <a href="/creator/faq/">Cheat Sheet</a> under "What's different on TikTok?"</p>
+    </div>
+
+    <!-- Section 1: Film real -->
+    <div class="card">
+      <h2>Film like a real Tuesday morning, not a commercial</h2>
+      <p>Before we built this program, we dug into the actual research on what makes creator content convert. Studies, A/B tests, real numbers. The clearest finding: videos that look like real life outperform anything polished. By a lot.</p>
+      <div class="big-stat">
+        <div class="num">~10×</div>
+        <div class="text">Real-life videos beat the polished kind by about 10× on conversion (Emplifi, 2025)</div>
+      </div>
+      <p style="margin-top: 14px;">It tracks with what moms tell us: <em>"if it looks like an ad, I scroll past."</em> Real reads as a recommendation from a friend. Polished reads like a sponsorship, which is the one thing you're trying <em>not</em> to sound like.</p>
+      <p style="margin-top: 14px;"><strong>Yes:</strong> phone camera, kitchen light, kids being kids in the background, one take, your normal iPhone captions.<br><strong>No:</strong> ring light, scripted voiceover, branded graphics, anything that screams "ad."</p>
+    </div>
+
+    <!-- Section 2: Format -->
+    <div class="card">
+      <h2>Each format has a job</h2>
+      <div class="formats">
+        <div class="fmt">
+          <div class="name">Reels</div>
+          <div class="job">Reach. Non-followers find you. Open with the high-pressure moment in 1-2 sec on TikTok, ~3 sec on IG.</div>
+        </div>
+        <div class="fmt">
+          <div class="name">Stories</div>
+          <div class="job">Conversion. Link sticker, code on screen, 3-frame arc to followers only.</div>
+        </div>
+        <div class="fmt">
+          <div class="name">Carousels</div>
+          <div class="job">Saves &amp; long-tail. The algorithm reshows them. List or educational hooks.</div>
+        </div>
+      </div>
+      <p style="margin-top: 14px;">The trick is using all three together. Reels are how new moms find you, reaching about 2× as many people as carousels. Stories are where your existing followers actually tap through (warm audience, link sticker right there). Carousels stick around in people's saves and the algorithm keeps reshowing them for weeks.</p>
+      <p style="margin-top: 8px;">Skip the single static post. It doesn't pull its weight anymore.</p>
+      <p class="source">Source: Metricool x HypeAuditor 2025 Instagram report; CreatorsJet 10,000-post study.</p>
+    </div>
+
+    <!-- Section 3: 3-touch arc -->
+    <div class="card">
+      <h2>Use 3 touches, not 1 (and not 7)</h2>
+      <div class="arc">
+        <div class="arc-step">
+          <div class="badge">Week 1</div>
+          <h4>Announce</h4>
+          <p>One Reel. A high-pressure moment + MomRise as the unlock.</p>
+        </div>
+        <div class="arc-step">
+          <div class="badge">Week 2</div>
+          <h4>Demo</h4>
+          <p>Carousel or Story arc. The specific feature you use, in your hand.</p>
+        </div>
+        <div class="arc-step">
+          <div class="badge">Week 3</div>
+          <h4>Results</h4>
+          <p>"Two weeks in, here's what changed." Code goes here.</p>
+        </div>
+      </div>
+      <p style="margin-top: 14px;">One post and your audience forgets by Friday. Seven in a row and they start tuning you out as a brand account. Three across three weeks is the sweet spot: long enough to register, short enough not to overdo it.</p>
+    </div>
+
+    <!-- Section 4: First post matters most -->
+    <div class="card">
+      <h2>Your first post does most of the work</h2>
+      <p>The launch Reel sets the velocity for everything that follows. If it lands, the rest of the campaign rides its momentum. If it flops, you're rebuilding from zero by week 2.</p>
+      <ul>
+        <li><strong>Warm up first.</strong> Post 2-3 normal posts in your voice the week before the launch Reel. If you've been quiet, both the algorithm and your audience read a sudden ad post as a content hijack, and tune it out.</li>
+        <li><strong>Make it a Reel, not a Story.</strong> Reels can reach moms who don't follow you yet. That's the biggest audience pull you'll get all campaign. Don't waste it on a Story that only reaches your existing followers.</li>
+        <li><strong>Lead with a moment, not an announcement.</strong> <em>"I'm so excited to partner with @momrise!"</em> reads as an ad. <em>"Here's how I planned 4 schedules this week in 8 minutes"</em> reads as content. Same partnership, completely different conversion.</li>
+        <li><strong>The first 2 hours decide everything.</strong> Post when your audience is online (check Insights → most-active times), reply to every comment, share to your own Story within the first hour (or restitch/repost to a side account on TikTok). Don't edit or delete after posting. It tells the algorithm something's off and stops the post from spreading.</li>
+        <li><strong>Anchor to a specific moment.</strong> Sunday-night planning marathon. Mid-week schedule pile-up. The 5pm pivot. Specific moments give weeks 2 and 3 somewhere to refer back to. "Motherhood is busy" doesn't.</li>
+      </ul>
+    </div>
+
+    <!-- Section 5: Sample schedule -->
+    <div class="card" id="schedule">
+      <h2>A sample 3-week schedule</h2>
+      <p>A shape, not a script. Move things around to fit your normal posting rhythm and the times your audience is actually online. The point of putting this in front of you is so you have something to start from, not something to follow to the day.</p>
+      <div class="schedule">
+        <div class="sched-row">
+          <div class="sched-day">The week before</div>
+          <div class="sched-action">
+            <div class="sched-title">Warm up</div>
+            <div class="sched-desc">2-3 normal posts in your voice. No mention of MomRise yet. The point is to make the algorithm see you're an active account before any sponsored content lands.</div>
+          </div>
+        </div>
+        <div class="sched-row primary">
+          <div class="sched-day">Day 1</div>
+          <div class="sched-action">
+            <div class="sched-title">★ Launch Reel</div>
+            <div class="sched-desc">The pressure-moment Reel. Code in the caption. The whole campaign hinges on this one.</div>
+          </div>
+        </div>
+        <div class="sched-row">
+          <div class="sched-day">Days 3-5</div>
+          <div class="sched-action">
+            <div class="sched-title">Story arc</div>
+            <div class="sched-desc">Recap the Reel for followers who missed it. Add a poll sticker tied to the moment ("does anyone else?").</div>
+          </div>
+        </div>
+        <div class="sched-row primary">
+          <div class="sched-day">Day 8</div>
+          <div class="sched-action">
+            <div class="sched-title">★ Carousel demo</div>
+            <div class="sched-desc">"7 things in my mom toolkit" or "how I plan a week in 5 min". Show it in your hand. Code in the caption.</div>
+          </div>
+        </div>
+        <div class="sched-row">
+          <div class="sched-day">Days 10-12</div>
+          <div class="sched-action">
+            <div class="sched-title">Story update</div>
+            <div class="sched-desc">One quick Story arc with the feature you're actually using this week. Link sticker pointing to your code.</div>
+          </div>
+        </div>
+        <div class="sched-row primary">
+          <div class="sched-day">Day 15</div>
+          <div class="sched-action">
+            <div class="sched-title">★ Results Reel</div>
+            <div class="sched-desc">"Two weeks in, here's what changed." Specific outcome, not vague enthusiasm. Code in caption.</div>
+          </div>
+        </div>
+        <div class="sched-row">
+          <div class="sched-day">Days 17-19</div>
+          <div class="sched-action">
+            <div class="sched-title">Final story arc</div>
+            <div class="sched-desc">Code reminder + a question that invites replies. Replies in the closing window keep the campaign visible in your followers' feeds longer.</div>
+          </div>
+        </div>
+      </div>
+      <p style="margin-top: 14px; font-size: 13px; color: var(--text-muted);">Three big posts (the ★ ones), three lighter Story arcs to reinforce them, plus your warm-up week. The Stories aren't ads. They're just you, reminding people what you said last week.</p>
+    </div>
+
+    <!-- Section 5: Steal captions -->
+    <div class="card">
+      <h2>Steal these captions</h2>
+      <p style="margin-bottom: 10px;">Replace bracketed bits with your specifics. Tap Copy.</p>
+
+      <div class="template">
+        <div class="template-header">
+          <span>Reel · pressure moment</span>
+          <button class="copy-btn" data-copy="pressure">Copy</button>
+        </div>
+        <div class="template-body" id="pressure">#ad Paid partnership with @momrise
+
+The hardest part of my week is [Sunday night, mapping out 7 days for 4 humans].
+
+MomRise is the first thing that actually clicked. [I plan the whole week of meals in 5 min. Sunday-night me thanks Friday-night me].
+
+Code [YOURCODE] for a free trial. Link in bio.</div>
+      </div>
+
+      <div class="template">
+        <div class="template-header">
+          <span>Carousel · the list</span>
+          <button class="copy-btn" data-copy="list">Copy</button>
+        </div>
+        <div class="template-body" id="list">#ad Paid partnership with @momrise
+
+7 things actually in my mom toolkit right now (swipe →)
+
+#4 is the only one I'd say has made a real difference. Code [YOURCODE] if you want to try MomRise. Link in bio.
+
+Which one do you swear by? 👇</div>
+      </div>
+
+      <div class="template">
+        <div class="template-header">
+          <span>Reel · two-week update</span>
+          <button class="copy-btn" data-copy="update">Copy</button>
+        </div>
+        <div class="template-body" id="update">#ad Paid partnership with @momrise
+
+Two weeks ago I told you I was trying MomRise. Update:
+
+[Specific result. "I'm planning the whole week's meals in 5 min on Sunday now."]
+
+The thing I didn't expect: [the calendar handles all 4 of our schedules in one place].
+
+Code [YOURCODE], free 7-day trial, link in bio.</div>
+      </div>
+    </div>
+
+    <!-- Section: Audio -->
+    <div class="card">
+      <h2>Use the platform's audio library — don't bake music in</h2>
+      <p>For Reels and TikToks: <strong>add music in the app at upload time</strong>, not in CapCut. Export your master with just your voiceover (or muted if no voiceover), then pick a sound from Instagram's or TikTok's library when you upload.</p>
+      <p style="margin-top: 12px;"><strong>Why it actually matters</strong>:</p>
+      <ul>
+        <li><strong>Discoverability.</strong> Platform-native sounds get a measurable algorithmic lift — recent agency benchmarks show ~48-68% on TikTok views and ~33% on IG reach versus imported audio. Same sound being used across videos creates a content graph; your post enters that graph.</li>
+        <li><strong>Licensing.</strong> TikTok's July 2025 Music ToS update requires Business and brand-affiliated content to use TikTok's Commercial Music Library — and that license is TikTok-only. If you bake CML audio into a master and re-upload to IG, you're exposed. Pick audio per-platform avoids it entirely.</li>
+        <li><strong>Cross-platform safety.</strong> TikTok's audio fingerprinting (ACRCloud) is robust to pitch and speed changes, so "just pitch it 1%" tricks don't work. Per-platform audio is the cleanest workflow.</li>
+      </ul>
+      <p style="margin-top: 14px;"><strong>What about voiceover content?</strong> Your voice talking IS your audio — keep it baked into the master. No swap needed. The audio-library swap is for videos with music beds underneath (B-roll, lifestyle cuts, no-talking content).</p>
+      <p style="margin-top: 10px;"><strong>What NOT to do</strong>:</p>
+      <ul>
+        <li>Don't drag music files (Epidemic Sound, YouTube licensed audio, Spotify rips) into CapCut. Imported audio gets no platform boost and creates licensing exposure.</li>
+        <li>Don't save a Reel from inside IG to your camera roll, then re-upload to TikTok. The Instagram watermark bakes in — flagged as unoriginal, downranked on TikTok.</li>
+        <li>Don't trust "evasion" tricks (4px crop, pitch shift, metadata strip). They don't reliably bypass detection.</li>
+      </ul>
+    </div>
+
+    <!-- Section 6: Filming + FTC -->
+    <div class="card">
+      <h2>Five quick filming rules</h2>
+      <ul>
+        <li><strong>Window light, not ring light.</strong> Face the window. Natural daylight is what we mean by "real."</li>
+        <li><strong>Phone at chest height.</strong> Eye-level reads as a conversation. Looking down at the camera reads as an ad.</li>
+        <li><strong>Hook in the first 1-2 seconds on TikTok, first ~3 seconds on IG.</strong> Don't set up. Open with the pressure moment: the Sunday-night planning marathon, the mid-week schedule stack, the 5pm pivot.</li>
+        <li><strong>Show the app on screen for at least 2 seconds.</strong> Screen recording over your face cam works great. People need to actually see MomRise to remember it.</li>
+        <li><strong>End with the code + a question.</strong> "Code [YOURCODE]. If you try it, tell me what you made for dinner." Replies tell the algorithm to keep showing the post.</li>
+      </ul>
+      <p style="margin-top: 14px;"><strong>The legal bit (FTC):</strong> use Instagram's branded content tool. It's a toggle in Settings → Business → Branded content. Also put <code>#ad</code> in the first 1-3 lines of the caption. Buried disclosures hurt your audience's trust and don't actually protect you legally. <a href="https://www.ftc.gov/business-guidance/resources/ftcs-endorsement-guides-what-people-are-asking" target="_blank" rel="noopener">The FTC says it themselves</a>: clear at the top helps; buried hurts.</p>
+    </div>
+
+    <!-- Section 7: Don't -->
+    <div class="card">
+      <h2>What makes posts flop</h2>
+      <ul class="dont-list">
+        <li>Generic enthusiasm. "I love this app!!" with no specific moment goes nowhere.</li>
+        <li>One and done. Posting once and hoping people remember a week later. They won't.</li>
+        <li>Falling-apart framing. Your audience trusts capable moms, not victims. Show the pressure, not the breakdown.</li>
+        <li>Hiding the disclosure. Hurts your audience's trust without giving you any legal cover.</li>
+        <li>A polished commercial vibe. The 10× thing is real. Don't fight it.</li>
+        <li>Promoting competing parenting apps in the same window. Moms notice.</li>
+        <li>Telling people the price. Let the paywall handle that. Your job is "you should try this."</li>
+        <li>Sharing your link without your code. Codes survive copy-paste; links don't.</li>
+      </ul>
+    </div>
+
+    <!-- Brand kit CTA -->
+    <a href="/creator/brand-kit/" style="text-decoration: none; color: inherit; display: block;">
+      <div class="card" style="background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: white; padding: 26px 28px;">
+        <div style="display: flex; align-items: center; gap: 18px;">
+          <div style="width: 56px; height: 56px; background: rgba(255,255,255,0.16); border-radius: 14px; display: grid; place-items: center; flex-shrink: 0;">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>
+            </svg>
+          </div>
+          <div style="flex: 1;">
+            <h2 style="margin: 0 0 4px; font-size: 19px; color: white;">Brand kit</h2>
+            <p style="margin: 0; font-size: 14px; color: rgba(255,255,255,0.92);">Logo, color palette, fonts, and do/don't examples. Grab what you need to make graphics that look on-brand.</p>
+          </div>
+          <div style="font-size: 22px; font-weight: 700; opacity: 0.9; flex-shrink: 0;">→</div>
+        </div>
+      </div>
+    </a>
+
+    <div class="card" style="text-align: center;">
+      <p style="margin: 0; font-size: 13.5px; color: var(--text-muted);">Questions? Wins? Email <a href="mailto:creators@momrise.app">creators@momrise.app</a>. We read everything.</p>
+    </div>
+  </main>
+
+  <script>
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const targetId = btn.getAttribute('data-copy');
+        const el = document.getElementById(targetId);
+        if (!el) return;
+        try {
+          await navigator.clipboard.writeText(el.textContent.trim());
+          const orig = btn.textContent;
+          btn.textContent = 'Copied ✓';
+          btn.classList.add('copied');
+          setTimeout(() => {
+            btn.textContent = orig;
+            btn.classList.remove('copied');
+          }, 1500);
+        } catch (_) { /* ignore */ }
+      });
+    });
+  </script>
+</body>
+</html>

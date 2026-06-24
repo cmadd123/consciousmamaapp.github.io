@@ -1,75 +1,202 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MomRise</title>
-  <script>
-    // Check if this is a share link and redirect to the landing page.
-    // Only handle /s/CODE paths. Do NOT redirect /shared/CODE paths here —
-    // those are meant for App Links / Universal Links to intercept directly.
-    // Redirecting /shared/CODE back to the landing page would cause an
-    // infinite loop since the landing page navigates to /shared/CODE.
-    (function() {
-      var path = window.location.pathname;
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Open in MomRise</title>
 
-      // Handle /s/CODE → redirect to share landing page
-      var shortMatch = path.match(/^\/s\/([a-z0-9]{8})$/);
-      if (shortMatch) {
-        window.location.replace('/s/index.html?code=' + shortMatch[1]);
-        return;
-      }
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
 
-      // Handle /shared/CODE → show the landing page inline (don't redirect)
-      // This happens when App Links / Universal Links didn't intercept the URL
-      // (app not installed, or link verification not set up yet)
-      var sharedMatch = path.match(/^\/shared\/([a-z0-9]{8})$/);
-      if (sharedMatch) {
-        window.location.replace('/s/index.html?code=' + sharedMatch[1]);
-        return;
-      }
-    })();
-  </script>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: linear-gradient(180deg, #D7F2EB 0%, #FFE9E1 100%);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .card {
-      background: white;
-      border-radius: 24px;
-      padding: 40px 32px;
-      max-width: 400px;
-      width: 90%;
-      text-align: center;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.08);
-    }
-    .logo { font-size: 48px; margin-bottom: 16px; }
-    h1 { font-size: 24px; color: #333; margin-bottom: 8px; }
-    p { color: #888; font-size: 15px; margin-bottom: 24px; }
-    a {
-      display: inline-block;
-      background: #4CAF93;
-      color: white;
-      padding: 14px 40px;
-      border-radius: 28px;
-      text-decoration: none;
-      font-size: 16px;
-      font-weight: 600;
-    }
-  </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Andika', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #D7F2EB 0%, #FFE9E1 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 24px;
+            padding: 40px 32px;
+            text-align: center;
+            max-width: 380px;
+            width: 100%;
+            box-shadow: 0 12px 40px rgba(82, 160, 151, 0.15);
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #52A097;
+            margin-bottom: 24px;
+        }
+        .icon {
+            width: 72px;
+            height: 72px;
+            background: linear-gradient(135deg, #52A097 0%, #2A6F67 100%);
+            border-radius: 18px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+        }
+        h1 {
+            color: #1a2e2c;
+            font-size: 22px;
+            margin: 0 0 8px;
+        }
+        p {
+            color: #666;
+            line-height: 1.6;
+            font-size: 15px;
+            margin: 0;
+        }
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            margin-top: 20px;
+            background: #52A097;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-family: 'Andika', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            transition: background 0.2s;
+            box-sizing: border-box;
+        }
+        .btn:hover { background: #2A6F67; }
+        .share-code {
+            background: #EDFFFD;
+            border-radius: 12px;
+            padding: 12px;
+            margin-top: 20px;
+        }
+        .share-code label {
+            font-size: 11px;
+            color: #999;
+            display: block;
+            margin-bottom: 4px;
+        }
+        .share-code code {
+            font-family: monospace;
+            font-size: 20px;
+            font-weight: 700;
+            color: #2A6F67;
+            letter-spacing: 3px;
+        }
+        .footer {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #999;
+        }
+        .footer a { color: #52A097; }
+    </style>
 </head>
 <body>
-  <div class="card">
-    <div class="logo">🌱</div>
-    <h1>MomRise</h1>
-    <p>The page you're looking for doesn't exist.</p>
-    <a href="/">Go Home</a>
-  </div>
+    <div class="container">
+        <div class="logo">MomRise</div>
+        <div class="icon">🎁</div>
+
+        <h1 id="title">Someone shared with you!</h1>
+        <p id="subtitle">Open MomRise to view this shared content.</p>
+
+        <a class="btn" id="openBtn" href="#">Open in MomRise</a>
+
+        <div class="share-code" id="codeSection" style="display: none;">
+            <label>Share Code</label>
+            <code id="codeDisplay">--------</code>
+        </div>
+
+        <p class="footer">
+            Don't have the app? <a href="/">Download MomRise</a>
+        </p>
+    </div>
+
+    <script>
+        // Extract share code from URL path
+        const path = window.location.pathname;
+
+        // Creator profile: /c/HALEY → /c/?code=HALEY
+        const creatorMatch = path.match(/^\/c\/([a-z0-9]{3,20})\/?$/i);
+        if (creatorMatch) {
+            window.location.replace('/c/?code=' + encodeURIComponent(creatorMatch[1].toUpperCase()));
+            throw new Error('redirecting');
+        }
+
+        const match = path.match(/\/s\/([a-z0-9]{8})$/i) || path.match(/\/shared\/([a-z0-9]{8})$/i);
+        const shareCode = match ? match[1].toLowerCase() : null;
+
+        if (shareCode) {
+            // Show the code
+            document.getElementById('codeSection').style.display = 'block';
+            document.getElementById('codeDisplay').textContent = shareCode.toUpperCase();
+
+            // Build deep link URLs
+            const customScheme = `momrise://shared/${shareCode}`;
+            const isAndroid = /Android/i.test(navigator.userAgent);
+            const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+            const intentUrl = `intent://shared/${shareCode}#Intent;scheme=momecoach;end`;
+
+            // Set button action
+            const btn = document.getElementById('openBtn');
+
+            if (isIOS) {
+                // iOS: Don't use custom scheme (Safari blocks it)
+                // Universal Links should open the app automatically
+                // If we're here, Universal Links didn't work — show instructions
+                btn.href = '#';
+                btn.textContent = 'Open MomRise App';
+                document.getElementById('subtitle').textContent =
+                    'Open MomRise on your phone and enter the share code below.';
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    // Try custom scheme via iframe trick (avoids Safari error)
+                    const iframe = document.createElement('iframe');
+                    iframe.style.display = 'none';
+                    iframe.src = customScheme;
+                    document.body.appendChild(iframe);
+                    setTimeout(() => { document.body.removeChild(iframe); }, 2000);
+
+                    // Show manual instructions
+                    setTimeout(() => {
+                        document.getElementById('subtitle').textContent =
+                            'Open MomRise and go to Settings → enter the share code below to import.';
+                    }, 1500);
+                });
+            } else {
+                // Android: custom scheme works
+                btn.href = customScheme;
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    window.location.href = customScheme;
+                    setTimeout(() => {
+                        document.getElementById('subtitle').textContent =
+                            'If the app didn\'t open, open MomRise manually and enter the share code below.';
+                    }, 1500);
+                });
+            }
+        } else {
+            // Not a share link
+            document.getElementById('title').textContent = 'Welcome to MomRise';
+            document.getElementById('subtitle').textContent = 'The all-in-one parenting app.';
+            document.getElementById('openBtn').href = '/';
+            document.getElementById('openBtn').textContent = 'Visit MomRise';
+        }
+    </script>
 </body>
 </html>

@@ -60,6 +60,38 @@
         { "fieldPath": "creator_ref", "order": "ASCENDING" },
         { "fieldPath": "is_published", "order": "ASCENDING" }
       ]
+    },
+    {
+      "collectionGroup": "creator_earnings",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "creator_ref", "order": "ASCENDING" },
+        { "fieldPath": "created_at", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "creator_earnings",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "charge_id", "order": "ASCENDING" },
+        { "fieldPath": "kind", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "routines",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "user_ref", "order": "ASCENDING" },
+        { "fieldPath": "shared_with_followers", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "creator_applications",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "status", "order": "ASCENDING" },
+        { "fieldPath": "submitted_at", "order": "DESCENDING" }
+      ]
     }
   ],
   "fieldOverrides": []

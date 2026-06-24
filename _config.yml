@@ -1,0 +1,4 @@
+# GitHub Pages configuration
+# Include the .well-known directory for Android App Links verification
+include:
+  - .well-known

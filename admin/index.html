@@ -1,0 +1,1563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MomRise · Admin</title>
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #52A097;
+      --primary-dark: #2A6F67;
+      --accent: #EE8B60;
+      --bg: #F9FAFB;
+      --surface: #FFFFFF;
+      --text: #1F2937;
+      --text-muted: #6B7280;
+      --border: #E5E7EB;
+      --danger: #EF4444;
+      --success: #10B981;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; padding: 0;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      color: var(--text); background: var(--bg); min-height: 100vh;
+    }
+    button { cursor: pointer; font-family: inherit; }
+    a { color: var(--primary); }
+
+    header.topbar {
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      padding: 12px 24px; display: flex; align-items: center; justify-content: space-between;
+    }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; }
+    .brand img { width: 32px; height: 32px; border-radius: 8px; object-fit: contain; }
+    .user-chip { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--text-muted); }
+    .user-chip .signout { color: var(--text-muted); background: none; border: none; padding: 6px; font-size: 14px; }
+    .user-chip .signout:hover { color: var(--danger); }
+
+    main { max-width: 1000px; margin: 0 auto; padding: 24px; width: 100%; }
+    @media (max-width: 600px) {
+      main { padding: 16px; }
+      header.topbar { padding: 12px 16px; flex-wrap: wrap; gap: 8px; }
+      .section-head { flex-direction: column; align-items: stretch; gap: 10px; }
+      .section-head h2 { font-size: 18px; }
+      .action-callout { flex-direction: column; align-items: stretch; gap: 10px; text-align: left; }
+      .action-callout .btn { width: 100%; }
+      input[type="search"] { width: 100% !important; }
+      .modal { padding: 20px; }
+    }
+
+    /* Aggregate metrics banner */
+    .metrics-banner {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 10px; margin-bottom: 24px;
+    }
+    .metric {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 14px 16px;
+    }
+    .metric-label {
+      font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--text-muted); font-weight: 600; margin-bottom: 4px;
+    }
+    .metric-value {
+      font-size: 22px; font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums;
+    }
+    .metric-action {
+      background: linear-gradient(135deg, color-mix(in srgb, #F59E0B 12%, white), white);
+      border-color: color-mix(in srgb, #F59E0B 32%, var(--border));
+    }
+    .metric-action .metric-value { color: #92400E; }
+
+    .action-callout {
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      background: linear-gradient(135deg, #FEF3C7, #FDE68A);
+      border: 1px solid #F59E0B;
+      border-radius: 12px;
+      padding: 14px 18px;
+      margin-bottom: 16px;
+    }
+    .action-callout-text { color: #92400E; font-size: 14px; }
+    .action-callout-text strong { font-size: 18px; font-weight: 700; margin-right: 6px; }
+    .action-callout .btn { background: #92400E; flex-shrink: 0; }
+    .action-callout .btn:hover { background: #78350F; }
+    input[type="search"]:focus {
+      outline: 2px solid var(--primary); outline-offset: -1px; border-color: var(--primary);
+    }
+
+    .view { display: none; }
+    .view.active { display: block; }
+
+    /* Sign-in */
+    .signin {
+      min-height: calc(100vh - 60px);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 20px; padding: 24px; text-align: center;
+    }
+    .signin h1 { font-size: 28px; margin: 0; }
+    .signin p { color: var(--text-muted); margin: 0 0 8px; max-width: 420px; }
+    .btn-oauth {
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      padding: 12px 20px; border-radius: 10px; font-size: 15px; font-weight: 500;
+      border: 1px solid var(--border); background: var(--surface); color: var(--text);
+    }
+    .btn-oauth:hover { border-color: var(--primary); }
+
+    /* Gate */
+    .gate {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+      padding: 32px; text-align: center; max-width: 480px; margin: 48px auto;
+    }
+
+    /* List */
+    .section-head {
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;
+    }
+    .section-head h2 { margin: 0; font-size: 20px; }
+    .btn {
+      background: var(--primary); color: white; border: none;
+      padding: 10px 16px; border-radius: 10px; font-size: 14px; font-weight: 600;
+    }
+    .btn:hover:not(:disabled) { background: var(--primary-dark); }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .btn.ghost { background: transparent; color: var(--primary); border: 1px solid var(--primary); }
+    .btn.ghost:hover { background: rgba(82,160,151,0.08); }
+    .btn.danger { background: var(--danger); }
+    .btn.danger:hover:not(:disabled) { background: #B91C1C; }
+
+    .app-list { display: flex; flex-direction: column; gap: 10px; }
+    .app-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+      padding: 16px 18px; display: flex; align-items: center; gap: 14px;
+      cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .app-card:hover { border-color: var(--primary); box-shadow: 0 4px 12px rgba(0,0,0,0.04); }
+    .app-name { font-weight: 600; font-size: 15px; }
+    .app-meta { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+    .app-main { flex: 1; min-width: 0; }
+    .app-status-pill {
+      font-size: 11px; padding: 3px 10px; border-radius: 999px; font-weight: 600;
+      background: #FEF3C7; color: #92400E; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .app-status-pill.approved { background: #D1FAE5; color: #065F46; }
+    .app-status-pill.rejected { background: #FEE2E2; color: #991B1B; }
+
+    .empty { text-align: center; padding: 48px 24px; color: var(--text-muted); }
+
+    /* Detail */
+    .detail {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+      padding: 24px; max-width: 760px; margin: 0 auto;
+    }
+    .back-btn {
+      background: none; border: none; color: var(--text-muted); font-size: 14px;
+      padding: 6px 10px 6px 0; margin-bottom: 16px;
+    }
+    .back-btn:hover { color: var(--primary); }
+    .detail h1 { margin: 0 0 4px; font-size: 22px; }
+    .detail .handle { color: var(--text-muted); font-size: 14px; margin-bottom: 20px; }
+    table.fields { width: 100%; border-collapse: collapse; margin-bottom: 24px; }
+    table.fields td {
+      padding: 12px 14px; border-bottom: 1px solid var(--border); font-size: 14px; vertical-align: top;
+    }
+    table.fields td:first-child {
+      color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;
+      font-size: 11px; font-weight: 600; width: 120px;
+    }
+    table.fields td:last-child { color: var(--text); }
+    .pitch-pre { white-space: pre-wrap; line-height: 1.55; }
+    .actions { display: flex; gap: 10px; justify-content: flex-end; padding-top: 12px; border-top: 1px solid var(--border); }
+    .actions .btn { padding: 12px 20px; font-size: 15px; }
+
+    /* Toast */
+    .toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(120%);
+      background: #111827; color: white; padding: 12px 20px; border-radius: 10px;
+      font-size: 14px; transition: transform 0.25s ease;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2); max-width: 420px;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* Inline loader */
+    .loader {
+      width: 16px; height: 16px; border: 2px solid transparent;
+      border-top-color: currentColor; border-right-color: currentColor;
+      border-radius: 50%; animation: spin 0.6s linear infinite;
+      display: inline-block; vertical-align: -3px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Confirm modal */
+    .modal-backdrop {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.4);
+      display: none; align-items: center; justify-content: center; padding: 16px; z-index: 50;
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal {
+      background: var(--surface); border-radius: 14px; width: 100%; max-width: 440px;
+      padding: 24px;
+    }
+    .modal h3 { margin: 0 0 8px; }
+    .modal p { color: var(--text-muted); margin: 0 0 16px; font-size: 14px; line-height: 1.5; }
+    .modal textarea {
+      width: 100%; padding: 10px 12px; font-size: 14px; border: 1px solid var(--border);
+      border-radius: 8px; font-family: inherit; resize: vertical; min-height: 80px;
+    }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <img src="/app_store_assets/brand/momrise-icon-square-512.png" alt="MomRise">
+        MomRise · Admin
+      </div>
+      <div class="user-chip" id="userChip" style="display:none;">
+        <span id="userName"></span>
+        <button class="signout" id="signOutBtn">Sign out</button>
+      </div>
+    </header>
+
+    <nav aria-label="MomRise tools" style="background:#fff;border-bottom:1px solid #E5E7EB;padding:8px 16px;display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-family:'Inter',system-ui,sans-serif;">
+      <span style="font-size:12px;color:#6B7280;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-right:2px;">Go to</span>
+      <a href="/admin/" style="font-size:13px;font-weight:600;color:#52A097;text-decoration:none;padding:6px 11px;border-radius:8px;border:1px solid #52A097;background:#EAF5F3;">Admin</a>
+      <a href="/admin/pin-generator.html" style="font-size:13px;font-weight:500;color:#6B7280;text-decoration:none;padding:6px 11px;border-radius:8px;border:1px solid #E5E7EB;background:#F9FAFB;">Pin Generator</a>
+      <a href="/admin/aso-preview.html" style="font-size:13px;font-weight:500;color:#6B7280;text-decoration:none;padding:6px 11px;border-radius:8px;border:1px solid #E5E7EB;background:#F9FAFB;">ASO Preview</a>
+      <a href="/creator/" style="font-size:13px;font-weight:500;color:#6B7280;text-decoration:none;padding:6px 11px;border-radius:8px;border:1px solid #E5E7EB;background:#F9FAFB;">Creator Dashboard</a>
+      <a href="/apply/" style="font-size:13px;font-weight:500;color:#6B7280;text-decoration:none;padding:6px 11px;border-radius:8px;border:1px solid #E5E7EB;background:#F9FAFB;">Creator Apply</a>
+      <a href="/review/" style="font-size:13px;font-weight:500;color:#6B7280;text-decoration:none;padding:6px 11px;border-radius:8px;border:1px solid #E5E7EB;background:#F9FAFB;">Reviews</a>
+      <a href="/subscribe.html" style="font-size:13px;font-weight:500;color:#6B7280;text-decoration:none;padding:6px 11px;border-radius:8px;border:1px solid #E5E7EB;background:#F9FAFB;">Subscribe</a>
+      <a href="/" style="font-size:13px;font-weight:500;color:#6B7280;text-decoration:none;padding:6px 11px;border-radius:8px;border:1px solid #E5E7EB;background:#F9FAFB;">Website</a>
+    </nav>
+
+    <main>
+      <!-- Sign-in view -->
+      <div class="view active" id="viewSignIn">
+        <div class="signin">
+          <h1>Admin access only</h1>
+          <p>Sign in with the authorized Google account to review creator applications.</p>
+          <button class="btn-oauth" id="googleSignInBtn">
+            <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+            Sign in with Google
+          </button>
+        </div>
+      </div>
+
+      <!-- Gate (wrong account) -->
+      <div class="view" id="viewGate">
+        <div class="gate">
+          <h2>Not authorized</h2>
+          <p>This Google account isn't on the admin allowlist. Sign in with the MomRise admin email to continue.</p>
+          <button class="btn ghost" id="gateSignOutBtn">Sign out and try another account</button>
+        </div>
+      </div>
+
+      <!-- Tab bar -->
+      <div class="view" id="viewList">
+        <!-- Pending-action callout (only shows when there are open applications) -->
+        <div class="action-callout" id="pendingCallout" hidden>
+          <div class="action-callout-text">
+            <strong id="pendingCalloutCount">—</strong>
+            <span id="pendingCalloutLabel">applications waiting on you</span>
+          </div>
+          <button class="btn" id="pendingCalloutBtn">Review now →</button>
+        </div>
+
+        <!-- Aggregate metrics banner -->
+        <div class="metrics-banner" id="metricsBanner" hidden>
+          <div class="metric metric-action"><div class="metric-label">Pending apps</div><div class="metric-value" id="mPending">—</div></div>
+          <div class="metric"><div class="metric-label">New this week</div><div class="metric-value" id="mNewWeek">—</div></div>
+          <div class="metric"><div class="metric-label">Active creators</div><div class="metric-value" id="mActive">—</div></div>
+          <div class="metric"><div class="metric-label">Total followers</div><div class="metric-value" id="mFollowers">—</div></div>
+          <div class="metric"><div class="metric-label">Subscribers</div><div class="metric-value" id="mSubs">—</div></div>
+          <div class="metric"><div class="metric-label">Gross MRR (est.)</div><div class="metric-value" id="mMrr">—</div></div>
+          <div class="metric"><div class="metric-label">Paid this month</div><div class="metric-value" id="mPaid">—</div></div>
+        </div>
+        <div id="viewListInner">
+        <div class="tabs" style="display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin-bottom: 20px;">
+          <button class="tab-btn active" data-tab="applications" style="background: none; border: none; padding: 10px 16px; font-size: 15px; color: var(--primary); border-bottom: 2px solid var(--primary); font-weight: 600; margin-bottom: -1px;">Applications</button>
+          <button class="tab-btn" data-tab="creators" style="background: none; border: none; padding: 10px 16px; font-size: 15px; color: var(--text-muted); border-bottom: 2px solid transparent; margin-bottom: -1px;">Creators</button>
+          <button class="tab-btn" data-tab="taxes" style="background: none; border: none; padding: 10px 16px; font-size: 15px; color: var(--text-muted); border-bottom: 2px solid transparent; margin-bottom: -1px;">Taxes (1099)</button>
+          <button class="tab-btn" data-tab="suggestions" style="background: none; border: none; padding: 10px 16px; font-size: 15px; color: var(--text-muted); border-bottom: 2px solid transparent; margin-bottom: -1px;">Suggestions <span id="suggestionBadge" hidden style="background: var(--accent); color: white; border-radius: 999px; padding: 2px 7px; font-size: 11px; margin-left: 4px;">0</span></button>
+          <button class="tab-btn" data-tab="brief" style="background: none; border: none; padding: 10px 16px; font-size: 15px; color: var(--text-muted); border-bottom: 2px solid transparent; margin-bottom: -1px;">Brief</button>
+          <button class="tab-btn" data-tab="recipes" style="background: none; border: none; padding: 10px 16px; font-size: 15px; color: var(--text-muted); border-bottom: 2px solid transparent; margin-bottom: -1px;">Recipes</button>
+        </div>
+
+        <!-- Applications tab -->
+        <div class="tab-panel active" id="tabApplications">
+          <div class="section-head">
+            <h2>Creator applications</h2>
+            <div style="display: flex; gap: 8px;">
+              <select id="statusFilter" style="padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border); background: white; font-size: 14px; font-family: inherit;">
+                <option value="new">Pending</option>
+                <option value="approved">Approved</option>
+                <option value="rejected">Rejected</option>
+                <option value="all">All</option>
+              </select>
+              <button class="btn ghost" id="refreshBtn">↻ Refresh</button>
+            </div>
+          </div>
+          <div class="app-list" id="appList">
+            <div class="empty"><div class="loader"></div> Loading…</div>
+          </div>
+        </div>
+
+        <!-- Creators tab -->
+        <div class="tab-panel" id="tabCreators" hidden>
+          <div class="section-head">
+            <h2>Approved creators</h2>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <input type="search" id="creatorSearch" placeholder="Search name, code, niche…"
+                     style="padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border); background: white; font-size: 14px; font-family: inherit; width: 240px;">
+              <button class="btn ghost" id="refreshCreatorsBtn">↻ Refresh</button>
+              <button class="btn" id="newCreatorBtn">+ New creator</button>
+            </div>
+          </div>
+          <div style="overflow-x: auto; background: var(--surface); border: 1px solid var(--border); border-radius: 12px;">
+            <table id="creatorsTable" style="width: 100%; border-collapse: collapse; font-size: 14px;">
+              <thead>
+                <tr style="background: #F9FAFB; text-align: left;">
+                  <th style="padding: 12px 14px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); font-weight: 600; border-bottom: 1px solid var(--border);">Creator</th>
+                  <th style="padding: 12px 14px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); font-weight: 600; border-bottom: 1px solid var(--border);">Code</th>
+                  <th style="padding: 12px 14px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); font-weight: 600; border-bottom: 1px solid var(--border); text-align: right;">Followers</th>
+                  <th style="padding: 12px 14px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); font-weight: 600; border-bottom: 1px solid var(--border); text-align: right;">Subs</th>
+                  <th style="padding: 12px 14px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); font-weight: 600; border-bottom: 1px solid var(--border); text-align: right;">Lifetime earnings</th>
+                  <th style="padding: 12px 14px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); font-weight: 600; border-bottom: 1px solid var(--border);">Stripe</th>
+                </tr>
+              </thead>
+              <tbody id="creatorsBody">
+                <tr><td colspan="6" style="padding: 48px; text-align: center; color: var(--text-muted);"><div class="loader"></div> Loading…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Taxes / 1099 tab -->
+        <div class="tab-panel" id="tabTaxes" hidden>
+          <div class="section-head">
+            <h2>1099 monitoring · <span style="color: var(--text-muted); font-size: 14px; font-weight: 400;" id="taxYearLabel"></span></h2>
+            <a class="btn ghost" href="https://dashboard.stripe.com/connect/accounts" target="_blank" rel="noopener">All Stripe accounts →</a>
+          </div>
+          <!-- Quick summary card -->
+          <div class="metrics-banner" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin-bottom: 14px;">
+            <div class="metric"><div class="metric-label">Creators tracked</div><div class="metric-value" id="taxCreatorsCount">—</div></div>
+            <div class="metric metric-action"><div class="metric-label">Require 1099 (≥$600 YTD)</div><div class="metric-value" id="taxRequireCount">—</div></div>
+            <div class="metric"><div class="metric-label">Total YTD paid</div><div class="metric-value" id="taxTotalPaid">—</div></div>
+            <div class="metric"><div class="metric-label">Onboarded with Stripe</div><div class="metric-value" id="taxOnboardedCount">—</div></div>
+          </div>
+          <div style="background: color-mix(in srgb, #F59E0B 8%, white); border: 1px solid color-mix(in srgb, #F59E0B 30%, var(--border)); border-radius: 10px; padding: 14px 18px; margin-bottom: 18px; font-size: 13px; color: #92400E;">
+            <strong>How this works:</strong> US tax law requires a 1099-NEC for any creator paid $600+ in a calendar year. Stripe Connect generates and files these for you — but you should monitor here that high-earner accounts have completed their tax-info onboarding in Stripe (W-9 / W-8). Click any row to verify in their Stripe dashboard.
+          </div>
+          <div style="overflow-x: auto; background: var(--surface); border: 1px solid var(--border); border-radius: 12px;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+              <thead>
+                <tr style="background: #F9FAFB; text-align: left;">
+                  <th style="padding: 12px 14px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); font-weight: 600; border-bottom: 1px solid var(--border);">Creator</th>
+                  <th style="padding: 12px 14px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); font-weight: 600; border-bottom: 1px solid var(--border);">Code</th>
+                  <th style="padding: 12px 14px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); font-weight: 600; border-bottom: 1px solid var(--border); text-align: right;">YTD paid</th>
+                  <th style="padding: 12px 14px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); font-weight: 600; border-bottom: 1px solid var(--border);">1099 status</th>
+                  <th style="padding: 12px 14px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); font-weight: 600; border-bottom: 1px solid var(--border);">Stripe</th>
+                </tr>
+              </thead>
+              <tbody id="taxesBody">
+                <tr><td colspan="5" style="padding: 48px; text-align: center; color: var(--text-muted);"><div class="loader"></div> Loading…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Brief tab: compose + send the monthly creator brief -->
+        <div class="tab-panel" id="tabBrief" hidden>
+          <div class="section-head">
+            <h2>Monthly creator brief</h2>
+            <button class="btn ghost" id="refreshBriefsBtn">↻ History</button>
+          </div>
+          <div style="background: color-mix(in srgb, var(--primary) 6%, white); border: 1px solid color-mix(in srgb, var(--primary) 20%, var(--border)); border-radius: 12px; padding: 14px 18px; margin-bottom: 18px; font-size: 13px; line-height: 1.55; color: var(--text);">
+            <strong>How this works:</strong> This goes to every active creator (one email per creator). Keep it under 300 words. Structure:
+            <strong>## What shipped this month</strong>, <strong>## What's coming</strong>, <strong>## Post idea this week</strong>. Markdown supported: <code>##</code> <code>###</code> <code>- bullets</code> <code>**bold**</code> <code>[link](url)</code>. Send a test to yourself first.
+          </div>
+          <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; display: flex; flex-direction: column; gap: 14px;">
+            <label style="display: flex; flex-direction: column; gap: 6px; font-size: 13px; font-weight: 500;">Subject
+              <input type="text" id="briefSubject" maxlength="120" placeholder="April brief — spring-reset content + what shipped"
+                style="padding: 11px 13px; border: 1px solid var(--border); border-radius: 10px; font-size: 15px; font-family: inherit;">
+            </label>
+            <label style="display: flex; flex-direction: column; gap: 6px; font-size: 13px; font-weight: 500;">Body (markdown)
+              <textarea id="briefBody" rows="18" placeholder="## What shipped&#10;- …&#10;&#10;## Coming this month&#10;- …&#10;&#10;## Post idea this week&#10;…"
+                style="padding: 11px 13px; border: 1px solid var(--border); border-radius: 10px; font-size: 14px; line-height: 1.55; font-family: 'SF Mono', Consolas, monospace; resize: vertical;"></textarea>
+            </label>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+              <label style="display: flex; flex-direction: column; gap: 6px; font-size: 13px; font-weight: 500;">CTA text <span style="font-weight: 400; color: var(--text-muted);">(optional)</span>
+                <input type="text" id="briefCtaText" maxlength="40" placeholder="Grab this week's post"
+                  style="padding: 11px 13px; border: 1px solid var(--border); border-radius: 10px; font-size: 14px; font-family: inherit;">
+              </label>
+              <label style="display: flex; flex-direction: column; gap: 6px; font-size: 13px; font-weight: 500;">CTA URL <span style="font-weight: 400; color: var(--text-muted);">(optional)</span>
+                <input type="url" id="briefCtaUrl" maxlength="400" placeholder="https://momrise.app/creator/"
+                  style="padding: 11px 13px; border: 1px solid var(--border); border-radius: 10px; font-size: 14px; font-family: inherit;">
+              </label>
+            </div>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px;">
+              <button class="btn ghost" id="briefTestBtn">Send test to me</button>
+              <button class="btn" id="briefSendBtn">Send to all active creators</button>
+            </div>
+          </div>
+
+          <h3 style="margin: 28px 0 10px; font-size: 15px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em;">Recent briefs</h3>
+          <div id="briefHistory" style="display: flex; flex-direction: column; gap: 10px;">
+            <div class="empty" style="color: var(--text-muted); font-size: 14px;">None yet.</div>
+          </div>
+        </div>
+
+        <!-- Suggestions tab -->
+        <div class="tab-panel" id="tabSuggestions" hidden>
+          <div class="section-head">
+            <h2>Creator suggestions</h2>
+            <div style="display: flex; gap: 8px;">
+              <select id="suggestionStatusFilter" style="padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border); background: white; font-size: 14px; font-family: inherit;">
+                <option value="new">New</option>
+                <option value="seen">Seen</option>
+                <option value="closed">Closed</option>
+                <option value="all">All</option>
+              </select>
+              <button class="btn ghost" id="refreshSuggestionsBtn">↻ Refresh</button>
+            </div>
+          </div>
+          <div id="suggestionList" style="display: flex; flex-direction: column; gap: 12px;">
+            <div class="empty"><div class="loader"></div> Loading…</div>
+          </div>
+        </div>
+
+        <!-- Recipes tab (admin-only insight: how creators are adding recipes) -->
+        <div class="tab-panel" id="tabRecipes" hidden>
+          <div class="section-head">
+            <h2>Recipe sources</h2>
+            <button class="btn ghost" id="refreshRecipesBtn">↻ Refresh</button>
+          </div>
+          <p style="color: var(--text-muted); font-size: 13px; margin: -8px 0 16px;">
+            Aggregate breakdown across all recipes in the <code>meal</code> collection.
+            Shows where creators are sourcing recipes from — useful for tracking adoption
+            of the import flows post-launch.
+          </p>
+          <div class="metrics-banner" id="recipesMetrics" style="grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); margin-bottom: 20px;">
+            <div class="metric"><div class="metric-label">Total recipes</div><div class="metric-value" id="rTotal">—</div></div>
+            <div class="metric"><div class="metric-label">Scan (OCR)</div><div class="metric-value" id="rScan">—</div></div>
+            <div class="metric"><div class="metric-label">From URL</div><div class="metric-value" id="rUrl">—</div></div>
+            <div class="metric"><div class="metric-label">Other / manual</div><div class="metric-value" id="rManual">—</div></div>
+          </div>
+          <div style="overflow-x: auto; background: var(--surface); border: 1px solid var(--border); border-radius: 12px;">
+            <table id="recipesByCreatorTable" style="width: 100%; border-collapse: collapse; font-size: 14px;">
+              <thead>
+                <tr style="background: #F9FAFB; text-align: left;">
+                  <th style="padding: 12px 14px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); font-weight: 600; border-bottom: 1px solid var(--border);">Creator</th>
+                  <th style="padding: 12px 14px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); font-weight: 600; border-bottom: 1px solid var(--border); text-align: right;">Total</th>
+                  <th style="padding: 12px 14px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); font-weight: 600; border-bottom: 1px solid var(--border); text-align: right;">Scan</th>
+                  <th style="padding: 12px 14px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); font-weight: 600; border-bottom: 1px solid var(--border); text-align: right;">URL</th>
+                  <th style="padding: 12px 14px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); font-weight: 600; border-bottom: 1px solid var(--border); text-align: right;">Other</th>
+                </tr>
+              </thead>
+              <tbody id="recipesByCreatorBody">
+                <tr><td colspan="5" style="padding: 48px; text-align: center; color: var(--text-muted);"><div class="loader"></div> Click Refresh to load…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        </div><!-- /viewListInner -->
+      </div>
+
+      <!-- Creator detail view -->
+      <div class="view" id="viewCreatorDetail">
+        <button class="back-btn" id="backToCreatorsBtn">← Back to creators</button>
+        <div class="detail" style="max-width: 760px;">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 18px;">
+            <div>
+              <h1 id="cdName">—</h1>
+              <div class="handle"><code id="cdCode" style="background: #F3F4F6; padding: 3px 8px; border-radius: 4px; font-size: 13px; color: var(--primary-dark); font-weight: 600; letter-spacing: 1px;">—</code></div>
+            </div>
+            <span class="app-status-pill" id="cdStatusPill">—</span>
+          </div>
+          <table class="fields" id="cdFields"></table>
+          <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border);">
+            <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); font-weight: 600; margin-bottom: 12px;">Admin actions</div>
+            <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+              <button class="btn ghost" id="cdEditCodeBtn">Edit code</button>
+              <button class="btn ghost" id="cdEditRevShareBtn">Edit rev share</button>
+              <button class="btn ghost" id="cdResendWelcomeBtn">Resend welcome email</button>
+              <button class="btn ghost" id="cdToggleActiveBtn">—</button>
+              <a class="btn ghost" id="cdStripeLink" href="https://dashboard.stripe.com/connect/accounts" target="_blank" rel="noopener">Open Stripe →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Edit code modal -->
+      <div class="modal-backdrop" id="editCodeModal">
+        <div class="modal">
+          <h3>Edit creator code</h3>
+          <p>Use this only if the creator asked you to change it. Existing share links pointing to the old code will break.</p>
+          <input type="text" id="editCodeInput" maxlength="20" style="width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-family: 'SF Mono', Consolas, monospace; font-size: 16px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase;">
+          <div style="font-size: 12px; color: var(--text-muted); margin-top: 6px;">3–20 uppercase letters or numbers. Must be unique.</div>
+          <div class="modal-actions">
+            <button class="btn ghost" id="cancelEditCodeBtn">Cancel</button>
+            <button class="btn" id="confirmEditCodeBtn">Save new code</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Edit rev share modal -->
+      <div class="modal-backdrop" id="editRevShareModal">
+        <div class="modal">
+          <h3>Edit rev share</h3>
+          <p>Percentage of gross revenue this creator earns on subscriptions credited to their code. Applies to NEW earnings only; existing rows keep the rate that was active when they were logged.</p>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <input type="number" id="editRevShareInput" min="1" max="100" step="1" style="width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 16px; font-weight: 600;">
+            <span style="font-size: 20px; font-weight: 600; color: var(--text-muted);">%</span>
+          </div>
+          <div style="font-size: 12px; color: var(--text-muted); margin-top: 6px;">Whole numbers 1–100. Default is 50%.</div>
+          <div class="modal-actions">
+            <button class="btn ghost" id="cancelEditRevShareBtn">Cancel</button>
+            <button class="btn" id="confirmEditRevShareBtn">Save rev share</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detail view (applications) -->
+      <div class="view" id="viewDetail">
+        <button class="back-btn" id="backBtn">← Back to applications</button>
+        <div class="detail">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 18px;">
+            <div>
+              <h1 id="detailName">—</h1>
+              <div class="handle" id="detailHandle">—</div>
+            </div>
+            <span class="app-status-pill" id="detailStatus">—</span>
+          </div>
+          <table class="fields" id="detailFields"></table>
+          <div class="actions" id="detailActions"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Overwrite-existing-creator confirm modal -->
+  <div class="modal-backdrop" id="overwriteModal">
+    <div class="modal">
+      <h3>Replace existing creator?</h3>
+      <p id="overwriteModalBody">—</p>
+      <div class="modal-actions">
+        <button class="btn ghost" id="cancelOverwriteBtn">Cancel</button>
+        <button class="btn danger" id="confirmOverwriteBtn">Delete existing & approve</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reject modal -->
+  <div class="modal-backdrop" id="rejectModal">
+    <div class="modal">
+      <h3>Reject this application?</h3>
+      <p>You can add an internal reason (not sent to the applicant). This is for your future reference only.</p>
+      <textarea id="rejectReason" placeholder="Optional — e.g. audience too small, outside niche, already approved via invite"></textarea>
+      <div class="modal-actions">
+        <button class="btn ghost" id="cancelRejectBtn">Cancel</button>
+        <button class="btn danger" id="confirmRejectBtn">Reject application</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Manual creator creation modal (testing / troubleshooting) -->
+  <div class="modal-backdrop" id="createCreatorModal">
+    <div class="modal">
+      <h3>Create a creator manually</h3>
+      <p>For testing and troubleshooting. Links a creator profile to an existing MomRise account by email — they pick their code on their first dashboard visit. No application, no welcome email.</p>
+      <label style="display:block; font-size:13px; font-weight:600; margin-bottom:4px;">Email</label>
+      <input type="email" id="ccEmail" placeholder="creator@example.com"
+             style="width:100%; padding:10px 12px; border:1px solid var(--border); border-radius:8px; font-size:14px; font-family:inherit; margin-bottom:12px;">
+      <label style="display:block; font-size:13px; font-weight:600; margin-bottom:4px;">Name</label>
+      <input type="text" id="ccName" placeholder="Haley Maddox"
+             style="width:100%; padding:10px 12px; border:1px solid var(--border); border-radius:8px; font-size:14px; font-family:inherit; margin-bottom:12px;">
+      <label style="display:block; font-size:13px; font-weight:600; margin-bottom:4px;">Test password <span style="color:var(--text-muted); font-weight:400;">(optional)</span></label>
+      <input type="text" id="ccPassword" placeholder="Leave blank for a real creator"
+             style="width:100%; padding:10px 12px; border:1px solid var(--border); border-radius:8px; font-size:14px; font-family:inherit; margin-bottom:4px;">
+      <p style="font-size:12px; margin:0;">Only set a password to spin up a test account when no MomRise account exists for that email. Real creators must already have an account.</p>
+      <div class="modal-actions">
+        <button class="btn ghost" id="cancelCreateCreatorBtn">Cancel</button>
+        <button class="btn" id="confirmCreateCreatorBtn">Create creator</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+    import { getAuth, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup }
+      from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+    import { getFirestore, collection, doc, query, where, orderBy, getDocs, getDoc, updateDoc }
+      from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+    import { getFunctions, httpsCallable }
+      from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBucTVaWpYhDYScTpQ4JH9XdJgCBFmbHWk",
+      authDomain: "parenting-plus-7szrif.firebaseapp.com",
+      projectId: "parenting-plus-7szrif",
+      storageBucket: "parenting-plus-7szrif.appspot.com",
+      messagingSenderId: "67449654316",
+      appId: "1:67449654316:web:88be5e06e598d56dd55589",
+    };
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const functions = getFunctions(app);
+
+    const ADMIN_EMAILS = ['collinjmaddox@gmail.com'];
+
+    const $ = (id) => document.getElementById(id);
+    const show = (id) => {
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      $(id).classList.add('active');
+    };
+    const toast = (msg, danger = false) => {
+      const el = $('toast');
+      el.textContent = msg;
+      el.style.background = danger ? 'var(--danger)' : '#111827';
+      el.classList.add('show');
+      setTimeout(() => el.classList.remove('show'), 3500);
+    };
+    const esc = (s) => String(s || '').replace(/[<>&"]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));
+
+    let currentApplications = [];
+    let currentCreators = [];
+    let currentStatusFilter = 'new';
+    let currentUser = null;
+
+    // Auth wiring
+    $('googleSignInBtn').addEventListener('click', async () => {
+      try { await signInWithPopup(auth, new GoogleAuthProvider()); }
+      catch (e) { toast('Sign-in failed: ' + e.message, true); }
+    });
+    const doSignOut = () => signOut(auth);
+    $('signOutBtn').addEventListener('click', doSignOut);
+    $('gateSignOutBtn').addEventListener('click', doSignOut);
+
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        currentUser = null;
+        $('userChip').style.display = 'none';
+        show('viewSignIn');
+        return;
+      }
+      if (!ADMIN_EMAILS.includes((user.email || '').toLowerCase())) {
+        $('userChip').style.display = 'none';
+        show('viewGate');
+        return;
+      }
+      currentUser = user;
+      $('userChip').style.display = 'flex';
+      $('userName').textContent = user.displayName || user.email;
+      show('viewList');
+      loadApplications();
+      loadAggregateMetrics();
+      loadSuggestionBadge();
+    });
+
+    async function loadAggregateMetrics() {
+      try {
+        const now = new Date();
+        const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+
+        const [creatorsSnap, pendingSnap] = await Promise.all([
+          getDocs(query(collection(db, 'creators'), where('is_active', '==', true))),
+          getDocs(query(collection(db, 'creator_applications'), where('status', '==', 'new'))),
+        ]);
+        const creators = creatorsSnap.docs.map(d => d.data());
+        const totalFollowers = creators.reduce((s, c) => s + (c.follower_count || 0), 0);
+        const totalSubs = creators.reduce((s, c) => s + (c.subscriber_count || 0), 0);
+        const grossMrr = totalSubs * 699;
+        const newThisWeek = creators.filter(c => {
+          const t = c.created_at?.toDate?.();
+          return t && t >= weekAgo;
+        }).length;
+        const pendingCount = pendingSnap.size;
+
+        let paidThisMonth = 0;
+        try {
+          const earningsSnap = await getDocs(query(
+            collection(db, 'creator_earnings'),
+            where('payout_status', '==', 'paid'),
+          ));
+          for (const d of earningsSnap.docs) {
+            const e = d.data();
+            if (e.environment === 'Sandbox') continue;
+            const paidAt = e.paid_at?.toDate?.();
+            if (paidAt && paidAt >= monthStart) {
+              paidThisMonth += e.creator_cents || 0;
+            }
+          }
+        } catch (err) { console.warn('Paid-this-month calc failed:', err.message); }
+
+        $('mPending').textContent = pendingCount;
+        $('mNewWeek').textContent = newThisWeek;
+        $('mActive').textContent = creators.length;
+        $('mFollowers').textContent = totalFollowers;
+        $('mSubs').textContent = totalSubs;
+        $('mMrr').textContent = `$${(grossMrr / 100).toFixed(2)}`;
+        $('mPaid').textContent = `$${(paidThisMonth / 100).toFixed(2)}`;
+        $('metricsBanner').hidden = false;
+
+        // Action callout: only when there's something waiting
+        if (pendingCount > 0) {
+          $('pendingCalloutCount').textContent = pendingCount;
+          $('pendingCalloutLabel').textContent = pendingCount === 1
+            ? 'application waiting on you'
+            : 'applications waiting on you';
+          $('pendingCallout').hidden = false;
+        } else {
+          $('pendingCallout').hidden = true;
+        }
+      } catch (e) {
+        console.warn('Aggregate metrics load failed:', e.message);
+      }
+    }
+
+    // List
+    $('refreshBtn').addEventListener('click', () => { loadApplications(); loadAggregateMetrics(); });
+    $('refreshCreatorsBtn').addEventListener('click', loadCreators);
+
+    // Manual creator creation — testing / troubleshooting.
+    $('newCreatorBtn').addEventListener('click', () => {
+      $('ccEmail').value = '';
+      $('ccName').value = '';
+      $('ccPassword').value = '';
+      $('createCreatorModal').classList.add('open');
+    });
+    $('cancelCreateCreatorBtn').addEventListener('click',
+      () => $('createCreatorModal').classList.remove('open'));
+    $('createCreatorModal').addEventListener('click', (e) => {
+      if (e.target === $('createCreatorModal')) $('createCreatorModal').classList.remove('open');
+    });
+    $('confirmCreateCreatorBtn').addEventListener('click', async () => {
+      const email = $('ccEmail').value.trim();
+      const name = $('ccName').value.trim();
+      const password = $('ccPassword').value;
+      if (!email) { toast('Email is required', true); return; }
+      const btn = $('confirmCreateCreatorBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="loader"></span> Creating…';
+      try {
+        const call = httpsCallable(functions, 'adminCreateCreator');
+        const res = await call({ email, name, password: password || undefined });
+        $('createCreatorModal').classList.remove('open');
+        toast(res.data && res.data.createdUser
+          ? 'Creator created — test account spun up too.'
+          : 'Creator created.');
+        loadCreators();
+      } catch (e) {
+        console.error(e);
+        toast(e.message || 'Could not create creator', true);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Create creator';
+      }
+    });
+    $('pendingCalloutBtn').addEventListener('click', () => {
+      // Jump to Applications tab + Pending filter
+      const appsTab = document.querySelector('.tab-btn[data-tab="applications"]');
+      if (appsTab) appsTab.click();
+      $('statusFilter').value = 'new';
+      currentStatusFilter = 'new';
+      loadApplications();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+    $('creatorSearch').addEventListener('input', renderCreatorsTable);
+    $('statusFilter').addEventListener('change', (e) => {
+      currentStatusFilter = e.target.value;
+      loadApplications();
+    });
+
+    // Tabs
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => {
+          b.classList.remove('active');
+          b.style.color = 'var(--text-muted)';
+          b.style.borderBottomColor = 'transparent';
+          b.style.fontWeight = '400';
+        });
+        btn.classList.add('active');
+        btn.style.color = 'var(--primary)';
+        btn.style.borderBottomColor = 'var(--primary)';
+        btn.style.fontWeight = '600';
+
+        document.querySelectorAll('.tab-panel').forEach(p => p.hidden = true);
+        $('tab' + btn.dataset.tab.charAt(0).toUpperCase() + btn.dataset.tab.slice(1)).hidden = false;
+        if (btn.dataset.tab === 'creators') loadCreators();
+        if (btn.dataset.tab === 'taxes') loadTaxesView();
+        if (btn.dataset.tab === 'suggestions') loadSuggestions();
+        if (btn.dataset.tab === 'brief') loadBriefHistory();
+        if (btn.dataset.tab === 'recipes') loadRecipesView();
+      });
+    });
+
+    // Recipes tab — admin-only insight into where recipes come from.
+    $('refreshRecipesBtn').addEventListener('click', loadRecipesView);
+
+    async function loadRecipesView() {
+      const body = $('recipesByCreatorBody');
+      body.innerHTML = `<tr><td colspan="5" style="padding: 48px; text-align: center; color: var(--text-muted);"><div class="loader"></div> Loading recipe stats…</td></tr>`;
+      try {
+        // Pull every meal doc and every creator doc so we can group + label.
+        // For now this is acceptable since the meal collection is small.
+        // Once it scales we'd want a server-side aggregation (Cloud
+        // Function or scheduled rollup into a stats doc).
+        const [mealsSnap, creatorsSnap] = await Promise.all([
+          getDocs(collection(db, 'meal')),
+          getDocs(collection(db, 'creators')),
+        ]);
+
+        const creatorById = new Map();
+        creatorsSnap.forEach((d) => {
+          creatorById.set(d.id, d.data());
+        });
+
+        const totals = { scan: 0, url: 0, manual: 0 };
+        const byCreator = new Map(); // creator_ref doc id -> { name, scan, url, manual }
+        const noCreator = { name: '(no creator_ref — likely mobile/consumer)', scan: 0, url: 0, manual: 0 };
+
+        mealsSnap.forEach((d) => {
+          const data = d.data();
+          const src = data.source;
+          const bucket = src === 'creator_web_ocr' ? 'scan'
+            : src === 'creator_web_url' ? 'url'
+            : 'manual';
+          totals[bucket]++;
+
+          // Bucket per creator (or no_creator pile).
+          const creatorRef = data.creator_ref;
+          if (creatorRef && typeof creatorRef.id === 'string') {
+            const cid = creatorRef.id;
+            if (!byCreator.has(cid)) {
+              const c = creatorById.get(cid);
+              byCreator.set(cid, {
+                name: c?.name || c?.display_name || c?.code || `(creator ${cid.slice(0, 8)})`,
+                scan: 0, url: 0, manual: 0,
+              });
+            }
+            byCreator.get(cid)[bucket]++;
+          } else {
+            noCreator[bucket]++;
+          }
+        });
+
+        const total = totals.scan + totals.url + totals.manual;
+        $('rTotal').textContent = total;
+        $('rScan').textContent = totals.scan;
+        $('rUrl').textContent = totals.url;
+        $('rManual').textContent = totals.manual;
+
+        // Build sorted creator rows (descending by total).
+        const rows = Array.from(byCreator.values())
+          .map((c) => ({ ...c, total: c.scan + c.url + c.manual }))
+          .filter((c) => c.total > 0)
+          .sort((a, b) => b.total - a.total);
+
+        const noCreatorTotal = noCreator.scan + noCreator.url + noCreator.manual;
+        if (noCreatorTotal > 0) {
+          rows.push({ ...noCreator, total: noCreatorTotal });
+        }
+
+        if (rows.length === 0) {
+          body.innerHTML = `<tr><td colspan="5" style="padding: 48px; text-align: center; color: var(--text-muted);">No recipes in the database yet.</td></tr>`;
+          return;
+        }
+
+        body.innerHTML = rows.map((r) => `
+          <tr>
+            <td style="padding: 12px 14px; border-bottom: 1px solid var(--border); ${r.name.startsWith('(') ? 'color: var(--text-muted); font-style: italic;' : ''}">
+              ${escapeHtml(r.name)}
+            </td>
+            <td style="padding: 12px 14px; border-bottom: 1px solid var(--border); text-align: right; font-variant-numeric: tabular-nums; font-weight: 600;">${r.total}</td>
+            <td style="padding: 12px 14px; border-bottom: 1px solid var(--border); text-align: right; font-variant-numeric: tabular-nums; color: ${r.scan > 0 ? 'var(--text)' : 'var(--text-muted)'};">${r.scan}</td>
+            <td style="padding: 12px 14px; border-bottom: 1px solid var(--border); text-align: right; font-variant-numeric: tabular-nums; color: ${r.url > 0 ? 'var(--text)' : 'var(--text-muted)'};">${r.url}</td>
+            <td style="padding: 12px 14px; border-bottom: 1px solid var(--border); text-align: right; font-variant-numeric: tabular-nums; color: ${r.manual > 0 ? 'var(--text)' : 'var(--text-muted)'};">${r.manual}</td>
+          </tr>
+        `).join('');
+      } catch (e) {
+        console.error('loadRecipesView failed', e);
+        body.innerHTML = `<tr><td colspan="5" style="padding: 48px; text-align: center; color: var(--danger);">Failed to load: ${escapeHtml(e.message)}</td></tr>`;
+      }
+    }
+
+    // Monthly creator brief
+    $('briefTestBtn').addEventListener('click', () => sendBrief(true));
+    $('briefSendBtn').addEventListener('click', () => sendBrief(false));
+    $('refreshBriefsBtn').addEventListener('click', loadBriefHistory);
+
+    async function sendBrief(testOnly) {
+      const subject = $('briefSubject').value.trim();
+      const body = $('briefBody').value.trim();
+      const ctaText = $('briefCtaText').value.trim();
+      const ctaUrl = $('briefCtaUrl').value.trim();
+      if (!subject || !body) { alert('Subject + body are required.'); return; }
+      if (!testOnly && !confirm('Send this to EVERY active creator? This cannot be undone.')) return;
+      const btn = testOnly ? $('briefTestBtn') : $('briefSendBtn');
+      const orig = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = testOnly ? 'Sending test…' : 'Sending…';
+      try {
+        const call = httpsCallable(functions, 'sendCreatorBrief');
+        const { data } = await call({
+          subject, body,
+          cta_text: ctaText || null,
+          cta_url: ctaUrl || null,
+          test_only: testOnly,
+        });
+        alert(`${testOnly ? 'Test ' : ''}Sent ${data.sent}, failed ${data.failed}.`);
+        if (!testOnly) {
+          $('briefSubject').value = '';
+          $('briefBody').value = '';
+          $('briefCtaText').value = '';
+          $('briefCtaUrl').value = '';
+          loadBriefHistory();
+        }
+      } catch (e) {
+        alert('Send failed: ' + (e.message || 'unknown'));
+      } finally {
+        btn.disabled = false;
+        btn.textContent = orig;
+      }
+    }
+
+    async function loadBriefHistory() {
+      const wrap = $('briefHistory');
+      wrap.innerHTML = `<div class="empty" style="color: var(--text-muted); font-size: 14px;">Loading…</div>`;
+      try {
+        const snap = await getDocs(query(collection(db, 'creator_briefs'), orderBy('sent_at', 'desc')));
+        if (snap.empty) {
+          wrap.innerHTML = `<div class="empty" style="color: var(--text-muted); font-size: 14px;">None yet.</div>`;
+          return;
+        }
+        wrap.innerHTML = snap.docs.slice(0, 12).map(d => {
+          const b = d.data();
+          const when = b.sent_at?.toDate?.()?.toLocaleDateString() || '';
+          return `<div style="background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 14px;">
+            <div style="min-width: 0;"><strong>${escapeHtml(b.subject || '')}</strong><div style="font-size: 12px; color: var(--text-muted);">${when} · sent ${b.sent_count}${b.failed_count ? ` · failed ${b.failed_count}` : ''}</div></div>
+          </div>`;
+        }).join('');
+      } catch (e) {
+        wrap.innerHTML = `<div class="empty" style="color: var(--danger); font-size: 14px;">Couldn't load history: ${escapeHtml(e.message || '')}</div>`;
+      }
+    }
+
+    // Suggestions
+    let suggestionStatusFilter = 'new';
+    $('suggestionStatusFilter').addEventListener('change', (e) => {
+      suggestionStatusFilter = e.target.value;
+      loadSuggestions();
+    });
+    $('refreshSuggestionsBtn').addEventListener('click', loadSuggestions);
+
+    async function loadSuggestionBadge() {
+      try {
+        // Simple single-field query, no composite index needed.
+        const snap = await getDocs(query(
+          collection(db, 'creator_suggestions'),
+          where('status', '==', 'new')
+        ));
+        const badge = $('suggestionBadge');
+        if (snap.size > 0) {
+          badge.textContent = snap.size;
+          badge.hidden = false;
+        } else {
+          badge.hidden = true;
+        }
+      } catch (e) {
+        // This shouldn't need an index (single field), but if Firestore
+        // ever complains we just hide the badge silently.
+        console.warn('suggestion badge failed:', e.message);
+        $('suggestionBadge').hidden = true;
+      }
+    }
+
+    async function loadSuggestions() {
+      const list = $('suggestionList');
+      list.innerHTML = `<div class="empty"><div class="loader"></div> Loading…</div>`;
+      try {
+        // Filter client-side to avoid needing a composite index.
+        // Volume here is tiny — single-digit/dozens of suggestions.
+        const snap = await getDocs(query(collection(db, 'creator_suggestions'), orderBy('created_at', 'desc')));
+        const docs = suggestionStatusFilter === 'all'
+          ? snap.docs
+          : snap.docs.filter(d => (d.data().status || 'new') === suggestionStatusFilter);
+        if (docs.length === 0) {
+          list.innerHTML = `<div class="empty" style="padding: 40px; text-align: center; color: var(--text-muted);">No ${suggestionStatusFilter === 'all' ? '' : suggestionStatusFilter + ' '}suggestions.</div>`;
+          return;
+        }
+        const labelFor = {
+          idea: 'Feature idea', bug: 'Bug', ux: 'UX', other: 'Other',
+        };
+        list.innerHTML = docs.map(d => {
+          const s = d.data();
+          const when = s.created_at?.toDate?.()?.toLocaleString() || '';
+          const cat = labelFor[s.category] || 'Other';
+          const catColor = s.category === 'bug' ? 'var(--danger)' : s.category === 'ux' ? '#F59E0B' : 'var(--primary)';
+          const authorLine = s.anonymous
+            ? `<span style="color: var(--text-muted); font-style: italic;">Anonymous</span>`
+            : `<strong>${escapeHtml(s.creator_name || '—')}</strong> · <code style="font-size: 12px; background: #F3F4F6; padding: 1px 6px; border-radius: 4px;">${escapeHtml(s.creator_code || '—')}</code>${s.creator_email ? ` · <a href="mailto:${escapeHtml(s.creator_email)}" style="color: var(--text-muted); font-size: 13px;">${escapeHtml(s.creator_email)}</a>` : ''}`;
+          const statusPill = `<span style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; background: #F3F4F6; color: var(--text-muted); padding: 3px 8px; border-radius: 999px;">${s.status || 'new'}</span>`;
+          return `
+            <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px;">
+              <div style="display: flex; justify-content: space-between; gap: 12px; margin-bottom: 8px; flex-wrap: wrap;">
+                <div style="display: flex; gap: 8px; align-items: center;">
+                  <span style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; background: color-mix(in srgb, ${catColor} 14%, white); color: ${catColor}; padding: 3px 8px; border-radius: 999px; font-weight: 600;">${cat}</span>
+                  ${statusPill}
+                </div>
+                <div style="font-size: 12px; color: var(--text-muted);">${when}</div>
+              </div>
+              <div style="font-size: 14px; color: var(--text-muted); margin-bottom: 8px;">${authorLine}</div>
+              <div style="white-space: pre-wrap; font-size: 15px; line-height: 1.55;">${escapeHtml(s.body || '')}</div>
+              <div style="display: flex; gap: 8px; margin-top: 12px;">
+                ${s.status !== 'seen' ? `<button class="btn ghost" data-mark-seen="${d.id}" style="font-size: 13px; padding: 6px 12px;">Mark as seen</button>` : ''}
+                ${s.status !== 'closed' ? `<button class="btn ghost" data-mark-closed="${d.id}" style="font-size: 13px; padding: 6px 12px;">Close</button>` : ''}
+              </div>
+            </div>
+          `;
+        }).join('');
+        list.querySelectorAll('[data-mark-seen]').forEach(btn => {
+          btn.addEventListener('click', () => updateSuggestionStatus(btn.dataset.markSeen, 'seen'));
+        });
+        list.querySelectorAll('[data-mark-closed]').forEach(btn => {
+          btn.addEventListener('click', () => updateSuggestionStatus(btn.dataset.markClosed, 'closed'));
+        });
+      } catch (e) {
+        list.innerHTML = `<div class="empty" style="color: var(--danger); padding: 20px;">Could not load: ${escapeHtml(e.message || 'unknown')}</div>`;
+      }
+    }
+
+    async function updateSuggestionStatus(id, status) {
+      try {
+        await updateDoc(doc(db, 'creator_suggestions', id), { status });
+        loadSuggestions();
+        loadSuggestionBadge();
+      } catch (e) {
+        alert('Could not update: ' + (e.message || 'unknown'));
+      }
+    }
+
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, (c) => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      }[c]));
+    }
+
+    async function loadTaxesView() {
+      const body = $('taxesBody');
+      const year = new Date().getFullYear();
+      $('taxYearLabel').textContent = `${year}`;
+      body.innerHTML = `<tr><td colspan="5" style="padding: 48px; text-align: center; color: var(--text-muted);"><div class="loader"></div> Loading…</td></tr>`;
+      try {
+        const creatorsSnap = await getDocs(collection(db, 'creators'));
+        const creators = creatorsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+        const yearStart = new Date(year, 0, 1);
+        const ytdByCreator = new Map();
+        try {
+          const earningsSnap = await getDocs(query(collection(db, 'creator_earnings'), where('payout_status', '==', 'paid')));
+          for (const d of earningsSnap.docs) {
+            const e = d.data();
+            if (e.environment === 'Sandbox') continue;
+            const paidAt = e.paid_at?.toDate?.();
+            if (!paidAt || paidAt < yearStart) continue;
+            const path = e.creator_ref?.path || '';
+            ytdByCreator.set(path, (ytdByCreator.get(path) || 0) + (e.creator_cents || 0));
+          }
+        } catch (err) { console.warn('YTD calc failed:', err.message); }
+
+        const enriched = creators.map(c => ({
+          ...c,
+          _ytd: ytdByCreator.get(`creators/${c.id}`) || 0,
+        }));
+        enriched.sort((a, b) => b._ytd - a._ytd);
+
+        // Summary stats — always shown, even when no paid yet
+        const requireCount = enriched.filter(c => c._ytd >= 60000).length;
+        const totalPaid = enriched.reduce((s, c) => s + c._ytd, 0);
+        const onboardedCount = enriched.filter(c => c.stripe_connect_onboarded).length;
+        $('taxCreatorsCount').textContent = enriched.length;
+        $('taxRequireCount').textContent = requireCount;
+        $('taxTotalPaid').textContent = `$${(totalPaid / 100).toFixed(2)}`;
+        $('taxOnboardedCount').textContent = `${onboardedCount} / ${enriched.length}`;
+
+        if (enriched.length === 0 || enriched.every(c => c._ytd === 0)) {
+          body.innerHTML = `<tr><td colspan="5" style="padding: 48px; text-align: center; color: var(--text-muted);">
+            <div style="font-size: 36px; margin-bottom: 10px;">📋</div>
+            <div style="font-weight: 600; margin-bottom: 4px;">No paid earnings in ${year} yet</div>
+            <div style="font-size: 13px;">This view fills in as Stripe transfers complete on the 1st of each month.<br>Year-end (December), Stripe will issue 1099s automatically for any creator paid ≥ $600.</div>
+          </td></tr>`;
+          return;
+        }
+
+        body.innerHTML = enriched.map(c => {
+          const requires1099 = c._ytd >= 60000; // $600.00 in cents
+          const tax = requires1099
+            ? `<span style="color: ${c.stripe_connect_onboarded ? 'var(--success)' : '#F59E0B'}; font-weight: 600;">${c.stripe_connect_onboarded ? '✓ Stripe handles' : '⚠ Stripe pending'}</span>`
+            : `<span style="color: var(--text-muted);">Below $600 threshold</span>`;
+          return `
+            <tr style="border-bottom: 1px solid var(--border);">
+              <td style="padding: 14px;">
+                <div style="font-weight: 600;">${esc(c.name || '(no name)')}</div>
+                <div style="font-size: 12px; color: var(--text-muted);">${esc(c.niche || '')}</div>
+              </td>
+              <td style="padding: 14px;"><code style="background: #F3F4F6; padding: 3px 8px; border-radius: 4px; font-size: 13px; color: var(--primary-dark); font-weight: 600;">${esc(c.code || '—')}</code></td>
+              <td style="padding: 14px; text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; color: ${requires1099 ? 'var(--text)' : 'var(--text-muted)'};">$${(c._ytd / 100).toFixed(2)}</td>
+              <td style="padding: 14px;">${tax}</td>
+              <td style="padding: 14px;">${
+                c.stripe_connect_account_id
+                  ? `<a href="https://dashboard.stripe.com/connect/accounts/${esc(c.stripe_connect_account_id)}" target="_blank" rel="noopener" style="color: var(--primary); text-decoration: none;">Open ↗</a>`
+                  : '<span style="color: var(--text-muted);">—</span>'
+              }</td>
+            </tr>`;
+        }).join('');
+      } catch (e) {
+        console.error(e);
+        body.innerHTML = `<tr><td colspan="5" style="padding: 48px; text-align: center; color: var(--danger);">Couldn't load: ${esc(e.message)}</td></tr>`;
+      }
+    }
+
+    async function loadCreators() {
+      const body = $('creatorsBody');
+      body.innerHTML = `<tr><td colspan="6" style="padding: 48px; text-align: center; color: var(--text-muted);"><div class="loader"></div> Loading…</td></tr>`;
+      try {
+        const creatorsSnap = await getDocs(query(collection(db, 'creators'), where('is_active', '==', true)));
+        const creators = creatorsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+        creators.sort((a, b) => (b.follower_count || 0) - (a.follower_count || 0));
+
+        let earningsByCreator = new Map();
+        try {
+          const earningsSnap = await getDocs(collection(db, 'creator_earnings'));
+          for (const d of earningsSnap.docs) {
+            const e = d.data();
+            if (e.environment === 'Sandbox') continue;
+            if (e.kind !== 'earning' && e.kind !== 'clawback') continue;
+            const path = e.creator_ref?.path || '';
+            earningsByCreator.set(path, (earningsByCreator.get(path) || 0) + (e.creator_cents || 0));
+          }
+        } catch (err) {
+          console.warn('Could not load creator_earnings aggregate:', err.message);
+        }
+
+        // Stamp lifetime onto each row so the filter can sort on it later.
+        for (const c of creators) {
+          c._lifetime = earningsByCreator.get(`creators/${c.id}`) || c.lifetime_payout_cents || 0;
+        }
+        currentCreators = creators;
+        renderCreatorsTable();
+      } catch (e) {
+        console.error(e);
+        body.innerHTML = `<tr><td colspan="6" style="padding: 48px; text-align: center; color: var(--danger);">Couldn't load creators: ${esc(e.message)}</td></tr>`;
+      }
+    }
+
+    function renderCreatorsTable() {
+      const body = $('creatorsBody');
+      const q = ($('creatorSearch')?.value || '').trim().toLowerCase();
+      const filtered = q
+        ? currentCreators.filter(c =>
+            (c.name || '').toLowerCase().includes(q) ||
+            (c.code || '').toLowerCase().includes(q) ||
+            (c.niche || '').toLowerCase().includes(q)
+          )
+        : currentCreators;
+
+      if (filtered.length === 0) {
+        const msg = currentCreators.length === 0 ? 'No active creators yet.' : `No creators match "${esc(q)}".`;
+        body.innerHTML = `<tr><td colspan="6" style="padding: 48px; text-align: center; color: var(--text-muted);">${msg}</td></tr>`;
+        return;
+      }
+
+      body.innerHTML = filtered.map(c => {
+        const followers = c.follower_count || 0;
+        const subs = c.subscriber_count || 0;
+        const lifetime = c._lifetime || 0;
+        const stripeStatus = c.stripe_connect_onboarded
+          ? '<span style="color: var(--success); font-weight: 600;">✓ Connected</span>'
+          : c.stripe_connect_account_id
+            ? '<span style="color: #F59E0B;">Pending</span>'
+            : '<span style="color: var(--text-muted);">Not connected</span>';
+        const inactiveTag = c.is_active === false ? ' <span style="font-size: 10px; background: #FEE2E2; color: #991B1B; padding: 2px 6px; border-radius: 999px; margin-left: 4px; font-weight: 600;">INACTIVE</span>' : '';
+        return `
+          <tr data-id="${c.id}" style="border-bottom: 1px solid var(--border); cursor: pointer;">
+            <td style="padding: 14px;">
+              <div style="font-weight: 600; color: var(--text);">${esc(c.name || '(no name)')}${inactiveTag}</div>
+              <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">${esc(c.niche || '')}</div>
+            </td>
+            <td style="padding: 14px;"><code style="background: #F3F4F6; padding: 3px 8px; border-radius: 4px; font-size: 13px; color: var(--primary-dark); font-weight: 600; letter-spacing: 1px;">${esc(c.code || '—')}</code></td>
+            <td style="padding: 14px; text-align: right; font-variant-numeric: tabular-nums;">${followers}</td>
+            <td style="padding: 14px; text-align: right; font-variant-numeric: tabular-nums;">${subs}</td>
+            <td style="padding: 14px; text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; color: var(--text);">$${(lifetime / 100).toFixed(2)}</td>
+            <td style="padding: 14px;">${stripeStatus}</td>
+          </tr>`;
+      }).join('');
+
+      body.querySelectorAll('tr[data-id]').forEach(row => {
+        row.addEventListener('mouseover', () => row.style.background = '#F9FAFB');
+        row.addEventListener('mouseout', () => row.style.background = '');
+        row.addEventListener('click', () => {
+          const c = currentCreators.find(x => x.id === row.dataset.id);
+          if (c) openCreatorDetail(c);
+        });
+      });
+    }
+
+    let activeCreatorDetail = null;
+    function openCreatorDetail(c) {
+      activeCreatorDetail = c;
+      $('cdName').textContent = c.name || '(no name)';
+      $('cdCode').textContent = c.code || '(not set)';
+      const status = c.is_active === false ? 'inactive' : 'active';
+      $('cdStatusPill').textContent = status.toUpperCase();
+      $('cdStatusPill').className = 'app-status-pill ' + (status === 'active' ? 'approved' : 'rejected');
+
+      const stripeLine = c.stripe_connect_onboarded
+        ? `<span style="color: var(--success);">✓ Connected</span> <span style="color: var(--text-muted);">· ${esc(c.stripe_connect_account_id || '')}</span>`
+        : c.stripe_connect_account_id
+          ? `<span style="color: #F59E0B;">Pending</span> <span style="color: var(--text-muted);">· ${esc(c.stripe_connect_account_id)}</span>`
+          : `<span style="color: var(--text-muted);">Not connected</span>`;
+
+      const rows = [
+        ['Niche', esc(c.niche || '—')],
+        ['Bio', c.bio ? `<div class="pitch-pre">${esc(c.bio)}</div>` : '<span style="color: var(--text-muted);">—</span>'],
+        ['Followers', c.follower_count || 0],
+        ['Subscribers', c.subscriber_count || 0],
+        ['Lifetime earnings', `$${((c._lifetime || 0) / 100).toFixed(2)}`],
+        ['Last payout', c.last_payout_cents ? `$${(c.last_payout_cents / 100).toFixed(2)} on ${c.last_payout_at?.toDate?.()?.toLocaleDateString() || '—'}` : '<span style="color: var(--text-muted);">None yet</span>'],
+        ['Stripe Connect', stripeLine],
+        ['Rev share', typeof c.rev_share === 'number'
+          ? `<strong>${Math.round(c.rev_share * 100)}%</strong> <span style="color: var(--text-muted);">· custom</span>`
+          : `<strong>50%</strong> <span style="color: var(--text-muted);">· default</span>`],
+        ['Theme color', c.theme_primary ? `<span style="display:inline-block;width:14px;height:14px;border-radius:3px;background:${esc(c.theme_primary)};vertical-align:-3px;margin-right:6px;"></span><code>${esc(c.theme_primary)}</code>` : '<span style="color: var(--text-muted);">default</span>'],
+        ['Created', c.created_at?.toDate?.()?.toLocaleString() || '—'],
+        ['Creator doc', `<code style="font-size: 11px; color: var(--text-muted);">${c.id}</code>`],
+      ];
+      $('cdFields').innerHTML = rows.map(([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`).join('');
+
+      // Stripe link goes to that specific Connect account if known
+      $('cdStripeLink').href = c.stripe_connect_account_id
+        ? `https://dashboard.stripe.com/connect/accounts/${c.stripe_connect_account_id}`
+        : 'https://dashboard.stripe.com/connect/accounts';
+
+      // Toggle active button
+      const isActive = c.is_active !== false;
+      const tBtn = $('cdToggleActiveBtn');
+      tBtn.textContent = isActive ? 'Deactivate' : 'Reactivate';
+      tBtn.className = isActive ? 'btn ghost' : 'btn';
+      tBtn.onclick = () => handleToggleActive(c, !isActive);
+
+      $('cdEditCodeBtn').onclick = () => openEditCodeModal(c);
+      $('cdEditRevShareBtn').onclick = () => openEditRevShareModal(c);
+      $('cdResendWelcomeBtn').onclick = () => handleResendWelcome(c);
+
+      show('viewCreatorDetail');
+    }
+    $('backToCreatorsBtn').addEventListener('click', () => show('viewList'));
+
+    async function handleToggleActive(c, makeActive) {
+      const btn = $('cdToggleActiveBtn');
+      const orig = btn.textContent;
+      btn.disabled = true; btn.textContent = makeActive ? 'Reactivating…' : 'Deactivating…';
+      try {
+        const call = httpsCallable(functions, 'adminSetCreatorActive');
+        await call({ creatorId: c.id, isActive: makeActive });
+        toast(makeActive ? 'Creator reactivated.' : 'Creator deactivated.');
+        c.is_active = makeActive;
+        openCreatorDetail(c);
+        loadCreators();
+        loadAggregateMetrics();
+      } catch (e) {
+        toast('Failed: ' + (e.message || 'unknown error'), true);
+      } finally {
+        btn.disabled = false; btn.textContent = orig;
+      }
+    }
+
+    async function handleResendWelcome(c) {
+      const btn = $('cdResendWelcomeBtn');
+      const orig = btn.textContent;
+      btn.disabled = true; btn.textContent = 'Sending…';
+      try {
+        const call = httpsCallable(functions, 'adminResendWelcomeEmail');
+        const { data } = await call({ creatorId: c.id });
+        toast(`Welcome email resent to ${data.email}.`);
+      } catch (e) {
+        toast('Resend failed: ' + (e.message || 'unknown error'), true);
+      } finally {
+        btn.disabled = false; btn.textContent = orig;
+      }
+    }
+
+    function openEditCodeModal(c) {
+      $('editCodeInput').value = c.code || '';
+      $('editCodeModal').classList.add('open');
+      $('editCodeInput').focus();
+      $('confirmEditCodeBtn').onclick = () => handleEditCode(c);
+    }
+    $('cancelEditCodeBtn').addEventListener('click', () => $('editCodeModal').classList.remove('open'));
+    $('cancelEditRevShareBtn').addEventListener('click', () => $('editRevShareModal').classList.remove('open'));
+
+    function openEditRevShareModal(c) {
+      const currentPct = typeof c.rev_share === 'number'
+        ? Math.round(c.rev_share * 100)
+        : 50;
+      $('editRevShareInput').value = currentPct;
+      $('editRevShareModal').classList.add('open');
+      $('editRevShareInput').focus();
+      $('editRevShareInput').select();
+      $('confirmEditRevShareBtn').onclick = () => handleEditRevShare(c);
+    }
+
+    async function handleEditRevShare(c) {
+      const pct = Number($('editRevShareInput').value);
+      if (!Number.isFinite(pct) || pct < 1 || pct > 100) {
+        toast('Rev share must be a whole number 1–100.', true);
+        return;
+      }
+      const v = pct / 100;
+      const btn = $('confirmEditRevShareBtn');
+      btn.disabled = true; btn.textContent = 'Saving…';
+      try {
+        const call = httpsCallable(functions, 'adminSetCreatorRevShare');
+        await call({ creatorId: c.id, revShare: v });
+        toast(`Rev share set to ${pct}%.`);
+        c.rev_share = v;
+        $('editRevShareModal').classList.remove('open');
+        openCreatorDetail(c);
+      } catch (e) {
+        toast('Failed: ' + (e.message || 'unknown error'), true);
+      } finally {
+        btn.disabled = false; btn.textContent = 'Save rev share';
+      }
+    }
+    $('editCodeInput')?.addEventListener('input', (e) => {
+      e.target.value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+    });
+
+    async function handleEditCode(c) {
+      const newCode = $('editCodeInput').value.trim().toUpperCase();
+      if (!/^[A-Z0-9]{3,20}$/.test(newCode)) {
+        toast('Code must be 3-20 letters or numbers.', true); return;
+      }
+      const btn = $('confirmEditCodeBtn');
+      btn.disabled = true; btn.textContent = 'Saving…';
+      try {
+        const call = httpsCallable(functions, 'adminUpdateCreatorCode');
+        await call({ creatorId: c.id, code: newCode });
+        toast(`Code changed to ${newCode}.`);
+        c.code = newCode;
+        $('editCodeModal').classList.remove('open');
+        openCreatorDetail(c);
+        loadCreators();
+        loadAggregateMetrics();
+      } catch (e) {
+        toast('Failed: ' + (e.message || 'unknown error'), true);
+      } finally {
+        btn.disabled = false; btn.textContent = 'Save new code';
+      }
+    }
+    $('backBtn').addEventListener('click', () => {
+      // Clear the deep-link query param when going back to list
+      history.replaceState({}, '', '/admin/');
+      show('viewList');
+    });
+
+    async function loadApplications() {
+      const list = $('appList');
+      list.innerHTML = '<div class="empty"><div class="loader"></div> Loading…</div>';
+      try {
+        let q;
+        if (currentStatusFilter === 'all') {
+          q = query(collection(db, 'creator_applications'), orderBy('submitted_at', 'desc'));
+        } else {
+          q = query(collection(db, 'creator_applications'), where('status', '==', currentStatusFilter), orderBy('submitted_at', 'desc'));
+        }
+        const snap = await getDocs(q);
+        currentApplications = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        renderList();
+
+        // Deep link: ?app=<id>  → open detail immediately
+        const targetId = new URLSearchParams(location.search).get('app');
+        if (targetId) {
+          const match = currentApplications.find(a => a.id === targetId);
+          if (match) openDetail(match);
+          else await openDetailById(targetId); // may be in a different status filter
+        }
+      } catch (e) {
+        console.error(e);
+        list.innerHTML = `<div class="empty">Couldn't load applications: ${esc(e.message)}</div>`;
+      }
+    }
+
+    function renderList() {
+      const list = $('appList');
+      if (currentApplications.length === 0) {
+        list.innerHTML = `<div class="empty">No ${currentStatusFilter === 'all' ? '' : currentStatusFilter} applications.</div>`;
+        return;
+      }
+      list.innerHTML = currentApplications.map(a => {
+        const when = a.submitted_at?.toDate?.()
+          ? a.submitted_at.toDate().toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })
+          : '';
+        const statusClass = a.status === 'approved' ? 'approved' : a.status === 'rejected' ? 'rejected' : '';
+        return `
+          <div class="app-card" data-id="${a.id}">
+            <div class="app-main">
+              <div class="app-name">${esc(a.name || '(no name)')}</div>
+              <div class="app-meta">${esc(a.primary_handle || '')} · ${esc(a.audience_size || '')} · ${when}</div>
+            </div>
+            <span class="app-status-pill ${statusClass}">${esc(a.status || 'new')}</span>
+          </div>`;
+      }).join('');
+      list.querySelectorAll('.app-card').forEach(card => {
+        card.addEventListener('click', () => {
+          const appData = currentApplications.find(a => a.id === card.dataset.id);
+          if (appData) openDetail(appData);
+        });
+      });
+    }
+
+    async function openDetailById(id) {
+      try {
+        const ref = doc(db, 'creator_applications', id);
+        const snap = await getDoc(ref);
+        if (snap.exists()) openDetail({ id: snap.id, ...snap.data() });
+      } catch (e) { /* silent; may not exist */ }
+    }
+
+    function openDetail(appData) {
+      history.replaceState({}, '', `/admin/?app=${appData.id}`);
+      $('detailName').textContent = appData.name || '(no name)';
+      $('detailHandle').textContent = appData.primary_handle || '—';
+      const status = appData.status || 'new';
+      $('detailStatus').textContent = status;
+      $('detailStatus').className = 'app-status-pill ' + (status === 'approved' ? 'approved' : status === 'rejected' ? 'rejected' : '');
+
+      const rows = [
+        ['Email', appData.email ? `<a href="mailto:${esc(appData.email)}">${esc(appData.email)}</a>` : '—'],
+        ['Handle', esc(appData.primary_handle || '—')],
+      ];
+      if (appData.other_handles) rows.push(['Other', esc(appData.other_handles)]);
+      rows.push(['Audience', esc(appData.audience_size || '—')]);
+      rows.push(['Website', appData.website ? `<a href="${esc(appData.website)}" target="_blank" rel="noopener">${esc(appData.website)}</a>` : '<span style="color: var(--text-muted);">(none)</span>']);
+      rows.push(['Community', esc(appData.audience_description || '—')]);
+      rows.push(['Pitch', `<div class="pitch-pre">${esc(appData.pitch || '—')}</div>`]);
+      if (appData.submitted_at?.toDate) {
+        rows.push(['Submitted', appData.submitted_at.toDate().toLocaleString()]);
+      }
+      if (appData.status === 'approved') {
+        rows.push(['Approved at', appData.approved_at?.toDate?.()?.toLocaleString() || '—']);
+        rows.push(['Assigned code', `<code>${esc(appData.assigned_code || '—')}</code>`]);
+      }
+      if (appData.status === 'rejected' && appData.rejection_reason) {
+        rows.push(['Reason', esc(appData.rejection_reason)]);
+      }
+
+      $('detailFields').innerHTML = rows.map(([k, v]) =>
+        `<tr><td>${k}</td><td>${v}</td></tr>`
+      ).join('');
+
+      // Actions
+      const actions = $('detailActions');
+      if (status === 'new') {
+        actions.innerHTML = `
+          <div style="flex: 1; font-size: 13px; color: var(--text-muted); align-self: center;">
+            The creator will pick their own code after their first sign-in.
+          </div>
+          <button class="btn danger" id="rejectBtn">Reject</button>
+          <button class="btn" id="approveBtn">Approve creator</button>`;
+        $('approveBtn').addEventListener('click', () => handleApprove(appData));
+        $('rejectBtn').addEventListener('click', () => openRejectModal(appData));
+      } else {
+        actions.innerHTML = `<div style="color: var(--text-muted); font-size: 13px; align-self: center;">Application already ${status}.</div>`;
+      }
+
+      show('viewDetail');
+    }
+
+    async function handleApprove(appData, overwriteExisting = false) {
+      const btn = $('approveBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="loader"></span> Approving…';
+      try {
+        const call = httpsCallable(functions, 'approveCreatorApplication');
+        await call({ applicationId: appData.id, overwriteExisting });
+        toast(`Approved — welcome email sent. They'll pick their code on first sign-in.`);
+        // Reload and return to list
+        await loadApplications();
+        loadAggregateMetrics();
+        history.replaceState({}, '', '/admin/');
+        show('viewList');
+      } catch (e) {
+        console.error(e);
+        const details = e.details || {};
+        // 409 already-exists with structured details → offer inline recovery
+        if (e.code === 'functions/already-exists' && details.existingCreatorId) {
+          $('overwriteModalBody').innerHTML =
+            `This applicant's user already has a creator profile ` +
+            `(code <code style="background: #F3F4F6; padding: 2px 6px; border-radius: 4px;">${esc(details.existingCode || '(not set)')}</code>). ` +
+            `<br><br>Replacing deletes the existing creator doc, earnings, and daily snapshots, then approves this application fresh.`;
+          $('overwriteModal').classList.add('open');
+          $('confirmOverwriteBtn').onclick = async () => {
+            $('overwriteModal').classList.remove('open');
+            await handleApprove(appData, true);
+          };
+        } else {
+          toast('Approve failed: ' + (e.message || 'unknown error'), true);
+        }
+        btn.disabled = false;
+        btn.textContent = 'Approve creator';
+      }
+    }
+    $('cancelOverwriteBtn').addEventListener('click', () => $('overwriteModal').classList.remove('open'));
+    $('overwriteModal').addEventListener('click', (e) => {
+      if (e.target === $('overwriteModal')) $('overwriteModal').classList.remove('open');
+    });
+
+    function openRejectModal(appData) {
+      $('rejectReason').value = '';
+      $('rejectModal').classList.add('open');
+      $('confirmRejectBtn').onclick = () => handleReject(appData);
+    }
+    $('cancelRejectBtn').addEventListener('click', () => $('rejectModal').classList.remove('open'));
+    $('rejectModal').addEventListener('click', (e) => {
+      if (e.target === $('rejectModal')) $('rejectModal').classList.remove('open');
+    });
+
+    async function handleReject(appData) {
+      const btn = $('confirmRejectBtn');
+      const reason = $('rejectReason').value.trim();
+      btn.disabled = true;
+      btn.innerHTML = '<span class="loader"></span> Rejecting…';
+      try {
+        const call = httpsCallable(functions, 'rejectCreatorApplication');
+        await call({ applicationId: appData.id, reason: reason || null });
+        toast('Application rejected.');
+        $('rejectModal').classList.remove('open');
+        await loadApplications();
+        loadAggregateMetrics();
+        history.replaceState({}, '', '/admin/');
+        show('viewList');
+      } catch (e) {
+        console.error(e);
+        toast('Reject failed: ' + (e.message || 'unknown error'), true);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Reject application';
+      }
+    }
+  </script>
+</body>
+</html>

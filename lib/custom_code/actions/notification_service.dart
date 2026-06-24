@@ -39,13 +39,38 @@ class NotificationService {
   static const String keyQuietHoursEnd = 'notification_quiet_end';
 
   /// Initialize the notification service
+  // Cached timezone diagnostic info — populated by initialize(). Surfaced
+  // via debugNotificationState() so a developer can read it from the in-app
+  // notification settings page. Used to diagnose the silent-scheduling-fail
+  // class of bugs where zonedSchedule queues against the wrong wall clock
+  // because FlutterTimezone returned a name tz.getLocation can't parse.
+  String? _lastTimezoneName;
+  String? _lastTimezoneError;
+
   Future<void> initialize() async {
     if (_isInitialized) return;
 
-    // Initialize timezone
+    // Initialize timezone. Wrapped because FlutterTimezone has been seen to
+    // return non-IANA names ("EST" instead of "America/New_York") on some
+    // iOS versions — tz.getLocation throws on those and the prior code let
+    // the exception kill initialize(), which meant zonedSchedule was being
+    // called against UTC for some users. Now we fall back to UTC explicitly
+    // and surface the error via debugNotificationState() for diagnosis.
     tz_data.initializeTimeZones();
-    final String timeZoneName = await FlutterTimezone.getLocalTimezone();
-    tz.setLocalLocation(tz.getLocation(timeZoneName));
+    try {
+      final String timeZoneName = await FlutterTimezone.getLocalTimezone();
+      _lastTimezoneName = timeZoneName;
+      tz.setLocalLocation(tz.getLocation(timeZoneName));
+      debugPrint('[notif-service] timezone set to $timeZoneName');
+    } catch (e) {
+      _lastTimezoneError = e.toString();
+      _lastTimezoneName ??= 'UTC (fallback)';
+      debugPrint(
+        '[notif-service] failed to set timezone, falling back to UTC. '
+        'Scheduled notifications may fire at wrong wall-clock time. Error: $e',
+      );
+      // tz.local stays at default UTC. Better than crashing init.
+    }
 
     // Android initialization
     const AndroidInitializationSettings androidSettings =
@@ -278,8 +303,8 @@ class NotificationService {
       learningNotificationId + notificationId,
       '📚 Learning Time for $childName!',
       taskName,
-      tz.TZDateTime.from(scheduledTime, tz.local),
-      const NotificationDetails(
+      _toUtcTzDateTime(scheduledTime),
+      NotificationDetails(
         android: AndroidNotificationDetails(
           learningChannelId,
           'Learning Reminders',
@@ -334,8 +359,49 @@ class NotificationService {
       calendarNotificationId + notificationId,
       '📅 Coming Up',
       '$eventName in $minutesBefore minutes',
-      tz.TZDateTime.from(reminderTime, tz.local),
-      const NotificationDetails(
+      _toUtcTzDateTime(reminderTime),
+      NotificationDetails(
+        android: AndroidNotificationDetails(
+          calendarChannelId,
+          'Calendar Reminders',
+          channelDescription: 'Event and task reminders',
+          importance: Importance.high,
+          priority: Priority.high,
+          icon: '@mipmap/ic_launcher',
+        ),
+        iOS: const DarwinNotificationDetails(
+          presentAlert: true,
+          presentBadge: true,
+          presentSound: true,
+        ),
+      ),
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+      payload: 'calendar:$eventId',
+    );
+  }
+
+  /// Schedule a calendar notification at a specific absolute time.
+  /// Used for morning briefs and immediate fallbacks. Lower-level than
+  /// scheduleCalendarReminder, which always computes fireAt from minutesBefore.
+  Future<void> scheduleCalendarAt({
+    required int notificationId,
+    required String title,
+    required String body,
+    required DateTime fireAt,
+    String? eventId,
+  }) async {
+    if (!await _isSettingEnabled(keyCalendarRemindersEnabled)) return;
+    if (fireAt.isBefore(DateTime.now())) return;
+    if (await _isInQuietHours(fireAt)) return;
+
+    await _notifications.zonedSchedule(
+      calendarNotificationId + notificationId,
+      title,
+      body,
+      _toUtcTzDateTime(fireAt),
+      NotificationDetails(
         android: AndroidNotificationDetails(
           calendarChannelId,
           'Calendar Reminders',
@@ -360,6 +426,140 @@ class NotificationService {
   /// Cancel a specific calendar reminder
   Future<void> cancelCalendarReminder(int notificationId) async {
     await _notifications.cancel(calendarNotificationId + notificationId);
+  }
+
+  /// Schedule a full set of reminders for an event:
+  ///   1. 15 minutes before (the standard "leaving soon" ping)
+  ///   2. 8 AM the day of the event (a morning brief so users see what's
+  ///      coming when they wake up)
+  ///   3. A fallback ping ~2 minutes from now IF both of the above are
+  ///      already in the past at schedule time (e.g., user is creating an
+  ///      event at 4:00 PM for 4:10 PM — 15-min-before is gone, 8 AM is
+  ///      gone). Without this, tight-timing events fire zero reminders.
+  ///
+  /// Each variant uses a different notification id derived from the base
+  /// [notificationId] so cancelEventReminders can clean them up later.
+  Future<void> scheduleEventReminders({
+    required int notificationId,
+    required String eventName,
+    required DateTime eventTime,
+    String? eventId,
+  }) async {
+    if (!await _isSettingEnabled(keyCalendarRemindersEnabled)) return;
+    final now = DateTime.now();
+
+    bool scheduledBefore = false;
+    bool scheduledMorning = false;
+
+    // 1) 15 minutes before
+    final beforeAt = eventTime.subtract(const Duration(minutes: 15));
+    if (beforeAt.isAfter(now) && !(await _isInQuietHours(beforeAt))) {
+      await scheduleCalendarAt(
+        notificationId: notificationId,
+        title: '📅 Coming Up',
+        body: '$eventName in 15 minutes',
+        fireAt: beforeAt,
+        eventId: eventId,
+      );
+      scheduledBefore = true;
+    }
+
+    // 2) 8 AM morning brief on the event date. Skip if morning has passed
+    //    OR if 8 AM is within 15 minutes of the event (would feel redundant).
+    final morningAt = DateTime(eventTime.year, eventTime.month, eventTime.day, 8, 0);
+    if (morningAt.isAfter(now) &&
+        morningAt.isBefore(eventTime.subtract(const Duration(minutes: 15))) &&
+        !(await _isInQuietHours(morningAt))) {
+      await scheduleCalendarAt(
+        notificationId: _eventMorningId(notificationId),
+        title: '☀️ Today on your calendar',
+        body: '$eventName at ${_formatEventTime(eventTime)}',
+        fireAt: morningAt,
+        eventId: eventId,
+      );
+      scheduledMorning = true;
+    }
+
+    // 3) Fallback. Only if neither above is scheduled AND event is still
+    //    in the future. Picks ~2 min from now to give the OS time to
+    //    register without the event firing first.
+    if (!scheduledBefore && !scheduledMorning && eventTime.isAfter(now)) {
+      final fallbackAt = now.add(const Duration(minutes: 2));
+      if (fallbackAt.isBefore(eventTime) && !(await _isInQuietHours(fallbackAt))) {
+        final minutesUntil = eventTime.difference(now).inMinutes;
+        await scheduleCalendarAt(
+          notificationId: _eventFallbackId(notificationId),
+          title: '📅 Coming Up Soon',
+          body: '$eventName in about $minutesUntil minutes',
+          fireAt: fallbackAt,
+          eventId: eventId,
+        );
+      }
+    }
+  }
+
+  /// Cancel all three reminder variants for an event. Safe to call even if
+  /// nothing was scheduled — the plugin no-ops on unknown ids.
+  Future<void> cancelEventReminders(int notificationId) async {
+    await cancelCalendarReminder(notificationId);
+    await cancelCalendarReminder(_eventMorningId(notificationId));
+    await cancelCalendarReminder(_eventFallbackId(notificationId));
+  }
+
+  // Notification-id variants for the three reminder kinds, all derived from
+  // the same base id so cancelEventReminders can find them.
+  int _eventMorningId(int baseId) => (baseId ^ 0x40000000) & 0x7fffffff;
+  int _eventFallbackId(int baseId) => (baseId ^ 0x20000000) & 0x7fffffff;
+
+  // Convert a Dart DateTime (system-local) to a TZDateTime in UTC by routing
+  // through DateTime.toUtc(). This bypasses the tz.local global, which has
+  // been observed silently wrong on some iOS devices when FlutterTimezone
+  // returns a name the tz package can't resolve. Same absolute instant
+  // either way, but this version doesn't depend on tz.local being correct.
+  tz.TZDateTime _toUtcTzDateTime(DateTime dt) {
+    final utc = dt.toUtc();
+    return tz.TZDateTime.utc(
+      utc.year,
+      utc.month,
+      utc.day,
+      utc.hour,
+      utc.minute,
+      utc.second,
+    );
+  }
+
+  /// Snapshot of notification-service runtime state for in-app debugging.
+  /// Surfaced by the Notification Settings debug view so we can diagnose
+  /// silent-scheduling-fail bugs without needing device logs.
+  Future<Map<String, dynamic>> debugNotificationState() async {
+    final pending = await _notifications.pendingNotificationRequests();
+    return {
+      'initialized': _isInitialized,
+      'timezone_name': _lastTimezoneName ?? '(unset)',
+      'timezone_error': _lastTimezoneError ?? '(none)',
+      'tz_local_now': tz.TZDateTime.now(tz.local).toString(),
+      'dart_now_local': DateTime.now().toString(),
+      'dart_now_utc': DateTime.now().toUtc().toString(),
+      'pending_count': pending.length,
+      'pending': pending
+          .take(20)
+          .map((p) => {
+                'id': p.id,
+                'title': p.title,
+                'body': p.body,
+                'payload': p.payload,
+              })
+          .toList(),
+    };
+  }
+
+  // Format a DateTime as "h:mm a" (e.g. "10:30 AM") for inclusion in
+  // notification bodies. Avoids pulling in intl just for one call.
+  String _formatEventTime(DateTime t) {
+    final hour12 = t.hour == 0 ? 12 : (t.hour > 12 ? t.hour - 12 : t.hour);
+    final minute = t.minute.toString().padLeft(2, '0');
+    final ampm = t.hour < 12 ? 'AM' : 'PM';
+    return '$hour12:$minute $ampm';
   }
 
   // ============ ENCOURAGEMENT ============
@@ -510,35 +710,30 @@ class NotificationService {
     }
   }
 
-  /// Get next instance of a specific time (for daily scheduling)
+  /// Get next instance of a specific time (for daily scheduling). Uses Dart's
+  /// system-local DateTime then routes through _toUtcTzDateTime so we don't
+  /// depend on tz.local being correctly set.
   tz.TZDateTime _nextInstanceOfTime(int hour, int minute) {
-    final now = tz.TZDateTime.now(tz.local);
-    var scheduled = tz.TZDateTime(tz.local, now.year, now.month, now.day, hour, minute);
-
+    final now = DateTime.now();
+    var scheduled = DateTime(now.year, now.month, now.day, hour, minute);
     if (scheduled.isBefore(now)) {
       scheduled = scheduled.add(const Duration(days: 1));
     }
-
-    return scheduled;
+    return _toUtcTzDateTime(scheduled);
   }
 
   /// Get next instance of a specific weekday and time (for weekly scheduling).
   /// [weekday] uses Dart convention: 1=Monday ... 7=Sunday.
   tz.TZDateTime _nextInstanceOfDayAndTime(int weekday, int hour, int minute) {
-    final now = tz.TZDateTime.now(tz.local);
-    var scheduled = tz.TZDateTime(tz.local, now.year, now.month, now.day, hour, minute);
-
-    // Advance to the target weekday
+    final now = DateTime.now();
+    var scheduled = DateTime(now.year, now.month, now.day, hour, minute);
     while (scheduled.weekday != weekday) {
       scheduled = scheduled.add(const Duration(days: 1));
     }
-
-    // If that day/time has already passed this week, move to next week
     if (scheduled.isBefore(now)) {
       scheduled = scheduled.add(const Duration(days: 7));
     }
-
-    return scheduled;
+    return _toUtcTzDateTime(scheduled);
   }
 
   /// Cancel all notifications

@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Brand Kit — MomRise</title>
+  <meta name="description" content="Logo, colors, fonts, and voice for creators promoting MomRise.">
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #52A097;
+      --primary-dark: #2A6F67;
+      --accent: #EE8B60;
+      --warm-start: #D7F2EB;
+      --warm-end:   #FFE9E1;
+      --surface: #FFFFFF;
+      --text: #1F2937;
+      --text-muted: #6B7280;
+      --border: #E5E7EB;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; padding: 0;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      color: var(--text);
+      background: linear-gradient(180deg, var(--warm-start) 0%, var(--warm-end) 100%);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+    a { color: var(--primary-dark); }
+    main { max-width: 760px; margin: 0 auto; padding: 36px 20px 80px; }
+
+    .back {
+      display: inline-block;
+      margin-bottom: 14px;
+      font-size: 13px;
+      color: var(--primary-dark);
+      text-decoration: none;
+    }
+    .back:hover { text-decoration: underline; }
+
+    .hero { text-align: center; margin-bottom: 28px; }
+    .hero .pill {
+      display: inline-block;
+      background: color-mix(in srgb, var(--primary) 12%, var(--surface));
+      color: var(--primary-dark);
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 12px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .hero h1 {
+      margin: 0 0 6px;
+      font-size: 32px;
+      letter-spacing: -0.01em;
+    }
+    .hero p {
+      margin: 0 auto;
+      max-width: 500px;
+      color: var(--text-muted);
+      font-size: 15px;
+    }
+
+    .card {
+      background: var(--surface);
+      border-radius: 16px;
+      padding: 28px 30px;
+      box-shadow: 0 12px 32px -18px rgba(0,0,0,0.18);
+      margin-bottom: 20px;
+    }
+    @media (max-width: 520px) { .card { padding: 22px 20px; } }
+
+    h2 {
+      font-size: 20px;
+      letter-spacing: -0.005em;
+      margin: 0 0 14px;
+    }
+    p { margin: 0 0 12px; font-size: 15px; }
+    .muted { color: var(--text-muted); font-size: 13px; }
+
+    /* Logo section */
+    .logo-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 16px 0 8px;
+    }
+    @media (max-width: 540px) { .logo-row { grid-template-columns: 1fr; } }
+    .logo-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      text-align: center;
+    }
+    .logo-card.dark { background: var(--primary-dark); border-color: var(--primary-dark); }
+    .logo-card img { width: 96px; height: 96px; border-radius: 22px; }
+    .logo-card .name {
+      margin-top: 14px;
+      font-weight: 700;
+      font-size: 17px;
+      letter-spacing: -0.01em;
+      color: var(--text);
+    }
+    .logo-card.dark .name { color: white; }
+    .logo-card .label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+    .logo-card.dark .label { color: rgba(255,255,255,0.7); }
+
+    .logo-split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      margin-top: 14px;
+    }
+    .logo-split-light, .logo-split-dark {
+      padding: 32px 20px 16px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+    .logo-split-light { background: var(--surface); }
+    .logo-split-dark { background: var(--primary-dark); }
+    .logo-split-light img, .logo-split-dark img {
+      width: 96px; height: 96px; border-radius: 22px;
+    }
+    .logo-split-tag {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .lockup {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .lockup img { width: 36px; height: 36px; border-radius: 8px; }
+    .lockup .word {
+      font-weight: 800;
+      font-size: 20px;
+      letter-spacing: -0.01em;
+    }
+
+    .download-row {
+      display: flex; gap: 10px; flex-wrap: wrap;
+      margin-top: 14px;
+    }
+    .download {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--primary);
+      color: white;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .download:hover { background: var(--primary-dark); color: white; }
+
+    /* Color section */
+    .colors {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      margin: 14px 0 0;
+    }
+    .color {
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: transform 100ms;
+    }
+    .color:hover { transform: translateY(-2px); }
+    .color-swatch {
+      aspect-ratio: 1.4;
+      display: flex;
+      align-items: flex-end;
+      justify-content: flex-end;
+      padding: 8px 10px;
+    }
+    .copy-pill {
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(4px);
+      color: var(--text);
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+    .color.copied .copy-pill {
+      background: var(--primary-dark);
+      color: white;
+    }
+    .color-body {
+      background: var(--surface);
+      padding: 10px 12px;
+    }
+    .color-name { font-weight: 700; font-size: 13px; color: var(--text); }
+    .color-hex { font-size: 11px; color: var(--text-muted); font-family: 'SF Mono', Consolas, monospace; margin-top: 2px; }
+
+    .gradient-swatch {
+      aspect-ratio: 5.5;
+      background: linear-gradient(135deg, var(--warm-start) 0%, var(--warm-end) 100%);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--primary-dark);
+      letter-spacing: 0.02em;
+      margin-top: 14px;
+    }
+
+    /* Typography section */
+    .type-spec {
+      background: color-mix(in srgb, var(--primary) 5%, var(--surface));
+      border: 1px solid color-mix(in srgb, var(--primary) 18%, var(--border));
+      border-radius: 12px;
+      padding: 18px 20px;
+      margin-top: 14px;
+    }
+    .type-spec .display {
+      font-family: 'Andika', 'Andika New Basic', sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--primary-dark);
+      letter-spacing: -0.01em;
+      margin-bottom: 4px;
+    }
+    .type-spec .display-sub {
+      font-family: 'Andika', 'Andika New Basic', sans-serif;
+      font-size: 16px;
+      color: var(--text);
+    }
+    .type-spec .meta {
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px dashed var(--border);
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    .type-spec .meta code {
+      background: var(--surface);
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-family: 'SF Mono', Consolas, monospace;
+      font-size: 12px;
+      color: var(--primary-dark);
+    }
+
+    /* Voice / POV */
+    .pov {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      border-radius: 12px;
+      padding: 22px 24px;
+      text-align: center;
+      margin: 14px 0 8px;
+    }
+    .pov .text {
+      font-size: 19px;
+      font-weight: 600;
+      font-style: italic;
+      letter-spacing: -0.005em;
+      margin-bottom: 6px;
+    }
+    .pov .sub {
+      font-size: 13px;
+      opacity: 0.92;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    /* Do/don't */
+    .do-dont {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin: 18px 0 0;
+    }
+    @media (max-width: 520px) { .do-dont { grid-template-columns: 1fr; } }
+    .do, .dont {
+      border-radius: 12px;
+      padding: 16px 18px;
+      font-size: 14px;
+    }
+    .do {
+      background: color-mix(in srgb, #10B981 10%, var(--surface));
+      border: 1px solid color-mix(in srgb, #10B981 30%, var(--border));
+    }
+    .dont {
+      background: color-mix(in srgb, #EF4444 8%, var(--surface));
+      border: 1px solid color-mix(in srgb, #EF4444 28%, var(--border));
+    }
+    .do strong, .dont strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .do strong { color: #10B981; }
+    .dont strong { color: #EF4444; }
+    .do ul, .dont ul { margin: 0; padding-left: 18px; }
+    .do li, .dont li { font-size: 13.5px; margin-bottom: 5px; }
+
+    /* Code overlay sample */
+    .code-overlay-demo {
+      display: inline-block;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(8px);
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-family: 'SF Mono', Consolas, monospace;
+      font-weight: 800;
+      font-size: 18px;
+      letter-spacing: 4px;
+      color: var(--primary-dark);
+      box-shadow: 0 4px 14px -2px rgba(0,0,0,0.18);
+      margin: 12px 0;
+    }
+
+    /* Creator tab nav — matches the dashboard nav so users keep the
+       same top-strip / bottom-bar across sub-pages. Dashboard-only views
+       (Home/Recipes/Plans/Stats) link back to /creator/ with a hash so
+       the dashboard can route to the right tab. */
+    .creator-nav {
+      display: flex;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      max-width: 100%;
+    }
+    .nav-tab {
+      flex: 1;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      background: none; border: none;
+      padding: 14px 8px;
+      font: inherit; font-size: 14px; font-weight: 600;
+      color: var(--text-muted);
+      border-bottom: 2px solid transparent;
+      transition: color 120ms, border-color 120ms, background 120ms;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .nav-tab .nav-tab-icon { font-size: 16px; display: inline-flex; align-items: center; }
+    .nav-tab .nav-tab-icon svg { width: 18px; height: 18px; }
+    .nav-tab:hover { color: var(--text); background: color-mix(in srgb, var(--primary) 5%, var(--surface)); }
+    .nav-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+    @media (max-width: 720px) {
+      .creator-nav {
+        position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
+        border-bottom: none; border-top: 1px solid var(--border);
+        padding-bottom: env(safe-area-inset-bottom);
+        box-shadow: 0 -4px 16px -8px rgba(0,0,0,0.16);
+        overflow-x: auto;
+      }
+      .nav-tab {
+        flex: 0 0 auto; min-width: 72px;
+        flex-direction: column; gap: 3px;
+        padding: 8px 4px 6px; font-size: 11px;
+        border-bottom: none; border-top: 2px solid transparent;
+      }
+      .nav-tab .nav-tab-icon svg { width: 22px; height: 22px; }
+      .nav-tab.active { border-top-color: var(--primary); }
+      main { padding-bottom: 88px; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="creator-nav">
+    <a class="nav-tab" href="/creator/#home">
+      <span class="nav-tab-icon" data-icon="home"></span><span class="nav-tab-label">Home</span>
+    </a>
+    <a class="nav-tab" href="/creator/playbook/">
+      <span class="nav-tab-icon" data-icon="clipboard"></span><span class="nav-tab-label">Playbook</span>
+    </a>
+    <a class="nav-tab active" href="/creator/brand-kit/">
+      <span class="nav-tab-icon" data-icon="grid"></span><span class="nav-tab-label">Brand kit</span>
+    </a>
+    <a class="nav-tab" href="/creator/library/">
+      <span class="nav-tab-icon" data-icon="folder"></span><span class="nav-tab-label">Library</span>
+    </a>
+    <a class="nav-tab" href="/creator/faq/">
+      <span class="nav-tab-icon" data-icon="help"></span><span class="nav-tab-label">Cheat sheet</span>
+    </a>
+    <a class="nav-tab" href="/creator/#recipes">
+      <span class="nav-tab-icon" data-icon="camera"></span><span class="nav-tab-label">Recipes</span>
+    </a>
+    <a class="nav-tab" href="/creator/#plans">
+      <span class="nav-tab-icon" data-icon="calendar"></span><span class="nav-tab-label">Plans</span>
+    </a>
+    <a class="nav-tab" href="/creator/#stats">
+      <span class="nav-tab-icon" data-icon="chart"></span><span class="nav-tab-label">Stats</span>
+    </a>
+    <a class="nav-tab" href="/creator/#plans">
+      <span class="nav-tab-icon" data-icon="calendar"></span><span class="nav-tab-label">Plans</span>
+    </a>
+    <a class="nav-tab" href="/creator/#stats">
+      <span class="nav-tab-icon" data-icon="chart"></span><span class="nav-tab-label">Stats</span>
+    </a>
+  </nav>
+  <script>
+    // Inline icon hydration — keeps the brand-kit page standalone (no
+    // dependency on the dashboard's larger JS). Same SVG glyphs as
+    // /creator/index.html's ICON object so the nav reads identically.
+    (function () {
+      const w = (inner) => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + inner + '</svg>';
+      const ICON = {
+        home: w('<path d="M3 10.2 12 3l9 7.2V21H3z"/><path d="M9 21v-7h6v7"/>'),
+        camera: w('<path d="M3 8a2 2 0 0 1 2-2h2.5L9 4h6l1.5 2H19a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><circle cx="12" cy="13" r="3.5"/>'),
+        calendar: w('<rect x="3" y="4.5" width="18" height="16.5" rx="2"/><path d="M3 9.5h18M8 3v3M16 3v3"/>'),
+        chart: w('<path d="M6 21v-7M12 21V3M18 21v-10"/>'),
+        grid: w('<rect x="3.5" y="3.5" width="7" height="7" rx="1"/><rect x="13.5" y="3.5" width="7" height="7" rx="1"/><rect x="13.5" y="13.5" width="7" height="7" rx="1"/><rect x="3.5" y="13.5" width="7" height="7" rx="1"/>'),
+        clipboard: w('<rect x="8" y="3" width="8" height="4" rx="1.5"/><path d="M16 5h2a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2"/>'),
+        folder: w('<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>'),
+        help: w('<circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 0 1 5 0c0 1.5-2.5 2-2.5 4"/><circle cx="12" cy="17" r="0.5" fill="currentColor"/>'),
+      };
+      document.querySelectorAll('[data-icon]').forEach((el) => {
+        if (ICON[el.dataset.icon]) el.innerHTML = ICON[el.dataset.icon];
+      });
+    })();
+  </script>
+  <main>
+    <a class="back" href="/creator/playbook/">← Back to playbook</a>
+
+    <div class="hero">
+      <span class="pill">For creators</span>
+      <h1>MomRise Brand Kit</h1>
+      <p>Logo, colors, fonts, and voice. Use these so your MomRise mentions look like part of the same world — without losing your own voice.</p>
+    </div>
+
+    <!-- Logo -->
+    <div class="card">
+      <h2>Logo</h2>
+      <p>Use the rounded-square icon. Don't crop it, don't change the corner radius, don't put it inside another shape.</p>
+      <div class="logo-split">
+        <div class="logo-split-light">
+          <img src="/app_store_assets/brand/momrise-icon-square-512.png" alt="MomRise icon on light">
+          <div class="logo-split-tag">on light</div>
+        </div>
+        <div class="logo-split-dark">
+          <img src="/app_store_assets/brand/momrise-icon-square-512.png" alt="MomRise icon on dark">
+          <div class="logo-split-tag" style="color: rgba(255,255,255,0.7);">on dark</div>
+        </div>
+      </div>
+      <p class="muted" style="text-align: center; margin: 14px 0 8px;">Same file in both. The icon works on any background — don't recolor it or remove the rounded corners.</p>
+      <div class="download-row" style="justify-content: center;">
+        <a class="download" href="/app_store_assets/brand/momrise-icon-square-512.png" download="momrise-icon.png">↓ Icon PNG · 512px</a>
+      </div>
+      <p style="margin-top: 18px;">When you need it inline with text — like in a Story or sign-off:</p>
+      <div class="logo-card" style="text-align: left;">
+        <div class="lockup">
+          <img src="/app_store_assets/brand/momrise-icon-square-512.png" alt="">
+          <span class="word">MomRise</span>
+        </div>
+        <div class="label" style="text-align: left; margin-top: 8px;">Horizontal lockup — icon + name in bold Andika</div>
+        <div class="download-row" style="margin-top: 12px;">
+          <a class="download" href="/app_store_assets/brand/momrise-icon-square-512.png" download="momrise-icon.png">↓ Icon PNG</a>
+          <a class="download" href="https://fonts.google.com/specimen/Andika" target="_blank" rel="noopener" style="background: var(--surface); color: var(--primary-dark); border: 1px solid var(--border);">↓ Andika font</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Colors -->
+    <div class="card">
+      <h2>Colors</h2>
+      <p>Tap any swatch to copy the hex code. Use teal for primary accents and the warm gradient as your background — the orange is for the rare highlight only.</p>
+      <div class="colors">
+        <div class="color" data-hex="#52A097">
+          <div class="color-swatch" style="background: #52A097;"><span class="copy-pill">Copy</span></div>
+          <div class="color-body">
+            <div class="color-name">Primary teal</div>
+            <div class="color-hex">#52A097</div>
+          </div>
+        </div>
+        <div class="color" data-hex="#2A6F67">
+          <div class="color-swatch" style="background: #2A6F67;"><span class="copy-pill" style="color:white;background:rgba(0,0,0,0.25);">Copy</span></div>
+          <div class="color-body">
+            <div class="color-name">Deep teal</div>
+            <div class="color-hex">#2A6F67</div>
+          </div>
+        </div>
+        <div class="color" data-hex="#EE8B60">
+          <div class="color-swatch" style="background: #EE8B60;"><span class="copy-pill">Copy</span></div>
+          <div class="color-body">
+            <div class="color-name">Warm accent</div>
+            <div class="color-hex">#EE8B60</div>
+          </div>
+        </div>
+        <div class="color" data-hex="#D7F2EB">
+          <div class="color-swatch" style="background: #D7F2EB;"><span class="copy-pill">Copy</span></div>
+          <div class="color-body">
+            <div class="color-name">Mint (gradient start)</div>
+            <div class="color-hex">#D7F2EB</div>
+          </div>
+        </div>
+        <div class="color" data-hex="#FFE9E1">
+          <div class="color-swatch" style="background: #FFE9E1;"><span class="copy-pill">Copy</span></div>
+          <div class="color-body">
+            <div class="color-name">Peach (gradient end)</div>
+            <div class="color-hex">#FFE9E1</div>
+          </div>
+        </div>
+        <div class="color" data-hex="#1F2937">
+          <div class="color-swatch" style="background: #1F2937;"><span class="copy-pill" style="color:white;background:rgba(255,255,255,0.2);">Copy</span></div>
+          <div class="color-body">
+            <div class="color-name">Body text</div>
+            <div class="color-hex">#1F2937</div>
+          </div>
+        </div>
+      </div>
+      <p style="margin-top: 16px;" class="muted">The signature gradient — use this as a background panel behind text:</p>
+      <div class="gradient-swatch">linear-gradient(180deg, #D7F2EB 0%, #FFE9E1 100%)</div>
+    </div>
+
+    <!-- Typography -->
+    <div class="card">
+      <h2>Typography</h2>
+      <p>MomRise uses <strong>Andika</strong> throughout. It's warm, rounded, and reads as approachable rather than corporate — that's intentional. Use it whenever you add text to a graphic, not Arial or Times.</p>
+      <div class="type-spec">
+        <div class="display">Mom's the engine.</div>
+        <div class="display-sub">She's the one we built it for.</div>
+        <div class="meta">
+          Font: <code>Andika</code> · weights <code>400</code> &amp; <code>700</code> · free on <a href="https://fonts.google.com/specimen/Andika" target="_blank" rel="noopener">Google Fonts</a>
+        </div>
+      </div>
+      <p style="margin-top: 14px;" class="muted">If Andika isn't available in your editor, fall back to <strong>Inter</strong> or your phone's default rounded sans-serif. Never use Times, Comic Sans, or anything italicized at large sizes.</p>
+    </div>
+
+    <!-- Voice -->
+    <div class="card">
+      <h2>Voice</h2>
+      <p>This is the POV you participate in — the same line that's in the playbook.</p>
+      <div class="pov">
+        <div class="text">"Mom's the engine. We're the toolkit."</div>
+        <div class="sub">She's the one we built it for. Talk to her like she's got it handled — just needs better tools.</div>
+      </div>
+      <p style="margin-top: 12px;">If a sentence sounds like it's saving her, rescuing her, or talking down to her, rewrite it. She runs the show; you're handing her a tool.</p>
+    </div>
+
+    <!-- Do / Don't -->
+    <div class="card">
+      <h2>Do / Don't</h2>
+      <p>The small calls that decide whether a graphic looks "with the brand" or just "made by someone with the colors."</p>
+      <div class="do-dont">
+        <div class="do">
+          <strong>Do</strong>
+          <ul>
+            <li>Use the warm gradient as a background panel</li>
+            <li>Andika for headlines, your normal iPhone caption for body</li>
+            <li>Code in monospace, big, with letter-spacing</li>
+            <li>Put your code where it has breathing room — not jammed into a corner</li>
+            <li>Show the actual MomRise app on screen (a real screen recording counts)</li>
+          </ul>
+        </div>
+        <div class="dont">
+          <strong>Don't</strong>
+          <ul>
+            <li>Recolor the icon or change its corner radius</li>
+            <li>Use a different gradient or substitute palette</li>
+            <li>Set MomRise in italics, all-caps, or stretched type</li>
+            <li>Put the icon inside a circle or another shape</li>
+            <li>Use stock photos of moms with kids that aren't yours</li>
+          </ul>
+        </div>
+      </div>
+
+      <p style="margin-top: 20px;" class="muted">When your code is on a graphic, it should look like this — bold, monospaced, spaced out, easy to read:</p>
+      <div class="code-overlay-demo">STONE45</div>
+    </div>
+
+    <!-- Downloads -->
+    <div class="card">
+      <h2>Downloads</h2>
+      <p>Grab what you need. More assets (screen recordings, Story stickers) drop soon — we'll email you when they're up.</p>
+      <div class="download-row">
+        <a class="download" href="/app_store_assets/brand/momrise-icon-square-512.png" download>↓ Icon · 512px PNG</a>
+        <a class="download" href="https://fonts.google.com/specimen/Andika" target="_blank" rel="noopener">↓ Andika font (Google Fonts)</a>
+      </div>
+    </div>
+
+    <div class="card" style="text-align: center;">
+      <p style="margin: 0; font-size: 13.5px; color: var(--text-muted);">Missing something? Email <a href="mailto:creators@momrise.app">creators@momrise.app</a> and we'll add it.</p>
+    </div>
+  </main>
+
+  <script>
+    document.querySelectorAll('.color').forEach(el => {
+      el.addEventListener('click', async () => {
+        const hex = el.getAttribute('data-hex');
+        try {
+          await navigator.clipboard.writeText(hex);
+          el.classList.add('copied');
+          const pill = el.querySelector('.copy-pill');
+          const orig = pill.textContent;
+          pill.textContent = 'Copied ✓';
+          setTimeout(() => {
+            el.classList.remove('copied');
+            pill.textContent = orig;
+          }, 1400);
+        } catch (_) { /* ignore */ }
+      });
+    });
+  </script>
+</body>
+</html>

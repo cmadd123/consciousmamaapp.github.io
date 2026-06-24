@@ -510,10 +510,33 @@ class FFAppState extends ChangeNotifier {
     return debugMessage;
   }
 
-  /// Add multiple ingredients from a recipe with aggregation
+  /// Add multiple ingredients from a recipe with aggregation, then run the
+  /// LLM dedup pass so synonyms ("flour" + "all-purpose flour") and unit
+  /// conversions get collapsed before the user sees the list. The local
+  /// per-add aggregation handles the easy cases; this pass catches the rest
+  /// and surfaces a `needsReview` flag on any row the LLM can't confidently
+  /// merge.
   Future<void> addIngredientsFromRecipe(List<String> ingredients) async {
     for (final ingredient in ingredients) {
       await addToUserGroceryList(ingredient);
+    }
+    await dedupeUserGroceryList();
+  }
+
+  /// Run the server-side LLM dedup pass over the current grocery list and
+  /// persist the cleaned result. Fail-open: any error leaves the list
+  /// unchanged. Safe to call repeatedly.
+  Future<void> dedupeUserGroceryList() async {
+    if (_groceryItems.isEmpty) return;
+    try {
+      final cleaned = await dedupGroceryList(_groceryItems);
+      // Guard against the helper returning the exact same list on error —
+      // identity check avoids needless notify + persist.
+      if (identical(cleaned, _groceryItems)) return;
+      _groceryItems = cleaned;
+      _persistGroceryItems();
+    } catch (e) {
+      debugPrint('dedupeUserGroceryList failed (fail-open): $e');
     }
   }
 

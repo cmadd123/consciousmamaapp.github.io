@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Become a MomRise Creator</title>
+  <meta name="description" content="Earn a percentage of every subscription you refer. Apply to join the MomRise creator program.">
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #52A097;
+      --primary-dark: #2A6F67;
+      --accent: #EE8B60;
+      --bg: #F9FAFB;
+      --surface: #FFFFFF;
+      --text: #1F2937;
+      --text-muted: #6B7280;
+      --border: #E5E7EB;
+      --danger: #EF4444;
+      --success: #10B981;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; padding: 0;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      color: var(--text);
+      background: linear-gradient(180deg, #D7F2EB 0%, #FFE9E1 100%);
+      min-height: 100vh;
+    }
+    a { color: var(--primary); }
+    main {
+      max-width: 620px; margin: 0 auto; padding: 48px 20px 60px;
+    }
+    .hero { text-align: center; margin-bottom: 32px; }
+    .hero h1 { margin: 0 0 10px; font-size: 34px; letter-spacing: -0.01em; }
+    .hero p { margin: 0 auto; max-width: 480px; color: var(--text-muted); font-size: 16px; line-height: 1.6; }
+    .hero .pill { display: inline-block; background: color-mix(in srgb, var(--primary) 12%, var(--surface)); color: var(--primary-dark); padding: 4px 12px; border-radius: 999px; font-weight: 600; font-size: 12px; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 16px; }
+    .card {
+      background: var(--surface); border-radius: 18px; padding: 28px 28px 24px;
+      box-shadow: 0 16px 40px -20px rgba(0,0,0,0.18);
+    }
+    .benefits { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 28px; }
+    .benefit { background: color-mix(in srgb, var(--primary) 5%, var(--surface)); border: 1px solid color-mix(in srgb, var(--primary) 18%, var(--border)); border-radius: 12px; padding: 14px 16px; font-size: 13px; line-height: 1.45; }
+    .benefit strong { display: block; font-size: 15px; margin-bottom: 4px; color: var(--text); }
+    form { display: flex; flex-direction: column; gap: 16px; }
+    form[hidden] { display: none; }
+    label { display: flex; flex-direction: column; gap: 6px; font-size: 13px; font-weight: 500; }
+    label .hint { font-weight: 400; color: var(--text-muted); }
+    input, textarea, select {
+      font-family: inherit; font-size: 15px; color: var(--text);
+      padding: 11px 13px; border: 1px solid var(--border); border-radius: 10px;
+      background: var(--surface); width: 100%;
+    }
+    textarea { min-height: 120px; resize: vertical; line-height: 1.5; }
+    input:focus, textarea:focus, select:focus {
+      outline: 2px solid var(--primary); outline-offset: -1px; border-color: var(--primary);
+    }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 480px) { .row { grid-template-columns: 1fr; } }
+    .btn {
+      background: var(--primary); color: white; border: none;
+      padding: 13px 20px; border-radius: 10px; font-size: 15px; font-weight: 600;
+      cursor: pointer; margin-top: 8px;
+    }
+    .btn:hover { background: var(--primary-dark); }
+    .btn:disabled { opacity: 0.7; cursor: not-allowed; }
+    .foot { text-align: center; margin-top: 20px; font-size: 13px; color: var(--text-muted); }
+    .foot a { color: inherit; text-decoration: underline; }
+    .thanks {
+      text-align: center; padding: 20px 4px 4px;
+    }
+    .thanks .check { font-size: 46px; margin-bottom: 8px; }
+    .thanks h2 { margin: 0 0 8px; font-size: 22px; }
+    .thanks p { color: var(--text-muted); margin: 0 0 4px; line-height: 1.55; }
+    .error-banner { background: color-mix(in srgb, var(--danger) 10%, var(--surface)); border: 1px solid color-mix(in srgb, var(--danger) 40%, var(--border)); color: var(--danger); padding: 10px 14px; border-radius: 8px; font-size: 13px; display: none; }
+    .error-banner.show { display: block; }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="hero">
+      <span class="pill">Creator program</span>
+      <h1>Become a MomRise creator</h1>
+      <p>Share the app with your community and earn <strong>a percentage of every subscription</strong> from anyone who joins with your code — for as long as they stay subscribed.</p>
+    </div>
+
+    <div class="card">
+      <div class="benefits">
+        <div class="benefit"><strong>Your code, your cut</strong>A percentage of every sub forever</div>
+        <div class="benefit"><strong>Real dashboard</strong>Track followers, earnings, and performance</div>
+        <div class="benefit"><strong>Paid monthly</strong>Direct deposit via Stripe on the 1st</div>
+      </div>
+
+      <div id="errorBanner" class="error-banner"></div>
+
+      <form id="applyForm">
+        <div class="row">
+          <label>Full name
+            <input type="text" name="name" required maxlength="80" autocomplete="name" placeholder="Haley Maddox">
+          </label>
+          <label>Email
+            <input type="email" name="email" required maxlength="120" autocomplete="email" placeholder="you@example.com">
+            <span class="hint">Use the exact email on your MomRise app account. If you haven't made one yet, sign up in the MomRise app first with this same email — your creator dashboard and app share one login.</span>
+          </label>
+        </div>
+        <label>Primary platform + handle
+          <input type="text" name="primary_handle" required maxlength="120" placeholder="Instagram: @haleyraisesem">
+        </label>
+        <label><span class="label-text">Other platforms <span class="hint">(optional)</span></span>
+          <input type="text" name="other_handles" maxlength="220" placeholder="TikTok: @haley · YouTube: Haley Maddox">
+        </label>
+        <div class="row">
+          <label><span class="label-text">Audience size (approx.)</span>
+            <select name="audience_size" required>
+              <option value="">Select a range…</option>
+              <option>Under 1,000</option>
+              <option>1,000 – 10,000</option>
+              <option>10,000 – 50,000</option>
+              <option>50,000 – 100,000</option>
+              <option>100,000 – 500,000</option>
+              <option>500,000+</option>
+            </select>
+          </label>
+          <label><span class="label-text">Website <span class="hint">(optional)</span></span>
+            <input type="text" name="website" maxlength="200" placeholder="momrise.app" inputmode="url" autocomplete="url">
+          </label>
+        </div>
+        <label><span class="label-text">Who's in your community? <span class="hint">(moms of toddlers, new moms, etc.)</span></span>
+          <input type="text" name="audience_description" required maxlength="160" placeholder="Moms of 0–5 year olds, focus on postpartum + routines">
+        </label>
+        <label><span class="label-text">Country <span class="hint">(for payouts via Stripe)</span></span>
+          <select name="country" required>
+            <option value="">Select…</option>
+            <option value="US" selected>United States</option>
+            <option value="CA">Canada</option>
+            <option value="GB">United Kingdom</option>
+            <option value="AU">Australia</option>
+            <option value="NZ">New Zealand</option>
+            <option value="IE">Ireland</option>
+            <option value="DE">Germany</option>
+            <option value="FR">France</option>
+            <option value="ES">Spain</option>
+            <option value="IT">Italy</option>
+            <option value="NL">Netherlands</option>
+            <option value="BE">Belgium</option>
+            <option value="SE">Sweden</option>
+            <option value="DK">Denmark</option>
+            <option value="NO">Norway</option>
+            <option value="FI">Finland</option>
+            <option value="MX">Mexico</option>
+            <option value="BR">Brazil</option>
+            <option value="OTHER">Other (we'll reach out)</option>
+          </select>
+        </label>
+        <!-- Honeypot — hidden from real users, filled by bots. We reject if non-empty. -->
+        <div style="position: absolute; left: -9999px; top: -9999px; height: 0; overflow: hidden;" aria-hidden="true">
+          <label>Don't fill this out: <input type="text" name="trap" autocomplete="off" tabindex="-1"></label>
+        </div>
+        <label>Why does MomRise resonate with you?
+          <textarea name="pitch" required maxlength="600" placeholder="Tell us a bit about why you'd recommend MomRise to your community…"></textarea>
+        </label>
+
+        <label style="flex-direction: row; align-items: flex-start; gap: 10px; font-weight: 400; font-size: 13.5px; line-height: 1.55; color: var(--text); cursor: pointer; padding: 6px 2px;">
+          <input type="checkbox" name="agreement_accepted" required style="width: 18px; height: 18px; margin-top: 2px; accent-color: var(--primary); flex-shrink: 0;">
+          <span>I agree to the <a href="/creator/agreement.html" target="_blank" rel="noopener" style="color: var(--primary); font-weight: 500;">MomRise Creator Agreement</a>.</span>
+        </label>
+
+        <button class="btn" id="submitBtn" type="submit">Submit application</button>
+        <div class="foot">We'll review and get back to you within a few days. Questions? <a href="mailto:creators@momrise.app">creators@momrise.app</a></div>
+      </form>
+
+      <div id="thanks" class="thanks" hidden>
+        <div class="check">✓</div>
+        <h2>Thanks — we got it.</h2>
+        <p>We'll review your application and follow up at the email you provided within a few days.</p>
+        <p>In the meantime, <a href="/">explore MomRise</a>.</p>
+      </div>
+    </div>
+  </main>
+
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+    import { getFirestore, collection, addDoc, serverTimestamp }
+      from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBucTVaWpYhDYScTpQ4JH9XdJgCBFmbHWk",
+      authDomain: "parenting-plus-7szrif.firebaseapp.com",
+      projectId: "parenting-plus-7szrif",
+      storageBucket: "parenting-plus-7szrif.appspot.com",
+      messagingSenderId: "67449654316",
+      appId: "1:67449654316:web:88be5e06e598d56dd55589",
+    };
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const form = document.getElementById('applyForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const errorBanner = document.getElementById('errorBanner');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorBanner.classList.remove('show');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Submitting…';
+
+      const fd = new FormData(form);
+
+      // Honeypot — only bots fill this. Pretend success so they don't retry.
+      if (fd.get('trap')?.toString().trim()) {
+        form.hidden = true;
+        document.getElementById('thanks').hidden = false;
+        return;
+      }
+
+      const payload = {
+        name: fd.get('name')?.toString().trim(),
+        email: fd.get('email')?.toString().trim().toLowerCase(),
+        primary_handle: fd.get('primary_handle')?.toString().trim(),
+        other_handles: fd.get('other_handles')?.toString().trim() || null,
+        country: fd.get('country')?.toString() || null,
+        audience_size: fd.get('audience_size')?.toString(),
+        website: (() => {
+          const raw = fd.get('website')?.toString().trim();
+          if (!raw) return null;
+          // Accept "momrise.app" as well as "https://momrise.app" —
+          // prepend https:// if the user didn't include a scheme.
+          return /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
+        })(),
+        audience_description: fd.get('audience_description')?.toString().trim(),
+        pitch: fd.get('pitch')?.toString().trim(),
+        status: 'new',
+        referrer: document.referrer || null,
+        user_agent: navigator.userAgent || null,
+        agreement_accepted: true, // checkbox is `required`, so we can't be here without it
+        agreement_version: 'v1',  // creator/agreement.html — bump when revising
+        agreement_accepted_at: serverTimestamp(),
+        submitted_at: serverTimestamp(),
+      };
+
+      try {
+        await addDoc(collection(db, 'creator_applications'), payload);
+        form.hidden = true;
+        document.getElementById('thanks').hidden = false;
+      } catch (err) {
+        console.error(err);
+        errorBanner.textContent = 'Could not submit: ' + (err.message || 'unknown error') + '. Please try again or email support@momrise.app.';
+        errorBanner.classList.add('show');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit application';
+      }
+    });
+  </script>
+</body>
+</html>

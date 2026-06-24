@@ -232,6 +232,111 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
     );
   }
 
+  // Full-width "Shop this week's groceries" CTA on the meal-plan header.
+  // Routes to AddToGroceryWidget with isWeekly=true so every meal planned
+  // for the week's ingredients are pre-aggregated into one grocery list,
+  // ready for the existing Instacart button there. The biggest single
+  // affiliate-revenue lever per the meal-planner roadmap: turns per-recipe
+  // ~$30 carts into bundled ~$150-300 weekly carts.
+  Widget _buildShopThisWeekCTA(BuildContext context) {
+    // Instacart brand colors (matched to the IC button on the grocery list
+    // page so the visual association is immediate).
+    const instacartGreen = Color(0xFF003D29);
+    const instacartCarrot = Color(0xFFFF6B00);
+
+    return InkWell(
+      onTap: () {
+        context.pushNamed(
+          AddToGroceryWidget.routeName,
+          queryParameters: {
+            'isWeekly': serializeParam(true, ParamType.bool),
+          }.withoutNulls,
+        );
+      },
+      borderRadius: BorderRadius.circular(14.0),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
+        decoration: BoxDecoration(
+          color: instacartGreen,
+          borderRadius: BorderRadius.circular(14.0),
+          boxShadow: [
+            BoxShadow(
+              color: instacartGreen.withOpacity(0.28),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  const Icon(
+                    Icons.shopping_cart_rounded,
+                    color: instacartGreen,
+                    size: 18.0,
+                  ),
+                  Positioned(
+                    top: 6,
+                    right: 7,
+                    child: Container(
+                      width: 7,
+                      height: 7,
+                      decoration: const BoxDecoration(
+                        color: instacartCarrot,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 12.0),
+            const Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Shop this week's groceries",
+                    style: TextStyle(
+                      fontFamily: 'Andika New Basic',
+                      color: Colors.white,
+                      fontSize: 15.0,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  SizedBox(height: 2.0),
+                  Text(
+                    'Send the whole list to Instacart',
+                    style: TextStyle(
+                      fontFamily: 'Andika New Basic',
+                      color: Colors.white70,
+                      fontSize: 12.0,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Icon(
+              Icons.chevron_right_rounded,
+              color: Colors.white70,
+              size: 22.0,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildBudgetBar(BuildContext context, double totalCost) {
     final budget = FFAppState().mealPlanBudget;
     final hasBudget = budget > 0;
@@ -480,20 +585,38 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
       return;
     }
 
-    // Build category lookup: meal type tag → list of recipes
+    // Build category lookup: lowercase meal type tag → list of recipes.
+    // Lowercase both at build and lookup so "Dinner" / "dinner" / "DINNER"
+    // all bucket together.
     final categoryMap = <String, List<MealRecord>>{};
     for (final meal in cookbook) {
-      final tags = meal.mealTyp.split(',').map((s) => s.trim()).where((s) => s.isNotEmpty);
+      final tags = meal.mealTyp
+          .split(',')
+          .map((s) => s.trim().toLowerCase())
+          .where((s) => s.isNotEmpty);
       for (final tag in tags) {
         categoryMap.putIfAbsent(tag, () => []).add(meal);
       }
       if (tags.isEmpty) {
-        categoryMap.putIfAbsent('Any', () => []).add(meal);
+        categoryMap.putIfAbsent('any', () => []).add(meal);
       }
     }
     // Shuffle each bucket for variety
     for (final list in categoryMap.values) {
       list.shuffle();
+    }
+
+    // Predicate: for a main-meal slot (Breakfast/Lunch/Dinner) we want an
+    // entree — a dessert tagged "Dinner" shouldn't slot in. Snack and
+    // other slots pass through without the entree filter.
+    bool passesRoleFilter(MealRecord m, String slotNameLower) {
+      final isMainMealSlot = slotNameLower == 'breakfast'
+          || slotNameLower == 'lunch'
+          || slotNameLower == 'dinner';
+      if (!isMainMealSlot) return true;
+      return m.recipeType == RecipeType.Entree
+          || m.mainOrSides == 'Main'
+          || m.mainOrSides.isEmpty;
     }
 
     // Assign meals greedily: for each empty slot, find a matching recipe within budget
@@ -504,13 +627,14 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
     final usedRecipeIds = <String>{};
 
     for (final slot in emptySlots) {
-      final slotName = slot.value.name;
+      final slotNameLower = slot.value.name.toLowerCase();
 
       // Try to find a matching recipe: prefer category match, then any
       MealRecord? pick;
-      final candidates = categoryMap[slotName] ?? categoryMap['Any'] ?? cookbook;
+      final candidates = categoryMap[slotNameLower] ?? categoryMap['any'] ?? cookbook;
       for (final meal in candidates) {
         if (usedRecipeIds.contains(meal.reference.id)) continue;
+        if (!passesRoleFilter(meal, slotNameLower)) continue;
         if (running + meal.estimatedCost > budget) {
           skippedBudget++;
           continue;
@@ -518,10 +642,11 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
         pick = meal;
         break;
       }
-      // Fallback: try any cookbook recipe not yet used
+      // Fallback: try any cookbook recipe not yet used (still respects role)
       if (pick == null) {
         for (final meal in cookbook) {
           if (usedRecipeIds.contains(meal.reference.id)) continue;
+          if (!passesRoleFilter(meal, slotNameLower)) continue;
           if (running + meal.estimatedCost > budget) {
             skippedBudget++;
             continue;
@@ -1589,67 +1714,116 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
     // Capture primary color before async gap to avoid InheritedWidget issues
     final primaryColor = FlutterFlowTheme.of(context).primary;
 
+    // Multi-select preferred weekdays. Empty = no preference.
+    final Set<int> selectedWeekdays = {};
+
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) {
         final dialogTheme = FlutterFlowTheme.of(dialogContext);
-        return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
-          title: Text(
-            'Save Day as Templates',
-            style: dialogTheme.titleMedium.override(
-              fontFamily: FFAppState().currentFontFamily,
-              letterSpacing: 0.0,
+        return StatefulBuilder(
+          builder: (ctx, setDialogState) => AlertDialog(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
+            title: Text(
+              'Save as Saved Day',
+              style: dialogTheme.titleMedium.override(
+                fontFamily: 'Andika New Basic',
+                letterSpacing: 0.0,
+              ),
             ),
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'This will save each meal as a reusable template. Give them a name prefix:',
-                style: dialogTheme.bodySmall.override(
-                  fontFamily: FFAppState().currentFontFamily,
-                  letterSpacing: 0.0,
-                  color: dialogTheme.secondaryText,
-                ),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Save this whole day as a reusable Saved Day. Give it a name:',
+                    style: dialogTheme.bodySmall.override(
+                      fontFamily: 'Andika New Basic',
+                      letterSpacing: 0.0,
+                      color: dialogTheme.secondaryText,
+                    ),
+                  ),
+                  SizedBox(height: 12.0),
+                  TextField(
+                    controller: nameController,
+                    decoration: InputDecoration(
+                      hintText: 'e.g., Monday, Taco Night',
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.0)),
+                      contentPadding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
+                    ),
+                    style: dialogTheme.bodyMedium.override(
+                      fontFamily: 'Andika New Basic',
+                      letterSpacing: 0.0,
+                    ),
+                  ),
+                  SizedBox(height: 16.0),
+                  Text(
+                    'Preferred days (optional, tap any)',
+                    style: dialogTheme.bodySmall.override(
+                      fontFamily: 'Andika New Basic',
+                      letterSpacing: 0.0,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  SizedBox(height: 4.0),
+                  Text(
+                    'Autofill will land this Saved Day on any day you pick.',
+                    style: dialogTheme.bodySmall.override(
+                      fontFamily: 'Andika New Basic',
+                      letterSpacing: 0.0,
+                      color: dialogTheme.secondaryText,
+                      fontSize: 11.0,
+                    ),
+                  ),
+                  SizedBox(height: 8.0),
+                  Wrap(
+                    spacing: 6.0,
+                    runSpacing: 6.0,
+                    children: [
+                      _weekdayChip(ctx, dialogTheme, null, 'None',
+                          selected: selectedWeekdays.isEmpty,
+                          onTap: () => setDialogState(() => selectedWeekdays.clear())),
+                      ...List.generate(7, (i) {
+                        final weekday = i + 1; // 1..7 Mon..Sun
+                        const labels = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+                        return _weekdayChip(
+                          ctx, dialogTheme, weekday, labels[i],
+                          selected: selectedWeekdays.contains(weekday),
+                          onTap: () => setDialogState(() {
+                            if (!selectedWeekdays.remove(weekday)) {
+                              selectedWeekdays.add(weekday);
+                            }
+                          }),
+                        );
+                      }),
+                    ],
+                  ),
+                  SizedBox(height: 12.0),
+                  Text(
+                    '${dayMealPlans.length} meal${dayMealPlans.length > 1 ? 's' : ''} will be saved',
+                    style: dialogTheme.bodySmall.override(
+                      fontFamily: 'Andika New Basic',
+                      letterSpacing: 0.0,
+                      color: dialogTheme.primary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 12.0),
-              TextField(
-                controller: nameController,
-                decoration: InputDecoration(
-                  hintText: 'e.g., Monday, Taco Night',
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.0)),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
-                ),
-                style: dialogTheme.bodyMedium.override(
-                  fontFamily: FFAppState().currentFontFamily,
-                  letterSpacing: 0.0,
-                ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(dialogContext, false),
+                child: Text('Cancel'),
               ),
-              const SizedBox(height: 8.0),
-              Text(
-                '${dayMealPlans.length} meal${dayMealPlans.length > 1 ? 's' : ''} will be saved',
-                style: dialogTheme.bodySmall.override(
-                  fontFamily: FFAppState().currentFontFamily,
-                  letterSpacing: 0.0,
-                  color: dialogTheme.primary,
-                  fontWeight: FontWeight.w600,
-                ),
+              ElevatedButton(
+                onPressed: () => Navigator.pop(dialogContext, true),
+                style: ElevatedButton.styleFrom(backgroundColor: dialogTheme.primary),
+                child: Text('Save'),
               ),
             ],
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(dialogContext, false),
-              child: const Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () => Navigator.pop(dialogContext, true),
-              style: ElevatedButton.styleFrom(backgroundColor: dialogTheme.primary),
-              child: const Text('Save Saved Days'),
-            ),
-          ],
         );
       },
     );
@@ -1657,12 +1831,13 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
     if (confirmed != true || !mounted) return;
 
     final prefix = nameController.text.trim();
+    final preferredWeekdays = selectedWeekdays.toList()..sort();
 
     // Show loading
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Row(children: [
         SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)),
-        SizedBox(width: 12), Text('Saving saved days...'),
+        SizedBox(width: 12), Text('Saving...'),
       ]), duration: Duration(seconds: 10)),
     );
 
@@ -1719,6 +1894,9 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
           comboData['is_leftover_snack'] = plan.isLeftoverSnack;
           comboData['day_template_group'] = groupId;
           comboData['day_template_name'] = prefix.isNotEmpty ? prefix : dayName;
+          if (preferredWeekdays.isNotEmpty) {
+            comboData['preferred_weekdays'] = preferredWeekdays;
+          }
           await MealComboRecord.collection.add(comboData);
           savedCount++;
         }
@@ -1763,8 +1941,9 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
     // Track which days to fill — all selected by default
     Set<int> selectedDays = Set<int>.from(List.generate(days.length, (i) => i));
 
-    // Track source selection
-    String selectedSource = 'all'; // 'my_recipes', 'templates', 'discover', 'all'
+    // Track source selection. "My Recipes" is the default since that's
+    // the most common flow — user has a cookbook and wants to fill from it.
+    String selectedSource = 'my_recipes'; // 'my_recipes' | 'templates' | 'saved_days'
 
     showModalBottomSheet<void>(
       context: context,
@@ -2049,21 +2228,9 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                     // Source options
                     _buildSourceOption(
                       context,
-                      icon: Icons.menu_book,
-                      title: 'All Sources',
-                      subtitle: 'Mix of your recipes and templates',
-                      value: 'all',
-                      selectedValue: selectedSource,
-                      onTap: () {
-                        setSheetState(() => selectedSource = 'all');
-                      },
-                    ),
-                    const SizedBox(height: 8.0),
-                    _buildSourceOption(
-                      context,
                       icon: Icons.restaurant,
                       title: 'My Recipes',
-                      subtitle: 'Only recipes you created',
+                      subtitle: 'Entrees from your cookbook (you add sides)',
                       value: 'my_recipes',
                       selectedValue: selectedSource,
                       onTap: () {
@@ -2082,7 +2249,58 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                         setSheetState(() => selectedSource = 'templates');
                       },
                     ),
-                    const SizedBox(height: 16.0),
+                    SizedBox(height: 8.0),
+                    _buildSourceOption(
+                      context,
+                      icon: Icons.event_repeat,
+                      title: 'Saved Days',
+                      subtitle: 'Clone a saved day into each selected date',
+                      value: 'saved_days',
+                      selectedValue: selectedSource,
+                      onTap: () {
+                        setSheetState(() => selectedSource = 'saved_days');
+                      },
+                    ),
+                    SizedBox(height: 16.0),
+
+                    // Note only shows for My Recipes — that's the only
+                    // source where autofill leaves sides to the user.
+                    // Templates and Saved Days carry their own sides, so
+                    // a tip about "you add sides" would be misleading.
+                    if (selectedSource == 'my_recipes') ...[
+                      Container(
+                        padding: EdgeInsets.all(12.0),
+                        decoration: BoxDecoration(
+                          color: FlutterFlowTheme.of(context).primary.withValues(alpha: 0.08),
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Icon(
+                              Icons.auto_awesome,
+                              size: 16.0,
+                              color: FlutterFlowTheme.of(context).primary,
+                            ),
+                            SizedBox(width: 8.0),
+                            Expanded(
+                              child: Text(
+                                'Autofill handles the tough call — your '
+                                'entrees. You know what sides your family '
+                                'loves, so those are yours to add.',
+                                style: TextStyle(
+                                  fontFamily: 'Andika New Basic',
+                                  fontSize: 12.0,
+                                  color: FlutterFlowTheme.of(context).primaryText,
+                                  height: 1.35,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 16.0),
+                    ],
 
                     // Generate button
                     SizedBox(
@@ -2090,11 +2308,18 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                       child: ElevatedButton(
                         onPressed: selectedDays.isEmpty || selectedMealTypes.isEmpty ? null : () {
                           Navigator.pop(context);
-                          _generateMealPlanFromCookbook(
-                            selectedDates: selectedDays.map((i) => days[i]).toList(),
-                            mealTypes: selectedMealTypes.toList(),
-                            source: selectedSource,
-                          );
+                          if (selectedSource == 'saved_days') {
+                            _fillFromSavedDays(
+                              selectedDates: selectedDays.map((i) => days[i]).toList(),
+                              mealTypes: selectedMealTypes.toList(),
+                            );
+                          } else {
+                            _generateMealPlanFromCookbook(
+                              selectedDates: selectedDays.map((i) => days[i]).toList(),
+                              mealTypes: selectedMealTypes.toList(),
+                              source: selectedSource,
+                            );
+                          }
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: FlutterFlowTheme.of(context).primary,
@@ -2122,6 +2347,42 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
             ],
           ),
         )),
+      ),
+    );
+  }
+
+  /// Small selectable chip for weekday picking in the Save Day dialog.
+  /// `weekday` is 1-7 (ISO: Mon=1..Sun=7) or null for the "None" chip.
+  Widget _weekdayChip(
+    BuildContext context,
+    FlutterFlowTheme theme,
+    int? weekday, // ignored for styling; just a semantic tag
+    String label, {
+    required bool selected,
+    required VoidCallback onTap,
+  }) {
+    final primary = theme.primary;
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8.0),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+        decoration: BoxDecoration(
+          color: selected ? primary : primary.withValues(alpha: 0.08),
+          borderRadius: BorderRadius.circular(8.0),
+          border: Border.all(
+            color: selected ? primary : primary.withValues(alpha: 0.3),
+          ),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontFamily: 'Andika New Basic',
+            fontSize: 12.0,
+            fontWeight: FontWeight.w600,
+            color: selected ? Colors.white : primary,
+          ),
+        ),
       ),
     );
   }
@@ -2301,7 +2562,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
     List<int>? selectedDays, // List of day indices into the displayed week
     List<DateTime>? selectedDates, // Actual dates to fill (preferred over selectedDays)
     List<MealTyp>? mealTypes,
-    String source = 'all', // 'my_recipes', 'templates', 'discover', 'all'
+    String source = 'my_recipes', // 'my_recipes' | 'templates'
   }) async {
     // Show loading indicator
     showDialog(
@@ -2494,95 +2755,39 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
               // Random selection - no weight on rating or time
               matchingRecipes.shuffle();
               recipeToUse = matchingRecipes.first;
-            } else {
-              // Try any entree recipe not yet used
-              final anyEntrees = recipes.where((r) {
-                final isEntree = r.recipeType == RecipeType.Entree ||
-                                 r.mainOrSides == 'Main' ||
-                                 (r.mainOrSides.isEmpty && r.recipeType != RecipeType.Side && r.recipeType != RecipeType.Dessert);
-                final notUsed = !usedRecipeIds.contains(r.reference.path);
-                return isEntree && notUsed;
-              }).toList();
-
-              if (anyEntrees.isNotEmpty) {
-                anyEntrees.shuffle();
-                recipeToUse = anyEntrees.first;
-              }
             }
+            // No recipe match for this meal type — leave recipeToUse null.
+            // Previously fell back to "any unused entree" which silently
+            // dropped a breakfast recipe into a dinner slot. Respect the
+            // user's tags: if nothing matches, try combos, then leave empty.
 
-            // If no unused recipe found, try combos
+            // If no unused recipe found, try combos that match this meal type.
             if (recipeToUse == null) {
               final matchingCombos = combos.where((c) =>
                   c.mealTyp?.name == mealType.name &&
                   !usedComboIds.contains(c.reference.path)).toList();
               if (matchingCombos.isNotEmpty) {
-                // Random selection - no weight on rating
                 matchingCombos.shuffle();
                 comboToUse = matchingCombos.first;
-              } else {
-                // Try any unused combo
-                final anyCombos = combos.where((c) =>
-                    !usedComboIds.contains(c.reference.path)).toList();
-                if (anyCombos.isNotEmpty) {
-                  anyCombos.shuffle();
-                  comboToUse = anyCombos.first;
-                }
               }
+              // No meal-type-matching combo either — leave slot empty
+              // instead of grabbing a combo tagged for a different meal.
             }
           }
 
           // Create the meal plan entry
           if (recipeToUse != null) {
-            // For snacks, just add the recipe directly
-            if (mealType == MealTyp.Snacks) {
-              await MealPlanRecord.collection.add({
-                'user_ref': currentUserReference,
-                'date': day,
-                'typ': mealType.name,
-                'user_firebasemeal': recipeToUse.reference,
-              });
-            } else {
-              // For main meals, create ad-hoc composition with sides and drink
-              // Find available sides that match the meal type
-              final availableSides = recipes.where((r) {
-                final isSide = r.recipeType == RecipeType.Side ||
-                               r.mainOrSides.toLowerCase() == 'side' ||
-                               r.mainOrSides.toLowerCase() == 'sides';
-                if (!isSide) return false;
-
-                // Check if the side is appropriate for this meal type
-                if (r.mealTyp.isNotEmpty) {
-                  return r.mealTyp.toLowerCase().contains(mealType.name.toLowerCase());
-                }
-                return true;
-              }).toList();
-              availableSides.shuffle();
-
-              // Pick up to 2 sides
-              final selectedSides = availableSides.take(2).map((s) => s.reference).toList();
-
-              // Find available desserts that match the meal type
-              final availableDesserts = recipes.where((r) {
-                final isDessert = r.recipeType == RecipeType.Dessert;
-                if (!isDessert) return false;
-                if (r.mealTyp.isNotEmpty) {
-                  return r.mealTyp.toLowerCase().contains(mealType.name.toLowerCase());
-                }
-                return true;
-              }).toList();
-              availableDesserts.shuffle();
-              final selectedDesserts = availableDesserts.take(1).map((d) => d.reference).toList();
-
-              // Create meal plan with ad-hoc composition (no combo record)
-              await MealPlanRecord.collection.add({
-                'user_ref': currentUserReference,
-                'date': day,
-                'typ': mealType.name,
-                'user_firebasemeal': recipeToUse.reference,
-                'side_refs': selectedSides,
-                'dessert_refs': selectedDesserts,
-              });
-            }
+            // Autofill writes the entree only. Sides + desserts are the
+            // user's call — a random-side pick is usually wrong and costs
+            // more cognitive load to evaluate/swap than adding the side
+            // manually would. User can add sides from the meal composer
+            // anytime.
+            await MealPlanRecord.collection.add({
+              'user_ref': currentUserReference,
+              'date': day,
+              'typ': mealType.name,
+              'user_firebasemeal': recipeToUse.reference,
+            });
             usedRecipeIds.add(recipeToUse.reference.path);
             mealsAdded++;
           } else if (comboToUse != null) {
@@ -2760,75 +2965,21 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
               // Random selection - no weight on rating
               matchingRecipes.shuffle();
               recipeToUse = matchingRecipes.first;
-            } else {
-              // Try any entree recipe not yet used
-              final anyEntrees = curatedRecipes.where((r) {
-                final isEntree = r.recipeType == RecipeType.Entree ||
-                                 r.mainOrSides == 'Main' ||
-                                 (r.mainOrSides.isEmpty && r.recipeType != RecipeType.Side && r.recipeType != RecipeType.Dessert);
-                final notUsed = !usedRecipeIds.contains(r.reference.path);
-                return isEntree && notUsed;
-              }).toList();
-
-              if (anyEntrees.isNotEmpty) {
-                anyEntrees.shuffle();
-                recipeToUse = anyEntrees.first;
-              }
             }
+            // If nothing matches the meal type, leave the slot unfilled.
+            // Better to show an empty slot than to silently slot a breakfast
+            // recipe into dinner because the user ran out of dinner picks.
           }
 
-          // Create the meal plan entry
+          // Create the meal plan entry. Entree only — user adds sides
+          // themselves (same reasoning as cookbook autofill above).
           if (recipeToUse != null) {
-            // For snacks, just add the recipe directly
-            if (mealType == MealTyp.Snacks) {
-              await MealPlanRecord.collection.add({
-                'user_ref': currentUserReference,
-                'date': day,
-                'typ': mealType.name,
-                'user_firebasemeal': recipeToUse.reference,
-              });
-            } else {
-              // For main meals, create ad-hoc composition with sides and drink
-              // Find available sides from curated recipes that match the meal type
-              final availableSides = curatedRecipes.where((r) {
-                final isSide = r.recipeType == RecipeType.Side ||
-                               r.mainOrSides.toLowerCase() == 'side' ||
-                               r.mainOrSides.toLowerCase() == 'sides';
-                if (!isSide) return false;
-
-                // Check if the side is appropriate for this meal type
-                if (r.mealTyp.isNotEmpty) {
-                  return r.mealTyp.toLowerCase().contains(mealType.name.toLowerCase());
-                }
-                return true;
-              }).toList();
-              availableSides.shuffle();
-
-              // Pick up to 2 sides
-              final selectedSides = availableSides.take(2).map((s) => s.reference).toList();
-
-              // Find available desserts from curated recipes
-              final availableDesserts = curatedRecipes.where((r) {
-                final isDessert = r.recipeType == RecipeType.Dessert;
-                if (!isDessert) return false;
-                if (r.mealTyp.isNotEmpty) {
-                  return r.mealTyp.toLowerCase().contains(mealType.name.toLowerCase());
-                }
-                return true;
-              }).toList();
-              availableDesserts.shuffle();
-              final selectedDesserts = availableDesserts.take(1).map((d) => d.reference).toList();
-
-              // Create meal plan with ad-hoc composition (no combo record)
-              await MealPlanRecord.collection.add({
-                'user_ref': currentUserReference,
-                'date': day,
-                'typ': mealType.name,
-                'user_firebasemeal': recipeToUse.reference,
-                'side_refs': selectedSides,
-                'dessert_refs': selectedDesserts,
-              });
-            }
+            await MealPlanRecord.collection.add({
+              'user_ref': currentUserReference,
+              'date': day,
+              'typ': mealType.name,
+              'user_firebasemeal': recipeToUse.reference,
+            });
             usedRecipeIds.add(recipeToUse.reference.path);
             mealsAdded++;
           }
@@ -3378,6 +3529,13 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                             )),
                                           ],
                                         ),
+                                        // Full-width "Shop this week's groceries" CTA.
+                                        // Routes to the grocery list with isWeekly=true so
+                                        // it auto-aggregates every meal planned for the
+                                        // week — turns per-recipe carts into bundle carts.
+                                        // Single biggest revenue lever per the roadmap.
+                                        const SizedBox(height: 14.0),
+                                        _buildShopThisWeekCTA(context),
                                       ],
                                     ),
                                   ),
@@ -4185,6 +4343,121 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
   }
 
   /// Show saved days picker for a specific date
+  /// Autofill selected dates with saved days.
+  ///
+  /// Two passes — label is authoritative:
+  ///   Pass 1: for each target date, find saved days tagged with a
+  ///           matching preferred_weekday. If any exist, pick one
+  ///           (randomly if multiple). So "Taco Tuesday" labeled for
+  ///           Monday lands on Mondays, regardless of its name.
+  ///   Pass 2: remaining dates get unlabeled saved days, shuffled.
+  ///           If no unlabeled saved days exist, falls back to the
+  ///           full pool (including labeled ones) to avoid leaving
+  ///           slots empty.
+  Future<void> _fillFromSavedDays({
+    required List<DateTime> selectedDates,
+    required List<MealTyp> mealTypes,
+  }) async {
+    if (selectedDates.isEmpty) return;
+
+    // Load + group saved days by day_template_group.
+    final allTemplates = await queryMealComboRecordOnce(
+      queryBuilder: (q) => q.where('user_ref', isEqualTo: currentUserReference),
+    );
+    final dayTemplates = allTemplates.where((t) => t.dayTemplateGroup.isNotEmpty).toList();
+
+    final Map<String, List<MealComboRecord>> grouped = {};
+    for (final t in dayTemplates) {
+      grouped.putIfAbsent(t.dayTemplateGroup, () => []).add(t);
+    }
+
+    if (grouped.isEmpty) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(
+            'No Saved Days yet. Save a good day from the planner first.',
+          )),
+        );
+      }
+      return;
+    }
+
+    // Split groups into labeled vs unlabeled pools. A saved day labeled
+    // for multiple weekdays registers under EACH weekday's pool.
+    final Map<int, List<String>> labeledByWeekday = {};
+    final List<String> unlabeledKeys = [];
+    grouped.forEach((key, templates) {
+      final weekdays = templates.first.preferredWeekdays;
+      if (weekdays.isEmpty) {
+        unlabeledKeys.add(key);
+      } else {
+        for (final w in weekdays) {
+          labeledByWeekday.putIfAbsent(w, () => []).add(key);
+        }
+      }
+    });
+
+    // Pass 1: assign labeled saved days to matching dates.
+    final assignments = <int, String>{}; // index in selectedDates → group key
+    for (var i = 0; i < selectedDates.length; i++) {
+      final weekday = selectedDates[i].weekday; // 1..7 Mon..Sun
+      final matches = labeledByWeekday[weekday];
+      if (matches != null && matches.isNotEmpty) {
+        final pick = (matches.toList()..shuffle()).first;
+        assignments[i] = pick;
+      }
+    }
+
+    // Pass 2: fill unassigned dates. Prefer unlabeled pool; fall back to
+    // full pool if no unlabeled saved days exist.
+    final unassignedIndexes = List.generate(selectedDates.length, (i) => i)
+        .where((i) => !assignments.containsKey(i)).toList();
+    final fallbackPool = unlabeledKeys.isNotEmpty
+        ? (unlabeledKeys.toList()..shuffle())
+        : (grouped.keys.toList()..shuffle());
+    for (var j = 0; j < unassignedIndexes.length; j++) {
+      if (fallbackPool.isEmpty) break;
+      assignments[unassignedIndexes[j]] = fallbackPool[j % fallbackPool.length];
+    }
+
+    final allowedTypeNames = mealTypes.map((t) => t.name).toSet();
+    int applied = 0;
+    int labeledApplied = 0;
+
+    for (var i = 0; i < selectedDates.length; i++) {
+      final day = selectedDates[i];
+      final groupKey = assignments[i];
+      if (groupKey == null) continue;
+      final templatesForGroup = grouped[groupKey]!;
+
+      final filteredTemplates = templatesForGroup.where((t) {
+        return t.mealTyp == null || allowedTypeNames.contains(t.mealTyp!.name);
+      }).toList();
+      if (filteredTemplates.isEmpty) continue;
+
+      await _applySavedDayToDate(
+        day,
+        filteredTemplates,
+        templatesForGroup.first.dayTemplateName,
+      );
+      applied += 1;
+      if (templatesForGroup.first.preferredWeekdays.contains(day.weekday)) {
+        labeledApplied += 1;
+      }
+    }
+
+    _model.mealCache.clear();
+    FFAppState().MealCashtearm = true;
+    await _refreshMealPlans();
+
+    if (mounted) {
+      final labeledNote = labeledApplied > 0
+          ? ' ($labeledApplied matched by day)'
+          : '';
+      _showSuccessDialog('days filled from your Saved Days$labeledNote', count: applied);
+    }
+  }
+
   void _showSavedDaysPickerForDate(BuildContext context, DateTime day) async {
     // Load all day templates (grouped by day_template_group)
     final allTemplates = await queryMealComboRecordOnce(

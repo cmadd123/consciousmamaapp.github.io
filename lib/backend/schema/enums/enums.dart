@@ -48,6 +48,7 @@ enum RecipeType {
   Entree,
   Side,
   Dessert,
+  Snack,
 }
 
 /// Types of shareable content

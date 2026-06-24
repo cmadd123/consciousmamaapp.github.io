@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Haley · MomRise Social</title>
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #52A097;
+      --primary-dark: #2A6F67;
+      --accent: #EE8B60;
+      --warm-start: #D7F2EB;
+      --warm-end:   #FFE9E1;
+      --surface: #FFFFFF;
+      --text: #1F2937;
+      --text-muted: #6B7280;
+      --border: #E5E7EB;
+      --success: #10B981;
+      --warning: #F59E0B;
+      --danger: #EF4444;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; padding: 0;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      color: var(--text);
+      background: linear-gradient(180deg, var(--warm-start) 0%, var(--warm-end) 100%);
+      background-attachment: fixed;
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+    button { cursor: pointer; font-family: inherit; }
+    a { color: var(--primary-dark); }
+
+    header.topbar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .brand-line { font-weight: 700; font-size: 15px; }
+    .brand-line .dot {
+      display: inline-block;
+      width: 10px; height: 10px;
+      background: var(--accent);
+      border-radius: 50%;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+    .user-chip { font-size: 13px; color: var(--text-muted); display: flex; align-items: center; gap: 10px; }
+    .user-chip button { background: none; border: none; color: var(--text-muted); padding: 4px 6px; font-size: 16px; }
+    .user-chip button:hover { color: var(--danger); }
+
+    /* Section nav (sticks below topbar) */
+    nav.section-nav {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 20px;
+      display: flex;
+      gap: 4px;
+      position: sticky;
+      top: 47px;
+      z-index: 50;
+      overflow-x: auto;
+    }
+    nav.section-nav a {
+      flex-shrink: 0;
+      padding: 11px 12px;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-decoration: none;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+    }
+    nav.section-nav a:hover { color: var(--text); }
+    nav.section-nav a.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+    .view { display: none; }
+    .view.active { display: block; }
+
+    main { max-width: 760px; margin: 0 auto; padding: 24px 20px 64px; }
+
+    /* Gate views */
+    .gate {
+      max-width: 420px; margin: 80px auto; padding: 32px; background: var(--surface);
+      border: 1px solid var(--border); border-radius: 12px; text-align: center;
+    }
+    .gate h1 { margin: 0 0 8px; font-size: 22px; }
+    .gate p { color: var(--text-muted); margin: 8px 0 20px; }
+    .gate .btn {
+      background: var(--text); color: white; padding: 12px 24px;
+      border: none; border-radius: 8px; font-weight: 600; font-size: 15px;
+    }
+
+    /* Hero */
+    h1.title {
+      font-size: 30px;
+      margin: 0 0 6px;
+      letter-spacing: -0.01em;
+    }
+    .lede { color: var(--text-muted); margin: 0 0 28px; font-size: 15px; }
+
+    /* Section headers */
+    section { margin-bottom: 44px; scroll-margin-top: 92px; }
+    section h2 {
+      font-size: 22px;
+      margin: 0 0 6px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    section h2 .budget {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--warm-start) 70%, white);
+    }
+    .section-lede { color: var(--text-muted); font-size: 14px; margin: 0 0 18px; }
+
+    /* Cards */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px 20px;
+      margin-bottom: 12px;
+    }
+    .card h3 {
+      font-size: 16px;
+      margin: 0 0 4px;
+    }
+    .card h3 .micro-budget {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-left: 8px;
+    }
+    .card p { margin: 0 0 8px; font-size: 14px; color: var(--text); }
+    .card p:last-child { margin-bottom: 0; }
+    .card ul, .card ol {
+      margin: 6px 0 8px;
+      padding-left: 22px;
+      font-size: 14px;
+    }
+    .card li { margin-bottom: 5px; }
+    .card code {
+      background: color-mix(in srgb, var(--warm-start) 50%, white);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      font-size: 13px;
+    }
+    .codeblock {
+      background: color-mix(in srgb, var(--warm-start) 35%, white);
+      border: 1px solid color-mix(in srgb, var(--primary) 22%, var(--border));
+      border-radius: 8px;
+      padding: 12px 14px;
+      margin: 10px 0;
+      font-family: 'Inter', sans-serif;
+      font-size: 13.5px;
+      line-height: 1.5;
+      color: var(--text);
+      white-space: pre-wrap;
+    }
+    .callout {
+      border-left: 4px solid var(--primary);
+      background: color-mix(in srgb, var(--warm-start) 30%, white);
+      padding: 12px 16px;
+      border-radius: 0 8px 8px 0;
+      margin: 12px 0;
+      font-size: 13.5px;
+    }
+    .callout.warn { border-left-color: var(--warning); background: color-mix(in srgb, #FEF3C7 60%, white); }
+    .callout strong { color: var(--text); }
+
+    /* Tools table */
+    table.tools {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 4px 0 0;
+      font-size: 13.5px;
+    }
+    table.tools th, table.tools td {
+      padding: 10px 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    table.tools th {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    table.tools td:first-child { font-weight: 600; }
+
+    /* Parts bin grid */
+    .parts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 10px;
+      margin: 4px 0 0;
+    }
+    .part {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+    }
+    .part .part-name { font-weight: 700; font-size: 14px; margin-bottom: 3px; }
+    .part .part-desc { font-size: 12.5px; color: var(--text-muted); line-height: 1.45; }
+
+    /* Top quick-card */
+    .quick-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px 22px;
+      margin-bottom: 32px;
+      box-shadow: 0 8px 28px -16px rgba(0,0,0,0.18);
+    }
+    .quick-card .qc-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--primary-dark);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 6px;
+    }
+    .quick-card h2 { font-size: 19px; margin: 0 0 6px; }
+    .quick-card p { font-size: 14px; color: var(--text); margin: 0 0 12px; }
+    .quick-card .qc-actions {
+      display: flex; gap: 10px; flex-wrap: wrap;
+    }
+    .qc-btn {
+      background: var(--primary);
+      color: white !important;
+      text-decoration: none !important;
+      border-radius: 8px;
+      padding: 10px 18px;
+      font-weight: 700;
+      font-size: 14px;
+    }
+    .qc-btn.secondary {
+      background: transparent;
+      color: var(--primary-dark) !important;
+      border: 1px solid var(--border);
+    }
+
+    /* One-card */
+    .one-card {
+      background: var(--surface);
+      border: 2px solid var(--primary);
+      border-radius: 14px;
+      padding: 18px 20px;
+      margin-top: 16px;
+    }
+    .one-card h2 { margin-top: 0; color: var(--primary-dark); }
+    .one-card .group-h {
+      font-weight: 700;
+      color: var(--primary-dark);
+      margin: 14px 0 4px;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .one-card ul { list-style: none; padding: 0; margin: 0; }
+    .one-card li { padding: 5px 0; font-size: 14px; display: flex; align-items: flex-start; gap: 10px; }
+    .one-card li::before { content: "☐"; color: var(--primary); font-weight: 700; flex-shrink: 0; }
+
+    @media (max-width: 600px) {
+      main { padding: 16px 14px 64px; }
+      h1.title { font-size: 26px; }
+      .quick-card { padding: 16px; }
+      .codeblock { font-size: 13px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand-line"><span class="dot"></span>Haley · MomRise Social</div>
+  </header>
+
+  <nav class="section-nav">
+    <a href="#now">Right now</a>
+    <a href="#bootstrap">Bootstrap (week 1)</a>
+    <a href="#weekly">Weekly rhythm</a>
+    <a href="#tiktok">TikTok</a>
+    <a href="#parts">Parts bin</a>
+    <a href="#pin">Pin batch</a>
+    <a href="#tools">Tools</a>
+    <a href="#escalate">When to ping Collin</a>
+  </nav>
+
+  <main>
+    <!-- Content -->
+    <div id="viewContent">
+      <h1 class="title">Running MomRise's social</h1>
+      <p class="lede">Specific. Ordered. No strategy fluff. Three workstreams (MomRise IG, Pinterest, Creator Library) sharing one filming session per week.</p>
+
+      <!-- Right now -->
+      <section id="now">
+        <div class="quick-card">
+          <div class="qc-label">Right now</div>
+          <h2>Are you done with Bootstrap?</h2>
+          <p>If not — start with Day 1 below. If yes — jump to Weekly rhythm.</p>
+          <div class="qc-actions">
+            <a class="qc-btn" href="#bootstrap">Bootstrap →</a>
+            <a class="qc-btn secondary" href="#weekly">Weekly rhythm →</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Bootstrap -->
+      <section id="bootstrap">
+        <h2>Bootstrap <span class="budget">Week 1 · ~5 hrs</span></h2>
+        <p class="section-lede">Foundations first. After this week you switch to the weekly rhythm.</p>
+
+        <div class="card">
+          <h3>Day 1 — Accounts <span class="micro-budget">30 min</span></h3>
+          <ul>
+            <li><strong>MomRise IG</strong>: confirm it's <strong>Professional / Creator</strong> mode (Settings → Account → Switch to Professional → "Creator"). Required for Collab posts + Insights.</li>
+            <li><strong>MomRise Pinterest</strong>: set up at business.pinterest.com. When you click "Claim your website," DM Collin the verification token — he commits it to momrise.app, you click verify. ~5 min round-trip.</li>
+            <li><strong>Firebase Console</strong>: bookmark <a href="https://console.firebase.google.com">console.firebase.google.com</a> → MomRise → Storage tab. That's where you'll upload videos.</li>
+            <li><strong>Canva</strong> (free tier). Bookmark.</li>
+            <li><strong>CapCut</strong> on your phone (free). This is the video editor — better than Reels' built-in.</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>Day 2 — Pinterest boards <span class="micro-budget">45 min</span></h3>
+          <p>Create these 10 boards. Names are deliberate — these phrases come from Pinterest's autocomplete and they rank where generic names don't.</p>
+          <ul>
+            <li>Easy Toddler Dinners</li>
+            <li>Sheet Pan Family Meals</li>
+            <li>Lunchbox Ideas for Picky Eaters</li>
+            <li>30-Minute Mom Recipes</li>
+            <li>Make-Ahead Freezer Meals</li>
+            <li>Healthy Meal Prep for Busy Moms</li>
+            <li>Kid-Friendly Snacks Without Sugar</li>
+            <li>Weeknight Dinner Ideas for Families</li>
+            <li>One-Pan Recipes for Tired Moms</li>
+            <li>Family Breakfast Ideas</li>
+          </ul>
+          <p>Don't pin anything yet. Just create the boards with a 1-sentence description each — Pinterest weights board descriptions for SEO. Style: <em>"Quick, kid-approved dinners I actually make on weeknights."</em> Avoid keyword stuffing.</p>
+        </div>
+
+        <div class="card">
+          <h3>Day 3 — Storage folder <span class="micro-budget">5 min</span></h3>
+          <p>Firebase Console → Storage → <code>creator_library/</code> folder already exists (publicly readable, admin-write only).</p>
+          <p>When you upload a video, just name it descriptively — no subfolders needed:</p>
+          <div class="codeblock">share-tiktok-to-momrise.mp4
+recipe-to-grocery-list.mp4
+hands-chopping-onion.mp4</div>
+          <p>After upload: click the file → copy the access URL (starts with <code>https://firebasestorage.googleapis.com/...</code>) → paste into <code>creator/library/manifest.js</code> with a title and duration. Push the repo. The Creator Library at <a href="/creator/library/">momrise.app/creator/library/</a> picks it up on next load.</p>
+        </div>
+
+        <div class="card">
+          <h3>Day 4 — Five app screen recordings <span class="micro-budget">30 min</span></h3>
+          <p>The easiest day. Open MomRise, hit record-screen, do each of these once slowly. Trim in CapCut. <strong>No audio</strong> — creators will voice-over.</p>
+          <ul>
+            <li><code>share-tiktok-to-momrise.mp4</code> — 7-10s. Open TikTok, tap share, choose MomRise, recipe lands.</li>
+            <li><code>recipe-to-grocery-list.mp4</code> — 8-10s. Open a recipe, "add to grocery list," watch it appear.</li>
+            <li><code>grocery-to-instacart.mp4</code> — 6-8s. Grocery list → "Send to Instacart" → Instacart opens with items.</li>
+            <li><code>meal-plan-week.mp4</code> — 5-7s. Scroll through one week of the meal plan view.</li>
+            <li><code>family-setup.mp4</code> — 8-10s. Quick demo of adding a child or family member.</li>
+          </ul>
+          <p>Upload each to Firebase Storage as you finish, add to <code>creator/library/manifest.js</code>.</p>
+        </div>
+
+        <div class="card">
+          <h3>Day 5 — Cook With Me Reel <span class="micro-budget">90 min</span></h3>
+          <p>Film one full recipe Reel. This becomes the first MomRise IG post AND the first "example" file creators can reference.</p>
+          <p><strong>Setup (10 min)</strong>: pick a recipe from an existing creator's TikTok, import it via the share extension. Phone on a tripod or stack of books, eye-level. Daylight if possible.</p>
+          <p><strong>Film (45 min for a ~25s Reel)</strong>:</p>
+          <ul>
+            <li>1-2s hook: "I import all my recipes from TikTok now"</li>
+            <li>Cut to the share-from-TikTok screen recording you already shot</li>
+            <li>You cooking the recipe: 4-5 short cuts</li>
+            <li>2-3s outro: "Recipe imported from @[creator]. Code [CODE] in bio."</li>
+          </ul>
+          <p><strong>Edit (30 min in CapCut)</strong>:</p>
+          <ul>
+            <li>Add on-screen overlay <code>Paid partnership · #ad</code> in the top-right, visible the whole time</li>
+            <li>Auto-captions, proofread</li>
+            <li><strong>Target 20-30 seconds</strong> — sweet spot for TikTok, still works for IG. One master cross-posts to both.</li>
+          </ul>
+          <p><strong>Post (5 min)</strong>: caption goes <code>#ad Affiliate of @momrise — import recipes from TikTok in one tap. Recipe by @[creator]. Code [CODE] in bio.</code></p>
+          <p>Save the final mp4 to Firebase Storage and add to manifest under "Examples" so creators can watch it as a format reference.</p>
+        </div>
+
+        <div class="card">
+          <h3>Day 6 — One bootstrap pin <span class="micro-budget">30 min</span></h3>
+          <p>A placeholder until the recipe pin generator workflow kicks in. Pull a still frame from Day 5's Reel, make a 1000×1500 Canva design with recipe name big at top + small MomRise mark, save as <code>pin-template-001.png</code>. Pin to 2 of your boards with a 1-sentence description.</p>
+        </div>
+
+        <div class="card">
+          <h3>Day 7 — Review <span class="micro-budget">20 min</span></h3>
+          <ul>
+            <li>Scroll MomRise IG: does the one post look right?</li>
+            <li>Check Pinterest: pin is live? Don't expect impressions yet — week 1 is flat.</li>
+            <li>TikTok (after Business Account setup): is the first post live? Watch-through %?</li>
+            <li>Add today's date to a tracking sheet (Drive): IG followers + post views, Pinterest impressions + saves, TikTok followers + watch-through, App Store Connect campaign attributions (ct=pinterest-* and ct=tiktok-*). Update weekly.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Weekly -->
+      <section id="weekly">
+        <h2>Weekly rhythm <span class="budget">~3-4 hrs/wk</span></h2>
+        <p class="section-lede">Front-load on one day if that's easier than spreading.</p>
+
+        <div class="card">
+          <h3>One filming + editing session <span class="micro-budget">2 hrs</span></h3>
+          <p>Pick a recipe. Film a Cook With Me Reel using the Day 5 setup. <strong>One Reel master cross-posts to BOTH MomRise IG and MomRise TikTok</strong> — see <a href="#tiktok">TikTok playbook</a> for the upload workflow.</p>
+        </div>
+
+        <div class="card">
+          <h3>Pin batch <span class="micro-budget">~30 min/week</span></h3>
+          <p>Once Collin's recipe page generator is live (it is), the pin generator at <a href="/admin/pin-generator.html">momrise.app/admin/pin-generator.html</a> drives this. Pin every recipe Collin flags as <code>is_curated</code> once, to its best-matching board.</p>
+          <p><strong>Volume is not the goal.</strong> A correctly-pinned 30 unique recipes beats 200 recycled pins.</p>
+          <p><strong>Monthly re-pinning</strong>: look at which pins earned saves/clicks. Winners get re-pinned to 1-2 adjacent boards with a new image angle. Kill losers — don't try to revive with re-pins.</p>
+        </div>
+
+        <div class="card">
+          <h3>One IG post per week <span class="micro-budget">already filmed</span></h3>
+          <p>Aim for <strong>Tuesday or Thursday evening</strong> — these tend to be highest-engagement for parenting content. Not a rule, just a starting hypothesis.</p>
+        </div>
+
+        <div class="card">
+          <h3>Alternate-week variation <span class="micro-budget">1 hr</span></h3>
+          <p>Every other week, instead of a Cook With Me Reel, post one of:</p>
+          <ul>
+            <li>"What I Feed My Toddler This Week" carousel (7 meal photos + final slide is MomRise weekly plan screenshot)</li>
+            <li>"Pulling a recipe from TikTok into MomRise" 30-second demo Reel</li>
+            <li>Behind-the-scenes "how I pick recipes for the week"</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>Asset library refresh <span class="micro-budget">15 min, end of week</span></h3>
+          <p>Save the week's finished Reel master to Firebase Storage as an updated "example finished post" reference for creators. Update <code>caption snippets</code> in the library manifest if a hook worked unusually well. <strong>No more hands-only B-roll cuts</strong> — creators were unlikely to use someone else's kitchen footage anyway.</p>
+        </div>
+      </section>
+
+      <!-- TikTok -->
+      <section id="tiktok">
+        <h2>TikTok playbook <span class="budget">Same filming, second platform</span></h2>
+        <p class="section-lede">Adds TikTok without doubling production. One filming session → cross-posts to IG + TikTok.</p>
+
+        <div class="card">
+          <h3>One-time setup: Verified Business Account <span class="micro-budget">15 min</span></h3>
+          <p>Personal/Creator accounts CAN'T put app-store links in bio (TikTok blocks them with "Action cannot be completed"). Business Account is the only sanctioned path.</p>
+          <ol>
+            <li>TikTok app → Settings → Manage Account → "Switch to Business Account"</li>
+            <li>Category: Food &amp; Beverage</li>
+            <li>Bio website URL: <code>apps.apple.com/app/id6758357382?ct=tiktok-brand&amp;mt=8</code></li>
+          </ol>
+          <p>For per-creator codes, same pattern with <code>ct=tiktok-{CODE}</code> — DM Collin to provision these. App Store Connect Analytics → Acquisition shows installs attributed by campaign (24-hour window).</p>
+          <div class="callout warn">
+            <strong>Never put <code>momrise.app</code> in the TikTok bio link.</strong> Pinterest blocked the domain as spam (it's under 6 months old). TikTok may have a similar classifier — the <code>apps.apple.com</code> URL sidesteps the question.
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Cadence <span class="micro-budget">3-4 posts/week</span></h3>
+          <p>Buffer's 11.4M-post regression (Jan 2026): median views per post DROP above 5/week. More posts = more viral-lottery shots, not better typical performance.</p>
+          <p><strong>The "post daily or the algorithm kills you" thing is a myth.</strong> No documented frequency penalty. 3-4/week sustainable beats 7/week burnout.</p>
+        </div>
+
+        <div class="card">
+          <h3>Style: natural beats polished <span class="micro-budget">good news</span></h3>
+          <p>TikTok's 2026 Next Trend Report (their own primary doc) explicitly says <em>"the era of polished perfection is fading"</em> — audiences want unfiltered, BTS, real-process content.</p>
+          <p><strong>Implication for filming</strong>: phone-shot, natural lighting, face-on-camera, your voice. NOT studio-lit B-roll with music beds + voiceover. "Authentic" doesn't mean low-effort — hook strength, audio clarity, and lighting still matter; the aesthetic just needs to read spontaneous.</p>
+        </div>
+
+        <div class="card">
+          <h3>The cross-posting workflow <span class="micro-budget">save 10+ min/post</span></h3>
+          <p>Export ONE master from CapCut. Upload to BOTH platforms.</p>
+          <ul>
+            <li><strong>No watermarks on the master.</strong> If you save the IG version FROM IG to your camera roll, the IG logo is baked into that file — gets downranked on TikTok. Always upload from the original CapCut master, never from a downloaded copy.</li>
+            <li><strong>Audio</strong>: see the dedicated audio rules below.</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>Audio rules <span class="micro-budget">applies to all platforms</span></h3>
+          <p><strong>Voiceover content (your Cook With Me Reels)</strong>: audio IS your voice — bakes into the master. No swap needed. Upload the same file to TikTok + IG.</p>
+          <p><strong>Music-bed content (no voice / B-roll / lifestyle cuts)</strong>: export the master MUTED. At upload time:</p>
+          <ul>
+            <li><strong>TikTok</strong>: browse the Commercial Music Library, pick a trending sound</li>
+            <li><strong>IG</strong>: same idea in IG's native audio library</li>
+          </ul>
+          <p>Two different sounds, one master file. Costs ~30 sec extra per platform.</p>
+          <p style="margin-top: 12px;"><strong>Why this matters</strong>:</p>
+          <ul>
+            <li><strong>Discoverability</strong>: platform-native audio reportedly lifts TikTok views 48-68% and IG reach ~33% vs imported audio. Same sound across videos = a discovery graph your post enters.</li>
+            <li><strong>Licensing</strong>: TikTok's July 2025 Music ToS update requires Business Accounts to use the in-app library — CML license is TikTok-only. Baking it into a master cross-posted to IG creates licensing exposure.</li>
+            <li><strong>Cross-platform detection</strong>: TikTok's audio fingerprinting (ACRCloud) is robust to pitch/speed shifts, so file-level tricks don't reliably evade detection.</li>
+          </ul>
+          <p style="margin-top: 12px;"><strong>What NOT to do</strong>:</p>
+          <ul>
+            <li>Drag music files (Epidemic Sound, YouTube licensed audio) into CapCut as a master audio track</li>
+            <li>Trust "evasion" tricks like a 1% pitch shift or 4px crop — they don't work</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>First 4 TikTok posts <span class="micro-budget">test set</span></h3>
+          <ol>
+            <li><strong>Cook With Me</strong> — POV cooking, your standard format. Same Reel as IG. Your voiceover, your face, your script.</li>
+            <li><strong>"I import all my recipes from TikTok now"</strong> — Hands-on-phone demo. Show the share-from-TikTok flow. 15s. Hook in the first 1-2 seconds.</li>
+            <li><strong>"How I plan a week of dinners in 8 minutes"</strong> — Real-time screen recording of you using MomRise, with light voiceover. Slow pacing is fine — the value is showing it really takes 8 min.</li>
+            <li><strong>Stitch a viral mom-food TikTok</strong> — Find a "what do I make for dinner?" post in your FYP. Stitch with "Here's what I did" → demo MomRise finding a recipe. Native to the platform, leverages someone else's reach.</li>
+          </ol>
+          <p>After these 4: check TikTok analytics → which got watch-through above 65%? That's the format signal. Make more of that.</p>
+        </div>
+
+        <div class="card">
+          <h3>What NOT to do</h3>
+          <ul>
+            <li>Don't save an IG Reel from inside IG, then re-upload to TikTok. IG watermark = downranked.</li>
+            <li>Don't post 7x/week forcing it. Median per-post views drop above 5/week.</li>
+            <li>Don't shoot studio-style B-roll with stock music. Reads as "ad" — penalty under the Reali-TEA pattern.</li>
+            <li>Don't drag external music (Epidemic Sound, etc.) into CapCut and bake it into the master. Use platform-native audio at upload time.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Parts bin -->
+      <section id="parts">
+        <h2>The parts bin — what's actually high-leverage</h2>
+        <p class="section-lede">Earlier draft of this list spec'd hands-only kitchen B-roll. Cut. Creators won't use someone else's kitchen footage — TikTok's Reali-TEA pattern + creators already filming their own hands means it goes unused. Below is what's actually worth building.</p>
+
+        <div class="card">
+          <h3>App screen recordings <span class="micro-budget">5 clips · the meat</span></h3>
+          <p>Covered in <a href="#bootstrap">Day 4</a>. <strong>This is the high-leverage content</strong> — creators can't shoot the share-extension flow on their own phone without it looking janky. Re-record any that came out shaky.</p>
+          <p>Live in <a href="/creator/library/">creator/library/</a> for creators to grab.</p>
+        </div>
+
+        <div class="card">
+          <h3>Example "finished Reel" reference <span class="micro-budget">1 polished Cook With Me</span></h3>
+          <p>Your best Cook With Me Reel, uploaded to the library as <strong>"What a finished MomRise post looks like."</strong> Creators see the shape, pattern-match. One reference video &gt; five generic B-roll cuts.</p>
+          <p>Swap this out when a noticeably better Reel ships — keep one current reference, not a graveyard.</p>
+        </div>
+
+        <div class="card">
+          <h3>App-feature cheat sheet <span class="micro-budget">1 page · which screens demo well</span></h3>
+          <p>Add this as a section on the library page so creators know what to shoot:</p>
+          <ul>
+            <li><strong>Share-extension flow</strong> — most "wow" moment</li>
+            <li><strong>Recipe → grocery list</strong> — quick, satisfying</li>
+            <li><strong>Grocery → Instacart</strong> — conversion magic</li>
+            <li><strong>Weekly meal plan view</strong> — the planning surface</li>
+            <li><strong>Adding a family member</strong> — humanizing</li>
+          </ul>
+          <p>One framing tip per entry (e.g., "center the phone, tilt slightly so overhead light doesn't wash out the screen").</p>
+        </div>
+
+        <div class="card">
+          <h3>Brand graphics + end-card templates <span class="micro-budget">2-3 Canva files</span></h3>
+          <p>For creators wrapping their Reels with a clean MomRise outro:</p>
+          <ul>
+            <li>1000×1500 vertical end-card (MomRise logo, "Code [CODE] in bio")</li>
+            <li>Square version for IG carousels</li>
+            <li>A "title card" template — creator types in recipe name, exports, uses as opening frame</li>
+          </ul>
+          <p>Upload PNGs to Firebase Storage; add to library manifest.</p>
+        </div>
+      </section>
+
+      <!-- Pin -->
+      <section id="pin">
+        <h2>Pin batch workflow</h2>
+        <p class="section-lede">The recipe pin generator is your friend.</p>
+
+        <div class="card">
+          <h3>Use this URL</h3>
+          <p><a href="/admin/pin-generator.html" target="_blank">momrise.app/admin/pin-generator.html</a></p>
+          <p>Two tabs in your browser:</p>
+          <ul>
+            <li><strong>Tab 1</strong>: Pinterest, logged in as MomRise (shared creds)</li>
+            <li><strong>Tab 2</strong>: pin generator, signed in with your Google account (you're allowlisted)</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>Per-pin flow</h3>
+          <ol>
+            <li>Pick a board from the dropdown — tags the URL with the right tracking</li>
+            <li>Find a recipe (search "chicken" to narrow, or scroll the corpus)</li>
+            <li>Click the red <strong>Pin it</strong> button on the recipe card</li>
+            <li>Pinterest popup opens with image + URL + description pre-filled</li>
+            <li>Pick the matching board on Pinterest, hit Save</li>
+            <li>Back to pin generator, next recipe — different board if it fits a different category</li>
+          </ol>
+          <p>About 10-15 seconds per pin. 60 recipes = ~15-20 min total.</p>
+        </div>
+
+        <div class="card">
+          <h3>Important: destination is the App Store</h3>
+          <p>Pinterest's spam classifier blocks new momrise.app domains. We're using the App Store destination on pins until that block lifts (~6 months from domain age).</p>
+          <p>The pin generator defaults to App Store. Leave it.</p>
+          <div class="callout warn">
+            <strong>Don't manually paste links to momrise.app</strong> on Pinterest in the meantime — they'll get flagged as spam. Use the pin generator for everything.
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Pace yourself</h3>
+          <p>Pin no more than 10-15/day. Pinterest's anti-spam likes a human cadence; rapid-fire pinning on a new account looks like marketing automation. 5-10 seconds between pins reads as natural.</p>
+        </div>
+      </section>
+
+      <!-- Tools -->
+      <section id="tools">
+        <h2>Tools — one-time setup</h2>
+        <table class="tools">
+          <thead>
+            <tr><th>Tool</th><th>For</th><th>Setup</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Phone camera</td><td>Filming Reels + B-roll</td><td>—</td></tr>
+            <tr><td><strong>CapCut</strong> (iOS/Android)</td><td>Video editing, captions, overlay text</td><td>Install, sign in</td></tr>
+            <tr><td><strong>Canva</strong> (web)</td><td>Pin design, brand graphics</td><td>Sign up, save a 1000×1500 template</td></tr>
+            <tr><td>Firebase Console</td><td>Upload videos to creator library</td><td>Already on the allowlist</td></tr>
+            <tr><td>Pinterest Trends</td><td>Find what's searched in the niche</td><td>Bookmark <a href="https://trends.pinterest.com">trends.pinterest.com</a></td></tr>
+            <tr><td>IG Insights</td><td>Track post performance</td><td>Already in your IG settings</td></tr>
+          </tbody>
+        </table>
+        <p style="margin-top: 12px; font-size: 13.5px; color: var(--text-muted);">Upgrades to consider in month 2-3 only if you feel the need: small ring light (~$20), Tailwind Pinterest scheduler (~$15/mo if you scale past 10 pins/week).</p>
+      </section>
+
+      <!-- Escalate -->
+      <section id="escalate">
+        <h2>When to ping Collin</h2>
+
+        <div class="card">
+          <p><strong>DO ping for</strong>:</p>
+          <ul>
+            <li>A creator asks about money (payouts, earnings, code issues)</li>
+            <li>A creator wants to leave the program</li>
+            <li>Stripe / Apple support emails about anything financial</li>
+            <li>You're more than 30 min over the time budget on any step</li>
+            <li>Firebase Storage folder is full or messy and you want it reorganized</li>
+            <li>Pinterest says "blocked" on a manual pin attempt</li>
+          </ul>
+          <p><strong>DON'T ping for</strong>:</p>
+          <ul>
+            <li>Picking which recipes to film</li>
+            <li>Pin colors and layouts</li>
+            <li>Whether to post on Tuesday or Wednesday</li>
+            <li>Writing caption variations</li>
+          </ul>
+        </div>
+
+        <!-- One-card summary -->
+        <div class="one-card">
+          <h2>📌 Print this</h2>
+          <div class="group-h">Weekly (3-4 hours)</div>
+          <ul>
+            <li>Film 1 Cook With Me Reel → IG + library example</li>
+            <li>Pin batch via pin generator → ~30 min</li>
+            <li>Save B-roll cuts to Firebase Storage → library refresh</li>
+            <li>Update weekly metrics row</li>
+          </ul>
+          <div class="group-h">Every IG post</div>
+          <ul>
+            <li>Caption first line: <code>#ad Affiliate of @momrise — code [CODE]</code></li>
+            <li>Paid Partnership toggle ON, tag @momrise</li>
+            <li>Reel overlay: <code>Paid partnership · #ad</code> full duration</li>
+          </ul>
+          <div class="group-h">Every pin</div>
+          <ul>
+            <li>Use the pin generator (App Store destination)</li>
+            <li>One board per pin — never spam-pin</li>
+            <li>Max 10-15 pins/day</li>
+          </ul>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    // Auth gate removed — page is public. Haley was having trouble signing
+    // in and the content here is tactical guidance, not sensitive (no
+    // credentials, no private data, just process docs).
+
+    // Active-link tracking on scroll
+    const navLinks = document.querySelectorAll('nav.section-nav a');
+    const sections = Array.from(navLinks).map(a => document.querySelector(a.getAttribute('href')));
+    function updateActive() {
+      let active = sections[0];
+      for (const s of sections) {
+        if (!s) continue;
+        const top = s.getBoundingClientRect().top;
+        if (top - 100 < 0) active = s;
+      }
+      navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + active.id));
+    }
+    window.addEventListener('scroll', updateActive, { passive: true });
+    updateActive();
+  </script>
+</body>
+</html>

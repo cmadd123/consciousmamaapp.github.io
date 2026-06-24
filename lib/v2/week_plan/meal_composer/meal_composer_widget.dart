@@ -9,6 +9,7 @@ import '/index.dart';
 import '/components/share_content_bottom_sheet.dart';
 import '/components/animated_press_widget.dart';
 import '/components/momrise_confirmation.dart';
+import '/services/review_service.dart';
 import '/components/page_animations.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -2913,6 +2914,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
         await MomRiseConfirmation.show(context, message: 'Meal Planned');
         Navigator.pop(context);
       }
+      ReviewService.onMealPlanSaved();
     } catch (e) {
       debugPrint('Error saving meal plan: $e');
       if (mounted) {

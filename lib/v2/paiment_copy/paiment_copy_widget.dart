@@ -1,4 +1,5 @@
 import '/auth/firebase_auth/auth_util.dart';
+import '/custom_code/actions/analytics_service.dart';
 import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -6,7 +7,11 @@ import '/flutter_flow/flutter_flow_widgets.dart';
 import '/index.dart';
 import '/custom_code/actions/index.dart';
 import '/v2/auth/demo_data_notifier.dart';
+import '/v2/auth/creator_code_prompt_sheet.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/scheduler.dart';
@@ -57,6 +62,12 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
     if (!Platform.isIOS) {
       SchedulerBinding.instance.addPostFrameCallback((_) async {
         await initializeStripe();
+      });
+    } else {
+      // Initialize Apple IAP listener so purchase events from StoreKit
+      // get streamed and mirrored into Firestore.
+      SchedulerBinding.instance.addPostFrameCallback((_) async {
+        await initializeIap();
       });
     }
 
@@ -109,7 +120,44 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
       Future.delayed(const Duration(milliseconds: 550), () {
         if (mounted) _ctaController.forward();
       });
+
+      // DISABLED FOR NOW (re-enable when real creators are onboarded):
+      // Surfacing "Did a creator share MomRise with you?" to every new
+      // signup before any real creators exist creates FOMO/confusion
+      // ("am I supposed to know one?"). Paywall link + Settings tile
+      // stay live so anyone who DOES have a code can enter it. The
+      // _maybeShowCreatorCodePrompt() method below stays in the file,
+      // ready to wire back up by uncommenting the Future.delayed below.
+      //
+      // Future.delayed(const Duration(milliseconds: 900), () {
+      //   if (mounted) _maybeShowCreatorCodePrompt();
+      // });
     });
+  }
+
+  Future<void> _maybeShowCreatorCodePrompt() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+    try {
+      final snap = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+      final code = snap.data()?['active_creator_code'] as String?;
+      if (code != null && code.isNotEmpty) return;
+    } catch (_) {
+      return; // fail silent — user can still use the "Got a creator code?" link
+    }
+    if (!mounted) return;
+    await showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (_) => const CreatorCodePromptSheet(),
+    );
   }
 
   @override
@@ -140,6 +188,143 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
     );
   }
 
+  /// Show the creator-code entry dialog and write attribution to the user's
+  /// doc via setActiveCreatorCode. Mirrors the Settings entry — same call,
+  /// same error semantics, so a user who enters their code here vs Settings
+  /// gets identical behavior. See profile_widget.dart for the twin.
+  Future<void> _openCreatorCodeDialog() async {
+    final codeController = TextEditingController();
+    final result = await showDialog<String>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Text(
+          'Add Creator Code',
+          style: FlutterFlowTheme.of(context).bodyMedium.override(
+                fontFamily: 'Andika New Basic',
+                fontSize: 20.0,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 0.0,
+              ),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              "Did a friend or creator share MomRise with you? Enter their code and they'll get credit for your subscription.",
+              style: FlutterFlowTheme.of(context).bodySmall.override(
+                    fontFamily: 'Andika New Basic',
+                    color: FlutterFlowTheme.of(context).secondaryText,
+                    fontSize: 13.0,
+                    letterSpacing: 0.0,
+                  ),
+            ),
+            const SizedBox(height: 16.0),
+            TextField(
+              controller: codeController,
+              textCapitalization: TextCapitalization.characters,
+              maxLength: 20,
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp(r'[A-Za-z0-9]')),
+              ],
+              style: FlutterFlowTheme.of(context).bodyLarge.override(
+                    fontFamily: 'Andika New Basic',
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 3.0,
+                  ),
+              textAlign: TextAlign.center,
+              decoration: InputDecoration(
+                hintText: 'CODE',
+                hintStyle: TextStyle(
+                  color: FlutterFlowTheme.of(context)
+                      .secondaryText
+                      .withOpacity(0.4),
+                  letterSpacing: 3.0,
+                ),
+                filled: true,
+                fillColor: FlutterFlowTheme.of(context).primaryBackground,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(14.0),
+                  borderSide: BorderSide.none,
+                ),
+                counterText: '',
+              ),
+              autofocus: true,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(null),
+            child: Text(
+              'Cancel',
+              style: TextStyle(
+                color: FlutterFlowTheme.of(context).secondaryText,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              final code = codeController.text.trim().toUpperCase();
+              if (code.length >= 3 && code.length <= 20) {
+                Navigator.of(dialogContext).pop(code);
+              }
+            },
+            child: Text(
+              'Apply',
+              style: TextStyle(
+                color: FlutterFlowTheme.of(context).primary,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+    codeController.dispose();
+    if (result == null || result.isEmpty || !mounted) return;
+
+    try {
+      final callable = FirebaseFunctions.instance
+          .httpsCallable('setActiveCreatorCode');
+      final response = await callable.call({'code': result});
+      final data = Map<String, dynamic>.from(response.data as Map);
+      final creatorName = data['creator_name'] as String? ?? 'the creator';
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              "Thanks — $creatorName will get credit when you subscribe.",
+            ),
+            backgroundColor: FlutterFlowTheme.of(context).primary,
+            duration: const Duration(seconds: 4),
+          ),
+        );
+      }
+    } on FirebaseFunctionsException catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.message ?? "We couldn't apply that code."),
+            backgroundColor: FlutterFlowTheme.of(context).error,
+            duration: const Duration(seconds: 4),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Couldn't apply the code. Try again in a moment."),
+            backgroundColor: FlutterFlowTheme.of(context).error,
+            duration: const Duration(seconds: 4),
+          ),
+        );
+      }
+    }
+  }
+
   Future<void> _completeOnboardingAndGoHome() async {
     // Save children from DemoDataNotifier to Firestore
     try {
@@ -161,6 +346,7 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
       // Only set free_trial_start if not already set (don't reset on re-onboarding)
       if (userData == null || userData['free_trial_start'] == null) {
         updateData['free_trial_start'] = FieldValue.serverTimestamp();
+        analyticsService.logSubscriptionStart(tier: 'free_trial', value: 0.0);
       }
       await currentUserReference!.update(updateData);
     }
@@ -193,6 +379,8 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
       final result = await createSubscription(planType: planType);
 
       if (result == 'success') {
+        // TODO: set real prices (monthly/yearly) for accurate revenue value
+        analyticsService.logSubscriptionStart(tier: planType, value: planType == 'yearly' ? 69.99 : 6.99);
         // Payment sheet completed successfully - Show success screen
         if (mounted) {
           setState(() {
@@ -549,6 +737,55 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
                       children: [
                         const SizedBox(height: 8.0),
 
+                        // Warm trial-ended framing — only when the free
+                        // week has lapsed. Reassures rather than cold-pitches.
+                        if (_trialExpired)
+                          _staggeredEntry(
+                            controller: _headerController,
+                            child: Container(
+                              width: double.infinity,
+                              margin: const EdgeInsets.only(bottom: 24.0),
+                              padding: const EdgeInsets.all(20.0),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.7),
+                                borderRadius: BorderRadius.circular(16.0),
+                              ),
+                              child: Column(
+                                children: [
+                                  Text(
+                                    'Your free week\'s complete 🌱',
+                                    textAlign: TextAlign.center,
+                                    style: FlutterFlowTheme.of(context)
+                                        .headlineSmall
+                                        .override(
+                                          fontFamily: 'Andika New Basic',
+                                          fontSize: 22.0,
+                                          fontWeight: FontWeight.bold,
+                                          letterSpacing: 0.0,
+                                        ),
+                                  ),
+                                  const SizedBox(height: 10.0),
+                                  Text(
+                                    'You\'ve made a beautiful start. Pick up right '
+                                    'where you left off — your plans, milestones, '
+                                    'and family calendar are all still here, '
+                                    'waiting for you.',
+                                    textAlign: TextAlign.center,
+                                    style: FlutterFlowTheme.of(context)
+                                        .bodyMedium
+                                        .override(
+                                          fontFamily: 'Andika New Basic',
+                                          fontSize: 15.0,
+                                          letterSpacing: 0.0,
+                                          color: FlutterFlowTheme.of(context)
+                                              .secondaryText,
+                                        ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+
                         // Header: Logo + title
                         _staggeredEntry(
                           controller: _headerController,
@@ -606,8 +843,10 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
 
                         const SizedBox(height: 28.0),
 
-                        // Pricing plans (Android only — iOS has no in-app purchase)
-                        if (!Platform.isIOS) _staggeredEntry(
+                        // Pricing plans — shown on both platforms. On iOS the
+                        // selected plan drives the IAP button below; on Android
+                        // it drives the Stripe payment sheet.
+                        _staggeredEntry(
                           controller: _plansController,
                           slideOffset: 30.0,
                           child: Row(
@@ -711,87 +950,108 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
     );
   }
 
-  /// iOS CTA — compliant with App Store guideline 3.1.1
+  /// iOS CTA — single Apple IAP button driven by the plan toggle above
+  /// (annual or monthly), plus an equal-weight web subscribe button. The
+  /// inline microtext below the buttons satisfies Apple Guideline 3.1.2(c)
+  /// (subscription title, length, price, renew/cancel language) and the
+  /// Terms of Use (EULA) + Privacy Policy links are rendered at the bottom.
   Widget _buildIOSCTA() {
+    final isYearly = _model.selectedPayment == 'yearly';
+    final priceLine = isYearly
+        ? '7-day free trial, then \$69.99/year. Auto-renews yearly. Cancel anytime in iPhone Settings.'
+        : '7-day free trial, then \$6.99/month. Auto-renews monthly. Cancel anytime in iPhone Settings.';
+
     return Column(
       children: [
-        // Info card telling users where to subscribe
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.7),
-            borderRadius: BorderRadius.circular(20.0),
-            border: Border.all(color: const Color(0xFFE0E0E0)),
-          ),
-          child: Column(
-            children: [
-              Text(
-                'Subscribe at momrise.app',
-                textAlign: TextAlign.center,
-                style: FlutterFlowTheme.of(context).bodyLarge.override(
-                  fontFamily: FFAppState().currentFontFamily,
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 0.0,
-                ),
-              ),
-              const SizedBox(height: 6.0),
-              Text(
-                'Visit momrise.app/subscribe in your browser to start your 7-day free trial. Then come back and tap the button below.',
-                textAlign: TextAlign.center,
-                style: FlutterFlowTheme.of(context).bodySmall.override(
-                  fontFamily: FFAppState().currentFontFamily,
-                  color: FlutterFlowTheme.of(context).secondaryText,
-                  fontSize: 13.0,
-                  letterSpacing: 0.0,
-                ),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 12.0),
-        // "I already subscribed" — verifies subscription in Firestore
+        // Single Apple IAP CTA — buys whichever plan is selected above.
         FFButtonWidget(
           onPressed: () async {
-            final hasSubscription = await hasActiveSubscription();
-            if (hasSubscription) {
-              _completeOnboardingAndGoHome();
-            } else {
-              if (mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: const Text('No active subscription found for this account.'),
-                    backgroundColor: FlutterFlowTheme.of(context).error,
-                    behavior: SnackBarBehavior.floating,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                    margin: const EdgeInsets.all(16),
-                    duration: const Duration(seconds: 4),
-                  ),
-                );
-              }
-            }
+            HapticFeedback.lightImpact();
+            final result = isYearly
+                ? await buyAnnualSubscription()
+                : await buyMonthlySubscription();
+            await _handleIapResult(result);
           },
-          text: 'I already subscribed — continue',
+          text: 'Start 7-day free trial',
           options: FFButtonOptions(
             width: double.infinity,
             height: 56.0,
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
             color: FlutterFlowTheme.of(context).primary,
             textStyle: FlutterFlowTheme.of(context).titleMedium.override(
               fontFamily: FFAppState().currentFontFamily,
               color: Colors.white,
-              fontSize: 16.0,
+              fontSize: 17.0,
               fontWeight: FontWeight.w600,
               letterSpacing: 0.0,
             ),
-            elevation: 0.0,
+            elevation: 3.0,
+            borderSide: const BorderSide(color: Colors.transparent, width: 1.0),
             borderRadius: BorderRadius.circular(28.0),
           ),
         ),
-        const SizedBox(height: 10.0),
-        // Restore purchases
+        const SizedBox(height: 8.0),
+
+        // Apple Guideline 3.1.2(c) microtext — title/length/price/renew/cancel
+        // surfaced inline so the binding flow shows the disclosure adjacent
+        // to the buy CTA without taking up button-sized real estate.
+        Text(
+          priceLine,
+          textAlign: TextAlign.center,
+          style: FlutterFlowTheme.of(context).bodySmall.override(
+            fontFamily: 'Andika New Basic',
+            color: FlutterFlowTheme.of(context).secondaryText,
+            fontSize: 11.5,
+            letterSpacing: 0.0,
+          ),
+        ),
+        const SizedBox(height: 12.0),
+
+        // Web subscribe option — equal-weight outline button so Apple
+        // anti-steering parity is preserved without stacking another solid CTA.
+        FFButtonWidget(
+          onPressed: () async {
+            HapticFeedback.lightImpact();
+            final plan = isYearly ? 'yearly' : 'monthly';
+            final uri = Uri.parse('https://momrise.app/subscribe?plan=$plan');
+            if (await canLaunchUrl(uri)) {
+              await launchUrl(uri, mode: LaunchMode.externalApplication);
+            }
+          },
+          text: 'Or subscribe at momrise.app',
+          options: FFButtonOptions(
+            width: double.infinity,
+            height: 50.0,
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            color: Colors.transparent,
+            textStyle: FlutterFlowTheme.of(context).bodyMedium.override(
+              fontFamily: 'Andika New Basic',
+              color: FlutterFlowTheme.of(context).primary,
+              fontSize: 14.0,
+              fontWeight: FontWeight.w500,
+              letterSpacing: 0.0,
+            ),
+            elevation: 0.0,
+            borderSide: BorderSide(
+              color: FlutterFlowTheme.of(context).primary.withOpacity(0.5),
+              width: 1.5,
+            ),
+            borderRadius: BorderRadius.circular(28.0),
+          ),
+        ),
+        // Restore purchases — checks Firestore (web subscriptions) AND
+        // asks Apple to restore any prior IAP purchases on this Apple ID.
+        // This single link replaces the previous "I already subscribed"
+        // button since restore already polls Firestore for web subs.
         GestureDetector(
           onTap: () async {
+            // Kick off Apple restore first; the IAP listener will mirror
+            // any restored purchase into Firestore. We then poll for the
+            // entitlement.
+            if (Platform.isIOS) {
+              await restoreApplePurchases();
+              await Future.delayed(const Duration(seconds: 2));
+            }
             final hasSubscription = await hasActiveSubscription();
             if (hasSubscription) {
               if (mounted) {
@@ -831,20 +1091,46 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
             ),
           ),
         ),
+        const SizedBox(height: 12.0),
+        // Creator-code entry — small text link that opens the same dialog
+        // used in Settings. This catches users who came in via a creator
+        // share link and didn't get auto-attributed (manual recovery path
+        // until the deferred deep link integration ships). Not a payment
+        // method — just attribution metadata — so it stays inside Apple's
+        // 3.1.1 guidance without triggering anti-steering review.
+        GestureDetector(
+          onTap: () => _openCreatorCodeDialog(),
+          child: Text(
+            'Got a creator code?',
+            style: FlutterFlowTheme.of(context).bodySmall.override(
+              fontFamily: 'Andika New Basic',
+              color: FlutterFlowTheme.of(context).secondaryText,
+              fontSize: 13.0,
+              letterSpacing: 0.0,
+              decoration: TextDecoration.underline,
+            ),
+          ),
+        ),
         const SizedBox(height: 16.0),
-        // Terms & Privacy links (required by Apple)
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+        // Required Apple Guideline 3.1.2(c) links — Terms of Use (EULA) +
+        // Privacy Policy must be functional in the binding subscription flow.
+        // We point Terms of Use at Apple's standard EULA (the default reviewers
+        // expect when the app doesn't substitute a custom EULA) and keep our
+        // own Privacy Policy URL.
+        Wrap(
+          alignment: WrapAlignment.center,
+          crossAxisAlignment: WrapCrossAlignment.center,
           children: [
             GestureDetector(
               onTap: () async {
-                final uri = Uri.parse('https://momrise.app/terms');
+                final uri = Uri.parse(
+                    'https://www.apple.com/legal/internet-services/itunes/dev/stdeula/');
                 if (await canLaunchUrl(uri)) {
                   await launchUrl(uri, mode: LaunchMode.externalApplication);
                 }
               },
               child: Text(
-                'Terms of Service',
+                'Terms of Use (EULA)',
                 style: FlutterFlowTheme.of(context).bodySmall.override(
                   fontFamily: FFAppState().currentFontFamily,
                   color: FlutterFlowTheme.of(context).secondaryText,
@@ -882,10 +1168,88 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
                 ),
               ),
             ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Text(
+                '·',
+                style: TextStyle(
+                  color: FlutterFlowTheme.of(context).secondaryText,
+                  fontSize: 11.0,
+                ),
+              ),
+            ),
+            GestureDetector(
+              onTap: () async {
+                final uri = Uri.parse('https://momrise.app/terms');
+                if (await canLaunchUrl(uri)) {
+                  await launchUrl(uri, mode: LaunchMode.externalApplication);
+                }
+              },
+              child: Text(
+                'Terms of Service',
+                style: FlutterFlowTheme.of(context).bodySmall.override(
+                  fontFamily: 'Andika New Basic',
+                  color: FlutterFlowTheme.of(context).secondaryText,
+                  fontSize: 11.0,
+                  letterSpacing: 0.0,
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+            ),
           ],
         ),
       ],
     );
+  }
+
+  /// Shared handler for Apple IAP purchase results — silently waits for
+  /// the entitlement to propagate from Apple → purchase stream → Firestore,
+  /// then routes home. Apple's own native sheet already shows the user a
+  /// confirmation; an in-app snackbar on top is duplicate noise.
+  Future<void> _handleIapResult(String result) async {
+    if (!mounted) return;
+    if (result == 'pending' || result == 'success') {
+      // Poll for the entitlement to land. Sandbox is usually under 3s;
+      // production occasionally takes 10s+ behind a flaky network.
+      bool active = false;
+      for (var i = 0; i < 15; i++) {
+        await Future.delayed(const Duration(seconds: 1));
+        if (!mounted) return;
+        active = await hasActiveSubscription();
+        if (active) break;
+      }
+      if (!mounted) return;
+
+      if (active) {
+        _completeOnboardingAndGoHome();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text(
+              'We couldn’t confirm your subscription yet. Tap Restore Purchases or try again.',
+            ),
+            backgroundColor: FlutterFlowTheme.of(context).error,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            margin: const EdgeInsets.all(16),
+            duration: const Duration(seconds: 6),
+          ),
+        );
+      }
+    } else if (result == 'cancelled') {
+      // User dismissed the sheet — silent, no error toast
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Purchase failed: ${result.replaceFirst("error: ", "")}'),
+          backgroundColor: FlutterFlowTheme.of(context).error,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          margin: const EdgeInsets.all(16),
+          duration: const Duration(seconds: 5),
+        ),
+      );
+    }
   }
 
   /// Android CTA — full Stripe payment sheet
