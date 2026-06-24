@@ -549,7 +549,7 @@ class _CreateSkillPathPreviewWidgetState
                               color: const Color(0xFF9B8A9E).withOpacity(0.1),
                               borderRadius: BorderRadius.circular(8.0),
                             ),
-                            child: const Text(
+                            child: Text(
                               'Recommended',
                               style: TextStyle(
                                 fontFamily: FFAppState().currentFontFamily,
@@ -589,7 +589,7 @@ class _CreateSkillPathPreviewWidgetState
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
+                          Text(
                             '• ',
                             style: TextStyle(
                               fontFamily: FFAppState().currentFontFamily,

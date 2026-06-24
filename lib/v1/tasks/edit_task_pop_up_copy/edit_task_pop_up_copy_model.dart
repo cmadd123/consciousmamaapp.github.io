@@ -53,7 +53,6 @@ class EditTaskPopUpCopyModel extends FlutterFlowModel<EditTaskPopUpCopyWidget> {
   FocusNode? textFieldFocusNode2;
   TextEditingController? textController2;
   String? Function(BuildContext, String?)? textController2Validator;
-  DateTime? datePicked;
   // State field(s) for TextField widget.
   FocusNode? textFieldFocusNode3;
   TextEditingController? textController3;

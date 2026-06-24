@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '/flutter_flow/flutter_flow_util.dart';
 
 /// Friendly error screen shown when critical errors occur
 /// This prevents white screen crashes and gives users actionable info
@@ -84,7 +85,7 @@ class ErrorScreenWidget extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    child: const Text(
+                    child: Text(
                       'Try Again',
                       style: TextStyle(
                         fontFamily: FFAppState().currentFontFamily,

@@ -51,7 +51,6 @@ class AddNewTaskModel extends FlutterFlowModel<AddNewTaskWidget> {
     return null;
   }
 
-  DateTime? datePicked;
   // State field(s) for TextField widget.
   FocusNode? textFieldFocusNode3;
   TextEditingController? textController3;
