@@ -1286,7 +1286,7 @@
         </button>
         <div class="profile-menu" id="profileMenu" role="menu" aria-labelledby="profileTrigger">
           <button id="settingsBtn" role="menuitem"><span class="menu-icon" data-icon="user"></span> Profile settings</button>
-          <a id="playbookLink" href="/creator/playbook/" role="menuitem"><span class="menu-icon" data-icon="bulb"></span> Creator playbook</a>
+          <!-- Playbook removed: <a id="playbookLink" href="/creator/playbook/" role="menuitem"><span class="menu-icon" data-icon="bulb"></span> Creator playbook</a> -->
           <a id="brandKitLink" href="/creator/brand-kit/" role="menuitem"><span class="menu-icon" data-icon="grid"></span> Brand kit</a>
           <button id="suggestionBtn" role="menuitem"><span class="menu-icon" data-icon="bulb"></span> Send a suggestion</button>
           <a id="supportLink" href="mailto:creators@momrise.app" role="menuitem"><span class="menu-icon" data-icon="mail"></span> Contact support</a>
@@ -1300,9 +1300,11 @@
       <button class="nav-tab" data-tab="home" data-view="viewDashboard">
         <span class="nav-tab-icon" data-icon="home"></span><span class="nav-tab-label">Home</span>
       </button>
+      <!-- Playbook tab removed
       <a class="nav-tab" href="/creator/playbook/">
         <span class="nav-tab-icon" data-icon="clipboard"></span><span class="nav-tab-label">Playbook</span>
       </a>
+      -->
       <a class="nav-tab" href="/creator/brand-kit/">
         <span class="nav-tab-icon" data-icon="grid"></span><span class="nav-tab-label">Brand kit</span>
       </a>
@@ -1331,7 +1333,7 @@
              clear path to the sign-in form just below. -->
         <div class="landing" style="max-width: 640px; margin: 0 auto 24px; padding: 0 0 32px;">
           <h1 style="font-size: 36px; line-height: 1.1; margin: 0 0 12px; letter-spacing: -0.01em;">Become a MomRise creator</h1>
-          <p style="font-size: 17px; color: var(--text-muted); margin: 0 0 24px; max-width: 540px;">Earn a share of every yearly subscription driven by your code. Free assets, a playbook, FTC-clean caption snippets — all in one place.</p>
+          <p style="font-size: 17px; color: var(--text-muted); margin: 0 0 24px; max-width: 540px;">Earn a share of every yearly subscription driven by your code. Free assets, FTC-clean caption snippets — all in one place.</p>
           <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 0 0 24px;">
             <div style="background: color-mix(in srgb, var(--primary) 6%, var(--surface)); border: 1px solid color-mix(in srgb, var(--primary) 18%, var(--border)); border-radius: 12px; padding: 14px 14px;">
               <div style="font-size: 11px; font-weight: 700; color: var(--primary-dark); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 4px;">Rev share</div>
@@ -1344,7 +1346,7 @@
           </div>
           <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px;">
             <a href="/apply/" style="background: var(--primary); color: white; text-decoration: none; padding: 14px 26px; border-radius: 10px; font-weight: 700; font-size: 15px;">Apply to join →</a>
-            <a href="/creator/playbook/" style="color: var(--primary-dark); text-decoration: none; padding: 14px 8px; font-weight: 600; font-size: 15px;">See the playbook</a>
+            <!-- Playbook CTA removed: <a href="/creator/playbook/" ...>See the playbook</a> -->
           </div>
           <div style="height: 1px; background: var(--border); margin: 28px 0 24px;"></div>
         </div>
@@ -3793,6 +3795,7 @@
       // ctx: { onboarded, docsPublished, mealPlansPublished, codeShared }
       const items = [
         { id: 'account', label: 'Create your creator account', done: true },
+        /* Playbook checklist item removed
         {
           id: 'playbook',
           label: 'Read the creator playbook (5 min)',
@@ -3807,6 +3810,7 @@
             },
           } : null,
         },
+        */
         {
           id: 'connect',
           label: 'Connect your bank for payouts',
