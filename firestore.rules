@@ -334,6 +334,16 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // ─── Creator library (b-roll / app demos / brand assets) ─────
+    // Public read — the creator library page renders it (may be unauth'd).
+    // Signed-in users upload via /admin/library-upload.html (tighten to
+    // specific admin emails later if needed). Files live in Storage at
+    // creator_library/* (that bucket path needs a matching authed-write rule).
+    match /creator_library/{assetId} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+
     // ─── Default deny ─────────────────────────────────────────────
     match /{document=**} {
       allow read, write: if false;

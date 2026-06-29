@@ -419,6 +419,8 @@
 
   <script type="module">
     import { LIBRARY_MANIFEST, CAPTION_SNIPPETS } from './manifest.js';
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     const $ = (id) => document.getElementById(id);
     const esc = (s) => String(s || '').replace(/[<>&"]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));
@@ -481,6 +483,28 @@
     renderVideos('b-roll', LIBRARY_MANIFEST.bRoll, 'No B-roll yet');
     renderResources('brand-elements', LIBRARY_MANIFEST.brandElements, 'No brand elements yet');
     renderResources('examples', LIBRARY_MANIFEST.examples, 'No examples yet');
+
+    // ----- Live additions from Firestore (creator_library) — Haley's uploads via
+    // /admin/library-upload.html appear here instantly, no code push needed. -----
+    (async () => {
+      try {
+        const app = initializeApp({ apiKey:"AIzaSyBucTVaWpYhDYScTpQ4JH9XdJgCBFmbHWk", authDomain:"parenting-plus-7szrif.firebaseapp.com", projectId:"parenting-plus-7szrif", storageBucket:"parenting-plus-7szrif.appspot.com", appId:"1:67449654316:web:88be5e06e598d56dd55589" });
+        const snap = await getDocs(collection(getFirestore(app), "creator_library"));
+        if (snap.empty) return;
+        const seen = new Set([...LIBRARY_MANIFEST.appDemos, ...LIBRARY_MANIFEST.bRoll, ...LIBRARY_MANIFEST.brandElements].map(i => i.url).filter(Boolean));
+        const rows = []; snap.forEach(d => rows.push(d.data()));
+        rows.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+        rows.forEach(a => {
+          if (!a.url || seen.has(a.url)) return; seen.add(a.url);
+          if (a.category === 'appDemos') LIBRARY_MANIFEST.appDemos.unshift({ url: a.url, title: a.title, duration: a.duration, note: a.note || '' });
+          else if (a.category === 'bRoll') LIBRARY_MANIFEST.bRoll.unshift({ url: a.url, title: a.title, duration: a.duration, note: a.note || '' });
+          else if (a.category === 'brandElements') LIBRARY_MANIFEST.brandElements.unshift({ title: a.title, description: a.description || '', url: a.url, cta: a.cta || 'Download' });
+        });
+        renderVideos('app-demos', LIBRARY_MANIFEST.appDemos, 'No app demos yet');
+        renderVideos('b-roll', LIBRARY_MANIFEST.bRoll, 'No B-roll yet');
+        renderResources('brand-elements', LIBRARY_MANIFEST.brandElements, 'No brand elements yet');
+      } catch (e) { /* offline / rules — the static manifest is already rendered */ }
+    })();
 
     // ----- Copy buttons -----
     function bindCopy(getText, button) {

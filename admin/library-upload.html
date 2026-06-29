@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Creator Library — Upload</title>
+<style>
+  :root{--bg:#faf7f2;--card:#fff;--border:#e7ddd0;--text:#2c2420;--muted:#8a7d6c;--accent:#e8744e;--good:#5b8c5a;--bad:#c0492f}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.5}
+  header{display:flex;align-items:center;gap:10px;padding:14px 20px;background:var(--card);border-bottom:1px solid var(--border)}
+  header img{width:30px;height:30px;border-radius:8px}
+  .wrap{max-width:760px;margin:0 auto;padding:20px}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:16px}
+  h1{font-size:18px;margin:0}
+  label{display:block;font-size:12px;color:var(--muted);margin:10px 0 4px}
+  input,select{width:100%;background:#fff;color:var(--text);border:1px solid var(--border);border-radius:8px;padding:9px 10px;font-size:14px;font-family:inherit}
+  .btn{background:var(--accent);color:#fff;border:0;border-radius:9px;padding:10px 18px;font-weight:700;cursor:pointer;font-size:14px}
+  .btn:disabled{opacity:.5;cursor:default}
+  .btn.ghost{background:transparent;color:var(--text);border:1px solid var(--border);font-weight:600}
+  .row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end}
+  .muted{color:var(--muted);font-size:13px}
+  .asset{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--border)}
+  .asset video,.asset img{width:72px;height:48px;object-fit:cover;border-radius:6px;background:#eee;flex-shrink:0}
+  .asset .meta{flex:1;min-width:0}
+  .asset .meta b{font-size:14px}
+  .grp{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:14px 0 4px;font-weight:700}
+  #status{font-size:13px;min-height:18px}
+  .del{color:var(--bad);background:transparent;border:0;cursor:pointer;font-size:13px}
+</style>
+</head>
+<body>
+<header>
+  <img src="/app_store_assets/brand/momrise-icon-square-512.png" alt="MomRise">
+  <h1>Creator Library — Upload</h1>
+  <span style="margin-left:auto"><span id="who" class="muted"></span> <button id="auth" class="btn ghost" style="padding:7px 12px">Sign in</button></span>
+</header>
+<div class="wrap">
+
+  <div class="card" id="gate">
+    <p class="muted">Sign in with your MomRise Google account to add b-roll, app demos, and brand assets. They appear on the <a href="/creator/library/">creator library</a> instantly — no code, no waiting.</p>
+  </div>
+
+  <div class="card" id="form" style="display:none">
+    <div class="row">
+      <div style="flex:1;min-width:160px">
+        <label>Type</label>
+        <select id="cat">
+          <option value="bRoll">B-roll (cooking video)</option>
+          <option value="appDemos">App demo (screen recording)</option>
+          <option value="brandElements">Brand asset (logo / template / PDF)</option>
+        </select>
+      </div>
+      <div style="flex:2;min-width:220px">
+        <label>Title</label>
+        <input id="title" placeholder="e.g. Hands chopping veggies">
+      </div>
+    </div>
+    <label>File (mp4 / mov / png / jpg / pdf)</label>
+    <input type="file" id="file" accept="video/*,image/*,application/pdf">
+    <div class="row" style="margin-top:14px">
+      <button class="btn" id="upload">Upload to library ▶</button>
+      <span id="status" class="muted"></span>
+    </div>
+  </div>
+
+  <div class="card" id="list" style="display:none">
+    <b>In the library</b>
+    <div id="assets"><p class="muted">Loading…</p></div>
+  </div>
+
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+
+const app = initializeApp({
+  apiKey: "AIzaSyBucTVaWpYhDYScTpQ4JH9XdJgCBFmbHWk",
+  authDomain: "parenting-plus-7szrif.firebaseapp.com",
+  projectId: "parenting-plus-7szrif",
+  storageBucket: "parenting-plus-7szrif.appspot.com",
+  appId: "1:67449654316:web:88be5e06e598d56dd55589",
+});
+const auth = getAuth(app), db = getFirestore(app), storage = getStorage(app);
+const $ = (id) => document.getElementById(id);
+const CAT_LABEL = { bRoll: "B-roll", appDemos: "App demos", brandElements: "Brand assets" };
+
+onAuthStateChanged(auth, (user) => {
+  $("who").textContent = user ? (user.email || "") : "";
+  $("auth").textContent = user ? "Sign out" : "Sign in";
+  $("gate").style.display = user ? "none" : "block";
+  $("form").style.display = user ? "block" : "none";
+  $("list").style.display = user ? "block" : "none";
+  if (user) loadAssets();
+});
+$("auth").addEventListener("click", () => auth.currentUser ? signOut(auth) : signInWithPopup(auth, new GoogleAuthProvider()));
+
+// probe video duration (best-effort) so the library can show it
+function videoDuration(file) {
+  return new Promise((res) => {
+    if (!file.type.startsWith("video/")) return res(null);
+    const v = document.createElement("video"); v.preload = "metadata";
+    v.onloadedmetadata = () => { res(Math.round(v.duration) || null); URL.revokeObjectURL(v.src); };
+    v.onerror = () => res(null);
+    v.src = URL.createObjectURL(file);
+  });
+}
+
+$("upload").addEventListener("click", async () => {
+  const file = $("file").files[0], cat = $("cat").value, title = $("title").value.trim();
+  if (!file) return ($("status").textContent = "Pick a file first.");
+  $("upload").disabled = true; $("status").style.color = "var(--muted)"; $("status").textContent = "Uploading…";
+  try {
+    const safe = file.name.replace(/[^\w.\-]+/g, "_");
+    const path = `creator_library/${cat}/${Date.now()}_${safe}`;
+    const r = ref(storage, path);
+    await uploadBytes(r, file, { contentType: file.type, cacheControl: "public, max-age=31536000, immutable" });
+    const url = await getDownloadURL(r);
+    const duration = await videoDuration(file);
+    await addDoc(collection(db, "creator_library"), {
+      category: cat,
+      title: title || file.name.replace(/\.[^.]+$/, "").replace(/[-_]+/g, " "),
+      url, storagePath: path, duration: duration ?? null,
+      contentType: file.type, createdAt: serverTimestamp(),
+    });
+    $("status").style.color = "var(--good)"; $("status").textContent = "✓ Added — live on the creator library now.";
+    $("file").value = ""; $("title").value = "";
+    loadAssets();
+  } catch (e) {
+    $("status").style.color = "var(--bad)";
+    $("status").textContent = "Upload failed: " + (e?.message || e) + (String(e).includes("storage/unauthorized") ? " (Storage rule needs to allow signed-in writes to creator_library/ — see setup note.)" : "");
+  } finally { $("upload").disabled = false; }
+});
+
+async function loadAssets() {
+  const box = $("assets"); box.innerHTML = '<p class="muted">Loading…</p>';
+  let snap;
+  try { snap = await getDocs(query(collection(db, "creator_library"), orderBy("createdAt", "desc"))); }
+  catch { snap = await getDocs(collection(db, "creator_library")); }
+  if (snap.empty) { box.innerHTML = '<p class="muted">Nothing uploaded yet.</p>'; return; }
+  const byCat = {};
+  snap.forEach((d) => { const a = { id: d.id, ...d.data() }; (byCat[a.category] = byCat[a.category] || []).push(a); });
+  box.innerHTML = "";
+  for (const cat of ["bRoll", "appDemos", "brandElements"]) {
+    const items = byCat[cat]; if (!items) continue;
+    const h = document.createElement("div"); h.className = "grp"; h.textContent = CAT_LABEL[cat] || cat; box.appendChild(h);
+    items.forEach((a) => {
+      const row = document.createElement("div"); row.className = "asset";
+      const isVid = (a.contentType || "").startsWith("video/");
+      row.innerHTML = `${isVid ? `<video src="${a.url}" muted></video>` : `<img src="${a.url}" alt="">`}
+        <div class="meta"><b>${a.title || "(untitled)"}</b><div class="muted">${a.duration ? a.duration + "s · " : ""}${(a.contentType || "").split("/")[1] || ""}</div></div>
+        <button class="del">Remove</button>`;
+      row.querySelector(".del").addEventListener("click", async () => {
+        if (!confirm("Remove this from the library?")) return;
+        try { if (a.storagePath) await deleteObject(ref(storage, a.storagePath)).catch(() => {}); await deleteDoc(doc(db, "creator_library", a.id)); loadAssets(); }
+        catch (e) { alert("Remove failed: " + (e?.message || e)); }
+      });
+      box.appendChild(row);
+    });
+  }
+}
+</script>
+</body>
+</html>
