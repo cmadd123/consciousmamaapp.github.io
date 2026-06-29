@@ -1210,7 +1210,8 @@
     .stat-band-value { font-size: 22px; font-weight: 700; color: var(--text); line-height: 1.1; }
     .stat-band-label { font-size: 12px; color: var(--text-muted); }
     .stat-band-cta { margin-left: auto; font-size: 13px; color: var(--primary); font-weight: 600; }
-    .info-tip { cursor: help; color: var(--text-muted); opacity: 0.7; font-size: 0.9em; margin-left: 2px; }
+    .info-tip { cursor: help; color: var(--text-muted); opacity: 0.65; margin-left: 4px; display: inline-flex; align-items: center; vertical-align: -3px; }
+    .info-tip .ic { width: 16px; height: 16px; stroke-width: 1.75; }
 
     @media (max-width: 720px) {
       .creator-nav {
@@ -2257,6 +2258,7 @@
         clipboard: w('<rect x="8" y="3" width="8" height="4" rx="1.5"/><path d="M16 5h2a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2"/>'),
         folder: w('<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>'),
         help: w('<circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 0 1 5 0c0 1.5-2.5 2-2.5 4"/><circle cx="12" cy="17" r="0.5" fill="currentColor"/>'),
+        info: w('<circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 7.5h.01"/>'),
       };
     })();
     document.querySelectorAll('[data-icon]').forEach((el) => {
@@ -3460,9 +3462,10 @@
         // holdback portion, otherwise the existing threshold messaging.
         const thresholdGap = 2500 - pendingEligible;
         if (holdbackDisplay > 0) {
+          const holdTip = "Why the wait? Each earning is held 35 days from when it's credited. This window lets refunds settle first AND aligns with Apple's payment cycle — Apple holds subscription revenue for ~30 days after the end of the month before paying it to MomRise. Payouts then run on the 1st of each month, with a $25 minimum. End-to-end from new subscriber to your bank: typically 35-65 days.";
           $('statPendingSub').innerHTML = pendingEligible >= 2500
-            ? `<span class="up">${fmtMoney(eligibleDisplay)} ready · ${fmtMoney(holdbackDisplay)} in 30-day hold <span class="info-tip" title="Earnings become eligible for payout 30 days after they're credited, so refunds can settle first. The 30-day hold portion will roll into your next eligible payout as it ages.">ⓘ</span></span>`
-            : `<span class="muted">${fmtMoney(eligibleDisplay)} eligible · ${fmtMoney(holdbackDisplay)} in 30-day hold <span class="info-tip" title="Earnings become eligible for payout 30 days after they're credited, so refunds can settle first. The 30-day hold portion will roll into your next eligible payout as it ages.">ⓘ</span></span>`;
+            ? `<span class="up">${fmtMoney(eligibleDisplay)} ready · ${fmtMoney(holdbackDisplay)} in 35-day hold <span class="info-tip" title="${holdTip}">${ICON.info}</span></span>`
+            : `<span class="muted">${fmtMoney(eligibleDisplay)} eligible · ${fmtMoney(holdbackDisplay)} in 35-day hold <span class="info-tip" title="${holdTip}">${ICON.info}</span></span>`;
         } else {
           $('statPendingSub').innerHTML = pendingEligible >= 2500
             ? '<span class="up">Ready for next payout</span>'

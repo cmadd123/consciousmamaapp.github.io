@@ -264,5 +264,5 @@ CONTENT:
 PAYOUT:
   ☐ Dashboard: momrise.app/creator/
   ☐ Monthly on the 1st, $25 minimum
-  ☐ 30-day hold from credit date
+  ☐ 35-day hold from credit date
 ```
