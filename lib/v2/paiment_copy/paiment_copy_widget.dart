@@ -58,18 +58,13 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
     super.initState();
     _model = createModel(context, () => PaimentCopyModel());
 
-    // Initialize Stripe on page load (Android only — iOS uses web checkout)
-    if (!Platform.isIOS) {
-      SchedulerBinding.instance.addPostFrameCallback((_) async {
-        await initializeStripe();
-      });
-    } else {
-      // Initialize Apple IAP listener so purchase events from StoreKit
-      // get streamed and mirrored into Firestore.
-      SchedulerBinding.instance.addPostFrameCallback((_) async {
-        await initializeIap();
-      });
-    }
+    // Initialize the store IAP listener (StoreKit on iOS, Google Play
+    // Billing on Android) so purchase events get streamed and mirrored
+    // into Firestore. Play policy requires Play Billing for digital
+    // subscriptions — the old in-app Stripe path is gone on Android.
+    SchedulerBinding.instance.addPostFrameCallback((_) async {
+      await initializeIap();
+    });
 
     // Check if free trial has expired
     _checkTrialExpired();
@@ -365,72 +360,20 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
     }
   }
 
+  /// Android subscribe: Google Play Billing via the shared IAP service
+  /// (Play policy requires Play Billing for digital subscriptions — this
+  /// replaced the old in-app Stripe payment sheet).
   Future<void> _handleSubscribe() async {
     HapticFeedback.mediumImpact();
+    setState(() => _model.isProcessing = true);
 
-    setState(() {
-      _model.isProcessing = true;
-    });
+    final isYearly = _model.selectedPayment == 'yearly';
+    final result = isYearly
+        ? await buyAnnualSubscription()
+        : await buyMonthlySubscription();
 
-    try {
-      final planType = _model.selectedPayment; // 'monthly' or 'yearly'
-
-      // Call Stripe service to create subscription and present payment sheet
-      final result = await createSubscription(planType: planType);
-
-      if (result == 'success') {
-        // TODO: set real prices (monthly/yearly) for accurate revenue value
-        analyticsService.logSubscriptionStart(tier: planType, value: planType == 'yearly' ? 69.99 : 6.99);
-        // Payment sheet completed successfully - Show success screen
-        if (mounted) {
-          setState(() {
-            _model.isProcessing = false;
-            _model.showSuccessScreen = true;
-          });
-        }
-      } else if (result == 'Payment canceled') {
-        // User canceled payment sheet
-        if (mounted) {
-          setState(() => _model.isProcessing = false);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: const Text('Payment canceled. You can try again anytime.'),
-              backgroundColor: FlutterFlowTheme.of(context).secondaryText,
-              behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              margin: const EdgeInsets.all(16),
-            ),
-          );
-        }
-      } else {
-        // Error occurred
-        if (mounted) {
-          setState(() => _model.isProcessing = false);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('An error occurred: $result'),
-              backgroundColor: FlutterFlowTheme.of(context).error,
-              behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              margin: const EdgeInsets.all(16),
-            ),
-          );
-        }
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() => _model.isProcessing = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Exception: $e'),
-            backgroundColor: FlutterFlowTheme.of(context).error,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            margin: const EdgeInsets.all(16),
-          ),
-        );
-      }
-    }
+    if (mounted) setState(() => _model.isProcessing = false);
+    await _handleIapResult(result);
   }
 
   Future<void> _checkTrialExpired() async {
@@ -1045,13 +988,11 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
         // button since restore already polls Firestore for web subs.
         GestureDetector(
           onTap: () async {
-            // Kick off Apple restore first; the IAP listener will mirror
-            // any restored purchase into Firestore. We then poll for the
-            // entitlement.
-            if (Platform.isIOS) {
-              await restoreApplePurchases();
-              await Future.delayed(const Duration(seconds: 2));
-            }
+            // Kick off a store restore first (StoreKit or Play Billing);
+            // the IAP listener mirrors any restored purchase into
+            // Firestore. We then poll for the entitlement.
+            await restoreApplePurchases();
+            await Future.delayed(const Duration(seconds: 2));
             final hasSubscription = await hasActiveSubscription();
             if (hasSubscription) {
               if (mounted) {
@@ -1221,6 +1162,11 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
       if (!mounted) return;
 
       if (active) {
+        final plan = _model.selectedPayment == 'yearly' ? 'yearly' : 'monthly';
+        analyticsService.logSubscriptionStart(
+          tier: plan,
+          value: plan == 'yearly' ? 69.99 : 6.99,
+        );
         _completeOnboardingAndGoHome();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -1252,8 +1198,13 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
     }
   }
 
-  /// Android CTA — full Stripe payment sheet
+  /// Android CTA — Google Play Billing subscription (plan chosen by the
+  /// toggle above), with renewal/cancel disclosure adjacent to the button.
   Widget _buildAndroidCTA() {
+    final isYearly = _model.selectedPayment == 'yearly';
+    final priceLine = isYearly
+        ? '7-day free trial, then \$69.99/year. Auto-renews yearly. Cancel anytime in Google Play.'
+        : '7-day free trial, then \$6.99/month. Auto-renews monthly. Cancel anytime in Google Play.';
     return Column(
       children: [
         AnimatedBuilder(
@@ -1299,12 +1250,12 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
         ),
         const SizedBox(height: 8.0),
         Text(
-          '7-day free trial, cancel anytime',
+          priceLine,
           textAlign: TextAlign.center,
           style: FlutterFlowTheme.of(context).bodySmall.override(
             fontFamily: FFAppState().currentFontFamily,
             color: FlutterFlowTheme.of(context).secondaryText,
-            fontSize: 12.0,
+            fontSize: 11.5,
             letterSpacing: 0.0,
           ),
         ),
@@ -1312,6 +1263,10 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
         GestureDetector(
           onTap: () async {
             HapticFeedback.lightImpact();
+            // Ask Play Billing to restore first; the IAP listener mirrors
+            // any restored purchase into Firestore before we check.
+            await restoreApplePurchases();
+            await Future.delayed(const Duration(seconds: 2));
             final hasSubscription = await hasActiveSubscription();
             if (hasSubscription) {
               if (mounted) {
