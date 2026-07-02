@@ -590,9 +590,9 @@ flutter build appbundle --release
 flutter build ipa --release
 ```
 
-**Current keystore**: `android/upload-keystore.jks`
+**Current keystore**: `android/upload-keystore.jks` (gitignored — never commit)
 - Alias: upload
-- Password: consciousmama2026 (⚠️ CHANGE BEFORE PUBLIC LAUNCH)
+- Regenerated 2026-07-01. The previous keystore is retired (its password had been committed to this public file). Credentials live in `android/key.properties` (gitignored) and the password manager — never in this file.
 
 ---
 
