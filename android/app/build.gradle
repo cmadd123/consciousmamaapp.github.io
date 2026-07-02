@@ -33,6 +33,9 @@ if (keystorePropertiesFile.exists()) {
 android {
     namespace "com.momrise.app"
     compileSdkVersion 35
+    // Pin to the locally installed NDK so release builds don't try to
+    // download AGP's default NDK version (fails on low disk).
+    ndkVersion "27.0.12077973"
     
 
     compileOptions {
