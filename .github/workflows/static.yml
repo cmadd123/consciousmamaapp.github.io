@@ -26,10 +26,22 @@ jobs:
         uses: actions/checkout@v4
       - name: Setup Pages
         uses: actions/configure-pages@v5
+      - name: Prepare site artifact
+        # Only the website ships to Pages. Excluding the Flutter app tree
+        # keeps the artifact small — a local release build once bloated
+        # build/ to several GB and made deployments time out.
+        run: |
+          mkdir -p _site
+          rsync -a \
+            --exclude='_site' --exclude='.git' --exclude='.github' \
+            --exclude='build' --exclude='android' --exclude='ios' \
+            --exclude='lib' --exclude='test' --exclude='functions' \
+            --exclude='node_modules' --exclude='.dart_tool' \
+            ./ _site/
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: '.'
+          path: '_site'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
