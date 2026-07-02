@@ -45,3 +45,7 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          # GitHub's deployment queue sometimes stalls well past the 10-min
+          # default (observed 2026-07-02); wait up to 30 min before failing.
+          timeout: 1800000
