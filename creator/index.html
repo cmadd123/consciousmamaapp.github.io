@@ -1672,7 +1672,7 @@
               <div id="payoutHistoryBody">
                 <div class="chart-empty">
                   <div class="chart-empty-title">No payouts yet</div>
-                  <div>Payouts appear here after the 1st of each month once your pending balance clears $25.</div>
+                  <div>Payouts run on the 10th of each month once your pending balance clears $25 — we pay you as soon as Apple has paid us for your subscribers.</div>
                 </div>
               </div>
             </div>
@@ -3415,10 +3415,12 @@
         ));
         let pending = 0, lifetime = 0;
         let pendingEligible = 0, pendingHoldback = 0;
-        // Earnings need to be 30 days old before they're swept into a
-        // payout cycle (matches the holdback in runCreatorPayouts).
-        const HOLDBACK_DAYS = 30;
+        // Earnings need to be 45 days old before they're swept into a
+        // payout cycle (matches the holdback in runCreatorPayouts —
+        // "we pay you when Apple pays us"; payouts run on the 10th).
+        const HOLDBACK_DAYS = 45;
         const holdbackCutoff = Date.now() - HOLDBACK_DAYS * 24 * 60 * 60 * 1000;
+        let newestPendingMs = 0;
         const byMonth = new Map();
         const byUser = new Map(); // userPath -> Set of "YYYY-MM" they paid in
         for (const d of snap.docs) {
@@ -3430,6 +3432,7 @@
           if (e.payout_status === 'pending') {
             pending += e.creator_cents;
             const createdAtMs = e.created_at?.toMillis?.() || 0;
+            if (createdAtMs > newestPendingMs) newestPendingMs = createdAtMs;
             if (createdAtMs > 0 && createdAtMs <= holdbackCutoff) {
               pendingEligible += e.creator_cents;
             } else {
@@ -3462,15 +3465,25 @@
 
         // Sub-line shows the eligible vs holdback split when there's a
         // holdback portion, otherwise the existing threshold messaging.
+        // When anything is pending, also show the concrete date the full
+        // balance pays out — the #1 creator support question.
+        let paydayStr = '';
+        if (pendingDisplay > 0 && newestPendingMs > 0) {
+          const fullEligible = new Date(newestPendingMs + HOLDBACK_DAYS * 86400000);
+          const payday = new Date(fullEligible.getFullYear(), fullEligible.getMonth(), 10);
+          if (payday < fullEligible) payday.setMonth(payday.getMonth() + 1);
+          paydayStr = payday.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        }
         const thresholdGap = 2500 - pendingEligible;
         if (holdbackDisplay > 0) {
-          const holdTip = "Why the wait? Each earning is held 35 days from when it's credited. This window lets refunds settle first AND aligns with Apple's payment cycle — Apple holds subscription revenue for ~30 days after the end of the month before paying it to MomRise. Payouts then run on the 1st of each month, with a $25 minimum. End-to-end from new subscriber to your bank: typically 35-65 days.";
+          const holdTip = "We pay you when Apple pays us. Apple holds each month's subscription revenue for about a month after the month ends before depositing it to MomRise — so each earning is held 45 days, then paid on the next monthly payout run (the 10th, $25 minimum). This also lets refunds settle before money moves. End-to-end from new subscriber to your bank: typically 6-9 weeks.";
+          const payline = paydayStr ? ` · full balance pays ~${paydayStr}` : '';
           $('statPendingSub').innerHTML = pendingEligible >= 2500
-            ? `<span class="up">${fmtMoney(eligibleDisplay)} ready · ${fmtMoney(holdbackDisplay)} in 35-day hold <span class="info-tip" title="${holdTip}">${ICON.info}</span></span>`
-            : `<span class="muted">${fmtMoney(eligibleDisplay)} eligible · ${fmtMoney(holdbackDisplay)} in 35-day hold <span class="info-tip" title="${holdTip}">${ICON.info}</span></span>`;
+            ? `<span class="up">${fmtMoney(eligibleDisplay)} ready · ${fmtMoney(holdbackDisplay)} awaiting Apple${payline} <span class="info-tip" title="${holdTip}">${ICON.info}</span></span>`
+            : `<span class="muted">${fmtMoney(eligibleDisplay)} eligible · ${fmtMoney(holdbackDisplay)} awaiting Apple${payline} <span class="info-tip" title="${holdTip}">${ICON.info}</span></span>`;
         } else {
           $('statPendingSub').innerHTML = pendingEligible >= 2500
-            ? '<span class="up">Ready for next payout</span>'
+            ? `<span class="up">Ready — pays ~${paydayStr || 'the 10th'}</span>`
             : thresholdGap > 0
               ? `<span class="muted">${fmtMoney(thresholdGap)} to $25 minimum</span>`
               : '';

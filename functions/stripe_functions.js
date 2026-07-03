@@ -768,23 +768,25 @@ async function recordRefundClawback(charge) {
 
 exports.runCreatorPayouts = onSchedule(
   {
-    schedule: '0 13 1 * *',
+    schedule: '0 13 10 * *',
     timeZone: 'America/New_York',
     secrets: [stripeSecretKey],
   },
   async () => {
     const stripeClient = stripe(stripeSecretKey.value().replace(/[\s\r\n]+/g, ''));
 
-    // 30-day holdback on payout eligibility. Apple deposits IAP revenue
-    // to the platform account roughly 30-45 days after the close of each
-    // fiscal month. Without this hold the platform would owe creators
-    // money it hasn't received yet — a real working-capital crunch as
-    // the program scales. The holdback aligns creator payouts to Apple's
-    // own settlement cycle. Industry standard: Patreon ~5 days, Substack
-    // 30 days, Amazon Associates 60 days, Apple Affiliate 60 days.
-    // 30 days is the user-friendly end of the band while still covering
-    // Apple's deposit lag.
-    const PAYOUT_HOLDBACK_DAYS = 30;
+    // "We pay you when Apple pays us." Payouts run on the 10th with a
+    // 45-day holdback, which together guarantee every earning is inside
+    // an Apple deposit that has ALREADY landed — the platform never
+    // fronts creator money from its own reserves (there are none to
+    // front at this stage). Apple pays each fiscal month's sales ~33
+    // days after the fiscal month closes, so worst case (a purchase on
+    // fiscal day 1) deposits ~65 days later, always before the 10th-of-
+    // month sweep that follows the 45-day aging. The old 1st-of-month /
+    // 30-35-day design quietly fronted early-month purchases by up to a
+    // week. Creator-facing copy (dashboard, FAQ, agreement) states the
+    // when-Apple-pays-us framing — keep them in sync with this number.
+    const PAYOUT_HOLDBACK_DAYS = 45;
     const holdbackCutoffMs = Date.now() - PAYOUT_HOLDBACK_DAYS * 24 * 60 * 60 * 1000;
 
     const pendingSnap = await db.collection('creator_earnings')
@@ -801,7 +803,7 @@ exports.runCreatorPayouts = onSchedule(
       // before this field shipped default to production so they still
       // pay out.
       if (d.environment === 'Sandbox') continue;
-      // Apply the 30-day holdback. Rows younger than this stay pending
+      // Apply the 35-day holdback. Rows younger than this stay pending
       // and become eligible on the next monthly cron run. Applies to
       // both earnings and clawbacks — recent refund clawbacks delay
       // until the matching earning age is met. Net balances always
