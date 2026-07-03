@@ -1,4 +1,4 @@
-name: mome_coach
+﻿name: mome_coach
 description: MomRise - Track milestones, create AI-powered learning paths, plan meals, and manage your family.
 
 # The following line prevents the package from being accidentally published to
@@ -15,7 +15,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 2.4.0+540
+version: 2.4.0+541
 
 environment:
   sdk: ">=3.0.0 <4.0.0"

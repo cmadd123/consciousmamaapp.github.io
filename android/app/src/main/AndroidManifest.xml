@@ -9,8 +9,10 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.VIBRATE"/>
-    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
-    <uses-permission android:name="android.permission.USE_EXACT_ALARM"/>
+    <!-- Exact-alarm permissions deliberately absent: reminders use inexact
+         scheduling (AndroidScheduleMode.inexactAllowWhileIdle), which needs
+         no permission and keeps us clear of Play's USE_EXACT_ALARM policy
+         (restricted to clock/calendar core-functionality apps). -->
 
     <!-- Required for url_launcher canLaunchUrl on Android 11+ -->
     <queries>
