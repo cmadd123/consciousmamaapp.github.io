@@ -1672,7 +1672,7 @@
               <div id="payoutHistoryBody">
                 <div class="chart-empty">
                   <div class="chart-empty-title">No payouts yet</div>
-                  <div>Payouts run on the 10th of each month once your pending balance clears $25 — we pay you as soon as Apple has paid us for your subscribers.</div>
+                  <div>You get paid when we get paid — once Apple deposits your subscribers' revenue to MomRise, your share goes out on the next monthly payout run ($25 minimum).</div>
                 </div>
               </div>
             </div>
@@ -3588,8 +3588,8 @@
           <div class="chart-empty">
             <div class="chart-empty-title">No payouts yet</div>
             <div>${pendingTotal > 0
-              ? `You have ${fmtMoney(pendingTotal)} pending. Payouts run on the 1st of each month once pending ≥ $25.`
-              : 'Payouts appear here after the 1st of each month once your pending balance clears $25.'}</div>
+              ? `You have ${fmtMoney(pendingTotal)} pending. You get paid when we get paid — see the date above ($25 minimum).`
+              : 'You get paid when we get paid — payouts appear here once Apple has deposited your subscribers\' revenue and your balance clears $25.'}</div>
           </div>`;
         $('payoutHistorySubtitle').textContent = '';
         return;

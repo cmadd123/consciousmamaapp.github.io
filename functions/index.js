@@ -2780,7 +2780,7 @@ function _renderCreatorWelcomeEmail(name) {
         <li style="margin: 10px 0;">Start sharing your code with your community — our <a href="https://momrise.app/creator/playbook/" style="color: #52A097;">creator playbook</a> covers exactly what works (and what doesn't) for promoting parenting apps. Read it before your first post.</li>
       </ol>
 
-      <p style="margin: 24px 0 8px;">Payouts run on the 1st of each month, $25 minimum, for earnings that are at least 30 days old. The 30-day hold gives refunds time to settle before money moves. Your dashboard always shows both your eligible balance and what's still in the hold window.</p>
+      <p style="margin: 24px 0 8px;"><strong>You get paid when we get paid.</strong> Apple holds each month's subscription revenue for about a month before depositing it to MomRise — once it lands, your share goes out on the next monthly payout run ($25 minimum). Your dashboard always shows your balance and the exact date it pays out, so you never have to guess.</p>
       <p style="margin: 16px 0 8px;">Everything else (follower count, earnings, content performance) is in your dashboard too.</p>
 
       <div style="text-align: center; margin: 32px 0 16px;">
@@ -3331,12 +3331,12 @@ function _renderRejectionEmail(name) {
 // ── Monthly creator stats digest ──────────────────────
 // Emails each active creator a recap of the previous calendar month:
 // followers gained, subscribers gained, money earned, top doc + meal
-// plan. Runs the 2nd of each month at 10:00 ET — gives a 24-hour
-// buffer after the 1st-of-month payout runner so paid totals are
+// plan. Runs the 11th of each month at 10:00 ET — gives a 24-hour
+// buffer after the 10th-of-month payout runner so paid totals are
 // settled. Skipped silently when a creator hasn't been onboarded.
 exports.monthlyCreatorDigest = onSchedule(
   {
-    schedule: '0 10 2 * *',
+    schedule: '0 10 11 * *',
     timeZone: 'America/New_York',
     secrets: [sendgridApiKey],
   },

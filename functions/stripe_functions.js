@@ -761,7 +761,7 @@ async function recordRefundClawback(charge) {
 }
 
 // ── Monthly payout runner ─────────────────────────────
-// Runs on the 1st of every month. For each creator with Connect onboarded,
+// Runs on the 10th of every month. For each creator with Connect onboarded,
 // sums pending earnings (incl. negative clawbacks). If the balance is ≥
 // $25, transfers it to their Connect account and marks those ledger docs
 // as paid. Sub-threshold balances roll to next month.

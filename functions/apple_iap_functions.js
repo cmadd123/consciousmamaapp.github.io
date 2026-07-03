@@ -194,7 +194,28 @@ exports.appleNotification = onRequest(
         'OFFER_REDEEMED',
       ]);
       if (earningTypes.has(notificationType) && txInfo) {
-        await recordAppleEarning(txInfo, notificationType, subtype, envEnv);
+        // Skip earnings during free-trial start.
+        //
+        // SUBSCRIBED with subtype INITIAL_BUY + an active intro/promo offer
+        // fires the moment a user starts a free trial — but no money has
+        // moved yet. Apple then fires DID_RENEW when the trial converts
+        // and the first real charge lands. Without this guard we'd credit
+        // the creator twice for the same subscription (once at trial
+        // start, once at conversion) because Apple intentionally uses
+        // different transactionIds across SUBSCRIBED→DID_RENEW, defeating
+        // our transaction_id-based idempotency.
+        const isFreeTrialStart =
+          notificationType === 'SUBSCRIBED' &&
+          subtype === 'INITIAL_BUY' &&
+          txInfo.offerType != null;
+        if (isFreeTrialStart) {
+          console.log(
+            `[apple_iap] tx ${txInfo.transactionId} is trial-start ` +
+              `(offerType=${txInfo.offerType}) — deferring earning until DID_RENEW`,
+          );
+        } else {
+          await recordAppleEarning(txInfo, notificationType, subtype, envEnv);
+        }
       }
 
       // Refund events: Apple yanks money back, sometimes weeks after

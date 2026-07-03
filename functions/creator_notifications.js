@@ -191,12 +191,16 @@ function _renderPayoutEmail({ firstName, amountStr, lifetimeStr }) {
 function _formatEligibleDate(createdAt) {
   try {
     const created = createdAt?.toDate?.() || new Date();
-    const eligible = new Date(created.getTime() + 30 * 24 * 60 * 60 * 1000);
-    return eligible.toLocaleDateString('en-US', {
+    // 45-day holdback (matches runCreatorPayouts), then the next
+    // monthly payout run on the 10th picks it up.
+    const eligible = new Date(created.getTime() + 45 * 24 * 60 * 60 * 1000);
+    const payday = new Date(eligible.getFullYear(), eligible.getMonth(), 10);
+    if (payday < eligible) payday.setMonth(payday.getMonth() + 1);
+    return payday.toLocaleDateString('en-US', {
       year: 'numeric', month: 'long', day: 'numeric',
     });
   } catch (_) {
-    return 'about 30 days from now';
+    return 'about six to nine weeks from now';
   }
 }
 
@@ -227,7 +231,7 @@ function _renderEarningEmail({ firstName, amountStr, sourceLabel, creatorCode, e
     <div style="padding: 28px 32px;">
       <p style="margin: 0 0 16px; font-size: 16px; color: #1F2937;">Hey ${esc(firstName)},</p>
       <p style="margin: 0 0 16px; font-size: 16px; color: #1F2937;">A new subscription was credited to your code <strong style="color: #2A6F67;">${esc(creatorCode)}</strong>. Your share, <strong>${esc(amountStr)}</strong>, has been added to your pending balance.</p>
-      <p style="margin: 0 0 8px; font-size: 14px; color: #6B7280;">Payouts run on the 1st of each month once your pending balance hits $25. Earnings become payout-eligible 30 days after they're credited, so this one is eligible starting <strong style="color: #2A6F67;">${esc(eligibleDate)}</strong>.</p>
+      <p style="margin: 0 0 8px; font-size: 14px; color: #6B7280;">You get paid when we get paid — Apple deposits subscription revenue to MomRise about a month after it's charged, and your share goes out on the next monthly payout run ($25 minimum). This earning pays out on <strong style="color: #2A6F67;">${esc(eligibleDate)}</strong>.</p>
       <div style="text-align: center;">
         <a href="https://momrise.app/creator/" style="display: inline-block; background: #52A097; color: white; padding: 12px 24px; border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 15px;">Open creator dashboard →</a>
       </div>
