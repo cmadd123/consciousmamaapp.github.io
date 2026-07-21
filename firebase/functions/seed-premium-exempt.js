@@ -50,6 +50,7 @@ const EMAILS = [
   "acb1604@yahoo.com",
   "jessica_sasser_13@yahoo.com",
   "itshopemann@gmail.com",
+  "hannahmarievogel@gmail.com",
 ];
 
 async function main() {
