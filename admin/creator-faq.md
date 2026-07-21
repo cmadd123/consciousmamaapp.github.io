@@ -136,10 +136,10 @@ gross** (after Apple/Stripe processing). Recurring renewals count too as
 long as the customer stays subscribed.
 
 **Q: When do I get paid?**
-Monthly payouts on the 1st, via Stripe to your bank. We hold each earning
-for 30 days from when it was credited (Stripe industry standard — covers
-the refund window). Minimum payout: $25. Anything below rolls to next
-month.
+Monthly payouts on the 10th, via Stripe to your bank. We hold each earning
+for 45 days from when it was credited (we pay you when Apple pays us — this
+also covers the refund window). Minimum payout: $25. Anything below rolls to
+next month.
 
 **Q: How do I see my earnings?**
 Sign in at **momrise.app/creator/** with the email tied to your creator
@@ -263,6 +263,6 @@ CONTENT:
 
 PAYOUT:
   ☐ Dashboard: momrise.app/creator/
-  ☐ Monthly on the 1st, $25 minimum
-  ☐ 35-day hold from credit date
+  ☐ Monthly on the 10th, $25 minimum
+  ☐ 45-day hold from credit date
 ```

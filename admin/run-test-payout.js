@@ -1,4 +1,4 @@
-// Manual creator payout trigger — bypasses the 30-day holdback enforced by
+// Manual creator payout trigger — bypasses the 45-day holdback enforced by
 // the scheduled runCreatorPayouts function. Use this for testing the
 // end-to-end Stripe Connect transfer path before Apple has deposited the
 // IAP revenue to the platform.

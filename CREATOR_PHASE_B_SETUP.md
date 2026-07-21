@@ -10,7 +10,7 @@ When a user enters Haley's creator code and subscribes via Apple IAP:
 2. Apple processes the payment and sends a **Server-to-Server Notification V2** to our Cloud Function `appleNotification`.
 3. The function verifies the JWS signature (using Apple Root CA G3), reads the UUID, looks up the Firebase user, reads `active_creator_code`, and creates a `creator_earnings` row at 50%.
 4. Refunds create clawback rows automatically.
-5. The existing monthly payout runner (`runCreatorPayouts`) sweeps those rows on the 1st of each month.
+5. The existing monthly payout runner (`runCreatorPayouts`) sweeps those rows on the 10th of each month, after a 45-day holdback.
 
 ## Setup steps
 

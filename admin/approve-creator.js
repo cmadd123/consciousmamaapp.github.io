@@ -124,7 +124,8 @@ Next steps:
    subscribes using this code earns you a share of their subscription
    for as long as they stay. Your specific rate is on your dashboard.
 
-Payouts run on the 1st of every month, minimum $25. Full details in
+Payouts run on the 10th of every month, minimum $25. Each earning is
+held 45 days first (we pay you when Apple pays us). Full details in
 your dashboard.
 
 Questions? Just reply to this email.

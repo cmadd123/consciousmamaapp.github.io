@@ -97,7 +97,7 @@ To get started:
 
 3. Start sharing your code — in a post, a story, a newsletter, wherever.
 
-Payouts run on the 1st of each month, minimum $25. Everything's in your dashboard — follower count, earnings, which content is landing.
+Payouts run on the 10th of each month, minimum $25 (each earning is held 45 days first — we pay you when Apple pays us). Everything's in your dashboard — follower count, earnings, which content is landing.
 
 Any questions, just reply. I'm thrilled to have you.
 

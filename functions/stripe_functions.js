@@ -803,7 +803,7 @@ exports.runCreatorPayouts = onSchedule(
       // before this field shipped default to production so they still
       // pay out.
       if (d.environment === 'Sandbox') continue;
-      // Apply the 35-day holdback. Rows younger than this stay pending
+      // Apply the 45-day holdback. Rows younger than this stay pending
       // and become eligible on the next monthly cron run. Applies to
       // both earnings and clawbacks — recent refund clawbacks delay
       // until the matching earning age is met. Net balances always
