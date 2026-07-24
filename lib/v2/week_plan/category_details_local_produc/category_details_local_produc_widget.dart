@@ -1343,7 +1343,7 @@ class _CategoryDetailsLocalProducWidgetState
                     Text(
                       'Send to Instacart',
                       style: TextStyle(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         color: Colors.white70,
                         fontSize: 11.0,
                       ),

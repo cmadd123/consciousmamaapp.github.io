@@ -308,7 +308,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                   Text(
                     "Shop this week's groceries",
                     style: TextStyle(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       color: Colors.white,
                       fontSize: 15.0,
                       fontWeight: FontWeight.w600,
@@ -318,7 +318,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                   Text(
                     'Send the whole list to Instacart',
                     style: TextStyle(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       color: Colors.white70,
                       fontSize: 12.0,
                     ),

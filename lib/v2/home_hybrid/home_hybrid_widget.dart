@@ -119,6 +119,8 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
 
   @override
   Widget build(BuildContext context) {
+    // Rebuild on creator-theme change so text re-fonts instantly on toggle.
+    context.watch<CreatorThemeNotifier>();
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
