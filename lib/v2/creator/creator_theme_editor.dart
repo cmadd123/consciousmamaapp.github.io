@@ -1,6 +1,7 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'confirm_share_dialog.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -142,6 +143,10 @@ class _CreatorThemeEditorWidgetState extends State<CreatorThemeEditorWidget> {
   }
 
   Future<void> _save() async {
+    final ok = await confirmShareWithFollowers(context,
+        what: 'Your theme colors and fonts');
+    if (!ok) return;
+
     setState(() => _isSaving = true);
     HapticFeedback.mediumImpact();
 

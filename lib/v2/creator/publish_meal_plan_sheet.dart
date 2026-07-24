@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'confirm_share_dialog.dart';
 import '/app_state.dart';
 import 'package:flutter/services.dart';
 import '/backend/backend.dart';
@@ -40,6 +41,10 @@ class _PublishMealPlanSheetState extends State<PublishMealPlanSheet> {
 
   Future<void> _publish() async {
     if (_titleController.text.trim().isEmpty) return;
+
+    final ok = await confirmShareWithFollowers(context,
+        what: 'This week\'s meal plan');
+    if (!ok) return;
 
     setState(() => _isPublishing = true);
     HapticFeedback.mediumImpact();

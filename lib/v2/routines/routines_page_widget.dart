@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import '../creator/confirm_share_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
@@ -80,6 +81,12 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
 
   Future<void> _toggleShare(RoutinesRecord routine) async {
     final newValue = !routine.sharedWithFollowers;
+    // Confirm before broadcasting a routine to followers (not when unsharing).
+    if (newValue) {
+      final ok = await confirmShareWithFollowers(context,
+          what: 'The routine "${routine.name}"');
+      if (!ok) return;
+    }
     await routine.reference.update({'shared_with_followers': newValue});
     if (!mounted) return;
     HapticFeedback.selectionClick();
