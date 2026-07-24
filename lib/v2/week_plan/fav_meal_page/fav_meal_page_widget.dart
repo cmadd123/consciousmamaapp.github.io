@@ -3268,8 +3268,17 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
   }
 
   Widget _buildSavedDaysView(BuildContext context) {
+    // Shared Library: source by cookbook mode (creator's own shared / active
+    // creator's shared / all own), then keep only day-template groups.
+    final dayTemplateSource = _model.cookbookMode == 'creator'
+        ? (_creatorProfile != null
+            ? _model.mealTemplates
+                .where((t) => t.sharedWithFollowers)
+                .toList()
+            : _model.creatorSharedTemplates)
+        : _model.mealTemplates;
     // Filter templates that have a day_template_group
-    final dayTemplates = _model.mealTemplates
+    final dayTemplates = dayTemplateSource
         .where((t) => t.hasDayTemplateGroup())
         .toList();
 
@@ -3402,6 +3411,47 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                           color: FlutterFlowTheme.of(context).primary,
                         ),
                         const SizedBox(width: 8.0),
+                        // Shared Library: share the whole saved day with followers.
+                        if (_creatorProfile != null &&
+                            _model.cookbookMode == 'personal')
+                          GestureDetector(
+                            onTap: () async {
+                              final isShared =
+                                  templates.first.sharedWithFollowers;
+                              for (final t in templates) {
+                                await t.reference.update(
+                                    {'shared_with_followers': !isShared});
+                              }
+                              _model.loadedMealTemplates = false;
+                              _loadMealTemplates();
+                              if (mounted) {
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(SnackBar(
+                                  content: Text(isShared
+                                      ? 'Removed from Shared'
+                                      : 'Shared with followers'),
+                                  behavior: SnackBarBehavior.floating,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(10)),
+                                  margin: const EdgeInsets.all(16),
+                                  duration: const Duration(seconds: 2),
+                                ));
+                              }
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.only(right: 8.0),
+                              child: Icon(
+                                templates.first.sharedWithFollowers
+                                    ? Icons.people
+                                    : Icons.people_outline,
+                                size: 18.0,
+                                color: templates.first.sharedWithFollowers
+                                    ? FlutterFlowTheme.of(context).primary
+                                    : Colors.grey.shade400,
+                              ),
+                            ),
+                          ),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -3809,8 +3859,17 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
 
   /// Build the Saved Days view
   Widget _buildTemplatesView(BuildContext context) {
+    // Shared Library: source by cookbook mode — creator sees their own shared
+    // templates, a follower sees the active creator's, else all own.
+    final templateSource = _model.cookbookMode == 'creator'
+        ? (_creatorProfile != null
+            ? _model.mealTemplates
+                .where((t) => t.sharedWithFollowers)
+                .toList()
+            : _model.creatorSharedTemplates)
+        : _model.mealTemplates;
     // Exclude day templates — those show in the Saved Days tab
-    final regularTemplates = _model.mealTemplates
+    final regularTemplates = templateSource
         .where((t) => !t.hasDayTemplateGroup())
         .toList();
 
@@ -4086,6 +4145,47 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                 ),
                               ),
                             ],
+                            // Shared Library: share this template with followers.
+                            if (_creatorProfile != null &&
+                                _model.cookbookMode == 'personal')
+                              GestureDetector(
+                                onTap: () async {
+                                  final isShared =
+                                      template.sharedWithFollowers;
+                                  await template.reference.update(
+                                      {'shared_with_followers': !isShared});
+                                  _model.loadedMealTemplates = false;
+                                  _loadMealTemplates();
+                                  if (mounted) {
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(SnackBar(
+                                      content: Text(isShared
+                                          ? 'Removed from Shared'
+                                          : 'Shared with followers'),
+                                      behavior: SnackBarBehavior.floating,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10)),
+                                      margin: const EdgeInsets.all(16),
+                                      duration: const Duration(seconds: 2),
+                                    ));
+                                  }
+                                },
+                                child: Padding(
+                                  padding:
+                                      const EdgeInsets.only(left: 8.0),
+                                  child: Icon(
+                                    template.sharedWithFollowers
+                                        ? Icons.people
+                                        : Icons.people_outline,
+                                    size: 18.0,
+                                    color: template.sharedWithFollowers
+                                        ? FlutterFlowTheme.of(context)
+                                            .primary
+                                        : Colors.grey.shade400,
+                                  ),
+                                ),
+                              ),
                           ],
                         ),
                         const SizedBox(height: 6.0),
