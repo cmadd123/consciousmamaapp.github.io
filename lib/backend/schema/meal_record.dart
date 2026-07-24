@@ -100,6 +100,12 @@ class MealRecord extends FirestoreRecord {
   String? _sourceDomain;
   String get sourceDomain => _sourceDomain ?? '';
   bool hasSourceDomain() => _sourceDomain != null;
+
+  // "shared_with_followers" field - Whether this recipe is in the creator's Shared Library
+  bool? _sharedWithFollowers;
+  bool get sharedWithFollowers => _sharedWithFollowers ?? false;
+  bool hasSharedWithFollowers() => _sharedWithFollowers != null;
+
   void _initializeFields() {
     _imageUrl = snapshotData['image_url'] as String?;
     _recipeName = snapshotData['recipe_name'] as String?;
@@ -120,6 +126,7 @@ class MealRecord extends FirestoreRecord {
     _estimatedCost = castToType<double>(snapshotData['estimated_cost']);
     _isImported = snapshotData['is_imported'] as bool?;
     _sourceDomain = snapshotData['source_domain'] as String?;
+    _sharedWithFollowers = snapshotData['shared_with_followers'] as bool?;
   }
 
   static CollectionReference get collection =>
@@ -171,6 +178,7 @@ Map<String, dynamic> createMealRecordData({
   double? estimatedCost,
   bool? isImported,
   String? sourceDomain,
+  bool? sharedWithFollowers,
 }) {
   final firestoreData = mapToFirestore(
     <String, dynamic>{
@@ -189,6 +197,7 @@ Map<String, dynamic> createMealRecordData({
       'estimated_cost': estimatedCost,
       'is_imported': isImported,
       'source_domain': sourceDomain,
+      'shared_with_followers': sharedWithFollowers,
     }.withoutNulls,
   );
 

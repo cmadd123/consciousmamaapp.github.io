@@ -102,6 +102,11 @@ class MealComboRecord extends FirestoreRecord {
   List<int> get preferredWeekdays => _preferredWeekdays;
   bool hasPreferredWeekdays() => _preferredWeekdays.isNotEmpty;
 
+  // "shared_with_followers" field - Whether this template is in the creator's Shared Library
+  bool? _sharedWithFollowers;
+  bool get sharedWithFollowers => _sharedWithFollowers ?? false;
+  bool hasSharedWithFollowers() => _sharedWithFollowers != null;
+
   void _initializeFields() {
     _name = snapshotData['name'] as String?;
     _entreeRef = snapshotData['entree_ref'] as DocumentReference?;
@@ -122,6 +127,7 @@ class MealComboRecord extends FirestoreRecord {
     _createdTime = snapshotData['created_time'] as DateTime?;
     _dayTemplateGroup = snapshotData['day_template_group'] as String?;
     _dayTemplateName = snapshotData['day_template_name'] as String?;
+    _sharedWithFollowers = snapshotData['shared_with_followers'] as bool?;
     // Multi-select preferred weekdays; fall back to legacy single-int field.
     final rawList = snapshotData['preferred_weekdays'];
     if (rawList is List) {
@@ -184,6 +190,7 @@ Map<String, dynamic> createMealComboRecordData({
   MealTyp? mealTyp,
   DocumentReference? userRef,
   DateTime? createdTime,
+  bool? sharedWithFollowers,
 }) {
   final firestoreData = mapToFirestore(
     <String, dynamic>{
@@ -198,6 +205,7 @@ Map<String, dynamic> createMealComboRecordData({
       'meal_typ': mealTyp,
       'user_ref': userRef,
       'created_time': createdTime,
+      'shared_with_followers': sharedWithFollowers,
     }.withoutNulls,
   );
 
