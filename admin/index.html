@@ -337,6 +337,20 @@
               </tbody>
             </table>
           </div>
+          <!-- Premium exemptions (admin) -->
+          <div class="section-head" style="margin-top: 28px;">
+            <h2>Premium exemptions</h2>
+          </div>
+          <p style="color: var(--text-muted); font-size: 13px; margin: -8px 0 12px;">
+            Comp an email to lifetime free premium. Activates on their next sign-in.
+          </p>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+            <input type="email" id="exemptEmailInput" placeholder="email@example.com"
+              style="flex: 1; min-width: 220px; padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px;" />
+            <button class="btn" id="addExemptBtn">Add exemption</button>
+            <button class="btn ghost" id="removeExemptBtn">Remove</button>
+          </div>
+          <div id="exemptResult" style="margin-top: 10px; font-size: 14px;"></div>
         </div>
 
         <!-- Taxes / 1099 tab -->
@@ -729,6 +743,27 @@
     // List
     $('refreshBtn').addEventListener('click', () => { loadApplications(); loadAggregateMetrics(); });
     $('refreshCreatorsBtn').addEventListener('click', loadCreators);
+
+    // Premium exemptions — calls the admin-gated Cloud Function (no key needed).
+    async function _submitExempt(fnName) {
+      const input = $('exemptEmailInput');
+      const result = $('exemptResult');
+      const email = (input.value || '').trim();
+      if (!email) { result.textContent = 'Enter an email.'; result.style.color = '#c00'; return; }
+      result.textContent = 'Working…'; result.style.color = 'var(--text-muted)';
+      try {
+        const call = httpsCallable(functions, fnName);
+        const res = await call({ email });
+        result.textContent = res.data?.message || (fnName.includes('Remove') ? 'Removed.' : 'Done.');
+        result.style.color = '#2a8a5f';
+        if (!fnName.includes('Remove')) input.value = '';
+      } catch (e) {
+        result.textContent = e.message || 'Failed.';
+        result.style.color = '#c00';
+      }
+    }
+    $('addExemptBtn').addEventListener('click', () => _submitExempt('adminAddPremiumExempt'));
+    $('removeExemptBtn').addEventListener('click', () => _submitExempt('adminRemovePremiumExempt'));
 
     // Manual creator creation — testing / troubleshooting.
     $('newCreatorBtn').addEventListener('click', () => {

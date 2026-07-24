@@ -2587,6 +2587,89 @@ async function _generateUniqueCreatorCode(baseName) {
   throw new HttpsError('internal', 'Could not generate a unique code');
 }
 
+// Admin: comp an email to lifetime free premium (mirrors admin/add-to-exempt.js).
+// Called by the /admin/ dashboard so exemptions no longer need a downloaded
+// service-account key. Gated on the caller's admin email.
+exports.adminAddPremiumExempt = onCall(async (request) => {
+  _requireAdmin(request);
+  const rawEmail = String(request.data?.email || '').trim();
+  const email = rawEmail.toLowerCase();
+  if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+    throw new HttpsError('invalid-argument', 'A valid email is required');
+  }
+
+  const db = getFirestore();
+  const auth = getAuth();
+
+  // 1. Write the exempt doc — activates on the user's next sign-in even if
+  //    they don't have an account yet.
+  await db.collection('premium_exempt').doc(email).set({
+    added_at: FieldValue.serverTimestamp(),
+    added_by: request.auth.token?.email || 'admin-dashboard',
+    source_email: rawEmail,
+  });
+
+  // 2. If they already have an Auth account, flip their subscription now.
+  let flipped = false;
+  try {
+    const user = await auth.getUserByEmail(email);
+    await db.collection('users').doc(user.uid).set(
+      {
+        subscription_status: 'active',
+        subscription_source: 'exempt',
+        subscription_plan: 'lifetime_exempt',
+        subscription_updated_at: FieldValue.serverTimestamp(),
+      },
+      { merge: true },
+    );
+    flipped = true;
+  } catch (e) {
+    if (e.code !== 'auth/user-not-found') throw e;
+  }
+
+  return {
+    ok: true,
+    email,
+    flipped,
+    message: flipped
+      ? 'Premium unlocked — active on their next sign-in.'
+      : 'Exemption saved — activates when they first sign in.',
+  };
+});
+
+// Admin: remove an email's premium-exempt status (mirrors remove-from-exempt.js).
+exports.adminRemovePremiumExempt = onCall(async (request) => {
+  _requireAdmin(request);
+  const email = String(request.data?.email || '').trim().toLowerCase();
+  if (!email) throw new HttpsError('invalid-argument', 'A valid email is required');
+
+  const db = getFirestore();
+  const auth = getAuth();
+
+  await db.collection('premium_exempt').doc(email).delete();
+
+  // If they have an account and are currently exempt, clear it back to free.
+  try {
+    const user = await auth.getUserByEmail(email);
+    const userRef = db.collection('users').doc(user.uid);
+    const snap = await userRef.get();
+    if (snap.exists && snap.data()?.subscription_source === 'exempt') {
+      await userRef.set(
+        {
+          subscription_status: 'inactive',
+          subscription_source: 'none',
+          subscription_updated_at: FieldValue.serverTimestamp(),
+        },
+        { merge: true },
+      );
+    }
+  } catch (e) {
+    if (e.code !== 'auth/user-not-found') throw e;
+  }
+
+  return { ok: true, email };
+});
+
 // Public creator profile lookup (unauthenticated) — powers /c/{CODE} pages.
 // Returns only safe, public fields; never Stripe IDs or earnings.
 exports.getPublicCreatorProfile = onRequest({ cors: true }, async (request, response) => {
