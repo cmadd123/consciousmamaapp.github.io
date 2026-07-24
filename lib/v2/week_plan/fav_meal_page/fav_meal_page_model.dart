@@ -43,6 +43,15 @@ class FavMealPageModel extends FlutterFlowModel<FavMealPageWidget> {
   void updateUserMealAtIndex(int index, Function(MealRecord) updateFn) =>
       userMeal[index] = updateFn(userMeal[index]);
 
+  // Recipe Shared Library (ported from phase2).
+  // cookbookMode: 'personal' (My Cookbook) or 'creator' (Shared).
+  String cookbookMode = 'personal';
+  // Active creator's shared recipes/templates (populated for followers).
+  List<MealRecord> creatorSharedRecipes = [];
+  List<MealComboRecord> creatorSharedTemplates = [];
+  // Display name of the active creator (for the mode-toggle pill label).
+  String? activeCreatorName;
+
   ///  State fields for stateful widgets in this page.
 
   // Stores action output result for [Firestore Query - Query a collection] action in FavMealPage widget.

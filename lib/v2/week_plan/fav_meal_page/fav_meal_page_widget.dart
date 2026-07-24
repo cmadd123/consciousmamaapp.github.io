@@ -1,6 +1,7 @@
 import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
 import '/backend/schema/enums/enums.dart';
+import '/custom_code/actions/index.dart' as actions;
 import '/components/home_nav_bar_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -42,6 +43,10 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
   late FavMealPageModel _model;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
+
+  // Recipe Shared Library (ported from phase2): the current user's creator
+  // profile, if any. Non-null => show the per-recipe "share" toggles.
+  CreatorsRecord? _creatorProfile;
 
   /// Upgrade Pinterest image URL to higher resolution
   /// Pinterest URLs follow pattern: i.pinimg.com/{size}/...
@@ -147,6 +152,11 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
       debugPrint('FavMealPage: Calling safeSetState - userMeal=${_model.userMeal.length}');
       safeSetState(() {});
       debugPrint('FavMealPage: safeSetState completed');
+
+      // Shared Library: load creator profile (for the share toggles) and,
+      // for followers, the active creator's shared recipes/templates.
+      await _loadCreatorProfile();
+      await _loadCreatorSharedRecipes();
     });
   }
 
@@ -161,6 +171,50 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
       if (mounted) safeSetState(() {});
     } catch (e) {
       debugPrint('Error reloading recipes: $e');
+    }
+  }
+
+  /// Load the current user's creator profile (null if they aren't a creator).
+  /// Creators get the per-recipe/template "share with followers" toggle.
+  Future<void> _loadCreatorProfile() async {
+    try {
+      final profile = await actions.getCurrentUserCreatorProfile();
+      if (mounted && profile != null) {
+        safeSetState(() => _creatorProfile = profile);
+      }
+    } catch (e) {
+      debugPrint('Error loading creator profile: $e');
+    }
+  }
+
+  /// For followers: load the active creator's shared recipes/templates so the
+  /// "Shared" cookbook mode can browse them. Matches on the creator's userRef.
+  Future<void> _loadCreatorSharedRecipes() async {
+    try {
+      final creator = await actions.getActiveCreator();
+      if (creator == null || !creator.hasUserRef()) return;
+      // If this user IS the creator, they browse their own shared items via
+      // the in-memory filter on userMeal — no separate load needed.
+      if (creator.userRef == currentUserReference) return;
+
+      final sharedRecipes = await queryMealRecordOnce(
+        queryBuilder: (q) => q
+            .where('user_ref', isEqualTo: creator.userRef)
+            .where('shared_with_followers', isEqualTo: true),
+      );
+      final sharedTemplates = await queryMealComboRecordOnce(
+        queryBuilder: (q) => q
+            .where('user_ref', isEqualTo: creator.userRef)
+            .where('shared_with_followers', isEqualTo: true),
+      );
+      if (mounted) {
+        _model.creatorSharedRecipes = sharedRecipes;
+        _model.creatorSharedTemplates = sharedTemplates;
+        _model.activeCreatorName = creator.name;
+        safeSetState(() {});
+      }
+    } catch (e) {
+      debugPrint('Error loading creator shared recipes: $e');
     }
   }
 

@@ -86,6 +86,22 @@
       ]
     },
     {
+      "collectionGroup": "meal",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "user_ref", "order": "ASCENDING" },
+        { "fieldPath": "shared_with_followers", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "meal_combo",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "user_ref", "order": "ASCENDING" },
+        { "fieldPath": "shared_with_followers", "order": "ASCENDING" }
+      ]
+    },
+    {
       "collectionGroup": "creator_applications",
       "queryScope": "COLLECTION",
       "fields": [
