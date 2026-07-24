@@ -1326,7 +1326,7 @@ class _CategoryDetailsLocalProducWidgetState
                 ),
               ),
               const SizedBox(width: 12.0),
-              const Expanded(
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

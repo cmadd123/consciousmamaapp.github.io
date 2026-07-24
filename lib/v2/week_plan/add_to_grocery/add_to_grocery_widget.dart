@@ -1069,7 +1069,7 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
                                 ),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
-                                  children: const [
+                                  children: [
                                     Icon(
                                       Icons.error_outline_rounded,
                                       size: 12.0,

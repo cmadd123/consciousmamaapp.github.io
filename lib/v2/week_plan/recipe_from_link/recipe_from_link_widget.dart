@@ -205,7 +205,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
-                const Text(
+                Text(
                   'Import from photo',
                   style: TextStyle(
                     fontFamily: FFAppState().currentFontFamily,
@@ -225,11 +225,11 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                     child: Icon(Icons.camera_alt,
                         color: FlutterFlowTheme.of(sheetContext).primary),
                   ),
-                  title: const Text('Take a photo',
+                  title: Text('Take a photo',
                       style: TextStyle(
                           fontFamily: FFAppState().currentFontFamily,
                           fontWeight: FontWeight.w500)),
-                  subtitle: const Text('Snap a cookbook page or magazine',
+                  subtitle: Text('Snap a cookbook page or magazine',
                       style: TextStyle(
                           fontFamily: FFAppState().currentFontFamily,
                           fontSize: 12,
@@ -246,11 +246,11 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                     child: Icon(Icons.photo_library,
                         color: FlutterFlowTheme.of(sheetContext).primary),
                   ),
-                  title: const Text('Choose a screenshot',
+                  title: Text('Choose a screenshot',
                       style: TextStyle(
                           fontFamily: FFAppState().currentFontFamily,
                           fontWeight: FontWeight.w500)),
-                  subtitle: const Text(
+                  subtitle: Text(
                       'Works for Instagram, Pinterest, anywhere',
                       style: TextStyle(
                           fontFamily: FFAppState().currentFontFamily,

@@ -462,7 +462,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
         SnackBar(
           content: Text(
             'Your free week ends in $daysLeft $dayWord. We hope you\'re loving MomRise 💛',
-            style: const TextStyle(fontFamily: FFAppState().currentFontFamily),
+            style: TextStyle(fontFamily: FFAppState().currentFontFamily),
           ),
           backgroundColor: FlutterFlowTheme.of(context).primary,
           behavior: SnackBarBehavior.floating,

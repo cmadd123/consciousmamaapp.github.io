@@ -301,7 +301,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
               ),
             ),
             const SizedBox(width: 12.0),
-            const Expanded(
+            Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
