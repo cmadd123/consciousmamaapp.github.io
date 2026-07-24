@@ -196,7 +196,7 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
         title: Text(
           'Add Creator Code',
           style: FlutterFlowTheme.of(context).bodyMedium.override(
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
                 fontSize: 20.0,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 0.0,
@@ -208,7 +208,7 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
             Text(
               "Did a friend or creator share MomRise with you? Enter their code and they'll get credit for your subscription.",
               style: FlutterFlowTheme.of(context).bodySmall.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     color: FlutterFlowTheme.of(context).secondaryText,
                     fontSize: 13.0,
                     letterSpacing: 0.0,
@@ -223,7 +223,7 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
                 FilteringTextInputFormatter.allow(RegExp(r'[A-Za-z0-9]')),
               ],
               style: FlutterFlowTheme.of(context).bodyLarge.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     fontSize: 20.0,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 3.0,
@@ -701,7 +701,7 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
                                     style: FlutterFlowTheme.of(context)
                                         .headlineSmall
                                         .override(
-                                          fontFamily: 'Andika New Basic',
+                                          fontFamily: FFAppState().currentFontFamily,
                                           fontSize: 22.0,
                                           fontWeight: FontWeight.bold,
                                           letterSpacing: 0.0,
@@ -717,7 +717,7 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
                                     style: FlutterFlowTheme.of(context)
                                         .bodyMedium
                                         .override(
-                                          fontFamily: 'Andika New Basic',
+                                          fontFamily: FFAppState().currentFontFamily,
                                           fontSize: 15.0,
                                           letterSpacing: 0.0,
                                           color: FlutterFlowTheme.of(context)
@@ -942,7 +942,7 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
           priceLine,
           textAlign: TextAlign.center,
           style: FlutterFlowTheme.of(context).bodySmall.override(
-            fontFamily: 'Andika New Basic',
+            fontFamily: FFAppState().currentFontFamily,
             color: FlutterFlowTheme.of(context).secondaryText,
             fontSize: 11.5,
             letterSpacing: 0.0,
@@ -968,7 +968,7 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
             padding: const EdgeInsets.symmetric(horizontal: 24.0),
             color: Colors.transparent,
             textStyle: FlutterFlowTheme.of(context).bodyMedium.override(
-              fontFamily: 'Andika New Basic',
+              fontFamily: FFAppState().currentFontFamily,
               color: FlutterFlowTheme.of(context).primary,
               fontSize: 14.0,
               fontWeight: FontWeight.w500,
@@ -1044,7 +1044,7 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
           child: Text(
             'Got a creator code?',
             style: FlutterFlowTheme.of(context).bodySmall.override(
-              fontFamily: 'Andika New Basic',
+              fontFamily: FFAppState().currentFontFamily,
               color: FlutterFlowTheme.of(context).secondaryText,
               fontSize: 13.0,
               letterSpacing: 0.0,
@@ -1129,7 +1129,7 @@ class _PaimentCopyWidgetState extends State<PaimentCopyWidget>
               child: Text(
                 'Terms of Service',
                 style: FlutterFlowTheme.of(context).bodySmall.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   color: FlutterFlowTheme.of(context).secondaryText,
                   fontSize: 11.0,
                   letterSpacing: 0.0,

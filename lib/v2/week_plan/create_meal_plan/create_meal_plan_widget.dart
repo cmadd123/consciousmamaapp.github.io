@@ -1727,7 +1727,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
             title: Text(
               'Save as Saved Day',
               style: dialogTheme.titleMedium.override(
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
                 letterSpacing: 0.0,
               ),
             ),
@@ -1739,7 +1739,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                   Text(
                     'Save this whole day as a reusable Saved Day. Give it a name:',
                     style: dialogTheme.bodySmall.override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       letterSpacing: 0.0,
                       color: dialogTheme.secondaryText,
                     ),
@@ -1753,7 +1753,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                       contentPadding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
                     ),
                     style: dialogTheme.bodyMedium.override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       letterSpacing: 0.0,
                     ),
                   ),
@@ -1761,7 +1761,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                   Text(
                     'Preferred days (optional, tap any)',
                     style: dialogTheme.bodySmall.override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       letterSpacing: 0.0,
                       fontWeight: FontWeight.w600,
                     ),
@@ -1770,7 +1770,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                   Text(
                     'Autofill will land this Saved Day on any day you pick.',
                     style: dialogTheme.bodySmall.override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       letterSpacing: 0.0,
                       color: dialogTheme.secondaryText,
                       fontSize: 11.0,
@@ -1803,7 +1803,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                   Text(
                     '${dayMealPlans.length} meal${dayMealPlans.length > 1 ? 's' : ''} will be saved',
                     style: dialogTheme.bodySmall.override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       letterSpacing: 0.0,
                       color: dialogTheme.primary,
                       fontWeight: FontWeight.w600,
@@ -2289,7 +2289,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                 'entrees. You know what sides your family '
                                 'loves, so those are yours to add.',
                                 style: TextStyle(
-                                  fontFamily: 'Andika New Basic',
+                                  fontFamily: FFAppState().currentFontFamily,
                                   fontSize: 12.0,
                                   color: FlutterFlowTheme.of(context).primaryText,
                                   height: 1.35,
@@ -2377,7 +2377,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
         child: Text(
           label,
           style: TextStyle(
-            fontFamily: 'Andika New Basic',
+            fontFamily: FFAppState().currentFontFamily,
             fontSize: 12.0,
             fontWeight: FontWeight.w600,
             color: selected ? Colors.white : primary,

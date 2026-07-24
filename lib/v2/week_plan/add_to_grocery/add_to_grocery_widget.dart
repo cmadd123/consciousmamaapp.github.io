@@ -1079,7 +1079,7 @@ class _AddToGroceryWidgetState extends State<AddToGroceryWidget> {
                                     Text(
                                       'Review',
                                       style: TextStyle(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         color: Color(0xFFB76A2A),
                                         fontSize: 11.0,
                                         fontWeight: FontWeight.w600,

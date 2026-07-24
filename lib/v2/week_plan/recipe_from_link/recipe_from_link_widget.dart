@@ -208,7 +208,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                 const Text(
                   'Import from photo',
                   style: TextStyle(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
                     color: Color(0xFF333333),
@@ -227,11 +227,11 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                   ),
                   title: const Text('Take a photo',
                       style: TextStyle(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           fontWeight: FontWeight.w500)),
                   subtitle: const Text('Snap a cookbook page or magazine',
                       style: TextStyle(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           fontSize: 12,
                           color: Colors.grey)),
                   onTap: () => Navigator.pop(sheetContext, 'camera'),
@@ -248,12 +248,12 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                   ),
                   title: const Text('Choose a screenshot',
                       style: TextStyle(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           fontWeight: FontWeight.w500)),
                   subtitle: const Text(
                       'Works for Instagram, Pinterest, anywhere',
                       style: TextStyle(
-                          fontFamily: 'Andika New Basic',
+                          fontFamily: FFAppState().currentFontFamily,
                           fontSize: 12,
                           color: Colors.grey)),
                   onTap: () => Navigator.pop(sheetContext, 'gallery'),
@@ -969,7 +969,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                                 child: Text(
                                   'Instagram link import coming soon. Screenshot Instagram posts for now.',
                                   style: FlutterFlowTheme.of(context).bodySmall.override(
-                                        fontFamily: 'Andika New Basic',
+                                        fontFamily: FFAppState().currentFontFamily,
                                         color: const Color(0xFF8B5A3C),
                                         fontSize: 12.0,
                                         fontWeight: FontWeight.w500,
@@ -1035,7 +1035,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                                             ? 'Reading the recipe...'
                                             : 'Import from photo',
                                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                              fontFamily: 'Andika New Basic',
+                                              fontFamily: FFAppState().currentFontFamily,
                                               fontSize: 14.0,
                                               fontWeight: FontWeight.w600,
                                               color: FlutterFlowTheme.of(context).primaryText,
@@ -1046,7 +1046,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                                       Text(
                                         'Works for Instagram, Pinterest, cookbooks, handwritten notes',
                                         style: FlutterFlowTheme.of(context).bodySmall.override(
-                                              fontFamily: 'Andika New Basic',
+                                              fontFamily: FFAppState().currentFontFamily,
                                               fontSize: 11.0,
                                               color: const Color(0x801B1F26),
                                             ),

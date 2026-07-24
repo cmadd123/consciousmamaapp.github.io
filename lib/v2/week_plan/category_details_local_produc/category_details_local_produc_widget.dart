@@ -1333,7 +1333,7 @@ class _CategoryDetailsLocalProducWidgetState
                     Text(
                       'Order these ingredients',
                       style: TextStyle(
-                        fontFamily: 'Andika New Basic',
+                        fontFamily: FFAppState().currentFontFamily,
                         color: Colors.white,
                         fontSize: 14.0,
                         fontWeight: FontWeight.w600,

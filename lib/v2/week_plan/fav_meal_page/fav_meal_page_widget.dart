@@ -835,7 +835,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
         child: Text(
           label,
           style: TextStyle(
-            fontFamily: 'Andika New Basic',
+            fontFamily: FFAppState().currentFontFamily,
             fontSize: 12.0,
             fontWeight: FontWeight.w600,
             color: selected ? Colors.white : primary,
@@ -2553,7 +2553,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
             title: Text(
               'Create Saved Day',
               style: dialogTheme.titleMedium.override(
-                fontFamily: 'Andika New Basic',
+                fontFamily: FFAppState().currentFontFamily,
                 letterSpacing: 0.0,
               ),
             ),
@@ -2565,7 +2565,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                   Text(
                     'Give your saved day a name, then build each meal:',
                     style: dialogTheme.bodySmall.override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       color: dialogTheme.secondaryText,
                       letterSpacing: 0.0,
                     ),
@@ -2580,7 +2580,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                       contentPadding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
                     ),
                     style: dialogTheme.bodyMedium.override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       letterSpacing: 0.0,
                     ),
                   ),
@@ -2588,7 +2588,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                   Text(
                     'Preferred days (optional, tap any)',
                     style: dialogTheme.bodySmall.override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       letterSpacing: 0.0,
                       fontWeight: FontWeight.w600,
                     ),
@@ -2597,7 +2597,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                   Text(
                     "Autofill lands this saved day on any day you pick below.",
                     style: dialogTheme.bodySmall.override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       letterSpacing: 0.0,
                       color: dialogTheme.secondaryText,
                       fontSize: 11.0,

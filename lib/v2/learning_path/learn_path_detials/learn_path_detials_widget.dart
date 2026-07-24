@@ -126,7 +126,7 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget>
           title: Text(
             'Edit Learning Path',
             style: FlutterFlowTheme.of(context).titleMedium.override(
-              fontFamily: 'Andika New Basic',
+              fontFamily: FFAppState().currentFontFamily,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -139,7 +139,7 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget>
                   decoration: InputDecoration(
                     labelText: 'Title',
                     labelStyle: FlutterFlowTheme.of(context).bodyMedium.override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       color: FlutterFlowTheme.of(context).secondaryText,
                     ),
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
@@ -149,7 +149,7 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget>
                     ),
                   ),
                   style: FlutterFlowTheme.of(context).bodyMedium.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                   ),
                 ),
                 SizedBox(height: 16),
@@ -158,7 +158,7 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget>
                   decoration: InputDecoration(
                     labelText: 'Description',
                     labelStyle: FlutterFlowTheme.of(context).bodyMedium.override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       color: FlutterFlowTheme.of(context).secondaryText,
                     ),
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
@@ -168,7 +168,7 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget>
                     ),
                   ),
                   style: FlutterFlowTheme.of(context).bodyMedium.override(
-                    fontFamily: 'Andika New Basic',
+                    fontFamily: FFAppState().currentFontFamily,
                   ),
                   maxLines: 3,
                 ),
@@ -205,7 +205,7 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget>
                         Text(
                           'Lesson time: ${selectedTime.format(ctx)}',
                           style: FlutterFlowTheme.of(context).bodyMedium.override(
-                            fontFamily: 'Andika New Basic',
+                            fontFamily: FFAppState().currentFontFamily,
                           ),
                         ),
                         Spacer(),
@@ -224,7 +224,7 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget>
                   child: Text(
                     'Changing the time updates every lesson on this path.',
                     style: FlutterFlowTheme.of(context).bodySmall.override(
-                      fontFamily: 'Andika New Basic',
+                      fontFamily: FFAppState().currentFontFamily,
                       color: FlutterFlowTheme.of(context).secondaryText,
                       fontSize: 11,
                     ),
@@ -239,7 +239,7 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget>
               child: Text(
                 'Cancel',
                 style: FlutterFlowTheme.of(context).bodyMedium.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   color: FlutterFlowTheme.of(context).secondaryText,
                 ),
               ),
@@ -298,7 +298,7 @@ class _LearnPathDetialsWidgetState extends State<LearnPathDetialsWidget>
               child: Text(
                 'Save',
                 style: FlutterFlowTheme.of(context).bodyMedium.override(
-                  fontFamily: 'Andika New Basic',
+                  fontFamily: FFAppState().currentFontFamily,
                   color: FlutterFlowTheme.of(context).primary,
                   fontWeight: FontWeight.w600,
                 ),
