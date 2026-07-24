@@ -1449,6 +1449,98 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                     ],
                                   ),
                                 ),
+                                // Shared Library: cookbook mode pill — only for
+                                // creators, or followers with an active creator.
+                                if (_creatorProfile != null ||
+                                    _model.activeCreatorName != null)
+                                  Padding(
+                                    padding: const EdgeInsets.fromLTRB(
+                                        8.0, 8.0, 8.0, 0.0),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              _model.cookbookMode = 'personal';
+                                              _model.categoryFilter = 'All';
+                                              safeSetState(() {});
+                                            },
+                                            child: Container(
+                                              padding: const EdgeInsets.symmetric(
+                                                  vertical: 8.0),
+                                              decoration: BoxDecoration(
+                                                color: _model.cookbookMode ==
+                                                        'personal'
+                                                    ? FlutterFlowTheme.of(context)
+                                                        .primary
+                                                    : FlutterFlowTheme.of(context)
+                                                        .secondaryBackground,
+                                                borderRadius:
+                                                    BorderRadius.circular(20.0),
+                                              ),
+                                              child: Text(
+                                                'My Cookbook',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                  fontFamily: FFAppState()
+                                                      .currentFontFamily,
+                                                  color: _model.cookbookMode ==
+                                                          'personal'
+                                                      ? Colors.white
+                                                      : FlutterFlowTheme.of(
+                                                              context)
+                                                          .primaryText,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8.0),
+                                        Expanded(
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              _model.cookbookMode = 'creator';
+                                              _model.categoryFilter = 'All';
+                                              safeSetState(() {});
+                                            },
+                                            child: Container(
+                                              padding: const EdgeInsets.symmetric(
+                                                  vertical: 8.0),
+                                              decoration: BoxDecoration(
+                                                color: _model.cookbookMode ==
+                                                        'creator'
+                                                    ? FlutterFlowTheme.of(context)
+                                                        .primary
+                                                    : FlutterFlowTheme.of(context)
+                                                        .secondaryBackground,
+                                                borderRadius:
+                                                    BorderRadius.circular(20.0),
+                                              ),
+                                              child: Text(
+                                                _creatorProfile != null
+                                                    ? 'Shared'
+                                                    : (_model.activeCreatorName ??
+                                                        'Creator'),
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                  fontFamily: FFAppState()
+                                                      .currentFontFamily,
+                                                  color: _model.cookbookMode ==
+                                                          'creator'
+                                                      ? Colors.white
+                                                      : FlutterFlowTheme.of(
+                                                              context)
+                                                          .primaryText,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 // Selection mode banner
                                 if (_model.isSelectionMode)
                                   Container(
@@ -1925,7 +2017,18 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                     // Get the active recipe list based on selected tab
                                     // Get active recipes based on selected tab
                                     debugPrint('FavMealPage Builder: recipeSourceTab=${_model.recipeSourceTab}, userMeal=${_model.userMeal.length}');
-                                    final activeRecipes = _model.userMeal;
+                                    // Shared Library: in 'creator' mode, a
+                                    // creator sees their own shared recipes;
+                                    // a follower sees the active creator's.
+                                    final activeRecipes = _model.cookbookMode ==
+                                            'creator'
+                                        ? (_creatorProfile != null
+                                            ? _model.userMeal
+                                                .where((r) =>
+                                                    r.sharedWithFollowers)
+                                                .toList()
+                                            : _model.creatorSharedRecipes)
+                                        : _model.userMeal;
                                     debugPrint('FavMealPage Builder: activeRecipes=${activeRecipes.length}');
 
                                     if (activeRecipes.isEmpty) {
@@ -2504,6 +2607,83 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                                             ),
                                                           ),
                                                         ),
+                                                        // Shared Library: creator
+                                                        // share toggle (top-left).
+                                                        if (_creatorProfile !=
+                                                                null &&
+                                                            _model.cookbookMode ==
+                                                                'personal')
+                                                          Positioned(
+                                                            top: 8.0,
+                                                            left: 8.0,
+                                                            child:
+                                                                GestureDetector(
+                                                              onTap: () async {
+                                                                final isShared =
+                                                                    containerVarItem
+                                                                        .sharedWithFollowers;
+                                                                await containerVarItem
+                                                                    .reference
+                                                                    .update({
+                                                                  'shared_with_followers':
+                                                                      !isShared
+                                                                });
+                                                                if (mounted) {
+                                                                  _reloadUserRecipes();
+                                                                  ScaffoldMessenger.of(
+                                                                          context)
+                                                                      .showSnackBar(
+                                                                          SnackBar(
+                                                                    content: Text(isShared
+                                                                        ? 'Removed from Shared'
+                                                                        : 'Shared with followers'),
+                                                                    behavior:
+                                                                        SnackBarBehavior
+                                                                            .floating,
+                                                                    shape: RoundedRectangleBorder(
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(
+                                                                                10)),
+                                                                    margin: const EdgeInsets
+                                                                        .all(16),
+                                                                    duration: const Duration(
+                                                                        seconds:
+                                                                            2),
+                                                                  ));
+                                                                }
+                                                              },
+                                                              child: Container(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .all(5.0),
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  color: containerVarItem
+                                                                          .sharedWithFollowers
+                                                                      ? FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .primary
+                                                                      : Colors
+                                                                          .black
+                                                                          .withOpacity(
+                                                                              0.4),
+                                                                  shape: BoxShape
+                                                                      .circle,
+                                                                ),
+                                                                child: Icon(
+                                                                  containerVarItem
+                                                                          .sharedWithFollowers
+                                                                      ? Icons
+                                                                          .people
+                                                                      : Icons
+                                                                          .people_outline,
+                                                                  color: Colors
+                                                                      .white,
+                                                                  size: 14.0,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
                                                       ],
                                                     ),
                                                   ),
