@@ -32,7 +32,7 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace "com.momrise.app"
-    compileSdkVersion 35
+    compileSdkVersion 36
     // Pin to the locally installed NDK so release builds don't try to
     // download AGP's default NDK version (fails on low disk).
     ndkVersion "27.0.12077973"
@@ -61,7 +61,7 @@ android {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "com.momrise.app"
         minSdkVersion flutter.minSdkVersion
-        targetSdkVersion 35 // Play requires API 35+ for new apps (2026)
+        targetSdkVersion 36 // Play requires API 36 (Android 16) by Aug 31, 2026
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }
