@@ -70,6 +70,9 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
+    // Rebuild the whole page when the creator theme/font changes so text
+    // re-fonts instantly on creator-code toggle (not just on re-navigation).
+    context.watch<CreatorThemeNotifier>();
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
@@ -1155,7 +1158,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                                 Text(
                                   'Rate MomRise',
                                   style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                    fontFamily: 'Andika New Basic',
+                                    fontFamily: FFAppState().currentFontFamily,
                                     fontSize: 16.0,
                                     letterSpacing: 0.0,
                                     fontWeight: FontWeight.w500,

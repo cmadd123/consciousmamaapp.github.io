@@ -3,6 +3,8 @@ import '/backend/backend.dart';
 import '/backend/schema/enums/enums.dart';
 import '/components/home_nav_bar_widget.dart';
 import '/v2/creator/creator_theme_wrapper.dart';
+import '/v2/creator/creator_theme_notifier.dart';
+import 'package:provider/provider.dart';
 import '/components/parent_circle_widget.dart';
 import '/services/review_service.dart';
 import '/custom_code/actions/index.dart' as actions;
@@ -2233,7 +2235,9 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
 
   // Milestones Card
   Widget _buildMilestonesCard(BuildContext context, List<ChildernRecord>? userChildren) {
-    return Container(
+    return GestureDetector(
+      onTap: () => context.pushNamed(MilstonesWidget.routeName),
+      child: Container(
         width: double.infinity,
         padding: const EdgeInsets.all(20.0),
         decoration: BoxDecoration(
@@ -2253,9 +2257,10 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
             // Header row
             Row(
               children: [
-                const Icon(
+                Icon(
                   Icons.emoji_events_outlined,
-                  color: Color(0xFFFF9800),
+                  color: Provider.of<CreatorThemeNotifier>(context).iconColor ??
+                      const Color(0xFFFF9800),
                   size: 26.0,
                 ),
                 const SizedBox(width: 8.0),
@@ -2309,7 +2314,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
               ),
           ],
         ),
-    );
+    ));
   }
 
   // Skills & Hobbies Card

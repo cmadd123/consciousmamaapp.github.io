@@ -227,8 +227,10 @@ class _CreatorMealPlanCardState extends State<CreatorMealPlanCard> {
   Widget build(BuildContext context) {
     return Consumer<CreatorThemeNotifier>(
       builder: (context, creatorTheme, _) {
-        // Don't show if no active creator
-        if (!creatorTheme.hasActiveCreator) return const SizedBox.shrink();
+        // Don't show if no active creator OR the creator toggle is off —
+        // respects the "Use X's style" switch so turning it off hides the
+        // creator's content too, not just the theme.
+        if (!creatorTheme.isCreatorThemeActive) return const SizedBox.shrink();
         // Still loading
         if (_isLoading) return const SizedBox.shrink();
         // No meal plan published

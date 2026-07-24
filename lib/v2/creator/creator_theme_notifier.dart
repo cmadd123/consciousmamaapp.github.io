@@ -117,6 +117,10 @@ class CreatorThemeNotifier extends ChangeNotifier {
 
     try {
       _activeCreator = await getActiveCreator();
+      // Auto-see-your-own-stuff: if the user follows no creator but is one
+      // themselves, fall back to their own profile so their published
+      // content, theme, and fonts appear without entering their own code.
+      _activeCreator ??= await getCurrentUserCreatorProfile();
     } catch (e) {
       debugPrint('Error loading active creator: $e');
       _activeCreator = null;
