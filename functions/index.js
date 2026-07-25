@@ -1889,10 +1889,12 @@ exports.claimAttribution = creatorAttributionMatch.claimAttribution;
 // Email a creator every time a new earning lands in their ledger.
 // Sandbox + clawback rows are filtered out at the trigger level.
 const creatorNotifications = require('./creator_notifications');
+const creatorPlanSync = require('./creator_plan_sync');
 exports.notifyOnCreatorEarning = creatorNotifications.notifyOnCreatorEarning;
 exports.notifyOnCreatorPayout = creatorNotifications.notifyOnCreatorPayout;
 exports.notifyFollowersOnPublish = creatorNotifications.notifyFollowersOnPublish;
 exports.unsubscribeCreatorEmails = creatorNotifications.unsubscribeCreatorEmails;
+exports.syncCreatorPlanToContent = creatorPlanSync.syncCreatorPlanToContent;
 exports.createCreatorOnboardingLink = stripeFunctions.createCreatorOnboardingLink;
 exports.createCreatorDashboardLink = stripeFunctions.createCreatorDashboardLink;
 exports.getCreatorConnectStatus = stripeFunctions.getCreatorConnectStatus;
