@@ -532,6 +532,161 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
     return '${months[d.month - 1]} ${d.day}';
   }
 
+  /// Single shared recipe (Creator Cookbook): save it or schedule it.
+  void _openRecipeActions(MealRecord m) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
+      ),
+      builder: (sheetCtx) {
+        final theme = FlutterFlowTheme.of(sheetCtx);
+        return Padding(
+          padding: EdgeInsets.only(
+            left: 16, right: 16, top: 16,
+            bottom: MediaQuery.of(sheetCtx).viewInsets.bottom + 24,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                m.recipeName,
+                style: TextStyle(
+                  fontFamily: FFAppState().currentFontFamily,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                  color: theme.primaryText,
+                ),
+              ),
+              const SizedBox(height: 18),
+              _actionButton(
+                sheetCtx,
+                icon: Icons.event_available,
+                label: 'Add to meal plan',
+                sub: 'Pick a date and meal slot',
+                filled: true,
+                onTap: () {
+                  Navigator.pop(sheetCtx);
+                  _scheduleSharedRecipe(m);
+                },
+              ),
+              const SizedBox(height: 10),
+              _actionButton(
+                sheetCtx,
+                icon: Icons.bookmark_add_outlined,
+                label: 'Add to my cookbook',
+                sub: 'Save it to use whenever you like',
+                filled: false,
+                onTap: () {
+                  Navigator.pop(sheetCtx);
+                  _addSharedRecipeToLibrary(m);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _addSharedRecipeToLibrary(MealRecord m) async {
+    final ref = await actions.copySharedRecipeToLibrary(
+      m,
+      creatorName: _activeCreator?.name,
+    );
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+          content: Text(ref != null
+              ? 'Added “${m.recipeName}” to your cookbook!'
+              : 'Couldn\'t add that recipe.')),
+    );
+    await _reloadUserRecipes();
+  }
+
+  Future<void> _scheduleSharedRecipe(MealRecord m) async {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: today,
+      firstDate: today,
+      lastDate: today.add(const Duration(days: 365)),
+      helpText: 'Schedule this recipe on…',
+    );
+    if (picked == null || !mounted) return;
+    final mealTyp = await _pickMealType();
+    if (mealTyp == null || !mounted) return;
+    final ok = await actions.scheduleSharedRecipe(
+      m,
+      date: picked,
+      mealTyp: mealTyp,
+      creatorName: _activeCreator?.name,
+    );
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+          content: Text(ok
+              ? 'Scheduled “${m.recipeName}” for ${_shortDate(picked)}!'
+              : 'Couldn\'t schedule that recipe.')),
+    );
+    await _reloadUserRecipes();
+  }
+
+  Future<MealTyp?> _pickMealType() {
+    return showModalBottomSheet<MealTyp>(
+      context: context,
+      backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
+      ),
+      builder: (ctx) {
+        final theme = FlutterFlowTheme.of(ctx);
+        const options = <MapEntry<String, MealTyp>>[
+          MapEntry('Breakfast', MealTyp.Breakfast),
+          MapEntry('Lunch', MealTyp.Lunch),
+          MapEntry('Dinner', MealTyp.Dinner),
+          MapEntry('Snack', MealTyp.Snacks),
+        ];
+        return Padding(
+          padding: EdgeInsets.only(
+            top: 12, bottom: MediaQuery.of(ctx).viewInsets.bottom + 20,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(12),
+                child: Text(
+                  'Which meal?',
+                  style: TextStyle(
+                    fontFamily: FFAppState().currentFontFamily,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: theme.primaryText,
+                  ),
+                ),
+              ),
+              for (final o in options)
+                ListTile(
+                  title: Text(
+                    o.key,
+                    style: TextStyle(
+                      fontFamily: FFAppState().currentFontFamily,
+                      color: theme.primaryText,
+                    ),
+                  ),
+                  onTap: () => Navigator.pop(ctx, o.value),
+                ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   /// Creator view: list their collections and create new ones from their
   /// shared recipes.
   void _openCreatorCollectionsSheet() {
@@ -2987,6 +3142,17 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                                 hoverColor: Colors.transparent,
                                                 highlightColor:
                                                     Colors.transparent,
+                                                // Creator Cookbook: long-press a
+                                                // creator's shared recipe to add
+                                                // it to your library or plan.
+                                                onLongPress: (_model.cookbookMode ==
+                                                            'creator' &&
+                                                        _activeCreator != null &&
+                                                        containerVarItem.userRef !=
+                                                            currentUserReference)
+                                                    ? () => _openRecipeActions(
+                                                        containerVarItem)
+                                                    : null,
                                                 onTap: () async {
                                                   // Always navigate to recipe detail page
                                                   // Pass selection params if in selection mode

@@ -1074,3 +1074,56 @@ Future<int> scheduleRecipeCollection({
 
   return scheduled;
 }
+
+/// Copy a creator's shared recipe into the follower's own cookbook as a new,
+/// editable MealRecord. Returns the new doc ref (null if not signed in).
+Future<DocumentReference?> copySharedRecipeToLibrary(
+  MealRecord source, {
+  String? creatorName,
+}) async {
+  final me = currentUserReference;
+  if (me == null) return null;
+  final suffix = (creatorName != null && creatorName.trim().isNotEmpty)
+      ? ' (by ${creatorName.trim()})'
+      : '';
+
+  final data = createMealRecordData(
+    recipeName: '${source.recipeName}$suffix',
+    imageUrl: source.imageUrl,
+    userRef: me,
+    mealTyp: source.mealTyp,
+    mainOrSides: source.mainOrSides.isNotEmpty ? source.mainOrSides : 'main',
+    sourceUrl: source.sourceUrl,
+    estimatedCost:
+        source.estimatedCost > 0 ? source.estimatedCost : source.cost,
+    recipeType: source.recipeType,
+    isImported: true,
+  );
+  if (source.ingredients.isNotEmpty) data['ingredients'] = source.ingredients;
+  if (source.cookingInstructions.isNotEmpty) {
+    data['CookingInstructions'] = source.cookingInstructions;
+  }
+  data['imported_from_shared_recipe'] = source.reference;
+
+  return await MealRecord.collection.add(data);
+}
+
+/// Copy a shared recipe into the cookbook AND schedule it on [date] at
+/// [mealTyp]. Returns true on success.
+Future<bool> scheduleSharedRecipe(
+  MealRecord source, {
+  required DateTime date,
+  required MealTyp mealTyp,
+  String? creatorName,
+}) async {
+  final ref = await copySharedRecipeToLibrary(source, creatorName: creatorName);
+  if (ref == null) return false;
+  final d = DateTime(date.year, date.month, date.day);
+  await MealPlanRecord.collection.add(createMealPlanRecordData(
+    date: d,
+    typ: mealTyp,
+    userRef: currentUserReference,
+    userFirebasemeal: ref,
+  ));
+  return true;
+}
