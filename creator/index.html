@@ -1326,9 +1326,6 @@
       <button class="nav-tab" data-view="viewRoutines">
         <span class="nav-tab-icon" data-icon="list"></span><span class="nav-tab-label">Routines</span>
       </button>
-      <button class="nav-tab" data-view="viewCollections">
-        <span class="nav-tab-icon" data-icon="folder"></span><span class="nav-tab-label">Collections</span>
-      </button>
       <button class="nav-tab" data-tab="stats" data-view="viewStats">
         <span class="nav-tab-icon" data-icon="chart"></span><span class="nav-tab-label">Stats</span>
       </button>
@@ -1818,6 +1815,21 @@
           </div>
         </div>
 
+        <!-- Recipe collections — named groups of recipes followers add as a set -->
+        <div class="scan-section">
+          <div class="section-head" style="margin-bottom: 6px;">
+            <h3 style="margin:0;">Recipe collections</h3>
+            <button class="btn" id="newCollectionBtn">+ New collection</button>
+          </div>
+          <p class="muted" style="margin: 0 0 12px; font-size: 13px;">
+            Bundle recipes into a named group — like “5 Crockpot Dinners.” Followers add the whole set to their cookbook in one tap, where each becomes a regular recipe.
+          </p>
+          <div class="routine-grid" id="collectionGrid">
+            <div class="skeleton-card"><div class="skeleton skeleton-line medium"></div><div class="skeleton skeleton-line short"></div></div>
+            <div class="skeleton-card"><div class="skeleton skeleton-line medium"></div><div class="skeleton skeleton-line short"></div></div>
+          </div>
+        </div>
+
         <!-- Import method picker — one panel shows at a time -->
         <div class="import-methods" id="importMethods">
           <button class="import-method active" type="button" data-method="methodScan"><span data-icon="camera"></span> Scan</button>
@@ -1984,24 +1996,6 @@
         </div>
       </div>
 
-      <!-- Recipe Collections sub-view -->
-      <div class="view" id="viewCollections">
-        <button class="back-btn" data-back>← Dashboard</button>
-        <div class="section-head">
-          <h2>Recipe collections</h2>
-          <div style="display: flex; gap: 8px;">
-            <button class="btn ghost" id="refreshCollectionsBtn">↻ Refresh</button>
-            <button class="btn" id="newCollectionBtn">+ New collection</button>
-          </div>
-        </div>
-        <p class="muted" style="margin: 0 0 16px; font-size: 13px;">
-          Bundle recipes into a named group — like “5 Crockpot Dinners.” Followers can add the whole set to their cookbook in one tap, where each becomes a regular recipe.
-        </p>
-        <div class="routine-grid" id="collectionGrid">
-          <div class="skeleton-card"><div class="skeleton skeleton-line medium"></div><div class="skeleton skeleton-line short"></div></div>
-          <div class="skeleton-card"><div class="skeleton skeleton-line medium"></div><div class="skeleton skeleton-line short"></div></div>
-        </div>
-      </div>
     </main>
   </div>
 
@@ -2796,13 +2790,12 @@
           loadPayouts();
         } else if (view === 'viewAddRecipes') {
           loadRecipeLibrary();
+          loadCreatorCollections();
         } else if (view === 'viewBuildPlan') {
           showPlanListMode();
           loadPlans();
         } else if (view === 'viewRoutines') {
           loadCreatorRoutines();
-        } else if (view === 'viewCollections') {
-          loadCreatorCollections();
         }
       });
     });
@@ -4577,6 +4570,7 @@
     }
 
     async function openCollectionForm(existing) {
+      collectionRecipeCache = null; // always reflect the latest library
       editingCollection = existing || null;
       $('collectionModalTitle').textContent = existing ? 'Edit collection' : 'New collection';
       $('collectionNameInput').value = existing?.name || '';
@@ -4609,7 +4603,6 @@
 
     function closeCollectionForm() { $('collectionModal').classList.remove('open'); editingCollection = null; }
     $('newCollectionBtn').addEventListener('click', () => openCollectionForm(null));
-    $('refreshCollectionsBtn').addEventListener('click', () => { collectionRecipeCache = null; loadCreatorCollections(); });
     $('closeCollectionModalBtn').addEventListener('click', closeCollectionForm);
     $('cancelCollectionBtn').addEventListener('click', closeCollectionForm);
     $('collectionModal').addEventListener('click', (e) => {
