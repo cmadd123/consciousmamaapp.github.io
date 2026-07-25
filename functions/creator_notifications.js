@@ -270,6 +270,14 @@ exports.notifyFollowersOnPublish = onDocumentCreated(
     const creatorSnap = await creatorRef.get();
     if (!creatorSnap.exists) return;
     const creatorName = creatorSnap.data().name || 'A creator you follow';
+    const creatorCode = (creatorSnap.data().code || '').trim();
+    // Universal link (/s/* and /shared/* are registered in the app's AASA +
+    // assetlinks) — opens the MomRise app directly if installed and re-applies
+    // the creator code, instead of dropping the follower on the website.
+    // Falls back to the app store landing page when there's no code.
+    const openUrl = creatorCode
+      ? `https://momrise.app/s/${encodeURIComponent(creatorCode)}`
+      : 'https://momrise.app';
 
     const followersSnap = await db
       .collection('users')
@@ -303,7 +311,7 @@ exports.notifyFollowersOnPublish = onDocumentCreated(
           html: `<div style="font-family: -apple-system, Segoe UI, Roboto, sans-serif; max-width: 480px; margin: 0 auto; padding: 24px; color: #333;">
   <h2 style="margin: 0 0 12px; color: #5D4E60;">${creatorName} just shared "${title}"</h2>
   <p style="margin: 0 0 20px; color: #555;">Open MomRise to see their latest recipes and meal plan.</p>
-  <a href="https://momrise.app" style="display: inline-block; background: #52A097; color: #fff; text-decoration: none; padding: 12px 22px; border-radius: 10px; font-weight: 600;">Open MomRise</a>
+  <a href="${openUrl}" style="display: inline-block; background: #52A097; color: #fff; text-decoration: none; padding: 12px 22px; border-radius: 10px; font-weight: 600;">Open in the MomRise app</a>
   <p style="margin: 28px 0 0; font-size: 12px; color: #999;">You're getting this because you follow ${creatorName} on MomRise. <a href="${unsubUrl}" style="color: #999;">Unsubscribe from creator updates</a>.</p>
 </div>`,
         });
