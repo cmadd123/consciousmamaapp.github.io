@@ -7,7 +7,6 @@ import '/v2/creator/creator_theme_editor.dart';
 import '/custom_code/actions/creator_service.dart';
 import '/components/home_nav_bar_widget.dart';
 import '/services/review_service.dart';
-import '/flutter_flow/creator_flags.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/v1/profile/delete_user/delete_user_widget.dart';
@@ -1011,8 +1010,10 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                     ),
                   )),
                   // Customize Theme — creators only, above Subscription.
-                  // Hidden when creator authoring lives on the web dashboard.
-                  if (kCreatorAuthoringInApp && _creatorProfile != null)
+                  // Kept in-app: the web dashboard's Brand Kit is a static
+                  // reference page, not a functional theme editor, so this is
+                  // the only place to set the creator's live colors/fonts.
+                  if (_creatorProfile != null)
                     CascadeItem(index: 5, baseDelayMs: 400, staggerMs: 80, child: Padding(
                       padding: const EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),
                       child: Container(
