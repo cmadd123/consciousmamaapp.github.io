@@ -3,6 +3,7 @@ import '/backend/backend.dart';
 import '/backend/schema/enums/enums.dart';
 import '/components/home_nav_bar_widget.dart';
 import '/components/animated_press_widget.dart';
+import '/flutter_flow/creator_flags.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
@@ -3685,7 +3686,8 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                               ),
                                             ),
                                             // Creator-side: publish the current week to followers.
-                                            if (_creatorProfile != null)
+                                            // Hidden when creator authoring lives on the web dashboard.
+                                            if (kCreatorAuthoringInApp && _creatorProfile != null)
                                               Padding(
                                                 padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 12),
                                                 child: FFButtonWidget(

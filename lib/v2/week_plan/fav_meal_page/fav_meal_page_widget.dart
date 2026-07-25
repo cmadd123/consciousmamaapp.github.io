@@ -3,6 +3,7 @@ import '/backend/backend.dart';
 import '/backend/schema/enums/enums.dart';
 import '/custom_code/actions/index.dart' as actions;
 import '/components/home_nav_bar_widget.dart';
+import '/flutter_flow/creator_flags.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/components/share_content_bottom_sheet.dart';
@@ -243,7 +244,9 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
   // with the web dashboard.
 
   void _openCollectionsSheet() {
-    if (_creatorProfile != null) {
+    // Creator authoring (building collections) lives on the web dashboard when
+    // the flag is off; followers still browse + ingest here.
+    if (kCreatorAuthoringInApp && _creatorProfile != null) {
       _openCreatorCollectionsSheet();
     } else if (_activeCreator != null) {
       _openFollowerCollectionsSheet();
@@ -2363,7 +2366,8 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                 // Recipe Collections: entry point. Creators
                                 // manage their own; followers browse the active
                                 // creator's published collections.
-                                if (_creatorProfile != null ||
+                                if ((kCreatorAuthoringInApp &&
+                                        _creatorProfile != null) ||
                                     _activeCreator != null)
                                   Padding(
                                     padding: const EdgeInsets.fromLTRB(
@@ -2392,7 +2396,8 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                             const SizedBox(width: 10.0),
                                             Expanded(
                                               child: Text(
-                                                _creatorProfile != null
+                                                (kCreatorAuthoringInApp &&
+                                                        _creatorProfile != null)
                                                     ? 'Recipe Collections — bundle & share'
                                                     : 'Recipe Collections from ${_activeCreator?.name ?? 'your creator'}',
                                                 style: TextStyle(
@@ -3496,7 +3501,10 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                                         ),
                                                         // Shared Library: creator
                                                         // share toggle (top-left).
-                                                        if (_creatorProfile !=
+                                                        // Hidden when creator
+                                                        // authoring lives on web.
+                                                        if (kCreatorAuthoringInApp &&
+                                                            _creatorProfile !=
                                                                 null &&
                                                             _model.cookbookMode ==
                                                                 'personal')
@@ -4299,7 +4307,8 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                         ),
                         const SizedBox(width: 8.0),
                         // Shared Library: share the whole saved day with followers.
-                        if (_creatorProfile != null &&
+                        if (kCreatorAuthoringInApp &&
+                            _creatorProfile != null &&
                             _model.cookbookMode == 'personal')
                           GestureDetector(
                             onTap: () async {
@@ -5033,7 +5042,8 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                               ),
                             ],
                             // Shared Library: share this template with followers.
-                            if (_creatorProfile != null &&
+                            if (kCreatorAuthoringInApp &&
+                                _creatorProfile != null &&
                                 _model.cookbookMode == 'personal')
                               GestureDetector(
                                 onTap: () async {

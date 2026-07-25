@@ -8,6 +8,7 @@ import '/backend/backend.dart';
 import '/custom_code/actions/creator_service.dart';
 import '/v2/creator/creator_theme_notifier.dart';
 import '/v2/creator/creator_theme_wrapper.dart';
+import '/flutter_flow/creator_flags.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
@@ -471,7 +472,7 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
                   // Creator-only: share with followers toggle. Placed with
                   // generous spacing on both sides so it can't be confused
                   // with the play button and doesn't crowd the title.
-                  if (_creatorProfile != null) ...[
+                  if (kCreatorAuthoringInApp && _creatorProfile != null) ...[
                     const SizedBox(width: 12),
                     GestureDetector(
                       behavior: HitTestBehavior.opaque,
