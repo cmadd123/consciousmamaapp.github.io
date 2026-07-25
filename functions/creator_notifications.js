@@ -12,7 +12,9 @@
 // on the dashboard regardless of email delivery.
 
 const { onDocumentCreated, onDocumentUpdated } = require('firebase-functions/v2/firestore');
+const { onRequest } = require('firebase-functions/v2/https');
 const { defineString, defineSecret } = require('firebase-functions/params');
+const { getFirestore } = require('firebase-admin/firestore');
 const sgMail = require('@sendgrid/mail');
 
 const sendgridApiKey = defineSecret('SENDGRID_API_KEY');
@@ -244,3 +246,98 @@ function _renderEarningEmail({ firstName, amountStr, sourceLabel, creatorCode, e
 </body>
 </html>`;
 }
+
+// ── Notify followers when a creator publishes content ─────────────────
+// Triggered on creator_content create (e.g. a published meal plan). Emails
+// the creator's followers (users whose active_creator_ref points at the
+// creator), skipping anyone who has turned creator emails off. Every email
+// carries a one-click unsubscribe link.
+exports.notifyFollowersOnPublish = onDocumentCreated(
+  {
+    document: 'creator_content/{id}',
+    secrets: [sendgridApiKey],
+  },
+  async (event) => {
+    const snap = event.data;
+    if (!snap) return;
+    const content = snap.data();
+    if (content.is_active === false) return;
+
+    const creatorRef = content.creator_ref;
+    if (!creatorRef) return;
+
+    const db = getFirestore();
+    const creatorSnap = await creatorRef.get();
+    if (!creatorSnap.exists) return;
+    const creatorName = creatorSnap.data().name || 'A creator you follow';
+
+    const followersSnap = await db
+      .collection('users')
+      .where('active_creator_ref', '==', creatorRef)
+      .get();
+    if (followersSnap.empty) return;
+
+    sgMail.setApiKey(sendgridApiKey.value().replace(/[\s\r\n]+/g, ''));
+    const title =
+      content.title && content.title.trim()
+        ? content.title.trim()
+        : 'a new meal plan';
+
+    let sent = 0;
+    for (const doc of followersSnap.docs) {
+      const d = doc.data();
+      if (d.creator_email_notifications === false) continue; // opted out
+      const to = d.email;
+      if (!to) continue;
+      const unsubUrl =
+        `https://us-central1-parenting-plus-7szrif.cloudfunctions.net/unsubscribeCreatorEmails?u=${doc.id}`;
+      try {
+        await sgMail.send({
+          to,
+          from: sendgridFromEmail.value(),
+          subject: `${creatorName} just shared something new on MomRise 🍽️`,
+          trackingSettings: {
+            clickTracking: { enable: false, enableText: false },
+            openTracking: { enable: false },
+          },
+          html: `<div style="font-family: -apple-system, Segoe UI, Roboto, sans-serif; max-width: 480px; margin: 0 auto; padding: 24px; color: #333;">
+  <h2 style="margin: 0 0 12px; color: #5D4E60;">${creatorName} just shared "${title}"</h2>
+  <p style="margin: 0 0 20px; color: #555;">Open MomRise to see their latest recipes and meal plan.</p>
+  <a href="https://momrise.app" style="display: inline-block; background: #52A097; color: #fff; text-decoration: none; padding: 12px 22px; border-radius: 10px; font-weight: 600;">Open MomRise</a>
+  <p style="margin: 28px 0 0; font-size: 12px; color: #999;">You're getting this because you follow ${creatorName} on MomRise. <a href="${unsubUrl}" style="color: #999;">Unsubscribe from creator updates</a>.</p>
+</div>`,
+        });
+        sent++;
+      } catch (err) {
+        console.warn(`[publish-notify] send failed for ${to}: ${err.message}`);
+      }
+    }
+    console.log(
+      `[publish-notify] "${title}" by ${creatorName}: emailed ${sent} follower(s)`,
+    );
+  },
+);
+
+// One-click unsubscribe from creator update emails. Sets a flag on the user
+// doc; identified by uid in the link (low-risk for this email type).
+exports.unsubscribeCreatorEmails = onRequest({ cors: true }, async (request, response) => {
+  const uid = String(request.query.u || '').trim();
+  if (!uid) {
+    response.status(400).send('Invalid unsubscribe link.');
+    return;
+  }
+  try {
+    const db = getFirestore();
+    await db.collection('users').doc(uid).set(
+      { creator_email_notifications: false },
+      { merge: true },
+    );
+    response.set('Content-Type', 'text/html');
+    response.send(
+      '<div style="font-family: sans-serif; text-align: center; padding: 60px 20px;"><h2>Unsubscribed</h2><p>You won\'t receive creator update emails anymore. You can re-enable them in the app\'s notification settings.</p></div>',
+    );
+  } catch (e) {
+    console.error('unsubscribeCreatorEmails failed', e);
+    response.status(500).send('Something went wrong. Please try again.');
+  }
+});
