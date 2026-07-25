@@ -92,7 +92,7 @@ void main() async {
     providers: [
       ChangeNotifierProvider(create: (context) => appState),
       ChangeNotifierProvider(create: (context) => DemoDataNotifier()),
-      ChangeNotifierProvider(create: (context) => CreatorThemeNotifier()),
+      ChangeNotifierProvider.value(value: CreatorThemeNotifier.instance),
     ],
     child: const MyApp(),
   ));
@@ -158,6 +158,11 @@ class _MyAppState extends State<MyApp> {
           } catch (_) {
             _appStateNotifier.onboardingCompleted = false;
           }
+
+          // Restore the saved creator code + theme for this session. Without
+          // this, the active creator silently un-applies on every app
+          // restart because nothing reloads it from the user's profile.
+          unawaited(CreatorThemeNotifier.instance.loadActiveCreatorForSession());
 
           // Fire-and-forget: try to claim a pending creator-code
           // attribution. Catches users who clicked momrise.app/c/{code}

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '/app_state.dart';
+import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
 import '/custom_code/actions/creator_service.dart';
 import 'creator_font_loader.dart';
@@ -18,18 +19,38 @@ class CreatorThemeNotifier extends ChangeNotifier {
   bool _useCreatorTheme = true; // Global/Creator toggle — default ON
   bool _isLoading = false;
   StreamSubscription<User?>? _authSub;
+  // Guards against re-loading on every auth token refresh. Reset on sign-out
+  // so the next sign-in (possibly a different account) reloads fresh.
+  bool _loadAttempted = false;
+
+  /// App-lifetime singleton so startup code (main.dart) can drive the restore
+  /// from the FlutterFlow user stream, where currentUserReference is
+  /// guaranteed to be set (the raw FirebaseAuth stream can fire earlier).
+  static final CreatorThemeNotifier instance = CreatorThemeNotifier();
 
   CreatorThemeNotifier() {
-    // Ensure the theme resets to default whenever the user signs out —
-    // prevents the login/signup screens from rendering with a leftover
-    // creator's colors + font from the previous session.
+    // Reset the theme to default whenever the user signs out — prevents the
+    // login/signup screens from rendering with a leftover creator's colors +
+    // font, and lets the next sign-in reload fresh.
     _authSub = FirebaseAuth.instance.authStateChanges().listen((user) {
       if (user == null) {
+        _loadAttempted = false;
         if (_activeCreator != null || _useCreatorTheme) {
           clearActiveCreator();
         }
       }
     });
+  }
+
+  /// Restore the saved active creator once per signed-in session. Idempotent —
+  /// safe to call from multiple startup paths. This is what re-applies the
+  /// active creator code + theme after an app restart (otherwise the theme
+  /// silently un-applies because nothing reloads it from the user's profile).
+  Future<void> loadActiveCreatorForSession() async {
+    if (_loadAttempted || currentUserReference == null) return;
+    _loadAttempted = true;
+    _useCreatorTheme = true; // re-enable overrides for the restored session
+    await loadActiveCreator();
   }
 
   @override
