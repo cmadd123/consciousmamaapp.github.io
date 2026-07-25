@@ -196,7 +196,21 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
   Future<void> _loadCreatorSharedRecipes() async {
     try {
       final creator = await actions.getActiveCreator();
-      if (creator == null || !creator.hasUserRef()) return;
+      if (creator == null || !creator.hasUserRef()) {
+        // No active creator (never set, or the code was removed) — clear any
+        // previously-loaded creator content so it doesn't linger, and drop
+        // back to the personal cookbook for non-creators.
+        if (mounted) {
+          setState(() {
+            _activeCreator = null;
+            _model.creatorSharedRecipes = [];
+            _model.creatorSharedTemplates = [];
+            _model.activeCreatorName = null;
+            if (_creatorProfile == null) _model.cookbookMode = 'personal';
+          });
+        }
+        return;
+      }
       if (mounted) _activeCreator = creator;
       // If this user IS the creator, they browse their own shared items via
       // the in-memory filter on userMeal — no separate load needed.
@@ -2167,9 +2181,11 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                               ),
                                               child: Text(
                                                 _creatorProfile != null
-                                                    ? 'Shared'
-                                                    : (_model.activeCreatorName ??
-                                                        'Creator'),
+                                                    ? 'Creator Cookbook'
+                                                    : (_model.activeCreatorName !=
+                                                            null
+                                                        ? '${_model.activeCreatorName}’s Cookbook'
+                                                        : 'Creator Cookbook'),
                                                 textAlign: TextAlign.center,
                                                 style: TextStyle(
                                                   fontFamily: FFAppState()
