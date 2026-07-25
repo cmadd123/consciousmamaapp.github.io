@@ -1895,6 +1895,7 @@ exports.notifyOnCreatorPayout = creatorNotifications.notifyOnCreatorPayout;
 exports.notifyFollowersOnPublish = creatorNotifications.notifyFollowersOnPublish;
 exports.unsubscribeCreatorEmails = creatorNotifications.unsubscribeCreatorEmails;
 exports.syncCreatorPlanToContent = creatorPlanSync.syncCreatorPlanToContent;
+exports.backfillCreatorPlans = creatorPlanSync.backfillCreatorPlans;
 exports.createCreatorOnboardingLink = stripeFunctions.createCreatorOnboardingLink;
 exports.createCreatorDashboardLink = stripeFunctions.createCreatorDashboardLink;
 exports.getCreatorConnectStatus = stripeFunctions.getCreatorConnectStatus;
