@@ -32,6 +32,7 @@ import 'schema/routines_record.dart';
 import 'schema/app_content_record.dart';
 import 'schema/creators_record.dart';
 import 'schema/creator_content_record.dart';
+import 'schema/recipe_collection_record.dart';
 
 export 'dart:async' show StreamSubscription;
 export 'package:cloud_firestore/cloud_firestore.dart' hide Order;
@@ -68,6 +69,7 @@ export 'schema/routines_record.dart';
 export 'schema/app_content_record.dart';
 export 'schema/creators_record.dart';
 export 'schema/creator_content_record.dart';
+export 'schema/recipe_collection_record.dart';
 
 /// Functions to query CreatorsRecords (as a Stream and as a Future).
 Future<int> queryCreatorsRecordCount({
@@ -212,6 +214,43 @@ Future<List<RoutinesRecord>> queryRoutinesRecordOnce({
     queryCollectionOnce(
       RoutinesRecord.collection,
       RoutinesRecord.fromSnapshot,
+      queryBuilder: queryBuilder,
+      limit: limit,
+      singleRecord: singleRecord,
+    );
+
+/// Functions to query RecipeCollectionRecords (as a Stream and as a Future).
+Future<int> queryRecipeCollectionRecordCount({
+  Query Function(Query)? queryBuilder,
+  int limit = -1,
+}) =>
+    queryCollectionCount(
+      RecipeCollectionRecord.collection,
+      queryBuilder: queryBuilder,
+      limit: limit,
+    );
+
+Stream<List<RecipeCollectionRecord>> queryRecipeCollectionRecord({
+  Query Function(Query)? queryBuilder,
+  int limit = -1,
+  bool singleRecord = false,
+}) =>
+    queryCollection(
+      RecipeCollectionRecord.collection,
+      RecipeCollectionRecord.fromSnapshot,
+      queryBuilder: queryBuilder,
+      limit: limit,
+      singleRecord: singleRecord,
+    );
+
+Future<List<RecipeCollectionRecord>> queryRecipeCollectionRecordOnce({
+  Query Function(Query)? queryBuilder,
+  int limit = -1,
+  bool singleRecord = false,
+}) =>
+    queryCollectionOnce(
+      RecipeCollectionRecord.collection,
+      RecipeCollectionRecord.fromSnapshot,
       queryBuilder: queryBuilder,
       limit: limit,
       singleRecord: singleRecord,

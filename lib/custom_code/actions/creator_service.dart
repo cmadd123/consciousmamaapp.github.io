@@ -748,3 +748,168 @@ Future<Set<int>> occupiedDaysInCurrentWeek({DateTime? weekStartMonday}) async {
   }
   return occupied;
 }
+
+// ============================================================================
+// Recipe Collections
+//
+// A recipe collection is a creator-curated, named group of recipes (e.g.
+// "5 Crockpot Dinners"). Recipes are stored as embedded snapshot maps on the
+// recipe_collections doc so followers can import them as plain cookbook
+// recipes without reading the creator's private meal docs. The same collection
+// docs are read/written by both the app and the web dashboard.
+// ============================================================================
+
+RecipeType _parseRecipeTypeString(String? type) {
+  switch ((type ?? '').toLowerCase()) {
+    case 'side':
+      return RecipeType.Side;
+    case 'dessert':
+      return RecipeType.Dessert;
+    case 'snack':
+    case 'snacks':
+      return RecipeType.Snack;
+    default:
+      return RecipeType.Entree;
+  }
+}
+
+/// Build a recipe snapshot map from one of the current creator's MealRecords.
+/// Used when a creator assembles a collection inside the app.
+Map<String, dynamic> recipeSnapshotFromMeal(MealRecord meal) => {
+      'name': meal.recipeName,
+      'image_url': meal.imageUrl,
+      'ingredients': meal.ingredients,
+      'instructions': meal.cookingInstructions,
+      'estimated_cost':
+          meal.estimatedCost > 0 ? meal.estimatedCost : meal.cost,
+      'source_url': meal.sourceUrl,
+      'recipe_type': (meal.recipeType ?? RecipeType.Entree).serialize(),
+      'meal_type': meal.mealTyp,
+    };
+
+/// Load the current signed-in user's own recipe collections (creator view).
+Future<List<RecipeCollectionRecord>> getMyRecipeCollections() async {
+  final me = currentUserReference;
+  if (me == null) return [];
+  final creator = await getCurrentUserCreatorProfile();
+  final results = await queryRecipeCollectionRecordOnce(
+    queryBuilder: (q) => q.where('creator_ref',
+        isEqualTo: creator?.reference ?? me),
+  );
+  results.sort((a, b) => (b.createdAt ?? DateTime(2000))
+      .compareTo(a.createdAt ?? DateTime(2000)));
+  return results;
+}
+
+/// Load a creator's active, published recipe collections for a follower,
+/// looked up by the creator's code. Filters is_active client-side to avoid a
+/// composite index.
+Future<List<RecipeCollectionRecord>> getCreatorRecipeCollections(
+    String creatorCode) async {
+  final code = creatorCode.trim();
+  if (code.isEmpty) return [];
+  final results = await queryRecipeCollectionRecordOnce(
+    queryBuilder: (q) => q.where('creator_code', isEqualTo: code),
+  );
+  final active = results.where((c) => c.isActive).toList();
+  active.sort((a, b) => (b.createdAt ?? DateTime(2000))
+      .compareTo(a.createdAt ?? DateTime(2000)));
+  return active;
+}
+
+/// Create or update a recipe collection owned by the current creator.
+/// Pass [existing] to update; omit to create. [recipes] is the full ordered
+/// list of recipe snapshot maps (see [recipeSnapshotFromMeal]).
+Future<DocumentReference?> saveRecipeCollection({
+  required String name,
+  required List<Map<String, dynamic>> recipes,
+  String description = '',
+  String coverImageUrl = '',
+  bool isActive = true,
+  RecipeCollectionRecord? existing,
+}) async {
+  final me = currentUserReference;
+  if (me == null) return null;
+  final creator = await getCurrentUserCreatorProfile();
+
+  final data = <String, dynamic>{
+    'name': name.trim(),
+    'description': description.trim(),
+    'cover_image_url': coverImageUrl,
+    'recipes': recipes,
+    'is_active': isActive,
+    'creator_ref': creator?.reference ?? me,
+    'creator_code': creator?.code ?? '',
+  };
+
+  if (existing != null) {
+    await existing.reference.update(data);
+    return existing.reference;
+  }
+
+  data['created_at'] = FieldValue.serverTimestamp();
+  data['download_count'] = 0;
+  return await RecipeCollectionRecord.collection.add(data);
+}
+
+/// Delete a recipe collection (creator only — enforced by rules/ownership).
+Future<void> deleteRecipeCollection(RecipeCollectionRecord collection) async {
+  try {
+    await collection.reference.delete();
+  } catch (_) {}
+}
+
+/// Import every recipe in a collection into the current user's personal
+/// cookbook as plain MealRecords. Returns the number of recipes created.
+Future<int> importRecipeCollection({
+  required RecipeCollectionRecord collection,
+  String? creatorName,
+}) async {
+  final me = currentUserReference;
+  if (me == null) return 0;
+
+  final suffix = (creatorName != null && creatorName.trim().isNotEmpty)
+      ? ' (by ${creatorName.trim()})'
+      : '';
+
+  int created = 0;
+  for (final raw in collection.recipes) {
+    final r = raw is Map ? Map<String, dynamic>.from(raw) : null;
+    if (r == null) continue;
+    final name = (r['name'] as String?)?.trim();
+    if (name == null || name.isEmpty) continue;
+
+    final rawCost = r['estimated_cost'];
+    final estimatedCost = rawCost is num ? rawCost.toDouble() : null;
+
+    final mealData = createMealRecordData(
+      recipeName: '$name$suffix',
+      imageUrl: r['image_url'] as String?,
+      userRef: me,
+      mealTyp: r['meal_type'] as String?,
+      mainOrSides: 'main',
+      sourceUrl: r['source_url'] as String?,
+      estimatedCost: estimatedCost,
+      recipeType: _parseRecipeTypeString(r['recipe_type'] as String?),
+      isImported: true,
+    );
+    final ingredients =
+        (r['ingredients'] as List<dynamic>?)?.map((e) => e.toString()).toList();
+    final instructions =
+        (r['instructions'] as List<dynamic>?)?.map((e) => e.toString()).toList();
+    if (ingredients != null) mealData['ingredients'] = ingredients;
+    if (instructions != null) mealData['CookingInstructions'] = instructions;
+    mealData['imported_from_collection'] = collection.reference;
+
+    await MealRecord.collection.add(mealData);
+    created++;
+  }
+
+  // Track downloads on the collection doc (best-effort).
+  try {
+    await collection.reference
+        .update({'download_count': FieldValue.increment(1)});
+  } catch (_) {}
+
+  return created;
+}

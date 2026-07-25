@@ -192,6 +192,14 @@ service cloud.firestore {
       allow delete: if false;
     }
 
+    // Recipe collections — creator-curated named groups of recipes.
+    // Any authenticated user reads (followers browse); creators create,
+    // update, and delete their own; followers bump download_count on import.
+    match /recipe_collections/{collectionId} {
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isAuthenticated();
+    }
+
     // ─── Shared content (public read, owner write + counter bumps) ──
 
     match /shared_content/{contentId} {

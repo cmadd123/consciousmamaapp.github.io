@@ -48,6 +48,10 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
   // profile, if any. Non-null => show the per-recipe "share" toggles.
   CreatorsRecord? _creatorProfile;
 
+  // Recipe Collections: the follower's active creator (for browsing that
+  // creator's published collections). Null when the user has no active code.
+  CreatorsRecord? _activeCreator;
+
   /// Upgrade Pinterest image URL to higher resolution
   /// Pinterest URLs follow pattern: i.pinimg.com/{size}/...
   /// Sizes: 236x (thumbnail), 474x (medium), 564x (large), originals (full)
@@ -193,6 +197,7 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
     try {
       final creator = await actions.getActiveCreator();
       if (creator == null || !creator.hasUserRef()) return;
+      if (mounted) _activeCreator = creator;
       // If this user IS the creator, they browse their own shared items via
       // the in-memory filter on userMeal — no separate load needed.
       if (creator.userRef == currentUserReference) return;
@@ -216,6 +221,502 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
     } catch (e) {
       debugPrint('Error loading creator shared recipes: $e');
     }
+  }
+
+  // ── Recipe Collections ──────────────────────────────────────────────
+  // Creators bundle recipes into a named group; followers add the whole set
+  // to their cookbook in one tap. Shares the recipe_collections collection
+  // with the web dashboard.
+
+  void _openCollectionsSheet() {
+    if (_creatorProfile != null) {
+      _openCreatorCollectionsSheet();
+    } else if (_activeCreator != null) {
+      _openFollowerCollectionsSheet();
+    }
+  }
+
+  /// Follower view: browse the active creator's published collections and add
+  /// a whole collection to the personal cookbook.
+  void _openFollowerCollectionsSheet() {
+    final code = _activeCreator?.code ?? '';
+    final creatorName = _activeCreator?.name ?? 'your creator';
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
+      ),
+      builder: (sheetCtx) {
+        return StatefulBuilder(
+          builder: (sheetCtx, setSheet) {
+            return FutureBuilder<List<RecipeCollectionRecord>>(
+              future: actions.getCreatorRecipeCollections(code),
+              builder: (ctx, snap) {
+                final loading =
+                    snap.connectionState == ConnectionState.waiting;
+                final collections = snap.data ?? [];
+                return Padding(
+                  padding: EdgeInsets.only(
+                    left: 16.0,
+                    right: 16.0,
+                    top: 16.0,
+                    bottom: MediaQuery.of(sheetCtx).viewInsets.bottom + 20.0,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '📚 Collections from $creatorName',
+                        style: TextStyle(
+                          fontFamily: FFAppState().currentFontFamily,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18.0,
+                          color: FlutterFlowTheme.of(ctx).primaryText,
+                        ),
+                      ),
+                      const SizedBox(height: 4.0),
+                      Text(
+                        'Add a whole set to your cookbook — each recipe becomes a regular recipe you can plan any day.',
+                        style: TextStyle(
+                          fontFamily: FFAppState().currentFontFamily,
+                          fontSize: 13.0,
+                          color: FlutterFlowTheme.of(ctx).secondaryText,
+                        ),
+                      ),
+                      const SizedBox(height: 16.0),
+                      if (loading)
+                        const Padding(
+                          padding: EdgeInsets.all(24.0),
+                          child: Center(child: CircularProgressIndicator()),
+                        )
+                      else if (collections.isEmpty)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 24.0),
+                          child: Text(
+                            '$creatorName hasn\'t shared any collections yet.',
+                            style: TextStyle(
+                              fontFamily: FFAppState().currentFontFamily,
+                              color: FlutterFlowTheme.of(ctx).secondaryText,
+                            ),
+                          ),
+                        )
+                      else
+                        Flexible(
+                          child: ListView.separated(
+                            shrinkWrap: true,
+                            itemCount: collections.length,
+                            separatorBuilder: (_, __) =>
+                                const SizedBox(height: 10.0),
+                            itemBuilder: (_, i) {
+                              final c = collections[i];
+                              return _collectionTile(
+                                ctx: ctx,
+                                title: c.name,
+                                subtitle: c.description.isNotEmpty
+                                    ? c.description
+                                    : '${c.recipes.length} recipe${c.recipes.length == 1 ? '' : 's'}',
+                                trailingLabel: 'Add all',
+                                onTrailing: () => _importCollection(c),
+                              );
+                            },
+                          ),
+                        ),
+                    ],
+                  ),
+                );
+              },
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> _importCollection(RecipeCollectionRecord c) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dCtx) => AlertDialog(
+        title: Text('Add “${c.name}”?'),
+        content: Text(
+            'This adds ${c.recipes.length} recipe${c.recipes.length == 1 ? '' : 's'} to your cookbook. You can edit or remove them anytime.'),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(dCtx, false),
+              child: const Text('Cancel')),
+          TextButton(
+              onPressed: () => Navigator.pop(dCtx, true),
+              child: const Text('Add all')),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Adding recipes…')),
+    );
+    final count = await actions.importRecipeCollection(
+      collection: c,
+      creatorName: _activeCreator?.name,
+    );
+    if (!mounted) return;
+    Navigator.of(context).maybePop(); // close the sheet
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+          content: Text(count > 0
+              ? 'Added $count recipe${count == 1 ? '' : 's'} to your cookbook!'
+              : 'Nothing to add from this collection.')),
+    );
+    await _reloadUserRecipes();
+  }
+
+  /// Creator view: list their collections and create new ones from their
+  /// shared recipes.
+  void _openCreatorCollectionsSheet() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
+      ),
+      builder: (sheetCtx) {
+        return StatefulBuilder(
+          builder: (sheetCtx, setSheet) {
+            Future<List<RecipeCollectionRecord>> future =
+                actions.getMyRecipeCollections();
+            return FutureBuilder<List<RecipeCollectionRecord>>(
+              future: future,
+              builder: (ctx, snap) {
+                final loading =
+                    snap.connectionState == ConnectionState.waiting;
+                final collections = snap.data ?? [];
+                return Padding(
+                  padding: EdgeInsets.only(
+                    left: 16.0,
+                    right: 16.0,
+                    top: 16.0,
+                    bottom: MediaQuery.of(sheetCtx).viewInsets.bottom + 20.0,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              '📚 Your recipe collections',
+                              style: TextStyle(
+                                fontFamily: FFAppState().currentFontFamily,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18.0,
+                                color: FlutterFlowTheme.of(ctx).primaryText,
+                              ),
+                            ),
+                          ),
+                          TextButton.icon(
+                            onPressed: () async {
+                              final created =
+                                  await _openCreateCollectionSheet();
+                              if (created == true) setSheet(() {});
+                            },
+                            icon: const Icon(Icons.add, size: 18.0),
+                            label: const Text('New'),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 4.0),
+                      Text(
+                        'Bundle recipes into a named group like “5 Crockpot Dinners.” Followers add the whole set in one tap.',
+                        style: TextStyle(
+                          fontFamily: FFAppState().currentFontFamily,
+                          fontSize: 13.0,
+                          color: FlutterFlowTheme.of(ctx).secondaryText,
+                        ),
+                      ),
+                      const SizedBox(height: 16.0),
+                      if (loading)
+                        const Padding(
+                          padding: EdgeInsets.all(24.0),
+                          child: Center(child: CircularProgressIndicator()),
+                        )
+                      else if (collections.isEmpty)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 24.0),
+                          child: Text(
+                            'No collections yet. Tap “New” to bundle some of your shared recipes.',
+                            style: TextStyle(
+                              fontFamily: FFAppState().currentFontFamily,
+                              color: FlutterFlowTheme.of(ctx).secondaryText,
+                            ),
+                          ),
+                        )
+                      else
+                        Flexible(
+                          child: ListView.separated(
+                            shrinkWrap: true,
+                            itemCount: collections.length,
+                            separatorBuilder: (_, __) =>
+                                const SizedBox(height: 10.0),
+                            itemBuilder: (_, i) {
+                              final c = collections[i];
+                              return _collectionTile(
+                                ctx: ctx,
+                                title: c.name +
+                                    (c.isActive ? '' : ' (hidden)'),
+                                subtitle:
+                                    '${c.recipes.length} recipe${c.recipes.length == 1 ? '' : 's'}',
+                                trailingLabel: 'Delete',
+                                trailingColor: FlutterFlowTheme.of(ctx).error,
+                                onTrailing: () async {
+                                  final ok = await showDialog<bool>(
+                                    context: ctx,
+                                    builder: (dCtx) => AlertDialog(
+                                      title: Text('Delete “${c.name}”?'),
+                                      content: const Text(
+                                          'Followers will no longer see it. Recipes they already added stay in their cookbook.'),
+                                      actions: [
+                                        TextButton(
+                                            onPressed: () =>
+                                                Navigator.pop(dCtx, false),
+                                            child: const Text('Cancel')),
+                                        TextButton(
+                                            onPressed: () =>
+                                                Navigator.pop(dCtx, true),
+                                            child: const Text('Delete')),
+                                      ],
+                                    ),
+                                  );
+                                  if (ok == true) {
+                                    await actions.deleteRecipeCollection(c);
+                                    setSheet(() {});
+                                  }
+                                },
+                              );
+                            },
+                          ),
+                        ),
+                    ],
+                  ),
+                );
+              },
+            );
+          },
+        );
+      },
+    );
+  }
+
+  /// Creator flow to name a collection and pick from their shared recipes.
+  /// Returns true if a collection was created.
+  Future<bool?> _openCreateCollectionSheet() async {
+    // Load the creator's own shared recipes to choose from.
+    List<MealRecord> shared = [];
+    try {
+      shared = await queryMealRecordOnce(
+        queryBuilder: (q) => q
+            .where('user_ref', isEqualTo: currentUserReference)
+            .where('shared_with_followers', isEqualTo: true),
+      );
+    } catch (_) {}
+
+    if (!mounted) return false;
+    if (shared.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text(
+                'Share a few recipes with followers first, then bundle them into a collection.')),
+      );
+      return false;
+    }
+
+    final nameCtrl = TextEditingController();
+    final selected = <String>{};
+
+    return showModalBottomSheet<bool>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
+      ),
+      builder: (sheetCtx) {
+        return StatefulBuilder(
+          builder: (sheetCtx, setSheet) {
+            return Padding(
+              padding: EdgeInsets.only(
+                left: 16.0,
+                right: 16.0,
+                top: 16.0,
+                bottom: MediaQuery.of(sheetCtx).viewInsets.bottom + 20.0,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'New collection',
+                    style: TextStyle(
+                      fontFamily: FFAppState().currentFontFamily,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18.0,
+                      color: FlutterFlowTheme.of(sheetCtx).primaryText,
+                    ),
+                  ),
+                  const SizedBox(height: 12.0),
+                  TextField(
+                    controller: nameCtrl,
+                    decoration: InputDecoration(
+                      hintText: 'e.g. 5 Crockpot Dinners',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12.0),
+                  Text(
+                    'Pick recipes (${selected.length} selected)',
+                    style: TextStyle(
+                      fontFamily: FFAppState().currentFontFamily,
+                      fontWeight: FontWeight.w600,
+                      color: FlutterFlowTheme.of(sheetCtx).primaryText,
+                    ),
+                  ),
+                  const SizedBox(height: 8.0),
+                  Flexible(
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: shared.length,
+                      itemBuilder: (_, i) {
+                        final m = shared[i];
+                        final id = m.reference.id;
+                        final on = selected.contains(id);
+                        return CheckboxListTile(
+                          value: on,
+                          dense: true,
+                          contentPadding: EdgeInsets.zero,
+                          title: Text(
+                            m.recipeName,
+                            style: TextStyle(
+                              fontFamily: FFAppState().currentFontFamily,
+                              color:
+                                  FlutterFlowTheme.of(sheetCtx).primaryText,
+                            ),
+                          ),
+                          onChanged: (v) {
+                            setSheet(() {
+                              if (v == true) {
+                                selected.add(id);
+                              } else {
+                                selected.remove(id);
+                              }
+                            });
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 12.0),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        final name = nameCtrl.text.trim();
+                        if (name.isEmpty) {
+                          ScaffoldMessenger.of(sheetCtx).showSnackBar(
+                            const SnackBar(
+                                content: Text('Give the collection a name')),
+                          );
+                          return;
+                        }
+                        if (selected.isEmpty) {
+                          ScaffoldMessenger.of(sheetCtx).showSnackBar(
+                            const SnackBar(
+                                content: Text('Pick at least one recipe')),
+                          );
+                          return;
+                        }
+                        final recipes = shared
+                            .where((m) => selected.contains(m.reference.id))
+                            .map((m) => actions.recipeSnapshotFromMeal(m))
+                            .toList();
+                        await actions.saveRecipeCollection(
+                          name: name,
+                          recipes: recipes,
+                        );
+                        if (sheetCtx.mounted) Navigator.pop(sheetCtx, true);
+                      },
+                      child: const Text('Publish collection'),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _collectionTile({
+    required BuildContext ctx,
+    required String title,
+    required String subtitle,
+    required String trailingLabel,
+    required VoidCallback onTrailing,
+    Color? trailingColor,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 12.0),
+      decoration: BoxDecoration(
+        color: FlutterFlowTheme.of(ctx).primaryBackground,
+        borderRadius: BorderRadius.circular(12.0),
+        border: Border.all(color: FlutterFlowTheme.of(ctx).alternate),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontFamily: FFAppState().currentFontFamily,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 15.0,
+                    color: FlutterFlowTheme.of(ctx).primaryText,
+                  ),
+                ),
+                const SizedBox(height: 2.0),
+                Text(
+                  subtitle,
+                  style: TextStyle(
+                    fontFamily: FFAppState().currentFontFamily,
+                    fontSize: 12.0,
+                    color: FlutterFlowTheme.of(ctx).secondaryText,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8.0),
+          TextButton(
+            onPressed: onTrailing,
+            child: Text(
+              trailingLabel,
+              style: TextStyle(
+                fontFamily: FFAppState().currentFontFamily,
+                fontWeight: FontWeight.w600,
+                color: trailingColor ?? FlutterFlowTheme.of(ctx).primary,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   /// Load meal templates (user-created combos)
@@ -1539,6 +2040,63 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                           ),
                                         ),
                                       ],
+                                    ),
+                                  ),
+                                // Recipe Collections: entry point. Creators
+                                // manage their own; followers browse the active
+                                // creator's published collections.
+                                if (_creatorProfile != null ||
+                                    _activeCreator != null)
+                                  Padding(
+                                    padding: const EdgeInsets.fromLTRB(
+                                        8.0, 8.0, 8.0, 0.0),
+                                    child: GestureDetector(
+                                      onTap: _openCollectionsSheet,
+                                      child: Container(
+                                        width: double.infinity,
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 12.0, vertical: 10.0),
+                                        decoration: BoxDecoration(
+                                          color: FlutterFlowTheme.of(context)
+                                              .secondaryBackground,
+                                          borderRadius:
+                                              BorderRadius.circular(12.0),
+                                          border: Border.all(
+                                            color: FlutterFlowTheme.of(context)
+                                                .primary
+                                                .withOpacity(0.35),
+                                          ),
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            const Text('📚',
+                                                style: TextStyle(fontSize: 18.0)),
+                                            const SizedBox(width: 10.0),
+                                            Expanded(
+                                              child: Text(
+                                                _creatorProfile != null
+                                                    ? 'Recipe Collections — bundle & share'
+                                                    : 'Recipe Collections from ${_activeCreator?.name ?? 'your creator'}',
+                                                style: TextStyle(
+                                                  fontFamily: FFAppState()
+                                                      .currentFontFamily,
+                                                  color:
+                                                      FlutterFlowTheme.of(context)
+                                                          .primaryText,
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 14.0,
+                                                ),
+                                              ),
+                                            ),
+                                            Icon(
+                                              Icons.chevron_right,
+                                              color: FlutterFlowTheme.of(context)
+                                                  .primary,
+                                              size: 22.0,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 // Selection mode banner

@@ -1326,6 +1326,9 @@
       <button class="nav-tab" data-view="viewRoutines">
         <span class="nav-tab-icon" data-icon="list"></span><span class="nav-tab-label">Routines</span>
       </button>
+      <button class="nav-tab" data-view="viewCollections">
+        <span class="nav-tab-icon" data-icon="folder"></span><span class="nav-tab-label">Collections</span>
+      </button>
       <button class="nav-tab" data-tab="stats" data-view="viewStats">
         <span class="nav-tab-icon" data-icon="chart"></span><span class="nav-tab-label">Stats</span>
       </button>
@@ -1980,6 +1983,25 @@
           <div class="skeleton-card"><div class="skeleton skeleton-line medium"></div><div class="skeleton skeleton-line short"></div></div>
         </div>
       </div>
+
+      <!-- Recipe Collections sub-view -->
+      <div class="view" id="viewCollections">
+        <button class="back-btn" data-back>← Dashboard</button>
+        <div class="section-head">
+          <h2>Recipe collections</h2>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn ghost" id="refreshCollectionsBtn">↻ Refresh</button>
+            <button class="btn" id="newCollectionBtn">+ New collection</button>
+          </div>
+        </div>
+        <p class="muted" style="margin: 0 0 16px; font-size: 13px;">
+          Bundle recipes into a named group — like “5 Crockpot Dinners.” Followers can add the whole set to their cookbook in one tap, where each becomes a regular recipe.
+        </p>
+        <div class="routine-grid" id="collectionGrid">
+          <div class="skeleton-card"><div class="skeleton skeleton-line medium"></div><div class="skeleton skeleton-line short"></div></div>
+          <div class="skeleton-card"><div class="skeleton skeleton-line medium"></div><div class="skeleton skeleton-line short"></div></div>
+        </div>
+      </div>
     </main>
   </div>
 
@@ -2083,6 +2105,45 @@
       </div>
       <div class="meal-plan-meta muted" id="routineModalMeta"></div>
       <ol id="routineModalBody" class="routine-steps"></ol>
+    </div>
+  </div>
+
+  <!-- New/Edit recipe collection modal -->
+  <div class="modal-backdrop" id="collectionModal">
+    <div class="modal wide">
+      <div class="modal-head">
+        <h3 id="collectionModalTitle">New collection</h3>
+        <button type="button" class="btn ghost" id="closeCollectionModalBtn">Close</button>
+      </div>
+      <form id="collectionForm" class="form-grid">
+        <div class="field">
+          <label for="collectionNameInput">Collection name</label>
+          <input type="text" id="collectionNameInput" required maxlength="80" placeholder="e.g. 5 Crockpot Dinners">
+        </div>
+        <div class="field">
+          <label for="collectionDescInput">Short description (optional)</label>
+          <input type="text" id="collectionDescInput" maxlength="160" placeholder="Cozy set-and-forget dinners for busy weeks">
+        </div>
+        <div class="field">
+          <label>Recipes in this collection <span class="muted" id="collectionPickCount">(0 selected)</span></label>
+          <input type="text" id="collectionRecipeSearch" placeholder="Search your recipe library…"
+                 style="width:100%; padding:10px 12px; border:1px solid var(--border); border-radius:8px; margin-bottom:8px;">
+          <div id="collectionRecipeList" style="max-height:280px; overflow-y:auto; border:1px solid var(--border); border-radius:10px;">
+            <div class="muted" style="text-align:center; padding:24px;"><div class="loader" style="margin:0 auto;"></div></div>
+          </div>
+        </div>
+        <div class="toggle">
+          <input type="checkbox" id="collectionActive" checked>
+          <label for="collectionActive">Publish immediately (visible to followers)</label>
+        </div>
+        <div class="modal-actions" style="justify-content: space-between;">
+          <button type="button" class="btn ghost" id="deleteCollectionBtn" hidden style="color: var(--danger); border-color: var(--danger);">Delete</button>
+          <div style="display:flex; gap:8px; margin-left:auto;">
+            <button type="button" class="btn ghost" id="cancelCollectionBtn">Cancel</button>
+            <button type="submit" class="btn" id="saveCollectionBtn">Save collection</button>
+          </div>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -2740,6 +2801,8 @@
           loadPlans();
         } else if (view === 'viewRoutines') {
           loadCreatorRoutines();
+        } else if (view === 'viewCollections') {
+          loadCreatorCollections();
         }
       });
     });
@@ -4383,6 +4446,224 @@
         toast('Routine saved');
         celebrate();
         loadCreatorRoutines();
+      } catch (err) {
+        console.error(err);
+        toast('Save failed: ' + err.message, true);
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.textContent = orig;
+      }
+    });
+
+    // ───────────────────────────────────────────────────────────────
+    // Recipe Collections — named groups of recipes followers import as a
+    // set. Recipes are stored as embedded snapshots on the collection doc
+    // so the app can import them without reading the creator's private
+    // meal docs. Same recipe_collections docs are read by the mobile app.
+    // ───────────────────────────────────────────────────────────────
+    let collectionRecipeCache = null;   // [{id, recipe_name, image_url, snapshot}]
+    let collectionSelected = new Set();  // selected recipe ids
+    let editingCollection = null;        // {id, ref, data} when editing
+
+    async function loadCreatorCollections() {
+      const grid = $('collectionGrid');
+      grid.innerHTML = renderSkeletonGrid(3);
+      try {
+        const snap = await getDocs(query(
+          collection(db, 'recipe_collections'),
+          where('creator_ref', '==', creatorDoc.ref),
+        ));
+        const cols = snap.docs.map(d => ({ id: d.id, ref: d.ref, ...d.data() }));
+        cols.sort((a, b) => (b.created_at?.toMillis?.() || 0) - (a.created_at?.toMillis?.() || 0));
+
+        if (cols.length === 0) {
+          grid.innerHTML = `
+            <div class="empty">
+              <div style="font-size: 36px; margin-bottom: 10px; color: var(--text-muted);">${ICON.folder}</div>
+              <div style="font-weight: 600; margin-bottom: 4px;">No collections yet</div>
+              <div style="font-size: 13px;">Group a few recipes together — like “5 Crockpot Dinners” — and followers can add them all at once.</div>
+            </div>`;
+          return;
+        }
+
+        grid.innerHTML = cols.map(c => {
+          const count = Array.isArray(c.recipes) ? c.recipes.length : 0;
+          const status = c.is_active ? '' : ' · <span style="color:var(--text-muted)">hidden</span>';
+          const dls = c.download_count ? ` · ${c.download_count} added` : '';
+          return `
+            <div class="routine-card" data-id="${c.id}">
+              <div class="r-head">
+                <span class="r-emoji">📚</span>
+                <span class="r-title">${escapeHtml(c.name || 'Untitled collection')}</span>
+              </div>
+              <div class="r-meta">${count} recipe${count === 1 ? '' : 's'}${status}${dls}</div>
+            </div>`;
+        }).join('');
+
+        grid.querySelectorAll('.routine-card').forEach(card => {
+          card.addEventListener('click', () => {
+            const col = cols.find(c => c.id === card.dataset.id);
+            if (col) openCollectionForm(col);
+          });
+        });
+      } catch (e) {
+        console.error(e);
+        grid.innerHTML = `<div class="empty">Couldn't load collections: ${escapeHtml(e.message)}</div>`;
+      }
+    }
+
+    // Load the creator's full recipe library once (with the data we snapshot
+    // into a collection). Cached for the session.
+    async function ensureCollectionRecipeCache() {
+      if (collectionRecipeCache) return;
+      const snap = await getDocs(query(
+        collection(db, 'meal'),
+        where('user_ref', '==', doc(db, 'users', currentUser.uid)),
+      ));
+      collectionRecipeCache = [];
+      snap.forEach((d) => {
+        const r = d.data();
+        collectionRecipeCache.push({
+          id: d.id,
+          recipe_name: r.recipe_name || 'Untitled recipe',
+          image_url: r.image_url || '',
+          snapshot: {
+            name: r.recipe_name || 'Untitled recipe',
+            image_url: r.image_url || '',
+            ingredients: Array.isArray(r.ingredients) ? r.ingredients : [],
+            instructions: Array.isArray(r.CookingInstructions) ? r.CookingInstructions : [],
+            estimated_cost: (typeof r.estimated_cost === 'number' ? r.estimated_cost
+              : (typeof r.cost === 'number' ? r.cost : 0)),
+            source_url: r.source_url || '',
+            recipe_type: r.recipe_type || 'Entree',
+            meal_type: r.meal_typ || '',
+          },
+        });
+      });
+      collectionRecipeCache.sort((a, b) => a.recipe_name.localeCompare(b.recipe_name));
+    }
+
+    function renderCollectionRecipeList(filter) {
+      const listEl = $('collectionRecipeList');
+      const f = (filter || '').trim().toLowerCase();
+      const matches = (collectionRecipeCache || []).filter(
+        (r) => !f || r.recipe_name.toLowerCase().includes(f));
+      if (matches.length === 0) {
+        listEl.innerHTML = `<div class="muted" style="text-align:center; padding:24px;">
+          ${(collectionRecipeCache || []).length === 0
+            ? 'No recipes in your library yet. Add some from the Recipes tab first.'
+            : 'No recipes match that search.'}
+        </div>`;
+        return;
+      }
+      listEl.innerHTML = matches.map((r) => {
+        const on = collectionSelected.has(r.id);
+        return `
+          <div class="picker-row" data-pick="${escapeHtml(r.id)}" style="cursor:pointer; ${on ? 'background:var(--primary-tint,#f0f7f4);' : ''}">
+            <div style="width:22px; text-align:center; font-size:16px;">${on ? '✅' : '⬜'}</div>
+            <div class="picker-thumb">${r.image_url ? `<img src="${escapeHtml(r.image_url)}" alt="">` : ICON.image}</div>
+            <div class="picker-name">${escapeHtml(r.recipe_name)}</div>
+          </div>`;
+      }).join('');
+      listEl.querySelectorAll('[data-pick]').forEach((row) => {
+        row.addEventListener('click', () => {
+          const id = row.dataset.pick;
+          if (collectionSelected.has(id)) collectionSelected.delete(id);
+          else collectionSelected.add(id);
+          $('collectionPickCount').textContent = `(${collectionSelected.size} selected)`;
+          renderCollectionRecipeList($('collectionRecipeSearch').value);
+        });
+      });
+    }
+
+    async function openCollectionForm(existing) {
+      editingCollection = existing || null;
+      $('collectionModalTitle').textContent = existing ? 'Edit collection' : 'New collection';
+      $('collectionNameInput').value = existing?.name || '';
+      $('collectionDescInput').value = existing?.description || '';
+      $('collectionActive').checked = existing ? existing.is_active !== false : true;
+      $('collectionRecipeSearch').value = '';
+      $('deleteCollectionBtn').hidden = !existing;
+      collectionSelected = new Set();
+      $('collectionPickCount').textContent = '(0 selected)';
+      $('collectionModal').classList.add('open');
+      $('collectionRecipeList').innerHTML =
+        `<div class="muted" style="text-align:center; padding:24px;"><div class="loader" style="margin:0 auto;"></div></div>`;
+      try {
+        await ensureCollectionRecipeCache();
+        // Pre-select recipes already in the collection, matched by name.
+        if (existing && Array.isArray(existing.recipes)) {
+          const names = new Set(existing.recipes.map(r => (r.name || '').trim().toLowerCase()));
+          collectionRecipeCache.forEach(r => {
+            if (names.has(r.recipe_name.trim().toLowerCase())) collectionSelected.add(r.id);
+          });
+          $('collectionPickCount').textContent = `(${collectionSelected.size} selected)`;
+        }
+        renderCollectionRecipeList('');
+      } catch (e) {
+        console.error(e);
+        $('collectionRecipeList').innerHTML =
+          `<div class="muted" style="text-align:center; padding:24px;">Couldn't load recipes: ${escapeHtml(e.message)}</div>`;
+      }
+    }
+
+    function closeCollectionForm() { $('collectionModal').classList.remove('open'); editingCollection = null; }
+    $('newCollectionBtn').addEventListener('click', () => openCollectionForm(null));
+    $('refreshCollectionsBtn').addEventListener('click', () => { collectionRecipeCache = null; loadCreatorCollections(); });
+    $('closeCollectionModalBtn').addEventListener('click', closeCollectionForm);
+    $('cancelCollectionBtn').addEventListener('click', closeCollectionForm);
+    $('collectionModal').addEventListener('click', (e) => {
+      if (e.target === $('collectionModal')) closeCollectionForm();
+    });
+    $('collectionRecipeSearch').addEventListener('input', (e) => renderCollectionRecipeList(e.target.value));
+
+    $('deleteCollectionBtn').addEventListener('click', async () => {
+      if (!editingCollection) return;
+      if (!confirm(`Delete “${editingCollection.name || 'this collection'}”? Followers will no longer see it. Recipes they already added stay in their cookbook.`)) return;
+      try {
+        await deleteDoc(editingCollection.ref);
+        closeCollectionForm();
+        toast('Collection deleted');
+        loadCreatorCollections();
+      } catch (err) {
+        console.error(err);
+        toast('Delete failed: ' + err.message, true);
+      }
+    });
+
+    $('collectionForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = $('collectionNameInput').value.trim();
+      if (!name) { toast('Give the collection a name', true); return; }
+      if (collectionSelected.size === 0) { toast('Pick at least one recipe', true); return; }
+      const recipes = (collectionRecipeCache || [])
+        .filter(r => collectionSelected.has(r.id))
+        .map(r => r.snapshot);
+      const saveBtn = $('saveCollectionBtn');
+      saveBtn.disabled = true;
+      const orig = saveBtn.textContent;
+      saveBtn.textContent = 'Saving…';
+      try {
+        const payload = {
+          name,
+          description: $('collectionDescInput').value.trim(),
+          recipes,
+          is_active: $('collectionActive').checked,
+          creator_ref: creatorDoc.ref,
+          creator_code: creatorDoc.data.code || '',
+        };
+        if (editingCollection) {
+          await updateDoc(editingCollection.ref, payload);
+          toast('Collection updated');
+        } else {
+          payload.created_at = serverTimestamp();
+          payload.download_count = 0;
+          await addDoc(collection(db, 'recipe_collections'), payload);
+          toast('Collection published');
+          celebrate();
+        }
+        closeCollectionForm();
+        loadCreatorCollections();
       } catch (err) {
         console.error(err);
         toast('Save failed: ' + err.message, true);
