@@ -318,8 +318,8 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                 subtitle: c.description.isNotEmpty
                                     ? c.description
                                     : '${c.recipes.length} recipe${c.recipes.length == 1 ? '' : 's'}',
-                                trailingLabel: 'Add all',
-                                onTrailing: () => _importCollection(c),
+                                trailingLabel: 'Add',
+                                onTrailing: () => _openCollectionActions(c),
                               );
                             },
                           ),
@@ -335,33 +335,143 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
     );
   }
 
-  Future<void> _importCollection(RecipeCollectionRecord c) async {
-    final confirmed = await showDialog<bool>(
+  /// Two ways to ingest a collection: save the recipes to the cookbook, or
+  /// schedule them onto the calendar (which also saves them).
+  void _openCollectionActions(RecipeCollectionRecord c) {
+    final count = c.recipes.length;
+    showModalBottomSheet(
       context: context,
-      builder: (dCtx) => AlertDialog(
-        title: Text('Add “${c.name}”?'),
-        content: Text(
-            'This adds ${c.recipes.length} recipe${c.recipes.length == 1 ? '' : 's'} to your cookbook. You can edit or remove them anytime.'),
-        actions: [
-          TextButton(
-              onPressed: () => Navigator.pop(dCtx, false),
-              child: const Text('Cancel')),
-          TextButton(
-              onPressed: () => Navigator.pop(dCtx, true),
-              child: const Text('Add all')),
-        ],
+      backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
+      ),
+      builder: (sheetCtx) {
+        final theme = FlutterFlowTheme.of(sheetCtx);
+        return Padding(
+          padding: EdgeInsets.only(
+            left: 16, right: 16, top: 16,
+            bottom: MediaQuery.of(sheetCtx).viewInsets.bottom + 24,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                c.name,
+                style: TextStyle(
+                  fontFamily: FFAppState().currentFontFamily,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                  color: theme.primaryText,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                '$count recipe${count == 1 ? '' : 's'}',
+                style: TextStyle(
+                  fontFamily: FFAppState().currentFontFamily,
+                  color: theme.secondaryText,
+                  fontSize: 13,
+                ),
+              ),
+              const SizedBox(height: 18),
+              _actionButton(
+                sheetCtx,
+                icon: Icons.event_available,
+                label: 'Add to meal plan',
+                sub: 'Schedule them on consecutive days from a date you pick',
+                filled: true,
+                onTap: () {
+                  Navigator.pop(sheetCtx);
+                  _addCollectionToMealPlan(c);
+                },
+              ),
+              const SizedBox(height: 10),
+              _actionButton(
+                sheetCtx,
+                icon: Icons.bookmark_add_outlined,
+                label: 'Add to my cookbook',
+                sub: 'Save the recipes to use whenever you like',
+                filled: false,
+                onTap: () {
+                  Navigator.pop(sheetCtx);
+                  _addCollectionToLibrary(c);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _actionButton(
+    BuildContext ctx, {
+    required IconData icon,
+    required String label,
+    required String sub,
+    required bool filled,
+    required VoidCallback onTap,
+  }) {
+    final theme = FlutterFlowTheme.of(ctx);
+    final primary = theme.primary;
+    return InkWell(
+      borderRadius: BorderRadius.circular(12),
+      onTap: onTap,
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        decoration: BoxDecoration(
+          color: filled ? primary : theme.secondaryBackground,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: primary, width: 1.5),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, color: filled ? Colors.white : primary, size: 22),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: TextStyle(
+                      fontFamily: FFAppState().currentFontFamily,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 15,
+                      color: filled ? Colors.white : theme.primaryText,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    sub,
+                    style: TextStyle(
+                      fontFamily: FFAppState().currentFontFamily,
+                      fontSize: 12,
+                      color: filled
+                          ? Colors.white.withOpacity(0.85)
+                          : theme.secondaryText,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
-    if (confirmed != true) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Adding recipes…')),
-    );
+  }
+
+  Future<void> _addCollectionToLibrary(RecipeCollectionRecord c) async {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(const SnackBar(content: Text('Adding recipes…')));
     final count = await actions.importRecipeCollection(
       collection: c,
       creatorName: _activeCreator?.name,
     );
     if (!mounted) return;
-    Navigator.of(context).maybePop(); // close the sheet
+    Navigator.of(context).maybePop(); // close the collections sheet
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
           content: Text(count > 0
@@ -369,6 +479,43 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
               : 'Nothing to add from this collection.')),
     );
     await _reloadUserRecipes();
+  }
+
+  Future<void> _addCollectionToMealPlan(RecipeCollectionRecord c) async {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: today,
+      firstDate: today,
+      lastDate: today.add(const Duration(days: 365)),
+      helpText: 'Start this collection on…',
+    );
+    if (picked == null || !mounted) return;
+    ScaffoldMessenger.of(context)
+        .showSnackBar(const SnackBar(content: Text('Scheduling recipes…')));
+    final count = await actions.scheduleRecipeCollection(
+      collection: c,
+      startDate: picked,
+      creatorName: _activeCreator?.name,
+    );
+    if (!mounted) return;
+    Navigator.of(context).maybePop(); // close the collections sheet
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+          content: Text(count > 0
+              ? 'Scheduled $count recipe${count == 1 ? '' : 's'} starting ${_shortDate(picked)}!'
+              : 'Nothing to schedule from this collection.')),
+    );
+    await _reloadUserRecipes();
+  }
+
+  String _shortDate(DateTime d) {
+    const months = [
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+    ];
+    return '${months[d.month - 1]} ${d.day}';
   }
 
   /// Creator view: list their collections and create new ones from their

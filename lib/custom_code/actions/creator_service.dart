@@ -1003,3 +1003,74 @@ Future<int> importRecipeCollection({
 
   return created;
 }
+
+/// Schedule a collection's recipes onto the calendar starting at [startDate],
+/// one recipe per consecutive day at its own meal slot (default dinner). Each
+/// recipe is also saved to the cookbook as a MealRecord (so it's reusable).
+/// Returns the number of recipes scheduled.
+Future<int> scheduleRecipeCollection({
+  required RecipeCollectionRecord collection,
+  required DateTime startDate,
+  String? creatorName,
+}) async {
+  final me = currentUserReference;
+  if (me == null) return 0;
+
+  final suffix = (creatorName != null && creatorName.trim().isNotEmpty)
+      ? ' (by ${creatorName.trim()})'
+      : '';
+  final start = DateTime(startDate.year, startDate.month, startDate.day);
+
+  int scheduled = 0;
+  int dayIndex = 0;
+  for (final raw in collection.recipes) {
+    final r = raw is Map ? Map<String, dynamic>.from(raw) : null;
+    if (r == null) continue;
+    final name = (r['name'] as String?)?.trim();
+    if (name == null || name.isEmpty) continue;
+
+    final rawCost = r['estimated_cost'];
+    final estimatedCost = rawCost is num ? rawCost.toDouble() : null;
+    final mealTypeStr = (r['meal_type'] as String?);
+    final mealTypEnum = _parseMealTypeString(mealTypeStr ?? 'dinner') ?? MealTyp.Dinner;
+
+    final mealData = createMealRecordData(
+      recipeName: '$name$suffix',
+      imageUrl: r['image_url'] as String?,
+      userRef: me,
+      mealTyp: mealTypeStr ?? 'dinner',
+      mainOrSides: 'main',
+      sourceUrl: r['source_url'] as String?,
+      estimatedCost: estimatedCost,
+      recipeType: _parseRecipeTypeString(r['recipe_type'] as String?),
+      isImported: true,
+    );
+    final ingredients =
+        (r['ingredients'] as List<dynamic>?)?.map((e) => e.toString()).toList();
+    final instructions =
+        (r['instructions'] as List<dynamic>?)?.map((e) => e.toString()).toList();
+    if (ingredients != null) mealData['ingredients'] = ingredients;
+    if (instructions != null) mealData['CookingInstructions'] = instructions;
+    mealData['imported_from_collection'] = collection.reference;
+
+    final mealRef = await MealRecord.collection.add(mealData);
+
+    final date = DateTime(start.year, start.month, start.day + dayIndex);
+    await MealPlanRecord.collection.add(createMealPlanRecordData(
+      date: date,
+      typ: mealTypEnum,
+      userRef: me,
+      userFirebasemeal: mealRef,
+    ));
+
+    scheduled++;
+    dayIndex++;
+  }
+
+  try {
+    await collection.reference
+        .update({'download_count': FieldValue.increment(1)});
+  } catch (_) {}
+
+  return scheduled;
+}
