@@ -559,11 +559,16 @@ Future<CreatorImportResult> importCreatorMealPlan({
   required CreatorContentRecord mealPlan,
   required CreatorsRecord creator,
   required Set<int> selectedDayOffsets,
-  DateTime? weekStartMonday,
+  DateTime? startDate,
 }) async {
   final now = DateTime.now();
-  final monday = weekStartMonday ??
-      DateTime(now.year, now.month, now.day).subtract(Duration(days: now.weekday - 1));
+  // Anchor the plan's relative days (day_1, day_2, …) to TODAY so day_1 lands
+  // on today, day_2 on tomorrow, etc. This matches the week planner, which
+  // displays getSevenDays() == [today .. today+6]. (Previously this anchored
+  // to the week's Monday, so importing later in the week put most days in the
+  // past — outside the planner's visible window — and only the days from
+  // today forward appeared. That was the "only the first day applies" bug.)
+  final start = startDate ?? DateTime(now.year, now.month, now.day);
 
   final planData = mealPlan.data;
   final creatorName = creator.name;
@@ -585,7 +590,7 @@ Future<CreatorImportResult> importCreatorMealPlan({
     final dayData = dayRaw is Map ? Map<String, dynamic>.from(dayRaw) : null;
     if (dayData == null) continue;
 
-    final date = DateTime(monday.year, monday.month, monday.day + dayOffset);
+    final date = DateTime(start.year, start.month, start.day + dayOffset);
     final dayStart = date;
     final dayEnd = date.add(const Duration(days: 1));
 
@@ -725,25 +730,25 @@ MealTyp? _parseMealTypeString(String type) {
   }
 }
 
-/// Look up which day offsets (0=Mon..6=Sun) already have meal plans on the
-/// current week. Used by the preview screen to default the checkboxes.
-Future<Set<int>> occupiedDaysInCurrentWeek({DateTime? weekStartMonday}) async {
+/// Look up which day offsets (0=today .. 6=today+6) already have meal plans.
+/// Used by the preview screen to default the checkboxes. Anchored to TODAY to
+/// match importCreatorMealPlan (day_1 -> today) and the week planner.
+Future<Set<int>> occupiedDaysInCurrentWeek({DateTime? startDate}) async {
   final now = DateTime.now();
-  final monday = weekStartMonday ??
-      DateTime(now.year, now.month, now.day).subtract(Duration(days: now.weekday - 1));
-  final sunday = monday.add(const Duration(days: 7));
+  final start = startDate ?? DateTime(now.year, now.month, now.day);
+  final end = start.add(const Duration(days: 7));
 
   final plans = await queryMealPlanRecordOnce(
     queryBuilder: (q) => q
         .where('user_ref', isEqualTo: currentUserReference)
-        .where('date', isGreaterThanOrEqualTo: monday)
-        .where('date', isLessThan: sunday),
+        .where('date', isGreaterThanOrEqualTo: start)
+        .where('date', isLessThan: end),
   );
 
   final occupied = <int>{};
   for (final p in plans) {
     if (p.date == null) continue;
-    final offset = p.date!.difference(monday).inDays;
+    final offset = p.date!.difference(start).inDays;
     if (offset >= 0 && offset <= 6) occupied.add(offset);
   }
   return occupied;

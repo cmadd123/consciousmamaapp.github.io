@@ -126,10 +126,10 @@ class _CreatorMealPlanCardState extends State<CreatorMealPlanCard> {
       final creatorName = creatorTheme.activeCreator?.name ?? 'Creator';
       final planData = _mealPlan!.data;
 
-      // Get the start of the current week (Monday)
+      // Anchor day_1 to today (matches importCreatorMealPlan + the planner's
+      // getSevenDays() == [today .. today+6]).
       final now = DateTime.now();
-      final monday = DateTime(now.year, now.month, now.day)
-          .subtract(Duration(days: now.weekday - 1));
+      final start = DateTime(now.year, now.month, now.day);
 
       // Support both old format (monday/tuesday) and new format (day_1/day_2)
       final dayNames = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
@@ -144,7 +144,7 @@ class _CreatorMealPlanCardState extends State<CreatorMealPlanCard> {
         final dayData = dayRaw is Map ? Map<String, dynamic>.from(dayRaw) : null;
         if (dayData == null) continue;
 
-        final date = DateTime(monday.year, monday.month, monday.day + dayIndex);
+        final date = DateTime(start.year, start.month, start.day + dayIndex);
 
         // Each day can have breakfast, lunch, dinner, snack
         for (final mealType in ['breakfast', 'lunch', 'dinner', 'snack']) {

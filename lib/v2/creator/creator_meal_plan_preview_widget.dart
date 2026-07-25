@@ -26,20 +26,35 @@ class CreatorMealPlanPreviewWidget extends StatefulWidget {
 }
 
 class _CreatorMealPlanPreviewWidgetState extends State<CreatorMealPlanPreviewWidget> {
-  static const _dayLabels = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
   static const _legacyKeys = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
   static const _slotOrder = ['breakfast', 'lunch', 'dinner', 'snack'];
+  static const _weekdayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  static const _monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-  /// selectedDays[i] = true means day_i+1 will be imported
+  /// selectedDays[i] = true means day_i+1 will be imported onto _startDay + i.
   final Set<int> _selectedDays = {};
   Set<int> _occupiedDays = {};
   bool _loadingOccupancy = true;
   bool _isImporting = false;
+  late final DateTime _startDay;
 
   @override
   void initState() {
     super.initState();
+    final now = DateTime.now();
+    // Day 1 of the plan lands on today (matches importCreatorMealPlan + the
+    // week planner), so labels show the real dates it will fill.
+    _startDay = DateTime(now.year, now.month, now.day);
     _loadOccupancyAndInitDefaults();
+  }
+
+  /// Label for the day this plan-offset lands on: "Today", "Tomorrow", or
+  /// e.g. "Wed, Jul 30".
+  String _dayLabel(int offset) {
+    final d = _startDay.add(Duration(days: offset));
+    if (offset == 0) return 'Today';
+    if (offset == 1) return 'Tomorrow';
+    return '${_weekdayNames[d.weekday - 1]}, ${_monthNames[d.month - 1]} ${d.day}';
   }
 
   Future<void> _loadOccupancyAndInitDefaults() async {
@@ -280,7 +295,7 @@ class _CreatorMealPlanPreviewWidgetState extends State<CreatorMealPlanPreviewWid
                       Row(
                         children: [
                           Text(
-                            _dayLabels[i],
+                            _dayLabel(i),
                             style: theme.bodyLarge.override(
                               fontFamily: FFAppState().currentFontFamily,
                               fontWeight: FontWeight.w600,
