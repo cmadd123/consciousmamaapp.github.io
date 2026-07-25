@@ -507,6 +507,9 @@ class _MealPlanSnapshot {
 class CreatorImportResult {
   final int mealsCreated;
   final int daysReplaced;
+  // True when the recipes were only saved to the cookbook (no scheduling), so
+  // the UI can word the confirmation as "Saved N recipes" vs "Added N meals".
+  final bool libraryOnly;
   final List<_MealPlanSnapshot> _replacedSnapshots;
   final List<DocumentReference> _createdPlanRefs;
   final List<DocumentReference> _createdMealRefs;
@@ -517,6 +520,7 @@ class CreatorImportResult {
     required List<_MealPlanSnapshot> replacedSnapshots,
     required List<DocumentReference> createdPlanRefs,
     required List<DocumentReference> createdMealRefs,
+    this.libraryOnly = false,
   })  : _replacedSnapshots = replacedSnapshots,
         _createdPlanRefs = createdPlanRefs,
         _createdMealRefs = createdMealRefs;
@@ -558,18 +562,11 @@ class CreatorImportResult {
 Future<CreatorImportResult> importCreatorMealPlan({
   required CreatorContentRecord mealPlan,
   required CreatorsRecord creator,
-  required Set<int> selectedDayOffsets,
-  DateTime? startDate,
+  required Map<int, DateTime> dayDates,
 }) async {
-  final now = DateTime.now();
-  // Anchor the plan's relative days (day_1, day_2, …) to TODAY so day_1 lands
-  // on today, day_2 on tomorrow, etc. This matches the week planner, which
-  // displays getSevenDays() == [today .. today+6]. (Previously this anchored
-  // to the week's Monday, so importing later in the week put most days in the
-  // past — outside the planner's visible window — and only the days from
-  // today forward appeared. That was the "only the first day applies" bug.)
-  final start = startDate ?? DateTime(now.year, now.month, now.day);
-
+  // dayDates maps a plan day offset (0-based: day_1 -> 0) to the exact calendar
+  // date the follower wants it on. This gives full flexibility — Day 1 can go
+  // on the 4th, Day 3 on the 9th, etc. — instead of a fixed anchor.
   final planData = mealPlan.data;
   final creatorName = creator.name;
   final List<_MealPlanSnapshot> replacedSnapshots = [];
@@ -581,16 +578,18 @@ Future<CreatorImportResult> importCreatorMealPlan({
   // Support both new day_N and legacy weekday-named keys
   final legacyDayNames = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
-  for (final dayOffset in selectedDayOffsets) {
-    if (dayOffset < 0 || dayOffset > 6) continue;
+  for (final entry in dayDates.entries) {
+    final dayOffset = entry.key;
+    if (dayOffset < 0) continue;
 
     final newKey = 'day_${dayOffset + 1}';
-    final oldKey = legacyDayNames[dayOffset];
+    final oldKey = dayOffset < legacyDayNames.length ? legacyDayNames[dayOffset] : '__none__';
     final dayRaw = planData[newKey] ?? planData[oldKey];
     final dayData = dayRaw is Map ? Map<String, dynamic>.from(dayRaw) : null;
     if (dayData == null) continue;
 
-    final date = DateTime(start.year, start.month, start.day + dayOffset);
+    final target = entry.value;
+    final date = DateTime(target.year, target.month, target.day);
     final dayStart = date;
     final dayEnd = date.add(const Duration(days: 1));
 
@@ -716,6 +715,92 @@ Future<CreatorImportResult> importCreatorMealPlan({
     replacedSnapshots: replacedSnapshots,
     createdPlanRefs: createdPlanRefs,
     createdMealRefs: createdMealRefs,
+  );
+}
+
+/// Save every recipe in a creator meal plan into the follower's cookbook,
+/// WITHOUT scheduling any of them onto the calendar. Used by the "Add to
+/// Library" action so followers can keep a creator's recipes to plan later.
+/// Skips custom (eat-out/typed) meals since those have no reusable recipe.
+/// Returns a CreatorImportResult (libraryOnly) so the caller can show an
+/// undoable confirmation.
+Future<CreatorImportResult> addCreatorPlanToLibrary({
+  required CreatorContentRecord mealPlan,
+  required CreatorsRecord creator,
+}) async {
+  final List<DocumentReference> createdMealRefs = [];
+  if (currentUserReference == null) {
+    return CreatorImportResult._(
+      mealsCreated: 0,
+      daysReplaced: 0,
+      replacedSnapshots: const [],
+      createdPlanRefs: const [],
+      createdMealRefs: const [],
+      libraryOnly: true,
+    );
+  }
+  final planData = mealPlan.data;
+  final creatorName = creator.name;
+  final legacyDayNames = [
+    'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'
+  ];
+
+  int saved = 0;
+  // Plans can have up to 30 relative days (day_1..day_30) plus legacy keys.
+  for (int dayOffset = 0; dayOffset < 30; dayOffset++) {
+    final newKey = 'day_${dayOffset + 1}';
+    final oldKey =
+        dayOffset < legacyDayNames.length ? legacyDayNames[dayOffset] : '__none__';
+    final dayRaw = planData[newKey] ?? planData[oldKey];
+    final dayData = dayRaw is Map ? Map<String, dynamic>.from(dayRaw) : null;
+    if (dayData == null) continue;
+
+    for (final mealType in ['breakfast', 'lunch', 'dinner', 'snack']) {
+      final mRaw = dayData[mealType];
+      final m = mRaw is Map ? Map<String, dynamic>.from(mRaw) : null;
+      if (m == null) continue;
+      final name = m['name'] as String?;
+      if (name == null || name.isEmpty) continue;
+      if (m['is_custom'] == true) continue; // no reusable recipe
+
+      final rawCost = m['estimated_cost'];
+      final estimatedCost = rawCost is num ? rawCost.toDouble() : null;
+
+      final mealRecordData = createMealRecordData(
+        recipeName: '$name (by $creatorName)',
+        imageUrl: m['image_url'] as String?,
+        userRef: currentUserReference,
+        mealTyp: mealType,
+        mainOrSides: 'main',
+        sourceUrl: m['source_url'] as String?,
+        estimatedCost: estimatedCost,
+        isImported: true,
+      );
+      final ingredients =
+          (m['ingredients'] as List<dynamic>?)?.map((e) => e.toString()).toList();
+      final instructions =
+          (m['instructions'] as List<dynamic>?)?.map((e) => e.toString()).toList();
+      if (ingredients != null) mealRecordData['ingredients'] = ingredients;
+      if (instructions != null) mealRecordData['CookingInstructions'] = instructions;
+      mealRecordData['imported_from_creator_content'] = mealPlan.reference;
+
+      final ref = await MealRecord.collection.add(mealRecordData);
+      createdMealRefs.add(ref);
+      saved++;
+    }
+  }
+
+  try {
+    await mealPlan.reference.update({'download_count': FieldValue.increment(1)});
+  } catch (_) {}
+
+  return CreatorImportResult._(
+    mealsCreated: saved,
+    daysReplaced: 0,
+    replacedSnapshots: const [],
+    createdPlanRefs: const [],
+    createdMealRefs: createdMealRefs,
+    libraryOnly: true,
   );
 }
 

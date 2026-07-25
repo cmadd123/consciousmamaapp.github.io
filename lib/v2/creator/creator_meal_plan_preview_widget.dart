@@ -31,8 +31,10 @@ class _CreatorMealPlanPreviewWidgetState extends State<CreatorMealPlanPreviewWid
   static const _weekdayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
   static const _monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-  /// selectedDays[i] = true means day_i+1 will be imported onto _startDay + i.
-  final Set<int> _selectedDays = {};
+  /// _dayDates[planOffset] = the calendar date that plan day is scheduled onto.
+  /// Presence in the map == "included in Add to Meal Plan". Followers can move
+  /// any plan day to any date (Day 1 -> the 4th, etc.).
+  final Map<int, DateTime> _dayDates = {};
   Set<int> _occupiedDays = {};
   bool _loadingOccupancy = true;
   bool _isImporting = false;
@@ -42,31 +44,31 @@ class _CreatorMealPlanPreviewWidgetState extends State<CreatorMealPlanPreviewWid
   void initState() {
     super.initState();
     final now = DateTime.now();
-    // Day 1 of the plan lands on today (matches importCreatorMealPlan + the
-    // week planner), so labels show the real dates it will fill.
+    // Default each plan day to today + its offset (matches the week planner),
+    // but the follower can change any of them.
     _startDay = DateTime(now.year, now.month, now.day);
     _loadOccupancyAndInitDefaults();
   }
 
-  /// Label for the day this plan-offset lands on: "Today", "Tomorrow", or
-  /// e.g. "Wed, Jul 30".
-  String _dayLabel(int offset) {
-    final d = _startDay.add(Duration(days: offset));
-    if (offset == 0) return 'Today';
-    if (offset == 1) return 'Tomorrow';
+  /// Friendly label for a concrete date: "Today", "Tomorrow", or "Wed, Jul 30".
+  String _formatDate(DateTime date) {
+    final d = DateTime(date.year, date.month, date.day);
+    final diff = d.difference(_startDay).inDays;
+    if (diff == 0) return 'Today';
+    if (diff == 1) return 'Tomorrow';
     return '${_weekdayNames[d.weekday - 1]}, ${_monthNames[d.month - 1]} ${d.day}';
   }
 
   Future<void> _loadOccupancyAndInitDefaults() async {
-    final occupied = await occupiedDaysInCurrentWeek();
+    final occupied = await occupiedDaysInCurrentWeek(startDate: _startDay);
     if (!mounted) return;
     setState(() {
       _occupiedDays = occupied;
-      // Default: check days that are EMPTY, leave occupied days unchecked.
-      // Only consider days where the creator actually has data.
+      // Default: include days that are EMPTY (today+offset not already planned),
+      // each defaulted onto today+offset. Only days the creator actually filled.
       for (int i = 0; i < 7; i++) {
         if (_dayHasCreatorData(i) && !occupied.contains(i)) {
-          _selectedDays.add(i);
+          _dayDates[i] = _startDay.add(Duration(days: i));
         }
       }
       _loadingOccupancy = false;
@@ -97,8 +99,10 @@ class _CreatorMealPlanPreviewWidgetState extends State<CreatorMealPlanPreviewWid
     return names;
   }
 
-  Future<void> _doImport() async {
-    if (_selectedDays.isEmpty || _isImporting) return;
+  /// Schedule the selected days onto their chosen dates (and save the recipes
+  /// to the cookbook, which importCreatorMealPlan does as part of scheduling).
+  Future<void> _addToMealPlan() async {
+    if (_dayDates.isEmpty || _isImporting) return;
     setState(() => _isImporting = true);
     HapticFeedback.mediumImpact();
 
@@ -106,25 +110,61 @@ class _CreatorMealPlanPreviewWidgetState extends State<CreatorMealPlanPreviewWid
       final result = await importCreatorMealPlan(
         mealPlan: widget.mealPlan,
         creator: widget.creator,
-        selectedDayOffsets: Set<int>.from(_selectedDays),
+        dayDates: Map<int, DateTime>.from(_dayDates),
       );
       if (!mounted) return;
-
       HapticFeedback.heavyImpact();
-      // Hand the result back to the caller — it will show the "Added X
-      // meals · Undo" snackbar on its own scaffold so it survives pop and
-      // auto-dismisses reliably.
+      // The caller shows the "Added X meals · Undo" snackbar on its own
+      // scaffold so it survives the pop.
       Navigator.of(context).pop(result);
     } catch (e) {
+      _showError('Couldn\'t add to your plan: $e');
+    }
+  }
+
+  /// Save every recipe in the plan to the cookbook without scheduling anything.
+  Future<void> _addToLibrary() async {
+    if (_isImporting) return;
+    setState(() => _isImporting = true);
+    HapticFeedback.mediumImpact();
+
+    try {
+      final result = await addCreatorPlanToLibrary(
+        mealPlan: widget.mealPlan,
+        creator: widget.creator,
+      );
       if (!mounted) return;
-      setState(() => _isImporting = false);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Import failed: $e'),
-        backgroundColor: FlutterFlowTheme.of(context).error,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        margin: const EdgeInsets.all(16),
-      ));
+      HapticFeedback.heavyImpact();
+      Navigator.of(context).pop(result);
+    } catch (e) {
+      _showError('Couldn\'t save to your library: $e');
+    }
+  }
+
+  void _showError(String message) {
+    if (!mounted) return;
+    setState(() => _isImporting = false);
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(message),
+      backgroundColor: FlutterFlowTheme.of(context).error,
+      behavior: SnackBarBehavior.floating,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      margin: const EdgeInsets.all(16),
+    ));
+  }
+
+  Future<void> _pickDateFor(int offset) async {
+    final current = _dayDates[offset] ?? _startDay.add(Duration(days: offset));
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: current,
+      firstDate: _startDay,
+      lastDate: _startDay.add(const Duration(days: 365)),
+      helpText: 'Schedule this day',
+    );
+    if (picked != null && mounted) {
+      setState(() =>
+          _dayDates[offset] = DateTime(picked.year, picked.month, picked.day));
     }
   }
 
@@ -242,11 +282,12 @@ class _CreatorMealPlanPreviewWidgetState extends State<CreatorMealPlanPreviewWid
 
   List<Widget> _buildDayCards(FlutterFlowTheme theme, Color primary) {
     final cards = <Widget>[];
-    for (int i = 0; i < 7; i++) {
+    // Plans can have up to 30 relative days.
+    for (int i = 0; i < 30; i++) {
       if (!_dayHasCreatorData(i)) continue;
       final names = _dayMealNames(i);
-      final isSelected = _selectedDays.contains(i);
-      final isOccupied = _occupiedDays.contains(i);
+      final isSelected = _dayDates.containsKey(i);
+      final chosen = _dayDates[i] ?? _startDay.add(Duration(days: i));
 
       cards.add(Padding(
         padding: const EdgeInsets.only(bottom: 10),
@@ -255,9 +296,9 @@ class _CreatorMealPlanPreviewWidgetState extends State<CreatorMealPlanPreviewWid
           onTap: () {
             setState(() {
               if (isSelected) {
-                _selectedDays.remove(i);
+                _dayDates.remove(i);
               } else {
-                _selectedDays.add(i);
+                _dayDates[i] = chosen;
               }
             });
           },
@@ -280,9 +321,9 @@ class _CreatorMealPlanPreviewWidgetState extends State<CreatorMealPlanPreviewWid
                   onChanged: (v) {
                     setState(() {
                       if (v == true) {
-                        _selectedDays.add(i);
+                        _dayDates[i] = chosen;
                       } else {
-                        _selectedDays.remove(i);
+                        _dayDates.remove(i);
                       }
                     });
                   },
@@ -292,35 +333,12 @@ class _CreatorMealPlanPreviewWidgetState extends State<CreatorMealPlanPreviewWid
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        children: [
-                          Text(
-                            _dayLabel(i),
-                            style: theme.bodyLarge.override(
-                              fontFamily: FFAppState().currentFontFamily,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          if (isOccupied) ...[
-                            const SizedBox(width: 8),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                              decoration: BoxDecoration(
-                                color: Colors.amber.withOpacity(0.18),
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              child: Text(
-                                'Will replace',
-                                style: theme.bodySmall.override(
-                                  fontFamily: FFAppState().currentFontFamily,
-                                  color: Colors.amber.shade900,
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ],
+                      Text(
+                        'Day ${i + 1}',
+                        style: theme.bodyLarge.override(
+                          fontFamily: FFAppState().currentFontFamily,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                       const SizedBox(height: 6),
                       Text(
@@ -330,19 +348,56 @@ class _CreatorMealPlanPreviewWidgetState extends State<CreatorMealPlanPreviewWid
                           color: theme.secondaryText,
                         ),
                       ),
-                      if (isOccupied)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 4),
-                          child: Text(
-                            'You already have meals on this day.',
-                            style: theme.bodySmall.override(
-                              fontFamily: FFAppState().currentFontFamily,
-                              color: Colors.amber.shade900,
-                              fontSize: 11,
-                              fontStyle: FontStyle.italic,
+                      // Date picker chip — only meaningful when the day is
+                      // included in "Add to Meal Plan". Tap to move it to any
+                      // date (Day 1 can go on the 4th, etc.).
+                      if (isSelected) ...[
+                        const SizedBox(height: 10),
+                        InkWell(
+                          borderRadius: BorderRadius.circular(8),
+                          onTap: () => _pickDateFor(i),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: primary.withOpacity(0.10),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: primary.withOpacity(0.4)),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.calendar_today, size: 14, color: primary),
+                                const SizedBox(width: 6),
+                                Text(
+                                  _formatDate(chosen),
+                                  style: theme.bodySmall.override(
+                                    fontFamily: FFAppState().currentFontFamily,
+                                    color: primary,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                const SizedBox(width: 4),
+                                Icon(Icons.edit, size: 12, color: primary),
+                              ],
                             ),
                           ),
                         ),
+                        if (_occupiedDays.contains(
+                            chosen.difference(_startDay).inDays))
+                          Padding(
+                            padding: const EdgeInsets.only(top: 4),
+                            child: Text(
+                              'You already have meals on this date — they\'ll be replaced.',
+                              style: theme.bodySmall.override(
+                                fontFamily: FFAppState().currentFontFamily,
+                                color: Colors.amber.shade900,
+                                fontSize: 11,
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
+                          ),
+                      ],
                     ],
                   ),
                 ),
@@ -356,15 +411,14 @@ class _CreatorMealPlanPreviewWidgetState extends State<CreatorMealPlanPreviewWid
   }
 
   Widget _buildBottomBar(FlutterFlowTheme theme, Color primary) {
-    final count = _selectedDays.length;
-    final replaceCount = _selectedDays.where((i) => _occupiedDays.contains(i)).length;
-    final canImport = count > 0 && !_isImporting;
+    final count = _dayDates.length;
+    final canSchedule = count > 0 && !_isImporting;
 
-    final label = _isImporting
-        ? 'Adding...'
+    final scheduleLabel = _isImporting
+        ? 'Working…'
         : count == 0
-            ? 'Select at least one day'
-            : 'Add $count ${count == 1 ? 'day' : 'days'} to my week';
+            ? 'Pick day(s) to schedule'
+            : 'Add $count ${count == 1 ? 'day' : 'days'} to my meal plan';
 
     return Container(
       padding: EdgeInsets.fromLTRB(16, 12, 16, 12 + MediaQuery.of(context).padding.bottom),
@@ -381,30 +435,42 @@ class _CreatorMealPlanPreviewWidgetState extends State<CreatorMealPlanPreviewWid
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (replaceCount > 0 && !_isImporting)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 6),
-              child: Text(
-                'Will replace $replaceCount day${replaceCount == 1 ? '' : 's'} you already planned',
-                style: theme.bodySmall.override(
-                  fontFamily: FFAppState().currentFontFamily,
-                  color: Colors.amber.shade900,
-                ),
-              ),
-            ),
+          // Add to Meal Plan — schedules the checked days onto their chosen
+          // dates (and keeps the recipes in the cookbook).
           FFButtonWidget(
-            onPressed: canImport ? _doImport : null,
-            text: label,
+            onPressed: canSchedule ? _addToMealPlan : null,
+            text: scheduleLabel,
+            icon: const Icon(Icons.event_available, size: 18, color: Colors.white),
             options: FFButtonOptions(
               width: double.infinity,
               height: 48,
-              color: canImport ? primary : theme.alternate,
+              color: canSchedule ? primary : theme.alternate,
               textStyle: theme.bodyMedium.override(
                 fontFamily: FFAppState().currentFontFamily,
                 color: Colors.white,
                 fontWeight: FontWeight.w600,
               ),
               elevation: 0,
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+          const SizedBox(height: 8),
+          // Add to Library — save every recipe to the cookbook, no scheduling.
+          FFButtonWidget(
+            onPressed: _isImporting ? null : _addToLibrary,
+            text: 'Save all recipes to my cookbook',
+            icon: Icon(Icons.bookmark_add_outlined, size: 18, color: primary),
+            options: FFButtonOptions(
+              width: double.infinity,
+              height: 46,
+              color: theme.secondaryBackground,
+              textStyle: theme.bodyMedium.override(
+                fontFamily: FFAppState().currentFontFamily,
+                color: primary,
+                fontWeight: FontWeight.w600,
+              ),
+              elevation: 0,
+              borderSide: BorderSide(color: primary, width: 1.5),
               borderRadius: BorderRadius.circular(12),
             ),
           ),

@@ -374,8 +374,11 @@ class _CreatorMealPlanCardState extends State<CreatorMealPlanCard> {
                     final replacedText = result.daysReplaced > 0
                         ? ' · Replaced ${result.daysReplaced} day${result.daysReplaced == 1 ? '' : 's'}'
                         : '';
+                    final confirmText = result.libraryOnly
+                        ? 'Saved ${result.mealsCreated} recipe${result.mealsCreated == 1 ? '' : 's'} to your cookbook'
+                        : 'Added ${result.mealsCreated} meals$replacedText';
                     final controller = messenger.showSnackBar(SnackBar(
-                      content: Text('Added ${result.mealsCreated} meals$replacedText'),
+                      content: Text(confirmText),
                       backgroundColor: FlutterFlowTheme.of(context).primary,
                       behavior: SnackBarBehavior.floating,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
