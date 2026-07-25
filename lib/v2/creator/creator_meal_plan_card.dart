@@ -31,6 +31,7 @@ class _CreatorMealPlanCardState extends State<CreatorMealPlanCard> {
   bool _isLoading = true;
   bool _isImporting = false;
   bool _imported = false;
+  bool _isOwnPlan = false;
 
   CreatorThemeNotifier? _themeNotifier;
   String? _lastLoadedCode;
@@ -82,11 +83,32 @@ class _CreatorMealPlanCardState extends State<CreatorMealPlanCard> {
 
     final code = creatorTheme.activeCreator!.code;
     final plan = await getCreatorWeeklyMealPlan(code);
+    // Creator viewing their OWN plan — don't offer import (it would just
+    // duplicate their recipes into their personal cookbook).
+    final isOwn = creatorTheme.activeCreator!.hasUserRef() &&
+        creatorTheme.activeCreator!.userRef == currentUserReference;
+    // Persist the "Added" state across re-entry: look for meals already
+    // imported from this plan.
+    bool alreadyImported = false;
+    if (plan != null && !isOwn) {
+      try {
+        final imported = await queryMealRecordOnce(
+          queryBuilder: (q) => q.where(
+            'imported_from_creator_content',
+            isEqualTo: plan.reference,
+          ),
+        );
+        alreadyImported =
+            imported.any((m) => m.userRef == currentUserReference);
+      } catch (_) {}
+    }
     if (mounted) {
       setState(() {
         _mealPlan = plan;
         _isLoading = false;
         _lastLoadedCode = code;
+        _isOwnPlan = isOwn;
+        _imported = alreadyImported;
       });
     }
   }
@@ -331,7 +353,9 @@ class _CreatorMealPlanCardState extends State<CreatorMealPlanCard> {
 
                 // View preview button
                 FFButtonWidget(
-                  onPressed: () async {
+                  onPressed: _isOwnPlan
+                      ? null
+                      : () async {
                     final result = await showCreatorMealPlanPreview(
                       context,
                       mealPlan: _mealPlan!,
@@ -385,11 +409,15 @@ class _CreatorMealPlanCardState extends State<CreatorMealPlanCard> {
                       } catch (_) {}
                     });
                   },
-                  text: _imported ? '✓ Added to Your Week' : 'View This Plan',
+                  text: _isOwnPlan
+                      ? 'Your published plan'
+                      : (_imported ? '✓ Added to Your Week' : 'View This Plan'),
                   options: FFButtonOptions(
                     width: double.infinity,
                     height: 44.0,
-                    color: _imported ? Colors.green : primary,
+                    color: _isOwnPlan
+                        ? Colors.grey
+                        : (_imported ? Colors.green : primary),
                     textStyle: FlutterFlowTheme.of(context).bodyMedium.override(
                       fontFamily: FFAppState().currentFontFamily,
                       color: Colors.white,
