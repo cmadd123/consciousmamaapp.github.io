@@ -1320,6 +1320,12 @@
       <button class="nav-tab" data-tab="plans" data-view="viewBuildPlan">
         <span class="nav-tab-icon" data-icon="calendar"></span><span class="nav-tab-label">Plans</span>
       </button>
+      <button class="nav-tab" data-view="viewDocs">
+        <span class="nav-tab-icon" data-icon="file"></span><span class="nav-tab-label">Docs</span>
+      </button>
+      <button class="nav-tab" data-view="viewRoutines">
+        <span class="nav-tab-icon" data-icon="list"></span><span class="nav-tab-label">Routines</span>
+      </button>
       <button class="nav-tab" data-tab="stats" data-view="viewStats">
         <span class="nav-tab-icon" data-icon="chart"></span><span class="nav-tab-label">Stats</span>
       </button>
@@ -2732,6 +2738,8 @@
         } else if (view === 'viewBuildPlan') {
           showPlanListMode();
           loadPlans();
+        } else if (view === 'viewRoutines') {
+          loadCreatorRoutines();
         }
       });
     });
