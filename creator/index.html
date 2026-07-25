@@ -2792,6 +2792,9 @@
           loadRecipeLibrary();
           loadCreatorCollections();
         } else if (view === 'viewBuildPlan') {
+          // Drop the cached recipe list so a recipe just added in the Recipes
+          // tab shows up in the plan builder's picker without a page reload.
+          recipePickerCache = null;
           showPlanListMode();
           loadPlans();
         } else if (view === 'viewRoutines') {
@@ -3978,7 +3981,7 @@
         const [docsSnap, mealPlans, routinesSnap, productsSnap] = await Promise.all([
           getDocs(query(collection(db, 'app_content'), where('creator_ref', '==', creatorDoc.ref))),
           getDocs(query(collection(db, 'creator_content'),
-            where('creator_code', '==', creatorDoc.data.code),
+            where('creator_code', '==', creatorDoc.data.code || '__nocode__'),
             where('type', '==', 'meal_plan'))),
           routinesP,
           getDocs(query(collection(db, 'creator_products'), where('creator_ref', '==', creatorDoc.ref))),
@@ -4223,7 +4226,7 @@
       try {
         const snap = await getDocs(query(
           collection(db, 'creator_content'),
-          where('creator_code', '==', creatorDoc.data.code),
+          where('creator_code', '==', creatorDoc.data.code || '__nocode__'),
           where('type', '==', 'meal_plan'),
         ));
         const plans = snap.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -4521,6 +4524,9 @@
           recipe_name: r.recipe_name || 'Untitled recipe',
           image_url: r.image_url || '',
           snapshot: {
+            // recipe_id lets edits re-select by identity (not by name, which
+            // silently drops renamed/deleted recipes on save).
+            recipe_id: d.id,
             name: r.recipe_name || 'Untitled recipe',
             image_url: r.image_url || '',
             ingredients: Array.isArray(r.ingredients) ? r.ingredients : [],
@@ -4585,12 +4591,21 @@
         `<div class="muted" style="text-align:center; padding:24px;"><div class="loader" style="margin:0 auto;"></div></div>`;
       try {
         await ensureCollectionRecipeCache();
-        // Pre-select recipes already in the collection, matched by name.
+        // Pre-select recipes already in the collection. Prefer matching by
+        // recipe_id (stable); fall back to name for legacy snapshots saved
+        // before recipe_id existed.
         if (existing && Array.isArray(existing.recipes)) {
-          const names = new Set(existing.recipes.map(r => (r.name || '').trim().toLowerCase()));
-          collectionRecipeCache.forEach(r => {
-            if (names.has(r.recipe_name.trim().toLowerCase())) collectionSelected.add(r.id);
-          });
+          const idsInCache = new Set(collectionRecipeCache.map(r => r.id));
+          const namesToId = new Map(
+            collectionRecipeCache.map(r => [r.recipe_name.trim().toLowerCase(), r.id]));
+          for (const snap of existing.recipes) {
+            if (snap.recipe_id && idsInCache.has(snap.recipe_id)) {
+              collectionSelected.add(snap.recipe_id);
+            } else {
+              const byName = namesToId.get((snap.name || '').trim().toLowerCase());
+              if (byName) collectionSelected.add(byName);
+            }
+          }
           $('collectionPickCount').textContent = `(${collectionSelected.size} selected)`;
         }
         renderCollectionRecipeList('');
@@ -4609,6 +4624,10 @@
       if (e.target === $('collectionModal')) closeCollectionForm();
     });
     $('collectionRecipeSearch').addEventListener('input', (e) => renderCollectionRecipeList(e.target.value));
+    // Enter while filtering must not submit the surrounding collection form.
+    $('collectionRecipeSearch').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') e.preventDefault();
+    });
 
     $('deleteCollectionBtn').addEventListener('click', async () => {
       if (!editingCollection) return;
@@ -4632,6 +4651,19 @@
       const recipes = (collectionRecipeCache || [])
         .filter(r => collectionSelected.has(r.id))
         .map(r => r.snapshot);
+      // Preserve any recipes already in the collection that no longer resolve
+      // to a live library doc (renamed/deleted) so editing name/description
+      // doesn't silently drop them.
+      if (editingCollection && Array.isArray(editingCollection.recipes)) {
+        const liveIds = new Set(collectionRecipeCache.map(r => r.id));
+        const liveNames = new Set(
+          collectionRecipeCache.map(r => r.recipe_name.trim().toLowerCase()));
+        for (const snap of editingCollection.recipes) {
+          const resolvable = (snap.recipe_id && liveIds.has(snap.recipe_id)) ||
+            liveNames.has((snap.name || '').trim().toLowerCase());
+          if (!resolvable) recipes.push(snap);
+        }
+      }
       const saveBtn = $('saveCollectionBtn');
       saveBtn.disabled = true;
       const orig = saveBtn.textContent;
@@ -6120,6 +6152,10 @@
         };
         if (targetStatus === 'published') {
           payload.published_at = serverTimestamp();
+        } else {
+          // Reverting a published plan to draft must clear published_at so
+          // nothing downstream treats it as still-published.
+          payload.published_at = null;
         }
         if (editingPlanId) {
           await updateDoc(doc(db, 'creator_products', editingPlanId), payload);

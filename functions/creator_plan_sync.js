@@ -59,17 +59,24 @@ async function _syncProduct(db, productId, after) {
     const dayKey = `day_${dayIdx + 1}`;
     dayLabels[dayKey] = `Day ${dayIdx + 1}`;
 
+    // Web slots store each recipe as {recipe_id, recipe_name, image_url, role}
+    // where role is lowercase 'entree'|'side'|'dessert'. (Earlier code read
+    // r.recipe_type / r.id, which never matched — so sides/desserts were
+    // dropped and ingredients/instructions/cost never synced.)
+    const roleOf = (r) => (r.role || r.recipe_type || '').toLowerCase();
+    const idOf = (r) => r.recipe_id || r.id;
     const primary =
-      recipes.find((r) => (r.recipe_type || '') === 'Entree') || recipes[0];
-    const sides = recipes.filter((r) => (r.recipe_type || '') === 'Side');
-    const desserts = recipes.filter((r) => (r.recipe_type || '') === 'Dessert');
+      recipes.find((r) => roleOf(r) === 'entree') || recipes[0];
+    const sides = recipes.filter((r) => roleOf(r) === 'side');
+    const desserts = recipes.filter((r) => roleOf(r) === 'dessert');
 
     const entry = { name: primary.recipe_name || 'Planned' };
     if (primary.image_url) entry.image_url = primary.image_url;
 
-    if (primary.id) {
+    const primaryId = idOf(primary);
+    if (primaryId) {
       try {
-        const mealDoc = await db.collection('meal').doc(primary.id).get();
+        const mealDoc = await db.collection('meal').doc(primaryId).get();
         if (mealDoc.exists) {
           const m = mealDoc.data();
           if (Array.isArray(m.ingredients) && m.ingredients.length) {
@@ -120,19 +127,23 @@ async function _syncProduct(db, productId, after) {
   weekData._total_meals = totalMeals;
 
   // The app shows the creator's latest active plan — deactivate the others.
-  const activeSnap = await db
-    .collection('creator_content')
-    .where('creator_code', '==', after.creator_code || '')
-    .where('type', '==', 'meal_plan')
-    .where('is_active', '==', true)
-    .get();
-  const batch = db.batch();
-  activeSnap.forEach((d) => {
-    if (!existingRef || d.ref.path !== existingRef.path) {
-      batch.update(d.ref, { is_active: false });
-    }
-  });
-  await batch.commit();
+  // Guard on a non-empty creator_code: an empty code would match every
+  // no-code plan across ALL creators and wrongly deactivate them.
+  if (after.creator_code) {
+    const activeSnap = await db
+      .collection('creator_content')
+      .where('creator_code', '==', after.creator_code)
+      .where('type', '==', 'meal_plan')
+      .where('is_active', '==', true)
+      .get();
+    const batch = db.batch();
+    activeSnap.forEach((d) => {
+      if (!existingRef || d.ref.path !== existingRef.path) {
+        batch.update(d.ref, { is_active: false });
+      }
+    });
+    await batch.commit();
+  }
 
   const contentData = {
     creator_ref: creatorRef,

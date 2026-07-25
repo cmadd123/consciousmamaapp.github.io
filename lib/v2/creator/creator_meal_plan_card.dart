@@ -414,7 +414,7 @@ class _CreatorMealPlanCardState extends State<CreatorMealPlanCard> {
                   },
                   text: _isOwnPlan
                       ? 'Your published plan'
-                      : (_imported ? '✓ Added to Your Week' : 'View This Plan'),
+                      : (_imported ? '✓ Added — tap to add more' : 'View This Plan'),
                   options: FFButtonOptions(
                     width: double.infinity,
                     height: 44.0,

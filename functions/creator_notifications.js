@@ -263,6 +263,14 @@ exports.notifyFollowersOnPublish = onDocumentCreated(
     const content = snap.data();
     if (content.is_active === false) return;
 
+    // Recency gate: only email for freshly-published content. The web→app
+    // bridge (and the one-time backfill) create creator_content docs for
+    // plans published long ago; without this, running the backfill would
+    // email every follower once per historical plan. Live publishes have a
+    // just-set published_at and pass through.
+    const pubMs = content.published_at?.toMillis?.();
+    if (pubMs && Date.now() - pubMs > 12 * 60 * 60 * 1000) return;
+
     const creatorRef = content.creator_ref;
     if (!creatorRef) return;
 
@@ -286,10 +294,21 @@ exports.notifyFollowersOnPublish = onDocumentCreated(
     if (followersSnap.empty) return;
 
     sgMail.setApiKey(sendgridApiKey.value().replace(/[\s\r\n]+/g, ''));
+    // Escape any creator-authored text before putting it in the email HTML —
+    // creator_content can be created by any authenticated user, so title /
+    // name are untrusted and could otherwise inject markup into the email.
+    const esc = (s) =>
+      String(s == null ? '' : s)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
     const title =
       content.title && content.title.trim()
         ? content.title.trim()
         : 'a new meal plan';
+    const safeTitle = esc(title);
+    const safeCreatorName = esc(creatorName);
 
     let sent = 0;
     for (const doc of followersSnap.docs) {
@@ -309,10 +328,10 @@ exports.notifyFollowersOnPublish = onDocumentCreated(
             openTracking: { enable: false },
           },
           html: `<div style="font-family: -apple-system, Segoe UI, Roboto, sans-serif; max-width: 480px; margin: 0 auto; padding: 24px; color: #333;">
-  <h2 style="margin: 0 0 12px; color: #5D4E60;">${creatorName} just shared "${title}"</h2>
+  <h2 style="margin: 0 0 12px; color: #5D4E60;">${safeCreatorName} just shared "${safeTitle}"</h2>
   <p style="margin: 0 0 20px; color: #555;">Open MomRise to see their latest recipes and meal plan.</p>
   <a href="${openUrl}" style="display: inline-block; background: #52A097; color: #fff; text-decoration: none; padding: 12px 22px; border-radius: 10px; font-weight: 600;">Open in the MomRise app</a>
-  <p style="margin: 28px 0 0; font-size: 12px; color: #999;">You're getting this because you follow ${creatorName} on MomRise. <a href="${unsubUrl}" style="color: #999;">Unsubscribe from creator updates</a>.</p>
+  <p style="margin: 28px 0 0; font-size: 12px; color: #999;">You're getting this because you follow ${safeCreatorName} on MomRise. <a href="${unsubUrl}" style="color: #999;">Unsubscribe from creator updates</a>.</p>
 </div>`,
         });
         sent++;

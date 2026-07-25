@@ -578,29 +578,26 @@ Future<CreatorImportResult> importCreatorMealPlan({
   // Support both new day_N and legacy weekday-named keys
   final legacyDayNames = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
+  // Pass 1: snapshot + delete PRE-EXISTING plans on each unique target date,
+  // before creating anything. Doing this per-day inside the create loop meant
+  // that two plan days pointed at the same date would make the second day's
+  // "replace" step delete the first day's freshly-created meals (data loss).
+  final uniqueTargets = <String, DateTime>{};
   for (final entry in dayDates.entries) {
-    final dayOffset = entry.key;
-    if (dayOffset < 0) continue;
-
-    final newKey = 'day_${dayOffset + 1}';
-    final oldKey = dayOffset < legacyDayNames.length ? legacyDayNames[dayOffset] : '__none__';
-    final dayRaw = planData[newKey] ?? planData[oldKey];
-    final dayData = dayRaw is Map ? Map<String, dynamic>.from(dayRaw) : null;
-    if (dayData == null) continue;
-
-    final target = entry.value;
-    final date = DateTime(target.year, target.month, target.day);
+    if (entry.key < 0) continue;
+    final t = entry.value;
+    final d = DateTime(t.year, t.month, t.day);
+    uniqueTargets['${d.year}-${d.month}-${d.day}'] = d;
+  }
+  for (final date in uniqueTargets.values) {
     final dayStart = date;
     final dayEnd = date.add(const Duration(days: 1));
-
-    // Snapshot + delete any existing plans for this date
     final existing = await queryMealPlanRecordOnce(
       queryBuilder: (q) => q
           .where('user_ref', isEqualTo: currentUserReference)
           .where('date', isGreaterThanOrEqualTo: dayStart)
           .where('date', isLessThan: dayEnd),
     );
-
     bool hadExisting = false;
     for (final plan in existing) {
       hadExisting = true;
@@ -628,6 +625,21 @@ Future<CreatorImportResult> importCreatorMealPlan({
       }
     }
     if (hadExisting) daysReplaced++;
+  }
+
+  // Pass 2: create meals + plans for each plan day on its target date.
+  for (final entry in dayDates.entries) {
+    final dayOffset = entry.key;
+    if (dayOffset < 0) continue;
+
+    final newKey = 'day_${dayOffset + 1}';
+    final oldKey = dayOffset < legacyDayNames.length ? legacyDayNames[dayOffset] : '__none__';
+    final dayRaw = planData[newKey] ?? planData[oldKey];
+    final dayData = dayRaw is Map ? Map<String, dynamic>.from(dayRaw) : null;
+    if (dayData == null) continue;
+
+    final target = entry.value;
+    final date = DateTime(target.year, target.month, target.day);
 
     // Create new meals + plans from creator data
     for (final mealType in ['breakfast', 'lunch', 'dinner', 'snack']) {

@@ -2901,9 +2901,19 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                     // Shared Library: in 'creator' mode, a
                                     // creator sees their own shared recipes;
                                     // a follower sees the active creator's.
+                                    // "Viewing own creator content" = I'm a
+                                    // creator and the active code is mine (or I
+                                    // follow no one). A creator who follows a
+                                    // DIFFERENT creator must see that creator's
+                                    // shared recipes, not their own.
+                                    final viewingOwnCreator =
+                                        _creatorProfile != null &&
+                                            (_activeCreator == null ||
+                                                _activeCreator!.userRef ==
+                                                    currentUserReference);
                                     final activeRecipes = _model.cookbookMode ==
                                             'creator'
-                                        ? (_creatorProfile != null
+                                        ? (viewingOwnCreator
                                             ? _model.userMeal
                                                 .where((r) =>
                                                     r.sharedWithFollowers)
