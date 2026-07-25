@@ -320,6 +320,13 @@ service cloud.firestore {
       allow delete: if false;
     }
 
+    // In-app reviewer notes (annotation_overlay.dart, temporary beta tool).
+    // Any signed-in user can create; only admins read/update/delete.
+    match /feedback/{noteId} {
+      allow create: if request.auth != null;
+      allow read, update, delete: if isAdmin();
+    }
+
     // ─── Premium-exempt list ──────────────────────────────────────
     // Hand-picked Firebase users (founders, reviewers, beta testers)
     // who get free-forever premium access. Doc IDs are lowercased

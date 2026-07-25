@@ -1890,12 +1890,14 @@ exports.claimAttribution = creatorAttributionMatch.claimAttribution;
 // Sandbox + clawback rows are filtered out at the trigger level.
 const creatorNotifications = require('./creator_notifications');
 const creatorPlanSync = require('./creator_plan_sync');
+const feedbackMd = require('./feedback_md');
 exports.notifyOnCreatorEarning = creatorNotifications.notifyOnCreatorEarning;
 exports.notifyOnCreatorPayout = creatorNotifications.notifyOnCreatorPayout;
 exports.notifyFollowersOnPublish = creatorNotifications.notifyFollowersOnPublish;
 exports.unsubscribeCreatorEmails = creatorNotifications.unsubscribeCreatorEmails;
 exports.syncCreatorPlanToContent = creatorPlanSync.syncCreatorPlanToContent;
 exports.backfillCreatorPlans = creatorPlanSync.backfillCreatorPlans;
+exports.feedbackMarkdown = feedbackMd.feedbackMarkdown;
 exports.createCreatorOnboardingLink = stripeFunctions.createCreatorOnboardingLink;
 exports.createCreatorDashboardLink = stripeFunctions.createCreatorDashboardLink;
 exports.getCreatorConnectStatus = stripeFunctions.getCreatorConnectStatus;
