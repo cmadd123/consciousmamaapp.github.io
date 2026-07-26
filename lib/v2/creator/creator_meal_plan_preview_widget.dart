@@ -77,7 +77,10 @@ class _CreatorMealPlanPreviewWidgetState extends State<CreatorMealPlanPreviewWid
 
   Map<String, dynamic>? _dayMap(int offset) {
     final data = widget.mealPlan.data;
-    final raw = data['day_${offset + 1}'] ?? data[_legacyKeys[offset]];
+    // Legacy weekday-named keys only exist for the first 7 days; guard the
+    // index so 8..30-day plans don't RangeError (which blanked the screen).
+    final legacy = offset < _legacyKeys.length ? data[_legacyKeys[offset]] : null;
+    final raw = data['day_${offset + 1}'] ?? legacy;
     return raw is Map ? Map<String, dynamic>.from(raw) : null;
   }
 
