@@ -3,7 +3,6 @@ import '/backend/backend.dart';
 import '/backend/schema/enums/enums.dart';
 import '/components/home_nav_bar_widget.dart';
 import '/components/animated_press_widget.dart';
-import '/flutter_flow/creator_flags.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
@@ -24,7 +23,6 @@ import '/components/page_animations.dart';
 import '/custom_code/actions/creator_service.dart';
 import '/v2/creator/creator_meal_plan_card.dart';
 import '/v2/creator/creator_theme_wrapper.dart';
-import '/v2/creator/publish_meal_plan_sheet.dart';
 import 'create_meal_plan_model.dart';
 export 'create_meal_plan_model.dart';
 
@@ -3685,31 +3683,8 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                                                 },
                                               ),
                                             ),
-                                            // Creator-side: publish the current week to followers.
-                                            // Hidden when creator authoring lives on the web dashboard.
-                                            if (kCreatorAuthoringInApp && _creatorProfile != null)
-                                              Padding(
-                                                padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 12),
-                                                child: FFButtonWidget(
-                                                  onPressed: () async {
-                                                    await showPublishMealPlanSheet(context, _creatorProfile!);
-                                                  },
-                                                  text: 'Publish This Week to Followers',
-                                                  icon: const Icon(Icons.ios_share, size: 18, color: Colors.white),
-                                                  options: FFButtonOptions(
-                                                    width: double.infinity,
-                                                    height: 44,
-                                                    color: FlutterFlowTheme.of(context).primary,
-                                                    textStyle: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                      fontFamily: FFAppState().currentFontFamily,
-                                                      color: Colors.white,
-                                                      fontWeight: FontWeight.w600,
-                                                    ),
-                                                    elevation: 0,
-                                                    borderRadius: BorderRadius.circular(12),
-                                                  ),
-                                                ),
-                                              ),
+                                            // Creator meal-plan publishing lives on the web dashboard now,
+                                            // so there's no in-app "Publish This Week" button.
                                             // Show the budget bar as soon as the user has either planned a
                                             // meal with cost OR set a budget. Previously it also required
                                             // visiblePlans.isNotEmpty, which meant saving a budget on an empty

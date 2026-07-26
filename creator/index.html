@@ -527,6 +527,17 @@
       background: color-mix(in srgb, var(--danger) 12%, white); color: var(--danger);
       border-color: color-mix(in srgb, var(--danger) 40%, var(--border));
     }
+    .recipe-row .row-actions button.share-on {
+      color: var(--primary, #2A6F67);
+      border-color: var(--primary, #2A6F67);
+      background: color-mix(in srgb, var(--primary, #2A6F67) 10%, white);
+    }
+    .share-badge {
+      display: inline-block; font-size: 11px; font-weight: 600;
+      color: var(--primary, #2A6F67);
+      background: color-mix(in srgb, var(--primary, #2A6F67) 14%, white);
+      padding: 1px 6px; border-radius: 6px; margin-left: 6px; vertical-align: middle;
+    }
     .recipe-detail {
       margin-top: 12px;
       display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
@@ -5345,11 +5356,12 @@
         const thumbHtml = r.image_url
           ? `<img src="${escapeHtml(r.image_url)}" alt="">`
           : ICON.image;
+        const shared = r.shared_with_followers === true;
         return `
           <div class="recipe-row" data-id="${escapeHtml(it.id)}">
             <div class="row-thumb">${thumbHtml}</div>
             <div class="row-body">
-              <div class="row-name">${escapeHtml(r.recipe_name || 'Untitled recipe')}</div>
+              <div class="row-name">${escapeHtml(r.recipe_name || 'Untitled recipe')}${shared ? ' <span class="share-badge">Shared</span>' : ''}</div>
               <div class="row-meta">
                 <span class="src-pill ${src}">${srcLabel}</span>
                 ${dateStr ? `<span>${escapeHtml(dateStr)}</span>` : ''}
@@ -5358,6 +5370,7 @@
               </div>
             </div>
             <div class="row-actions">
+              <button title="${shared ? 'Shared with followers — tap to unshare' : 'Share this recipe with followers'}" aria-label="Share with followers" class="${shared ? 'share-on' : ''}" data-share="${escapeHtml(it.id)}">${shared ? '👥 Shared' : 'Share'}</button>
               <button title="Delete recipe" aria-label="Delete recipe" class="danger" data-delete="${escapeHtml(it.id)}">🗑</button>
             </div>
           </div>`;
@@ -5375,6 +5388,28 @@
         btn.addEventListener('click', (e) => {
           e.stopPropagation();
           void deleteRecipe(btn.dataset.delete);
+        });
+      });
+      // Share a single recipe with followers (sets shared_with_followers on
+      // the meal doc — the same flag the app's Creator Cookbook reads).
+      listEl.querySelectorAll('[data-share]').forEach((btn) => {
+        btn.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          const id = btn.dataset.share;
+          const item = libraryCache.find((x) => x.id === id);
+          if (!item) return;
+          const newVal = !item.data.shared_with_followers;
+          btn.disabled = true;
+          try {
+            await updateDoc(doc(db, 'meal', id), { shared_with_followers: newVal });
+            item.data.shared_with_followers = newVal;
+            renderRecipeLibrary(items);
+            toast(newVal ? 'Recipe shared with followers' : 'Removed from followers');
+          } catch (err) {
+            console.error(err);
+            toast('Update failed: ' + err.message, true);
+            btn.disabled = false;
+          }
         });
       });
     }

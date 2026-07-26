@@ -353,9 +353,7 @@ class _CreatorMealPlanCardState extends State<CreatorMealPlanCard> {
 
                 // View preview button
                 FFButtonWidget(
-                  onPressed: _isOwnPlan
-                      ? null
-                      : () async {
+                  onPressed: () async {
                     final result = await showCreatorMealPlanPreview(
                       context,
                       mealPlan: _mealPlan!,
@@ -413,14 +411,12 @@ class _CreatorMealPlanCardState extends State<CreatorMealPlanCard> {
                     });
                   },
                   text: _isOwnPlan
-                      ? 'Your published plan'
+                      ? 'View meal plan'
                       : (_imported ? '✓ Added — tap to add more' : 'View This Plan'),
                   options: FFButtonOptions(
                     width: double.infinity,
                     height: 44.0,
-                    color: _isOwnPlan
-                        ? Colors.grey
-                        : (_imported ? Colors.green : primary),
+                    color: (_imported && !_isOwnPlan) ? Colors.green : primary,
                     textStyle: FlutterFlowTheme.of(context).bodyMedium.override(
                       fontFamily: FFAppState().currentFontFamily,
                       color: Colors.white,
