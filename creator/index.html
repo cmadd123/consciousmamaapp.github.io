@@ -538,6 +538,81 @@
       background: color-mix(in srgb, var(--primary, #2A6F67) 14%, white);
       padding: 1px 6px; border-radius: 6px; margin-left: 6px; vertical-align: middle;
     }
+
+    /* ── Theme editor ───────────────────────────────────────────── */
+    .theme-layout { display: flex; gap: 28px; align-items: flex-start; flex-wrap: wrap; }
+    .theme-preview-col { flex: 0 0 300px; position: sticky; top: 16px; }
+    .theme-controls-col { flex: 1 1 320px; min-width: 300px; }
+    @media (max-width: 720px) {
+      .theme-preview-col { position: static; flex-basis: 100%; display: flex; justify-content: center; }
+    }
+    .theme-label { display: block; font-size: 13px; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; }
+    .theme-presets { display: flex; flex-wrap: wrap; gap: 10px; }
+    .theme-presets .preset {
+      width: 44px; height: 44px; border-radius: 12px; cursor: pointer;
+      border: 2px solid rgba(0,0,0,0.08); position: relative; transition: transform 100ms;
+    }
+    .theme-presets .preset:hover { transform: scale(1.08); }
+    .theme-presets .preset .dot {
+      position: absolute; inset: 0; margin: auto; width: 16px; height: 16px;
+      border-radius: 50%; border: 2px solid #fff;
+    }
+    .theme-color-row {
+      display: flex; align-items: center; gap: 12px; padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .theme-color-row input[type="color"] {
+      width: 44px; height: 34px; border: 1px solid var(--border);
+      border-radius: 8px; padding: 2px; background: #fff; cursor: pointer; flex: 0 0 auto;
+    }
+    .theme-color-row .tc-name { font-weight: 600; font-size: 14px; }
+    .theme-color-row .tc-sub { font-size: 11px; color: var(--text-muted); }
+    .theme-color-row > div:nth-child(2) { flex: 1 1 auto; }
+    .theme-color-row code { font-size: 12px; color: var(--text-muted); }
+    #themeFontSelect { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; }
+    .seg { display: inline-flex; background: #eef0f2; border-radius: 20px; padding: 3px; }
+    .seg button {
+      border: none; background: transparent; padding: 6px 16px; border-radius: 16px;
+      font-size: 12px; font-weight: 600; color: var(--text-muted); cursor: pointer;
+    }
+    .seg button.on { background: #fff; color: var(--text); box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+
+    /* Phone preview */
+    .phone {
+      width: 300px; border-radius: 34px; background: #1c1c22; padding: 10px;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.22); position: relative; margin: 0 auto;
+    }
+    .phone-notch {
+      position: absolute; top: 16px; left: 50%; transform: translateX(-50%);
+      width: 110px; height: 22px; background: #1c1c22; border-radius: 0 0 14px 14px; z-index: 2;
+    }
+    .phone-screen {
+      border-radius: 26px; overflow: hidden; padding: 34px 14px 14px;
+      min-height: 520px; font-family: var(--tp-font, 'Andika New Basic', system-ui, sans-serif);
+      background: linear-gradient(to bottom, var(--tp-grad-start, #D7F2EB), var(--tp-grad-end, #FFE9E1));
+      transition: background 160ms;
+    }
+    .tp-greeting { font-size: 18px; font-weight: 700; color: #5D4E60; margin: 4px 2px 14px; }
+    .tp-card { background: #fff; border-radius: 18px; padding: 14px; margin-bottom: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+    .tp-card-head { display: flex; align-items: center; gap: 6px; margin-bottom: 10px; }
+    .tp-card-title { font-weight: 700; font-size: 14px; color: #5D4E60; }
+    .tp-ico { color: var(--tp-icon, #52A097); display: inline-flex; align-items: center; }
+    .tp-ico svg { width: 17px; height: 17px; }
+    .tp-nav-ico { color: var(--tp-icon, #52A097); display: inline-flex; }
+    .tp-nav-ico svg { width: 20px; height: 20px; }
+    .tp-pill { margin-left: auto; font-size: 8px; font-weight: 800; padding: 2px 6px; border-radius: 6px; letter-spacing: 0.4px; }
+    .tp-pill-primary { color: var(--tp-primary, #52A097); background: color-mix(in srgb, var(--tp-primary, #52A097) 14%, white); }
+    .tp-pill-accent { color: var(--tp-accent, #EE8B60); background: color-mix(in srgb, var(--tp-accent, #EE8B60) 16%, white); }
+    .tp-meal { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #5D4E60; margin-bottom: 6px; }
+    .tp-bar { width: 4px; height: 18px; border-radius: 2px; background: var(--tp-primary, #52A097); flex: 0 0 auto; }
+    .tp-btn {
+      margin-top: 8px; width: 100%; border: none; border-radius: 10px; padding: 9px;
+      background: var(--tp-primary, #52A097); color: #fff; font-weight: 700; font-size: 12px;
+      cursor: default; font-family: inherit;
+    }
+    .tp-event { background: var(--tp-accent, #EE8B60); color: #fff; font-size: 11px; font-weight: 600; padding: 7px 10px; border-radius: 8px; }
+    .tp-nav { display: flex; justify-content: space-around; background: #fff; border-radius: 16px; padding: 10px 6px; margin-top: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+    .tp-nav-ico { font-size: 18px; }
     .recipe-detail {
       margin-top: 12px;
       display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
@@ -1337,6 +1412,9 @@
       <button class="nav-tab" data-view="viewRoutines">
         <span class="nav-tab-icon" data-icon="list"></span><span class="nav-tab-label">Routines</span>
       </button>
+      <button class="nav-tab" data-view="viewTheme">
+        <span class="nav-tab-icon" data-icon="grid"></span><span class="nav-tab-label">Theme</span>
+      </button>
       <button class="nav-tab" data-tab="stats" data-view="viewStats">
         <span class="nav-tab-icon" data-icon="chart"></span><span class="nav-tab-label">Stats</span>
       </button>
@@ -2004,6 +2082,86 @@
         <div class="routine-grid" id="routineGrid">
           <div class="skeleton-card"><div class="skeleton skeleton-line medium"></div><div class="skeleton skeleton-line short"></div></div>
           <div class="skeleton-card"><div class="skeleton skeleton-line medium"></div><div class="skeleton skeleton-line short"></div></div>
+        </div>
+      </div>
+
+      <!-- Theme editor sub-view -->
+      <div class="view" id="viewTheme">
+        <button class="back-btn" data-back>← Dashboard</button>
+        <div class="section-head">
+          <h2>Customize your theme</h2>
+          <button class="btn" id="saveThemeBtn">Save theme</button>
+        </div>
+        <p class="muted" style="margin: 0 0 16px; font-size: 13px;">
+          These colors and font are what your followers see in the MomRise app once they enter your code. Changes here go live for them after you save.
+        </p>
+
+        <div class="theme-layout">
+          <!-- Live phone preview -->
+          <div class="theme-preview-col">
+            <div class="phone" id="themePhone">
+              <div class="phone-notch"></div>
+              <div class="phone-screen" id="tpScreen">
+                <div class="tp-greeting" id="tpGreeting">Good morning, Sarah</div>
+
+                <div class="tp-card">
+                  <div class="tp-card-head">
+                    <span class="tp-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7a3 3 0 0 0 3 3v10M6 2v10M9 2v7M17 2c-1.5 0-3 1.5-3 5s1.5 4 3 4v9"/></svg></span>
+                    <span class="tp-card-title">Today's Meals</span>
+                    <span class="tp-pill tp-pill-primary">Primary</span>
+                  </div>
+                  <div class="tp-meal"><span class="tp-bar"></span>Breakfast · Overnight Oats</div>
+                  <div class="tp-meal"><span class="tp-bar"></span>Lunch · Turkey Wraps</div>
+                  <div class="tp-meal"><span class="tp-bar"></span>Dinner · Chicken Stir Fry</div>
+                  <button class="tp-btn" id="tpBtn">Plan this week</button>
+                </div>
+
+                <div class="tp-card">
+                  <div class="tp-card-head">
+                    <span class="tp-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span>
+                    <span class="tp-card-title">Today's Events</span>
+                    <span class="tp-pill tp-pill-accent">Accent</span>
+                  </div>
+                  <div class="tp-event">Soccer Practice · 4:00 PM</div>
+                </div>
+
+                <div class="tp-nav">
+                  <span class="tp-nav-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10l9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg></span>
+                  <span class="tp-nav-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7a3 3 0 0 0 3 3v10M6 2v10M9 2v7M17 2c-1.5 0-3 1.5-3 5s1.5 4 3 4v9"/></svg></span>
+                  <span class="tp-nav-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span>
+                  <span class="tp-nav-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/></svg></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Controls -->
+          <div class="theme-controls-col">
+            <label class="theme-label">Presets</label>
+            <div class="theme-presets" id="themePresets"></div>
+
+            <label class="theme-label" style="margin-top:18px;">Background</label>
+            <div class="seg" id="bgToggle">
+              <button type="button" data-bg="solid">Solid</button>
+              <button type="button" data-bg="gradient" class="on">Gradient</button>
+            </div>
+
+            <label class="theme-label" style="margin-top:18px;">Colors</label>
+            <div class="theme-color-row"><input type="color" id="cPrimary"><div><div class="tc-name">Primary</div><div class="tc-sub">Buttons, bars, active states</div></div><code id="cPrimaryHex"></code></div>
+            <div class="theme-color-row"><input type="color" id="cAccent"><div><div class="tc-name">Accent</div><div class="tc-sub">Events, emphasis, highlights</div></div><code id="cAccentHex"></code></div>
+            <div class="theme-color-row"><input type="color" id="cIcon"><div><div class="tc-name">Icons</div><div class="tc-sub">Nav bar + card icons</div></div><code id="cIconHex"></code></div>
+            <div class="theme-color-row"><input type="color" id="cGradStart"><div><div class="tc-name">Background top</div><div class="tc-sub">Gradient start (or solid color)</div></div><code id="cGradStartHex"></code></div>
+            <div class="theme-color-row" id="gradEndRow"><input type="color" id="cGradEnd"><div><div class="tc-name">Background bottom</div><div class="tc-sub">Gradient end</div></div><code id="cGradEndHex"></code></div>
+
+            <label class="theme-label" style="margin-top:18px;">Font</label>
+            <select id="themeFontSelect"></select>
+            <div style="display:flex; gap:8px; align-items:center; margin-top:8px;">
+              <input type="file" id="themeFontInput" accept=".ttf,.otf" style="display:none;">
+              <button type="button" class="btn ghost" id="uploadFontBtn">Upload .ttf / .otf</button>
+              <button type="button" class="btn ghost" id="removeFontBtn" hidden style="color:var(--danger); border-color:var(--danger);">Remove custom</button>
+            </div>
+            <div class="muted" id="themeFontName" style="font-size:12px; margin-top:6px;"></div>
+          </div>
         </div>
       </div>
 
@@ -2810,6 +2968,8 @@
           loadPlans();
         } else if (view === 'viewRoutines') {
           loadCreatorRoutines();
+        } else if (view === 'viewTheme') {
+          loadCreatorTheme();
         }
       });
     });
@@ -4707,6 +4867,188 @@
         saveBtn.disabled = false;
         saveBtn.textContent = orig;
       }
+    });
+
+    // ───────────────────────────────────────────────────────────────
+    // Theme editor — mirrors the in-app editor. Writes the same fields to
+    // the creator's doc (theme_primary/accent/gradient/icon_color/font/
+    // font_url) so followers see the same colors + font in the app. Live
+    // phone preview updates as the creator edits.
+    // ───────────────────────────────────────────────────────────────
+    const THEME_PRESETS = [
+      { name:'Default',  primary:'#52A097', accent:'#EE8B60', gradStart:'#D7F2EB', gradEnd:'#FFE9E1', icon:'#52A097' },
+      { name:'Rose',     primary:'#E91E63', accent:'#AD1457', gradStart:'#FCE4EC', gradEnd:'#F3E5F5', icon:'#E91E63' },
+      { name:'Ocean',    primary:'#0288D1', accent:'#00BCD4', gradStart:'#E1F5FE', gradEnd:'#E0F7FA', icon:'#0288D1' },
+      { name:'Forest',   primary:'#2E7D32', accent:'#8BC34A', gradStart:'#E8F5E9', gradEnd:'#F1F8E9', icon:'#2E7D32' },
+      { name:'Sunset',   primary:'#FF5722', accent:'#FF9800', gradStart:'#FFF3E0', gradEnd:'#FFEBEE', icon:'#FF5722' },
+      { name:'Lavender', primary:'#7B1FA2', accent:'#E040FB', gradStart:'#F3E5F5', gradEnd:'#EDE7F6', icon:'#7B1FA2' },
+      { name:'Midnight', primary:'#283593', accent:'#5C6BC0', gradStart:'#E8EAF6', gradEnd:'#E3F2FD', icon:'#283593' },
+      { name:'Peach',    primary:'#E64A19', accent:'#FF8A65', gradStart:'#FBE9E7', gradEnd:'#FFF8E1', icon:'#E64A19' },
+      { name:'Sage',     primary:'#607D8B', accent:'#78909C', gradStart:'#ECEFF1', gradEnd:'#E8F5E9', icon:'#607D8B' },
+      { name:'Berry',    primary:'#880E4F', accent:'#C2185B', gradStart:'#FCE4EC', gradEnd:'#F8BBD0', icon:'#880E4F' },
+    ];
+    const CURATED_FONTS = ['Andika New Basic','Playfair Display','Poppins','Nunito','Quicksand','Fredoka','Comfortaa','Montserrat','Lora','DM Serif Display','Caveat','Pacifico'];
+    let themeState = null;
+
+    function normHex(h, fallback) {
+      if (typeof h !== 'string') return fallback;
+      let s = h.trim(); if (s && !s.startsWith('#')) s = '#' + s;
+      return /^#[0-9a-fA-F]{6}$/.test(s) ? s.toUpperCase() : fallback;
+    }
+
+    async function loadCreatorTheme() {
+      const d = (creatorDoc && creatorDoc.data) || {};
+      themeState = {
+        primary: normHex(d.theme_primary, '#52A097'),
+        accent: normHex(d.theme_accent, '#EE8B60'),
+        gradStart: normHex(d.theme_background_gradient_start, '#D7F2EB'),
+        gradEnd: normHex(d.theme_background_gradient_end, '#FFE9E1'),
+        icon: normHex(d.theme_icon_color, '#52A097'),
+        font: (d.theme_font && d.theme_font.trim()) ? d.theme_font : 'Andika New Basic',
+        fontUrl: d.theme_font_url || null,
+      };
+      themeState.useGradient = themeState.gradStart !== themeState.gradEnd;
+
+      const pv = $('themePresets');
+      pv.innerHTML = THEME_PRESETS.map((p, i) =>
+        `<div class="preset" data-preset="${i}" title="${p.name}" style="background:linear-gradient(135deg, ${p.gradStart}, ${p.gradEnd}); border-color:${p.primary}66;"><span class="dot" style="background:${p.primary};"></span></div>`).join('');
+      pv.querySelectorAll('[data-preset]').forEach((el) => el.addEventListener('click', () => {
+        const p = THEME_PRESETS[+el.dataset.preset];
+        Object.assign(themeState, { primary: p.primary, accent: p.accent, gradStart: p.gradStart, gradEnd: p.gradEnd, icon: p.icon, useGradient: true });
+        syncThemeInputs(); renderThemePreview();
+      }));
+
+      buildFontSelect();
+      syncThemeInputs();
+      await ensureThemeFontLoaded(themeState.font, themeState.fontUrl);
+      renderThemePreview();
+    }
+
+    function buildFontSelect() {
+      const sel = $('themeFontSelect');
+      const custom = themeState.fontUrl && !CURATED_FONTS.includes(themeState.font);
+      sel.innerHTML = CURATED_FONTS.map((f) => `<option value="${escapeHtml(f)}">${escapeHtml(f)}</option>`).join('') +
+        (custom ? `<option value="${escapeHtml(themeState.font)}">Custom: ${escapeHtml(themeState.font)}</option>` : '');
+      sel.value = themeState.font;
+      $('removeFontBtn').hidden = !custom;
+      $('themeFontName').textContent = custom ? `Custom font: ${themeState.font}` : '';
+    }
+
+    function syncThemeInputs() {
+      $('cPrimary').value = themeState.primary;
+      $('cAccent').value = themeState.accent;
+      $('cIcon').value = themeState.icon;
+      $('cGradStart').value = themeState.gradStart;
+      $('cGradEnd').value = themeState.gradEnd;
+      $('cPrimaryHex').textContent = themeState.primary;
+      $('cAccentHex').textContent = themeState.accent;
+      $('cIconHex').textContent = themeState.icon;
+      $('cGradStartHex').textContent = themeState.gradStart;
+      $('cGradEndHex').textContent = themeState.gradEnd;
+      $('gradEndRow').style.display = themeState.useGradient ? '' : 'none';
+      document.querySelectorAll('#bgToggle button').forEach((b) =>
+        b.classList.toggle('on', b.dataset.bg === (themeState.useGradient ? 'gradient' : 'solid')));
+    }
+
+    function renderThemePreview() {
+      const s = $('tpScreen');
+      s.style.setProperty('--tp-primary', themeState.primary);
+      s.style.setProperty('--tp-accent', themeState.accent);
+      s.style.setProperty('--tp-icon', themeState.icon);
+      s.style.setProperty('--tp-grad-start', themeState.gradStart);
+      s.style.setProperty('--tp-grad-end', themeState.useGradient ? themeState.gradEnd : themeState.gradStart);
+      s.style.setProperty('--tp-font', `'${themeState.font}', system-ui, sans-serif`);
+    }
+
+    // Google Fonts loaded via <link>; custom uploads via the FontFace API.
+    const _loadedFontLinks = new Set();
+    async function ensureThemeFontLoaded(family, url) {
+      if (!family || family === 'Andika New Basic') return;
+      if (url) {
+        try { const ff = new FontFace(family, `url(${url})`); await ff.load(); document.fonts.add(ff); }
+        catch (e) { console.warn('custom font load failed', e); }
+        return;
+      }
+      if (_loadedFontLinks.has(family)) return;
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = `https://fonts.googleapis.com/css2?family=${family.replace(/ /g, '+')}&display=swap`;
+      document.head.appendChild(link);
+      _loadedFontLinks.add(family);
+      try { await document.fonts.ready; } catch (_) {}
+    }
+
+    ['Primary', 'Accent', 'Icon', 'GradStart', 'GradEnd'].forEach((k) => {
+      const id = 'c' + k;
+      const key = k.charAt(0).toLowerCase() + k.slice(1);
+      $(id).addEventListener('input', (e) => {
+        if (!themeState) return;
+        const v = e.target.value.toUpperCase();
+        themeState[key] = v;
+        if (key === 'gradStart' && !themeState.useGradient) themeState.gradEnd = v;
+        $(id + 'Hex').textContent = v;
+        renderThemePreview();
+      });
+    });
+
+    document.querySelectorAll('#bgToggle button').forEach((b) => b.addEventListener('click', () => {
+      if (!themeState) return;
+      themeState.useGradient = b.dataset.bg === 'gradient';
+      if (!themeState.useGradient) themeState.gradEnd = themeState.gradStart;
+      syncThemeInputs(); renderThemePreview();
+    }));
+
+    $('themeFontSelect').addEventListener('change', async (e) => {
+      if (!themeState) return;
+      themeState.font = e.target.value;
+      if (CURATED_FONTS.includes(themeState.font)) themeState.fontUrl = null;
+      buildFontSelect();
+      await ensureThemeFontLoaded(themeState.font, themeState.fontUrl);
+      renderThemePreview();
+    });
+
+    $('uploadFontBtn').addEventListener('click', () => $('themeFontInput').click());
+    $('removeFontBtn').addEventListener('click', () => {
+      themeState.font = 'Andika New Basic'; themeState.fontUrl = null;
+      buildFontSelect(); renderThemePreview();
+    });
+    $('themeFontInput').addEventListener('change', async (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (!file || !creatorDoc) return;
+      const btn = $('uploadFontBtn'); btn.disabled = true; const orig = btn.textContent; btn.textContent = 'Uploading…';
+      try {
+        const base = file.name.replace(/\.(ttf|otf)$/i, '').replace(/[^A-Za-z0-9_]/g, '');
+        const family = `Creator_${creatorDoc.id}_${base}`;
+        const ref = storageRef(storage, `creator_fonts/${creatorDoc.id}/${file.name}`);
+        await uploadBytes(ref, file, { contentType: file.type || 'font/ttf' });
+        const url = await getDownloadURL(ref);
+        themeState.font = family; themeState.fontUrl = url;
+        await ensureThemeFontLoaded(family, url);
+        buildFontSelect(); renderThemePreview();
+        toast('Font uploaded — Save to apply for followers');
+      } catch (err) { console.error(err); toast('Font upload failed: ' + err.message, true); }
+      finally { btn.disabled = false; btn.textContent = orig; e.target.value = ''; }
+    });
+
+    $('saveThemeBtn').addEventListener('click', async () => {
+      if (!themeState || !creatorDoc) return;
+      const btn = $('saveThemeBtn'); btn.disabled = true; const orig = btn.textContent; btn.textContent = 'Saving…';
+      try {
+        const payload = {
+          theme_primary: themeState.primary,
+          theme_accent: themeState.accent,
+          theme_background_gradient_start: themeState.gradStart,
+          theme_background_gradient_end: themeState.useGradient ? themeState.gradEnd : themeState.gradStart,
+          theme_icon_color: themeState.icon,
+          theme_font: themeState.font,
+          theme_font_url: themeState.fontUrl || null,
+        };
+        await updateDoc(creatorDoc.ref, payload);
+        creatorDoc.data = Object.assign({}, creatorDoc.data, payload);
+        toast('Theme saved — your followers will see it in the app');
+        celebrate();
+      } catch (err) { console.error(err); toast('Save failed: ' + err.message, true); }
+      finally { btn.disabled = false; btn.textContent = orig; }
     });
 
     // ───────────────────────────────────────────────────────────────
