@@ -9,6 +9,25 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
+    /* Bundle the app's default font so the theme editor's "Default" preview
+       renders true (Andika New Basic isn't on Google Fonts). Served from the
+       repo's Flutter assets; ../ resolves to the site root under /creator/. */
+    @font-face {
+      font-family: 'Andika New Basic'; font-weight: 400; font-style: normal;
+      src: url('../assets/fonts/AndikaNewBasic-R.ttf') format('truetype'); font-display: swap;
+    }
+    @font-face {
+      font-family: 'Andika New Basic'; font-weight: 400; font-style: italic;
+      src: url('../assets/fonts/AndikaNewBasic-I.ttf') format('truetype'); font-display: swap;
+    }
+    @font-face {
+      font-family: 'Andika New Basic'; font-weight: 700; font-style: normal;
+      src: url('../assets/fonts/AndikaNewBasic-B.ttf') format('truetype'); font-display: swap;
+    }
+    @font-face {
+      font-family: 'Andika New Basic'; font-weight: 700; font-style: italic;
+      src: url('../assets/fonts/AndikaNewBasic-BI.ttf') format('truetype'); font-display: swap;
+    }
     :root {
       --primary: #52A097;
       --primary-dark: #2A6F67;
