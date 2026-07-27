@@ -251,90 +251,9 @@ class _OBoardingStep1WidgetState extends State<OBoardingStep1Widget> {
                                         ),
                                       ),
                                     ),
-                                    InkWell(
-                                      splashColor: Colors.transparent,
-                                      focusColor: Colors.transparent,
-                                      hoverColor: Colors.transparent,
-                                      highlightColor: Colors.transparent,
-                                      onTap: () async {
-                                        _model.toggleSupport(
-                                            'Daily Reminders & Encouragement');
-                                        safeSetState(() {});
-                                      },
-                                      child: Container(
-                                        width: itemWidth,
-                                        height: 142.0,
-                                        decoration: BoxDecoration(
-                                          color: FlutterFlowTheme.of(context)
-                                              .secondaryBackground,
-                                          borderRadius:
-                                              BorderRadius.circular(14.0),
-                                          border: Border.all(
-                                            color: _model.isSelected(
-                                                    'Daily Reminders & Encouragement')
-                                                ? FlutterFlowTheme.of(context)
-                                                    .primary
-                                                : Colors.transparent,
-                                            width: 1.0,
-                                          ),
-                                        ),
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.max,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            ClipOval(
-                                              child: Container(
-                                                width: 50.0,
-                                                height: 50.0,
-                                                decoration: const BoxDecoration(
-                                                  color: Color(0xFFA3CDC8),
-                                                  shape: BoxShape.circle,
-                                                ),
-                                                child: Padding(
-                                                  padding: const EdgeInsetsDirectional
-                                                      .fromSTEB(12.0, 12.0,
-                                                          12.0, 12.0),
-                                                  child: ClipRRect(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8.0),
-                                                    child: Image.asset(
-                                                      'assets/images/Vector_(5).png',
-                                                      width: double.infinity,
-                                                      height: double.infinity,
-                                                      fit: BoxFit.scaleDown,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsetsDirectional
-                                                  .fromSTEB(
-                                                      0.0, 12.0, 0.0, 0.0),
-                                              child: Text(
-                                                'Daily Reminders & Encouragement',
-                                                textAlign: TextAlign.center,
-                                                style:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMedium
-                                                        .override(
-                                                          fontFamily: 'Andika New Basic',
-                                                          color: FlutterFlowTheme
-                                                                  .of(context)
-                                                              .black60,
-                                                          fontSize: 12.0,
-                                                          letterSpacing: 0.0,
-                                                          fontWeight:
-                                                              FontWeight.normal,
-                                                        ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
+                                    // "Daily Reminders & Encouragement" support
+                                    // tile removed — the encouragement feature
+                                    // is retired.
                                     InkWell(
                                       splashColor: Colors.transparent,
                                       focusColor: Colors.transparent,
