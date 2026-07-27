@@ -10,6 +10,7 @@ import '/services/review_service.dart';
 import '/custom_code/actions/index.dart' as actions;
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
+import '/flutter_flow/recurrence_util.dart';
 import '/index.dart';
 import 'dart:math';
 import 'package:flutter/material.dart';
@@ -1438,6 +1439,14 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
       ),
       builder: (context, snapshot) {
         final routines = snapshot.data ?? [];
+        // Only show routines scheduled for today. A routine with no recur_days
+        // is treated as "every day" (legacy behavior).
+        final now = DateTime.now();
+        final todaysRoutines = routines
+            .where((r) =>
+                !r.hasRecurDays() ||
+                recursOnDate(r.recurDays, r.recurIntervalWeeks, r.recurAnchor, now))
+            .toList();
 
         return InkWell(
           onTap: () => Navigator.push(
@@ -1470,7 +1479,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                         Icon(Icons.repeat_rounded, color: FlutterFlowTheme.of(context).primary, size: 22.0),
                         const SizedBox(width: 8.0),
                         Text(
-                          routines.isEmpty ? 'Create a Routine' : 'Routines',
+                          routines.isEmpty ? 'Create a Routine' : "Today's Routines",
                           style: FlutterFlowTheme.of(context).bodyLarge.override(
                             fontFamily: FFAppState().currentFontFamily,
                             color: const Color(0xFF5D4E60),
@@ -1498,9 +1507,21 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                     ),
                   ],
                 ),
-                if (routines.isNotEmpty) ...[
+                if (routines.isNotEmpty && todaysRoutines.isEmpty) ...[
                   const SizedBox(height: 12.0),
-                  ...routines.take(3).map((routine) => Padding(
+                  Text(
+                    'Nothing scheduled for today',
+                    style: FlutterFlowTheme.of(context).bodySmall.override(
+                      fontFamily: FFAppState().currentFontFamily,
+                      color: const Color(0xFF9B8A9E),
+                      fontSize: 13.0,
+                      letterSpacing: 0.0,
+                    ),
+                  ),
+                ],
+                if (todaysRoutines.isNotEmpty) ...[
+                  const SizedBox(height: 12.0),
+                  ...todaysRoutines.take(3).map((routine) => Padding(
                     padding: const EdgeInsets.only(bottom: 8.0),
                     child: Row(
                       children: [
@@ -1532,11 +1553,11 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                       ],
                     ),
                   )),
-                  if (routines.length > 3)
+                  if (todaysRoutines.length > 3)
                     Padding(
                       padding: const EdgeInsets.only(top: 4.0),
                       child: Text(
-                        '+${routines.length - 3} more',
+                        '+${todaysRoutines.length - 3} more',
                         style: TextStyle(
                           fontSize: 12,
                           color: FlutterFlowTheme.of(context).primary,

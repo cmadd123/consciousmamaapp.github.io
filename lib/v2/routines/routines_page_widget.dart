@@ -8,7 +8,9 @@ import '/backend/backend.dart';
 import '/custom_code/actions/creator_service.dart';
 import '/v2/creator/creator_theme_notifier.dart';
 import '/v2/creator/creator_theme_wrapper.dart';
+import '/components/parent_circle_widget.dart';
 import '/flutter_flow/creator_flags.dart';
+import '/flutter_flow/recurrence_util.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
@@ -35,10 +37,31 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
   String? _loadedCollapseKey;
   static const _kCollapsePrefsKey = 'creator_routines_collapsed';
 
+  // The user's children, for the routine person-assignment chips.
+  List<ChildernRecord> _children = [];
+  ParentDisplayInfo _parentInfo = ParentDisplayInfo.defaults();
+
   @override
   void initState() {
     super.initState();
     _loadCreatorProfile();
+    _loadChildrenAndParent();
+  }
+
+  Future<void> _loadChildrenAndParent() async {
+    if (currentUserReference == null) return;
+    try {
+      final kids = await queryChildernRecordOnce(
+        queryBuilder: (q) => q.where('userRef', isEqualTo: currentUserReference),
+      );
+      final user = await UsersRecord.getDocumentOnce(currentUserReference!);
+      if (mounted) {
+        setState(() {
+          _children = kids;
+          _parentInfo = ParentDisplayInfo.fromUser(user);
+        });
+      }
+    } catch (_) {}
   }
 
   String _collapseKey(CreatorsRecord creator) =>
@@ -458,15 +481,55 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
                   ),
                   const SizedBox(width: 14),
                   Expanded(
-                    child: Text(
-                      routine.name,
-                      overflow: TextOverflow.ellipsis,
-                      style: FlutterFlowTheme.of(context).bodyMedium.override(
-                        fontFamily: FFAppState().currentFontFamily,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 0,
-                      ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          routine.name,
+                          overflow: TextOverflow.ellipsis,
+                          style: FlutterFlowTheme.of(context).bodyMedium.override(
+                            fontFamily: FFAppState().currentFontFamily,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 0,
+                          ),
+                        ),
+                        if (routine.hasRecurDays() ||
+                            routine.assignedToMom ||
+                            routine.assignedToDad ||
+                            routine.selectedChildren.isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 3),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                if (routine.hasRecurDays()) ...[
+                                  Icon(Icons.repeat_rounded, size: 12, color: FlutterFlowTheme.of(context).primary),
+                                  const SizedBox(width: 4),
+                                  Flexible(
+                                    child: Text(
+                                      recurrenceLabel(routine.recurDays, routine.recurIntervalWeeks),
+                                      overflow: TextOverflow.ellipsis,
+                                      style: FlutterFlowTheme.of(context).bodySmall.override(
+                                        fontFamily: FFAppState().currentFontFamily,
+                                        color: FlutterFlowTheme.of(context).primary,
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                                if (routine.assignedToMom)
+                                  _assigneeDot('M', const Color(0xFFEC407A)),
+                                if (routine.assignedToDad)
+                                  _assigneeDot(_parentInfo.partnerInitial, _parentInfo.partnerColor),
+                                ...routine.selectedChildren.take(3).map((_) =>
+                                    _assigneeDot('•', FlutterFlowTheme.of(context).primary)),
+                              ],
+                            ),
+                          ),
+                      ],
                     ),
                   ),
                   // Creator-only: share with followers toggle. Placed with
@@ -618,6 +681,12 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
     final stepControllers = (editing?.steps ?? []).map((s) => TextEditingController(text: s)).toList();
     String selectedEmoji = editing?.emoji ?? '📋';
     final emojis = ['📋', '☀️', '🌙', '🍳', '💪', '🧹', '📚', '🎯', '🏃', '🛁', '🎒', '✨'];
+    // Recurrence + assignment drafts (initialized from the routine being edited).
+    final draftDays = <int>{...(editing?.recurDays ?? const [])};
+    int draftInterval = (editing?.recurIntervalWeeks ?? 1) < 1 ? 1 : (editing?.recurIntervalWeeks ?? 1);
+    bool draftMom = editing?.assignedToMom ?? false;
+    bool draftDad = editing?.assignedToDad ?? false;
+    final draftChildren = <DocumentReference>{...(editing?.selectedChildren ?? const [])};
 
     showModalBottomSheet(
       context: context,
@@ -636,6 +705,60 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
             });
           }
 
+          final primary = FlutterFlowTheme.of(context).primary;
+
+          Widget presetChip(String label, List<int> days) {
+            final sel = draftDays.length == days.length && days.every(draftDays.contains);
+            return GestureDetector(
+              onTap: () => setSheetState(() => draftDays..clear()..addAll(days)),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+                decoration: BoxDecoration(
+                  color: sel ? primary.withOpacity(0.15) : Colors.transparent,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: sel ? primary : const Color(0xFFE0E0E0)),
+                ),
+                child: Text(label, style: TextStyle(color: sel ? primary : const Color(0xFF5D4E60), fontWeight: FontWeight.w600, fontSize: 13)),
+              ),
+            );
+          }
+
+          Widget dayCircle(int day, String label) {
+            final sel = draftDays.contains(day);
+            return GestureDetector(
+              onTap: () => setSheetState(() { if (!draftDays.remove(day)) draftDays.add(day); }),
+              child: Container(
+                width: 36, height: 36,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: sel ? primary : Colors.transparent,
+                  border: Border.all(color: sel ? primary : const Color(0xFFE0E0E0), width: 1.5),
+                ),
+                child: Center(child: Text(label, style: TextStyle(color: sel ? Colors.white : const Color(0xFF9B8A9E), fontWeight: FontWeight.w700))),
+              ),
+            );
+          }
+
+          Widget personChip(String label, Color color, bool selected, VoidCallback onTap) {
+            return GestureDetector(
+              onTap: onTap,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                decoration: BoxDecoration(
+                  color: selected ? color.withOpacity(0.15) : Colors.transparent,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: selected ? color : const Color(0xFFE0E0E0), width: selected ? 1.5 : 1.0),
+                ),
+                child: Row(mainAxisSize: MainAxisSize.min, children: [
+                  Container(width: 18, height: 18, decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+                      child: Center(child: Text(label.isNotEmpty ? label[0].toUpperCase() : '?', style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)))),
+                  const SizedBox(width: 6),
+                  Text(label, style: TextStyle(color: selected ? color : const Color(0xFF9B8A9E), fontSize: 12, fontWeight: selected ? FontWeight.w600 : FontWeight.w500, fontFamily: FFAppState().currentFontFamily)),
+                ]),
+              ),
+            );
+          }
+
           Future<void> save() async {
             final name = nameController.text.trim();
             if (name.isEmpty) return;
@@ -647,11 +770,20 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
 
             HapticFeedback.mediumImpact();
 
+            final recurList = draftDays.toList()..sort();
             if (editing != null) {
               await editing.reference.update({
                 'name': name,
                 'emoji': selectedEmoji,
                 'steps': steps,
+                'recur_days': recurList,
+                'recur_interval_weeks': recurList.isNotEmpty ? draftInterval : 1,
+                'recur_anchor': recurList.isNotEmpty
+                    ? (editing.recurAnchor.isNotEmpty ? editing.recurAnchor : ymdString(DateTime.now()))
+                    : '',
+                'assigned_to_mom': draftMom,
+                'assigned_to_dad': draftDad,
+                'selected_children': draftChildren.toList(),
               });
             } else {
               await RoutinesRecord.collection.add(createRoutinesRecordData(
@@ -660,6 +792,12 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
                 steps: steps,
                 userRef: currentUserReference,
                 createdAt: DateTime.now(),
+                recurDays: recurList.isNotEmpty ? recurList : null,
+                recurIntervalWeeks: recurList.isNotEmpty ? draftInterval : null,
+                recurAnchor: recurList.isNotEmpty ? ymdString(DateTime.now()) : null,
+                assignedToMom: draftMom,
+                assignedToDad: draftDad,
+                selectedChildren: draftChildren.isNotEmpty ? draftChildren.toList() : null,
               ));
             }
 
@@ -792,6 +930,52 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
                   ),
                   const SizedBox(height: 20),
 
+                  // Repeats
+                  Text('Repeats', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.grey[600])),
+                  const SizedBox(height: 8),
+                  Wrap(spacing: 8, runSpacing: 8, children: [
+                    presetChip('Every day', const [1, 2, 3, 4, 5, 6, 7]),
+                    presetChip('Weekdays', const [1, 2, 3, 4, 5]),
+                    presetChip('Weekends', const [6, 7]),
+                  ]),
+                  const SizedBox(height: 10),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: List.generate(7, (i) => dayCircle(i + 1, const ['M', 'T', 'W', 'T', 'F', 'S', 'S'][i])),
+                  ),
+                  const SizedBox(height: 12),
+                  Row(children: [
+                    const Text('Every', style: TextStyle(fontSize: 14, color: Color(0xFF5D4E60))),
+                    const SizedBox(width: 12),
+                    GestureDetector(
+                      onTap: () { if (draftInterval > 1) setSheetState(() => draftInterval--); },
+                      child: Container(width: 32, height: 32, decoration: BoxDecoration(color: const Color(0xFFF0F0F0), borderRadius: BorderRadius.circular(8)), child: const Icon(Icons.remove, size: 18, color: Color(0xFF5D4E60))),
+                    ),
+                    Padding(padding: const EdgeInsets.symmetric(horizontal: 12), child: Text('$draftInterval', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF5D4E60)))),
+                    GestureDetector(
+                      onTap: () { if (draftInterval < 12) setSheetState(() => draftInterval++); },
+                      child: Container(width: 32, height: 32, decoration: BoxDecoration(color: const Color(0xFFF0F0F0), borderRadius: BorderRadius.circular(8)), child: const Icon(Icons.add, size: 18, color: Color(0xFF5D4E60))),
+                    ),
+                    const SizedBox(width: 10),
+                    Text(draftInterval == 1 ? 'week' : 'weeks', style: const TextStyle(fontSize: 14, color: Color(0xFF5D4E60))),
+                  ]),
+                  const SizedBox(height: 20),
+
+                  // Assign to
+                  Text('Assign to', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.grey[600])),
+                  const SizedBox(height: 8),
+                  Wrap(spacing: 8, runSpacing: 8, children: [
+                    personChip('Mom', const Color(0xFFEC407A), draftMom, () => setSheetState(() => draftMom = !draftMom)),
+                    personChip(_parentInfo.partnerName, Color(_parentInfo.partnerColor.value), draftDad, () => setSheetState(() => draftDad = !draftDad)),
+                    ..._children.map((c) => personChip(
+                          c.name,
+                          FlutterFlowTheme.of(context).primary,
+                          draftChildren.contains(c.reference),
+                          () => setSheetState(() { if (!draftChildren.remove(c.reference)) draftChildren.add(c.reference); }),
+                        )),
+                  ]),
+                  const SizedBox(height: 24),
+
                   // Save button
                   FFButtonWidget(
                     onPressed: save,
@@ -814,6 +998,21 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
       ),
     );
   }
+
+  Widget _assigneeDot(String label, Color color) => Padding(
+        padding: const EdgeInsets.only(left: 4),
+        child: Container(
+          width: 16,
+          height: 16,
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+          child: Center(
+            child: Text(
+              label.isNotEmpty ? label[0].toUpperCase() : '?',
+              style: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold),
+            ),
+          ),
+        ),
+      );
 
   String _todayKey() {
     final now = DateTime.now();
