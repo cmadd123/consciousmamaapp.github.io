@@ -22,12 +22,18 @@ class NotificationService {
   static const String learningChannelId = 'learning_reminders';
   static const String calendarChannelId = 'calendar_reminders';
   static const String encouragementChannelId = 'encouragement';
+  static const String todoChannelId = 'todo_reminders';
+  static const String routineChannelId = 'routine_reminders';
 
   // Notification IDs (base IDs, actual IDs will be offset)
   static const int mealNotificationId = 1000;
   static const int learningNotificationId = 2000;
   static const int calendarNotificationId = 3000;
   static const int encouragementNotificationId = 4000;
+  // Recurring todos/routines get a block of ids each, computed from the doc
+  // id: base + (seed % 10000) * 20 + (weekday-1) * 2 + kind (0=day-of,1=advance).
+  static const int todoNotificationBase = 500000;
+  static const int routineNotificationBase = 700000;
 
   // Settings keys
   static const String keyMealRemindersEnabled = 'notification_meal_enabled';
@@ -37,6 +43,16 @@ class NotificationService {
   static const String keyMealReminderTime = 'notification_meal_time';
   static const String keyQuietHoursStart = 'notification_quiet_start';
   static const String keyQuietHoursEnd = 'notification_quiet_end';
+  // Todos / routines / calendar per-module reminders.
+  static const String keyTodoRemindersEnabled = 'notification_todo_enabled';
+  static const String keyRoutineRemindersEnabled = 'notification_routine_enabled';
+  // Timing mode per module: 'day_of' | 'advance' | 'both'. Default 'both'.
+  static const String keyTodoTiming = 'notification_todo_timing';
+  static const String keyRoutineTiming = 'notification_routine_timing';
+  static const String keyCalendarTiming = 'notification_calendar_timing';
+  // Fixed default clock times: day-of at 8 AM, advance the evening before at 6 PM.
+  static const int dayOfHour = 8;
+  static const int advanceHour = 18;
 
   /// Initialize the notification service
   // Cached timezone diagnostic info — populated by initialize(). Surfaced
@@ -147,6 +163,26 @@ class NotificationService {
           'Daily Encouragement',
           description: 'Inspirational messages and tips',
           importance: Importance.defaultImportance,
+        ),
+      );
+
+      // Todo reminders channel
+      await androidPlugin.createNotificationChannel(
+        const AndroidNotificationChannel(
+          todoChannelId,
+          'To-Do Reminders',
+          description: 'Reminders for recurring to-dos',
+          importance: Importance.high,
+        ),
+      );
+
+      // Routine reminders channel
+      await androidPlugin.createNotificationChannel(
+        const AndroidNotificationChannel(
+          routineChannelId,
+          'Routine Reminders',
+          description: 'Reminders for recurring routines',
+          importance: Importance.high,
         ),
       );
     }
@@ -452,12 +488,19 @@ class NotificationService {
     if (!await _isSettingEnabled(keyCalendarRemindersEnabled)) return;
     final now = DateTime.now();
 
+    // Timing mode: 'day_of' (morning brief only), 'advance' (15-min-before
+    // only), or 'both' (default). Mirrors the todo/routine treatment.
+    final prefs = await SharedPreferences.getInstance();
+    final timing = prefs.getString(keyCalendarTiming) ?? 'both';
+    final wantBefore = timing == 'advance' || timing == 'both';
+    final wantMorning = timing == 'day_of' || timing == 'both';
+
     bool scheduledBefore = false;
     bool scheduledMorning = false;
 
     // 1) 15 minutes before
     final beforeAt = eventTime.subtract(const Duration(minutes: 15));
-    if (beforeAt.isAfter(now) && !(await _isInQuietHours(beforeAt))) {
+    if (wantBefore && beforeAt.isAfter(now) && !(await _isInQuietHours(beforeAt))) {
       await scheduleCalendarAt(
         notificationId: notificationId,
         title: '📅 Coming Up',
@@ -471,7 +514,8 @@ class NotificationService {
     // 2) 8 AM morning brief on the event date. Skip if morning has passed
     //    OR if 8 AM is within 15 minutes of the event (would feel redundant).
     final morningAt = DateTime(eventTime.year, eventTime.month, eventTime.day, 8, 0);
-    if (morningAt.isAfter(now) &&
+    if (wantMorning &&
+        morningAt.isAfter(now) &&
         morningAt.isBefore(eventTime.subtract(const Duration(minutes: 15))) &&
         !(await _isInQuietHours(morningAt))) {
       await scheduleCalendarAt(
@@ -649,6 +693,121 @@ class NotificationService {
   /// Cancel encouragement notifications
   Future<void> cancelEncouragementNotifications() async {
     await _notifications.cancel(encouragementNotificationId);
+  }
+
+  // ============ TODO / ROUTINE RECURRING REMINDERS ============
+
+  /// Schedule a weekly-repeating reminder on [weekday] (1=Mon..7=Sun) at
+  /// [hour]:00, repeating every week via dayOfWeekAndTime matching.
+  Future<void> _scheduleWeekly({
+    required int id,
+    required int weekday,
+    required int hour,
+    required String channelId,
+    required String channelName,
+    required String title,
+    required String body,
+    required String payload,
+  }) async {
+    await _notifications.zonedSchedule(
+      id,
+      title,
+      body,
+      _nextInstanceOfDayAndTime(weekday, hour, 0),
+      NotificationDetails(
+        android: AndroidNotificationDetails(
+          channelId,
+          channelName,
+          importance: Importance.high,
+          priority: Priority.high,
+          icon: '@mipmap/ic_launcher',
+        ),
+        iOS: const DarwinNotificationDetails(
+          presentAlert: true,
+          presentBadge: true,
+          presentSound: true,
+        ),
+      ),
+      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+      matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime,
+      payload: payload,
+    );
+  }
+
+  int _itemBaseId(bool routine, String docId) {
+    final seed = docId.hashCode.abs() % 10000;
+    return (routine ? routineNotificationBase : todoNotificationBase) + seed * 20;
+  }
+
+  /// (Re)schedule reminders for a set of recurring items in one module.
+  /// [items] is a list of {id: String, title: String, days: List<int>}.
+  /// Always cancels each item's id block first, then reschedules per the
+  /// module's enable flag and timing mode ('day_of' | 'advance' | 'both').
+  /// Note: fires weekly on each recurrence weekday — the every-N-weeks
+  /// interval isn't reflected in the reminder (item still shows correctly
+  /// in-app; a skipped week just gets an extra ping).
+  Future<void> syncRecurringReminders({
+    required bool routine,
+    required List<Map<String, dynamic>> items,
+  }) async {
+    final prefs = await SharedPreferences.getInstance();
+    final enabled = prefs.getBool(
+            routine ? keyRoutineRemindersEnabled : keyTodoRemindersEnabled) ??
+        true;
+    final timing =
+        prefs.getString(routine ? keyRoutineTiming : keyTodoTiming) ?? 'both';
+    final channelId = routine ? routineChannelId : todoChannelId;
+    final channelName = routine ? 'Routine Reminders' : 'To-Do Reminders';
+    final wantDayOf = timing == 'day_of' || timing == 'both';
+    final wantAdvance = timing == 'advance' || timing == 'both';
+
+    for (final item in items) {
+      final docId = item['id'] as String? ?? '';
+      final title = (item['title'] as String? ?? '').trim();
+      final days = ((item['days'] as List?) ?? const [])
+          .map((e) => e is int ? e : int.tryParse('$e') ?? 0)
+          .where((d) => d >= 1 && d <= 7)
+          .toList();
+      if (docId.isEmpty) continue;
+      final base = _itemBaseId(routine, docId);
+
+      // Cancel this item's whole id block (7 weekdays × 2 kinds) first.
+      for (int w = 1; w <= 7; w++) {
+        await _notifications.cancel(base + (w - 1) * 2 + 0);
+        await _notifications.cancel(base + (w - 1) * 2 + 1);
+      }
+      if (!enabled || days.isEmpty || title.isEmpty) continue;
+
+      for (final w in days) {
+        if (wantDayOf) {
+          await _scheduleWeekly(
+            id: base + (w - 1) * 2 + 0,
+            weekday: w,
+            hour: dayOfHour,
+            channelId: channelId,
+            channelName: channelName,
+            title: routine ? '🔁 Routine' : '✅ To-Do',
+            body: title,
+            payload: '${routine ? 'routine' : 'todo'}:$docId',
+          );
+        }
+        if (wantAdvance) {
+          final advWeekday = w == 1 ? 7 : w - 1; // evening before
+          await _scheduleWeekly(
+            id: base + (w - 1) * 2 + 1,
+            weekday: advWeekday,
+            hour: advanceHour,
+            channelId: channelId,
+            channelName: channelName,
+            title: routine ? '🔁 Tomorrow\'s routine' : '✅ Tomorrow',
+            body: title,
+            payload: '${routine ? 'routine' : 'todo'}:$docId',
+          );
+        }
+      }
+    }
   }
 
   // ============ SETTINGS HELPERS ============

@@ -20,6 +20,7 @@ import 'flutter_flow/internationalization.dart';
 import 'flutter_flow/share_intent_handler.dart';
 import 'flutter_flow/deep_link_handler.dart';
 import 'custom_code/actions/notification_service.dart';
+import 'custom_code/actions/reminder_sync.dart';
 import 'custom_code/actions/analytics_service.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'v2/auth/demo_data_notifier.dart';
@@ -163,6 +164,10 @@ class _MyAppState extends State<MyApp> {
           // this, the active creator silently un-applies on every app
           // restart because nothing reloads it from the user's profile.
           unawaited(CreatorThemeNotifier.instance.loadActiveCreatorForSession());
+
+          // (Re)schedule recurring to-do / routine reminders from the latest
+          // data per the user's per-module notification settings.
+          unawaited(resyncRecurringReminders());
 
           // Fire-and-forget: try to claim a pending creator-code
           // attribution. Catches users who clicked momrise.app/c/{code}

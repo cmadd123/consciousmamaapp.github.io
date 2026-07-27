@@ -26,6 +26,12 @@ class _NotificationSettingsWidgetState
   bool _learningReminders = true;
   bool _calendarReminders = true;
   bool _encouragement = true;
+  bool _todoReminders = true;
+  bool _routineReminders = true;
+  // Timing mode per module: 'day_of' | 'advance' | 'both'.
+  String _todoTiming = 'both';
+  String _routineTiming = 'both';
+  String _calendarTiming = 'both';
   TimeOfDay _mealReminderTime = const TimeOfDay(hour: 7, minute: 0);
   int _mealReminderDay = 0; // 0 = Sunday, 1 = Monday, etc. (0 = daily for now)
   TimeOfDay _quietStart = const TimeOfDay(hour: 22, minute: 0);
@@ -51,6 +57,11 @@ class _NotificationSettingsWidgetState
       _learningReminders = prefs.getBool(actions.NotificationService.keyLearningRemindersEnabled) ?? true;
       _calendarReminders = prefs.getBool(actions.NotificationService.keyCalendarRemindersEnabled) ?? true;
       _encouragement = prefs.getBool(actions.NotificationService.keyEncouragementEnabled) ?? true;
+      _todoReminders = prefs.getBool(actions.NotificationService.keyTodoRemindersEnabled) ?? true;
+      _routineReminders = prefs.getBool(actions.NotificationService.keyRoutineRemindersEnabled) ?? true;
+      _todoTiming = prefs.getString(actions.NotificationService.keyTodoTiming) ?? 'both';
+      _routineTiming = prefs.getString(actions.NotificationService.keyRoutineTiming) ?? 'both';
+      _calendarTiming = prefs.getString(actions.NotificationService.keyCalendarTiming) ?? 'both';
 
       final mealHour = prefs.getInt(actions.NotificationService.keyMealReminderTime) ?? 7;
       final mealMinute = prefs.getInt('${actions.NotificationService.keyMealReminderTime}_minute') ?? 0;
@@ -96,6 +107,16 @@ class _NotificationSettingsWidgetState
 
     // Daily encouragement retired — always keep it cancelled.
     await actions.notificationService.cancelEncouragementNotifications();
+
+    // Persist per-module todo/routine/calendar settings.
+    await prefs.setBool(actions.NotificationService.keyTodoRemindersEnabled, _todoReminders);
+    await prefs.setBool(actions.NotificationService.keyRoutineRemindersEnabled, _routineReminders);
+    await prefs.setString(actions.NotificationService.keyTodoTiming, _todoTiming);
+    await prefs.setString(actions.NotificationService.keyRoutineTiming, _routineTiming);
+    await prefs.setString(actions.NotificationService.keyCalendarTiming, _calendarTiming);
+
+    // Reschedule recurring todo/routine reminders with the new settings.
+    await actions.resyncRecurringReminders();
   }
 
   Future<void> _requestPermissions() async {
@@ -332,6 +353,45 @@ class _NotificationSettingsWidgetState
                                 await _saveSettings();
                               },
                             ),
+                            if (_calendarReminders)
+                              _buildTimingSelector(_calendarTiming, (v) async {
+                                setState(() => _calendarTiming = v);
+                                await _saveSettings();
+                              }),
+
+                            // To-Do Reminders
+                            _buildSettingTile(
+                              icon: Icons.checklist_rounded,
+                              title: 'To-Do Reminders',
+                              subtitle: 'Reminders for your recurring to-dos',
+                              value: _todoReminders,
+                              onChanged: (value) async {
+                                setState(() => _todoReminders = value);
+                                await _saveSettings();
+                              },
+                            ),
+                            if (_todoReminders)
+                              _buildTimingSelector(_todoTiming, (v) async {
+                                setState(() => _todoTiming = v);
+                                await _saveSettings();
+                              }),
+
+                            // Routine Reminders
+                            _buildSettingTile(
+                              icon: Icons.repeat_rounded,
+                              title: 'Routine Reminders',
+                              subtitle: 'Reminders for your recurring routines',
+                              value: _routineReminders,
+                              onChanged: (value) async {
+                                setState(() => _routineReminders = value);
+                                await _saveSettings();
+                              },
+                            ),
+                            if (_routineReminders)
+                              _buildTimingSelector(_routineTiming, (v) async {
+                                setState(() => _routineTiming = v);
+                                await _saveSettings();
+                              }),
 
                             // Daily Encouragement retired — toggle removed.
 
@@ -467,6 +527,52 @@ class _NotificationSettingsWidgetState
                   ],
                 ),
               ),
+      ),
+    );
+  }
+
+  /// Compact "Day of / In advance / Both" segmented selector shown under a
+  /// module's toggle.
+  Widget _buildTimingSelector(String current, ValueChanged<String> onChanged) {
+    final primary = FlutterFlowTheme.of(context).primary;
+    const options = [
+      ['day_of', 'Day of'],
+      ['advance', 'In advance'],
+      ['both', 'Both'],
+    ];
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(52.0, 0.0, 16.0, 10.0),
+      child: Row(
+        children: options.map((o) {
+          final sel = current == o[0];
+          return Expanded(
+            child: GestureDetector(
+              onTap: () => onChanged(o[0]),
+              child: Container(
+                margin: const EdgeInsets.only(right: 6.0),
+                padding: const EdgeInsets.symmetric(vertical: 7.0),
+                decoration: BoxDecoration(
+                  color: sel ? primary.withOpacity(0.12) : Colors.transparent,
+                  borderRadius: BorderRadius.circular(10.0),
+                  border: Border.all(
+                      color: sel ? primary : const Color(0xFFE0E0E0),
+                      width: sel ? 1.5 : 1.0),
+                ),
+                child: Text(
+                  o[1],
+                  textAlign: TextAlign.center,
+                  style: FlutterFlowTheme.of(context).bodySmall.override(
+                        fontFamily: FFAppState().currentFontFamily,
+                        color: sel ? primary : const Color(0xFF9B8A9E),
+                        fontSize: 12.0,
+                        fontWeight: sel ? FontWeight.w700 : FontWeight.w500,
+                        letterSpacing: 0.0,
+                      ),
+                ),
+              ),
+            ),
+          );
+        }).toList(),
       ),
     );
   }
