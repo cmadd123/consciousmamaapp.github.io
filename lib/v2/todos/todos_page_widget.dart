@@ -5,6 +5,7 @@ import '/components/parent_circle_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
+import '/flutter_flow/recurrence_util.dart';
 import '/components/page_animations.dart';
 import '/v2/creator/creator_theme_wrapper.dart';
 import 'package:flutter/material.dart';
@@ -33,6 +34,18 @@ class _TodosPageWidgetState extends State<TodosPageWidget> with TickerProviderSt
   List<DocumentReference> _selectedChildren = [];
   List<ChildernRecord>? _userChildren;
   ParentDisplayInfo _parentInfo = ParentDisplayInfo.defaults();
+
+  // Recurrence state for the add form (weekdays 1=Mon..7=Sun; empty = one-time).
+  List<int> _recurDays = [];
+  int _recurIntervalWeeks = 1;
+
+  String get _todayYmd => ymdString(DateTime.now());
+
+  /// A recurring todo counts as "done" only if it was completed today; on a
+  /// new day it auto-resets to incomplete. One-time todos use is_completed.
+  bool _effectiveCompleted(TodoRecord t) => t.hasRecurDays()
+      ? (t.isCompleted && t.lastCompletedDate == _todayYmd)
+      : t.isCompleted;
 
   @override
   void initState() {
@@ -75,7 +88,16 @@ class _TodosPageWidgetState extends State<TodosPageWidget> with TickerProviderSt
   }
 
   Future<void> _toggleTodo(TodoRecord todo) async {
-    await todo.reference.update({'is_completed': !todo.isCompleted});
+    final nowDone = !_effectiveCompleted(todo);
+    if (todo.hasRecurDays()) {
+      // Recurring: stamp the completion date so it auto-resets tomorrow.
+      await todo.reference.update({
+        'is_completed': nowDone,
+        'last_completed_date': nowDone ? _todayYmd : '',
+      });
+    } else {
+      await todo.reference.update({'is_completed': nowDone});
+    }
   }
 
   Future<void> _deleteTodo(TodoRecord todo) async {
@@ -268,13 +290,15 @@ class _TodosPageWidgetState extends State<TodosPageWidget> with TickerProviderSt
           );
         }
         final allTodos = snapshot.data ?? [];
-        // Filter and sort locally to avoid needing composite Firestore index
+        // Filter and sort locally to avoid needing composite Firestore index.
+        // Recurring todos use effective (per-day) completion so they resurface
+        // each scheduled day.
         final incompleteTodos = allTodos
-            .where((t) => !t.isCompleted)
+            .where((t) => !_effectiveCompleted(t))
             .toList()
           ..sort((a, b) => a.sortOrder.compareTo(b.sortOrder));
         final completedTodos = allTodos
-            .where((t) => t.isCompleted)
+            .where((t) => _effectiveCompleted(t))
             .toList()
           ..sort((a, b) => a.sortOrder.compareTo(b.sortOrder));
 
@@ -515,6 +539,42 @@ class _TodosPageWidgetState extends State<TodosPageWidget> with TickerProviderSt
             spacing: 8.0,
             runSpacing: 8.0,
             children: [
+              // Repeat chip
+              Builder(builder: (context) {
+                final primary = FlutterFlowTheme.of(context).primary;
+                final on = _recurDays.isNotEmpty;
+                return GestureDetector(
+                  onTap: _showRepeatPicker,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+                    decoration: BoxDecoration(
+                      color: on ? primary.withOpacity(0.15) : Colors.transparent,
+                      borderRadius: BorderRadius.circular(14.0),
+                      border: Border.all(
+                        color: on ? primary : const Color(0xFFE0E0E0),
+                        width: on ? 1.5 : 1.0,
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.repeat_rounded,
+                            size: 16.0, color: on ? primary : const Color(0xFF9B8A9E)),
+                        const SizedBox(width: 6.0),
+                        Text(
+                          on ? recurrenceLabel(_recurDays, _recurIntervalWeeks) : 'Repeat',
+                          style: FlutterFlowTheme.of(context).bodySmall.override(
+                            fontFamily: FFAppState().currentFontFamily,
+                            color: on ? primary : const Color(0xFF9B8A9E),
+                            fontSize: 12.0,
+                            fontWeight: on ? FontWeight.w600 : FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }),
               // Mom chip
               GestureDetector(
                 onTap: () => setState(() => _assignToMom = !_assignToMom),
@@ -679,8 +739,172 @@ class _TodosPageWidgetState extends State<TodosPageWidget> with TickerProviderSt
       _assignToMom = false;
       _assignToDad = false;
       _selectedChildren = [];
+      _recurDays = [];
+      _recurIntervalWeeks = 1;
     });
   }
+
+  void _showRepeatPicker() {
+    final primary = FlutterFlowTheme.of(context).primary;
+    const dayLabels = ['M', 'T', 'W', 'T', 'F', 'S', 'S']; // days 1..7
+    final draftDays = <int>{..._recurDays};
+    int draftInterval = _recurIntervalWeeks < 1 ? 1 : _recurIntervalWeeks;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
+      ),
+      builder: (sheetCtx) {
+        return StatefulBuilder(
+          builder: (sheetCtx, setSheet) {
+            Widget preset(String label, List<int> days) {
+              final sel = draftDays.length == days.length &&
+                  days.every(draftDays.contains);
+              return GestureDetector(
+                onTap: () => setSheet(() {
+                  draftDays
+                    ..clear()
+                    ..addAll(days);
+                }),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 7.0),
+                  decoration: BoxDecoration(
+                    color: sel ? primary.withOpacity(0.15) : Colors.transparent,
+                    borderRadius: BorderRadius.circular(16.0),
+                    border: Border.all(color: sel ? primary : const Color(0xFFE0E0E0)),
+                  ),
+                  child: Text(label,
+                      style: TextStyle(
+                          color: sel ? primary : const Color(0xFF5D4E60),
+                          fontWeight: FontWeight.w600,
+                          fontSize: 13.0)),
+                ),
+              );
+            }
+
+            return Padding(
+              padding: EdgeInsets.only(
+                left: 20, right: 20, top: 18,
+                bottom: MediaQuery.of(sheetCtx).viewInsets.bottom + 24,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Repeat',
+                      style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold, color: Color(0xFF5D4E60))),
+                  const SizedBox(height: 14.0),
+                  Wrap(spacing: 8.0, runSpacing: 8.0, children: [
+                    preset('Every day', const [1, 2, 3, 4, 5, 6, 7]),
+                    preset('Weekdays', const [1, 2, 3, 4, 5]),
+                    preset('Weekends', const [6, 7]),
+                  ]),
+                  const SizedBox(height: 16.0),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: List.generate(7, (i) {
+                      final day = i + 1;
+                      final sel = draftDays.contains(day);
+                      return GestureDetector(
+                        onTap: () => setSheet(() {
+                          if (!draftDays.remove(day)) draftDays.add(day);
+                        }),
+                        child: Container(
+                          width: 38.0, height: 38.0,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: sel ? primary : Colors.transparent,
+                            border: Border.all(
+                                color: sel ? primary : const Color(0xFFE0E0E0), width: 1.5),
+                          ),
+                          child: Center(
+                            child: Text(dayLabels[i],
+                                style: TextStyle(
+                                    color: sel ? Colors.white : const Color(0xFF9B8A9E),
+                                    fontWeight: FontWeight.w700)),
+                          ),
+                        ),
+                      );
+                    }),
+                  ),
+                  const SizedBox(height: 20.0),
+                  Row(
+                    children: [
+                      const Text('Every',
+                          style: TextStyle(fontSize: 14.0, color: Color(0xFF5D4E60))),
+                      const SizedBox(width: 12.0),
+                      _stepBtn(Icons.remove, () {
+                        if (draftInterval > 1) setSheet(() => draftInterval--);
+                      }),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                        child: Text('$draftInterval',
+                            style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold, color: Color(0xFF5D4E60))),
+                      ),
+                      _stepBtn(Icons.add, () {
+                        if (draftInterval < 12) setSheet(() => draftInterval++);
+                      }),
+                      const SizedBox(width: 10.0),
+                      Text(draftInterval == 1 ? 'week' : 'weeks',
+                          style: const TextStyle(fontSize: 14.0, color: Color(0xFF5D4E60))),
+                    ],
+                  ),
+                  const SizedBox(height: 22.0),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextButton(
+                          onPressed: () {
+                            setState(() {
+                              _recurDays = [];
+                              _recurIntervalWeeks = 1;
+                            });
+                            Navigator.pop(sheetCtx);
+                          },
+                          child: const Text('One-time', style: TextStyle(color: Color(0xFF9B8A9E))),
+                        ),
+                      ),
+                      Expanded(
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: primary,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _recurDays = draftDays.toList()..sort();
+                              _recurIntervalWeeks = draftInterval;
+                            });
+                            Navigator.pop(sheetCtx);
+                          },
+                          child: const Text('Done', style: TextStyle(color: Colors.white)),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _stepBtn(IconData icon, VoidCallback onTap) => GestureDetector(
+        onTap: onTap,
+        child: Container(
+          width: 32.0, height: 32.0,
+          decoration: BoxDecoration(
+            color: const Color(0xFFF0F0F0),
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+          child: Icon(icon, size: 18.0, color: const Color(0xFF5D4E60)),
+        ),
+      );
 
   Future<void> _submitTodo() async {
     final title = _textController.text.trim();
@@ -707,6 +931,9 @@ class _TodosPageWidgetState extends State<TodosPageWidget> with TickerProviderSt
         assignedToMom: _assignToMom,
         assignedToDad: _assignToDad,
         selectedChildren: _selectedChildren.isNotEmpty ? _selectedChildren : null,
+        recurDays: _recurDays.isNotEmpty ? (_recurDays..sort()) : null,
+        recurIntervalWeeks: _recurDays.isNotEmpty ? _recurIntervalWeeks : null,
+        recurAnchor: _recurDays.isNotEmpty ? _todayYmd : null,
       ));
 
       // Reset for next todo
@@ -716,6 +943,8 @@ class _TodosPageWidgetState extends State<TodosPageWidget> with TickerProviderSt
         _assignToMom = false;
         _assignToDad = false;
         _selectedChildren = [];
+        _recurDays = [];
+        _recurIntervalWeeks = 1;
       });
 
       // Keep focus for rapid entry
@@ -734,7 +963,9 @@ class _TodosPageWidgetState extends State<TodosPageWidget> with TickerProviderSt
   }
 
   Widget _buildTodoItem(BuildContext context, TodoRecord todo) {
-    final isCompleted = todo.isCompleted;
+    final isCompleted = _effectiveCompleted(todo);
+    final recurLabel =
+        todo.hasRecurDays() ? recurrenceLabel(todo.recurDays, todo.recurIntervalWeeks) : '';
 
     return Dismissible(
       key: Key(todo.reference.id),
@@ -787,17 +1018,45 @@ class _TodosPageWidgetState extends State<TodosPageWidget> with TickerProviderSt
                   ),
                 ),
                 const SizedBox(width: 12.0),
-                // Title
+                // Title (+ repeat badge)
                 Expanded(
-                  child: Text(
-                    todo.title,
-                    style: FlutterFlowTheme.of(context).bodyMedium.override(
-                      fontFamily: FFAppState().currentFontFamily,
-                      color: isCompleted ? const Color(0xFF9B8A9E) : const Color(0xFF5D4E60),
-                      fontSize: 15.0,
-                      fontWeight: FontWeight.w500,
-                      decoration: isCompleted ? TextDecoration.lineThrough : null,
-                    ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        todo.title,
+                        style: FlutterFlowTheme.of(context).bodyMedium.override(
+                          fontFamily: FFAppState().currentFontFamily,
+                          color: isCompleted ? const Color(0xFF9B8A9E) : const Color(0xFF5D4E60),
+                          fontSize: 15.0,
+                          fontWeight: FontWeight.w500,
+                          decoration: isCompleted ? TextDecoration.lineThrough : null,
+                        ),
+                      ),
+                      if (recurLabel.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 2.0),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.repeat_rounded,
+                                  size: 12.0,
+                                  color: FlutterFlowTheme.of(context).primary),
+                              const SizedBox(width: 4.0),
+                              Text(
+                                recurLabel,
+                                style: FlutterFlowTheme.of(context).bodySmall.override(
+                                  fontFamily: FFAppState().currentFontFamily,
+                                  color: FlutterFlowTheme.of(context).primary,
+                                  fontSize: 11.0,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                    ],
                   ),
                 ),
                 // Assignee icons (on the right)
