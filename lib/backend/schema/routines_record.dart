@@ -54,6 +54,36 @@ class RoutinesRecord extends FirestoreRecord {
   bool get sharedWithFollowers => _sharedWithFollowers ?? false;
   bool hasSharedWithFollowers() => _sharedWithFollowers != null;
 
+  // "recur_days" field — weekdays this routine repeats on (1=Mon..7=Sun).
+  // Non-empty => scheduled recurrence; empty => shows every day (legacy).
+  List<int>? _recurDays;
+  List<int> get recurDays => _recurDays ?? const [];
+  bool hasRecurDays() => _recurDays != null && _recurDays!.isNotEmpty;
+
+  // "recur_interval_weeks" field — repeat every N weeks (default 1).
+  int? _recurIntervalWeeks;
+  int get recurIntervalWeeks => _recurIntervalWeeks ?? 1;
+  bool hasRecurIntervalWeeks() => _recurIntervalWeeks != null;
+
+  // "recur_anchor" field — YYYY-MM-DD anchor for the every-N-weeks math.
+  String? _recurAnchor;
+  String get recurAnchor => _recurAnchor ?? '';
+  bool hasRecurAnchor() => _recurAnchor != null;
+
+  // Person assignment (mirrors todos).
+  bool? _assignedToMom;
+  bool get assignedToMom => _assignedToMom ?? false;
+  bool hasAssignedToMom() => _assignedToMom != null;
+
+  bool? _assignedToDad;
+  bool get assignedToDad => _assignedToDad ?? false;
+  bool hasAssignedToDad() => _assignedToDad != null;
+
+  List<DocumentReference>? _selectedChildren;
+  List<DocumentReference> get selectedChildren => _selectedChildren ?? const [];
+  bool hasSelectedChildren() =>
+      _selectedChildren != null && _selectedChildren!.isNotEmpty;
+
   void _initializeFields() {
     _name = snapshotData['name'] as String?;
     _emoji = snapshotData['emoji'] as String?;
@@ -65,6 +95,15 @@ class RoutinesRecord extends FirestoreRecord {
         .toList();
     _lastCompletedDate = snapshotData['last_completed_date'] as String?;
     _sharedWithFollowers = snapshotData['shared_with_followers'] as bool?;
+    _recurDays = (snapshotData['recur_days'] as List?)
+        ?.map((e) => castToType<int>(e))
+        .whereType<int>()
+        .toList();
+    _recurIntervalWeeks = castToType<int>(snapshotData['recur_interval_weeks']);
+    _recurAnchor = snapshotData['recur_anchor'] as String?;
+    _assignedToMom = snapshotData['assigned_to_mom'] as bool?;
+    _assignedToDad = snapshotData['assigned_to_dad'] as bool?;
+    _selectedChildren = getDataList(snapshotData['selected_children']);
   }
 
   static CollectionReference get collection =>
@@ -110,6 +149,12 @@ Map<String, dynamic> createRoutinesRecordData({
   List<bool>? stepCompletions,
   String? lastCompletedDate,
   bool? sharedWithFollowers,
+  List<int>? recurDays,
+  int? recurIntervalWeeks,
+  String? recurAnchor,
+  bool? assignedToMom,
+  bool? assignedToDad,
+  List<DocumentReference>? selectedChildren,
 }) {
   final firestoreData = mapToFirestore(
     <String, dynamic>{
@@ -121,6 +166,12 @@ Map<String, dynamic> createRoutinesRecordData({
       'step_completions': stepCompletions,
       'last_completed_date': lastCompletedDate,
       'shared_with_followers': sharedWithFollowers,
+      'recur_days': recurDays,
+      'recur_interval_weeks': recurIntervalWeeks,
+      'recur_anchor': recurAnchor,
+      'assigned_to_mom': assignedToMom,
+      'assigned_to_dad': assignedToDad,
+      'selected_children': selectedChildren,
     }.withoutNulls,
   );
 

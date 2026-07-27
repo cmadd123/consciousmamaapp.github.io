@@ -59,6 +59,29 @@ class TodoRecord extends FirestoreRecord {
   int get sortOrder => _sortOrder ?? 0;
   bool hasSortOrder() => _sortOrder != null;
 
+  // "recur_days" field — weekdays this todo repeats on (1=Mon..7=Sun).
+  // Non-empty => the todo is recurring. Empty/null => one-time.
+  List<int>? _recurDays;
+  List<int> get recurDays => _recurDays ?? const [];
+  bool hasRecurDays() => _recurDays != null && _recurDays!.isNotEmpty;
+
+  // "recur_interval_weeks" field — repeat every N weeks (default 1).
+  int? _recurIntervalWeeks;
+  int get recurIntervalWeeks => _recurIntervalWeeks ?? 1;
+  bool hasRecurIntervalWeeks() => _recurIntervalWeeks != null;
+
+  // "recur_anchor" field — YYYY-MM-DD; the week the recurrence starts from,
+  // used as the base for the every-N-weeks math.
+  String? _recurAnchor;
+  String get recurAnchor => _recurAnchor ?? '';
+  bool hasRecurAnchor() => _recurAnchor != null;
+
+  // "last_completed_date" field — YYYY-MM-DD the todo was last checked off.
+  // Drives the daily auto-reset for recurring todos.
+  String? _lastCompletedDate;
+  String get lastCompletedDate => _lastCompletedDate ?? '';
+  bool hasLastCompletedDate() => _lastCompletedDate != null;
+
   void _initializeFields() {
     _title = snapshotData['title'] as String?;
     _isCompleted = snapshotData['is_completed'] as bool?;
@@ -68,6 +91,13 @@ class TodoRecord extends FirestoreRecord {
     _assignedToDad = snapshotData['assigned_to_dad'] as bool?;
     _createdTime = snapshotData['created_time'] as DateTime?;
     _sortOrder = castToType<int>(snapshotData['sort_order']);
+    _recurDays = (snapshotData['recur_days'] as List?)
+        ?.map((e) => castToType<int>(e))
+        .whereType<int>()
+        .toList();
+    _recurIntervalWeeks = castToType<int>(snapshotData['recur_interval_weeks']);
+    _recurAnchor = snapshotData['recur_anchor'] as String?;
+    _lastCompletedDate = snapshotData['last_completed_date'] as String?;
   }
 
   static CollectionReference get collection =>
@@ -113,6 +143,10 @@ Map<String, dynamic> createTodoRecordData({
   bool? assignedToDad,
   DateTime? createdTime,
   int? sortOrder,
+  List<int>? recurDays,
+  int? recurIntervalWeeks,
+  String? recurAnchor,
+  String? lastCompletedDate,
 }) {
   final firestoreData = mapToFirestore(
     <String, dynamic>{
@@ -124,6 +158,10 @@ Map<String, dynamic> createTodoRecordData({
       'assigned_to_dad': assignedToDad,
       'created_time': createdTime,
       'sort_order': sortOrder,
+      'recur_days': recurDays,
+      'recur_interval_weeks': recurIntervalWeeks,
+      'recur_anchor': recurAnchor,
+      'last_completed_date': lastCompletedDate,
     }.withoutNulls,
   );
 
