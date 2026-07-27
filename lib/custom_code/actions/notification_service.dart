@@ -96,6 +96,10 @@ class NotificationService {
     // Create notification channels for Android
     await _createNotificationChannels();
 
+    // Daily encouragement is retired — clear any reminder scheduled by an
+    // older build so it stops firing after this update.
+    try { await cancelEncouragementNotifications(); } catch (_) {}
+
     _isInitialized = true;
   }
 
@@ -564,11 +568,15 @@ class NotificationService {
 
   // ============ ENCOURAGEMENT ============
 
-  /// Schedule daily encouragement notification
+  /// Daily encouragement is retired — the feature is hidden app-wide, so this
+  /// never schedules and always clears any previously-scheduled reminder.
   Future<void> scheduleDailyEncouragement({
     required int hour,
     required int minute,
   }) async {
+    await cancelEncouragementNotifications();
+    return;
+    // ignore: dead_code
     if (!await _isSettingEnabled(keyEncouragementEnabled)) return;
     if (await _isTimeInQuietHours(hour, minute)) {
       await cancelEncouragementNotifications();

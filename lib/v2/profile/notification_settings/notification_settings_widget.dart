@@ -94,14 +94,8 @@ class _NotificationSettingsWidgetState
       await actions.notificationService.cancelMealReminders();
     }
 
-    if (_encouragement) {
-      await actions.notificationService.scheduleDailyEncouragement(
-        hour: 8,
-        minute: 0,
-      );
-    } else {
-      await actions.notificationService.cancelEncouragementNotifications();
-    }
+    // Daily encouragement retired — always keep it cancelled.
+    await actions.notificationService.cancelEncouragementNotifications();
   }
 
   Future<void> _requestPermissions() async {
@@ -246,7 +240,7 @@ class _NotificationSettingsWidgetState
                             ),
                             const SizedBox(height: 4.0),
                             Text(
-                              'Allow notifications to receive meal reminders, learning prompts, and encouragement.',
+                              'Allow notifications to receive meal reminders, learning prompts, and calendar alerts.',
                               textAlign: TextAlign.center,
                               style: FlutterFlowTheme.of(context).bodySmall.override(
                                     fontFamily: FFAppState().currentFontFamily,
@@ -339,17 +333,7 @@ class _NotificationSettingsWidgetState
                               },
                             ),
 
-                            // Encouragement
-                            _buildSettingTile(
-                              icon: Icons.favorite_outline,
-                              title: 'Daily Encouragement',
-                              subtitle: 'Inspirational messages to brighten your day',
-                              value: _encouragement,
-                              onChanged: (value) async {
-                                setState(() => _encouragement = value);
-                                await _saveSettings();
-                              },
-                            ),
+                            // Daily Encouragement retired — toggle removed.
 
                             const SizedBox(height: 16.0),
 

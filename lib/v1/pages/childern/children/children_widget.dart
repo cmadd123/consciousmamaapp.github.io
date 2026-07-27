@@ -59,6 +59,15 @@ class _ChildrenWidgetState extends State<ChildrenWidget> {
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: const Color(0xFFEDFFFD),
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          automaticallyImplyLeading: false,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back, color: theme.primaryText),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+        ),
         floatingActionButton: Builder(
           builder: (context) => Padding(
             padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 75.0),

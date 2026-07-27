@@ -44,6 +44,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   CreatorsRecord? _creatorProfile;
+  bool _isSubscribed = false;
 
   @override
   void initState() {
@@ -51,6 +52,7 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
     _model = createModel(context, () => ProfileModel());
     initPageAnimations(itemCount: 5);
     _loadCreatorProfile();
+    _loadSubscriptionStatus();
   }
 
   Future<void> _loadCreatorProfile() async {
@@ -58,6 +60,13 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
     if (mounted && profile != null) {
       setState(() => _creatorProfile = profile);
     }
+  }
+
+  Future<void> _loadSubscriptionStatus() async {
+    try {
+      final subbed = await actions.hasActiveSubscription();
+      if (mounted) setState(() => _isSubscribed = subbed);
+    } catch (_) {}
   }
 
   @override
@@ -1079,7 +1088,11 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                         focusColor: Colors.transparent,
                         hoverColor: Colors.transparent,
                         highlightColor: Colors.transparent,
+                        // Subscribed users shouldn't see the paywall here —
+                        // the row just reflects their active status. Non-subs
+                        // still open the paywall to subscribe.
                         onTap: () async {
+                          if (_isSubscribed) return;
                           context.pushNamed(PaimentCopyWidget.routeName);
                         },
                         child: Row(
@@ -1115,11 +1128,36 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                             Padding(
                               padding: const EdgeInsetsDirectional.fromSTEB(
                                   16.0, 0.0, 16.0, 0.0),
-                              child: Icon(
-                                Icons.arrow_forward_ios,
-                                color: FlutterFlowTheme.of(context).primaryText,
-                                size: 18.0,
-                              ),
+                              child: _isSubscribed
+                                  ? Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 10.0, vertical: 4.0),
+                                      decoration: BoxDecoration(
+                                        color: FlutterFlowTheme.of(context)
+                                            .primary
+                                            .withOpacity(0.12),
+                                        borderRadius: BorderRadius.circular(20.0),
+                                      ),
+                                      child: Text(
+                                        'Active',
+                                        style: FlutterFlowTheme.of(context)
+                                            .bodySmall
+                                            .override(
+                                              fontFamily:
+                                                  FFAppState().currentFontFamily,
+                                              color: FlutterFlowTheme.of(context)
+                                                  .primary,
+                                              fontWeight: FontWeight.w700,
+                                              letterSpacing: 0.0,
+                                            ),
+                                      ),
+                                    )
+                                  : Icon(
+                                      Icons.arrow_forward_ios,
+                                      color:
+                                          FlutterFlowTheme.of(context).primaryText,
+                                      size: 18.0,
+                                    ),
                             ),
                           ],
                         ),
