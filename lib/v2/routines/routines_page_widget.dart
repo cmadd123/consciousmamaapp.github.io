@@ -524,8 +524,13 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
                                   _assigneeDot('M', const Color(0xFFEC407A)),
                                 if (routine.assignedToDad)
                                   _assigneeDot(_parentInfo.partnerInitial, _parentInfo.partnerColor),
-                                ...routine.selectedChildren.take(3).map((_) =>
-                                    _assigneeDot('•', FlutterFlowTheme.of(context).primary)),
+                                ...routine.selectedChildren.take(3).map((ref) {
+                                  final child = _childFor(ref);
+                                  return _assigneeDot(
+                                    child?.name ?? '•',
+                                    child?.selectedColor ?? const Color(0xFF95A5A6),
+                                  );
+                                }),
                               ],
                             ),
                           ),
@@ -969,7 +974,7 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
                     personChip(_parentInfo.partnerName, Color(_parentInfo.partnerColor.value), draftDad, () => setSheetState(() => draftDad = !draftDad)),
                     ..._children.map((c) => personChip(
                           c.name,
-                          FlutterFlowTheme.of(context).primary,
+                          c.selectedColor ?? const Color(0xFF95A5A6),
                           draftChildren.contains(c.reference),
                           () => setSheetState(() { if (!draftChildren.remove(c.reference)) draftChildren.add(c.reference); }),
                         )),
@@ -997,6 +1002,13 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
         },
       ),
     );
+  }
+
+  ChildernRecord? _childFor(DocumentReference ref) {
+    for (final c in _children) {
+      if (c.reference.path == ref.path) return c;
+    }
+    return null;
   }
 
   Widget _assigneeDot(String label, Color color) => Padding(

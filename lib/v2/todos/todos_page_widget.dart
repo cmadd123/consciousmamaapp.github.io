@@ -744,11 +744,15 @@ class _TodosPageWidgetState extends State<TodosPageWidget> with TickerProviderSt
     });
   }
 
-  void _showRepeatPicker() {
+  /// Repeat picker. With [editing] null it edits the add-form draft; with a
+  /// todo it edits that existing todo's recurrence in place.
+  void _showRepeatPicker({TodoRecord? editing}) {
     final primary = FlutterFlowTheme.of(context).primary;
     const dayLabels = ['M', 'T', 'W', 'T', 'F', 'S', 'S']; // days 1..7
-    final draftDays = <int>{..._recurDays};
-    int draftInterval = _recurIntervalWeeks < 1 ? 1 : _recurIntervalWeeks;
+    final draftDays = <int>{...(editing != null ? editing.recurDays : _recurDays)};
+    int draftInterval = editing != null
+        ? (editing.recurIntervalWeeks < 1 ? 1 : editing.recurIntervalWeeks)
+        : (_recurIntervalWeeks < 1 ? 1 : _recurIntervalWeeks);
 
     showModalBottomSheet(
       context: context,
@@ -857,12 +861,20 @@ class _TodosPageWidgetState extends State<TodosPageWidget> with TickerProviderSt
                     children: [
                       Expanded(
                         child: TextButton(
-                          onPressed: () {
-                            setState(() {
-                              _recurDays = [];
-                              _recurIntervalWeeks = 1;
-                            });
-                            Navigator.pop(sheetCtx);
+                          onPressed: () async {
+                            if (editing != null) {
+                              await editing.reference.update({
+                                'recur_days': <int>[],
+                                'recur_interval_weeks': 1,
+                                'recur_anchor': '',
+                              });
+                            } else {
+                              setState(() {
+                                _recurDays = [];
+                                _recurIntervalWeeks = 1;
+                              });
+                            }
+                            if (mounted) Navigator.pop(sheetCtx);
                           },
                           child: const Text('One-time', style: TextStyle(color: Color(0xFF9B8A9E))),
                         ),
@@ -873,12 +885,23 @@ class _TodosPageWidgetState extends State<TodosPageWidget> with TickerProviderSt
                             backgroundColor: primary,
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
                           ),
-                          onPressed: () {
-                            setState(() {
-                              _recurDays = draftDays.toList()..sort();
-                              _recurIntervalWeeks = draftInterval;
-                            });
-                            Navigator.pop(sheetCtx);
+                          onPressed: () async {
+                            final sorted = draftDays.toList()..sort();
+                            if (editing != null) {
+                              await editing.reference.update({
+                                'recur_days': sorted,
+                                'recur_interval_weeks': draftInterval,
+                                'recur_anchor': editing.recurAnchor.isNotEmpty
+                                    ? editing.recurAnchor
+                                    : _todayYmd,
+                              });
+                            } else {
+                              setState(() {
+                                _recurDays = sorted;
+                                _recurIntervalWeeks = draftInterval;
+                              });
+                            }
+                            if (mounted) Navigator.pop(sheetCtx);
                           },
                           child: const Text('Done', style: TextStyle(color: Colors.white)),
                         ),
@@ -1074,10 +1097,14 @@ class _TodosPageWidgetState extends State<TodosPageWidget> with TickerProviderSt
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
-      builder: (context) => _AssignmentBottomSheet(
+      builder: (sheetContext) => _AssignmentBottomSheet(
         todo: todo,
         onUpdate: () => setState(() {}),
         parentInfo: _parentInfo,
+        onEditRepeat: () {
+          Navigator.pop(sheetContext);
+          _showRepeatPicker(editing: todo);
+        },
       ),
     );
   }
@@ -1219,11 +1246,13 @@ class _AssignmentBottomSheet extends StatefulWidget {
   final TodoRecord todo;
   final VoidCallback onUpdate;
   final ParentDisplayInfo parentInfo;
+  final VoidCallback onEditRepeat;
 
   const _AssignmentBottomSheet({
     required this.todo,
     required this.onUpdate,
     required this.parentInfo,
+    required this.onEditRepeat,
   });
 
   @override
@@ -1306,6 +1335,46 @@ class _AssignmentBottomSheetState extends State<_AssignmentBottomSheet> {
                   fontFamily: FFAppState().currentFontFamily,
                   color: const Color(0xFF9B8A9E),
                   fontSize: 14.0,
+                ),
+              ),
+              const SizedBox(height: 16.0),
+              // Repeat row — edit the todo's recurring schedule
+              GestureDetector(
+                onTap: widget.onEditRepeat,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 12.0),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF5F5F5),
+                    borderRadius: BorderRadius.circular(14.0),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.repeat_rounded, size: 18.0, color: FlutterFlowTheme.of(context).primary),
+                      const SizedBox(width: 10.0),
+                      Expanded(
+                        child: Text(
+                          widget.todo.hasRecurDays()
+                              ? recurrenceLabel(widget.todo.recurDays, widget.todo.recurIntervalWeeks)
+                              : 'One-time',
+                          style: FlutterFlowTheme.of(context).bodyMedium.override(
+                            fontFamily: FFAppState().currentFontFamily,
+                            color: const Color(0xFF5D4E60),
+                            fontSize: 14.0,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                      Text(
+                        'Edit',
+                        style: FlutterFlowTheme.of(context).bodySmall.override(
+                          fontFamily: FFAppState().currentFontFamily,
+                          color: FlutterFlowTheme.of(context).primary,
+                          fontSize: 13.0,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               const SizedBox(height: 20.0),
