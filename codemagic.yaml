@@ -135,6 +135,10 @@ workflows:
       app_store_connect:
         auth: integration
         submit_to_testflight: true
+        # Auto-distribute each build to this TestFlight group so testers get
+        # it without a manual "add build to group" step in App Store Connect.
+        beta_groups:
+          - "MomRise Test Group 1"
 
   android-workflow:
     name: Android Production Build
