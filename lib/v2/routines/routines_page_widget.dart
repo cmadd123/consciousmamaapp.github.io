@@ -17,7 +17,11 @@ import '/flutter_flow/flutter_flow_widgets.dart';
 
 /// Routines page — view, create, edit, and run routines.
 class RoutinesPageWidget extends StatefulWidget {
-  const RoutinesPageWidget({super.key});
+  const RoutinesPageWidget({super.key, this.openRoutine});
+
+  /// When set (e.g. from the home card), the run sheet for this routine opens
+  /// automatically after the page loads.
+  final RoutinesRecord? openRoutine;
 
   static String routeName = 'RoutinesPage';
   static String routePath = '/routines';
@@ -46,6 +50,12 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
     super.initState();
     _loadCreatorProfile();
     _loadChildrenAndParent();
+    // Deep-linked from the home card: open this routine's run sheet.
+    if (widget.openRoutine != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _showRunRoutineSheet(context, widget.openRoutine!);
+      });
+    }
   }
 
   Future<void> _loadChildrenAndParent() async {
@@ -216,13 +226,28 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
                     );
                   }
 
+                  // Split into what's scheduled today vs. everything else.
+                  final now = DateTime.now();
+                  bool isToday(RoutinesRecord r) => !r.hasRecurDays() ||
+                      recursOnDate(r.recurDays, r.recurIntervalWeeks, r.recurAnchor, now);
+                  final todays = routines.where(isToday).toList();
+                  final others = routines.where((r) => !isToday(r)).toList();
+
                   return ListView(
                     padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
                     children: [
                       if (routines.isEmpty)
                         _buildEmptyState()
-                      else
-                        ...routines.map(_buildRoutineCard),
+                      else ...[
+                        if (todays.isNotEmpty) ...[
+                          _sectionHeader('Today'),
+                          ...todays.map(_buildRoutineCard),
+                        ],
+                        if (others.isNotEmpty) ...[
+                          _sectionHeader('Other routines'),
+                          ...others.map(_buildRoutineCard),
+                        ],
+                      ],
                       _buildCreatorRoutinesSection(),
                     ],
                   );
@@ -534,6 +559,20 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
                               ],
                             ),
                           ),
+                        if (routine.description.isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 3),
+                            child: Text(
+                              routine.description,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: FlutterFlowTheme.of(context).bodySmall.override(
+                                    fontFamily: FFAppState().currentFontFamily,
+                                    color: const Color(0xFF9B8A9E),
+                                    fontSize: 12,
+                                  ),
+                            ),
+                          ),
                       ],
                     ),
                   ),
@@ -683,6 +722,7 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
   /// Create or edit routine bottom sheet
   void _showCreateRoutineSheet(BuildContext context, {RoutinesRecord? editing}) {
     final nameController = TextEditingController(text: editing?.name ?? '');
+    final descController = TextEditingController(text: editing?.description ?? '');
     final stepControllers = (editing?.steps ?? []).map((s) => TextEditingController(text: s)).toList();
     String selectedEmoji = editing?.emoji ?? '📋';
     final emojis = ['📋', '☀️', '🌙', '🍳', '💪', '🧹', '📚', '🎯', '🏃', '🛁', '🎒', '✨'];
@@ -776,9 +816,11 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
             HapticFeedback.mediumImpact();
 
             final recurList = draftDays.toList()..sort();
+            final desc = descController.text.trim();
             if (editing != null) {
               await editing.reference.update({
                 'name': name,
+                'description': desc,
                 'emoji': selectedEmoji,
                 'steps': steps,
                 'recur_days': recurList,
@@ -793,6 +835,7 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
             } else {
               await RoutinesRecord.collection.add(createRoutinesRecordData(
                 name: name,
+                description: desc,
                 emoji: selectedEmoji,
                 steps: steps,
                 userRef: currentUserReference,
@@ -870,6 +913,25 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
                     ),
                     decoration: InputDecoration(
                       hintText: 'e.g., Morning Routine',
+                      filled: true,
+                      fillColor: Colors.grey.shade100,
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Description (optional)
+                  Text('Description', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.grey[600])),
+                  const SizedBox(height: 6),
+                  TextField(
+                    controller: descController,
+                    maxLines: 2,
+                    style: FlutterFlowTheme.of(context).bodyMedium.override(
+                      fontFamily: FFAppState().currentFontFamily, fontSize: 15, letterSpacing: 0,
+                    ),
+                    decoration: InputDecoration(
+                      hintText: 'Optional — a short note about this routine',
                       filled: true,
                       fillColor: Colors.grey.shade100,
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
@@ -1003,6 +1065,20 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
       ),
     );
   }
+
+  Widget _sectionHeader(String label) => Padding(
+        padding: const EdgeInsets.only(top: 8, bottom: 8, left: 2),
+        child: Text(
+          label,
+          style: FlutterFlowTheme.of(context).bodySmall.override(
+                fontFamily: FFAppState().currentFontFamily,
+                color: const Color(0xFF9B8A9E),
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.4,
+              ),
+        ),
+      );
 
   ChildernRecord? _childFor(DocumentReference ref) {
     for (final c in _children) {

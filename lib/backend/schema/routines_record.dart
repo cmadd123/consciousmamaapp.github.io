@@ -18,6 +18,11 @@ class RoutinesRecord extends FirestoreRecord {
   String get name => _name ?? '';
   bool hasName() => _name != null;
 
+  // "description" field — optional short note about the routine.
+  String? _description;
+  String get description => _description ?? '';
+  bool hasDescription() => _description != null;
+
   // "emoji" field.
   String? _emoji;
   String get emoji => _emoji ?? '📋';
@@ -86,6 +91,7 @@ class RoutinesRecord extends FirestoreRecord {
 
   void _initializeFields() {
     _name = snapshotData['name'] as String?;
+    _description = snapshotData['description'] as String?;
     _emoji = snapshotData['emoji'] as String?;
     _steps = getDataList(snapshotData['steps']);
     _userRef = snapshotData['user_ref'] as DocumentReference?;
@@ -142,6 +148,7 @@ class RoutinesRecord extends FirestoreRecord {
 
 Map<String, dynamic> createRoutinesRecordData({
   String? name,
+  String? description,
   String? emoji,
   List<String>? steps,
   DocumentReference? userRef,
@@ -159,6 +166,7 @@ Map<String, dynamic> createRoutinesRecordData({
   final firestoreData = mapToFirestore(
     <String, dynamic>{
       'name': name,
+      'description': description,
       'emoji': emoji,
       'steps': steps,
       'user_ref': userRef,

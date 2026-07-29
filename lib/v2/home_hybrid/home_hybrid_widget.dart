@@ -1523,34 +1523,49 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                   const SizedBox(height: 12.0),
                   ...todaysRoutines.take(3).map((routine) => Padding(
                     padding: const EdgeInsets.only(bottom: 8.0),
-                    child: Row(
-                      children: [
-                        Text(routine.emoji, style: const TextStyle(fontSize: 16)),
-                        const SizedBox(width: 8.0),
-                        Expanded(
-                          child: Text(
-                            routine.name,
-                            style: FlutterFlowTheme.of(context).bodyMedium.override(
-                              fontFamily: FFAppState().currentFontFamily,
-                              color: const Color(0xFF5D4E60),
-                              fontSize: 14.0,
-                              fontWeight: FontWeight.w500,
-                              letterSpacing: 0.0,
+                    child: InkWell(
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              RoutinesPageWidget(openRoutine: routine),
+                        ),
+                      ),
+                      borderRadius: BorderRadius.circular(8.0),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 2.0),
+                        child: Row(
+                          children: [
+                            Text(routine.emoji, style: const TextStyle(fontSize: 16)),
+                            const SizedBox(width: 8.0),
+                            Expanded(
+                              child: Text(
+                                routine.name,
+                                style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                  fontFamily: FFAppState().currentFontFamily,
+                                  color: const Color(0xFF5D4E60),
+                                  fontSize: 14.0,
+                                  fontWeight: FontWeight.w500,
+                                  letterSpacing: 0.0,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
+                            Text(
+                              '${routine.steps.length} steps',
+                              style: FlutterFlowTheme.of(context).bodySmall.override(
+                                fontFamily: FFAppState().currentFontFamily,
+                                color: const Color(0xFF9B8A9E),
+                                fontSize: 12.0,
+                                letterSpacing: 0.0,
+                              ),
+                            ),
+                            const SizedBox(width: 6.0),
+                            const Icon(Icons.chevron_right, size: 16.0, color: Color(0xFF9B8A9E)),
+                          ],
                         ),
-                        Text(
-                          '${routine.steps.length} steps',
-                          style: FlutterFlowTheme.of(context).bodySmall.override(
-                            fontFamily: FFAppState().currentFontFamily,
-                            color: const Color(0xFF9B8A9E),
-                            fontSize: 12.0,
-                            letterSpacing: 0.0,
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                   )),
                   if (todaysRoutines.length > 3)
