@@ -2270,7 +2270,7 @@
   <!-- New routine modal -->
   <div class="modal-backdrop" id="routineFormModal">
     <div class="modal">
-      <h3>New routine</h3>
+      <h3 id="routineFormTitle">New routine</h3>
       <form id="routineForm" class="form-grid">
         <div class="field">
           <label for="routineNameInput">Routine name</label>
@@ -2307,9 +2307,12 @@
           <label for="routineStepsInput">Steps — one per line</label>
           <textarea id="routineStepsInput" rows="7" placeholder="One step per line…"></textarea>
         </div>
-        <div class="modal-actions">
-          <button type="button" class="btn ghost" id="cancelRoutineFormBtn">Cancel</button>
-          <button type="submit" class="btn" id="saveRoutineBtn">Save routine</button>
+        <div class="modal-actions" style="justify-content: space-between;">
+          <button type="button" class="btn ghost" id="deleteRoutineBtn" hidden style="color:var(--danger); border-color:var(--danger);">Delete</button>
+          <div style="display:flex; gap:8px; margin-left:auto;">
+            <button type="button" class="btn ghost" id="cancelRoutineFormBtn">Cancel</button>
+            <button type="submit" class="btn" id="saveRoutineBtn">Save routine</button>
+          </div>
         </div>
       </form>
     </div>
@@ -4632,7 +4635,7 @@
         grid.querySelectorAll('.routine-card').forEach(card => {
           card.addEventListener('click', () => {
             const routine = routines.find(r => r.id === card.dataset.id);
-            if (routine) openRoutinePreview(routine);
+            if (routine) openRoutineForm(routine);
           });
         });
       } catch (e) {
@@ -4674,16 +4677,41 @@
       if (routineInterval < 12) { routineInterval++; renderRoutineInterval(); }
     });
 
-    $('newRoutineBtn').addEventListener('click', () => {
-      $('routineNameInput').value = '';
-      $('routineDescInput').value = '';
-      $('routineEmojiInput').value = '📋';
-      $('routineStepsInput').value = '';
-      $('routineDays').querySelectorAll('button').forEach((b) => b.classList.remove('on'));
-      routineInterval = 1;
+    let editingRoutineId = null;
+    let editingRoutineAnchor = '';
+    function openRoutineForm(routine) {
+      editingRoutineId = routine ? routine.id : null;
+      editingRoutineAnchor = routine?.recur_anchor || '';
+      $('routineFormTitle').textContent = routine ? 'Edit routine' : 'New routine';
+      $('saveRoutineBtn').textContent = routine ? 'Save changes' : 'Save routine';
+      $('routineNameInput').value = routine?.name || '';
+      $('routineDescInput').value = routine?.description || '';
+      $('routineEmojiInput').value = routine?.emoji || '📋';
+      $('routineStepsInput').value = Array.isArray(routine?.steps) ? routine.steps.join('\n') : '';
+      const days = Array.isArray(routine?.recur_days) ? routine.recur_days : [];
+      $('routineDays').querySelectorAll('button').forEach((b) => {
+        b.classList.toggle('on', days.includes(parseInt(b.dataset.day, 10)));
+      });
+      routineInterval = (routine?.recur_interval_weeks > 0) ? routine.recur_interval_weeks : 1;
       renderRoutineInterval();
+      $('deleteRoutineBtn').hidden = !routine;
       $('routineFormModal').classList.add('open');
       setTimeout(() => $('routineNameInput').focus(), 50);
+    }
+    $('newRoutineBtn').addEventListener('click', () => openRoutineForm(null));
+
+    $('deleteRoutineBtn').addEventListener('click', async () => {
+      if (!editingRoutineId) return;
+      if (!confirm('Delete this routine? Followers will no longer see it.')) return;
+      try {
+        await deleteDoc(doc(db, 'routines', editingRoutineId));
+        closeRoutineForm();
+        toast('Routine deleted');
+        loadCreatorRoutines();
+      } catch (err) {
+        console.error(err);
+        toast('Delete failed: ' + err.message, true);
+      }
     });
     $('cancelRoutineFormBtn').addEventListener('click', closeRoutineForm);
     $('routineFormModal').addEventListener('click', (e) => {
@@ -4704,7 +4732,7 @@
       saveBtn.textContent = 'Saving…';
       try {
         const todayYmd = new Date().toISOString().slice(0, 10);
-        await addDoc(collection(db, 'routines'), {
+        const fields = {
           name,
           description: $('routineDescInput').value.trim(),
           emoji: $('routineEmojiInput').value.trim() || '📋',
@@ -4712,16 +4740,26 @@
           // Recurrence — mirrors the in-app routine editor.
           recur_days: recurDays,
           recur_interval_weeks: recurDays.length ? routineInterval : 1,
-          recur_anchor: recurDays.length ? todayYmd : '',
-          // user_ref must match the creator's own user for the security
-          // rule; it's the same ref loadCreatorRoutines queries by.
-          user_ref: creatorDoc.data.user_ref,
-          shared_with_followers: true,
-          created_at: serverTimestamp(),
-        });
+          recur_anchor: recurDays.length
+            ? (editingRoutineAnchor || todayYmd)
+            : '',
+        };
+        if (editingRoutineId) {
+          await updateDoc(doc(db, 'routines', editingRoutineId), fields);
+          toast('Routine updated');
+        } else {
+          await addDoc(collection(db, 'routines'), {
+            ...fields,
+            // user_ref must match the creator's own user for the security
+            // rule; it's the same ref loadCreatorRoutines queries by.
+            user_ref: creatorDoc.data.user_ref,
+            shared_with_followers: true,
+            created_at: serverTimestamp(),
+          });
+          toast('Routine saved');
+          celebrate();
+        }
         closeRoutineForm();
-        toast('Routine saved');
-        celebrate();
         loadCreatorRoutines();
       } catch (err) {
         console.error(err);
