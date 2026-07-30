@@ -558,6 +558,15 @@
       padding: 1px 6px; border-radius: 6px; margin-left: 6px; vertical-align: middle;
     }
 
+    .subsection-title {
+      font-size: 15px; font-weight: 700; color: var(--text, #333);
+      margin: 4px 0 10px;
+    }
+    .section-divider {
+      border: none; border-top: 1px solid var(--border);
+      margin: 28px 0 20px;
+    }
+
     /* ── Theme editor ───────────────────────────────────────────── */
     .theme-layout { display: flex; gap: 28px; align-items: flex-start; flex-wrap: wrap; }
     .theme-preview-col { flex: 0 0 300px; position: sticky; top: 16px; }
@@ -1923,21 +1932,8 @@
           </div>
         </div>
 
-        <!-- Recipe collections — named groups of recipes followers add as a set -->
-        <div class="scan-section">
-          <div class="section-head" style="margin-bottom: 6px;">
-            <h3 style="margin:0;">Recipe collections</h3>
-            <button class="btn" id="newCollectionBtn">+ New collection</button>
-          </div>
-          <p class="muted" style="margin: 0 0 12px; font-size: 13px;">
-            Bundle recipes into a named group — like “5 Crockpot Dinners.” Followers add the whole set to their cookbook in one tap, where each becomes a regular recipe.
-          </p>
-          <div class="routine-grid" id="collectionGrid">
-            <div class="skeleton-card"><div class="skeleton skeleton-line medium"></div><div class="skeleton skeleton-line short"></div></div>
-            <div class="skeleton-card"><div class="skeleton skeleton-line medium"></div><div class="skeleton skeleton-line short"></div></div>
-          </div>
-        </div>
-
+        <!-- Recipe creation methods -->
+        <h3 class="subsection-title">Add a recipe</h3>
         <!-- Import method picker — one panel shows at a time -->
         <div class="import-methods" id="importMethods">
           <button class="import-method active" type="button" data-method="methodScan"><span data-icon="camera"></span> Scan</button>
@@ -1988,6 +1984,22 @@
           <p class="scan-intro">For a recipe that isn't online — a handwritten family recipe, or one you know by heart.</p>
           <button class="btn" id="newBlankRecipeBtn">+ New blank recipe</button>
           <div class="scan-cards" id="manualCards"></div>
+        </div>
+
+        <!-- ── Collections (built from recipes above) ── -->
+        <hr class="section-divider">
+        <div class="scan-section">
+          <div class="section-head" style="margin-bottom: 6px;">
+            <h3 style="margin:0;">Recipe collections</h3>
+            <button class="btn" id="newCollectionBtn">+ New collection</button>
+          </div>
+          <p class="muted" style="margin: 0 0 12px; font-size: 13px;">
+            Group recipes from your library into a named set — like “5 Crockpot Dinners.” Followers add the whole set to their cookbook in one tap, where each becomes a regular recipe.
+          </p>
+          <div class="routine-grid" id="collectionGrid">
+            <div class="skeleton-card"><div class="skeleton skeleton-line medium"></div><div class="skeleton skeleton-line short"></div></div>
+            <div class="skeleton-card"><div class="skeleton skeleton-line medium"></div><div class="skeleton skeleton-line short"></div></div>
+          </div>
         </div>
       </div>
 
