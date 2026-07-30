@@ -566,6 +566,20 @@
       border: none; border-top: 1px solid var(--border);
       margin: 28px 0 20px;
     }
+    .rt-days { display: flex; gap: 6px; flex-wrap: wrap; }
+    .rt-days button {
+      width: 36px; height: 36px; border-radius: 50%; cursor: pointer;
+      border: 1.5px solid var(--border); background: #fff; color: var(--text-muted);
+      font-weight: 700; font-size: 13px; transition: all 120ms;
+    }
+    .rt-days button.on {
+      background: var(--primary); border-color: var(--primary); color: #fff;
+    }
+    .rt-step {
+      width: 28px; height: 28px; border-radius: 8px; cursor: pointer;
+      border: 1px solid var(--border); background: #f0f0f0; color: var(--text);
+      font-size: 16px; line-height: 1;
+    }
 
     /* ── Theme editor ───────────────────────────────────────────── */
     .theme-layout { display: flex; gap: 28px; align-items: flex-start; flex-wrap: wrap; }
@@ -2263,8 +2277,31 @@
           <input type="text" id="routineNameInput" required maxlength="80" placeholder="e.g. Calm bedtime routine">
         </div>
         <div class="field">
+          <label for="routineDescInput">Description <span class="muted">(optional)</span></label>
+          <input type="text" id="routineDescInput" maxlength="160" placeholder="A short note about this routine">
+        </div>
+        <div class="field">
           <label for="routineEmojiInput">Emoji</label>
           <input type="text" id="routineEmojiInput" maxlength="4" placeholder="📋" value="📋">
+        </div>
+        <div class="field">
+          <label>Repeats on</label>
+          <div class="rt-days" id="routineDays">
+            <button type="button" data-day="1">M</button>
+            <button type="button" data-day="2">T</button>
+            <button type="button" data-day="3">W</button>
+            <button type="button" data-day="4">T</button>
+            <button type="button" data-day="5">F</button>
+            <button type="button" data-day="6">S</button>
+            <button type="button" data-day="7">S</button>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px; margin-top:8px;">
+            <span class="muted" style="font-size:13px;">Every</span>
+            <button type="button" class="rt-step" id="routineIntervalMinus">−</button>
+            <span id="routineIntervalVal" style="font-weight:700; min-width:16px; text-align:center;">1</span>
+            <button type="button" class="rt-step" id="routineIntervalPlus">+</button>
+            <span class="muted" id="routineIntervalUnit" style="font-size:13px;">week</span>
+          </div>
         </div>
         <div class="field">
           <label for="routineStepsInput">Steps — one per line</label>
@@ -4564,18 +4601,31 @@
           return;
         }
 
+        const recurLabelJs = (days, interval) => {
+          if (!Array.isArray(days) || days.length === 0) return '';
+          const s = [...days].sort((a, b) => a - b);
+          const names = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+          const eq = (a) => a.length === s.length && a.every((v, i) => v === s[i]);
+          let base;
+          if (eq([1, 2, 3, 4, 5])) base = 'Weekdays';
+          else if (eq([6, 7])) base = 'Weekends';
+          else if (s.length === 7) base = 'Every day';
+          else base = s.map((d) => names[d - 1]).join(', ');
+          return ((interval > 1) ? `Every ${interval} wks · ` : '') + base;
+        };
         grid.innerHTML = routines.map(r => {
           const stepCount = Array.isArray(r.steps) ? r.steps.length : 0;
-          const lastDone = r.last_completed_date
-            ? `Last done ${escapeHtml(r.last_completed_date)}`
-            : 'Not completed yet';
+          const recur = recurLabelJs(r.recur_days, r.recur_interval_weeks || 1);
+          const metaBits = [`${stepCount} step${stepCount === 1 ? '' : 's'}`];
+          if (recur) metaBits.push(`🔁 ${escapeHtml(recur)}`);
           return `
             <div class="routine-card" data-id="${r.id}">
               <div class="r-head">
                 <span class="r-emoji">${escapeHtml(r.emoji || '📋')}</span>
                 <span class="r-title">${escapeHtml(r.name || 'Untitled routine')}</span>
               </div>
-              <div class="r-meta">${stepCount} step${stepCount === 1 ? '' : 's'} · ${lastDone}</div>
+              ${r.description ? `<div class="r-desc" style="font-size:12px; color:var(--text-muted); margin-top:2px;">${escapeHtml(r.description)}</div>` : ''}
+              <div class="r-meta">${metaBits.join(' · ')}</div>
             </div>`;
         }).join('');
 
@@ -4607,10 +4657,31 @@
 
     // --- Create a routine (writes to the shared `routines` collection) ---
     function closeRoutineForm() { $('routineFormModal').classList.remove('open'); }
+    let routineInterval = 1;
+    function renderRoutineInterval() {
+      $('routineIntervalVal').textContent = routineInterval;
+      $('routineIntervalUnit').textContent = routineInterval === 1 ? 'week' : 'weeks';
+    }
+    // Day-chip toggles + interval stepper (wired once).
+    $('routineDays').addEventListener('click', (e) => {
+      const b = e.target.closest('button[data-day]');
+      if (b) b.classList.toggle('on');
+    });
+    $('routineIntervalMinus').addEventListener('click', () => {
+      if (routineInterval > 1) { routineInterval--; renderRoutineInterval(); }
+    });
+    $('routineIntervalPlus').addEventListener('click', () => {
+      if (routineInterval < 12) { routineInterval++; renderRoutineInterval(); }
+    });
+
     $('newRoutineBtn').addEventListener('click', () => {
       $('routineNameInput').value = '';
+      $('routineDescInput').value = '';
       $('routineEmojiInput').value = '📋';
       $('routineStepsInput').value = '';
+      $('routineDays').querySelectorAll('button').forEach((b) => b.classList.remove('on'));
+      routineInterval = 1;
+      renderRoutineInterval();
       $('routineFormModal').classList.add('open');
       setTimeout(() => $('routineNameInput').focus(), 50);
     });
@@ -4625,15 +4696,23 @@
         .split('\n').map(s => s.trim()).filter(Boolean);
       if (!name) { toast('Give the routine a name', true); return; }
       if (steps.length === 0) { toast('Add at least one step', true); return; }
+      const recurDays = [...$('routineDays').querySelectorAll('button.on')]
+        .map((b) => parseInt(b.dataset.day, 10)).sort((a, b) => a - b);
       const saveBtn = $('saveRoutineBtn');
       saveBtn.disabled = true;
       const orig = saveBtn.textContent;
       saveBtn.textContent = 'Saving…';
       try {
+        const todayYmd = new Date().toISOString().slice(0, 10);
         await addDoc(collection(db, 'routines'), {
           name,
+          description: $('routineDescInput').value.trim(),
           emoji: $('routineEmojiInput').value.trim() || '📋',
           steps,
+          // Recurrence — mirrors the in-app routine editor.
+          recur_days: recurDays,
+          recur_interval_weeks: recurDays.length ? routineInterval : 1,
+          recur_anchor: recurDays.length ? todayYmd : '',
           // user_ref must match the creator's own user for the security
           // rule; it's the same ref loadCreatorRoutines queries by.
           user_ref: creatorDoc.data.user_ref,
@@ -5372,24 +5451,29 @@
     const RM_ALLERGENS = ['Milk', 'Eggs', 'Peanuts', 'Tree nuts', 'Soy', 'Wheat / Gluten', 'Fish', 'Shellfish', 'Sesame'];
 
     function recipeMetaFieldsHtml(r = {}) {
-      const rt = r.recipe_type || '';
-      const mt = r.meal_typ || '';
+      // Multi-select: prefer the array fields, fall back to the legacy single.
+      const rtSel = Array.isArray(r.recipe_types)
+        ? r.recipe_types
+        : (r.recipe_type ? [r.recipe_type] : []);
+      const mtSel = Array.isArray(r.meal_types)
+        ? r.meal_types
+        : (r.meal_typ ? [r.meal_typ] : []);
       const allergens = Array.isArray(r.allergens) ? r.allergens : [];
       const tags = Array.isArray(r.tags) ? r.tags.join(', ') : '';
       const pillGroup = (group, list, sel) =>
         `<div class="rm-pills" data-group="${group}">` +
-        list.map((t) => `<button type="button" class="rm-pill${t === sel ? ' selected' : ''}" data-value="${t}">${t}</button>`).join('') +
+        list.map((t) => `<button type="button" class="rm-pill${sel.includes(t) ? ' selected' : ''}" data-value="${t}">${t}</button>`).join('') +
         `</div>`;
       return `
         <div class="rm-block">
           <div class="rm-row">
             <div class="rm-field">
-              <span class="rm-label">Recipe type</span>
-              ${pillGroup('recipe-type', RM_RECIPE_TYPES, rt)}
+              <span class="rm-label">Recipe type <span class="rm-hint">— pick any that apply</span></span>
+              ${pillGroup('recipe-type', RM_RECIPE_TYPES, rtSel)}
             </div>
             <div class="rm-field">
-              <span class="rm-label">Meal type</span>
-              ${pillGroup('meal-type', RM_MEAL_TYPES, mt)}
+              <span class="rm-label">Meal type <span class="rm-hint">— pick any that apply</span></span>
+              ${pillGroup('meal-type', RM_MEAL_TYPES, mtSel)}
             </div>
           </div>
           <div class="rm-field">
@@ -5405,25 +5489,30 @@
         </div>`;
     }
 
-    // Single-select pill groups — click to select, click the active one to clear.
+    // Multi-select pill groups — click to toggle each pill independently.
     function wireRecipeMetaFields(container) {
       container.querySelectorAll('.rm-pills').forEach((group) => {
         group.addEventListener('click', (e) => {
           const pill = e.target.closest('.rm-pill');
           if (!pill) return;
-          const wasSelected = pill.classList.contains('selected');
-          group.querySelectorAll('.rm-pill').forEach((p) => p.classList.remove('selected'));
-          if (!wasSelected) pill.classList.add('selected');
+          pill.classList.toggle('selected');
         });
       });
     }
 
     function readRecipeMetaFields(container) {
-      const pill = (group) =>
-        container.querySelector(`.rm-pills[data-group="${group}"] .rm-pill.selected`)?.dataset.value || '';
+      const pills = (group) => [
+        ...container.querySelectorAll(`.rm-pills[data-group="${group}"] .rm-pill.selected`),
+      ].map((p) => p.dataset.value);
+      const recipeTypes = pills('recipe-type');
+      const mealTyps = pills('meal-type');
       return {
-        recipeType: pill('recipe-type'),
-        mealTyp: pill('meal-type'),
+        // Arrays hold every selection; the singular fields keep the first
+        // pick so the app + plan builder (which read one enum) still work.
+        recipeTypes,
+        mealTyps,
+        recipeType: recipeTypes[0] || '',
+        mealTyp: mealTyps[0] || '',
         allergens: [...container.querySelectorAll('.meta-allergen:checked')].map((c) => c.value),
         tags: (container.querySelector('.meta-tags')?.value || '').split(',').map((s) => s.trim()).filter(Boolean),
       };
@@ -5433,8 +5522,12 @@
       const tags = Array.isArray(r.tags) ? r.tags : [];
       const allergens = Array.isArray(r.allergens) ? r.allergens : [];
       const pills = [];
-      if (r.recipe_type) pills.push(`<span class="rm-tag">${escapeHtml(r.recipe_type)}</span>`);
-      if (r.meal_typ) pills.push(`<span class="rm-tag">${escapeHtml(r.meal_typ)}</span>`);
+      const rts = (Array.isArray(r.recipe_types) && r.recipe_types.length)
+        ? r.recipe_types : (r.recipe_type ? [r.recipe_type] : []);
+      const mts = (Array.isArray(r.meal_types) && r.meal_types.length)
+        ? r.meal_types : (r.meal_typ ? [r.meal_typ] : []);
+      rts.forEach((t) => pills.push(`<span class="rm-tag">${escapeHtml(t)}</span>`));
+      mts.forEach((t) => pills.push(`<span class="rm-tag">${escapeHtml(t)}</span>`));
       tags.forEach((t) => pills.push(`<span class="rm-tag rm-tag-soft">${escapeHtml(t)}</span>`));
       if (!pills.length && !allergens.length) return '';
       return `
@@ -5634,9 +5727,12 @@
         source: `creator_web_${origin}`,
         ...(sourceUrl ? { source_url: sourceUrl } : {}),
         ...(attribution ? { attribution } : {}),
-        // Classification — recipe_type / meal_typ match the app's enums.
+        // Classification — recipe_type / meal_typ (single, app + plan-builder
+        // read these) plus recipe_types / meal_types arrays for multi-select.
         ...(meta.recipeType ? { recipe_type: meta.recipeType } : {}),
         ...(meta.mealTyp ? { meal_typ: meta.mealTyp } : {}),
+        ...(meta.recipeTypes && meta.recipeTypes.length ? { recipe_types: meta.recipeTypes } : {}),
+        ...(meta.mealTyps && meta.mealTyps.length ? { meal_types: meta.mealTyps } : {}),
         ...(meta.allergens.length ? { allergens: meta.allergens } : {}),
         ...(meta.tags.length ? { tags: meta.tags } : {}),
         // Rights attestation — required checkbox at save time. We stamp
@@ -5976,6 +6072,8 @@
           // Classification — written explicitly so clearing a field sticks.
           recipe_type: meta.recipeType,
           meal_typ: meta.mealTyp,
+          recipe_types: meta.recipeTypes,
+          meal_types: meta.mealTyps,
           allergens: meta.allergens,
           tags: meta.tags,
           updated_at: serverTimestamp(),
