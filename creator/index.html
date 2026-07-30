@@ -634,10 +634,16 @@
       background: linear-gradient(to bottom, var(--tp-grad-start, #D7F2EB), var(--tp-grad-end, #FFE9E1));
       transition: background 160ms;
     }
-    .tp-greeting { font-size: 18px; font-weight: 700; color: #5D4E60; margin: 4px 2px 14px; }
+    .tp-greeting {
+      font-size: 18px; font-weight: 700; color: #5D4E60; margin: 4px 2px 14px;
+      font-family: var(--tp-heading-font, var(--tp-font, 'Andika New Basic', system-ui, sans-serif));
+    }
     .tp-card { background: #fff; border-radius: 18px; padding: 14px; margin-bottom: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
     .tp-card-head { display: flex; align-items: center; gap: 6px; margin-bottom: 10px; }
-    .tp-card-title { font-weight: 700; font-size: 14px; color: #5D4E60; }
+    .tp-card-title {
+      font-weight: 700; font-size: 14px; color: #5D4E60;
+      font-family: var(--tp-heading-font, var(--tp-font, 'Andika New Basic', system-ui, sans-serif));
+    }
     .tp-ico { color: var(--tp-icon, #52A097); display: inline-flex; align-items: center; }
     .tp-ico svg { width: 17px; height: 17px; }
     .tp-nav-ico { color: var(--tp-icon, #52A097); display: inline-flex; }
@@ -647,10 +653,12 @@
     .tp-pill-accent { color: var(--tp-accent, #EE8B60); background: color-mix(in srgb, var(--tp-accent, #EE8B60) 16%, white); }
     .tp-meal { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #5D4E60; margin-bottom: 6px; }
     .tp-bar { width: 4px; height: 18px; border-radius: 2px; background: var(--tp-primary, #52A097); flex: 0 0 auto; }
+    /* Matches the app's primary FFButton: radius 12, ~44-48h, white 600 body font. */
     .tp-btn {
-      margin-top: 8px; width: 100%; border: none; border-radius: 10px; padding: 9px;
-      background: var(--tp-primary, #52A097); color: #fff; font-weight: 700; font-size: 12px;
-      cursor: default; font-family: inherit;
+      margin-top: 12px; width: 100%; border: none; border-radius: 12px; padding: 13px;
+      background: var(--tp-primary, #52A097); color: #fff; font-weight: 600; font-size: 14px;
+      cursor: default;
+      font-family: var(--tp-font, 'Andika New Basic', system-ui, sans-serif);
     }
     .tp-event { background: var(--tp-accent, #EE8B60); color: #fff; font-size: 11px; font-weight: 600; padding: 7px 10px; border-radius: 8px; }
     .tp-nav { display: flex; justify-content: space-around; background: #fff; border-radius: 16px; padding: 10px 6px; margin-top: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
@@ -1428,20 +1436,6 @@
       <button class="nav-tab" data-tab="home" data-view="viewDashboard">
         <span class="nav-tab-icon" data-icon="home"></span><span class="nav-tab-label">Home</span>
       </button>
-      <!-- Playbook tab removed
-      <a class="nav-tab" href="/creator/playbook/">
-        <span class="nav-tab-icon" data-icon="clipboard"></span><span class="nav-tab-label">Playbook</span>
-      </a>
-      -->
-      <a class="nav-tab" href="/creator/brand-kit/">
-        <span class="nav-tab-icon" data-icon="grid"></span><span class="nav-tab-label">Brand kit</span>
-      </a>
-      <a class="nav-tab" href="/creator/library/" style="display:none">
-        <span class="nav-tab-icon" data-icon="folder"></span><span class="nav-tab-label">Library</span>
-      </a>
-      <a class="nav-tab" href="/creator/faq/">
-        <span class="nav-tab-icon" data-icon="help"></span><span class="nav-tab-label">Cheat sheet</span>
-      </a>
       <button class="nav-tab" data-tab="recipes" data-view="viewAddRecipes">
         <span class="nav-tab-icon" data-icon="camera"></span><span class="nav-tab-label">Recipes</span>
       </button>
@@ -2198,7 +2192,10 @@
             <div class="theme-color-row"><input type="color" id="cGradStart"><div><div class="tc-name">Background top</div><div class="tc-sub">Gradient start (or solid color)</div></div><code id="cGradStartHex"></code></div>
             <div class="theme-color-row" id="gradEndRow"><input type="color" id="cGradEnd"><div><div class="tc-name">Background bottom</div><div class="tc-sub">Gradient end</div></div><code id="cGradEndHex"></code></div>
 
-            <label class="theme-label" style="margin-top:18px;">Font</label>
+            <label class="theme-label" style="margin-top:18px;">Heading font <span class="muted" style="font-weight:400;">— titles &amp; greetings</span></label>
+            <select id="themeHeadingFontSelect"></select>
+
+            <label class="theme-label" style="margin-top:14px;">Body font <span class="muted" style="font-weight:400;">— everything else</span></label>
             <select id="themeFontSelect"></select>
             <div style="display:flex; gap:8px; align-items:center; margin-top:8px;">
               <input type="file" id="themeFontInput" accept=".ttf,.otf" style="display:none;">
@@ -5054,6 +5051,8 @@
         icon: normHex(d.theme_icon_color, '#52A097'),
         font: (d.theme_font && d.theme_font.trim()) ? d.theme_font : 'Andika New Basic',
         fontUrl: d.theme_font_url || null,
+        // '' => headings use the body font.
+        headingFont: (d.theme_heading_font && d.theme_heading_font.trim()) ? d.theme_heading_font : '',
       };
       themeState.useGradient = themeState.gradStart !== themeState.gradEnd;
 
@@ -5067,8 +5066,10 @@
       }));
 
       buildFontSelect();
+      buildHeadingFontSelect();
       syncThemeInputs();
       await ensureThemeFontLoaded(themeState.font, themeState.fontUrl);
+      if (themeState.headingFont) await ensureThemeFontLoaded(themeState.headingFont, null);
       renderThemePreview();
     }
 
@@ -5080,6 +5081,14 @@
       sel.value = themeState.font;
       $('removeFontBtn').hidden = !custom;
       $('themeFontName').textContent = custom ? `Custom font: ${themeState.font}` : '';
+    }
+
+    function buildHeadingFontSelect() {
+      const sel = $('themeHeadingFontSelect');
+      sel.innerHTML =
+        `<option value="">Same as body font</option>` +
+        CURATED_FONTS.map((f) => `<option value="${escapeHtml(f)}">${escapeHtml(f)}</option>`).join('');
+      sel.value = themeState.headingFont || '';
     }
 
     function syncThemeInputs() {
@@ -5106,6 +5115,11 @@
       s.style.setProperty('--tp-grad-start', themeState.gradStart);
       s.style.setProperty('--tp-grad-end', themeState.useGradient ? themeState.gradEnd : themeState.gradStart);
       s.style.setProperty('--tp-font', `'${themeState.font}', system-ui, sans-serif`);
+      if (themeState.headingFont) {
+        s.style.setProperty('--tp-heading-font', `'${themeState.headingFont}', system-ui, sans-serif`);
+      } else {
+        s.style.removeProperty('--tp-heading-font'); // headings fall back to body
+      }
     }
 
     // Google Fonts loaded via <link>; custom uploads via the FontFace API.
@@ -5155,6 +5169,13 @@
       renderThemePreview();
     });
 
+    $('themeHeadingFontSelect').addEventListener('change', async (e) => {
+      if (!themeState) return;
+      themeState.headingFont = e.target.value; // '' = same as body
+      if (themeState.headingFont) await ensureThemeFontLoaded(themeState.headingFont, null);
+      renderThemePreview();
+    });
+
     $('uploadFontBtn').addEventListener('click', () => $('themeFontInput').click());
     $('removeFontBtn').addEventListener('click', () => {
       themeState.font = 'Andika New Basic'; themeState.fontUrl = null;
@@ -5190,6 +5211,7 @@
           theme_icon_color: themeState.icon,
           theme_font: themeState.font,
           theme_font_url: themeState.fontUrl || null,
+          theme_heading_font: themeState.headingFont || '',
         };
         await updateDoc(creatorDoc.ref, payload);
         creatorDoc.data = Object.assign({}, creatorDoc.data, payload);
