@@ -1092,8 +1092,13 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
           vertical: 10.0,
         ),
         decoration: BoxDecoration(
-          color: const Color(0xFFE6F5F3), // Teal for events
+          // Events use the creator theme accent (tertiary) — mirrors the
+          // "Events" color in the theme editor.
+          color: FlutterFlowTheme.of(context).tertiary.withOpacity(0.15),
           borderRadius: BorderRadius.circular(14.0),
+          border: Border.all(
+            color: FlutterFlowTheme.of(context).tertiary.withOpacity(0.35),
+          ),
         ),
         child: Row(
           children: [
@@ -1598,9 +1603,18 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
       ),
       builder: (context, snapshot) {
         final todos = snapshot.data ?? [];
-        // Filter and sort locally to avoid needing composite Firestore index
+        // Only show todos that belong on today's list: one-time todos, or
+        // recurring todos scheduled for today (a "Saturday" todo shouldn't
+        // appear on Friday). Recurring todos use per-day completion.
+        final now = DateTime.now();
+        final todayYmd = ymdString(now);
+        bool showsToday(TodoRecord t) => !t.hasRecurDays() ||
+            recursOnDate(t.recurDays, t.recurIntervalWeeks, t.recurAnchor, now);
+        bool doneToday(TodoRecord t) => t.hasRecurDays()
+            ? (t.isCompleted && t.lastCompletedDate == todayYmd)
+            : t.isCompleted;
         final incompleteTodos = todos
-            .where((t) => !t.isCompleted)
+            .where((t) => showsToday(t) && !doneToday(t))
             .toList()
           ..sort((a, b) => a.sortOrder.compareTo(b.sortOrder));
         final displayTodos = incompleteTodos.take(3).toList();

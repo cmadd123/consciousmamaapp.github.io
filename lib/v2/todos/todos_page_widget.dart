@@ -301,6 +301,13 @@ class _TodosPageWidgetState extends State<TodosPageWidget> with TickerProviderSt
             .where((t) => _effectiveCompleted(t))
             .toList()
           ..sort((a, b) => a.sortOrder.compareTo(b.sortOrder));
+        // Split incomplete into today (one-time or recurring-today) vs. other
+        // days, so the list reads like routines: today's up top.
+        final now = DateTime.now();
+        bool isTodayTodo(TodoRecord t) => !t.hasRecurDays() ||
+            recursOnDate(t.recurDays, t.recurIntervalWeeks, t.recurAnchor, now);
+        final todayTodos = incompleteTodos.where(isTodayTodo).toList();
+        final otherTodos = incompleteTodos.where((t) => !isTodayTodo(t)).toList();
 
         return SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(20.0, 8.0, 20.0, 24.0),
@@ -347,14 +354,23 @@ class _TodosPageWidgetState extends State<TodosPageWidget> with TickerProviderSt
                       ),
                       const SizedBox(height: 12.0),
                     ],
-                    // Incomplete todos — staggered entrance
-                    ...incompleteTodos.asMap().entries.map((entry) => CascadeItem(
-                      key: ValueKey('todo_${entry.value.reference.id}'),
-                      index: entry.key,
-                      baseDelayMs: 350,
-                      staggerMs: 100,
-                      child: _buildTodoItem(context, entry.value),
-                    )),
+                    // Today's todos — staggered entrance
+                    if (todayTodos.isNotEmpty) ...[
+                      if (otherTodos.isNotEmpty) _buildTodoSectionHeader('Today'),
+                      ...todayTodos.asMap().entries.map((entry) => CascadeItem(
+                        key: ValueKey('todo_${entry.value.reference.id}'),
+                        index: entry.key,
+                        baseDelayMs: 350,
+                        staggerMs: 100,
+                        child: _buildTodoItem(context, entry.value),
+                      )),
+                    ],
+                    // Other days
+                    if (otherTodos.isNotEmpty) ...[
+                      const SizedBox(height: 8.0),
+                      _buildTodoSectionHeader('Other days'),
+                      ...otherTodos.map((todo) => _buildTodoItem(context, todo)),
+                    ],
                     // Completed section
                     if (completedTodos.isNotEmpty) ...[
                       const SizedBox(height: 16.0),
@@ -984,6 +1000,20 @@ class _TodosPageWidgetState extends State<TodosPageWidget> with TickerProviderSt
       }
     }
   }
+
+  Widget _buildTodoSectionHeader(String label) => Padding(
+        padding: const EdgeInsets.only(top: 4.0, bottom: 8.0),
+        child: Text(
+          label,
+          style: FlutterFlowTheme.of(context).bodySmall.override(
+                fontFamily: FFAppState().currentFontFamily,
+                color: const Color(0xFF9B8A9E),
+                fontSize: 13.0,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.4,
+              ),
+        ),
+      );
 
   Widget _buildTodoItem(BuildContext context, TodoRecord todo) {
     final isCompleted = _effectiveCompleted(todo);
