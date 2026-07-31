@@ -6,4 +6,6 @@
 /// consume shared content in the app — only the authoring controls are hidden.
 ///
 /// Flip this to `true` to bring in-app creator authoring back.
-const bool kCreatorAuthoringInApp = false;
+/// Re-enabled: creators asked to share individual recipes, routines, saved
+/// days, and collections from the app (off by default, with a confirmation).
+const bool kCreatorAuthoringInApp = true;

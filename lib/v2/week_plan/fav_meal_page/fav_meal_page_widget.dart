@@ -4,6 +4,7 @@ import '/backend/schema/enums/enums.dart';
 import '/custom_code/actions/index.dart' as actions;
 import '/components/home_nav_bar_widget.dart';
 import '/flutter_flow/creator_flags.dart';
+import '/v2/creator/confirm_share_dialog.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/components/share_content_bottom_sheet.dart';
@@ -3527,6 +3528,13 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                                                 final isShared =
                                                                     containerVarItem
                                                                         .sharedWithFollowers;
+                                                                // Confirm before sharing (not when unsharing).
+                                                                if (!isShared) {
+                                                                  final ok = await confirmShareWithFollowers(
+                                                                      context,
+                                                                      what: 'This recipe');
+                                                                  if (!ok) return;
+                                                                }
                                                                 await containerVarItem
                                                                     .reference
                                                                     .update({
@@ -4324,6 +4332,12 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                             onTap: () async {
                               final isShared =
                                   templates.first.sharedWithFollowers;
+                              if (!isShared) {
+                                final ok = await confirmShareWithFollowers(
+                                    context,
+                                    what: 'This saved day');
+                                if (!ok) return;
+                              }
                               for (final t in templates) {
                                 await t.reference.update(
                                     {'shared_with_followers': !isShared});
@@ -5059,6 +5073,12 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                 onTap: () async {
                                   final isShared =
                                       template.sharedWithFollowers;
+                                  if (!isShared) {
+                                    final ok = await confirmShareWithFollowers(
+                                        context,
+                                        what: 'This template');
+                                    if (!ok) return;
+                                  }
                                   await template.reference.update(
                                       {'shared_with_followers': !isShared});
                                   _model.loadedMealTemplates = false;
