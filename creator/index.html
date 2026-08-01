@@ -557,6 +557,21 @@
       background: color-mix(in srgb, var(--primary, #2A6F67) 14%, white);
       padding: 1px 6px; border-radius: 6px; margin-left: 6px; vertical-align: middle;
     }
+    /* Publish/share toggle shown directly on a card (collections, plans) so
+       creators can share without opening the item. */
+    .card-share-btn {
+      margin-top: 10px; font-size: 12px; font-weight: 600;
+      padding: 6px 12px; border-radius: 8px; cursor: pointer;
+      border: 1px solid var(--border); background: white; color: var(--text-muted);
+      transition: background 120ms, color 120ms;
+    }
+    .card-share-btn:hover { background: var(--bg-subtle, #f7f7f7); color: var(--text); }
+    .card-share-btn:disabled { opacity: 0.6; cursor: default; }
+    .card-share-btn.share-on {
+      color: var(--primary, #2A6F67);
+      border-color: var(--primary, #2A6F67);
+      background: color-mix(in srgb, var(--primary, #2A6F67) 10%, white);
+    }
 
     .subsection-title {
       font-size: 15px; font-weight: 700; color: var(--text, #333);
@@ -4821,13 +4836,18 @@
           const count = Array.isArray(c.recipes) ? c.recipes.length : 0;
           const status = c.is_active ? '' : ' · <span style="color:var(--text-muted)">hidden</span>';
           const dls = c.download_count ? ` · ${c.download_count} added` : '';
+          const shared = c.is_active === true;
           return `
             <div class="routine-card" data-id="${c.id}">
               <div class="r-head">
                 <span class="r-emoji">📚</span>
                 <span class="r-title">${escapeHtml(c.name || 'Untitled collection')}</span>
+                ${shared ? '<span class="share-badge" style="margin-left:auto;">Shared</span>' : ''}
               </div>
               <div class="r-meta">${count} recipe${count === 1 ? '' : 's'}${status}${dls}</div>
+              <button class="card-share-btn${shared ? ' share-on' : ''}" data-collection-share="${c.id}"
+                title="${shared ? 'Shared with followers — tap to unshare' : 'Share this collection with followers'}">
+                ${shared ? '👥 Shared' : 'Share'}</button>
             </div>`;
         }).join('');
 
@@ -4835,6 +4855,31 @@
           card.addEventListener('click', () => {
             const col = cols.find(c => c.id === card.dataset.id);
             if (col) openCollectionForm(col);
+          });
+        });
+        grid.querySelectorAll('[data-collection-share]').forEach(btn => {
+          btn.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            const id = btn.dataset.collectionShare;
+            const col = cols.find(c => c.id === id);
+            if (!col) return;
+            const publishing = col.is_active !== true;
+            if (publishing) {
+              const n = Array.isArray(col.recipes) ? col.recipes.length : 0;
+              if (n === 0) { toast('Add at least one recipe before sharing', true); return; }
+              if (!confirm('Share this collection so your followers can add it?')) return;
+            }
+            btn.disabled = true;
+            try {
+              await updateDoc(doc(db, 'recipe_collections', id), { is_active: publishing });
+              col.is_active = publishing;
+              loadCreatorCollections();
+              toast(publishing ? 'Collection shared with followers' : 'Removed from followers');
+            } catch (err) {
+              console.error(err);
+              toast('Update failed: ' + err.message, true);
+              btn.disabled = false;
+            }
           });
         });
       } catch (e) {
@@ -6285,6 +6330,7 @@
               </div>
             </div>
             <div class="row-actions">
+              <button title="${isPublished ? 'Published — tap to unpublish' : 'Publish so followers can see it'}" aria-label="Publish plan" class="${isPublished ? 'share-on' : ''}" data-plan-share="${escapeHtml(it.id)}">${isPublished ? '👥 Published' : 'Publish'}</button>
               <button title="Delete plan" aria-label="Delete plan" class="danger" data-plan-delete="${escapeHtml(it.id)}">🗑</button>
             </div>
           </div>`;
@@ -6297,6 +6343,35 @@
         btn.addEventListener('click', (e) => {
           e.stopPropagation();
           void deletePlan(btn.dataset.planDelete);
+        });
+      });
+      // Publish/unpublish a plan straight from the card — no need to open the
+      // editor. Publishing requires at least one filled meal slot.
+      listEl.querySelectorAll('[data-plan-share]').forEach((btn) => {
+        btn.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          const id = btn.dataset.planShare;
+          const item = creatorPlans.find((x) => x.id === id);
+          if (!item) return;
+          const publishing = item.data.status !== 'published';
+          if (publishing) {
+            const filled = item.data.slots ? Object.keys(item.data.slots).length : 0;
+            if (filled === 0) { toast('Add at least one meal before publishing', true); return; }
+            if (!confirm('Publish this plan so your followers can see and add it?')) return;
+          }
+          btn.disabled = true;
+          try {
+            await updateDoc(doc(db, 'creator_products', id), {
+              status: publishing ? 'published' : 'draft',
+            });
+            item.data.status = publishing ? 'published' : 'draft';
+            renderPlanList(creatorPlans);
+            toast(publishing ? 'Plan published' : 'Plan unpublished');
+          } catch (err) {
+            console.error(err);
+            toast('Update failed: ' + err.message, true);
+            btn.disabled = false;
+          }
         });
       });
     }

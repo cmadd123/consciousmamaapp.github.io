@@ -1,6 +1,7 @@
 import 'dart:io';  // For File picker
 import 'package:flutter/material.dart';
 import '/app_state.dart';
+import '/auth/firebase_auth/auth_util.dart';
 import 'package:flutter/services.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -49,7 +50,7 @@ class _HelpfulDocsPageState extends State<HelpfulDocsPage> {
                       child: Icon(Icons.arrow_back, color: FlutterFlowTheme.of(context).primaryText),
                     ),
                     Text(
-                      creator != null ? 'From ${creator.name}' : 'Helpful Docs',
+                      'Helpful Docs',
                       style: FlutterFlowTheme.of(context).titleLarge.override(
                         fontFamily: FFAppState().currentFontFamily,
                         fontSize: 22,
@@ -57,26 +58,52 @@ class _HelpfulDocsPageState extends State<HelpfulDocsPage> {
                         letterSpacing: 0,
                       ),
                     ),
-                    // Keep layout balanced; uploads now live on the web dashboard.
-                    const SizedBox(width: 34),
+                    // Anyone can upload their own docs.
+                    InkWell(
+                      onTap: () => _showUploadSheet(context),
+                      borderRadius: BorderRadius.circular(14),
+                      child: Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        child: Icon(Icons.add_rounded,
+                            color: FlutterFlowTheme.of(context).primary, size: 22),
+                      ),
+                    ),
                   ],
                 ),
               ),
 
-              // Docs list — scoped to the active creator
+              // Docs list — the user's own uploads + the active creator's docs.
               Expanded(
                 child: StreamBuilder<List<AppContentRecord>>(
-                  stream: creator == null
+                  stream: currentUserReference == null
                       ? Stream.value(const <AppContentRecord>[])
                       : queryAppContentRecord(
-                          queryBuilder: (q) => q
-                              .where('creator_ref', isEqualTo: creator.reference)
-                              .where('is_published', isEqualTo: true),
+                          queryBuilder: (q) =>
+                              q.where('user_ref', isEqualTo: currentUserReference),
                         ),
-                  builder: (context, snapshot) {
-                    final docs = snapshot.data ?? [];
+                  builder: (context, mineSnap) {
+                    final mine = mineSnap.data ?? [];
+                    return StreamBuilder<List<AppContentRecord>>(
+                      stream: creator == null
+                          ? Stream.value(const <AppContentRecord>[])
+                          : queryAppContentRecord(
+                              queryBuilder: (q) => q
+                                  .where('creator_ref', isEqualTo: creator.reference)
+                                  .where('is_published', isEqualTo: true),
+                            ),
+                      builder: (context, creatorSnap) {
+                    // Merge own uploads + creator docs, deduped by path.
+                    final seenPaths = <String>{};
+                    final docs = <AppContentRecord>[];
+                    for (final d in [...mine, ...(creatorSnap.data ?? [])]) {
+                      if (seenPaths.add(d.reference.path)) docs.add(d);
+                    }
 
-                    if (!snapshot.hasData) {
+                    if (!mineSnap.hasData && !creatorSnap.hasData) {
                       return Center(
                         child: CircularProgressIndicator(
                           valueColor: AlwaysStoppedAnimation<Color>(FlutterFlowTheme.of(context).primary),
@@ -123,6 +150,8 @@ class _HelpfulDocsPageState extends State<HelpfulDocsPage> {
                       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
                       itemCount: docs.length,
                       itemBuilder: (context, index) => _buildDocCard(docs[index]),
+                    );
+                      },
                     );
                   },
                 ),
@@ -563,6 +592,9 @@ class _HelpfulDocsPageState extends State<HelpfulDocsPage> {
                         createdAt: DateTime.now(),
                         pdfUrl: downloadUrl,
                         contentType: 'pdf',
+                        // Owner — so anyone (not just creators) can upload and
+                        // see their own docs.
+                        userRef: currentUserReference,
                       ));
 
                       if (context.mounted) {

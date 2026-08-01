@@ -1010,6 +1010,52 @@ class _ProfileWidgetState extends State<ProfileWidget> with TickerProviderStateM
                                       ],
                                     ),
                                   ),
+                                  Divider(height: 1, indent: 16, endIndent: 16, color: Colors.grey.shade200),
+                                  InkWell(
+                                    splashColor: Colors.transparent,
+                                    onTap: () async {
+                                      final name = creatorTheme.activeCreator?.name ?? 'this creator';
+                                      final ok = await showDialog<bool>(
+                                        context: context,
+                                        builder: (d) => AlertDialog(
+                                          title: const Text('Remove creator code?'),
+                                          content: Text(
+                                              'You\'ll stop following $name. Their recipes, routines, docs, and theme will be removed from your app.'),
+                                          actions: [
+                                            TextButton(onPressed: () => Navigator.pop(d, false), child: const Text('Cancel')),
+                                            TextButton(onPressed: () => Navigator.pop(d, true), child: const Text('Remove', style: TextStyle(color: Colors.red))),
+                                          ],
+                                        ),
+                                      );
+                                      if (ok != true) return;
+                                      await deactivateCreatorCode();
+                                      creatorTheme.clearActiveCreator();
+                                      if (mounted) setState(() {});
+                                      if (mounted) {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          const SnackBar(content: Text('Creator code removed')),
+                                        );
+                                      }
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                                      child: Row(
+                                        children: [
+                                          const Icon(Icons.link_off, color: Colors.red, size: 18.0),
+                                          const SizedBox(width: 8.0),
+                                          Text(
+                                            'Remove creator code',
+                                            style: FlutterFlowTheme.of(context).bodySmall.override(
+                                              fontFamily: FFAppState().currentFontFamily,
+                                              color: Colors.red,
+                                              fontSize: 14.0,
+                                              letterSpacing: 0.0,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
                                 ],
                               );
                             },

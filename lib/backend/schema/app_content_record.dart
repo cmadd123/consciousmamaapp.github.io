@@ -72,6 +72,12 @@ class AppContentRecord extends FirestoreRecord {
   int? _viewCount;
   int get viewCount => _viewCount ?? 0;
 
+  // "user_ref" field — the uploader (for personal docs uploaded in-app by
+  // any user, not just creators).
+  DocumentReference? _userRef;
+  DocumentReference? get userRef => _userRef;
+  bool hasUserRef() => _userRef != null;
+
   void _initializeFields() {
     _title = snapshotData['title'] as String?;
     _author = snapshotData['author'] as String?;
@@ -85,6 +91,7 @@ class AppContentRecord extends FirestoreRecord {
     _contentType = snapshotData['content_type'] as String?;
     _creatorRef = snapshotData['creator_ref'] as DocumentReference?;
     _viewCount = castToType<int>(snapshotData['view_count']);
+    _userRef = snapshotData['user_ref'] as DocumentReference?;
   }
 
   static CollectionReference get collection =>
@@ -132,6 +139,7 @@ Map<String, dynamic> createAppContentRecordData({
   int? readTimeMinutes,
   String? pdfUrl,
   String? contentType,
+  DocumentReference? userRef,
 }) {
   final firestoreData = mapToFirestore(
     <String, dynamic>{
@@ -145,6 +153,7 @@ Map<String, dynamic> createAppContentRecordData({
       'read_time_minutes': readTimeMinutes,
       'pdf_url': pdfUrl,
       'content_type': contentType,
+      'user_ref': userRef,
     }.withoutNulls,
   );
 
