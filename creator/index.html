@@ -2255,8 +2255,8 @@
           </div>
         </div>
         <div class="toggle">
-          <input type="checkbox" id="docPublished" checked>
-          <label for="docPublished">Publish immediately (visible to followers)</label>
+          <input type="checkbox" id="docPublished">
+          <label for="docPublished">Share with followers (off by default)</label>
         </div>
         <div class="modal-actions">
           <button type="button" class="btn ghost" id="cancelDocBtn">Cancel</button>
@@ -2305,6 +2305,11 @@
         <div class="field">
           <label for="routineStepsInput">Steps — one per line</label>
           <textarea id="routineStepsInput" rows="7" placeholder="One step per line…"></textarea>
+        </div>
+        <div class="field">
+          <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-weight:400;">
+            <input type="checkbox" id="routineShareInput"> Share with followers (off by default)
+          </label>
         </div>
         <div class="modal-actions" style="justify-content: space-between;">
           <button type="button" class="btn ghost" id="deleteRoutineBtn" hidden style="color:var(--danger); border-color:var(--danger);">Delete</button>
@@ -2366,8 +2371,8 @@
           </div>
         </div>
         <div class="toggle">
-          <input type="checkbox" id="collectionActive" checked>
-          <label for="collectionActive">Publish immediately (visible to followers)</label>
+          <input type="checkbox" id="collectionActive">
+          <label for="collectionActive">Share with followers (off by default)</label>
         </div>
         <div class="modal-actions" style="justify-content: space-between;">
           <button type="button" class="btn ghost" id="deleteCollectionBtn" hidden style="color: var(--danger); border-color: var(--danger);">Delete</button>
@@ -3253,7 +3258,7 @@
       $('docEmoji').value = existing?.emoji || '📄';
       $('docCategory').value = existing?.category || '';
       $('docReadTime').value = existing?.read_time_minutes || '';
-      $('docPublished').checked = existing ? !!existing.is_published : true;
+      $('docPublished').checked = existing ? !!existing.is_published : false;
       $('docPdf').value = '';
       $('fileLabel').textContent = existing?.pdf_url ? 'Keep existing PDF (or choose a new one)' : 'Choose a PDF file…';
       $('fileWrap').classList.toggle('has-file', !!existing?.pdf_url);
@@ -4581,10 +4586,11 @@
       const grid = $('routineGrid');
       grid.innerHTML = renderSkeletonGrid(3);
       try {
+        // Show ALL the creator's routines (not just shared) — sharing is
+        // opt-in per routine via the form toggle, off by default.
         const snap = await getDocs(query(
           collection(db, 'routines'),
           where('user_ref', '==', creatorDoc.data.user_ref),
-          where('shared_with_followers', '==', true),
         ));
         const routines = snap.docs.map(d => ({ id: d.id, ...d.data() }));
         routines.sort((a, b) => {
@@ -4597,8 +4603,8 @@
           grid.innerHTML = `
             <div class="empty">
               <div style="font-size: 36px; margin-bottom: 10px; color: var(--text-muted);">${ICON.list}</div>
-              <div style="font-weight: 600; margin-bottom: 4px;">No routines shared yet</div>
-              <div style="font-size: 13px;">Toggle "Share with followers" on any routine in the MomRise app.</div>
+              <div style="font-weight: 600; margin-bottom: 4px;">No routines yet</div>
+              <div style="font-size: 13px;">Tap "New routine" to create one, then share it with followers.</div>
             </div>`;
           return;
         }
@@ -4620,11 +4626,13 @@
           const recur = recurLabelJs(r.recur_days, r.recur_interval_weeks || 1);
           const metaBits = [`${stepCount} step${stepCount === 1 ? '' : 's'}`];
           if (recur) metaBits.push(`🔁 ${escapeHtml(recur)}`);
+          const shared = r.shared_with_followers === true;
           return `
             <div class="routine-card" data-id="${r.id}">
               <div class="r-head">
                 <span class="r-emoji">${escapeHtml(r.emoji || '📋')}</span>
                 <span class="r-title">${escapeHtml(r.name || 'Untitled routine')}</span>
+                ${shared ? '<span class="share-badge" style="margin-left:auto;">Shared</span>' : ''}
               </div>
               ${r.description ? `<div class="r-desc" style="font-size:12px; color:var(--text-muted); margin-top:2px;">${escapeHtml(r.description)}</div>` : ''}
               <div class="r-meta">${metaBits.join(' · ')}</div>
@@ -4678,9 +4686,11 @@
 
     let editingRoutineId = null;
     let editingRoutineAnchor = '';
+    let editingRoutineWasShared = false;
     function openRoutineForm(routine) {
       editingRoutineId = routine ? routine.id : null;
       editingRoutineAnchor = routine?.recur_anchor || '';
+      editingRoutineWasShared = routine ? !!routine.shared_with_followers : false;
       $('routineFormTitle').textContent = routine ? 'Edit routine' : 'New routine';
       $('saveRoutineBtn').textContent = routine ? 'Save changes' : 'Save routine';
       $('routineNameInput').value = routine?.name || '';
@@ -4693,6 +4703,7 @@
       });
       routineInterval = (routine?.recur_interval_weeks > 0) ? routine.recur_interval_weeks : 1;
       renderRoutineInterval();
+      $('routineShareInput').checked = routine ? !!routine.shared_with_followers : false;
       $('deleteRoutineBtn').hidden = !routine;
       $('routineFormModal').classList.add('open');
       setTimeout(() => $('routineNameInput').focus(), 50);
@@ -4725,6 +4736,12 @@
       if (steps.length === 0) { toast('Add at least one step', true); return; }
       const recurDays = [...$('routineDays').querySelectorAll('button.on')]
         .map((b) => parseInt(b.dataset.day, 10)).sort((a, b) => a - b);
+      // Sharing is opt-in + confirmed. Only prompt when turning it ON.
+      const share = $('routineShareInput').checked;
+      if (share && !editingRoutineWasShared &&
+          !confirm('Share this routine with your followers? They will see it in the MomRise app.')) {
+        return;
+      }
       const saveBtn = $('saveRoutineBtn');
       saveBtn.disabled = true;
       const orig = saveBtn.textContent;
@@ -4736,6 +4753,7 @@
           description: $('routineDescInput').value.trim(),
           emoji: $('routineEmojiInput').value.trim() || '📋',
           steps,
+          shared_with_followers: share,
           // Recurrence — mirrors the in-app routine editor.
           recur_days: recurDays,
           recur_interval_weeks: recurDays.length ? routineInterval : 1,
@@ -4752,7 +4770,6 @@
             // user_ref must match the creator's own user for the security
             // rule; it's the same ref loadCreatorRoutines queries by.
             user_ref: creatorDoc.data.user_ref,
-            shared_with_followers: true,
             created_at: serverTimestamp(),
           });
           toast('Routine saved');
@@ -4899,7 +4916,7 @@
       $('collectionModalTitle').textContent = existing ? 'Edit collection' : 'New collection';
       $('collectionNameInput').value = existing?.name || '';
       $('collectionDescInput').value = existing?.description || '';
-      $('collectionActive').checked = existing ? existing.is_active !== false : true;
+      $('collectionActive').checked = existing ? existing.is_active !== false : false;
       $('collectionRecipeSearch').value = '';
       $('deleteCollectionBtn').hidden = !existing;
       collectionSelected = new Set();

@@ -45,6 +45,10 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
   List<ChildernRecord> _children = [];
   ParentDisplayInfo _parentInfo = ParentDisplayInfo.defaults();
 
+  // Creator routines the follower has added this session (so the Add button
+  // flips to "Added"). Also seeded from copies already in their routines.
+  final Set<String> _addedCreatorRoutineIds = {};
+
   @override
   void initState() {
     super.initState();
@@ -65,10 +69,21 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
         queryBuilder: (q) => q.where('userRef', isEqualTo: currentUserReference),
       );
       final user = await UsersRecord.getDocumentOnce(currentUserReference!);
+      // Seed "already added" creator routines from prior copies, so their
+      // Add button stays "Added" across reloads.
+      final mine = await queryRoutinesRecordOnce(
+        queryBuilder: (q) => q.where('user_ref', isEqualTo: currentUserReference),
+      );
+      final addedIds = <String>{};
+      for (final r in mine) {
+        final src = r.snapshotData['copied_from_routine'];
+        if (src is DocumentReference) addedIds.add(src.id);
+      }
       if (mounted) {
         setState(() {
           _children = kids;
           _parentInfo = ParentDisplayInfo.fromUser(user);
+          _addedCreatorRoutineIds.addAll(addedIds);
         });
       }
     } catch (_) {}
@@ -137,6 +152,7 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
 
   Future<void> _copyCreatorRoutine(RoutinesRecord creatorRoutine, String creatorName) async {
     if (currentUserReference == null) return;
+    if (_addedCreatorRoutineIds.contains(creatorRoutine.reference.id)) return;
     HapticFeedback.mediumImpact();
     final data = createRoutinesRecordData(
       name: '${creatorRoutine.name} (by $creatorName)',
@@ -146,10 +162,13 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
       createdAt: DateTime.now(),
       stepCompletions: List<bool>.filled(creatorRoutine.steps.length, false),
     );
+    // Tag the copy so we can tell it came from this creator routine.
+    data['copied_from_routine'] = creatorRoutine.reference;
     await RoutinesRecord.collection.add(data);
     if (!mounted) return;
+    setState(() => _addedCreatorRoutineIds.add(creatorRoutine.reference.id));
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text('Added "${creatorRoutine.name}" to your routines'),
+      content: const Text('Added creator routine'),
       backgroundColor: FlutterFlowTheme.of(context).primary,
       behavior: SnackBarBehavior.floating,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -407,15 +426,34 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
                 ],
               ),
             ),
-            TextButton.icon(
-              onPressed: () => _copyCreatorRoutine(routine, creator.name),
-              icon: const Icon(Icons.add, size: 16),
-              label: const Text('Add'),
-              style: TextButton.styleFrom(
-                foregroundColor: FlutterFlowTheme.of(context).primary,
+            if (_addedCreatorRoutineIds.contains(routine.reference.id))
+              Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.check_rounded,
+                        size: 16, color: FlutterFlowTheme.of(context).primary),
+                    const SizedBox(width: 4),
+                    Text('Added',
+                        style: FlutterFlowTheme.of(context).bodySmall.override(
+                              fontFamily: FFAppState().currentFontFamily,
+                              color: FlutterFlowTheme.of(context).primary,
+                              fontWeight: FontWeight.w600,
+                            )),
+                  ],
+                ),
+              )
+            else
+              TextButton.icon(
+                onPressed: () => _copyCreatorRoutine(routine, creator.name),
+                icon: const Icon(Icons.add, size: 16),
+                label: const Text('Add'),
+                style: TextButton.styleFrom(
+                  foregroundColor: FlutterFlowTheme.of(context).primary,
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                ),
               ),
-            ),
           ],
         ),
       ),
@@ -576,27 +614,20 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
                       ],
                     ),
                   ),
-                  // Creator-only: share with followers toggle. Placed with
-                  // generous spacing on both sides so it can't be confused
-                  // with the play button and doesn't crowd the title.
-                  if (kCreatorAuthoringInApp && _creatorProfile != null) ...[
+                  // Read-only "shared" indicator (sharing is managed on the
+                  // web dashboard — no toggle in the app).
+                  if (routine.sharedWithFollowers) ...[
                     const SizedBox(width: 12),
-                    GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onTap: () => _toggleShare(routine),
-                      child: Padding(
-                        padding: const EdgeInsets.all(4),
-                        child: Icon(
-                          routine.sharedWithFollowers ? Icons.people : Icons.people_outline,
-                          color: routine.sharedWithFollowers
-                              ? FlutterFlowTheme.of(context).primary
-                              : Colors.grey.shade400,
-                          size: 22,
-                        ),
+                    Padding(
+                      padding: const EdgeInsets.all(4),
+                      child: Icon(
+                        Icons.people,
+                        color: FlutterFlowTheme.of(context).primary,
+                        size: 22,
                       ),
                     ),
-                    const SizedBox(width: 12),
                   ],
+                  const SizedBox(width: 12),
                   Icon(Icons.play_circle_outline, color: FlutterFlowTheme.of(context).primary, size: 28),
                 ],
               ),

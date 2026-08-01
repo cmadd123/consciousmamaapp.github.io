@@ -1092,27 +1092,23 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
           vertical: 10.0,
         ),
         decoration: BoxDecoration(
-          // Events use the creator theme accent (tertiary) — mirrors the
-          // "Events" color in the theme editor.
-          color: FlutterFlowTheme.of(context).tertiary.withOpacity(0.15),
+          // Events use the creator theme accent (tertiary), solid — mirrors
+          // the "Events" color in the theme editor.
+          color: FlutterFlowTheme.of(context).tertiary,
           borderRadius: BorderRadius.circular(14.0),
-          border: Border.all(
-            color: FlutterFlowTheme.of(context).tertiary.withOpacity(0.35),
-          ),
         ),
         child: Row(
           children: [
             // Show assignee icons (child/mom/dad circles)
             _buildAssigneeIcons(event),
-            const SizedBox(width: 10.0),
             Expanded(
               child: Text(
                 event.name,
                 style: FlutterFlowTheme.of(context).bodyMedium.override(
                   fontFamily: FFAppState().currentFontFamily,
-                  color: const Color(0xFF5D4E60),
+                  color: Colors.white,
                   fontSize: 14.0,
-                  fontWeight: FontWeight.w500,
+                  fontWeight: FontWeight.w600,
                   letterSpacing: 0.0,
                 ),
                 maxLines: 1,
@@ -1124,14 +1120,14 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
               const Icon(
                 Icons.access_time_rounded,
                 size: 14.0,
-                color: Color(0xFF9B8A9E),
+                color: Colors.white,
               ),
               const SizedBox(width: 4.0),
               Text(
                 dateTimeFormat('jm', event.date!),
                 style: FlutterFlowTheme.of(context).bodySmall.override(
                   fontFamily: FFAppState().currentFontFamily,
-                  color: const Color(0xFF9B8A9E),
+                  color: Colors.white,
                   fontSize: 12.0,
                   letterSpacing: 0.0,
                 ),
@@ -1234,25 +1230,15 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
       icons.add(_buildChildIcon(event.selectedChild!));
     }
 
-    // Default icon if no assignment
+    // No default icon when unassigned — a bare event shows no leading icon.
     if (icons.isEmpty) {
-      return Container(
-        width: 24.0,
-        height: 24.0,
-        decoration: BoxDecoration(
-          color: const Color(0xFF52A097).withOpacity(0.15),
-          shape: BoxShape.circle,
-        ),
-        child: const Icon(
-          Icons.event_rounded,
-          size: 16.0,
-          color: Color(0xFF52A097),
-        ),
-      );
+      return const SizedBox.shrink();
     }
 
-    // Stack icons with slight overlap
-    return SizedBox(
+    // Stack icons with slight overlap (+ trailing gap before the event name).
+    return Padding(
+      padding: const EdgeInsets.only(right: 10.0),
+      child: SizedBox(
       width: 24.0 + (icons.length - 1) * 14.0,
       height: 24.0,
       child: Stack(
@@ -1263,6 +1249,7 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
           );
         }).toList(),
       ),
+    ),
     );
   }
 

@@ -4,7 +4,6 @@ import '/backend/schema/enums/enums.dart';
 import '/custom_code/actions/index.dart' as actions;
 import '/components/home_nav_bar_widget.dart';
 import '/flutter_flow/creator_flags.dart';
-import '/v2/creator/confirm_share_dialog.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/components/share_content_bottom_sheet.dart';
@@ -3510,90 +3509,33 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                                             ),
                                                           ),
                                                         ),
-                                                        // Shared Library: creator
-                                                        // share toggle (top-left).
-                                                        // Hidden when creator
-                                                        // authoring lives on web.
-                                                        if (kCreatorAuthoringInApp &&
-                                                            _creatorProfile !=
-                                                                null &&
-                                                            _model.cookbookMode ==
-                                                                'personal')
+                                                        // Read-only "shared"
+                                                        // indicator. Sharing is
+                                                        // managed on the web; this
+                                                        // just shows which items
+                                                        // are shared. Not a button.
+                                                        if (containerVarItem
+                                                            .sharedWithFollowers)
                                                           Positioned(
                                                             top: 8.0,
                                                             left: 8.0,
-                                                            child:
-                                                                GestureDetector(
-                                                              onTap: () async {
-                                                                final isShared =
-                                                                    containerVarItem
-                                                                        .sharedWithFollowers;
-                                                                // Confirm before sharing (not when unsharing).
-                                                                if (!isShared) {
-                                                                  final ok = await confirmShareWithFollowers(
-                                                                      context,
-                                                                      what: 'This recipe');
-                                                                  if (!ok) return;
-                                                                }
-                                                                await containerVarItem
-                                                                    .reference
-                                                                    .update({
-                                                                  'shared_with_followers':
-                                                                      !isShared
-                                                                });
-                                                                if (mounted) {
-                                                                  _reloadUserRecipes();
-                                                                  ScaffoldMessenger.of(
-                                                                          context)
-                                                                      .showSnackBar(
-                                                                          SnackBar(
-                                                                    content: Text(isShared
-                                                                        ? 'Removed from Shared'
-                                                                        : 'Shared with followers'),
-                                                                    behavior:
-                                                                        SnackBarBehavior
-                                                                            .floating,
-                                                                    shape: RoundedRectangleBorder(
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(
-                                                                                10)),
-                                                                    margin: const EdgeInsets
-                                                                        .all(16),
-                                                                    duration: const Duration(
-                                                                        seconds:
-                                                                            2),
-                                                                  ));
-                                                                }
-                                                              },
-                                                              child: Container(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                        .all(5.0),
-                                                                decoration:
-                                                                    BoxDecoration(
-                                                                  color: containerVarItem
-                                                                          .sharedWithFollowers
-                                                                      ? FlutterFlowTheme.of(
-                                                                              context)
-                                                                          .primary
-                                                                      : Colors
-                                                                          .black
-                                                                          .withOpacity(
-                                                                              0.4),
-                                                                  shape: BoxShape
-                                                                      .circle,
-                                                                ),
-                                                                child: Icon(
-                                                                  containerVarItem
-                                                                          .sharedWithFollowers
-                                                                      ? Icons
-                                                                          .people
-                                                                      : Icons
-                                                                          .people_outline,
-                                                                  color: Colors
-                                                                      .white,
-                                                                  size: 14.0,
-                                                                ),
+                                                            child: Container(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .all(5.0),
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                color: FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .primary,
+                                                                shape: BoxShape
+                                                                    .circle,
+                                                              ),
+                                                              child: const Icon(
+                                                                Icons.people,
+                                                                color:
+                                                                    Colors.white,
+                                                                size: 14.0,
                                                               ),
                                                             ),
                                                           ),
@@ -4324,52 +4266,14 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                           color: FlutterFlowTheme.of(context).primary,
                         ),
                         const SizedBox(width: 8.0),
-                        // Shared Library: share the whole saved day with followers.
-                        if (kCreatorAuthoringInApp &&
-                            _creatorProfile != null &&
-                            _model.cookbookMode == 'personal')
-                          GestureDetector(
-                            onTap: () async {
-                              final isShared =
-                                  templates.first.sharedWithFollowers;
-                              if (!isShared) {
-                                final ok = await confirmShareWithFollowers(
-                                    context,
-                                    what: 'This saved day');
-                                if (!ok) return;
-                              }
-                              for (final t in templates) {
-                                await t.reference.update(
-                                    {'shared_with_followers': !isShared});
-                              }
-                              _model.loadedMealTemplates = false;
-                              _loadMealTemplates();
-                              if (mounted) {
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(SnackBar(
-                                  content: Text(isShared
-                                      ? 'Removed from Shared'
-                                      : 'Shared with followers'),
-                                  behavior: SnackBarBehavior.floating,
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadius.circular(10)),
-                                  margin: const EdgeInsets.all(16),
-                                  duration: const Duration(seconds: 2),
-                                ));
-                              }
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.only(right: 8.0),
-                              child: Icon(
-                                templates.first.sharedWithFollowers
-                                    ? Icons.people
-                                    : Icons.people_outline,
-                                size: 18.0,
-                                color: templates.first.sharedWithFollowers
-                                    ? FlutterFlowTheme.of(context).primary
-                                    : Colors.grey.shade400,
-                              ),
+                        // Read-only "shared" indicator (sharing managed on web).
+                        if (templates.first.sharedWithFollowers)
+                          Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: Icon(
+                              Icons.people,
+                              size: 18.0,
+                              color: FlutterFlowTheme.of(context).primary,
                             ),
                           ),
                         Expanded(
@@ -5065,52 +4969,14 @@ class _FavMealPageWidgetState extends State<FavMealPageWidget> {
                                 ),
                               ),
                             ],
-                            // Shared Library: share this template with followers.
-                            if (kCreatorAuthoringInApp &&
-                                _creatorProfile != null &&
-                                _model.cookbookMode == 'personal')
-                              GestureDetector(
-                                onTap: () async {
-                                  final isShared =
-                                      template.sharedWithFollowers;
-                                  if (!isShared) {
-                                    final ok = await confirmShareWithFollowers(
-                                        context,
-                                        what: 'This template');
-                                    if (!ok) return;
-                                  }
-                                  await template.reference.update(
-                                      {'shared_with_followers': !isShared});
-                                  _model.loadedMealTemplates = false;
-                                  _loadMealTemplates();
-                                  if (mounted) {
-                                    ScaffoldMessenger.of(context)
-                                        .showSnackBar(SnackBar(
-                                      content: Text(isShared
-                                          ? 'Removed from Shared'
-                                          : 'Shared with followers'),
-                                      behavior: SnackBarBehavior.floating,
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10)),
-                                      margin: const EdgeInsets.all(16),
-                                      duration: const Duration(seconds: 2),
-                                    ));
-                                  }
-                                },
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.only(left: 8.0),
-                                  child: Icon(
-                                    template.sharedWithFollowers
-                                        ? Icons.people
-                                        : Icons.people_outline,
-                                    size: 18.0,
-                                    color: template.sharedWithFollowers
-                                        ? FlutterFlowTheme.of(context)
-                                            .primary
-                                        : Colors.grey.shade400,
-                                  ),
+                            // Read-only "shared" indicator (managed on web).
+                            if (template.sharedWithFollowers)
+                              Padding(
+                                padding: const EdgeInsets.only(left: 8.0),
+                                child: Icon(
+                                  Icons.people,
+                                  size: 18.0,
+                                  color: FlutterFlowTheme.of(context).primary,
                                 ),
                               ),
                           ],

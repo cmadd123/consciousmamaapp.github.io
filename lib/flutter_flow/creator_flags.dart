@@ -5,7 +5,7 @@
 /// consolidated onto the web dashboard (creator/index.html). Followers still
 /// consume shared content in the app — only the authoring controls are hidden.
 ///
-/// Flip this to `true` to bring in-app creator authoring back.
-/// Re-enabled: creators asked to share individual recipes, routines, saved
-/// days, and collections from the app (off by default, with a confirmation).
-const bool kCreatorAuthoringInApp = true;
+/// Sharing/authoring is done ONLY on the web dashboard. In the app, shared
+/// items show a read-only "people" indicator (see below) but cannot be
+/// toggled. Keep this false.
+const bool kCreatorAuthoringInApp = false;
