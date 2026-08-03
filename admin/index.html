@@ -178,10 +178,13 @@
     .toast {
       position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(120%);
       background: #111827; color: white; padding: 12px 20px; border-radius: 10px;
-      font-size: 14px; transition: transform 0.25s ease;
+      font-size: 14px; transition: transform 0.25s ease, opacity 0.25s ease;
       box-shadow: 0 10px 25px rgba(0,0,0,0.2); max-width: 420px;
+      /* Fully hide at rest — translateY(120%) alone leaves a dark sliver of
+         this box peeking above the viewport bottom on every page. */
+      opacity: 0; pointer-events: none;
     }
-    .toast.show { transform: translateX(-50%) translateY(0); }
+    .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; pointer-events: auto; }
 
     /* Inline loader */
     .loader {
