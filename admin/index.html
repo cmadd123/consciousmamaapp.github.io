@@ -499,12 +499,14 @@
           <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border);">
             <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); font-weight: 600; margin-bottom: 12px;">Admin actions</div>
             <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+              <button class="btn ghost" id="cdViewMembersBtn">View followers &amp; subscribers</button>
               <button class="btn ghost" id="cdEditCodeBtn">Edit code</button>
               <button class="btn ghost" id="cdEditRevShareBtn">Edit rev share</button>
               <button class="btn ghost" id="cdResendWelcomeBtn">Resend welcome email</button>
               <button class="btn ghost" id="cdToggleActiveBtn">—</button>
               <a class="btn ghost" id="cdStripeLink" href="https://dashboard.stripe.com/connect/accounts" target="_blank" rel="noopener">Open Stripe →</a>
             </div>
+            <div id="cdMembers" style="margin-top: 16px;"></div>
           </div>
         </div>
       </div>
@@ -1298,7 +1300,64 @@
       $('cdEditRevShareBtn').onclick = () => openEditRevShareModal(c);
       $('cdResendWelcomeBtn').onclick = () => handleResendWelcome(c);
 
+      // Reset the members list — it's loaded on demand (it reads user emails,
+      // so we don't fetch it unless the operator actually asks).
+      $('cdMembers').innerHTML = '';
+      const mBtn = $('cdViewMembersBtn');
+      mBtn.disabled = !c.code;
+      mBtn.onclick = () => loadCreatorMembers(c);
+
       show('viewCreatorDetail');
+    }
+
+    async function loadCreatorMembers(c) {
+      const box = $('cdMembers');
+      const btn = $('cdViewMembersBtn');
+      box.innerHTML = `<div style="padding: 16px; color: var(--text-muted);"><span class="loader"></span> Loading members…</div>`;
+      btn.disabled = true;
+      try {
+        const call = httpsCallable(functions, 'adminListCreatorMembers');
+        const { data } = await call({ code: c.code });
+        const members = data.members || [];
+        const subs = members.filter(m => m.subscribed);
+
+        const fmtDate = (iso) => {
+          if (!iso) return '—';
+          try { return new Date(iso).toLocaleDateString(); } catch { return '—'; }
+        };
+        const rowHtml = (m) => `
+          <tr style="border-bottom: 1px solid var(--border);">
+            <td style="padding: 8px 10px;">${esc(m.name || '(no name)')}</td>
+            <td style="padding: 8px 10px;"><a href="mailto:${esc(m.email)}" style="color: var(--primary-dark);">${esc(m.email || '—')}</a></td>
+            <td style="padding: 8px 10px;">${m.subscribed
+              ? '<span style="color: var(--success); font-weight: 600;">Subscriber</span>'
+              : '<span style="color: var(--text-muted);">Follower</span>'}
+              <span style="color: var(--text-muted); font-size: 12px;"> · ${esc(m.subscriptionStatus)}</span></td>
+            <td style="padding: 8px 10px; color: var(--text-muted); font-variant-numeric: tabular-nums;">${fmtDate(m.followedAt)}</td>
+          </tr>`;
+
+        const section = (title, list) => list.length === 0 ? '' : `
+          <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); font-weight: 600; margin: 14px 0 6px;">${title} (${list.length})</div>
+          <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+            <tbody>${list.map(rowHtml).join('')}</tbody>
+          </table>`;
+
+        const followers = members.filter(m => !m.subscribed);
+        box.innerHTML = members.length === 0
+          ? `<div style="padding: 12px; color: var(--text-muted);">No one has entered <code>${esc(c.code)}</code> yet.</div>`
+          : `
+            <div style="padding: 12px 0; font-size: 12px; color: var(--text-muted);">
+              ${data.subscriberCount} subscriber${data.subscriberCount === 1 ? '' : 's'} · ${data.followerCount} follower${data.followerCount === 1 ? '' : 's'} total.
+              These are user emails — handle privately.
+            </div>
+            ${section('Subscribers', subs)}
+            ${section('Followers (not subscribed)', followers)}`;
+      } catch (e) {
+        console.error(e);
+        box.innerHTML = `<div style="padding: 12px; color: var(--danger);">Couldn't load members: ${esc(e.message)}</div>`;
+      } finally {
+        btn.disabled = false;
+      }
     }
     $('backToCreatorsBtn').addEventListener('click', () => show('viewList'));
 

@@ -3258,6 +3258,48 @@ exports.adminSetCreatorActive = onCall(async (request) => {
   return { ok: true };
 });
 
+// Admin-only: list the users behind a creator's follower/subscriber counts.
+// The creator dashboard deliberately can't do this (users docs are
+// owner-only read, which is why the counts are denormalized) — so this is
+// an ADMIN tool, gated on ADMIN_EMAILS. It returns emails, so treat the
+// output as personal data: it exists so the operator can support a creator,
+// not for wholesale export to the creator.
+exports.adminListCreatorMembers = onCall(async (request) => {
+  _requireAdmin(request);
+  const code = String(request.data?.code || '').trim().toUpperCase();
+  if (!code) throw new HttpsError('invalid-argument', 'A creator code is required');
+
+  const db = getFirestore();
+  const snap = await db.collection('users')
+    .where('active_creator_code', '==', code)
+    .get();
+
+  const members = snap.docs.map((d) => {
+    const u = d.data();
+    return {
+      uid: d.id,
+      email: u.email || '',
+      name: u.display_name || '',
+      subscribed: _isActiveSub(u),
+      subscriptionStatus: u.subscription_status || 'none',
+      // ISO string so the client can format without a Timestamp shim.
+      followedAt: u.active_creator_code_set_at?.toDate?.()?.toISOString()
+        || u.created_time?.toDate?.()?.toISOString()
+        || null,
+    };
+  });
+
+  // Subscribers first, then alphabetical by name/email — most useful order
+  // for "who are my subs?".
+  members.sort((a, b) => {
+    if (a.subscribed !== b.subscribed) return a.subscribed ? -1 : 1;
+    return (a.name || a.email).localeCompare(b.name || b.email);
+  });
+
+  const subscriberCount = members.filter((m) => m.subscribed).length;
+  return { code, followerCount: members.length, subscriberCount, members };
+});
+
 // Override a creator's code (e.g., they typed something they regret).
 // Same validation rules as setCreatorCode but no caller-owns-doc check.
 exports.adminUpdateCreatorCode = onCall(async (request) => {
