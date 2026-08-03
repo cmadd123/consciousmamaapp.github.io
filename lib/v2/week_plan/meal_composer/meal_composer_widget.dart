@@ -5,6 +5,7 @@ import '/components/home_nav_bar_widget.dart';
 import '/v2/creator/creator_theme_wrapper.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
+import '/flutter_flow/duration_format.dart';
 import '/index.dart';
 import '/components/share_content_bottom_sheet.dart';
 import '/components/animated_press_widget.dart';
@@ -1312,7 +1313,7 @@ class _MealComposerWidgetState extends State<MealComposerWidget> {
                               Icon(Icons.schedule, size: 14.0, color: theme.secondaryText),
                               const SizedBox(width: 4.0),
                               Text(
-                                '${(item.prepareTime + item.cookingTime).toInt()} min',
+                                formatCookTime(item.prepareTime + item.cookingTime),
                                 style: theme.bodySmall.override(
                                   fontFamily: FFAppState().currentFontFamily,
                                   color: theme.secondaryText,

@@ -7,6 +7,7 @@ import '/backend/schema/enums/enums.dart';
 import '/components/home_nav_bar_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
+import '/flutter_flow/duration_format.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/flutter_flow/custom_icons.dart';
 import '/flutter_flow/upload_data.dart';
@@ -1488,7 +1489,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                                 Padding(
                                   padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 16.0, 0.0),
                                   child: Text(
-                                    'Prep: ${_model.prepTime} min',
+                                    'Prep: ${formatCookTime(_model.prepTime)}',
                                     style: FlutterFlowTheme.of(context).bodySmall.override(
                                           fontFamily: FFAppState().currentFontFamily,
                                           color: const Color(0xB71B1F26),
@@ -1500,7 +1501,7 @@ class _RecipeFromLinkWidgetState extends State<RecipeFromLinkWidget> {
                                 Padding(
                                   padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 16.0, 0.0),
                                   child: Text(
-                                    'Cook: ${_model.cookTime} min',
+                                    'Cook: ${formatCookTime(_model.cookTime)}',
                                     style: FlutterFlowTheme.of(context).bodySmall.override(
                                           fontFamily: FFAppState().currentFontFamily,
                                           color: const Color(0xB71B1F26),

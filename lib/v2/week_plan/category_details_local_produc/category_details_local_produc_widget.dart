@@ -4,6 +4,7 @@ import '/backend/schema/enums/enums.dart';
 import '/components/home_nav_bar_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
+import '/flutter_flow/duration_format.dart';
 import '/components/share_content_bottom_sheet.dart';
 import '/index.dart';
 import 'package:flutter/material.dart';
@@ -1003,8 +1004,8 @@ class _CategoryDetailsLocalProducWidgetState
     }
 
     List<String> parts = [];
-    if (prepTime > 0) parts.add('Prep: $prepTime min');
-    if (cookTime > 0) parts.add('Cook: $cookTime min');
+    if (prepTime > 0) parts.add('Prep: ${formatCookTime(prepTime)}');
+    if (cookTime > 0) parts.add('Cook: ${formatCookTime(cookTime)}');
 
     return parts.join('  |  ');
   }

@@ -4,6 +4,7 @@ import '/backend/schema/enums/enums.dart';
 import '/components/home_nav_bar_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
+import '/flutter_flow/duration_format.dart';
 import '/index.dart';
 import 'package:flutter/material.dart';
 
@@ -303,7 +304,7 @@ class _MealDetailWidgetState extends State<MealDetailWidget> {
                       if (_entree!.prepareTime > 0 || _entree!.cookingTime > 0)
                         _buildInfoChip(
                           Icons.schedule,
-                          '${(_entree!.prepareTime + _entree!.cookingTime).toInt()} min',
+                          formatCookTime(_entree!.prepareTime + _entree!.cookingTime),
                           const Color(0xFF64B5F6),
                         ),
                     ],

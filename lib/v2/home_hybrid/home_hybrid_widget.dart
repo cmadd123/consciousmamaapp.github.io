@@ -1528,8 +1528,10 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                         padding: const EdgeInsets.symmetric(vertical: 2.0),
                         child: Row(
                           children: [
-                            Text(routine.emoji, style: const TextStyle(fontSize: 16)),
-                            const SizedBox(width: 8.0),
+                            if (routine.emoji.isNotEmpty) ...[
+                              Text(routine.emoji, style: const TextStyle(fontSize: 16)),
+                              const SizedBox(width: 8.0),
+                            ],
                             Expanded(
                               child: Text(
                                 routine.name,

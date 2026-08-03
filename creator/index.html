@@ -572,6 +572,12 @@
       border-color: var(--primary, #2A6F67);
       background: color-mix(in srgb, var(--primary, #2A6F67) 10%, white);
     }
+    /* Hours + minutes duration picker (recipe prep/cook time). */
+    .dur-input { display: flex; align-items: center; gap: 4px; }
+    .dur-input input { width: 54px; }
+    .dur-input .dur-unit {
+      font-size: 12px; color: var(--text-muted); margin-right: 8px;
+    }
 
     .subsection-title {
       font-size: 15px; font-weight: 700; color: var(--text, #333);
@@ -2295,8 +2301,8 @@
           <input type="text" id="routineDescInput" maxlength="160" placeholder="A short note about this routine">
         </div>
         <div class="field">
-          <label for="routineEmojiInput">Emoji</label>
-          <input type="text" id="routineEmojiInput" maxlength="4" placeholder="📋" value="📋">
+          <label for="routineEmojiInput">Emoji (optional)</label>
+          <input type="text" id="routineEmojiInput" maxlength="4" placeholder="Leave blank for no icon">
         </div>
         <div class="field">
           <label>Repeats on</label>
@@ -4645,7 +4651,7 @@
           return `
             <div class="routine-card" data-id="${r.id}">
               <div class="r-head">
-                <span class="r-emoji">${escapeHtml(r.emoji || '📋')}</span>
+                ${r.emoji ? `<span class="r-emoji">${escapeHtml(r.emoji)}</span>` : ''}
                 <span class="r-title">${escapeHtml(r.name || 'Untitled routine')}</span>
                 ${shared ? '<span class="share-badge" style="margin-left:auto;">Shared</span>' : ''}
               </div>
@@ -4667,7 +4673,9 @@
     }
 
     function openRoutinePreview(routine) {
-      $('routineModalTitle').textContent = `${routine.emoji || '📋'} ${routine.name || 'Routine'}`;
+      $('routineModalTitle').textContent = routine.emoji
+        ? `${routine.emoji} ${routine.name || 'Routine'}`
+        : (routine.name || 'Routine');
       const stepCount = Array.isArray(routine.steps) ? routine.steps.length : 0;
       $('routineModalMeta').textContent = [
         `${stepCount} step${stepCount === 1 ? '' : 's'}`,
@@ -4710,7 +4718,7 @@
       $('saveRoutineBtn').textContent = routine ? 'Save changes' : 'Save routine';
       $('routineNameInput').value = routine?.name || '';
       $('routineDescInput').value = routine?.description || '';
-      $('routineEmojiInput').value = routine?.emoji || '📋';
+      $('routineEmojiInput').value = routine?.emoji || '';
       $('routineStepsInput').value = Array.isArray(routine?.steps) ? routine.steps.join('\n') : '';
       const days = Array.isArray(routine?.recur_days) ? routine.recur_days : [];
       $('routineDays').querySelectorAll('button').forEach((b) => {
@@ -4766,7 +4774,7 @@
         const fields = {
           name,
           description: $('routineDescInput').value.trim(),
-          emoji: $('routineEmojiInput').value.trim() || '📋',
+          emoji: $('routineEmojiInput').value.trim(),
           steps,
           shared_with_followers: share,
           // Recurrence — mirrors the in-app routine editor.
@@ -5697,8 +5705,8 @@
           <input type="hidden" class="field-image-url" value="${escapeHtml(imageUrl)}">
         </div>
         <div class="meta-row">
-          <div><label>Prep (min)</label><input type="number" class="field-prep" min="0" value="${prep}"></div>
-          <div><label>Cook (min)</label><input type="number" class="field-cook" min="0" value="${cook}"></div>
+          ${durationInputsHtml('field-prep', 'Prep', prep)}
+          ${durationInputsHtml('field-cook', 'Cook', cook)}
           <div><label>Servings</label><input type="number" class="field-servings" min="1" value="${servings}"></div>
         </div>
         ${recipeMetaFieldsHtml(recipe)}
@@ -5808,8 +5816,8 @@
 
     async function saveRecipe(card, { origin, file, sourceUrl, imageUrl }) {
       const name = card.querySelector('.recipe-name').value.trim() || 'Untitled recipe';
-      const prep = parseInt(card.querySelector('.field-prep').value, 10) || 0;
-      const cook = parseInt(card.querySelector('.field-cook').value, 10) || 0;
+      const prep = readDurationInputs(card, 'field-prep');
+      const cook = readDurationInputs(card, 'field-cook');
       const servings = parseInt(card.querySelector('.field-servings').value, 10) || 0;
       const ingredients = card.querySelector('.field-ingredients').value
         .split('\n').map(s => s.trim()).filter(Boolean);
@@ -5889,6 +5897,35 @@
       if (iso) return (parseInt(iso[1] || 0, 10) * 60) + parseInt(iso[2] || 0, 10);
       const n = parseInt(v, 10);
       return Number.isFinite(n) ? n : 0;
+    }
+
+    // Hours+minutes duration picker. Times are still stored as total minutes,
+    // so nothing downstream changes — this just splits the input so a
+    // 3-hour roast reads "3 hr 0 min" instead of forcing "180".
+    function durationInputsHtml(cls, label, totalMin) {
+      const t = Math.max(0, parseInt(totalMin, 10) || 0);
+      const h = Math.floor(t / 60);
+      const m = t % 60;
+      return `<div><label>${label}</label>
+        <div class="dur-input">
+          <input type="number" class="${cls}-h" min="0" placeholder="0" value="${h || ''}"><span class="dur-unit">hr</span>
+          <input type="number" class="${cls}-m" min="0" max="59" placeholder="0" value="${m || ''}"><span class="dur-unit">min</span>
+        </div></div>`;
+    }
+    function readDurationInputs(scope, cls) {
+      const h = parseInt(scope.querySelector('.' + cls + '-h')?.value, 10) || 0;
+      const m = parseInt(scope.querySelector('.' + cls + '-m')?.value, 10) || 0;
+      return Math.max(0, h) * 60 + Math.max(0, m);
+    }
+    // "185" → "3 hr 5 min", "180" → "3 hr", "45" → "45 min".
+    function formatDuration(totalMin) {
+      const t = Math.max(0, parseInt(totalMin, 10) || 0);
+      if (t === 0) return '0 min';
+      const h = Math.floor(t / 60);
+      const m = t % 60;
+      if (h === 0) return `${m} min`;
+      if (m === 0) return `${h} hr`;
+      return `${h} hr ${m} min`;
     }
 
     // ───────────────────────────────────────────────────────────────
@@ -6094,8 +6131,8 @@
             <input type="hidden" class="edit-image-url" value="${escapeHtml(r.image_url || '')}">
           </div>
           <div class="edit-meta-row">
-            <div><label>Prep (min)</label><input type="number" class="edit-prep" min="0" value="${parseInt(r.prepare_time, 10) || 0}"></div>
-            <div><label>Cook (min)</label><input type="number" class="edit-cook" min="0" value="${parseInt(r.cooking_time ?? r.cook_time, 10) || 0}"></div>
+            ${durationInputsHtml('edit-prep', 'Prep', parseInt(r.prepare_time, 10) || 0)}
+            ${durationInputsHtml('edit-cook', 'Cook', parseInt(r.cooking_time ?? r.cook_time, 10) || 0)}
             <div><label>Servings</label><input type="number" class="edit-servings" min="1" value="${parseInt(r.servings, 10) || 0}"></div>
           </div>
           ${recipeMetaFieldsHtml(r)}
@@ -6185,8 +6222,8 @@
         const patch = {
           recipe_name: form.querySelector('.edit-name').value.trim() || 'Untitled recipe',
           image_url: form.querySelector('.edit-image-url').value,
-          prepare_time: parseInt(form.querySelector('.edit-prep').value, 10) || 0,
-          cooking_time: parseInt(form.querySelector('.edit-cook').value, 10) || 0,
+          prepare_time: readDurationInputs(form, 'edit-prep'),
+          cooking_time: readDurationInputs(form, 'edit-cook'),
           servings: parseInt(form.querySelector('.edit-servings').value, 10) || 0,
           ingredients: form.querySelector('.edit-ingredients').value
             .split('\n').map((s) => s.trim()).filter(Boolean),

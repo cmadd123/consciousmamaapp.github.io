@@ -388,18 +388,20 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
         ),
         child: Row(
           children: [
-            Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12),
+            if (routine.emoji.isNotEmpty) ...[
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Center(
+                  child: Text(routine.emoji, style: const TextStyle(fontSize: 22)),
+                ),
               ),
-              child: Center(
-                child: Text(routine.emoji, style: const TextStyle(fontSize: 22)),
-              ),
-            ),
-            const SizedBox(width: 12),
+              const SizedBox(width: 12),
+            ],
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -531,18 +533,20 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
               // Top row: emoji + name + play icon
               Row(
                 children: [
-                  Container(
-                    width: 44,
-                    height: 44,
-                    decoration: BoxDecoration(
-                      color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
+                  if (routine.emoji.isNotEmpty) ...[
+                    Container(
+                      width: 44,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Center(
+                        child: Text(routine.emoji, style: const TextStyle(fontSize: 22)),
+                      ),
                     ),
-                    child: Center(
-                      child: Text(routine.emoji, style: const TextStyle(fontSize: 22)),
-                    ),
-                  ),
-                  const SizedBox(width: 14),
+                    const SizedBox(width: 14),
+                  ],
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -755,7 +759,7 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
     final nameController = TextEditingController(text: editing?.name ?? '');
     final descController = TextEditingController(text: editing?.description ?? '');
     final stepControllers = (editing?.steps ?? []).map((s) => TextEditingController(text: s)).toList();
-    String selectedEmoji = editing?.emoji ?? '📋';
+    String selectedEmoji = editing?.emoji ?? '';
     final emojis = ['📋', '☀️', '🌙', '🍳', '💪', '🧹', '📚', '🎯', '🏃', '🛁', '🎒', '✨'];
     // Recurrence + assignment drafts (initialized from the routine being edited).
     final draftDays = <int>{...(editing?.recurDays ?? const [])};
@@ -913,24 +917,46 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
                   ),
                   const SizedBox(height: 20),
 
-                  // Emoji picker
-                  Text('Icon', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.grey[600])),
+                  // Emoji picker (optional — "None" leaves the routine iconless)
+                  Text('Icon (optional)', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.grey[600])),
                   const SizedBox(height: 8),
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,
-                    children: emojis.map((e) => GestureDetector(
-                      onTap: () => setSheetState(() => selectedEmoji = e),
-                      child: Container(
-                        width: 40, height: 40,
-                        decoration: BoxDecoration(
-                          color: selectedEmoji == e ? FlutterFlowTheme.of(context).primary.withOpacity(0.15) : Colors.grey.shade100,
-                          borderRadius: BorderRadius.circular(10),
-                          border: selectedEmoji == e ? Border.all(color: FlutterFlowTheme.of(context).primary, width: 2) : null,
+                    children: [
+                      // "None" tile — clears the icon.
+                      GestureDetector(
+                        onTap: () => setSheetState(() => selectedEmoji = ''),
+                        child: Container(
+                          height: 40,
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          decoration: BoxDecoration(
+                            color: selectedEmoji.isEmpty ? FlutterFlowTheme.of(context).primary.withOpacity(0.15) : Colors.grey.shade100,
+                            borderRadius: BorderRadius.circular(10),
+                            border: selectedEmoji.isEmpty ? Border.all(color: FlutterFlowTheme.of(context).primary, width: 2) : null,
+                          ),
+                          child: Center(
+                            child: Text('None', style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color: selectedEmoji.isEmpty ? FlutterFlowTheme.of(context).primary : Colors.grey[600],
+                            )),
+                          ),
                         ),
-                        child: Center(child: Text(e, style: const TextStyle(fontSize: 20))),
                       ),
-                    )).toList(),
+                      ...emojis.map((e) => GestureDetector(
+                        onTap: () => setSheetState(() => selectedEmoji = e),
+                        child: Container(
+                          width: 40, height: 40,
+                          decoration: BoxDecoration(
+                            color: selectedEmoji == e ? FlutterFlowTheme.of(context).primary.withOpacity(0.15) : Colors.grey.shade100,
+                            borderRadius: BorderRadius.circular(10),
+                            border: selectedEmoji == e ? Border.all(color: FlutterFlowTheme.of(context).primary, width: 2) : null,
+                          ),
+                          child: Center(child: Text(e, style: const TextStyle(fontSize: 20))),
+                        ),
+                      )),
+                    ],
                   ),
                   const SizedBox(height: 16),
 
@@ -1187,8 +1213,10 @@ class _RoutinesPageWidgetState extends State<RoutinesPageWidget> {
                   padding: const EdgeInsets.fromLTRB(24, 16, 24, 8),
                   child: Row(
                     children: [
-                      Text(routine.emoji, style: const TextStyle(fontSize: 28)),
-                      const SizedBox(width: 12),
+                      if (routine.emoji.isNotEmpty) ...[
+                        Text(routine.emoji, style: const TextStyle(fontSize: 28)),
+                        const SizedBox(width: 12),
+                      ],
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,

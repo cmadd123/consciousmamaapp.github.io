@@ -5,6 +5,7 @@ import '/components/home_nav_bar_widget.dart';
 import '/components/animated_press_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
+import '/flutter_flow/duration_format.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import 'dart:async';
 import '/flutter_flow/custom_functions.dart' as functions;
@@ -5344,7 +5345,7 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                           ),
                           const SizedBox(width: 4.0),
                           Text(
-                            '${(meal.prepareTime + meal.cookingTime).toInt()} min',
+                            formatCookTime(meal.prepareTime + meal.cookingTime),
                             style: FlutterFlowTheme.of(context).bodySmall.override(
                                   fontFamily: FFAppState().currentFontFamily,
                                   color: const Color(0xFF888888),
