@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:collection/collection.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
+import '/flutter_flow/duration_format.dart';
 import '/custom_code/actions/sharing_service.dart';
 import '/backend/backend.dart';
 import '/components/debug_overlay_widget.dart';
@@ -1136,7 +1137,7 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
       overviewItems.add(_OverviewItem(
         name: widget.recipe!.recipeName ?? 'Recipe',
         imageUrl: widget.recipe!.imageUrl,
-        cookTime: widget.recipe!.cookingTime > 0 ? '${widget.recipe!.cookingTime.toInt()} min' : null,
+        cookTime: widget.recipe!.cookingTime > 0 ? formatCookTime(widget.recipe!.cookingTime) : null,
       ));
     } else if (widget.contentType == 'single_combo' && widget.combo != null) {
       // Add entree
@@ -1219,7 +1220,7 @@ class _ShareContentBottomSheetState extends State<ShareContentBottomSheet> {
         overviewItems.add(_OverviewItem(
           name: widget.meal!.recipeName ?? 'Meal',
           imageUrl: widget.meal!.imageUrl,
-          cookTime: widget.meal!.cookingTime > 0 ? '${widget.meal!.cookingTime.toInt()} min' : null,
+          cookTime: widget.meal!.cookingTime > 0 ? formatCookTime(widget.meal!.cookingTime) : null,
         ));
       }
     } else if (widget.mealPlans != null && widget.meals != null) {

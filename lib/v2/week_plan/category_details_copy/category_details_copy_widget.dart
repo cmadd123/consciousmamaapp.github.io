@@ -1,6 +1,7 @@
 import '/backend/schema/structs/index.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
+import '/flutter_flow/duration_format.dart';
 import '/index.dart';
 import 'package:flutter/material.dart';
 import 'category_details_copy_model.dart';
@@ -388,10 +389,7 @@ class _CategoryDetailsCopyWidgetState extends State<CategoryDetailsCopyWidget> {
                                   padding: const EdgeInsetsDirectional.fromSTEB(
                                       8.0, 0.0, 0.0, 0.0),
                                   child: Text(
-                                    'Prep:  ${valueOrDefault<String>(
-                                      widget.itemDetails?.preparationMinutes,
-                                      '0',
-                                    )} min  |  Cook: ${widget.itemDetails?.cookingMinutes} min',
+                                    'Prep:  ${formatCookTime(int.tryParse((widget.itemDetails?.preparationMinutes ?? '').replaceAll(RegExp(r'[^0-9]'), '')))}  |  Cook: ${formatCookTime(int.tryParse((widget.itemDetails?.cookingMinutes ?? '').replaceAll(RegExp(r'[^0-9]'), '')))}',
                                     style: FlutterFlowTheme.of(context)
                                         .bodyMedium
                                         .override(

@@ -1,6 +1,7 @@
 import 'dart:ui';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
+import '/flutter_flow/duration_format.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/components/celebration_animation.dart';
 import 'package:flutter/material.dart';
@@ -468,7 +469,7 @@ class _MealComposerDemoWidgetState extends State<MealComposerDemoWidget> {
                             Icon(Icons.schedule, size: 14.0, color: theme.secondaryText),
                             const SizedBox(width: 4.0),
                             Text(
-                              '${item.prepTime + item.cookTime} min',
+                              formatCookTime(item.prepTime + item.cookTime),
                               style: theme.bodySmall.override(
                                 fontFamily: 'Andika New Basic',
                                 color: theme.secondaryText,
@@ -978,7 +979,7 @@ class _MealComposerDemoWidgetState extends State<MealComposerDemoWidget> {
                     return ListTile(
                       leading: Text(recipe.imageUrl, style: const TextStyle(fontSize: 32.0)),
                       title: Text(recipe.name),
-                      subtitle: Text('${recipe.prepTime + recipe.cookTime} min'),
+                      subtitle: Text(formatCookTime(recipe.prepTime + recipe.cookTime)),
                       onTap: () {
                         setState(() {
                           if (type == 'entree') {
