@@ -2613,12 +2613,20 @@
         });
       }
     };
+    let _toastTimer = null;
     const toast = (msg, danger = false) => {
       const el = $('toast');
+      // Never surface an empty toast — with no text it renders as a stray
+      // dark box at the bottom of the screen.
+      if (!msg || !String(msg).trim()) {
+        el.classList.remove('show');
+        return;
+      }
       el.textContent = msg;
       el.style.background = danger ? 'var(--danger)' : '#111827';
       el.classList.add('show');
-      setTimeout(() => el.classList.remove('show'), 3000);
+      if (_toastTimer) clearTimeout(_toastTimer);
+      _toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
     };
     // Brief check-mark pop in the centre of the screen on a successful save.
     const celebrate = () => {
