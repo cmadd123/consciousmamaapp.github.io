@@ -96,12 +96,15 @@ class _HelpfulDocsPageState extends State<HelpfulDocsPage> {
                                   .where('is_published', isEqualTo: true),
                             ),
                       builder: (context, creatorSnap) {
-                    // Merge own uploads + creator docs, deduped by path.
-                    final seenPaths = <String>{};
-                    final docs = <AppContentRecord>[];
-                    for (final d in [...mine, ...(creatorSnap.data ?? [])]) {
-                      if (seenPaths.add(d.reference.path)) docs.add(d);
-                    }
+                    // Split into the user's own uploads vs the active
+                    // creator's published docs. A doc owned by the current
+                    // user (e.g. a creator viewing their own code) is only
+                    // shown under "My Docs", never duplicated below.
+                    final minePaths =
+                        mine.map((d) => d.reference.path).toSet();
+                    final creatorDocs = (creatorSnap.data ?? [])
+                        .where((d) => !minePaths.contains(d.reference.path))
+                        .toList();
 
                     if (!mineSnap.hasData && !creatorSnap.hasData) {
                       return Center(
@@ -111,7 +114,7 @@ class _HelpfulDocsPageState extends State<HelpfulDocsPage> {
                       );
                     }
 
-                    if (docs.isEmpty) {
+                    if (mine.isEmpty && creatorDocs.isEmpty) {
                       return Center(
                         child: Padding(
                           padding: const EdgeInsets.all(40),
@@ -146,10 +149,22 @@ class _HelpfulDocsPageState extends State<HelpfulDocsPage> {
                       );
                     }
 
-                    return ListView.builder(
+                    final creatorName = (creator?.name.isNotEmpty ?? false)
+                        ? creator!.name
+                        : 'Creator';
+
+                    return ListView(
                       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-                      itemCount: docs.length,
-                      itemBuilder: (context, index) => _buildDocCard(docs[index]),
+                      children: [
+                        if (mine.isNotEmpty) ...[
+                          _sectionHeader(context, 'My Docs'),
+                          ...mine.map(_buildDocCard),
+                        ],
+                        if (creatorDocs.isNotEmpty) ...[
+                          _sectionHeader(context, '$creatorName’s Docs'),
+                          ...creatorDocs.map(_buildDocCard),
+                        ],
+                      ],
                     );
                       },
                     );
@@ -198,6 +213,22 @@ class _HelpfulDocsPageState extends State<HelpfulDocsPage> {
         );
       }
     }
+  }
+
+  Widget _sectionHeader(BuildContext context, String label) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 4, bottom: 10, left: 2),
+      child: Text(
+        label,
+        style: FlutterFlowTheme.of(context).bodySmall.override(
+          fontFamily: FFAppState().currentFontFamily,
+          color: FlutterFlowTheme.of(context).secondaryText,
+          fontSize: 12,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 0.6,
+        ),
+      ),
+    );
   }
 
   Widget _buildDocCard(AppContentRecord doc) {
