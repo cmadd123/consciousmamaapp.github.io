@@ -391,6 +391,23 @@ service cloud.firestore {
       allow write: if isAuthenticated();
     }
 
+    // ─── Creator-outreach CRM (Haley's mini CRM) ─────────────────
+    // Small teammate allowlist for the outreach pipeline. Deliberately
+    // separate from isAdmin() so CRM access doesn't grant earnings/comp/
+    // suggestion visibility. Keep in sync with ALLOWED_EMAILS in
+    // admin/crm/index.html.
+    function isCrmUser() {
+      return request.auth != null && (
+        request.auth.token.email == 'collinjmaddox@gmail.com' ||
+        request.auth.token.email == 'brennanmaddox27@gmail.com' ||
+        request.auth.token.email == 'haley.hostetter@gmail.com'
+      );
+    }
+
+    match /outreach_leads/{leadId} {
+      allow read, write: if isCrmUser();
+    }
+
     // ─── Default deny ─────────────────────────────────────────────
     match /{document=**} {
       allow read, write: if false;

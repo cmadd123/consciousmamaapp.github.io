@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <title>Creator Outreach · MomRise CRM</title>
+  <style>
+    :root {
+      --bg: #F7F8FA; --surface: #FFFFFF; --border: #E7E9EE;
+      --text: #1A1D24; --text-muted: #6B7280;
+      --primary: #52A097; --primary-dark: #3E7A73;
+      --danger: #DC2626; --warn: #B45309; --warn-bg: #FEF3C7;
+      --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg); color: var(--text); line-height: 1.45;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--primary-dark); }
+    button { font-family: inherit; cursor: pointer; }
+    .wrap { max-width: 1040px; margin: 0 auto; padding: 20px 16px 80px; }
+
+    /* Header */
+    header {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; margin-bottom: 20px; flex-wrap: wrap;
+    }
+    .brand { display: flex; align-items: baseline; gap: 10px; }
+    .brand h1 { font-size: 20px; font-weight: 700; }
+    .brand .sub { font-size: 13px; color: var(--text-muted); }
+    .user-chip {
+      display: flex; align-items: center; gap: 10px; font-size: 13px;
+      color: var(--text-muted);
+    }
+    .user-chip img { width: 28px; height: 28px; border-radius: 50%; }
+
+    .btn {
+      background: var(--primary); color: #fff; border: none;
+      padding: 9px 16px; border-radius: 9px; font-size: 14px; font-weight: 600;
+      transition: background 120ms;
+    }
+    .btn:hover { background: var(--primary-dark); }
+    .btn.ghost { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
+    .btn.ghost:hover { background: #F0F1F4; color: var(--text); }
+    .btn.danger { background: transparent; color: var(--danger); border: 1px solid #F3C9C9; }
+    .btn.danger:hover { background: #FEF2F2; }
+    .btn.sm { padding: 5px 10px; font-size: 12px; border-radius: 7px; }
+    .btn:disabled { opacity: 0.55; cursor: default; }
+
+    /* Metrics */
+    .metrics { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
+    .metric {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 12px 16px; box-shadow: var(--shadow);
+      min-width: 120px; flex: 1;
+    }
+    .metric .label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .metric .value { font-size: 26px; font-weight: 700; margin-top: 2px; font-variant-numeric: tabular-nums; }
+    .metric.due .value { color: var(--warn); }
+
+    /* Toolbar */
+    .toolbar {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+    .search {
+      flex: 1; min-width: 180px; padding: 9px 14px; border: 1px solid var(--border);
+      border-radius: 9px; font-size: 14px; background: var(--surface);
+    }
+    .chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+    .chip {
+      padding: 5px 12px; border-radius: 999px; font-size: 13px; font-weight: 600;
+      border: 1px solid var(--border); background: var(--surface); color: var(--text-muted);
+    }
+    .chip.on { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .chip.due { color: var(--warn); border-color: #F1D9A8; }
+    .chip.due.on { background: var(--warn); color: #fff; border-color: var(--warn); }
+
+    /* Lead cards */
+    .lead {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 14px 16px; box-shadow: var(--shadow);
+      margin-bottom: 10px; display: flex; gap: 14px; align-items: flex-start;
+    }
+    .lead.overdue { border-left: 4px solid var(--warn); }
+    .lead-main { flex: 1; min-width: 0; }
+    .lead-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .lead-name { font-size: 16px; font-weight: 700; }
+    .lead-handle { font-size: 13px; color: var(--text-muted); }
+    .lead-meta { font-size: 13px; color: var(--text-muted); margin-top: 4px; display: flex; gap: 14px; flex-wrap: wrap; }
+    .lead-meta .fu.overdue { color: var(--warn); font-weight: 700; }
+    .lead-notes { font-size: 13px; color: var(--text); margin-top: 8px; white-space: pre-wrap; word-break: break-word; }
+    .lead-actions { display: flex; flex-direction: column; gap: 6px; align-items: flex-end; }
+
+    .pill {
+      display: inline-block; font-size: 12px; font-weight: 700; padding: 3px 10px;
+      border-radius: 999px; white-space: nowrap;
+    }
+    .platform-tag { font-size: 12px; color: var(--text-muted); }
+
+    .empty { text-align: center; color: var(--text-muted); padding: 60px 20px; }
+    .empty .big { font-size: 40px; margin-bottom: 10px; }
+
+    /* Modal */
+    .backdrop {
+      position: fixed; inset: 0; background: rgba(17,24,39,0.45);
+      display: none; align-items: center; justify-content: center; padding: 16px; z-index: 50;
+    }
+    .backdrop.open { display: flex; }
+    .modal {
+      background: var(--surface); border-radius: 16px; padding: 22px;
+      width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+    }
+    .modal h2 { font-size: 18px; margin-bottom: 16px; }
+    .field { margin-bottom: 14px; }
+    .field label { display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 5px; }
+    .field input, .field select, .field textarea {
+      width: 100%; padding: 9px 12px; border: 1px solid var(--border);
+      border-radius: 9px; font-size: 14px; font-family: inherit; background: var(--surface); color: var(--text);
+    }
+    .field textarea { resize: vertical; min-height: 72px; }
+    .row2 { display: flex; gap: 12px; }
+    .row2 .field { flex: 1; }
+    .modal-actions { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 8px; }
+
+    /* Gate + toast */
+    .gate { text-align: center; padding: 90px 20px; }
+    .gate h1 { font-size: 22px; margin-bottom: 8px; }
+    .gate p { color: var(--text-muted); margin-bottom: 20px; }
+    .hidden { display: none !important; }
+    .toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+      background: #111827; color: #fff; padding: 11px 18px; border-radius: 10px;
+      font-size: 14px; opacity: 0; pointer-events: none; transition: opacity 200ms; z-index: 100;
+    }
+    .toast.show { opacity: 1; }
+    .toast.err { background: var(--danger); }
+    @media (max-width: 560px) {
+      .lead { flex-direction: column; }
+      .lead-actions { flex-direction: row; align-self: stretch; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Gate -->
+  <div class="gate" id="gate">
+    <h1>Creator Outreach CRM</h1>
+    <p id="gateMsg">Sign in with your allowlisted Google account.</p>
+    <button class="btn" id="signInBtn">Sign in with Google</button>
+  </div>
+
+  <!-- App -->
+  <div class="wrap hidden" id="app">
+    <header>
+      <div class="brand">
+        <h1>Creator Outreach</h1>
+        <span class="sub">Track who you're reaching out to &amp; who to follow up with.</span>
+      </div>
+      <div class="user-chip">
+        <span id="userEmail"></span>
+        <button class="btn ghost sm" id="signOutBtn">Sign out</button>
+      </div>
+    </header>
+
+    <div class="metrics">
+      <div class="metric due"><div class="label">Follow-ups due</div><div class="value" id="mDue">—</div></div>
+      <div class="metric"><div class="label">Active leads</div><div class="value" id="mActive">—</div></div>
+      <div class="metric"><div class="label">Signed</div><div class="value" id="mSigned">—</div></div>
+      <div class="metric"><div class="label">Total</div><div class="value" id="mTotal">—</div></div>
+    </div>
+
+    <div class="toolbar">
+      <input class="search" id="search" type="search" placeholder="Search name, handle, email, notes…">
+      <button class="btn" id="addBtn">+ Add creator</button>
+    </div>
+
+    <div class="chips" id="filterChips"></div>
+
+    <div id="list"></div>
+  </div>
+
+  <!-- Add/Edit modal -->
+  <div class="backdrop" id="modal">
+    <div class="modal">
+      <h2 id="modalTitle">Add creator</h2>
+      <div class="field">
+        <label for="fName">Name *</label>
+        <input id="fName" type="text" placeholder="e.g. Jane Doe">
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label for="fHandle">Handle</label>
+          <input id="fHandle" type="text" placeholder="@janedoe">
+        </div>
+        <div class="field">
+          <label for="fPlatform">Platform</label>
+          <select id="fPlatform">
+            <option value="">—</option>
+            <option>Instagram</option>
+            <option>TikTok</option>
+            <option>YouTube</option>
+            <option>Facebook</option>
+            <option>Pinterest</option>
+            <option>Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label for="fEmail">Email</label>
+        <input id="fEmail" type="email" placeholder="jane@example.com">
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label for="fStatus">Stage</label>
+          <select id="fStatus"></select>
+        </div>
+        <div class="field">
+          <label for="fLast">Last contacted</label>
+          <input id="fLast" type="date">
+        </div>
+      </div>
+      <div class="field">
+        <label for="fFollow">Follow up on</label>
+        <input id="fFollow" type="date">
+      </div>
+      <div class="field">
+        <label for="fNotes">Notes</label>
+        <textarea id="fNotes" placeholder="What was said, what they're into, next step…"></textarea>
+      </div>
+      <div class="modal-actions">
+        <button class="btn danger" id="deleteBtn">Delete</button>
+        <div style="display:flex; gap:10px;">
+          <button class="btn ghost" id="cancelBtn">Cancel</button>
+          <button class="btn" id="saveBtn">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+    import { getAuth, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup }
+      from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+    import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, serverTimestamp }
+      from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBucTVaWpYhDYScTpQ4JH9XdJgCBFmbHWk",
+      authDomain: "parenting-plus-7szrif.firebaseapp.com",
+      projectId: "parenting-plus-7szrif",
+      storageBucket: "parenting-plus-7szrif.appspot.com",
+      messagingSenderId: "67449654316",
+      appId: "1:67449654316:web:88be5e06e598d56dd55589",
+    };
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Keep in sync with isCrmUser() in firestore.rules.
+    const ALLOWED_EMAILS = [
+      'collinjmaddox@gmail.com',
+      'brennanmaddox27@gmail.com',
+      'haley.hostetter@gmail.com',
+    ];
+
+    // Pipeline stages. `active` = counts toward "active leads" / follow-ups.
+    const STAGES = [
+      { key: 'to_contact', label: 'To contact', color: '#6B7280', bg: '#F1F2F4', active: true },
+      { key: 'contacted',  label: 'Contacted',  color: '#2563EB', bg: '#E0EAFF', active: true },
+      { key: 'replied',    label: 'Replied',    color: '#7C3AED', bg: '#EDE4FF', active: true },
+      { key: 'in_talks',   label: 'In talks',   color: '#B45309', bg: '#FEF3C7', active: true },
+      { key: 'signed',     label: 'Signed',     color: '#047857', bg: '#D1FAE5', active: false },
+      { key: 'passed',     label: 'Passed',     color: '#9CA3AF', bg: '#F3F4F6', active: false },
+    ];
+    const stageOf = (k) => STAGES.find(s => s.key === k) || STAGES[0];
+
+    const $ = (id) => document.getElementById(id);
+    const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) =>
+      ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const todayStr = () => {
+      const d = new Date();
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    };
+    const fmtDate = (s) => {
+      if (!s) return '';
+      const [y, m, d] = s.split('-').map(Number);
+      if (!y) return '';
+      return new Date(y, m - 1, d).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+    };
+
+    let toastTimer = null;
+    function toast(msg, err = false) {
+      if (!msg) return;
+      const t = $('toast');
+      t.textContent = msg;
+      t.classList.toggle('err', err);
+      t.classList.add('show');
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => t.classList.remove('show'), 2600);
+    }
+
+    // ── Auth ──
+    $('signInBtn').addEventListener('click', () =>
+      signInWithPopup(auth, new GoogleAuthProvider()).catch((e) => toast('Sign-in failed: ' + e.message, true)));
+    $('signOutBtn').addEventListener('click', () => signOut(auth));
+
+    let unsub = null;
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        if (unsub) { unsub(); unsub = null; }
+        $('gate').classList.remove('hidden');
+        $('app').classList.add('hidden');
+        $('gateMsg').textContent = 'Sign in with your allowlisted Google account.';
+        return;
+      }
+      if (!ALLOWED_EMAILS.includes((user.email || '').toLowerCase())) {
+        $('gate').classList.remove('hidden');
+        $('app').classList.add('hidden');
+        $('gateMsg').textContent = `${user.email} isn't on the CRM allowlist. Ask Collin to add you.`;
+        return;
+      }
+      $('gate').classList.add('hidden');
+      $('app').classList.remove('hidden');
+      $('userEmail').textContent = user.email;
+      subscribe();
+    });
+
+    // ── Data ──
+    let leads = [];
+    let activeFilter = 'all';
+    let searchTerm = '';
+
+    function subscribe() {
+      if (unsub) return;
+      unsub = onSnapshot(collection(db, 'outreach_leads'), (snap) => {
+        leads = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+        render();
+      }, (err) => {
+        console.error(err);
+        toast('Load failed: ' + err.message, true);
+      });
+    }
+
+    function isOverdue(lead) {
+      const st = stageOf(lead.status);
+      return st.active && lead.follow_up_date && lead.follow_up_date <= todayStr();
+    }
+
+    // ── Filter chips ──
+    function renderChips() {
+      const dueCount = leads.filter(isOverdue).length;
+      const chips = [
+        { key: 'all', label: `All (${leads.length})`, cls: '' },
+        { key: 'due', label: `Follow-ups due (${dueCount})`, cls: 'due' },
+        ...STAGES.map((s) => ({
+          key: s.key,
+          label: `${s.label} (${leads.filter(l => (l.status || 'to_contact') === s.key).length})`,
+          cls: '',
+        })),
+      ];
+      $('filterChips').innerHTML = chips.map((c) =>
+        `<button class="chip ${c.cls} ${activeFilter === c.key ? 'on' : ''}" data-filter="${c.key}">${esc(c.label)}</button>`
+      ).join('');
+      $('filterChips').querySelectorAll('[data-filter]').forEach((b) => {
+        b.addEventListener('click', () => { activeFilter = b.dataset.filter; render(); });
+      });
+    }
+
+    // ── Render ──
+    function render() {
+      renderChips();
+
+      const active = leads.filter(l => stageOf(l.status).active);
+      $('mDue').textContent = leads.filter(isOverdue).length;
+      $('mActive').textContent = active.length;
+      $('mSigned').textContent = leads.filter(l => l.status === 'signed').length;
+      $('mTotal').textContent = leads.length;
+
+      let rows = leads.slice();
+      if (activeFilter === 'due') rows = rows.filter(isOverdue);
+      else if (activeFilter !== 'all') rows = rows.filter(l => (l.status || 'to_contact') === activeFilter);
+
+      const q = searchTerm.trim().toLowerCase();
+      if (q) {
+        rows = rows.filter(l =>
+          [l.name, l.handle, l.email, l.notes, l.platform].some(v => (v || '').toLowerCase().includes(q)));
+      }
+
+      // Sort: overdue first (soonest follow-up first), then by follow-up date,
+      // then most-recently-updated.
+      rows.sort((a, b) => {
+        const ao = isOverdue(a), bo = isOverdue(b);
+        if (ao !== bo) return ao ? -1 : 1;
+        const af = a.follow_up_date || '9999', bf = b.follow_up_date || '9999';
+        if (af !== bf) return af < bf ? -1 : 1;
+        return (b.updated_at?.seconds || 0) - (a.updated_at?.seconds || 0);
+      });
+
+      const list = $('list');
+      if (rows.length === 0) {
+        list.innerHTML = leads.length === 0
+          ? `<div class="empty"><div class="big">📇</div><div style="font-weight:600;margin-bottom:4px;">No creators yet</div><div>Tap <strong>+ Add creator</strong> to start your outreach list.</div></div>`
+          : `<div class="empty"><div class="big">🔍</div><div>No creators match this filter.</div></div>`;
+        return;
+      }
+
+      list.innerHTML = rows.map((l) => {
+        const st = stageOf(l.status);
+        const overdue = isOverdue(l);
+        const meta = [];
+        if (l.platform || l.handle) meta.push(`<span class="platform-tag">${esc([l.platform, l.handle].filter(Boolean).join(' · '))}</span>`);
+        if (l.email) meta.push(`<a href="mailto:${esc(l.email)}">${esc(l.email)}</a>`);
+        if (l.last_contacted) meta.push(`Last: ${esc(fmtDate(l.last_contacted))}`);
+        if (l.follow_up_date) meta.push(`<span class="fu ${overdue ? 'overdue' : ''}">Follow up: ${esc(fmtDate(l.follow_up_date))}${overdue ? ' ⚠' : ''}</span>`);
+        return `
+          <div class="lead ${overdue ? 'overdue' : ''}" data-id="${l.id}">
+            <div class="lead-main">
+              <div class="lead-top">
+                <span class="lead-name">${esc(l.name || '(no name)')}</span>
+                <span class="pill" style="color:${st.color};background:${st.bg};">${esc(st.label)}</span>
+              </div>
+              <div class="lead-meta">${meta.join('')}</div>
+              ${l.notes ? `<div class="lead-notes">${esc(l.notes)}</div>` : ''}
+            </div>
+            <div class="lead-actions">
+              <button class="btn sm" data-contacted="${l.id}">Mark contacted</button>
+              <button class="btn ghost sm" data-edit="${l.id}">Edit</button>
+            </div>
+          </div>`;
+      }).join('');
+
+      list.querySelectorAll('[data-edit]').forEach(b =>
+        b.addEventListener('click', () => openModal(leads.find(l => l.id === b.dataset.edit))));
+      list.querySelectorAll('[data-contacted]').forEach(b =>
+        b.addEventListener('click', () => markContacted(b.dataset.contacted)));
+    }
+
+    // ── Add / edit modal ──
+    let editingId = null;
+    function fillStageSelect() {
+      $('fStatus').innerHTML = STAGES.map(s => `<option value="${s.key}">${esc(s.label)}</option>`).join('');
+    }
+    fillStageSelect();
+
+    function openModal(lead) {
+      editingId = lead?.id || null;
+      $('modalTitle').textContent = lead ? 'Edit creator' : 'Add creator';
+      $('fName').value = lead?.name || '';
+      $('fHandle').value = lead?.handle || '';
+      $('fPlatform').value = lead?.platform || '';
+      $('fEmail').value = lead?.email || '';
+      $('fStatus').value = lead?.status || 'to_contact';
+      $('fLast').value = lead?.last_contacted || '';
+      $('fFollow').value = lead?.follow_up_date || '';
+      $('fNotes').value = lead?.notes || '';
+      $('deleteBtn').style.display = lead ? 'inline-block' : 'none';
+      $('modal').classList.add('open');
+      $('fName').focus();
+    }
+    function closeModal() { $('modal').classList.remove('open'); editingId = null; }
+
+    $('addBtn').addEventListener('click', () => openModal(null));
+    $('cancelBtn').addEventListener('click', closeModal);
+    $('modal').addEventListener('click', (e) => { if (e.target === $('modal')) closeModal(); });
+
+    $('saveBtn').addEventListener('click', async () => {
+      const name = $('fName').value.trim();
+      if (!name) { toast('Name is required', true); return; }
+      const data = {
+        name,
+        handle: $('fHandle').value.trim(),
+        platform: $('fPlatform').value,
+        email: $('fEmail').value.trim().toLowerCase(),
+        status: $('fStatus').value,
+        last_contacted: $('fLast').value || '',
+        follow_up_date: $('fFollow').value || '',
+        notes: $('fNotes').value.trim(),
+        updated_at: serverTimestamp(),
+      };
+      $('saveBtn').disabled = true;
+      try {
+        if (editingId) {
+          await updateDoc(doc(db, 'outreach_leads', editingId), data);
+          toast('Saved');
+        } else {
+          data.created_at = serverTimestamp();
+          data.created_by = auth.currentUser?.email || '';
+          await addDoc(collection(db, 'outreach_leads'), data);
+          toast('Creator added');
+        }
+        closeModal();
+      } catch (e) {
+        console.error(e);
+        toast('Save failed: ' + e.message, true);
+      } finally {
+        $('saveBtn').disabled = false;
+      }
+    });
+
+    $('deleteBtn').addEventListener('click', async () => {
+      if (!editingId) return;
+      const lead = leads.find(l => l.id === editingId);
+      if (!confirm(`Delete "${lead?.name || 'this creator'}"? This can't be undone.`)) return;
+      try {
+        await deleteDoc(doc(db, 'outreach_leads', editingId));
+        toast('Deleted');
+        closeModal();
+      } catch (e) {
+        toast('Delete failed: ' + e.message, true);
+      }
+    });
+
+    // Quick action: stamp today as last-contacted, advance an untouched lead
+    // to "Contacted", and clear the follow-up flag (they can set a new one).
+    async function markContacted(id) {
+      const lead = leads.find(l => l.id === id);
+      if (!lead) return;
+      const patch = {
+        last_contacted: todayStr(),
+        follow_up_date: '',
+        updated_at: serverTimestamp(),
+      };
+      if ((lead.status || 'to_contact') === 'to_contact') patch.status = 'contacted';
+      try {
+        await updateDoc(doc(db, 'outreach_leads', id), patch);
+        toast(`Marked ${lead.name || 'creator'} contacted today`);
+      } catch (e) {
+        toast('Update failed: ' + e.message, true);
+      }
+    }
+
+    $('search').addEventListener('input', (e) => { searchTerm = e.target.value; render(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+  </script>
+</body>
+</html>
