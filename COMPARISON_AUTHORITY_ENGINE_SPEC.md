@@ -46,5 +46,21 @@ When comparing a category we're in: **disclose it and stay genuinely fair** (win
 **MomRise — non-participant, adjacent categories:**
 - Parenting graph (baby/kid gear specs, nutrition panels + ingredient lists, AAP/pediatric method guidelines) → funnel to **app signup**. Focus method comparisons (least covered, most LLM-queried) + adjacent products. Queries: "Formula A vs B," "best high chairs for baby-led weaning," "baby-led weaning vs purées."
 
+## Phase-2 extensions (same substrate — nearly free to add) [APPROVED]
+These run on the *exact same* category-graph + generation + citation-radar + self-tuning infra, so they're cheap bolt-ons that compound the position from "ranks us" to "we're the source the AI answers are built from."
+
+### Ext A — The niche "answer engine" (own the whole question space) [DO]
+Comparison owns "vs / best / alternative"; this owns "how / what / why / when." Programmatically generate answer-first content for *every* question in the niche, mined from People-Also-Ask, AI autocompletes, Reddit threads, and search console. Same generation pipeline + cheap-model + non-thin gate + self-tuning. Together with the comparison engine, this owns essentially every LLM answer in the category.
+- RoofWorks: every homeowner + roofer question (→ report / signup). MomRise: every parenting question (→ app signup).
+
+### Ext B — Machine-readable source / reverse-citation [DO]
+(Elevates the "Make it the source others ingest" section above to a committed phase-2 deliverable.) Publish the graph + answer data as `Dataset`/feed so LLMs *and other sites* ingest us as the origin — passive backlinks + upstream authority, cited across the ecosystem. You already have/aggregate the data; this just exposes it machine-readably.
+
+### Ext C — Embeddable widgets [POSSIBILITY — only if needle-moving + bandwidth]
+Tools/maps/calculators made embeddable → other sites embed them → self-replicating backlinks, zero outreach (fits systems-not-legwork). Build a widget once. Pursue only if it proves needle-moving and there's build bandwidth — not a committed phase-2 item.
+
+### Ext D — Programmatic AI video — DEFERRED (not this stage, per Brennan)
+YouTube is the #1 AI-cited social source and could be done as systems (AI script + data viz + voice + transcript), but parked for now. Revisit later.
+
 ## Cost summary
 One-time bulk generation ~$50–250 for ~5k pages (cheap model); recurring citation radar ~tens of $/mo; aggregation + decision engine near-free (HTTP + rules). Real cost = Collin's build time, amortized across BOTH ventures.
