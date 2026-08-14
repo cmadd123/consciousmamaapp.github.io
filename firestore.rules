@@ -306,7 +306,7 @@ service cloud.firestore {
     match /creator_earnings/{earningId} {
       allow read: if isAuthenticated() && (
         // Admin dashboard reads all creators' earnings for the aggregate view
-        request.auth.token.email == 'collinjmaddox@gmail.com' ||
+        isAdmin() ||
         // Creator reads their own earnings
         (resource.data.creator_ref != null &&
          get(resource.data.creator_ref).data.user_ref ==
@@ -322,8 +322,11 @@ service cloud.firestore {
     // Functions which use the admin SDK and bypass these rules.
 
     function isAdmin() {
-      return request.auth != null &&
-        request.auth.token.email == 'collinjmaddox@gmail.com';
+      return request.auth != null && (
+        request.auth.token.email == 'collinjmaddox@gmail.com' ||
+        request.auth.token.email == 'brennanmaddox27@gmail.com' ||
+        request.auth.token.email == 'haley.hostetter@gmail.com'
+      );
     }
 
     match /creator_applications/{appId} {

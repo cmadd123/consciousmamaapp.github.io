@@ -2571,7 +2571,7 @@ exports.notifyOnCreatorApplication = onDocumentCreated(
 // Called by the /admin/ dashboard. Gated on the caller's email.
 // Approve creates the creator doc (same logic as admin/approve-creator.js)
 // and marks the application approved. Reject just flips the status.
-const ADMIN_EMAILS = ['collinjmaddox@gmail.com', 'brennanmaddox27@gmail.com'];
+const ADMIN_EMAILS = ['collinjmaddox@gmail.com', 'brennanmaddox27@gmail.com', 'haley.hostetter@gmail.com'];
 
 function _requireAdmin(request) {
   if (!request.auth) throw new HttpsError('unauthenticated', 'Sign in required');
