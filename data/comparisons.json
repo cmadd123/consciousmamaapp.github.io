@@ -275,5 +275,189 @@
       "American Academy of Pediatrics (HealthyChildren.org) — feeding readiness"
     ],
     "updated": "2026-08-15"
+  },
+  {
+    "slug": "sippy-cup-vs-straw-cup",
+    "headline": "Sippy Cup vs. Straw Cup",
+    "subhead": "What to hand your toddler when the bottle goes away — and why it matters for teeth and speech.",
+    "category": "Feeding gear",
+    "question": "Sippy cup or straw cup — which is better for a toddler?",
+    "answer": "Pediatric dentists and speech-language pathologists generally prefer straw cups (and open cups) over traditional hard-spout sippy cups. Straws encourage a more mature swallow and better oral-motor and tongue development, while heavy, prolonged use of spout sippy cups can affect tongue posture and — with sugary drinks that pool around the teeth — raise the risk of cavities. Spout sippy cups are still handy for spill control; many families use a straw or open cup for everyday drinking and keep a spout cup for the car or stroller.",
+    "cta": {
+      "lead": "Getting mealtime sorted?",
+      "body": "MomRise plans <strong>age-appropriate meals</strong> and builds the grocery list — one less thing to figure out at the table."
+    },
+    "a": {
+      "name": "Sippy cup (hard spout)",
+      "blurb": "Spill-resistant and an easy step from the bottle. But the spout encourages a more immature suck, and prolonged use — especially with juice or milk — can affect oral development and teeth."
+    },
+    "b": {
+      "name": "Straw cup",
+      "blurb": "Promotes a mature swallow and good oral-motor development, and it's the option dentists and speech therapists usually recommend. Still spill-resistant, though it takes a little practice to learn."
+    },
+    "table": [
+      { "dim": "How the child drinks", "a": "Sucks from a spout", "b": "Sips through a straw (more mature pattern)" },
+      { "dim": "Oral / speech development", "a": "Can reinforce an immature swallow if overused", "b": "Supports tongue and oral-motor development" },
+      { "dim": "Teeth", "a": "Sugary drinks can pool and cause decay", "b": "Less pooling against front teeth" },
+      { "dim": "Spill resistance", "a": "High", "b": "High (valved straw cups)" },
+      { "dim": "Learning curve", "a": "Easy — familiar from the bottle", "b": "Takes a little practice at first" },
+      { "dim": "Expert preference", "a": "Convenience option", "b": "Dentist / speech-therapist preferred" }
+    ],
+    "bestFor": [
+      { "when": "You want the best option for teeth and speech", "pick": "Straw cup (or open cup)" },
+      { "when": "You need the easiest bottle-to-cup step", "pick": "Spout cup, short-term" },
+      { "when": "Spills in the car or stroller are the concern", "pick": "A valved straw cup" },
+      { "when": "Your child is ready for the next step", "pick": "An open cup with help at meals" }
+    ],
+    "faqs": [
+      { "q": "When should we switch from a bottle to a cup?", "a": "Common guidance is to introduce a cup around 6 months and aim to be off the bottle by about 12–18 months. Starting a straw or open cup early makes the transition smoother." },
+      { "q": "Are hard-spout sippy cups bad?", "a": "They're not harmful for occasional use, but relying on them heavily and for long periods — especially with sugary drinks — can affect oral development and teeth. Straw and open cups are better for daily drinking." },
+      { "q": "What about open cups?", "a": "Open cups (with help) are excellent for oral development and are recommended early — start with tiny amounts of water at meals. Expect spills while your child learns." },
+      { "q": "What's a good age for a straw cup?", "a": "Many babies can learn to use a straw cup around 9–12 months, and some earlier. It's fine to introduce it as soon as your child shows interest." }
+    ],
+    "disclaimer": "General guidance only — for concerns about oral development, speech, or your child's teeth, check with your pediatrician, pediatric dentist, or a speech-language pathologist.",
+    "sources": [
+      "American Academy of Pediatric Dentistry — cups & oral health",
+      "American Speech-Language-Hearing Association (ASHA) — feeding & oral-motor development"
+    ],
+    "updated": "2026-08-15"
+  },
+  {
+    "slug": "potty-training-child-led-vs-3-day-method",
+    "headline": "Child-Led vs. the 3-Day Potty Training Method",
+    "subhead": "Slow and steady or a fast, intensive push — how the two approaches compare.",
+    "category": "Milestones & routines",
+    "question": "Child-led or the 3-day method — which potty training approach actually works?",
+    "answer": "Child-led potty training follows your child's readiness cues and moves at their pace over weeks or months, keeping pressure low. The \"3-day method\" is an intensive, parent-led sprint — you clear the calendar, ditch the diapers, and focus on the potty for a few days. Neither is proven superior; success depends most on whether your child is actually ready. Intensive methods can work quickly for a ready toddler, while child-led tends to be lower-stress and easier to sustain.",
+    "cta": {
+      "lead": "Tackling a big milestone?",
+      "body": "MomRise helps you build <strong>consistent daily routines</strong> and track milestones — so potty training fits into the rhythm you already have."
+    },
+    "a": {
+      "name": "Child-led",
+      "blurb": "Follows your child's readiness signs and interest, progresses gradually, and keeps pressure low. Can stretch over weeks to months."
+    },
+    "b": {
+      "name": "3-day method",
+      "blurb": "An intensive few-day push: no diapers, lots of fluids and potty trips, and full focus. Fast when a child is ready, but demands a cleared schedule and consistency."
+    },
+    "table": [
+      { "dim": "Pace", "a": "Gradual, child sets the speed", "b": "Fast, front-loaded" },
+      { "dim": "Pressure level", "a": "Low", "b": "Higher during the sprint" },
+      { "dim": "Parent time up front", "a": "Spread out", "b": "Intense for a few days" },
+      { "dim": "Works best when", "a": "You're in no rush", "b": "The child is clearly ready" },
+      { "dim": "Accidents / regressions", "a": "Handled gently over time", "b": "Expected during the days, then eases" },
+      { "dim": "Typical duration", "a": "Weeks to months", "b": "A few days to click, longer to master" }
+    ],
+    "bestFor": [
+      { "when": "You have a relaxed timeline", "pick": "Child-led" },
+      { "when": "Your toddler shows clear readiness and you want it done", "pick": "3-day method" },
+      { "when": "Your child is anxious or resistant", "pick": "Child-led" },
+      { "when": "You have a free long weekend and a ready toddler", "pick": "3-day method" }
+    ],
+    "faqs": [
+      { "q": "What age should you start potty training?", "a": "Many children show readiness between about 18 months and 3 years. Readiness signs matter more than age — staying dry for stretches, interest in the potty, telling you when they've gone, and being able to pull pants up and down." },
+      { "q": "Does the 3-day method really work?", "a": "It can work well for children who are truly ready, but it isn't magic — plenty of kids need longer, and nighttime dryness comes later regardless of method. If it stalls, it usually means your child needs a bit more time." },
+      { "q": "What if potty training fails?", "a": "Taking a break for a few weeks and trying again later is common and completely fine. Pushing a child who isn't ready tends to backfire; a reset often does the trick." },
+      { "q": "Is daytime the same as nighttime training?", "a": "No. Daytime control usually comes first; staying dry overnight can take months or years longer and depends on physical development, not effort." }
+    ],
+    "disclaimer": "General guidance only. Every child develops on their own timeline — talk to your pediatrician if you have concerns about readiness or setbacks.",
+    "sources": [
+      "American Academy of Pediatrics (HealthyChildren.org) — toilet training",
+      "CDC — child development milestones"
+    ],
+    "updated": "2026-08-15"
+  },
+  {
+    "slug": "swaddle-vs-sleep-sack",
+    "headline": "Swaddle vs. Sleep Sack",
+    "subhead": "What the difference is, and the safe-sleep moment you have to switch.",
+    "category": "Sleep & routines",
+    "question": "Swaddle or sleep sack — what's the difference and when do you switch?",
+    "answer": "A swaddle wraps a newborn's arms snugly to calm the startle (Moro) reflex in the early weeks. A sleep sack is a wearable blanket that leaves the arms free and can be used for many months. The key isn't which is \"better\" — it's the order: swaddle first, then move to a sleep sack the moment your baby shows any sign of rolling, because swaddling must stop then for safe sleep. That transition usually happens around 2–4 months.",
+    "cta": {
+      "lead": "Building a bedtime routine?",
+      "body": "MomRise helps you set <strong>consistent sleep and bedtime routines</strong> and track milestones — so the early months feel a little more predictable."
+    },
+    "a": {
+      "name": "Swaddle",
+      "blurb": "A snug wrap that keeps a newborn's arms in, soothing the startle reflex. For the first weeks only — until any sign of rolling appears."
+    },
+    "b": {
+      "name": "Sleep sack",
+      "blurb": "A wearable blanket with arms free. Safe once a baby starts rolling, keeps them warm without loose bedding, and can be used well into toddlerhood."
+    },
+    "table": [
+      { "dim": "Arms", "a": "Wrapped snugly", "b": "Free to move" },
+      { "dim": "Best age", "a": "Newborn to first signs of rolling", "b": "From rolling onward, into toddlerhood" },
+      { "dim": "Main purpose", "a": "Calms the startle reflex", "b": "Warmth without loose blankets" },
+      { "dim": "Rolling safety", "a": "Must stop at any sign of rolling", "b": "Safe once rolling begins" },
+      { "dim": "How long usable", "a": "A few weeks to ~2–4 months", "b": "Many months" },
+      { "dim": "Role", "a": "First step", "b": "The transition out of the swaddle" }
+    ],
+    "bestFor": [
+      { "when": "A newborn startles themselves awake", "pick": "Swaddle (until any rolling)" },
+      { "when": "Your baby shows any sign of rolling", "pick": "Stop swaddling — switch to a sleep sack" },
+      { "when": "You want one item that lasts longer", "pick": "Sleep sack" },
+      { "when": "The room runs cool", "pick": "A sleep sack in an appropriate TOG weight" }
+    ],
+    "faqs": [
+      { "q": "When should you stop swaddling?", "a": "As soon as your baby shows any sign of trying to roll — often around 2–4 months, sometimes earlier. A swaddled baby who rolls to their stomach can't push up safely, so this is a firm safe-sleep rule." },
+      { "q": "Are sleep sacks safe?", "a": "Yes — a correctly sized wearable blanket is considered a safe alternative to loose blankets, which aren't recommended in the crib. Always follow safe-sleep basics: back to sleep, firm flat surface, nothing loose." },
+      { "q": "Can a newborn use a sleep sack instead of a swaddle?", "a": "Yes. Swaddling is optional — some newborns sleep fine in an arms-free sleep sack from the start. Use whichever your baby settles with, and follow safe-sleep rules either way." },
+      { "q": "How do you transition out of a swaddle?", "a": "Many families go arms-out one arm at a time, or use a transitional sack, over a few nights. Once both arms are out, a standard sleep sack is the next step." }
+    ],
+    "disclaimer": "Safe sleep is critical. Always place babies on their back on a firm, flat surface with nothing loose in the crib, stop swaddling at the first sign of rolling, and follow the AAP safe-sleep guidelines and your pediatrician's advice.",
+    "sources": [
+      "American Academy of Pediatrics — safe sleep recommendations",
+      "AAP HealthyChildren.org — swaddling guidance"
+    ],
+    "updated": "2026-08-15"
+  },
+  {
+    "slug": "cloth-vs-disposable-diapers",
+    "headline": "Cloth vs. Disposable Diapers",
+    "subhead": "Cost, effort, and environmental impact — the real trade-offs, compared.",
+    "category": "Baby gear",
+    "question": "Cloth or disposable diapers — which should you choose?",
+    "answer": "Disposable diapers are convenient, very absorbent, and low-effort, but they cost more over the diapering years and add up to a lot of landfill waste. Cloth diapers have a higher upfront cost but are cheaper over the long run, reusable, and lower-waste — in exchange for regular laundry and more hands-on effort. Neither is clearly \"better\"; it comes down to your budget, time, laundry access, and how much you weigh environmental impact. Plenty of families do a mix — cloth at home, disposable for travel and daycare.",
+    "cta": {
+      "lead": "One app for the whole journey",
+      "body": "MomRise plans meals, tracks milestones, and turns everyday parenting challenges into simple, age-appropriate daily steps."
+    },
+    "a": {
+      "name": "Disposable diapers",
+      "blurb": "Convenient and highly absorbent — use once and toss. The trade-off is a higher lifetime cost and significant landfill waste."
+    },
+    "b": {
+      "name": "Cloth diapers",
+      "blurb": "Reusable and cheaper over the long run, with lower waste and control over materials. The trade-off is upfront cost plus regular washing and more effort."
+    },
+    "table": [
+      { "dim": "Upfront cost", "a": "Low (buy as you go)", "b": "Higher (build the stash)" },
+      { "dim": "Lifetime cost", "a": "Higher over the years", "b": "Lower, especially across siblings" },
+      { "dim": "Effort", "a": "Minimal", "b": "Regular laundry + changes" },
+      { "dim": "Convenience / absorbency", "a": "High", "b": "Good, but more frequent changes" },
+      { "dim": "Environmental impact", "a": "More landfill waste", "b": "Less waste (some water/energy for washing)" },
+      { "dim": "Travel & daycare", "a": "Easiest", "b": "Trickier — many use disposables here" }
+    ],
+    "bestFor": [
+      { "when": "You want maximum convenience and minimal effort", "pick": "Disposable" },
+      { "when": "You want long-term savings and lower waste", "pick": "Cloth" },
+      { "when": "Laundry access is limited", "pick": "Disposable" },
+      { "when": "You want a middle ground", "pick": "Hybrid — cloth at home, disposable out and at daycare" }
+    ],
+    "faqs": [
+      { "q": "Do cloth diapers really save money?", "a": "Usually yes over the full diapering period, and even more if you reuse them for a second child — but the savings depend on how much you spend upfront and your laundry costs. The break-even point is often somewhere in the first year or two." },
+      { "q": "Are cloth diapers better for the environment?", "a": "Cloth creates far less landfill waste, but washing uses water and energy, so the overall footprint depends on how you launder them. Line-drying and full loads improve the math." },
+      { "q": "Are cloth diapers a lot more work?", "a": "They add laundry every few days and slightly more frequent changes, but modern all-in-one cloth diapers are much simpler than the pins-and-folds of the past." },
+      { "q": "Can you use cloth diapers at daycare?", "a": "Some daycares accept them, many don't, and policies vary — check first. A common solution is cloth at home and disposables at daycare and on trips." }
+    ],
+    "disclaimer": "General information to help you weigh the trade-offs — the right choice depends on your family's budget, routine, and priorities.",
+    "sources": [
+      "Consumer cost analyses of diapering over the diapering years",
+      "Environmental life-cycle comparisons of cloth vs. disposable diapers"
+    ],
+    "updated": "2026-08-15"
   }
 ]

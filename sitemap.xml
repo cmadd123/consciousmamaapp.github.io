@@ -13,7 +13,13 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://momrise.app/compare/cloth-vs-disposable-diapers/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://momrise.app/compare/high-chair-vs-booster-seat/</loc>
+    <lastmod>2026-08-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -25,16 +31,34 @@
   </url>
   <url>
     <loc>https://momrise.app/compare/montessori-vs-traditional/</loc>
+    <lastmod>2026-08-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://momrise.app/compare/potty-training-child-led-vs-3-day-method/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://momrise.app/compare/sippy-cup-vs-straw-cup/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://momrise.app/compare/swaddle-vs-sleep-sack/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://momrise.app/compare/toddler-bed-vs-crib/</loc>
+    <lastmod>2026-08-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://momrise.app/compare/whole-milk-vs-plant-based-milk-toddlers/</loc>
+    <lastmod>2026-08-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
