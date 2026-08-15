@@ -211,6 +211,54 @@ function buildSchema(recipe, slug) {
   return JSON.stringify(schema, null, 2);
 }
 
+// Answer-first FAQ, derived deterministically from the recipe's own data
+// (times, servings, ingredient count) — no AI, no fluff. This is the block
+// LLMs and AI answer-engines quote, and it naturally funnels "how do I meal
+// plan X" queries into the app.
+function buildFaqs(recipe) {
+  const name = recipe.recipe_name || 'this recipe';
+  const prep = Math.round(Number(recipe.prepare_time) || 0);
+  const cook = Math.round(Number(recipe.cooking_time) || 0);
+  const total = prep + cook;
+  const nIng = (Array.isArray(recipe.ingredients) ? recipe.ingredients.filter(Boolean) : []).length;
+  const faqs = [];
+
+  if (total > 0) {
+    faqs.push({
+      q: `How long does ${name} take to make?`,
+      a: `About ${total} minutes total${prep && cook ? ` — roughly ${prep} minutes of prep and ${cook} minutes of cooking` : ''}.`,
+    });
+  }
+  faqs.push({
+    q: `How many servings does ${name} make?`,
+    a: `It makes about 4 servings — enough for a family dinner, give or take depending on ages and appetites.`,
+  });
+  if (nIng > 0) {
+    faqs.push({
+      q: `What do I need to make ${name}?`,
+      a: `${nIng} ingredient${nIng === 1 ? '' : 's'} — the full list is above, and most are common pantry and fridge staples.`,
+    });
+  }
+  faqs.push({
+    q: `Can I add ${name} to a weekly meal plan?`,
+    a: `Yes — open ${name} in the free MomRise app to save it to your weekly plan, auto-build the grocery list, and plan the rest of the week in a few taps.`,
+  });
+  return faqs;
+}
+
+function buildFaqSchema(faqs) {
+  const schema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  };
+  return JSON.stringify(schema, null, 2);
+}
+
 function buildPage(recipe, slug, docId) {
   const name = escapeHtml(recipe.recipe_name || 'Recipe');
   const image = escapeHtml(recipe.image_url || '');
@@ -220,6 +268,8 @@ function buildPage(recipe, slug, docId) {
   const prep = Math.round(Number(recipe.prepare_time) || 0);
   const cook = Math.round(Number(recipe.cooking_time) || 0);
   const schemaJson = escapeJson(buildSchema(recipe, slug));
+  const faqs = buildFaqs(recipe);
+  const faqSchemaJson = escapeJson(buildFaqSchema(faqs));
   const deepLink = `momrise://r/${slug}`;
   const sourceUrl = recipe.source_url ? escapeHtml(recipe.source_url) : '';
   const sourceDom = recipe.source_url ? escapeHtml(sourceDomain(recipe.source_url)) : '';
@@ -244,6 +294,10 @@ function buildPage(recipe, slug, docId) {
 
   <script type="application/ld+json">
 ${schemaJson}
+  </script>
+
+  <script type="application/ld+json">
+${faqSchemaJson}
   </script>
 
   <link rel="stylesheet" href="/r/style.css">
@@ -287,6 +341,14 @@ ${schemaJson}
       <ol>
         ${instructions.map((s) => `<li>${escapeHtml(s)}</li>`).join('\n        ')}
       </ol>
+    </section>
+
+    <section class="faq">
+      <h2>Common questions</h2>
+      ${faqs.map((f) => `<div class="faq-item">
+        <h3>${escapeHtml(f.q)}</h3>
+        <p>${escapeHtml(f.a)}</p>
+      </div>`).join('\n      ')}
     </section>
 
     <div class="cta-secondary">
