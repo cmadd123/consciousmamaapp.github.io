@@ -1,4 +1,16 @@
-# Deploy static website to GitHub Pages
+# Deploy static website to GitHub Pages — with the AEO pipeline baked in.
+#
+# On every push to main this workflow regenerates the data-driven pages
+# (comparison pages from data/comparisons.json) and the sitemap, deploys the
+# fresh site to Pages, then pings IndexNow when content actually changed.
+#
+# Pages are regenerated INTO the deploy artifact (not committed back), so
+# there's no commit loop and no extra token permissions. Editing
+# data/comparisons.json and pushing is enough — the pipeline does the rest.
+#
+# Note: recipe pages under r/ are generated locally (they need the Firebase
+# service account + OpenAI) and committed; this workflow just keeps the
+# sitemap + IndexNow in sync when they change.
 name: Deploy website to Pages
 
 on:
@@ -24,12 +36,41 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 2   # need HEAD^ to detect content changes for IndexNow
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # ── AEO pipeline ──────────────────────────────────────────────
+      - name: Regenerate comparison pages
+        run: node scripts/generate-comparison-pages.js
+
+      - name: Stage generated pages so the sitemap sees new slugs
+        # gen_sitemap.py enumerates via `git ls-files`; staging (no commit)
+        # makes freshly generated pages visible to it.
+        run: git add -A compare/ r/ || true
+
+      - name: Regenerate sitemap
+        run: python scripts/gen_sitemap.py
+
+      # ── Deploy ────────────────────────────────────────────────────
       - name: Setup Pages
         uses: actions/configure-pages@v5
+
       - name: Prepare site artifact
         # Only the website ships to Pages. Excluding the Flutter app tree
         # keeps the artifact small — a local release build once bloated
-        # build/ to several GB and made deployments time out.
+        # build/ to several GB and made deployments time out. Build inputs
+        # (scripts/data/tools) don't need to be served, so they're excluded
+        # too.
         run: |
           mkdir -p _site
           rsync -a \
@@ -37,11 +78,14 @@ jobs:
             --exclude='build' --exclude='android' --exclude='ios' \
             --exclude='lib' --exclude='test' --exclude='functions' \
             --exclude='node_modules' --exclude='.dart_tool' \
+            --exclude='scripts' --exclude='data' --exclude='tools' \
             ./ _site/
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: '_site'
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
@@ -49,3 +93,24 @@ jobs:
           # GitHub's deployment queue sometimes stalls well past the 10-min
           # default (observed 2026-07-02); wait up to 30 min before failing.
           timeout: 1800000
+
+      # ── IndexNow (only when this push changed content) ────────────
+      - name: Detect content changes
+        id: changed
+        run: |
+          if git rev-parse HEAD^ >/dev/null 2>&1; then
+            FILES=$(git diff --name-only HEAD^ HEAD)
+          else
+            FILES=$(git ls-files)
+          fi
+          if echo "$FILES" | grep -qE '^(compare/|r/|data/comparisons\.json|sitemap\.xml)'; then
+            echo "content=true" >> "$GITHUB_OUTPUT"
+            echo "Content changed — will ping IndexNow."
+          else
+            echo "content=false" >> "$GITHUB_OUTPUT"
+            echo "No content change — skipping IndexNow."
+          fi
+
+      - name: Submit URLs to IndexNow
+        if: steps.changed.outputs.content == 'true'
+        run: node scripts/indexnow-submit.js
