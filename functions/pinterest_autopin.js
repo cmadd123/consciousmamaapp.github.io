@@ -141,7 +141,7 @@ async function runPinBatch(limit) {
   const results = [];
 
   for (const c of candidates.slice(0, perRun)) {
-    const board = boards[cursor % boards.length];
+    const board = pickBoard(boards, bucketRecipe(c.data), cursor);
     const slug = slugFor(c.data, c.id);
     try {
       const pin = buildPin(c.data, slug, board);
@@ -162,6 +162,27 @@ async function runPinBatch(limit) {
 
   await CONFIG_REF().set({ board_cursor: cursor, last_run_at: FieldValue.serverTimestamp() }, { merge: true });
   return { pinned: results.filter((r) => r.pin_id).length, results };
+}
+
+// Coarse meal-type bucket (matches scripts/generate-meal-index.js). Used to
+// route each recipe to a board that accepts its type. Reads meal_typ first,
+// then the name (most curated recipes have no explicit meal_typ).
+function bucketRecipe(recipe) {
+  const s = `${recipe.meal_typ || ''} ${recipe.recipe_name || ''}`.toLowerCase();
+  if (/dessert|cookie|brownie|browkie|blondie|\bcake\b|cupcake|ice cream|\bpie\b|cheesecake|\bbars?\b|fudge|truffle|oreo|donut|doughnut|pop.?tart|cinnamon roll|frosting|candy|\bballs?\b/.test(s)) return 'Dessert';
+  if (/breakfast|pancake|waffle|muffin|oatmeal|granola|mcgriddle|hash brown|egg bake|french toast|smoothie/.test(s)) return 'Breakfast';
+  if (/snack|nachos|\bbites\b|queso|dip|popcorn/.test(s)) return 'Snack';
+  if (/lunch|sandwich|wrap/.test(s)) return 'Lunch';
+  return 'Dinner';
+}
+
+// Pick a board that accepts this recipe's type. A board with no `types` (or an
+// empty list) is a general board that takes anything. Falls back to all boards
+// if nothing matches, so a pin never gets stuck.
+function pickBoard(boards, bucket, cursor) {
+  const eligible = boards.filter((b) => !Array.isArray(b.types) || b.types.length === 0 || b.types.includes(bucket));
+  const pool = eligible.length ? eligible : boards;
+  return pool[cursor % pool.length];
 }
 
 // Mirror of the recipe-page generator's slug logic so links match /r/{slug}/.
