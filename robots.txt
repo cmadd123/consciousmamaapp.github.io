@@ -1,0 +1,48 @@
+# MomRise — https://momrise.app
+# We WANT to be crawled, indexed, and cited — by search engines AND AI
+# answer engines. AI-referred visitors convert well, so AI bots are
+# explicitly welcomed here (see AEO strategy). Private tools are blocked.
+
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /creator/
+Disallow: /auth/
+Disallow: /web/
+Disallow: /s/
+
+# ── AI / answer-engine crawlers (explicitly allowed) ──
+# OpenAI
+User-agent: GPTBot
+Allow: /
+User-agent: OAI-SearchBot
+Allow: /
+User-agent: ChatGPT-User
+Allow: /
+# Anthropic
+User-agent: ClaudeBot
+Allow: /
+User-agent: Claude-Web
+Allow: /
+User-agent: anthropic-ai
+Allow: /
+# Perplexity
+User-agent: PerplexityBot
+Allow: /
+User-agent: Perplexity-User
+Allow: /
+# Google AI (AI Overviews / Gemini training signal)
+User-agent: Google-Extended
+Allow: /
+# Apple Intelligence
+User-agent: Applebot-Extended
+Allow: /
+# Others that drive AI answers
+User-agent: Amazonbot
+Allow: /
+User-agent: Bingbot
+Allow: /
+User-agent: CCBot
+Allow: /
+
+Sitemap: https://momrise.app/sitemap.xml
