@@ -26,8 +26,10 @@ def rank(url_path):
     if url_path == "/":
         return ("weekly", "1.0")
     if url_path.startswith("/r/"):
-        return ("monthly", "0.8")   # recipes = the traffic wedge
-    return ("monthly", "0.5")       # marketing / legal
+        return ("monthly", "0.8")       # recipes = the traffic wedge
+    if url_path.startswith("/compare/"):
+        return ("monthly", "0.8")       # comparison-authority content
+    return ("monthly", "0.5")           # marketing / legal
 
 
 def tracked_html():

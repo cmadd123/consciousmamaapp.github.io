@@ -1,0 +1,90 @@
+[
+  {
+    "slug": "baby-led-weaning-vs-purees",
+    "headline": "Baby-Led Weaning vs. Purées",
+    "subhead": "The two main ways to start solids, compared side by side — and how to pick (or combine) them.",
+    "category": "Starting solids",
+    "question": "What's the difference between baby-led weaning and purées, and which is better?",
+    "answer": "Baby-led weaning (BLW) means letting your baby self-feed soft, graspable pieces of food from the start, while the purée approach means spoon-feeding smooth mashed food and gradually thickening the texture. Neither is medically \"better\" — major pediatric groups consider both safe when done with age-appropriate textures and close supervision. Many families combine them. The right choice comes down to your baby's readiness, your comfort with mess and gagging, and what fits your routine.",
+    "a": {
+      "name": "Baby-led weaning (BLW)",
+      "blurb": "Baby feeds themselves soft finger foods from the beginning — no purée stage. You offer appropriately sized, soft pieces and let them explore, pick up, and eat at their own pace."
+    },
+    "b": {
+      "name": "Purées (spoon-feeding)",
+      "blurb": "You spoon-feed smooth purées first, then move to mashed and lumpier textures, and finally to finger foods. The caregiver controls pace and portion early on."
+    },
+    "table": [
+      {
+        "dim": "How baby eats",
+        "a": "Self-feeds whole soft pieces by hand",
+        "b": "Caregiver spoon-feeds smooth food"
+      },
+      {
+        "dim": "Typical start",
+        "a": "Around 6 months, once baby can sit up with little support, holds their head steady, and reaches for food",
+        "b": "Often 4–6 months depending on readiness and pediatric guidance"
+      },
+      {
+        "dim": "Texture progression",
+        "a": "Starts at soft finger-food texture",
+        "b": "Smooth → mashed → lumpy → finger foods"
+      },
+      {
+        "dim": "Mess",
+        "a": "Higher — exploring is part of the method",
+        "b": "Lower, more contained early on"
+      },
+      {
+        "dim": "Portion control / tracking intake",
+        "a": "Harder to measure how much was eaten",
+        "b": "Easier to see quantity consumed"
+      },
+      {
+        "dim": "Gagging (normal) vs. choking",
+        "a": "Gagging is common early and is a normal protective reflex; requires close supervision and safe textures/shapes",
+        "b": "Smooth textures reduce early gagging; supervision still required as textures advance"
+      },
+      {
+        "dim": "Exposure to textures & self-regulation",
+        "a": "Early, varied texture exposure; baby sets their own pace",
+        "b": "Gradual, caregiver-paced texture exposure"
+      }
+    ],
+    "bestFor": [
+      { "when": "You want your baby to self-feed and explore textures early", "pick": "Baby-led weaning" },
+      { "when": "You want to see exactly how much your baby is eating", "pick": "Purées" },
+      { "when": "Gagging makes you anxious and you'd rather ease in gradually", "pick": "Purées, then finger foods" },
+      { "when": "You want less mess at the start", "pick": "Purées" },
+      { "when": "You want the flexibility of both", "pick": "A combination — many families do purées at some meals and finger foods at others" }
+    ],
+    "faqs": [
+      {
+        "q": "Is baby-led weaning safe?",
+        "a": "Pediatric guidance considers baby-led weaning safe when your baby shows readiness signs, you offer soft age-appropriate textures and shapes, and you supervise every meal. Learn the difference between gagging (normal) and choking, avoid common choking hazards, and check with your pediatrician before starting."
+      },
+      {
+        "q": "Which is better for picky eating later?",
+        "a": "Evidence is mixed and no method is proven to prevent picky eating. Early, repeated exposure to a variety of flavors and textures — which either approach can provide — is the factor most often linked to broader acceptance."
+      },
+      {
+        "q": "Can I do both baby-led weaning and purées?",
+        "a": "Yes. A combined or 'responsive' approach is common — for example, offering purées at some meals and soft finger foods at others. Babies can move fluidly between the two."
+      },
+      {
+        "q": "When should we start solids?",
+        "a": "Most guidance points to around 6 months, and readiness signs (sitting with support, steady head control, interest in food, loss of the tongue-thrust reflex) matter more than a fixed date. Your pediatrician can confirm the right time for your baby."
+      },
+      {
+        "q": "What foods should we avoid at first?",
+        "a": "Avoid honey before age 1, choking hazards (whole grapes, nuts, hard raw vegetables, chunks of meat/cheese), and added salt and sugar. Introduce common allergens one at a time and watch for reactions, per your pediatrician's guidance."
+      }
+    ],
+    "disclaimer": "This is general educational information, not medical advice. Feeding readiness and safety vary by child — always follow your pediatrician's guidance, and learn infant choking first aid before starting solids.",
+    "sources": [
+      "American Academy of Pediatrics (HealthyChildren.org) — starting solid foods & choking prevention",
+      "CDC — Infant and Toddler Nutrition"
+    ],
+    "updated": "2026-08-15"
+  }
+]
