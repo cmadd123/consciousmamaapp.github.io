@@ -63,6 +63,19 @@ firebase deploy --only functions:pinterestAutoPin,functions:pinterestTestPin
   `pins_per_run` each (default 2 → ~6/weekday). Tune cadence in the schedule and
   volume in the config.
 
+## ⚠️ Access tier: Trial vs. Standard
+Pinterest **Trial access cannot create pins in production** (only against the
+sandbox). Creating real pins requires **Standard access**, which Pinterest
+grants after a review. Status as of setup: secrets set, config written, scopes
+correct (`boards:read,boards:write,pins:read,pins:write`), 60-pin queue ready,
+and a production pin was accepted by the API up to the access check (error 29:
+"Apps with Trial access may not create Pins in production"). So the ONLY thing
+blocking go-live is the Standard-access upgrade.
+
+To apply: developers.pinterest.com → your app → request **Standard/Production
+access**. Once granted → `firebase deploy --only functions:pinterestAutoPin,
+functions:pinterestTestPin` and set `config/pinterest.enabled = true`.
+
 ## Guardrails / notes
 - **ToS-safe drip**, never a flood — Pinterest suspends spammy automation.
 - Content source is curated recipes with a branded pin image

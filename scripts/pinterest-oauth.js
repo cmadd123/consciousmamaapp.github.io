@@ -21,7 +21,7 @@
 const APP_ID = process.env.PINTEREST_APP_ID;
 const APP_SECRET = process.env.PINTEREST_APP_SECRET;
 const REDIRECT = process.env.PINTEREST_REDIRECT || 'https://momrise.app/oauth/pinterest/';
-const SCOPES = 'boards:read,pins:write';
+const SCOPES = 'boards:read,boards:write,pins:read,pins:write';
 const API = 'https://api.pinterest.com/v5';
 
 function need(v, name) {
