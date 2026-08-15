@@ -459,5 +459,237 @@
       "Environmental life-cycle comparisons of cloth vs. disposable diapers"
     ],
     "updated": "2026-08-15"
+  },
+  {
+    "slug": "sensory-play-vs-structured-play",
+    "headline": "Sensory Play vs. Structured Play",
+    "subhead": "Two ways kids learn through play — what each builds and when to reach for it.",
+    "category": "Learning & play",
+    "question": "What's the difference between sensory play and structured play, and which is better?",
+    "answer": "Sensory play is open-ended exploration that engages the senses — think water tables, playdough, or a bin of dried beans — with no set goal. Structured play has a defined objective and steps, like a puzzle, a craft with instructions, or a simple board game. Neither is \"better\": sensory play builds curiosity, creativity, and fine-motor and language skills, while structured play builds focus, following directions, and problem-solving. A good week has both.",
+    "cta": {
+      "lead": "Looking for age-right activities?",
+      "body": "MomRise suggests <strong>sensory and structured activities</strong> tuned to your child's age, mood, and energy — so you always have an idea on hand."
+    },
+    "a": {
+      "name": "Sensory play",
+      "blurb": "Open-ended, senses-first exploration with no fixed goal — water, sand, playdough, textures. The child leads."
+    },
+    "b": {
+      "name": "Structured play",
+      "blurb": "Goal-directed play with steps or rules — puzzles, crafts with a model, simple games. The activity guides the child."
+    },
+    "table": [
+      { "dim": "Goal", "a": "Open-ended, no set outcome", "b": "Defined objective or end result" },
+      { "dim": "Who leads", "a": "The child explores freely", "b": "The activity (or adult) guides" },
+      { "dim": "Builds most", "a": "Curiosity, creativity, fine-motor, language", "b": "Focus, following directions, problem-solving" },
+      { "dim": "Mess", "a": "Often higher", "b": "Usually lower" },
+      { "dim": "Adult role", "a": "Set it up, then step back", "b": "Introduce and support the steps" },
+      { "dim": "Best moments", "a": "Wind-down, free exploration, big feelings", "b": "Attention-building, skill practice" }
+    ],
+    "bestFor": [
+      { "when": "Your child needs to decompress or explore freely", "pick": "Sensory play" },
+      { "when": "You're building attention span and following-directions", "pick": "Structured play" },
+      { "when": "You want language and creativity", "pick": "Sensory play" },
+      { "when": "You want a calmer, contained activity", "pick": "Structured play" },
+      { "when": "Planning a week", "pick": "Mix both — they build different skills" }
+    ],
+    "faqs": [
+      { "q": "Is sensory play just for babies and toddlers?", "a": "No — the materials change with age (dried beans and water for toddlers; slime, building, or science-style exploration for older kids), but open-ended sensory play benefits kids well into the school years." },
+      { "q": "Does structured play limit creativity?", "a": "Not inherently. Structured play builds focus and problem-solving; balancing it with plenty of open-ended play keeps creativity strong." },
+      { "q": "How much of each should my child get?", "a": "There's no strict ratio. A simple approach is to offer both across the week and follow your child's mood — more sensory for exploration and calming, more structured for skill practice." },
+      { "q": "What are easy sensory play ideas at home?", "a": "A water bin, playdough, a texture basket, or dried pasta to scoop and pour — cheap, low-setup, and easy to supervise." }
+    ],
+    "disclaimer": "General educational information. Always supervise play and choose age-appropriate materials (small items are a choking hazard for young children).",
+    "sources": [
+      "Early-childhood development resources on play-based learning",
+      "American Academy of Pediatrics (HealthyChildren.org) — the power of play"
+    ],
+    "updated": "2026-08-15"
+  },
+  {
+    "slug": "homemade-vs-store-bought-baby-food",
+    "headline": "Homemade vs. Store-Bought Baby Food",
+    "subhead": "Cost, nutrition, convenience, and safety — the honest trade-offs.",
+    "category": "Starting solids",
+    "question": "Is homemade or store-bought baby food better?",
+    "answer": "Both can be healthy. Homemade baby food is usually cheaper, lets you control ingredients and textures, and can expose babies to more variety and family flavors — but it takes time and requires safe prep and storage. Store-bought is convenient, consistent, shelf-stable, and portable, though it costs more per serving and offers less texture variety. Many families do a mix. Whichever you choose, skip added salt and sugar and follow allergen-introduction guidance.",
+    "cta": {
+      "lead": "Feeding a new eater?",
+      "body": "MomRise builds <strong>age-appropriate meal plans</strong> and grocery lists as your baby grows — so making food at home is one less thing to plan."
+    },
+    "a": {
+      "name": "Homemade",
+      "blurb": "You cook and purée (or mash) it yourself. Cheaper, full ingredient control, more texture and flavor variety — but takes time and safe storage."
+    },
+    "b": {
+      "name": "Store-bought",
+      "blurb": "Pre-made pouches and jars. Convenient, consistent, shelf-stable, and portable — at a higher cost per serving and with less texture variety."
+    },
+    "table": [
+      { "dim": "Cost", "a": "Lower per serving", "b": "Higher per serving" },
+      { "dim": "Convenience", "a": "Takes prep + storage", "b": "Grab-and-go" },
+      { "dim": "Ingredient control", "a": "Full control", "b": "Read the label" },
+      { "dim": "Texture variety", "a": "Easy to adjust as baby grows", "b": "Often smoother/uniform" },
+      { "dim": "Flavor variety", "a": "Can match family meals", "b": "Fixed blends" },
+      { "dim": "Shelf life / travel", "a": "Shorter; needs fridge/freezer", "b": "Shelf-stable, travel-friendly" }
+    ],
+    "bestFor": [
+      { "when": "You want to save money and control ingredients", "pick": "Homemade" },
+      { "when": "You need convenience or are traveling", "pick": "Store-bought" },
+      { "when": "You want to advance textures quickly", "pick": "Homemade" },
+      { "when": "You want the easiest, most consistent option", "pick": "Store-bought" },
+      { "when": "Most families", "pick": "A mix — homemade at home, pouches on the go" }
+    ],
+    "faqs": [
+      { "q": "Is homemade baby food healthier?", "a": "It can be, because you control ingredients and can avoid added salt and sugar — but many store-bought options are also nutritious. The bigger factors are variety, texture progression, and no added salt/sugar, which either can deliver." },
+      { "q": "How do I store homemade baby food safely?", "a": "Refrigerate and use within a couple of days, or freeze in small portions (ice-cube trays work well) and use within a month. Cool cooked food quickly and don't refreeze thawed purée." },
+      { "q": "Are pouches bad for babies?", "a": "Pouches are fine in moderation, but sucking straight from the spout too often can limit spoon and chewing skills and let sugary fruit blends pool on teeth. Spoon pouch contents out when you can." },
+      { "q": "What should I avoid in baby food?", "a": "No honey before age 1, no added salt or sugar, and introduce common allergens one at a time. Watch textures/shapes for choking, and check with your pediatrician." }
+    ],
+    "disclaimer": "General information, not medical or food-safety advice. Follow safe food-prep and storage guidance and your pediatrician's recommendations, especially for allergens and textures.",
+    "sources": [
+      "CDC — Infant and Toddler Nutrition",
+      "American Academy of Pediatrics (HealthyChildren.org) — making baby food & starting solids"
+    ],
+    "updated": "2026-08-15"
+  },
+  {
+    "slug": "two-naps-vs-one-nap",
+    "headline": "Two Naps vs. One Nap",
+    "subhead": "When toddlers drop to a single nap — and how to know it's time.",
+    "category": "Sleep & routines",
+    "question": "When do toddlers go from two naps to one, and how do I make the switch?",
+    "answer": "Most toddlers transition from two naps to one sometime between about 15 and 18 months, though the range is wide. The signs it's time: your child regularly fights the morning or afternoon nap, takes a long time to fall asleep, or the second nap pushes bedtime too late. The usual fix is to gradually push the morning nap later until it becomes a single, longer midday nap — expect a bumpy week or two of adjustment.",
+    "cta": {
+      "lead": "Smoothing a routine change?",
+      "body": "MomRise helps you build <strong>consistent daily and nap routines</strong> and track milestones — so transitions like dropping a nap go easier."
+    },
+    "a": {
+      "name": "Two naps",
+      "blurb": "A morning and an afternoon nap — typical for younger toddlers and babies. More total day sleep, split into two windows."
+    },
+    "b": {
+      "name": "One nap",
+      "blurb": "A single, longer midday nap — typical once a child resists two. Simpler schedule, better-aligned with preschool and family routines."
+    },
+    "table": [
+      { "dim": "Typical age", "a": "Up to ~15–18 months", "b": "~15–18 months onward" },
+      { "dim": "Schedule", "a": "Morning + afternoon", "b": "One longer midday nap" },
+      { "dim": "Signs it fits", "a": "Both naps come easily", "b": "Child fights one nap or bedtime slips late" },
+      { "dim": "Total day sleep", "a": "Slightly more", "b": "Slightly less, consolidated" },
+      { "dim": "Transition", "a": "—", "b": "Push the morning nap later over 1–2 weeks" },
+      { "dim": "Watch for", "a": "Short/skipped naps signaling readiness", "b": "Overtiredness during the switch" }
+    ],
+    "bestFor": [
+      { "when": "Both naps still happen without a fight", "pick": "Stay on two naps" },
+      { "when": "Your child fights the morning or afternoon nap", "pick": "Move toward one nap" },
+      { "when": "The afternoon nap pushes bedtime too late", "pick": "Move toward one nap" },
+      { "when": "Mid-transition", "pick": "Offer quiet time and an earlier bedtime while adjusting" }
+    ],
+    "faqs": [
+      { "q": "What age do toddlers drop to one nap?", "a": "Most commonly between 15 and 18 months, but some are ready earlier and some later. Readiness signs matter more than the exact age." },
+      { "q": "How do I transition from two naps to one?", "a": "Gradually push the morning nap 15–30 minutes later every few days until it lands around midday and becomes one longer nap. An earlier bedtime helps during the adjustment." },
+      { "q": "Is it normal for sleep to get worse during the switch?", "a": "Yes — a week or two of overtiredness, early wake-ups, or rough evenings is common. Consistency and a slightly earlier bedtime usually settle it." },
+      { "q": "What if some days need two naps and some need one?", "a": "That's normal during the transition. Stay flexible, offer a second short nap or an early bedtime on rough days, and let it settle over a couple of weeks." }
+    ],
+    "disclaimer": "General guidance only — sleep needs vary by child. Talk to your pediatrician about persistent sleep concerns.",
+    "sources": [
+      "American Academy of Pediatrics (HealthyChildren.org) — toddler sleep & naps",
+      "Pediatric sleep-foundation guidance on nap transitions"
+    ],
+    "updated": "2026-08-15"
+  },
+  {
+    "slug": "pacifier-vs-thumb-sucking",
+    "headline": "Pacifier vs. Thumb Sucking",
+    "subhead": "Both soothe — but they differ in habit-breaking, teeth, and control.",
+    "category": "Baby basics",
+    "question": "Pacifier or thumb sucking — which is better, and does either harm teeth?",
+    "answer": "Both are normal, healthy self-soothing for babies. The practical difference is control: a pacifier can be taken away when it's time to stop, while a thumb is always there and harder to wean. Prolonged, intense sucking of either — generally past about age 2–4, once permanent teeth are on the horizon — can affect the bite and the roof of the mouth. Most kids naturally give up both on their own; if not, gentle, consistent weaning is the goal.",
+    "cta": {
+      "lead": "One app for the whole journey",
+      "body": "MomRise helps with routines, milestones, and everyday parenting challenges — simple, age-appropriate steps for your child."
+    },
+    "a": {
+      "name": "Pacifier",
+      "blurb": "A soothing tool you control — you can limit it, then remove it when it's time to stop. Linked in early infancy to a lower SIDS risk at sleep."
+    },
+    "b": {
+      "name": "Thumb sucking",
+      "blurb": "Always available and self-directed — great for on-the-spot soothing, but harder to wean since you can't take a thumb away."
+    },
+    "table": [
+      { "dim": "Control / weaning", "a": "You can remove it", "b": "Harder — always available" },
+      { "dim": "Availability", "a": "Must be found/carried", "b": "Always there" },
+      { "dim": "Dental effect", "a": "Similar if prolonged/intense", "b": "Similar if prolonged/intense" },
+      { "dim": "Sleep", "a": "Pacifier at sleep linked to lower SIDS risk in infancy", "b": "No such association" },
+      { "dim": "Hygiene", "a": "Needs cleaning/replacing", "b": "Wash hands often" },
+      { "dim": "When to curb", "a": "Generally by ~2–4 years", "b": "Generally by ~2–4 years" }
+    ],
+    "bestFor": [
+      { "when": "You want to be able to phase it out later", "pick": "Pacifier" },
+      { "when": "Soothing during infant sleep", "pick": "Pacifier (per safe-sleep guidance)" },
+      { "when": "Your baby self-soothes with their thumb already", "pick": "That's fine — plan gentle weaning later" },
+      { "when": "Either habit lingers past preschool", "pick": "Talk to your pediatrician or dentist about weaning" }
+    ],
+    "faqs": [
+      { "q": "Does a pacifier or thumb ruin teeth?", "a": "Occasional sucking in the early years usually doesn't cause lasting problems. It's frequent, intense sucking that continues past about age 2–4 — as permanent teeth approach — that can affect the bite. Your dentist can advise." },
+      { "q": "Is a pacifier better than the thumb?", "a": "Many experts lean slightly toward pacifiers because you can take them away, making the habit easier to stop. A pacifier at sleep is also linked to lower SIDS risk in infancy. Both are normal, though." },
+      { "q": "When should my child stop?", "a": "Most children give up sucking on their own between ages 2 and 4. If it continues, gentle, consistent, positive weaning — not shaming — works best." },
+      { "q": "How do I wean off a pacifier or thumb?", "a": "Limit it to sleep first, offer comfort alternatives, praise going without, and pick a low-stress time (not during other big changes). For thumbs, reminders and busy hands help; a dentist can suggest more if needed." }
+    ],
+    "disclaimer": "General guidance only. Follow safe-sleep recommendations for pacifier use in infancy, and consult your pediatrician or pediatric dentist about weaning or dental concerns.",
+    "sources": [
+      "American Academy of Pediatrics (HealthyChildren.org) — pacifiers & thumb sucking",
+      "American Dental Association — thumb sucking and pacifier use"
+    ],
+    "updated": "2026-08-15"
+  },
+  {
+    "slug": "meal-prep-vs-cooking-fresh",
+    "headline": "Meal Prep vs. Cooking Fresh",
+    "subhead": "Batch it ahead or cook nightly? The trade-offs for busy families.",
+    "category": "Family meals",
+    "question": "Is meal prepping or cooking fresh each night better for a family?",
+    "answer": "Meal prep — cooking in batches ahead of time — saves weeknight time and stress, cuts food waste, and makes healthy choices easier when you're tired, at the cost of a few hours up front and less day-to-day variety. Cooking fresh each night gives you maximum flexibility and the best texture, but it takes daily time and decision-making (the dreaded \"what's for dinner?\"). Most families land on a hybrid: prep components or a couple of meals ahead, cook the rest fresh.",
+    "cta": {
+      "lead": "Tired of the 5pm scramble?",
+      "body": "MomRise builds your <strong>weekly meal plan and grocery list in a few taps</strong> — the planning that makes prep (or cooking fresh) actually happen."
+    },
+    "a": {
+      "name": "Meal prep (batch ahead)",
+      "blurb": "Cook once, eat through the week. Saves weeknight time and decisions and reduces waste — but takes a block of prep time and offers less variety."
+    },
+    "b": {
+      "name": "Cook fresh nightly",
+      "blurb": "Make each meal the day you eat it. Maximum flexibility and freshness — but daily time, cleanup, and the nightly \"what's for dinner\" decision."
+    },
+    "table": [
+      { "dim": "Weeknight time", "a": "Minimal — reheat/assemble", "b": "Full cook every night" },
+      { "dim": "Up-front time", "a": "A few hours once", "b": "None" },
+      { "dim": "Variety", "a": "Less within a week", "b": "High — cook whatever" },
+      { "dim": "Food waste", "a": "Lower — planned portions", "b": "Higher if plans change" },
+      { "dim": "Decision fatigue", "a": "Low — it's decided", "b": "High — decide nightly" },
+      { "dim": "Freshness/texture", "a": "Good for most dishes", "b": "Best" }
+    ],
+    "bestFor": [
+      { "when": "Busy weeknights and decision fatigue", "pick": "Meal prep" },
+      { "when": "You value variety and cooking on a whim", "pick": "Cook fresh" },
+      { "when": "You want to cut food waste and spending", "pick": "Meal prep" },
+      { "when": "Most families", "pick": "Hybrid — prep a couple of meals + components, cook the rest fresh" }
+    ],
+    "faqs": [
+      { "q": "Does meal prep actually save money?", "a": "Usually — planned portions mean less waste and fewer takeout nights, and buying for specific recipes curbs impulse spending. The savings depend on planning to what you'll actually eat." },
+      { "q": "How far ahead can I meal prep safely?", "a": "Most cooked dishes keep 3–4 days refrigerated; freeze anything for longer and label the date. Prepping components (chopped veg, cooked grains, proteins) is a flexible middle ground." },
+      { "q": "Is fresh-cooked food more nutritious than prepped?", "a": "The difference is small when prepped food is stored properly. Consistency matters more — the approach that helps you serve balanced meals regularly wins." },
+      { "q": "What's the easiest way to start meal prepping?", "a": "Start with a plan: pick 3–4 dinners, build one grocery list, and prep a couple of components on the weekend. A meal-planning app makes the plan-and-list step painless." }
+    ],
+    "disclaimer": "General guidance to help you weigh the trade-offs. Follow safe food-storage practices (cool, refrigerate/freeze, and reheat properly).",
+    "sources": [
+      "USDA / FoodSafety.gov — safe food storage and leftovers",
+      "Family nutrition and meal-planning guidance"
+    ],
+    "updated": "2026-08-15"
   }
 ]

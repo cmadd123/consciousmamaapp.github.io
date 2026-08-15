@@ -25,8 +25,18 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://momrise.app/compare/homemade-vs-store-bought-baby-food/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://momrise.app/compare/</loc>
     <lastmod>2026-08-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://momrise.app/compare/meal-prep-vs-cooking-fresh/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -37,8 +47,18 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://momrise.app/compare/pacifier-vs-thumb-sucking/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://momrise.app/compare/potty-training-child-led-vs-3-day-method/</loc>
     <lastmod>2026-08-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://momrise.app/compare/sensory-play-vs-structured-play/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -57,6 +77,11 @@
   <url>
     <loc>https://momrise.app/compare/toddler-bed-vs-crib/</loc>
     <lastmod>2026-08-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://momrise.app/compare/two-naps-vs-one-nap/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
