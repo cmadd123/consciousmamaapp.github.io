@@ -15,7 +15,7 @@ BASE = "https://momrise.app"
 
 # Path prefixes that are private tools or non-content (never in the sitemap).
 EXCLUDE_PREFIXES = (
-    "admin/", "creator/", "auth/", "web/", "s/", "c/",
+    "admin/", "creator/", "auth/", "oauth/", "web/", "s/", "c/",
     "node_modules/", "functions/", ".well-known/",
 )
 # Individual files to skip.

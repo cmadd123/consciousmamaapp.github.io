@@ -1897,6 +1897,10 @@ exports.notifyFollowersOnPublish = creatorNotifications.notifyFollowersOnPublish
 exports.unsubscribeCreatorEmails = creatorNotifications.unsubscribeCreatorEmails;
 exports.syncCreatorPlanToContent = creatorPlanSync.syncCreatorPlanToContent;
 exports.backfillCreatorPlans = creatorPlanSync.backfillCreatorPlans;
+
+const pinterestAutopin = require('./pinterest_autopin');
+exports.pinterestAutoPin = pinterestAutopin.pinterestAutoPin;
+exports.pinterestTestPin = pinterestAutopin.pinterestTestPin;
 exports.feedbackMarkdown = feedbackMd.feedbackMarkdown;
 exports.createCreatorOnboardingLink = stripeFunctions.createCreatorOnboardingLink;
 exports.createCreatorDashboardLink = stripeFunctions.createCreatorDashboardLink;
