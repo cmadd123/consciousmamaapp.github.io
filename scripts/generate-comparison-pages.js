@@ -143,10 +143,10 @@ ${escapeJson(faq)}
       </ul>
     </section>
 
-    <!-- App funnel -->
+    <!-- App funnel (per-comparison, falls back to a generic MomRise pitch) -->
     <div class="cta">
-      <p class="cta-lead">Feeding a new eater?</p>
-      <p>MomRise builds <strong>age-appropriate weekly meal plans</strong> and grocery lists as your baby grows — so you're not guessing what to serve next.</p>
+      <p class="cta-lead">${escapeHtml((c.cta && c.cta.lead) || 'One app for the whole parenting journey')}</p>
+      <p>${(c.cta && c.cta.body) || 'MomRise plans meals, tracks milestones, and turns everyday parenting challenges into simple, age-appropriate daily steps.'}</p>
       <div class="app-buttons">
         <a class="store-btn" href="${APP_STORE}">App Store</a>
         <a class="store-btn" href="${PLAY_STORE}">Google Play</a>

@@ -6,6 +6,10 @@
     "category": "Starting solids",
     "question": "What's the difference between baby-led weaning and purées, and which is better?",
     "answer": "Baby-led weaning (BLW) means letting your baby self-feed soft, graspable pieces of food from the start, while the purée approach means spoon-feeding smooth mashed food and gradually thickening the texture. Neither is medically \"better\" — major pediatric groups consider both safe when done with age-appropriate textures and close supervision. Many families combine them. The right choice comes down to your baby's readiness, your comfort with mess and gagging, and what fits your routine.",
+    "cta": {
+      "lead": "Feeding a new eater?",
+      "body": "MomRise builds <strong>age-appropriate weekly meal plans</strong> and grocery lists as your baby grows — so you're not guessing what to serve next."
+    },
     "a": {
       "name": "Baby-led weaning (BLW)",
       "blurb": "Baby feeds themselves soft finger foods from the beginning — no purée stage. You offer appropriately sized, soft pieces and let them explore, pick up, and eat at their own pace."
@@ -84,6 +88,191 @@
     "sources": [
       "American Academy of Pediatrics (HealthyChildren.org) — starting solid foods & choking prevention",
       "CDC — Infant and Toddler Nutrition"
+    ],
+    "updated": "2026-08-15"
+  },
+  {
+    "slug": "montessori-vs-traditional",
+    "headline": "Montessori vs. Traditional Learning",
+    "subhead": "Two very different approaches to how young children learn — compared side by side.",
+    "category": "Learning & play",
+    "question": "What's the difference between Montessori and a traditional approach, and which is better for my child?",
+    "answer": "Montessori is a child-led approach where kids choose hands-on, self-correcting activities at their own pace in mixed-age classrooms, with the adult acting as a guide. A traditional approach is teacher-directed, groups children by age, follows a set curriculum with whole-group instruction, and uses grades or rewards. Neither is universally \"better\" — the right fit depends on your child's temperament, how they focus, and what you value. Many families blend both.",
+    "cta": {
+      "lead": "Looking for age-right activities?",
+      "body": "MomRise suggests <strong>hands-on activities and learning paths</strong> tuned to your child's age, mood, and energy — Montessori-inspired or not."
+    },
+    "a": {
+      "name": "Montessori",
+      "blurb": "Child-led and hands-on. Kids freely choose from purposeful, self-correcting materials in mixed-age classrooms; the adult observes and guides rather than lectures."
+    },
+    "b": {
+      "name": "Traditional",
+      "blurb": "Teacher-directed and structured. Same-age classes follow a set curriculum with whole-group lessons, and progress is tracked with grades, tests, or rewards."
+    },
+    "table": [
+      { "dim": "Who leads", "a": "The child chooses activities", "b": "The teacher directs the lesson" },
+      { "dim": "Classroom", "a": "Mixed ages (often 3-year spans)", "b": "Grouped by same age/grade" },
+      { "dim": "Materials", "a": "Hands-on, self-correcting, concrete", "b": "Textbooks, worksheets, whole-class tools" },
+      { "dim": "Pace", "a": "Self-paced, uninterrupted work periods", "b": "Set schedule and shared pace" },
+      { "dim": "Motivation", "a": "Intrinsic — the work itself", "b": "Often external — grades, stars, rewards" },
+      { "dim": "Role of the adult", "a": "Guide and observer", "b": "Instructor and evaluator" }
+    ],
+    "bestFor": [
+      { "when": "Your child thrives with independence and choice", "pick": "Montessori" },
+      { "when": "Your child likes clear structure and routine", "pick": "Traditional" },
+      { "when": "You want a measurable, standardized curriculum", "pick": "Traditional" },
+      { "when": "You want self-paced, hands-on, sensory learning", "pick": "Montessori" },
+      { "when": "You're unsure", "pick": "Try elements of both at home and watch what your child responds to" }
+    ],
+    "faqs": [
+      { "q": "Is Montessori better than traditional schooling?", "a": "Research is mixed and neither is best for every child. Some studies find benefits from Montessori for executive function and independence; outcomes depend heavily on program quality and the individual child." },
+      { "q": "Can I do Montessori at home?", "a": "Yes — the core ideas (child-height access, real hands-on tasks, letting kids do things themselves, and offering choices) translate well to home without special schooling or expensive materials." },
+      { "q": "Is Montessori good for active or easily distracted kids?", "a": "Many families find the freedom of movement and hands-on work helps kids who struggle to sit still, but it varies by child. A structured environment suits some kids better." },
+      { "q": "Is 'Montessori' a regulated term?", "a": "No — the name isn't trademarked, so quality varies widely between programs. Look at teacher training and whether the classroom truly follows child-led, hands-on principles." }
+    ],
+    "disclaimer": "This is general educational information. Every child is different — the best judge is watching how your own child learns and engages.",
+    "sources": [
+      "American Montessori Society — Montessori education overview",
+      "Peer-reviewed early-childhood education research (mixed findings)"
+    ],
+    "updated": "2026-08-15"
+  },
+  {
+    "slug": "toddler-bed-vs-crib",
+    "headline": "Toddler Bed vs. Crib",
+    "subhead": "When to make the switch — and how to know your child is ready.",
+    "category": "Sleep & routines",
+    "question": "When should you switch your toddler from a crib to a toddler bed?",
+    "answer": "There's no single right age — most children move from a crib to a toddler bed sometime between about 18 months and 3.5 years. The most important trigger is safety: once your child can climb out of the crib (or reaches roughly 35 inches / the manufacturer's height limit), it's time to switch to prevent falls. If they're still safely contained and sleeping well, there's no rush.",
+    "cta": {
+      "lead": "Smoothing a big transition?",
+      "body": "MomRise helps you build <strong>consistent bedtime routines</strong> and track milestones — so changes like the crib-to-bed switch go easier."
+    },
+    "a": {
+      "name": "Crib",
+      "blurb": "Enclosed and contained — keeps a young child safely in place. Works well until they can climb out or outgrow the height limit."
+    },
+    "b": {
+      "name": "Toddler bed",
+      "blurb": "A low, open bed (often using the crib mattress). Gives independence and easy in-and-out — but the room needs to be fully childproofed."
+    },
+    "table": [
+      { "dim": "Typical timing", "a": "Birth to when climbing starts", "b": "~18 months to 3.5 years" },
+      { "dim": "Safety", "a": "Contains the child; risk once they climb", "b": "Open — requires a childproofed room + often a rail" },
+      { "dim": "Independence", "a": "Low — needs lifting in/out", "b": "High — child gets in and out alone" },
+      { "dim": "Night potty training", "a": "Harder — can't get out", "b": "Easier — child can reach the bathroom" },
+      { "dim": "Cost", "a": "Already have it", "b": "Low if it uses the crib mattress" },
+      { "dim": "Sleep disruption risk", "a": "Stable", "b": "Possible short-term regressions as they test freedom" }
+    ],
+    "bestFor": [
+      { "when": "Your child is climbing out of the crib", "pick": "Switch to a toddler bed now (safety)" },
+      { "when": "You're night-potty-training", "pick": "Toddler bed" },
+      { "when": "A new baby needs the crib", "pick": "Transition a bit earlier, ideally weeks ahead" },
+      { "when": "Your child is content and safely contained", "pick": "Keep the crib — no rush" }
+    ],
+    "faqs": [
+      { "q": "Is it bad to switch too early?", "a": "Switching before a child understands staying in bed can cause bedtime battles and lost sleep. Unless safety (climbing) or a new sibling requires it, many experts suggest waiting until closer to 3." },
+      { "q": "My toddler climbs out of the crib — what should I do?", "a": "Climbing is a fall risk, so it's the clearest sign to move to a toddler or low bed. Lower the mattress first if you can; if they still climb, switch and childproof the room." },
+      { "q": "Toddler bed or floor bed?", "a": "Both are low and safe options. A floor bed (a Montessori-style mattress on the floor) offers the most freedom; a toddler bed with a rail offers a little more containment." },
+      { "q": "Do I need a bed rail?", "a": "A rail helps prevent rolling out for younger toddlers. Many families use one at first and remove it once the child sleeps reliably." }
+    ],
+    "disclaimer": "General guidance only — follow current safe-sleep recommendations and your pediatrician's advice, and always childproof the room before an open bed.",
+    "sources": [
+      "American Academy of Pediatrics (HealthyChildren.org) — sleep & safe environments",
+      "Consumer product safety guidance on crib height limits"
+    ],
+    "updated": "2026-08-15"
+  },
+  {
+    "slug": "whole-milk-vs-plant-based-milk-toddlers",
+    "headline": "Whole Milk vs. Plant-Based Milk for Toddlers",
+    "subhead": "After age 1, what should go in the cup — and how the options actually compare.",
+    "category": "Toddler nutrition",
+    "question": "Is whole cow's milk or plant-based milk better for toddlers after age 1?",
+    "answer": "For most toddlers with no allergy, pediatric guidance points to whole cow's milk as the default after age 1 — it delivers protein, the fat young brains need, and calcium plus vitamin D. Most plant-based milks have less protein and fat and vary a lot in fortification; the closest nutritional match is fortified, unsweetened soy milk. Almond, oat, and rice milks are low in protein, so if you use them, protein needs to come from elsewhere. Always choose unsweetened, and check with your pediatrician — especially for allergies or a vegan diet.",
+    "cta": {
+      "lead": "Planning meals for a growing toddler?",
+      "body": "MomRise builds <strong>balanced weekly meal plans</strong> and grocery lists for your child's age — so protein, iron, and variety take care of themselves."
+    },
+    "a": {
+      "name": "Whole cow's milk",
+      "blurb": "The common default after age 1: roughly 8g protein per cup, plenty of fat for brain development, and naturally rich in calcium (usually with added vitamin D)."
+    },
+    "b": {
+      "name": "Plant-based milk",
+      "blurb": "Ranges widely. Fortified, unsweetened soy is closest to cow's milk in protein; almond, oat, and rice milks are much lower in protein and depend on fortification for calcium and vitamin D."
+    },
+    "table": [
+      { "dim": "Protein per cup", "a": "~8 g", "b": "Soy ~7 g; oat ~2–4 g; almond/rice ~1 g" },
+      { "dim": "Fat (for brain development)", "a": "Naturally higher (whole)", "b": "Varies; often lower" },
+      { "dim": "Calcium & vitamin D", "a": "Naturally present + often added", "b": "Only if fortified — check the label" },
+      { "dim": "Allergy fit", "a": "Not for dairy allergy/lactose intolerance", "b": "Good for dairy-free/vegan diets" },
+      { "dim": "Added sugar", "a": "None (plain)", "b": "Avoid sweetened/flavored — pick unsweetened" },
+      { "dim": "Closest plant match", "a": "—", "b": "Fortified, unsweetened soy milk" }
+    ],
+    "bestFor": [
+      { "when": "No allergy or dietary restriction", "pick": "Whole cow's milk" },
+      { "when": "Dairy allergy or a vegan diet", "pick": "Fortified, unsweetened soy milk" },
+      { "when": "Lactose intolerance", "pick": "Lactose-free cow's milk or fortified soy" },
+      { "when": "Using almond/oat milk", "pick": "Okay as a drink, but get protein from other foods — check with your pediatrician" }
+    ],
+    "faqs": [
+      { "q": "Is almond milk okay for toddlers?", "a": "As an occasional drink it's fine, but almond milk is very low in protein and calories, so it shouldn't replace the nutrition of cow's or fortified soy milk for a toddler. Talk to your pediatrician if it's a main milk." },
+      { "q": "Which plant milk has the most protein?", "a": "Soy milk — it's the only common plant milk with protein close to cow's milk (about 7g per cup). Choose a fortified, unsweetened version." },
+      { "q": "When can a toddler start cow's milk?", "a": "Whole cow's milk is generally introduced at age 1 (it's not recommended as a main drink before then). Before 1, breast milk or formula remains the primary milk." },
+      { "q": "How much milk does a toddler need?", "a": "Common guidance is roughly 2 cups (about 16 oz) of milk a day for toddlers — too much can crowd out other foods and iron. Your pediatrician can tailor this." }
+    ],
+    "disclaimer": "This is general nutrition information, not medical advice. Toddler needs, allergies, and growth vary — confirm milk choices and amounts with your pediatrician or a registered dietitian.",
+    "sources": [
+      "American Academy of Pediatrics (HealthyChildren.org) — milk for toddlers",
+      "CDC — Infant and Toddler Nutrition"
+    ],
+    "updated": "2026-08-15"
+  },
+  {
+    "slug": "high-chair-vs-booster-seat",
+    "headline": "High Chair vs. Booster Seat",
+    "subhead": "Which feeding seat your child needs — and when to move from one to the other.",
+    "category": "Feeding gear",
+    "question": "Does my child need a high chair or a booster seat?",
+    "answer": "A high chair is a standalone seat with its own tray, made for babies starting solids (around 6 months) who can sit up with support. A booster seat straps onto a regular dining chair and suits older toddlers (roughly 18 months and up) who can sit at the table. Most families use a high chair first and move to a booster later; some convertible seats do both. The right pick depends on your child's age, your space, and whether you want them eating at the family table.",
+    "cta": {
+      "lead": "Getting mealtime sorted?",
+      "body": "MomRise plans <strong>age-appropriate meals</strong> and builds the grocery list — so once they're in the seat, you know what to serve."
+    },
+    "a": {
+      "name": "High chair",
+      "blurb": "A standalone seat with a tray, made for babies ~6 months to ~3 years. More supportive and adjustable, but takes floor space and costs more."
+    },
+    "b": {
+      "name": "Booster seat",
+      "blurb": "Straps to a normal dining chair for toddlers who can sit at the table. Cheaper, portable, and brings the child to family meals — but offers less recline/support for young babies."
+    },
+    "table": [
+      { "dim": "Typical age", "a": "~6 months to ~3 years", "b": "~18 months and up" },
+      { "dim": "Portability", "a": "Bulky, mostly stays put", "b": "Light; clip-on versions travel well" },
+      { "dim": "Space", "a": "Takes floor space", "b": "Uses an existing chair" },
+      { "dim": "Cost", "a": "Higher", "b": "Lower" },
+      { "dim": "Family-table dining", "a": "Separate tray", "b": "Child eats at the table with everyone" },
+      { "dim": "Support for young babies", "a": "More (recline, straps, footrest)", "b": "Less — best once they sit sturdily" }
+    ],
+    "bestFor": [
+      { "when": "Your baby is just starting solids", "pick": "High chair" },
+      { "when": "Small kitchen or lots of travel", "pick": "Booster or clip-on seat" },
+      { "when": "You want the child eating at the family table", "pick": "Booster" },
+      { "when": "You want one seat that lasts for years", "pick": "A convertible high-chair-to-booster" }
+    ],
+    "faqs": [
+      { "q": "When can a baby use a high chair?", "a": "Once they can sit upright with support and have good head control — usually around 6 months, the same readiness window as starting solids. Always use the harness." },
+      { "q": "When should we switch to a booster?", "a": "Many toddlers move to a booster around 18 months to 3 years, once they can sit steadily at the table and follow basic mealtime routines." },
+      { "q": "Are clip-on / hook-on boosters safe?", "a": "They can be, on a sturdy table that meets the seat's requirements and with the child within the weight limit. Follow the manufacturer's instructions and always buckle the harness." },
+      { "q": "Do I need both?", "a": "Not necessarily. Some families use a high chair first then a booster; others buy a convertible seat that adjusts from one to the other to skip owning both." }
+    ],
+    "disclaimer": "General guidance only. Always follow the seat manufacturer's age, weight, and installation instructions, use the harness, and supervise your child while eating.",
+    "sources": [
+      "Juvenile Products Manufacturers Association (JPMA) — seat safety",
+      "American Academy of Pediatrics (HealthyChildren.org) — feeding readiness"
     ],
     "updated": "2026-08-15"
   }

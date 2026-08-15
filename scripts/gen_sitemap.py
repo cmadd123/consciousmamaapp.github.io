@@ -42,6 +42,9 @@ def tracked_html():
             continue
         if any(f.startswith(p) for p in EXCLUDE_PREFIXES):
             continue
+        # Search-engine ownership-verification files aren't crawlable pages.
+        if f.startswith("google") and f.endswith(".html"):
+            continue
         yield f
 
 
