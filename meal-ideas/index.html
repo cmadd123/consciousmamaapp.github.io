@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Free Meal Idea Generator — Family Dinners, Breakfasts &amp; More | MomRise</title>
+  <meta name="description" content="Stuck on what to make? Get instant family meal ideas by type and time — free, no signup. Pick your favorites and plan the whole week in the MomRise app.">
+  <link rel="canonical" href="https://momrise.app/meal-ideas/">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="MomRise">
+  <meta property="og:url" content="https://momrise.app/meal-ideas/">
+  <meta property="og:title" content="Free Meal Idea Generator for Families">
+  <meta property="og:description" content="Instant family meal ideas by type and time — then plan your week free in MomRise.">
+
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "MomRise Meal Idea Generator",
+  "url": "https://momrise.app/meal-ideas/",
+  "applicationCategory": "LifestyleApplication",
+  "operatingSystem": "Web",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "description": "A free tool that gives families instant meal ideas filtered by meal type and cook time."
+}
+  </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    { "@type": "Question", "name": "How does the meal idea generator work?", "acceptedAnswer": { "@type": "Answer", "text": "Pick a meal type (like dinner or breakfast) and how much time you have, and the tool instantly shows family-friendly recipe ideas that fit. Tap any idea for the full recipe, or add a few to your week and plan them in the free MomRise app." } },
+    { "@type": "Question", "name": "Is the meal idea generator free?", "acceptedAnswer": { "@type": "Answer", "text": "Yes — it's completely free and needs no signup. MomRise's app adds full weekly meal planning, auto grocery lists, and more with a free trial." } },
+    { "@type": "Question", "name": "Can I plan a whole week of meals?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Add the ideas you like here, then open the MomRise app to save them to your weekly plan and generate a grocery list automatically." } }
+  ]
+}
+  </script>
+
+  <style>
+    :root {
+      --teal:#52A097; --teal-dark:#2A6F67; --ink:#1a2e2c; --muted:#667;
+      --line:#e7e9ee; --radius:16px;
+    }
+    * { box-sizing:border-box; }
+    body {
+      margin:0; font-family:'Andika',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+      color:var(--ink); background:#fbfcfc; line-height:1.5; -webkit-font-smoothing:antialiased;
+    }
+    a { color:var(--teal-dark); }
+    .page-header { max-width:820px; margin:0 auto; padding:18px 20px; }
+    .brand-mark { font-weight:800; font-size:20px; color:var(--teal); }
+    main { max-width:820px; margin:0 auto; padding:8px 20px 140px; }
+
+    .hero { text-align:center; padding:8px 0 20px; }
+    h1 { font-size:30px; line-height:1.15; margin:0 0 10px; }
+    .lede { font-size:17px; color:var(--muted); margin:0 auto; max-width:560px; }
+
+    .controls {
+      background:#fff; border:1px solid var(--line); border-radius:var(--radius);
+      padding:16px; box-shadow:0 1px 3px rgba(0,0,0,.05); margin-bottom:18px;
+    }
+    .ctrl-label { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); margin:0 0 8px; }
+    .chips { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px; }
+    .chip {
+      border:1px solid var(--line); background:#f7f8fa; color:#333; border-radius:999px;
+      padding:7px 14px; font-size:14px; font-weight:600; cursor:pointer; font-family:inherit;
+    }
+    .chip.on { background:var(--teal); color:#fff; border-color:var(--teal); }
+    .row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    .search { flex:1; min-width:180px; padding:11px 14px; border:1px solid var(--line); border-radius:10px; font-size:15px; font-family:inherit; }
+    .btn {
+      border:none; background:var(--teal); color:#fff; border-radius:10px; padding:11px 18px;
+      font-size:15px; font-weight:700; cursor:pointer; font-family:inherit;
+    }
+    .btn:hover { background:var(--teal-dark); }
+    .btn.ghost { background:#fff; color:var(--teal-dark); border:1px solid var(--teal); }
+
+    .count { color:var(--muted); font-size:14px; margin:0 0 12px; }
+    .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:14px; }
+    .card { border:1px solid var(--line); border-radius:var(--radius); background:#fff; overflow:hidden; display:flex; flex-direction:column; }
+    .card .thumb { aspect-ratio:4/3; background:#eef1f0; overflow:hidden; }
+    .card .thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+    .card .body { padding:12px 14px; display:flex; flex-direction:column; gap:6px; flex:1; }
+    .card .name { font-weight:700; font-size:15px; line-height:1.3; }
+    .card .name a { color:var(--ink); text-decoration:none; }
+    .card .name a:hover { color:var(--teal-dark); }
+    .card .meta { font-size:12px; color:var(--muted); }
+    .card .pill { display:inline-block; font-size:11px; font-weight:700; color:var(--teal-dark); background:#EDFFFD; border-radius:999px; padding:2px 8px; }
+    .card .actions { margin-top:auto; display:flex; gap:8px; }
+    .add-btn { flex:1; border:1px solid var(--teal); background:#fff; color:var(--teal-dark); border-radius:9px; padding:8px; font-weight:700; font-size:13px; cursor:pointer; font-family:inherit; }
+    .add-btn.added { background:var(--teal); color:#fff; }
+    .view-btn { border:1px solid var(--line); background:#fff; color:#333; border-radius:9px; padding:8px 10px; font-size:13px; text-decoration:none; }
+
+    .empty { text-align:center; color:var(--muted); padding:40px 10px; }
+
+    /* Taste-of-the-planner tray */
+    .tray {
+      position:fixed; left:0; right:0; bottom:0; z-index:50;
+      background:#fff; border-top:1px solid var(--line); box-shadow:0 -6px 24px -12px rgba(0,0,0,.25);
+      transform:translateY(110%); transition:transform .2s ease;
+      padding:14px 20px calc(14px + env(safe-area-inset-bottom));
+    }
+    .tray.show { transform:translateY(0); }
+    .tray-inner { max-width:820px; margin:0 auto; display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
+    .tray-text { flex:1; min-width:160px; }
+    .tray-text strong { font-size:16px; }
+    .tray-text span { display:block; color:var(--muted); font-size:13px; }
+    .store-btn { display:inline-block; background:var(--teal); color:#fff; text-decoration:none; padding:11px 18px; border-radius:50px; font-weight:700; font-size:15px; white-space:nowrap; }
+    .store-btn:hover { background:var(--teal-dark); }
+    .tray .clear { background:none; border:none; color:var(--muted); font-size:13px; cursor:pointer; text-decoration:underline; font-family:inherit; }
+
+    .faq { border-top:1px solid var(--line); margin-top:40px; padding-top:22px; }
+    .faq h2 { font-size:20px; }
+    .faq-item { margin-bottom:14px; }
+    .faq-item h3 { font-size:15px; margin:0 0 4px; }
+    .faq-item p { font-size:15px; color:#444; margin:0; }
+    .page-footer { max-width:820px; margin:24px auto 0; padding:20px; border-top:1px solid var(--line); color:var(--muted); font-size:13px; }
+
+    @media (min-width:600px){ h1 { font-size:36px; } }
+  </style>
+</head>
+<body>
+  <header class="page-header"><a href="/" class="brand"><span class="brand-mark">MomRise</span></a></header>
+
+  <main>
+    <div class="hero">
+      <h1>Free meal idea generator</h1>
+      <p class="lede">Stuck on what to make? Pick a meal and how much time you've got — get instant family-friendly ideas, then plan the whole week free in MomRise.</p>
+    </div>
+
+    <div class="controls">
+      <p class="ctrl-label">Meal</p>
+      <div class="chips" id="typeChips"></div>
+      <p class="ctrl-label">Time</p>
+      <div class="chips" id="timeChips"></div>
+      <div class="row">
+        <input class="search" id="search" type="search" placeholder="Search an ingredient or dish (e.g. chicken, pasta)…">
+        <button class="btn" id="shuffleBtn">🎲 Surprise me</button>
+      </div>
+    </div>
+
+    <p class="count" id="count"></p>
+    <div class="grid" id="grid"></div>
+
+    <section class="faq">
+      <h2>How it works</h2>
+      <div class="faq-item"><h3>Is this free?</h3><p>Completely — no signup needed. Add the ideas you like and open the free MomRise app to turn them into a full weekly plan with an automatic grocery list.</p></div>
+      <div class="faq-item"><h3>Where do the ideas come from?</h3><p>They're real, family-tested recipes from MomRise. Tap any idea to see the full recipe.</p></div>
+      <div class="faq-item"><h3>Can I plan a whole week?</h3><p>Yes — pick a few here, then hit "Plan my week" to save them in MomRise and build your plan in a few taps.</p></div>
+    </section>
+  </main>
+
+  <div class="tray" id="tray">
+    <div class="tray-inner">
+      <div class="tray-text"><strong id="trayCount">0 meals picked</strong><span>Save them to your week + auto grocery list in MomRise.</span></div>
+      <button class="clear" id="clearTray">Clear</button>
+      <a class="store-btn" id="planBtn" href="https://apps.apple.com/app/id6758357382">Plan my week free →</a>
+    </div>
+  </div>
+
+  <footer class="page-footer">
+    <a href="/">MomRise</a> · <a href="/r/">Recipes</a> · <a href="/compare/">Compare</a> · <a href="/privacy.html">Privacy</a>
+  </footer>
+
+  <script>
+    const APP_STORE = 'https://apps.apple.com/app/id6758357382';
+    const PLAY_STORE = 'https://play.google.com/store/apps/details?id=com.momrise.app';
+
+    const TYPES = ['Any', 'Dinner', 'Breakfast', 'Dessert', 'Snack', 'Side'];
+    const TIMES = [
+      { label: 'Any time', max: Infinity },
+      { label: '≤ 15 min', max: 15 },
+      { label: '≤ 30 min', max: 30 },
+      { label: '≤ 45 min', max: 45 },
+    ];
+
+    let recipes = [];
+    let fType = 'Any';
+    let fTime = Infinity;
+    let picked = new Set();
+
+    const $ = (id) => document.getElementById(id);
+    const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+    function renderChips() {
+      $('typeChips').innerHTML = TYPES.map((t) => `<button class="chip ${t === fType ? 'on' : ''}" data-type="${t}">${t}</button>`).join('');
+      $('timeChips').innerHTML = TIMES.map((t) => `<button class="chip ${t.max === fTime ? 'on' : ''}" data-time="${t.max}">${t.label}</button>`).join('');
+      $('typeChips').querySelectorAll('[data-type]').forEach((b) => b.addEventListener('click', () => { fType = b.dataset.type; renderChips(); render(); }));
+      $('timeChips').querySelectorAll('[data-time]').forEach((b) => b.addEventListener('click', () => { fTime = Number(b.dataset.time); renderChips(); render(); }));
+    }
+
+    function filtered() {
+      const q = ($('search').value || '').trim().toLowerCase();
+      return recipes.filter((r) =>
+        (fType === 'Any' || r.type === fType) &&
+        (r.minutes <= fTime || (fTime !== Infinity && r.minutes === 0)) &&
+        (!q || r.name.toLowerCase().includes(q))
+      );
+    }
+
+    function card(r) {
+      const isPicked = picked.has(r.slug);
+      const timeTxt = r.minutes ? `${r.minutes} min` : '';
+      const thumb = r.image
+        ? `<img src="${esc(r.image)}" alt="" loading="lazy" onerror="this.parentElement.style.display='none'">`
+        : '';
+      return `<div class="card">
+        <div class="thumb">${thumb}</div>
+        <div class="body">
+          <div class="name"><a href="/r/${esc(r.slug)}/">${esc(r.name)}</a></div>
+          <div class="meta"><span class="pill">${esc(r.type)}</span>${timeTxt ? ' · ' + timeTxt : ''}${r.ingredients ? ' · ' + r.ingredients + ' ingredients' : ''}</div>
+          <div class="actions">
+            <button class="add-btn ${isPicked ? 'added' : ''}" data-add="${esc(r.slug)}">${isPicked ? '✓ Added' : '+ Add to week'}</button>
+            <a class="view-btn" href="/r/${esc(r.slug)}/">Recipe</a>
+          </div>
+        </div>
+      </div>`;
+    }
+
+    function render() {
+      const list = filtered();
+      $('count').textContent = list.length ? `${list.length} idea${list.length === 1 ? '' : 's'}` : '';
+      $('grid').innerHTML = list.length
+        ? list.map(card).join('')
+        : `<div class="empty">No ideas match that — try a different meal or more time.</div>`;
+      $('grid').querySelectorAll('[data-add]').forEach((b) => b.addEventListener('click', () => togglePick(b.dataset.add)));
+    }
+
+    function togglePick(slug) {
+      if (picked.has(slug)) picked.delete(slug); else picked.add(slug);
+      render();
+      renderTray();
+    }
+
+    function renderTray() {
+      const n = picked.size;
+      $('trayCount').textContent = `${n} meal${n === 1 ? '' : 's'} picked`;
+      $('tray').classList.toggle('show', n > 0);
+      // Deep-link with the picked slugs so the app can preload them; falls
+      // back to the store if the app isn't installed.
+      const slugs = [...picked].join(',');
+      $('planBtn').setAttribute('data-deeplink', `momrise://plan?recipes=${encodeURIComponent(slugs)}`);
+    }
+
+    $('shuffleBtn').addEventListener('click', () => {
+      const list = filtered();
+      if (!list.length) return;
+      // Shuffle by re-sorting recipes with a fresh random-ish key, then render.
+      recipes = recipes
+        .map((r) => ({ r, k: (r.slug.charCodeAt(0) + Date.now() + Math.floor(performance.now())) % 997 * Math.random() }))
+        .sort((a, b) => a.k - b.k)
+        .map((x) => x.r);
+      render();
+      window.scrollTo({ top: $('grid').offsetTop - 80, behavior: 'smooth' });
+    });
+
+    $('search').addEventListener('input', render);
+    $('clearTray').addEventListener('click', () => { picked.clear(); render(); renderTray(); });
+
+    // Plan button: try the app deep link, fall back to the app store.
+    $('planBtn').addEventListener('click', (e) => {
+      const deep = $('planBtn').getAttribute('data-deeplink');
+      const isAndroid = /Android/i.test(navigator.userAgent);
+      if (deep) {
+        e.preventDefault();
+        const start = Date.now();
+        setTimeout(() => {
+          if (Date.now() - start < 1200 && document.visibilityState === 'visible') {
+            location.href = isAndroid ? PLAY_STORE : APP_STORE;
+          }
+        }, 700);
+        location.href = deep;
+      }
+    });
+
+    fetch('/meal-ideas/recipes.json')
+      .then((r) => r.json())
+      .then((data) => { recipes = data; renderChips(); render(); })
+      .catch(() => { $('grid').innerHTML = `<div class="empty">Couldn't load ideas. Please refresh.</div>`; });
+  </script>
+</body>
+</html>

@@ -91,6 +91,11 @@
     <priority>1.0</priority>
   </url>
   <url>
+    <loc>https://momrise.app/meal-ideas/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
     <loc>https://momrise.app/privacy</loc>
     <lastmod>2026-07-03</lastmod>
     <changefreq>monthly</changefreq>

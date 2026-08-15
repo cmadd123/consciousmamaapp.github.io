@@ -53,10 +53,13 @@ jobs:
       - name: Regenerate comparison pages
         run: node scripts/generate-comparison-pages.js
 
+      - name: Rebuild meal-idea generator index (from published recipes)
+        run: node scripts/generate-meal-index.js
+
       - name: Stage generated pages so the sitemap sees new slugs
         # gen_sitemap.py enumerates via `git ls-files`; staging (no commit)
         # makes freshly generated pages visible to it.
-        run: git add -A compare/ r/ || true
+        run: git add -A compare/ r/ meal-ideas/ || true
 
       - name: Regenerate sitemap
         run: python scripts/gen_sitemap.py
@@ -103,7 +106,7 @@ jobs:
           else
             FILES=$(git ls-files)
           fi
-          if echo "$FILES" | grep -qE '^(compare/|r/|data/comparisons\.json|sitemap\.xml)'; then
+          if echo "$FILES" | grep -qE '^(compare/|r/|meal-ideas/|data/comparisons\.json|sitemap\.xml)'; then
             echo "content=true" >> "$GITHUB_OUTPUT"
             echo "Content changed — will ping IndexNow."
           else
