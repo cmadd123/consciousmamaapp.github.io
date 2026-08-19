@@ -3364,6 +3364,79 @@ exports.getAppHealth = onCall(async (request) => {
   };
 });
 
+// Admin: per-action event counts from Google Analytics (GA4) — the app's
+// logged button/action events (meal_plan_created, learning_path_created,
+// subscribe, feature_used, screen_view, …). Reads the GA4 Data API using the
+// function's own runtime service account (ADC), so no key is stored; that SA
+// just needs Viewer access on the GA4 property. Property id comes from the
+// Firestore config doc config/app_health.ga4_property_id (set without a
+// redeploy). Returns { configured:false } until it's wired up.
+const { GoogleAuth } = require('google-auth-library');
+let _gaAuth = null;
+async function _ga4Token() {
+  if (!_gaAuth) _gaAuth = new GoogleAuth({ scopes: ['https://www.googleapis.com/auth/analytics.readonly'] });
+  const client = await _gaAuth.getClient();
+  const t = await client.getAccessToken();
+  return t.token;
+}
+async function _ga4Report(propertyId, token, body) {
+  const res = await fetch(`https://analyticsdata.googleapis.com/v1beta/properties/${propertyId}:runReport`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(`GA4 ${res.status}: ${JSON.stringify(data).slice(0, 300)}`);
+  return data;
+}
+
+exports.getAppEvents = onCall(async (request) => {
+  _requireAdmin(request);
+  const db = getFirestore();
+  const cfg = (await db.doc('config/app_health').get()).data() || {};
+  const propertyId = cfg.ga4_property_id;
+  if (!propertyId) return { configured: false };
+
+  try {
+    const token = await _ga4Token();
+
+    // Event counts by name for 7d and 30d (two reports → simple merge).
+    const eventsReport = (days) => _ga4Report(propertyId, token, {
+      dateRanges: [{ startDate: `${days}daysAgo`, endDate: 'today' }],
+      dimensions: [{ name: 'eventName' }],
+      metrics: [{ name: 'eventCount' }],
+      orderBys: [{ metric: { metricName: 'eventCount' }, desc: true }],
+      limit: 100,
+    });
+    const toMap = (rep) => {
+      const m = {};
+      for (const row of (rep.rows || [])) m[row.dimensionValues[0].value] = Number(row.metricValues[0].value || 0);
+      return m;
+    };
+    const [r7, r30] = await Promise.all([eventsReport(7), eventsReport(30)]);
+    const m7 = toMap(r7), m30 = toMap(r30);
+    const names = [...new Set([...Object.keys(m7), ...Object.keys(m30)])];
+    const events = names
+      .map((name) => ({ name, d7: m7[name] || 0, d30: m30[name] || 0 }))
+      .sort((a, b) => b.d30 - a.d30);
+
+    // Active users, 7d and 30d.
+    const au = await _ga4Report(propertyId, token, {
+      dateRanges: [{ startDate: '7daysAgo', endDate: 'today' }, { startDate: '30daysAgo', endDate: 'today' }],
+      metrics: [{ name: 'activeUsers' }],
+    });
+    const auRows = au.rows || [];
+    const activeUsers = {
+      d7: Number(auRows[0]?.metricValues?.[0]?.value || 0),
+      d30: Number(auRows[1]?.metricValues?.[0]?.value || 0),
+    };
+
+    return { configured: true, activeUsers, events, generated_at: Date.now() };
+  } catch (e) {
+    return { configured: true, error: e.message };
+  }
+});
+
 // Override a creator's code (e.g., they typed something they regret).
 // Same validation rules as setCreatorCode but no caller-owns-doc check.
 exports.adminUpdateCreatorCode = onCall(async (request) => {
