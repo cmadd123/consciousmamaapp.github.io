@@ -292,6 +292,7 @@
           <button class="tab-btn" data-tab="suggestions" style="background: none; border: none; padding: 10px 16px; font-size: 15px; color: var(--text-muted); border-bottom: 2px solid transparent; margin-bottom: -1px;">Suggestions <span id="suggestionBadge" hidden style="background: var(--accent); color: white; border-radius: 999px; padding: 2px 7px; font-size: 11px; margin-left: 4px;">0</span></button>
           <button class="tab-btn" data-tab="brief" style="background: none; border: none; padding: 10px 16px; font-size: 15px; color: var(--text-muted); border-bottom: 2px solid transparent; margin-bottom: -1px;">Brief</button>
           <button class="tab-btn" data-tab="recipes" style="background: none; border: none; padding: 10px 16px; font-size: 15px; color: var(--text-muted); border-bottom: 2px solid transparent; margin-bottom: -1px;">Recipes</button>
+          <button class="tab-btn" data-tab="health" style="background: none; border: none; padding: 10px 16px; font-size: 15px; color: var(--text-muted); border-bottom: 2px solid transparent; margin-bottom: -1px;">Health</button>
           <a href="crm/" style="text-decoration: none; padding: 10px 16px; font-size: 15px; color: var(--text-muted); border-bottom: 2px solid transparent; margin-bottom: -1px; margin-left: auto;">Outreach CRM ↗</a>
         </div>
 
@@ -484,6 +485,22 @@
                 <tr><td colspan="5" style="padding: 48px; text-align: center; color: var(--text-muted);"><div class="loader"></div> Click Refresh to load…</td></tr>
               </tbody>
             </table>
+          </div>
+        </div>
+
+        <!-- Health tab — app-activity snapshot (Firestore counts) -->
+        <div class="tab-panel" id="tabHealth" hidden>
+          <div class="section-head">
+            <h2>App health</h2>
+            <button class="btn ghost" id="refreshHealthBtn">↻ Refresh</button>
+          </div>
+          <p style="color: var(--text-muted); font-size: 13px; margin: -8px 0 16px;">
+            Live activity from Firestore. Counts of who's using the app and what they're
+            creating. <em>Per-action button/tap events (from Firebase Analytics) are a
+            planned add.</em>
+          </p>
+          <div id="healthBody">
+            <div style="padding: 40px; text-align: center; color: var(--text-muted);"><div class="loader"></div> Loading…</div>
           </div>
         </div>
         </div><!-- /viewListInner -->
@@ -844,8 +861,53 @@
         if (btn.dataset.tab === 'suggestions') loadSuggestions();
         if (btn.dataset.tab === 'brief') loadBriefHistory();
         if (btn.dataset.tab === 'recipes') loadRecipesView();
+        if (btn.dataset.tab === 'health') loadHealth();
       });
     });
+
+    // ── App health tab ──
+    $('refreshHealthBtn').addEventListener('click', loadHealth);
+    async function loadHealth() {
+      const body = $('healthBody');
+      body.innerHTML = `<div style="padding: 40px; text-align: center; color: var(--text-muted);"><div class="loader"></div> Loading…</div>`;
+      try {
+        const { data } = await httpsCallable(functions, 'getAppHealth')();
+        const n = (v) => (v == null ? '—' : Number(v).toLocaleString());
+        const card = (label, value, sub) =>
+          `<div class="metric"><div class="metric-label">${label}</div><div class="metric-value">${n(value)}</div>${sub ? `<div style="font-size:12px;color:var(--text-muted);margin-top:2px;">${sub}</div>` : ''}</div>`;
+        const grid = (cards) =>
+          `<div class="metrics-banner" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); margin-bottom: 22px;">${cards.join('')}</div>`;
+        const h = (t) => `<h3 style="font-size:14px;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted);margin:0 0 10px;">${t}</h3>`;
+
+        body.innerHTML =
+          h('New users') +
+          grid([
+            card('Last 24h', data.users.d1),
+            card('Last 7 days', data.users.d7),
+            card('Last 30 days', data.users.d30),
+            card('Total users', data.users.total),
+          ]) +
+          h('Activity created') +
+          grid([
+            card('To-dos · 24h', data.todos.d1, `${n(data.todos.d7)} in 7d`),
+            card('Routines · 7d', data.routines.d7, `${n(data.routines.d30)} in 30d`),
+            card('Meal plans', data.totals.mealPlans, 'all-time'),
+            card('Learning paths', data.totals.learningPaths, 'all-time'),
+            card('Children added', data.totals.children, 'all-time'),
+            card('Calendar events', data.totals.events, 'all-time'),
+            card('Recipes', data.totals.recipes, 'all-time'),
+          ]) +
+          h('Creator reach') +
+          grid([
+            card('Active creators', data.creators.active),
+            card('Followers', data.creators.followers),
+            card('Subscribers', data.creators.subscribers),
+          ]) +
+          `<p style="font-size:12px;color:var(--text-muted);">Snapshot at ${new Date(data.generated_at).toLocaleString()}.</p>`;
+      } catch (e) {
+        body.innerHTML = `<div style="padding: 24px; color: var(--danger);">Couldn't load health: ${esc(e.message)}</div>`;
+      }
+    }
 
     // Recipes tab — admin-only insight into where recipes come from.
     $('refreshRecipesBtn').addEventListener('click', loadRecipesView);

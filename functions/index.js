@@ -3304,6 +3304,66 @@ exports.adminListCreatorMembers = onCall(async (request) => {
   return { code, followerCount: members.length, subscriberCount, members };
 });
 
+// Admin: app-health snapshot. Uses count() aggregation (cheap — server-side,
+// doesn't read docs) to gauge activity: new users over time, content created,
+// and creator reach. Admin SDK bypasses rules so it can count across all
+// users. Rich per-action event counts (button taps etc.) live in GA4 — a
+// future tier surfaces those via the Analytics Data API.
+exports.getAppHealth = onCall(async (request) => {
+  _requireAdmin(request);
+  const db = getFirestore();
+  const now = Date.now();
+  const since = (days) => new Date(now - days * 86400000);
+  const d1 = since(1), d7 = since(7), d30 = since(30);
+
+  // count() with a range filter; returns null on error (e.g. missing field)
+  // so one bad collection never breaks the whole snapshot.
+  const cnt = async (coll, field, from) => {
+    try {
+      let q = db.collection(coll);
+      if (field && from) q = q.where(field, '>=', from);
+      const s = await q.count().get();
+      return s.data().count;
+    } catch (e) {
+      console.warn(`getAppHealth count ${coll}/${field || 'total'}: ${e.message}`);
+      return null;
+    }
+  };
+
+  const [
+    usersTotal, users1, users7, users30,
+    todos1, todos7, todos30,
+    routines7, routines30,
+    mealPlans, learningPaths, children, recipes, events,
+  ] = await Promise.all([
+    cnt('users'), cnt('users', 'created_time', d1), cnt('users', 'created_time', d7), cnt('users', 'created_time', d30),
+    cnt('todos', 'created_time', d1), cnt('todos', 'created_time', d7), cnt('todos', 'created_time', d30),
+    cnt('routines', 'created_at', d7), cnt('routines', 'created_at', d30),
+    cnt('meal_plan'), cnt('learning_path'), cnt('childern'), cnt('meal'), cnt('event_and_task'),
+  ]);
+
+  // Creator reach — sum denormalized counters.
+  let activeCreators = 0, followers = 0, subscribers = 0;
+  try {
+    const csnap = await db.collection('creators').get();
+    csnap.forEach((d) => {
+      const c = d.data();
+      if (c.is_active !== false) activeCreators++;
+      followers += c.follower_count || 0;
+      subscribers += c.subscriber_count || 0;
+    });
+  } catch (e) { console.warn('getAppHealth creators:', e.message); }
+
+  return {
+    generated_at: now,
+    users: { total: usersTotal, d1: users1, d7: users7, d30: users30 },
+    todos: { d1: todos1, d7: todos7, d30: todos30 },
+    routines: { d7: routines7, d30: routines30 },
+    totals: { mealPlans, learningPaths, children, recipes, events },
+    creators: { active: activeCreators, followers, subscribers },
+  };
+});
+
 // Override a creator's code (e.g., they typed something they regret).
 // Same validation rules as setCreatorCode but no caller-owns-doc check.
 exports.adminUpdateCreatorCode = onCall(async (request) => {
