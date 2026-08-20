@@ -3309,26 +3309,38 @@ exports.adminListCreatorMembers = onCall(async (request) => {
 // and creator reach. Admin SDK bypasses rules so it can count across all
 // users. Rich per-action event counts (button taps etc.) live in GA4 — a
 // future tier surfaces those via the Analytics Data API.
+// count() helper shared by health + reset. Returns null on error so one bad
+// collection never breaks the snapshot.
+async function _cnt(db, coll, field, from) {
+  try {
+    let q = db.collection(coll);
+    if (field && from) q = q.where(field, '>=', from);
+    const s = await q.count().get();
+    return s.data().count;
+  } catch (e) {
+    console.warn(`appHealth count ${coll}/${field || 'total'}: ${e.message}`);
+    return null;
+  }
+}
+
 exports.getAppHealth = onCall(async (request) => {
   _requireAdmin(request);
   const db = getFirestore();
+  const cfg = (await db.doc('config/app_health').get()).data() || {};
+  const resetMs = cfg.reset_date ? Date.parse(cfg.reset_date) : null;
+  const base = cfg.baseline || {};
   const now = Date.now();
-  const since = (days) => new Date(now - days * 86400000);
-  const d1 = since(1), d7 = since(7), d30 = since(30);
 
-  // count() with a range filter; returns null on error (e.g. missing field)
-  // so one bad collection never breaks the whole snapshot.
-  const cnt = async (coll, field, from) => {
-    try {
-      let q = db.collection(coll);
-      if (field && from) q = q.where(field, '>=', from);
-      const s = await q.count().get();
-      return s.data().count;
-    } catch (e) {
-      console.warn(`getAppHealth count ${coll}/${field || 'total'}: ${e.message}`);
-      return null;
-    }
+  // Window start, clamped to the reset baseline so pre-reset (test) activity
+  // is excluded — right after a reset every window reads ~0 and grows.
+  const winFrom = (days) => {
+    const start = now - days * 86400000;
+    return new Date(resetMs ? Math.max(start, resetMs) : start);
   };
+  const d1 = winFrom(1), d7 = winFrom(7), d30 = winFrom(30);
+  const cnt = (coll, field, from) => _cnt(db, coll, field, from);
+  // Net-of-baseline: current total minus the count snapshotted at reset.
+  const net = (cur, key) => (cur == null ? null : Math.max(0, cur - (base[key] || 0)));
 
   const [
     usersTotal, users1, users7, users30,
@@ -3342,7 +3354,7 @@ exports.getAppHealth = onCall(async (request) => {
     cnt('meal_plan'), cnt('learning_path'), cnt('childern'), cnt('meal'), cnt('event_and_task'),
   ]);
 
-  // Creator reach — sum denormalized counters.
+  // Creator reach — real business counters, NOT reset.
   let activeCreators = 0, followers = 0, subscribers = 0;
   try {
     const csnap = await db.collection('creators').get();
@@ -3356,12 +3368,36 @@ exports.getAppHealth = onCall(async (request) => {
 
   return {
     generated_at: now,
-    users: { total: usersTotal, d1: users1, d7: users7, d30: users30 },
+    reset_date: cfg.reset_date || null,
+    users: { total: net(usersTotal, 'users'), d1: users1, d7: users7, d30: users30 },
     todos: { d1: todos1, d7: todos7, d30: todos30 },
     routines: { d7: routines7, d30: routines30 },
-    totals: { mealPlans, learningPaths, children, recipes, events },
+    totals: {
+      mealPlans: net(mealPlans, 'mealPlans'),
+      learningPaths: net(learningPaths, 'learningPaths'),
+      children: net(children, 'children'),
+      recipes: net(recipes, 'recipes'),
+      events: net(events, 'events'),
+    },
     creators: { active: activeCreators, followers, subscribers },
   };
+});
+
+// Admin: reset the app-health baseline to "now". Non-destructive — snapshots
+// current counts (so they read as zero going forward) and stamps reset_date,
+// which also clamps the GA4 event windows. Deletes nothing. Creator counters
+// are left untouched (they're real business metrics).
+exports.resetAppHealth = onCall(async (request) => {
+  _requireAdmin(request);
+  const db = getFirestore();
+  const [users, mealPlans, learningPaths, children, recipes, events] = await Promise.all([
+    _cnt(db, 'users'), _cnt(db, 'meal_plan'), _cnt(db, 'learning_path'),
+    _cnt(db, 'childern'), _cnt(db, 'meal'), _cnt(db, 'event_and_task'),
+  ]);
+  const baseline = { users: users || 0, mealPlans: mealPlans || 0, learningPaths: learningPaths || 0, children: children || 0, recipes: recipes || 0, events: events || 0 };
+  const reset_date = new Date().toISOString();
+  await db.doc('config/app_health').set({ reset_date, baseline }, { merge: true });
+  return { reset_date, baseline };
 });
 
 // Admin: per-action event counts from Google Analytics (GA4) — the app's
@@ -3407,12 +3443,21 @@ exports.getAppEvents = onCall(async (request) => {
   const propertyId = cfg.ga4_property_id;
   if (!propertyId) return { configured: false };
 
+  // Clamp report windows to the reset baseline so pre-reset (test) events are
+  // excluded from the view.
+  const resetMs = cfg.reset_date ? Date.parse(cfg.reset_date) : null;
+  const ymd = (ms) => new Date(ms).toISOString().slice(0, 10);
+  const startFor = (days) => {
+    const ago = Date.now() - days * 86400000;
+    return ymd(resetMs ? Math.max(ago, resetMs) : ago);
+  };
+
   try {
     const token = await _ga4Token();
 
     // Event counts by name for 7d and 30d (two reports → simple merge).
     const eventsReport = (days) => _ga4Report(propertyId, token, {
-      dateRanges: [{ startDate: `${days}daysAgo`, endDate: 'today' }],
+      dateRanges: [{ startDate: startFor(days), endDate: 'today' }],
       dimensions: [{ name: 'eventName' }],
       metrics: [{ name: 'eventCount' }],
       orderBys: [{ metric: { metricName: 'eventCount' }, desc: true }],
@@ -3430,9 +3475,9 @@ exports.getAppEvents = onCall(async (request) => {
       .map((name) => ({ name, d7: m7[name] || 0, d30: m30[name] || 0 }))
       .sort((a, b) => b.d30 - a.d30);
 
-    // Active users, 7d and 30d.
+    // Active users, 7d and 30d (clamped to reset).
     const au = await _ga4Report(propertyId, token, {
-      dateRanges: [{ startDate: '7daysAgo', endDate: 'today' }, { startDate: '30daysAgo', endDate: 'today' }],
+      dateRanges: [{ startDate: startFor(7), endDate: 'today' }, { startDate: startFor(30), endDate: 'today' }],
       metrics: [{ name: 'activeUsers' }],
     });
     const auRows = au.rows || [];
@@ -3441,7 +3486,7 @@ exports.getAppEvents = onCall(async (request) => {
       d30: Number(auRows[1]?.metricValues?.[0]?.value || 0),
     };
 
-    return { configured: true, activeUsers, events, generated_at: Date.now() };
+    return { configured: true, activeUsers, events, reset_date: cfg.reset_date || null, generated_at: Date.now() };
   } catch (e) {
     // Include the runtime SA so the admin knows exactly which account to grant.
     return { configured: true, error: e.message, service_account: await _runtimeSA() };

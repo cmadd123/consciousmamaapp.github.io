@@ -492,12 +492,14 @@
         <div class="tab-panel" id="tabHealth" hidden>
           <div class="section-head">
             <h2>App health</h2>
-            <button class="btn ghost" id="refreshHealthBtn">↻ Refresh</button>
+            <div style="display:flex; gap:8px;">
+              <button class="btn ghost" id="resetHealthBtn" title="Snapshot current counts as zero and count real usage from now (non-destructive)">Reset counters</button>
+              <button class="btn ghost" id="refreshHealthBtn">↻ Refresh</button>
+            </div>
           </div>
           <p style="color: var(--text-muted); font-size: 13px; margin: -8px 0 16px;">
-            Live activity from Firestore. Counts of who's using the app and what they're
-            creating. <em>Per-action button/tap events (from Firebase Analytics) are a
-            planned add.</em>
+            Live activity from Firestore, plus per-action events from Google Analytics.
+            <span id="healthResetNote"></span>
           </p>
           <div id="healthBody">
             <div style="padding: 40px; text-align: center; color: var(--text-muted);"><div class="loader"></div> Loading…</div>
@@ -867,11 +869,29 @@
 
     // ── App health tab ──
     $('refreshHealthBtn').addEventListener('click', loadHealth);
+    $('resetHealthBtn').addEventListener('click', async () => {
+      if (!confirm('Reset all app-health counters to zero from now?\n\nThis snapshots the current (test) counts as the new baseline and counts only real usage going forward. Nothing is deleted, and creator follower/subscriber numbers are not affected. You can reset again anytime.')) return;
+      const btn = $('resetHealthBtn');
+      btn.disabled = true; const orig = btn.textContent; btn.textContent = 'Resetting…';
+      try {
+        await httpsCallable(functions, 'resetAppHealth')();
+        toast('Counters reset — now counting from zero.');
+        loadHealth();
+      } catch (e) {
+        toast('Reset failed: ' + (e.message || 'error'), true);
+      } finally {
+        btn.disabled = false; btn.textContent = orig;
+      }
+    });
     async function loadHealth() {
       const body = $('healthBody');
       body.innerHTML = `<div style="padding: 40px; text-align: center; color: var(--text-muted);"><div class="loader"></div> Loading…</div>`;
       try {
         const { data } = await httpsCallable(functions, 'getAppHealth')();
+        $('healthResetNote').textContent = data.reset_date
+          ? `Counting since reset on ${new Date(data.reset_date).toLocaleDateString()}.`
+          : '';
+        const scope = data.reset_date ? 'since reset' : 'all-time';
         const n = (v) => (v == null ? '—' : Number(v).toLocaleString());
         const card = (label, value, sub) =>
           `<div class="metric"><div class="metric-label">${label}</div><div class="metric-value">${n(value)}</div>${sub ? `<div style="font-size:12px;color:var(--text-muted);margin-top:2px;">${sub}</div>` : ''}</div>`;
@@ -891,11 +911,11 @@
           grid([
             card('To-dos · 24h', data.todos.d1, `${n(data.todos.d7)} in 7d`),
             card('Routines · 7d', data.routines.d7, `${n(data.routines.d30)} in 30d`),
-            card('Meal plans', data.totals.mealPlans, 'all-time'),
-            card('Learning paths', data.totals.learningPaths, 'all-time'),
-            card('Children added', data.totals.children, 'all-time'),
-            card('Calendar events', data.totals.events, 'all-time'),
-            card('Recipes', data.totals.recipes, 'all-time'),
+            card('Meal plans', data.totals.mealPlans, scope),
+            card('Learning paths', data.totals.learningPaths, scope),
+            card('Children added', data.totals.children, scope),
+            card('Calendar events', data.totals.events, scope),
+            card('Recipes', data.totals.recipes, scope),
           ]) +
           h('Creator reach') +
           grid([
