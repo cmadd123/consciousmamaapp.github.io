@@ -3372,6 +3372,16 @@ exports.getAppHealth = onCall(async (request) => {
 // Firestore config doc config/app_health.ga4_property_id (set without a
 // redeploy). Returns { configured:false } until it's wired up.
 const { GoogleAuth } = require('google-auth-library');
+// The email the function actually runs as — queried from the metadata server.
+// Used to tell the admin exactly which service account to grant GA4 access to.
+async function _runtimeSA() {
+  try {
+    const res = await fetch('http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/email',
+      { headers: { 'Metadata-Flavor': 'Google' } });
+    if (res.ok) return (await res.text()).trim();
+  } catch (_) { /* ignore */ }
+  return null;
+}
 let _gaAuth = null;
 async function _ga4Token() {
   if (!_gaAuth) _gaAuth = new GoogleAuth({ scopes: ['https://www.googleapis.com/auth/analytics.readonly'] });
@@ -3433,7 +3443,8 @@ exports.getAppEvents = onCall(async (request) => {
 
     return { configured: true, activeUsers, events, generated_at: Date.now() };
   } catch (e) {
-    return { configured: true, error: e.message };
+    // Include the runtime SA so the admin knows exactly which account to grant.
+    return { configured: true, error: e.message, service_account: await _runtimeSA() };
   }
 });
 
