@@ -31,6 +31,8 @@ def rank(url_path):
         return ("monthly", "0.8")       # comparison-authority content
     if url_path.startswith("/meal-ideas"):
         return ("weekly", "0.9")        # hero free tool / link magnet
+    if url_path.startswith("/for-creators"):
+        return ("monthly", "0.7")       # creator-recruitment content
     return ("monthly", "0.5")           # marketing / legal
 
 
