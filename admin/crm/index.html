@@ -175,6 +175,8 @@
 
     <div class="toolbar">
       <input class="search" id="search" type="search" placeholder="Search name, handle, email, notes…">
+      <button class="btn ghost" id="importBtn" title="Bulk-import creators from a CSV (e.g. an export from a discovery tool)">Import CSV</button>
+      <input type="file" id="csvInput" accept=".csv,text/csv" style="display:none">
       <button class="btn" id="addBtn">+ Add creator</button>
     </div>
 
@@ -209,9 +211,15 @@
           </select>
         </div>
       </div>
-      <div class="field">
-        <label for="fEmail">Email</label>
-        <input id="fEmail" type="email" placeholder="jane@example.com">
+      <div class="row2">
+        <div class="field">
+          <label for="fEmail">Email</label>
+          <input id="fEmail" type="email" placeholder="jane@example.com">
+        </div>
+        <div class="field">
+          <label for="fFollowers">Followers</label>
+          <input id="fFollowers" type="number" min="0" placeholder="e.g. 8000">
+        </div>
       </div>
       <div class="row2">
         <div class="field">
@@ -292,6 +300,11 @@
       const [y, m, d] = s.split('-').map(Number);
       if (!y) return '';
       return new Date(y, m - 1, d).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+    };
+    const fmtFollowers = (v) => {
+      const num = Number(v) || 0;
+      if (num >= 1000) return (num / 1000).toFixed(num % 1000 === 0 ? 0 : 1) + 'K';
+      return String(num);
     };
 
     let toastTimer = null;
@@ -390,6 +403,7 @@
       if (q) {
         rows = rows.filter(l =>
           [l.name, l.handle, l.email, l.notes, l.platform].some(v => (v || '').toLowerCase().includes(q)));
+      // (followers is numeric — filtered via the stage chips / sorting, not text search)
       }
 
       // Sort: overdue first (soonest follow-up first), then by follow-up date,
@@ -415,6 +429,10 @@
         const overdue = isOverdue(l);
         const meta = [];
         if (l.platform || l.handle) meta.push(`<span class="platform-tag">${esc([l.platform, l.handle].filter(Boolean).join(' · '))}</span>`);
+        if (l.followers) {
+          const sweet = l.followers >= 5000 && l.followers <= 15000;
+          meta.push(`<span style="${sweet ? 'color:var(--teal-dark);font-weight:700;' : ''}">${fmtFollowers(l.followers)} followers${sweet ? ' ✓' : ''}</span>`);
+        }
         if (l.email) meta.push(`<a href="mailto:${esc(l.email)}">${esc(l.email)}</a>`);
         if (l.last_contacted) meta.push(`Last: ${esc(fmtDate(l.last_contacted))}`);
         if (l.follow_up_date) meta.push(`<span class="fu ${overdue ? 'overdue' : ''}">Follow up: ${esc(fmtDate(l.follow_up_date))}${overdue ? ' ⚠' : ''}</span>`);
@@ -455,6 +473,7 @@
       $('fHandle').value = lead?.handle || '';
       $('fPlatform').value = lead?.platform || '';
       $('fEmail').value = lead?.email || '';
+      $('fFollowers').value = lead?.followers != null ? lead.followers : '';
       $('fStatus').value = lead?.status || 'to_contact';
       $('fLast').value = lead?.last_contacted || '';
       $('fFollow').value = lead?.follow_up_date || '';
@@ -466,6 +485,90 @@
     function closeModal() { $('modal').classList.remove('open'); editingId = null; }
 
     $('addBtn').addEventListener('click', () => openModal(null));
+
+    // ── CSV import: bulk-load prospects from a discovery-tool export ──
+    // Accepts flexible headers (name/handle/platform/email/followers/notes),
+    // parses "8.2K"/"1,200" follower counts, and dedupes against existing.
+    $('importBtn').addEventListener('click', () => $('csvInput').click());
+    $('csvInput').addEventListener('change', async (e) => {
+      const file = e.target.files?.[0];
+      e.target.value = '';
+      if (!file) return;
+      let rows;
+      try { rows = parseCSV(await file.text()); } catch { toast('Could not read CSV', true); return; }
+      if (rows.length < 2) { toast('CSV looks empty', true); return; }
+      const headers = rows[0].map((h) => h.trim().toLowerCase());
+      const idx = (aliases) => headers.findIndex((h) => aliases.includes(h));
+      const col = {
+        name: idx(['name', 'full name', 'creator', 'creator name', 'display name']),
+        handle: idx(['handle', 'username', 'user name', 'account', 'ig handle', 'tiktok handle', 'profile']),
+        platform: idx(['platform', 'network', 'source', 'channel']),
+        email: idx(['email', 'e-mail', 'contact', 'contact email']),
+        followers: idx(['followers', 'follower count', 'followers count', 'follower_count', 'audience', 'audience size']),
+        notes: idx(['notes', 'bio', 'description', 'about']),
+      };
+      if (col.name < 0 && col.handle < 0) { toast('CSV needs a Name or Handle column', true); return; }
+      const get = (r, i) => (i >= 0 && i < r.length ? String(r[i]).trim() : '');
+      const existing = new Set(leads.map((l) => (l.handle || l.name || '').trim().toLowerCase()).filter(Boolean));
+      let added = 0, skipped = 0;
+      toast('Importing…');
+      for (let i = 1; i < rows.length; i++) {
+        const r = rows[i];
+        if (!r || r.every((c) => !String(c).trim())) continue;
+        const name = get(r, col.name), handle = get(r, col.handle);
+        if (!name && !handle) continue;
+        const key = (handle || name).toLowerCase();
+        if (existing.has(key)) { skipped++; continue; }
+        existing.add(key);
+        try {
+          await addDoc(collection(db, 'outreach_leads'), {
+            name: name || handle,
+            handle,
+            platform: get(r, col.platform),
+            email: get(r, col.email).toLowerCase(),
+            followers: parseFollowers(get(r, col.followers)),
+            status: 'to_contact',
+            last_contacted: '',
+            follow_up_date: '',
+            notes: get(r, col.notes),
+            source: 'csv_import',
+            created_at: serverTimestamp(),
+            created_by: auth.currentUser?.email || '',
+            updated_at: serverTimestamp(),
+          });
+          added++;
+        } catch (err) { console.error(err); }
+      }
+      toast(`Imported ${added}${skipped ? `, skipped ${skipped} duplicate${skipped === 1 ? '' : 's'}` : ''}`);
+    });
+
+    function parseFollowers(s) {
+      if (!s) return null;
+      const t = String(s).trim().toLowerCase().replace(/,/g, '');
+      const m = t.match(/^([\d.]+)\s*([km])?/);
+      if (!m) return null;
+      let n = parseFloat(m[1]);
+      if (isNaN(n)) return null;
+      if (m[2] === 'k') n *= 1000;
+      if (m[2] === 'm') n *= 1000000;
+      return Math.round(n);
+    }
+    function parseCSV(text) {
+      const rows = []; let row = [], field = '', inQ = false;
+      for (let i = 0; i < text.length; i++) {
+        const c = text[i];
+        if (inQ) {
+          if (c === '"') { if (text[i + 1] === '"') { field += '"'; i++; } else inQ = false; }
+          else field += c;
+        } else if (c === '"') inQ = true;
+        else if (c === ',') { row.push(field); field = ''; }
+        else if (c === '\n') { row.push(field); rows.push(row); row = []; field = ''; }
+        else if (c !== '\r') field += c;
+      }
+      if (field.length || row.length) { row.push(field); rows.push(row); }
+      return rows;
+    }
+
     $('cancelBtn').addEventListener('click', closeModal);
     $('modal').addEventListener('click', (e) => { if (e.target === $('modal')) closeModal(); });
 
@@ -477,6 +580,7 @@
         handle: $('fHandle').value.trim(),
         platform: $('fPlatform').value,
         email: $('fEmail').value.trim().toLowerCase(),
+        followers: $('fFollowers').value ? parseInt($('fFollowers').value, 10) : null,
         status: $('fStatus').value,
         last_contacted: $('fLast').value || '',
         follow_up_date: $('fFollow').value || '',
