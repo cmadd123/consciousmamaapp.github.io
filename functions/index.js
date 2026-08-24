@@ -1901,6 +1901,9 @@ exports.backfillCreatorPlans = creatorPlanSync.backfillCreatorPlans;
 const pinterestAutopin = require('./pinterest_autopin');
 exports.pinterestAutoPin = pinterestAutopin.pinterestAutoPin;
 exports.pinterestTestPin = pinterestAutopin.pinterestTestPin;
+
+const creatorDiscovery = require('./creator_discovery');
+exports.findCreators = creatorDiscovery.findCreators;
 exports.feedbackMarkdown = feedbackMd.feedbackMarkdown;
 exports.createCreatorOnboardingLink = stripeFunctions.createCreatorOnboardingLink;
 exports.createCreatorDashboardLink = stripeFunctions.createCreatorDashboardLink;
