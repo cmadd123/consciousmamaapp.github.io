@@ -93,9 +93,6 @@
     .lead-meta { font-size: 13px; color: var(--text-muted); margin-top: 4px; display: flex; gap: 14px; flex-wrap: wrap; }
     .lead-meta .fu.overdue { color: var(--warn); font-weight: 700; }
     .lead-notes { font-size: 13px; color: var(--text); margin-top: 8px; white-space: pre-wrap; word-break: break-word; }
-    .lead-opener { font-size: 13px; margin-top: 8px; padding: 8px 10px; background: #EDFFFD; border: 1px solid #cfe9e4; border-radius: 10px; display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
-    .lead-opener-label { font-size: 10px; text-transform: uppercase; letter-spacing: .05em; font-weight: 700; color: var(--teal-dark); }
-    .lead-opener-text { flex: 1; min-width: 180px; color: var(--text); }
     .lead-actions { display: flex; flex-direction: column; gap: 6px; align-items: flex-end; }
 
     .pill {
@@ -258,6 +255,10 @@
     <div class="modal">
       <h2>Find creators</h2>
       <p style="color:var(--muted); font-size:13px; margin:-6px 0 14px;">Searches Influencers.club and adds matches to your pipeline (US-based). Discovery is nearly free; fetching emails uses ~1 credit each.</p>
+      <div class="field" id="qRecentWrap" style="display:none;">
+        <label for="qRecent">Recent searches</label>
+        <select id="qRecent"><option value="">— pick one to autofill —</option></select>
+      </div>
       <div class="row2">
         <div class="field">
           <label for="qPlatform">Platform</label>
@@ -506,7 +507,6 @@
               </div>
               <div class="lead-meta">${meta.join('')}</div>
               ${l.notes ? `<div class="lead-notes">${esc(l.notes)}</div>` : ''}
-              ${l.suggested_opener ? `<div class="lead-opener"><span class="lead-opener-label">Suggested opener</span><span class="lead-opener-text">${esc(l.suggested_opener)}</span><button class="btn ghost sm" data-copy="${l.id}">Copy</button></div>` : ''}
             </div>
             <div class="lead-actions">
               <button class="btn sm" data-contacted="${l.id}">Mark contacted</button>
@@ -519,14 +519,6 @@
         b.addEventListener('click', () => openModal(leads.find(l => l.id === b.dataset.edit))));
       list.querySelectorAll('[data-contacted]').forEach(b =>
         b.addEventListener('click', () => markContacted(b.dataset.contacted)));
-      list.querySelectorAll('[data-copy]').forEach(b =>
-        b.addEventListener('click', async () => {
-          const lead = leads.find(l => l.id === b.dataset.copy);
-          if (lead?.suggested_opener) {
-            try { await navigator.clipboard.writeText(lead.suggested_opener); toast('Opener copied'); }
-            catch (_) { toast('Copy failed', true); }
-          }
-        }));
     }
 
     // ── Add / edit modal ──
@@ -564,7 +556,39 @@
         ? `Estimated cost: up to ~${n} credits (emails) + a fraction for discovery.`
         : `Estimated cost: ~${(n * 0.01).toFixed(2)} credits (discovery only, no emails).`;
     }
-    $('findBtn').addEventListener('click', () => { updateFindCost(); $('findModal').classList.add('open'); });
+    // ── Recent searches (localStorage) — autofill the modal from prior runs ──
+    const RECENT_KEY = 'momrise_crm_recent_searches';
+    const loadRecent = () => { try { return JSON.parse(localStorage.getItem(RECENT_KEY) || '[]'); } catch (_) { return []; } };
+    function recentLabel(p) {
+      const k = (n) => (n >= 1000 ? (n / 1000) + 'k' : n);
+      return [p.nlpSearch || 'any niche', p.platform, p.gender || 'any',
+        `${k(p.followersMin)}-${k(p.followersMax)}`, `eng≥${p.engagementMin}`].join(' · ');
+    }
+    function renderRecent() {
+      const recent = loadRecent();
+      const wrap = $('qRecentWrap'), sel = $('qRecent');
+      if (!recent.length) { wrap.style.display = 'none'; return; }
+      wrap.style.display = '';
+      sel.innerHTML = '<option value="">— pick one to autofill —</option>' +
+        recent.map((p, i) => `<option value="${i}">${esc(recentLabel(p))}</option>`).join('');
+    }
+    function saveRecent(p) {
+      let recent = loadRecent().filter((x) => JSON.stringify(x) !== JSON.stringify(p));
+      recent.unshift(p);
+      recent = recent.slice(0, 8);
+      localStorage.setItem(RECENT_KEY, JSON.stringify(recent));
+    }
+    $('qRecent').addEventListener('change', () => {
+      const p = loadRecent()[Number($('qRecent').value)];
+      if (!p) return;
+      $('qPlatform').value = p.platform; $('qCount').value = p.count;
+      $('qFollowersMin').value = p.followersMin; $('qFollowersMax').value = p.followersMax;
+      $('qEngagement').value = p.engagementMin; $('qGender').value = p.gender;
+      $('qNlp').value = p.nlpSearch; $('qEmails').checked = p.fetchEmails;
+      updateFindCost();
+    });
+
+    $('findBtn').addEventListener('click', () => { updateFindCost(); renderRecent(); $('findModal').classList.add('open'); });
     $('findCancelBtn').addEventListener('click', () => $('findModal').classList.remove('open'));
     $('findModal').addEventListener('click', (e) => { if (e.target === $('findModal')) $('findModal').classList.remove('open'); });
     ['qCount', 'qEmails'].forEach((id) => $(id).addEventListener('input', updateFindCost));
@@ -585,12 +609,17 @@
       try {
         const call = httpsCallable(functions, 'findCreators', { timeout: 240000 });
         const { data } = await call(payload);
+        saveRecent(payload);
         $('findModal').classList.remove('open');
         const parts = [`Added ${data.added}`];
         if (data.enriched) parts.push(`${data.enriched} with email`);
         if (data.scored) parts.push(`${data.scored} scored`);
         if (data.skipped) parts.push(`skipped ${data.skipped} dupes`);
         if (data.credits_left != null) parts.push(`~${Number(data.credits_left).toFixed(2)} credits left`);
+        // Fewer than requested? Explain it's the pool, not a bug.
+        if (data.total_matches != null && data.total_matches < payload.count) {
+          parts.push(`only ${data.total_matches} match these filters — broaden the niche or lower engagement`);
+        }
         toast(parts.join(' · '));
       } catch (e) {
         console.error(e);

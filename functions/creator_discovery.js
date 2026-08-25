@@ -51,8 +51,8 @@ async function icCreditsLeft() {
   } catch (_) { return null; }
 }
 
-// One batched LLM call to score all fresh creators for MomRise fit + draft an
-// opener each. Returns a map: lowercased handle -> { fit_score, opener }.
+// One batched LLM call to score all fresh creators for MomRise partnership fit.
+// Returns a map: lowercased handle -> fit_score (0-100 integer).
 async function scoreCreators(fresh, userEmail) {
   if (!fresh.length) return {};
   const list = fresh.map((c) => ({
@@ -67,13 +67,11 @@ async function scoreCreators(fresh, userEmail) {
     'You help MomRise (a family meal-planning + parenting app) recruit creator partners. ' +
     'A strong partner is a US-based family / food / recipe / mom micro-creator (roughly 5k–15k ' +
     'followers) with an engaged audience who would authentically recommend a meal-planning app ' +
-    'to fellow parents. Rate partnership fit from 0 to 100 (higher = better fit) and write one ' +
-    'short, warm, personalized outreach opener per creator: a single sentence, no emojis, that ' +
-    'references their niche or handle naturally and does not sound salesy or templated.';
+    'to fellow parents. Rate each creator\'s partnership fit from 0 to 100 (higher = better fit).';
   const prompt =
-    'Score each creator for MomRise partnership fit and draft an opener. ' +
+    'Score each creator for MomRise partnership fit. ' +
     'Return ONLY a JSON array — one object per creator, no prose, no code fences — of the form ' +
-    '[{"handle":"<their handle>","fit_score":<0-100 integer>,"opener":"<one sentence>"}].\n\n' +
+    '[{"handle":"<their handle>","fit_score":<0-100 integer>}].\n\n' +
     JSON.stringify(list);
 
   let text = '';
@@ -90,10 +88,7 @@ async function scoreCreators(fresh, userEmail) {
       const h = String(row.handle || '').replace(/^@/, '').toLowerCase();
       if (!h) continue;
       const score = Number(row.fit_score);
-      map[h] = {
-        fit_score: Number.isFinite(score) ? Math.max(0, Math.min(100, Math.round(score))) : null,
-        opener: String(row.opener || '').trim(),
-      };
+      if (Number.isFinite(score)) map[h] = Math.max(0, Math.min(100, Math.round(score)));
     }
   } catch (_) { /* leave map empty; leads still get added without scores */ }
   return map;
@@ -120,10 +115,12 @@ exports.findCreators = onCall(
 
     // 1) Discovery — page until we have `count` candidates (cheap: ~0.01/creator)
     const candidates = [];
+    let totalMatches = null;   // how many creators match these filters overall
     for (let page = 0; candidates.length < count && page < 25; page++) {
       const body = { platform, filters, paging: { limit: Math.min(50, count - candidates.length), page } };
       if (d.nlpSearch) body.nlp_search = String(d.nlpSearch);
       const r = await icPost('/discovery/', body);
+      if (totalMatches === null && typeof r.total === 'number') totalMatches = r.total;
       const accts = r.accounts || [];
       if (accts.length === 0) break;
       for (const a of accts) {
@@ -169,10 +166,9 @@ exports.findCreators = onCall(
     // 4) AI scoring — one batched call for the whole fresh set.
     const scores = await scoreCreators(fresh, request.auth.token.email);
 
-    // 5) Write each fresh lead with fit score + suggested opener.
+    // 5) Write each fresh lead with its fit score.
     let added = 0;
     for (const c of fresh) {
-      const s = scores[c.username.toLowerCase()] || {};
       const notes = [
         c.engagement != null ? `Engagement ${Number(c.engagement).toFixed(1)}%` : '',
         c.gender ? `Gender: ${c.gender}` : '',
@@ -189,8 +185,7 @@ exports.findCreators = onCall(
         last_contacted: '',
         follow_up_date: '',
         notes,
-        fit_score: s.fit_score ?? null,
-        suggested_opener: s.opener || '',
+        fit_score: scores[c.username.toLowerCase()] ?? null,
         source: 'influencers_club',
         created_at: FieldValue.serverTimestamp(),
         created_by: request.auth.token.email,
@@ -202,6 +197,6 @@ exports.findCreators = onCall(
     // Accurate remaining balance, read after all discovery + enrichment spend.
     const creditsLeft = await icCreditsLeft();
 
-    return { discovered: candidates.length, added, skipped, enriched, scored: Object.keys(scores).length, credits_left: creditsLeft };
+    return { discovered: candidates.length, added, skipped, enriched, scored: Object.keys(scores).length, total_matches: totalMatches, credits_left: creditsLeft };
   },
 );
