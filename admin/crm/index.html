@@ -86,6 +86,7 @@
       margin-bottom: 10px; display: flex; gap: 14px; align-items: flex-start;
     }
     .lead.overdue { border-left: 4px solid var(--warn); }
+    .lead-avatar { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; flex-shrink: 0; border: 1px solid var(--border); background: var(--border); }
     .lead-main { flex: 1; min-width: 0; }
     .lead-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
     .lead-name { font-size: 16px; font-weight: 700; }
@@ -528,6 +529,7 @@
           : '';
         return `
           <div class="lead ${overdue ? 'overdue' : ''}" data-id="${l.id}">
+            ${l.photo ? `<img class="lead-avatar" src="${esc(l.photo)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'">` : ''}
             <div class="lead-main">
               <div class="lead-top">
                 <span class="lead-name">${esc(l.name || '(no name)')}</span>

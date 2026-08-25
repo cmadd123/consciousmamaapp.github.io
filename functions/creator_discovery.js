@@ -136,7 +136,7 @@ exports.findCreators = onCall(
       if (accts.length === 0) break;
       for (const a of accts) {
         const p = a.profile || {};
-        if (p.username) candidates.push({ username: p.username, name: p.full_name || '', followers: p.followers ?? null, engagement: p.engagement_percent ?? null });
+        if (p.username) candidates.push({ username: p.username, name: p.full_name || '', followers: p.followers ?? null, engagement: p.engagement_percent ?? null, photo: p.picture || '' });
       }
     }
 
@@ -190,6 +190,7 @@ exports.findCreators = onCall(
         name: c.name || c.first || c.username,
         handle: '@' + c.username,
         profile_url: profileUrl(platform, c.username),
+        photo: c.photo || '',
         platform: platformLabel,
         email: c.email || '',
         followers: c.followers,
