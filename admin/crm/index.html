@@ -176,6 +176,12 @@
 
     <div class="toolbar">
       <input class="search" id="search" type="search" placeholder="Search name, handle, email, notes…">
+      <select id="sortBy" class="search" style="max-width:190px;" title="Sort the list">
+        <option value="smart">Sort: Smart (follow-ups first)</option>
+        <option value="fit">Sort: Fit score (high→low)</option>
+        <option value="followers">Sort: Followers (high→low)</option>
+        <option value="recent">Sort: Recently added</option>
+      </select>
       <button class="btn ghost" id="findBtn" title="Find new creators via Influencers.club and add them to the pipeline">🔍 Find creators</button>
       <button class="btn ghost" id="importBtn" title="Bulk-import creators from a CSV (e.g. an export from a discovery tool)">Import CSV</button>
       <input type="file" id="csvInput" accept=".csv,text/csv" style="display:none">
@@ -434,6 +440,7 @@
     let leads = [];
     let activeFilter = 'all';
     let searchTerm = '';
+    let sortMode = 'smart';
 
     function subscribe() {
       if (unsub) return;
@@ -492,15 +499,24 @@
       // (followers is numeric — filtered via the stage chips / sorting, not text search)
       }
 
-      // Sort: overdue first (soonest follow-up first), then by follow-up date,
-      // then most-recently-updated.
-      rows.sort((a, b) => {
-        const ao = isOverdue(a), bo = isOverdue(b);
-        if (ao !== bo) return ao ? -1 : 1;
-        const af = a.follow_up_date || '9999', bf = b.follow_up_date || '9999';
-        if (af !== bf) return af < bf ? -1 : 1;
-        return (b.updated_at?.seconds || 0) - (a.updated_at?.seconds || 0);
-      });
+      // Sorting. Default "smart" = overdue first, then follow-up date, then
+      // most-recent. Other modes sort by fit score / followers / recency.
+      const createdAt = (l) => (l.created_at?.seconds || l.updated_at?.seconds || 0);
+      if (sortMode === 'fit') {
+        rows.sort((a, b) => (b.fit_score ?? -1) - (a.fit_score ?? -1) || createdAt(b) - createdAt(a));
+      } else if (sortMode === 'followers') {
+        rows.sort((a, b) => (b.followers ?? -1) - (a.followers ?? -1) || createdAt(b) - createdAt(a));
+      } else if (sortMode === 'recent') {
+        rows.sort((a, b) => createdAt(b) - createdAt(a));
+      } else {
+        rows.sort((a, b) => {
+          const ao = isOverdue(a), bo = isOverdue(b);
+          if (ao !== bo) return ao ? -1 : 1;
+          const af = a.follow_up_date || '9999', bf = b.follow_up_date || '9999';
+          if (af !== bf) return af < bf ? -1 : 1;
+          return (b.updated_at?.seconds || 0) - (a.updated_at?.seconds || 0);
+        });
+      }
 
       const list = $('list');
       if (rows.length === 0) {
@@ -861,6 +877,7 @@
     }
 
     $('search').addEventListener('input', (e) => { searchTerm = e.target.value; render(); });
+    $('sortBy').addEventListener('change', (e) => { sortMode = e.target.value; render(); });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
   </script>
 </body>
