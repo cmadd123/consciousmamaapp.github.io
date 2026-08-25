@@ -28,6 +28,12 @@ function requireCrm(request) {
   if (!CRM_EMAILS.includes(email)) throw new HttpsError('permission-denied', 'CRM access required');
 }
 
+function profileUrl(platform, username) {
+  const u = String(username || '').replace(/^@/, '');
+  if (platform === 'tiktok') return `https://www.tiktok.com/@${u}`;
+  return `https://www.instagram.com/${u}`;
+}
+
 async function icPost(path, body) {
   const res = await fetch(`${API}${path}`, {
     method: 'POST',
@@ -183,6 +189,7 @@ exports.findCreators = onCall(
       await db.collection('outreach_leads').add({
         name: c.name || c.first || c.username,
         handle: '@' + c.username,
+        profile_url: profileUrl(platform, c.username),
         platform: platformLabel,
         email: c.email || '',
         followers: c.followers,

@@ -361,6 +361,12 @@
       { key: 'passed',     label: 'Passed',     color: '#9CA3AF', bg: '#F3F4F6', active: false },
     ];
     const stageOf = (k) => STAGES.find(s => s.key === k) || STAGES[0];
+    // Derive a clickable profile URL from a handle (fallback for leads with no stored profile_url).
+    function profileUrlFromHandle(platform, handle) {
+      const u = String(handle || '').replace(/^@/, '').trim();
+      if (!u) return '';
+      return /tiktok/i.test(platform || '') ? `https://www.tiktok.com/@${u}` : `https://www.instagram.com/${u}`;
+    }
 
     const $ = (id) => document.getElementById(id);
     const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) =>
@@ -502,7 +508,14 @@
         const st = stageOf(l.status);
         const overdue = isOverdue(l);
         const meta = [];
-        if (l.platform || l.handle) meta.push(`<span class="platform-tag">${esc([l.platform, l.handle].filter(Boolean).join(' · '))}</span>`);
+        if (l.platform || l.handle) {
+          const url = l.profile_url || (l.handle ? profileUrlFromHandle(l.platform, l.handle) : '');
+          const handlePart = (l.handle && url)
+            ? `<a href="${esc(url)}" target="_blank" rel="noopener" title="Open profile">${esc(l.handle)} ↗</a>`
+            : esc(l.handle || '');
+          const parts = [esc(l.platform || ''), handlePart].filter(Boolean);
+          meta.push(`<span class="platform-tag">${parts.join(' · ')}</span>`);
+        }
         if (l.followers) {
           const sweet = l.followers >= 5000 && l.followers <= 15000;
           meta.push(`<span style="${sweet ? 'color:var(--teal-dark);font-weight:700;' : ''}">${fmtFollowers(l.followers)} followers${sweet ? ' ✓' : ''}</span>`);
