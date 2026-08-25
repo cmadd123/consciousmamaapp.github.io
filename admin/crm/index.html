@@ -305,6 +305,11 @@
         </div>
       </div>
       <p style="font-size:12px; color:var(--muted); margin:-6px 0 0;">Hashtags = only creators who actually use those tags (tighter than the niche box). Min posts filters out thin or barely-active accounts.</p>
+      <div class="field" style="margin-top:14px;">
+        <label for="qMinFit">Min fit score <span style="font-weight:400;color:var(--muted);">(0 = keep all)</span></label>
+        <input id="qMinFit" type="number" min="0" max="100" value="0">
+        <p style="font-size:12px; color:var(--muted); margin:4px 0 0;">AI-scores creators on cheap data first and only spends email credits on those <strong>at/above</strong> this score — big credit saver. E.g. <em>60</em> keeps solid-or-better fits, skips the rest. Leave at 0 to add everyone.</p>
+      </div>
       <div class="field" style="display:flex; align-items:center; gap:8px; margin-top:14px;">
         <input id="qEmails" type="checkbox" checked style="width:auto;">
         <label for="qEmails" style="margin:0;">Fetch verified emails (≈1 credit each)</label>
@@ -640,6 +645,7 @@
       $('qEngagement').value = p.engagementMin; $('qGender').value = p.gender;
       $('qNlp').value = p.nlpSearch; $('qEmails').checked = p.fetchEmails;
       $('qHashtags').value = p.hashtags || ''; $('qMinPosts').value = p.minPosts || '';
+      $('qMinFit').value = p.minFit || 0;
       $('qVerified').checked = !!p.verified;
       updateFindCost(); updateEngHint();
     });
@@ -660,6 +666,7 @@
         nlpSearch: $('qNlp').value.trim(),
         hashtags: $('qHashtags').value.trim(),
         minPosts: Number($('qMinPosts').value) || 0,
+        minFit: Number($('qMinFit').value) || 0,
         verified: $('qVerified').checked,
         fetchEmails: $('qEmails').checked,
       };
@@ -674,6 +681,7 @@
         const parts = [`Added ${data.added}`];
         if (data.enriched) parts.push(`${data.enriched} with email`);
         if (data.scored) parts.push(`${data.scored} scored`);
+        if (data.gated) parts.push(`gated out ${data.gated} below fit ${payload.minFit}`);
         if (data.skipped) parts.push(`skipped ${data.skipped} dupes`);
         if (data.credits_left != null) parts.push(`~${Number(data.credits_left).toFixed(2)} credits left`);
         // Fewer than requested? Explain it's the pool, not a bug.

@@ -162,7 +162,7 @@ exports.findCreators = onCall(
     snap.forEach((x) => { const h = (x.data().handle || '').replace(/^@/, '').toLowerCase(); if (h) existing.add(h); });
 
     let skipped = 0;
-    const fresh = [];
+    let fresh = [];
     for (const c of candidates) {
       const key = c.username.toLowerCase();
       if (existing.has(key)) { skipped++; continue; }
@@ -170,28 +170,64 @@ exports.findCreators = onCall(
       fresh.push(c);
     }
 
-    // 3) Enrich each fresh creator (email + demographics), attaching to the object.
-    let enriched = 0;
-    if (fetchEmails) {
+    // 3) Score-gate (optional). When a minimum fit score is set, score creators
+    //    on CHEAP data first (discovery + a ~0.03-credit bio pull), drop anyone
+    //    below the threshold, then spend the 1-credit email enrichment only on
+    //    the survivors — so we never buy emails for low-fit creators.
+    const minFit = Math.max(0, Math.min(Number(d.minFit) || 0, 100));
+    let enriched = 0, gated = 0;
+    let scores = {};
+
+    if (minFit > 0) {
+      // Cheap bio pull for scoring (raw enrich ~0.03/creator).
       for (const c of fresh) {
         try {
-          const e = await icPost('/creators/enrich/handle/full/', {
-            handle: c.username, platform, email_required: 'preferred', include_audience_data: false,
-          });
-          const rr = e.result || {};
-          c.email = String(rr.email || '').toLowerCase();
-          c.gender = rr.gender || '';
-          c.first = rr.first_name || '';
-          c.interests = rr.audience_interests || [];
-          c.bio = String(deepFind(rr, 'biography') || '').slice(0, 300);   // free — already in the enrich payload
+          const r = await icPost('/creators/enrich/handle/raw/', { handle: c.username, platform });
+          const rr = r.result || r;
+          c.bio = String(deepFind(rr, 'biography') || '').slice(0, 300);
           c.category = String(deepFind(rr, 'category') || '');
-          if (c.email || c.first) enriched++;
-        } catch (_) { /* skip enrichment failure, still add the lead */ }
+        } catch (_) { /* score without bio if this fails */ }
       }
+      scores = await scoreCreators(fresh, request.auth.token.email);
+      const before = fresh.length;
+      fresh = fresh.filter((c) => (scores[c.username.toLowerCase()] ?? 0) >= minFit);
+      gated = before - fresh.length;
+      // Buy emails only for the survivors.
+      if (fetchEmails) {
+        for (const c of fresh) {
+          try {
+            const e = await icPost('/creators/enrich/handle/full/', {
+              handle: c.username, platform, email_required: 'preferred', include_audience_data: false,
+            });
+            const rr = e.result || {};
+            c.email = String(rr.email || '').toLowerCase();
+            c.gender = rr.gender || c.gender || '';
+            c.first = rr.first_name || '';
+            if (c.email || c.first) enriched++;
+          } catch (_) { /* keep the lead even if email enrichment fails */ }
+        }
+      }
+    } else {
+      // Standard mode: full-enrich everyone (email + bio), then score all.
+      if (fetchEmails) {
+        for (const c of fresh) {
+          try {
+            const e = await icPost('/creators/enrich/handle/full/', {
+              handle: c.username, platform, email_required: 'preferred', include_audience_data: false,
+            });
+            const rr = e.result || {};
+            c.email = String(rr.email || '').toLowerCase();
+            c.gender = rr.gender || '';
+            c.first = rr.first_name || '';
+            c.interests = rr.audience_interests || [];
+            c.bio = String(deepFind(rr, 'biography') || '').slice(0, 300);   // free — already in the enrich payload
+            c.category = String(deepFind(rr, 'category') || '');
+            if (c.email || c.first) enriched++;
+          } catch (_) { /* skip enrichment failure, still add the lead */ }
+        }
+      }
+      scores = await scoreCreators(fresh, request.auth.token.email);
     }
-
-    // 4) AI scoring — one batched call for the whole fresh set.
-    const scores = await scoreCreators(fresh, request.auth.token.email);
 
     // 5) Write each fresh lead with its fit score.
     let added = 0;
@@ -228,6 +264,6 @@ exports.findCreators = onCall(
     // Accurate remaining balance, read after all discovery + enrichment spend.
     const creditsLeft = await icCreditsLeft();
 
-    return { discovered: candidates.length, added, skipped, enriched, scored: Object.keys(scores).length, total_matches: totalMatches, credits_left: creditsLeft };
+    return { discovered: candidates.length, added, skipped, enriched, gated, scored: Object.keys(scores).length, total_matches: totalMatches, credits_left: creditsLeft };
   },
 );
