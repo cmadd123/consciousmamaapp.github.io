@@ -39,6 +39,18 @@ async function icPost(path, body) {
   return data;
 }
 
+// Authoritative remaining-credit balance (free GET) — call after all spending
+// so the number reflects discovery + enrichment, not the mid-run discovery value.
+async function icCreditsLeft() {
+  try {
+    const res = await fetch(`${API}/accounts/credits/`, {
+      headers: { Authorization: `Bearer ${INFLUENCERS_CLUB_API_KEY.value()}` },
+    });
+    const data = await res.json().catch(() => ({}));
+    return typeof data.credits_available === 'number' ? data.credits_available : null;
+  } catch (_) { return null; }
+}
+
 // One batched LLM call to score all fresh creators for MomRise fit + draft an
 // opener each. Returns a map: lowercased handle -> { fit_score, opener }.
 async function scoreCreators(fresh, userEmail) {
@@ -108,12 +120,10 @@ exports.findCreators = onCall(
 
     // 1) Discovery — page until we have `count` candidates (cheap: ~0.01/creator)
     const candidates = [];
-    let creditsLeft = null;
     for (let page = 0; candidates.length < count && page < 25; page++) {
       const body = { platform, filters, paging: { limit: Math.min(50, count - candidates.length), page } };
       if (d.nlpSearch) body.nlp_search = String(d.nlpSearch);
       const r = await icPost('/discovery/', body);
-      if (typeof r.credits_left === 'number') creditsLeft = r.credits_left;
       const accts = r.accounts || [];
       if (accts.length === 0) break;
       for (const a of accts) {
@@ -188,6 +198,9 @@ exports.findCreators = onCall(
       });
       added++;
     }
+
+    // Accurate remaining balance, read after all discovery + enrichment spend.
+    const creditsLeft = await icCreditsLeft();
 
     return { discovered: candidates.length, added, skipped, enriched, scored: Object.keys(scores).length, credits_left: creditsLeft };
   },
