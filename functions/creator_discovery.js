@@ -28,6 +28,17 @@ function requireCrm(request) {
   if (!CRM_EMAILS.includes(email)) throw new HttpsError('permission-denied', 'CRM access required');
 }
 
+// Recursively find a key's first non-empty value in a nested object.
+function deepFind(obj, key) {
+  if (!obj || typeof obj !== 'object') return null;
+  if (obj[key] != null && obj[key] !== '') return obj[key];
+  for (const k of Object.keys(obj)) {
+    const v = deepFind(obj[k], key);
+    if (v != null && v !== '') return v;
+  }
+  return null;
+}
+
 function profileUrl(platform, username) {
   const u = String(username || '').replace(/^@/, '');
   if (platform === 'tiktok') return `https://www.tiktok.com/@${u}`;
@@ -64,6 +75,8 @@ async function scoreCreators(fresh, userEmail) {
   const list = fresh.map((c) => ({
     handle: c.username,
     name: c.name || '',
+    bio: (c.bio || '').slice(0, 300),
+    category: c.category || '',
     followers: c.followers,
     engagement: c.engagement != null ? Number(c.engagement).toFixed(1) : null,
     gender: c.gender || '',
@@ -73,7 +86,8 @@ async function scoreCreators(fresh, userEmail) {
     'You help MomRise (a family meal-planning + parenting app) recruit creator partners. ' +
     'A strong partner is a US-based family / food / recipe / mom micro-creator (roughly 5k–15k ' +
     'followers) with an engaged audience who would authentically recommend a meal-planning app ' +
-    'to fellow parents. Rate each creator\'s partnership fit from 0 to 100 (higher = better fit).';
+    'to fellow parents. Weigh each creator\'s bio and category heavily — that\'s what they actually ' +
+    'post about — over the handle alone. Rate each creator\'s partnership fit from 0 to 100 (higher = better fit).';
   const prompt =
     'Score each creator for MomRise partnership fit. ' +
     'Return ONLY a JSON array — one object per creator, no prose, no code fences — of the form ' +
@@ -169,6 +183,8 @@ exports.findCreators = onCall(
           c.gender = rr.gender || '';
           c.first = rr.first_name || '';
           c.interests = rr.audience_interests || [];
+          c.bio = String(deepFind(rr, 'biography') || '').slice(0, 300);   // free — already in the enrich payload
+          c.category = String(deepFind(rr, 'category') || '');
           if (c.email || c.first) enriched++;
         } catch (_) { /* skip enrichment failure, still add the lead */ }
       }
@@ -198,6 +214,8 @@ exports.findCreators = onCall(
         last_contacted: '',
         follow_up_date: '',
         notes,
+        bio: c.bio || '',
+        category: c.category || '',
         fit_score: scores[c.username.toLowerCase()] ?? null,
         source: 'influencers_club',
         created_at: FieldValue.serverTimestamp(),
