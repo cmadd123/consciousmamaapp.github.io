@@ -286,6 +286,7 @@
       <div class="field">
         <label for="qEngagement">Min engagement %</label>
         <input id="qEngagement" type="number" min="0" step="0.5" value="3">
+        <p id="qEngHint" style="font-size:12px; margin:6px 0 0; padding:8px 10px; border-radius:8px; line-height:1.45;"></p>
       </div>
       <div class="field">
         <label for="qNlp">Niche / keywords</label>
@@ -556,6 +557,25 @@
         ? `Estimated cost: up to ~${n} credits (emails) + a fraction for discovery.`
         : `Estimated cost: ~${(n * 0.01).toFixed(2)} credits (discovery only, no emails).`;
     }
+    // ── Live engagement-floor descriptor — shows what results to expect ──
+    function engHint(v) {
+      if (v <= 0)  return ['dead',   'No floor — includes dead & bot channels. Expect 12k accounts getting 40 likes.'];
+      if (v < 1)   return ['dead',   'Very low floor — near-dormant accounts and possibly bought followers.'];
+      if (v < 3)   return ['low',    'Low floor — alive but passive audiences (~100–200 reactions per 10k). Broad reach, weaker influence.'];
+      if (v < 5)   return ['good',   'Healthy micro creators (~300+ real reactions per 10k) — genuine likes and comment threads. The sweet spot.'];
+      if (v < 7)   return ['good',   'Engaged communities only — real conversations, followers tag friends. Fewer but stronger results.'];
+      if (v < 10)  return ['strong', 'Rabid, tight-knit audiences — small but devoted. Pool gets small.'];
+      return ['strong', 'Exceptional only — very few creators; may catch one-off viral spikes. Verify it\'s consistent.'];
+    }
+    function updateEngHint() {
+      const v = Number($('qEngagement').value) || 0;
+      const [tone, text] = engHint(v);
+      const el = $('qEngHint');
+      const c = { dead: ['#FBEAEA', '#9B2C2C'], low: ['#FFF4E5', '#8A5A00'], good: ['#EDFFFD', '#2A6F67'], strong: ['#EAF3FF', '#1F5AA8'] }[tone];
+      el.style.background = c[0]; el.style.color = c[1];
+      el.textContent = `≥ ${v}% — ${text}`;
+    }
+
     // ── Recent searches (localStorage) — autofill the modal from prior runs ──
     const RECENT_KEY = 'momrise_crm_recent_searches';
     const loadRecent = () => { try { return JSON.parse(localStorage.getItem(RECENT_KEY) || '[]'); } catch (_) { return []; } };
@@ -585,13 +605,14 @@
       $('qFollowersMin').value = p.followersMin; $('qFollowersMax').value = p.followersMax;
       $('qEngagement').value = p.engagementMin; $('qGender').value = p.gender;
       $('qNlp').value = p.nlpSearch; $('qEmails').checked = p.fetchEmails;
-      updateFindCost();
+      updateFindCost(); updateEngHint();
     });
 
-    $('findBtn').addEventListener('click', () => { updateFindCost(); renderRecent(); $('findModal').classList.add('open'); });
+    $('findBtn').addEventListener('click', () => { updateFindCost(); updateEngHint(); renderRecent(); $('findModal').classList.add('open'); });
     $('findCancelBtn').addEventListener('click', () => $('findModal').classList.remove('open'));
     $('findModal').addEventListener('click', (e) => { if (e.target === $('findModal')) $('findModal').classList.remove('open'); });
     ['qCount', 'qEmails'].forEach((id) => $(id).addEventListener('input', updateFindCost));
+    $('qEngagement').addEventListener('input', updateEngHint);
     $('findRunBtn').addEventListener('click', async () => {
       const payload = {
         platform: $('qPlatform').value,
