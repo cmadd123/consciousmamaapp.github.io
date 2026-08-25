@@ -93,6 +93,9 @@
     .lead-meta { font-size: 13px; color: var(--text-muted); margin-top: 4px; display: flex; gap: 14px; flex-wrap: wrap; }
     .lead-meta .fu.overdue { color: var(--warn); font-weight: 700; }
     .lead-notes { font-size: 13px; color: var(--text); margin-top: 8px; white-space: pre-wrap; word-break: break-word; }
+    .lead-opener { font-size: 13px; margin-top: 8px; padding: 8px 10px; background: #EDFFFD; border: 1px solid #cfe9e4; border-radius: 10px; display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+    .lead-opener-label { font-size: 10px; text-transform: uppercase; letter-spacing: .05em; font-weight: 700; color: var(--teal-dark); }
+    .lead-opener-text { flex: 1; min-width: 180px; color: var(--text); }
     .lead-actions { display: flex; flex-direction: column; gap: 6px; align-items: flex-end; }
 
     .pill {
@@ -274,6 +277,10 @@
           <label for="qFollowersMax">Followers max</label>
           <input id="qFollowersMax" type="number" min="0" value="15000">
         </div>
+      </div>
+      <div class="field">
+        <label for="qGender">Gender</label>
+        <select id="qGender"><option value="female" selected>Female</option><option value="male">Male</option><option value="">Any</option></select>
       </div>
       <div class="field">
         <label for="qEngagement">Min engagement %</label>
@@ -486,15 +493,20 @@
         if (l.email) meta.push(`<a href="mailto:${esc(l.email)}">${esc(l.email)}</a>`);
         if (l.last_contacted) meta.push(`Last: ${esc(fmtDate(l.last_contacted))}`);
         if (l.follow_up_date) meta.push(`<span class="fu ${overdue ? 'overdue' : ''}">Follow up: ${esc(fmtDate(l.follow_up_date))}${overdue ? ' ⚠' : ''}</span>`);
+        const fit = (l.fit_score != null && l.fit_score !== '')
+          ? `<span class="pill" title="AI partnership-fit score" style="color:#fff;background:${l.fit_score >= 70 ? '#2A6F67' : l.fit_score >= 40 ? '#C8871F' : '#8A94A6'};">Fit ${l.fit_score}</span>`
+          : '';
         return `
           <div class="lead ${overdue ? 'overdue' : ''}" data-id="${l.id}">
             <div class="lead-main">
               <div class="lead-top">
                 <span class="lead-name">${esc(l.name || '(no name)')}</span>
                 <span class="pill" style="color:${st.color};background:${st.bg};">${esc(st.label)}</span>
+                ${fit}
               </div>
               <div class="lead-meta">${meta.join('')}</div>
               ${l.notes ? `<div class="lead-notes">${esc(l.notes)}</div>` : ''}
+              ${l.suggested_opener ? `<div class="lead-opener"><span class="lead-opener-label">Suggested opener</span><span class="lead-opener-text">${esc(l.suggested_opener)}</span><button class="btn ghost sm" data-copy="${l.id}">Copy</button></div>` : ''}
             </div>
             <div class="lead-actions">
               <button class="btn sm" data-contacted="${l.id}">Mark contacted</button>
@@ -507,6 +519,14 @@
         b.addEventListener('click', () => openModal(leads.find(l => l.id === b.dataset.edit))));
       list.querySelectorAll('[data-contacted]').forEach(b =>
         b.addEventListener('click', () => markContacted(b.dataset.contacted)));
+      list.querySelectorAll('[data-copy]').forEach(b =>
+        b.addEventListener('click', async () => {
+          const lead = leads.find(l => l.id === b.dataset.copy);
+          if (lead?.suggested_opener) {
+            try { await navigator.clipboard.writeText(lead.suggested_opener); toast('Opener copied'); }
+            catch (_) { toast('Copy failed', true); }
+          }
+        }));
     }
 
     // ── Add / edit modal ──
@@ -555,6 +575,7 @@
         followersMin: Number($('qFollowersMin').value) || 5000,
         followersMax: Number($('qFollowersMax').value) || 15000,
         engagementMin: Number($('qEngagement').value) || 0,
+        gender: $('qGender').value,
         nlpSearch: $('qNlp').value.trim(),
         fetchEmails: $('qEmails').checked,
       };
@@ -567,6 +588,7 @@
         $('findModal').classList.remove('open');
         const parts = [`Added ${data.added}`];
         if (data.enriched) parts.push(`${data.enriched} with email`);
+        if (data.scored) parts.push(`${data.scored} scored`);
         if (data.skipped) parts.push(`skipped ${data.skipped} dupes`);
         if (data.credits_left != null) parts.push(`~${Number(data.credits_left).toFixed(2)} credits left`);
         toast(parts.join(' · '));

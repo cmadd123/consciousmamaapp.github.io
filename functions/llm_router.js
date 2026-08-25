@@ -75,6 +75,16 @@ const TASK_PROFILES = {
     temperature: 0.6,
     cacheable: false, // depends on user state, refresh per request
   },
+  // Creator outreach scoring — rate a batch of discovered creators for
+  // MomRise partnership fit and draft a personalized opener for each.
+  // Sonnet: light reasoning + warm writing, same tier as mealSuggestion.
+  creatorScore: {
+    primary: 'sonnet',
+    fallback: 'haiku',
+    maxTokens: 4000,
+    temperature: 0.4,
+    cacheable: false, // batch-specific; not worth caching
+  },
   // Classification: "is this a recipe or not?" / "what cuisine is this?"
   // Always Haiku — cheap, fast, sufficient.
   classify: {
