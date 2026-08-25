@@ -112,6 +112,11 @@ exports.findCreators = onCall(
     };
     if (d.engagementMin) filters.engagement_percent = { min: Number(d.engagementMin) };
     if (gender === 'female' || gender === 'male') filters.gender = gender;   // string, not array
+    if (d.minPosts) filters.number_of_posts = { min: Number(d.minPosts) };   // filter out thin/inactive accounts
+    if (d.verified) filters.is_verified = true;                              // verified accounts only
+    const tags = (Array.isArray(d.hashtags) ? d.hashtags : String(d.hashtags || '').split(','))
+      .map((s) => s.trim().replace(/^#/, '')).filter(Boolean);
+    if (tags.length) filters.hashtags = tags;                               // e.g. ["recipe","mealprep"]
 
     // 1) Discovery — page until we have `count` candidates (cheap: ~0.01/creator)
     const candidates = [];

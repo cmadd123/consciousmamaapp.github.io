@@ -293,9 +293,24 @@
         <input id="qNlp" type="text" value="recipes">
         <p style="font-size:12px; color:var(--muted); margin:4px 0 0;">Use <strong>short</strong> terms for bigger pools — e.g. <em>recipes</em>, <em>family meals</em>, <em>toddler meals</em>, <em>meal prep</em>, <em>picky eater</em>. Long phrases narrow hard. Run a few different terms to build variety (dupes are skipped).</p>
       </div>
-      <div class="field" style="display:flex; align-items:center; gap:8px;">
+      <div class="row2">
+        <div class="field">
+          <label for="qHashtags">Hashtags <span style="font-weight:400;color:var(--muted);">(optional)</span></label>
+          <input id="qHashtags" type="text" placeholder="recipe, mealprep">
+        </div>
+        <div class="field">
+          <label for="qMinPosts">Min posts <span style="font-weight:400;color:var(--muted);">(optional)</span></label>
+          <input id="qMinPosts" type="number" min="0" placeholder="e.g. 30">
+        </div>
+      </div>
+      <p style="font-size:12px; color:var(--muted); margin:-6px 0 0;">Hashtags = only creators who actually use those tags (tighter than the niche box). Min posts filters out thin or barely-active accounts.</p>
+      <div class="field" style="display:flex; align-items:center; gap:8px; margin-top:14px;">
         <input id="qEmails" type="checkbox" checked style="width:auto;">
         <label for="qEmails" style="margin:0;">Fetch verified emails (≈1 credit each)</label>
+      </div>
+      <div class="field" style="display:flex; align-items:center; gap:8px;">
+        <input id="qVerified" type="checkbox" style="width:auto;">
+        <label for="qVerified" style="margin:0;">Verified accounts only</label>
       </div>
       <p id="qCost" style="font-size:12px; color:var(--muted); margin:4px 0 0;"></p>
       <div class="modal-actions" style="justify-content:flex-end;">
@@ -557,23 +572,27 @@
         ? `Estimated cost: up to ~${n} credits (emails) + a fraction for discovery.`
         : `Estimated cost: ~${(n * 0.01).toFixed(2)} credits (discovery only, no emails).`;
     }
-    // ── Live engagement-floor descriptor — shows what results to expect ──
+    // ── Live engagement-floor descriptor — shows what results to expect,
+    //    with raw reaction counts derived from the chosen follower minimum ──
+    const fmtK = (n) => (n >= 1000 ? (n % 1000 === 0 ? n / 1000 + 'k' : (n / 1000).toFixed(1) + 'k') : String(n));
     function engHint(v) {
-      if (v <= 0)  return ['dead',   'No floor — includes dead & bot channels. Expect 12k accounts getting 40 likes.'];
+      if (v <= 0)  return ['dead',   'No floor — includes dead & bot channels.'];
       if (v < 1)   return ['dead',   'Very low floor — near-dormant accounts and possibly bought followers.'];
-      if (v < 3)   return ['low',    'Low floor — alive but passive audiences (~100–200 reactions per 10k). Broad reach, weaker influence.'];
-      if (v < 5)   return ['good',   'Healthy micro creators (~300+ real reactions per 10k) — genuine likes and comment threads. The sweet spot.'];
-      if (v < 7)   return ['good',   'Engaged communities only — real conversations, followers tag friends. Fewer but stronger results.'];
+      if (v < 3)   return ['low',    'Low floor — alive but passive audiences. Broad reach, weaker influence.'];
+      if (v < 5)   return ['good',   'Healthy micro creators — genuine likes and real comment threads. The sweet spot.'];
+      if (v < 7)   return ['good',   'Engaged communities only — real conversations, followers tag friends. Fewer but stronger.'];
       if (v < 10)  return ['strong', 'Rabid, tight-knit audiences — small but devoted. Pool gets small.'];
-      return ['strong', 'Exceptional only — very few creators; may catch one-off viral spikes. Verify it\'s consistent.'];
+      return ['strong', 'Exceptional only — very few creators; may catch one-off viral spikes.'];
     }
     function updateEngHint() {
       const v = Number($('qEngagement').value) || 0;
+      const minF = Number($('qFollowersMin').value) || 5000;
       const [tone, text] = engHint(v);
       const el = $('qEngHint');
       const c = { dead: ['#FBEAEA', '#9B2C2C'], low: ['#FFF4E5', '#8A5A00'], good: ['#EDFFFD', '#2A6F67'], strong: ['#EAF3FF', '#1F5AA8'] }[tone];
       el.style.background = c[0]; el.style.color = c[1];
-      el.textContent = `≥ ${v}% — ${text}`;
+      const react = v > 0 ? ` ≈ ${Math.round(minF * v / 100).toLocaleString()}+ reactions/post on a ${fmtK(minF)}-follower account.` : '';
+      el.textContent = `≥ ${v}% — ${text}${react}`;
     }
 
     // ── Recent searches (localStorage) — autofill the modal from prior runs ──
@@ -605,6 +624,8 @@
       $('qFollowersMin').value = p.followersMin; $('qFollowersMax').value = p.followersMax;
       $('qEngagement').value = p.engagementMin; $('qGender').value = p.gender;
       $('qNlp').value = p.nlpSearch; $('qEmails').checked = p.fetchEmails;
+      $('qHashtags').value = p.hashtags || ''; $('qMinPosts').value = p.minPosts || '';
+      $('qVerified').checked = !!p.verified;
       updateFindCost(); updateEngHint();
     });
 
@@ -612,7 +633,7 @@
     $('findCancelBtn').addEventListener('click', () => $('findModal').classList.remove('open'));
     $('findModal').addEventListener('click', (e) => { if (e.target === $('findModal')) $('findModal').classList.remove('open'); });
     ['qCount', 'qEmails'].forEach((id) => $(id).addEventListener('input', updateFindCost));
-    $('qEngagement').addEventListener('input', updateEngHint);
+    ['qEngagement', 'qFollowersMin'].forEach((id) => $(id).addEventListener('input', updateEngHint));
     $('findRunBtn').addEventListener('click', async () => {
       const payload = {
         platform: $('qPlatform').value,
@@ -622,6 +643,9 @@
         engagementMin: Number($('qEngagement').value) || 0,
         gender: $('qGender').value,
         nlpSearch: $('qNlp').value.trim(),
+        hashtags: $('qHashtags').value.trim(),
+        minPosts: Number($('qMinPosts').value) || 0,
+        verified: $('qVerified').checked,
         fetchEmails: $('qEmails').checked,
       };
       const btn = $('findRunBtn');
