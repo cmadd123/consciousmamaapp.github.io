@@ -411,6 +411,12 @@ service cloud.firestore {
       allow read, write: if isCrmUser();
     }
 
+    // Saved creator-discovery searches (params + result counts). Shared across
+    // CRM users so recent searches sync and are auditable.
+    match /creator_searches/{searchId} {
+      allow read, write: if isCrmUser();
+    }
+
     // ─── Default deny ─────────────────────────────────────────────
     match /{document=**} {
       allow read, write: if false;
