@@ -1904,6 +1904,11 @@ exports.pinterestTestPin = pinterestAutopin.pinterestTestPin;
 
 const creatorDiscovery = require('./creator_discovery');
 exports.findCreators = creatorDiscovery.findCreators;
+
+const creatorEmail = require('./creator_email');
+exports.sendCreatorEmail = creatorEmail.sendCreatorEmail;
+exports.ingestCreatorReplies = creatorEmail.ingestCreatorReplies;
+exports.checkCreatorReplies = creatorEmail.checkCreatorReplies;
 exports.feedbackMarkdown = feedbackMd.feedbackMarkdown;
 exports.createCreatorOnboardingLink = stripeFunctions.createCreatorOnboardingLink;
 exports.createCreatorDashboardLink = stripeFunctions.createCreatorDashboardLink;
