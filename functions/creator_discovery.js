@@ -68,9 +68,10 @@ async function icCreditsLeft() {
   } catch (_) { return null; }
 }
 
-// One batched LLM call to score all fresh creators for MomRise partnership fit.
-// Returns a map: lowercased handle -> fit_score (0-100 integer).
-async function scoreCreators(fresh, userEmail) {
+// One batched LLM call to score creators for MomRise partnership fit AND draft
+// a bio-aware outreach opener for each. Learns from Haley's past decisions via
+// the `calibration` examples. Returns a map: lowercased handle -> { fit_score, opener }.
+async function scoreCreators(fresh, userEmail, calibration) {
   if (!fresh.length) return {};
   const list = fresh.map((c) => ({
     handle: c.username,
@@ -82,16 +83,26 @@ async function scoreCreators(fresh, userEmail) {
     gender: c.gender || '',
     interests: (c.interests || []).slice(0, 6),
   }));
-  const system =
+  let system =
     'You help MomRise (a family meal-planning + parenting app) recruit creator partners. ' +
     'A strong partner is a US-based family / food / recipe / mom micro-creator (roughly 5k–15k ' +
     'followers) with an engaged audience who would authentically recommend a meal-planning app ' +
     'to fellow parents. Weigh each creator\'s bio and category heavily — that\'s what they actually ' +
-    'post about — over the handle alone. Rate each creator\'s partnership fit from 0 to 100 (higher = better fit).';
+    'post about — over the handle alone. Rate each creator\'s partnership fit from 0 to 100 ' +
+    '(higher = better fit), and write one short, warm, personalized outreach opener per creator: ' +
+    'a single sentence, no emojis, that references their bio/niche naturally and does not sound ' +
+    'salesy or templated.';
+  // Learning loop: calibrate to Haley's real decisions.
+  if (calibration && (calibration.pursued?.length || calibration.passed?.length)) {
+    system += '\n\nCalibrate to the recruiter\'s actual track record. Creators she PURSUED ' +
+      '(good fits): ' + JSON.stringify((calibration.pursued || []).slice(0, 15)) +
+      '. Creators she PASSED on (poor fits): ' + JSON.stringify((calibration.passed || []).slice(0, 15)) +
+      '. Score new creators the way she would, based on these patterns.';
+  }
   const prompt =
-    'Score each creator for MomRise partnership fit. ' +
+    'Score each creator for MomRise partnership fit and draft an opener. ' +
     'Return ONLY a JSON array — one object per creator, no prose, no code fences — of the form ' +
-    '[{"handle":"<their handle>","fit_score":<0-100 integer>}].\n\n' +
+    '[{"handle":"<their handle>","fit_score":<0-100 integer>,"opener":"<one sentence>"}].\n\n' +
     JSON.stringify(list);
 
   let text = '';
@@ -108,10 +119,33 @@ async function scoreCreators(fresh, userEmail) {
       const h = String(row.handle || '').replace(/^@/, '').toLowerCase();
       if (!h) continue;
       const score = Number(row.fit_score);
-      if (Number.isFinite(score)) map[h] = Math.max(0, Math.min(100, Math.round(score)));
+      map[h] = {
+        fit_score: Number.isFinite(score) ? Math.max(0, Math.min(100, Math.round(score))) : null,
+        opener: String(row.opener || '').trim(),
+      };
     }
   } catch (_) { /* leave map empty; leads still get added without scores */ }
   return map;
+}
+
+// Build the learning-loop calibration set from Haley's past decisions.
+// Pursued (replied/in_talks/signed) = good; passed = bad. Compact bio snapshots.
+async function getCalibration(db) {
+  const out = { pursued: [], passed: [] };
+  try {
+    const snap = await db.collection('outreach_leads').get();
+    const pursuedStatuses = new Set(['replied', 'in_talks', 'signed']);
+    snap.forEach((doc) => {
+      const x = doc.data();
+      const ex = { name: x.name || x.handle || '', bio: (x.bio || '').slice(0, 160), category: x.category || '' };
+      if (!ex.bio && !ex.category) return;                 // no signal without bio/category
+      if (x.feedback === 'good' || pursuedStatuses.has(x.status)) out.pursued.push(ex);
+      else if (x.feedback === 'bad' || x.status === 'passed') out.passed.push(ex);
+    });
+  } catch (_) { /* no calibration available yet */ }
+  out.pursued = out.pursued.slice(-15);
+  out.passed = out.passed.slice(-15);
+  return out;
 }
 
 exports.findCreators = onCall(
@@ -170,6 +204,9 @@ exports.findCreators = onCall(
       fresh.push(c);
     }
 
+    // Learning loop: calibrate scoring + openers to Haley's past decisions.
+    const calibration = await getCalibration(db);
+
     // 3) Score-gate (optional). When a minimum fit score is set, score creators
     //    on CHEAP data first (discovery + a ~0.03-credit bio pull), drop anyone
     //    below the threshold, then spend the 1-credit email enrichment only on
@@ -188,9 +225,9 @@ exports.findCreators = onCall(
           c.category = String(deepFind(rr, 'category') || '');
         } catch (_) { /* score without bio if this fails */ }
       }
-      scores = await scoreCreators(fresh, request.auth.token.email);
+      scores = await scoreCreators(fresh, request.auth.token.email, calibration);
       const before = fresh.length;
-      fresh = fresh.filter((c) => (scores[c.username.toLowerCase()] ?? 0) >= minFit);
+      fresh = fresh.filter((c) => (scores[c.username.toLowerCase()]?.fit_score ?? 0) >= minFit);
       gated = before - fresh.length;
       // Buy emails only for the survivors.
       if (fetchEmails) {
@@ -226,7 +263,7 @@ exports.findCreators = onCall(
           } catch (_) { /* skip enrichment failure, still add the lead */ }
         }
       }
-      scores = await scoreCreators(fresh, request.auth.token.email);
+      scores = await scoreCreators(fresh, request.auth.token.email, calibration);
     }
 
     // 5) Write each fresh lead with its fit score.
@@ -252,7 +289,8 @@ exports.findCreators = onCall(
         notes,
         bio: c.bio || '',
         category: c.category || '',
-        fit_score: scores[c.username.toLowerCase()] ?? null,
+        fit_score: scores[c.username.toLowerCase()]?.fit_score ?? null,
+        suggested_opener: scores[c.username.toLowerCase()]?.opener || '',
         source: 'influencers_club',
         created_at: FieldValue.serverTimestamp(),
         created_by: request.auth.token.email,
