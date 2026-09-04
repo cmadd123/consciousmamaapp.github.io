@@ -40,7 +40,15 @@ function buildSchema(g) {
   return { article: JSON.stringify(article, null, 2), faq: JSON.stringify(faq, null, 2) };
 }
 
-function buildPage(g) {
+// Pick up to `n` related guides — prefer same category, then fill with others.
+function relatedGuides(g, all, n = 3) {
+  const others = all.filter((x) => x.slug && x.slug !== g.slug);
+  const sameCat = others.filter((x) => x.category === g.category);
+  const rest = others.filter((x) => x.category !== g.category);
+  return [...sameCat, ...rest].slice(0, n);
+}
+
+function buildPage(g, all = []) {
   const url = `https://momrise.app/for-creators/${g.slug}/`;
   const desc = escapeHtml(truncate(g.answer, 200));
   const { article, faq } = buildSchema(g);
@@ -48,6 +56,17 @@ function buildPage(g) {
     <section><h2>${escapeHtml(s.h)}</h2>${s.body}</section>`).join('');
   const faqs = (g.faqs || []).map((f) => `
       <div class="faq-item"><h3>${escapeHtml(f.q)}</h3><p>${escapeHtml(f.a)}</p></div>`).join('');
+  const related = relatedGuides(g, all);
+  const relatedHtml = related.length ? `
+    <section class="related" aria-label="Related guides">
+      <h2>Keep reading</h2>
+      <ul class="c-grid">${related.map((r) => `
+        <li><a href="/for-creators/${r.slug}/">
+          <span class="c-cat">${escapeHtml(r.category || '')}</span>
+          <span class="c-title">${escapeHtml(r.headline)}</span>
+        </a></li>`).join('')}
+      </ul>
+    </section>` : '';
   const cta = g.cta || {};
 
   return `<!DOCTYPE html>
@@ -97,6 +116,7 @@ ${escapeJson(faq)}
     <section class="faq">
       <h2>Frequently asked questions</h2>${faqs}
     </section>
+    ${relatedHtml}
   </main>
 
   <footer class="page-footer">
@@ -148,7 +168,7 @@ console.log(`${dryRun ? 'DRY RUN — ' : ''}Generating ${items.length} creator g
 let wrote = 0;
 for (const g of items) {
   if (!g.slug || !g.headline) { console.log(`  · skip (missing slug/headline)`); continue; }
-  const html = buildPage(g);
+  const html = buildPage(g, items);
   if (dryRun) { console.log(`  ⇢ for-creators/${g.slug}/ (${html.length}b)`); }
   else {
     fs.mkdirSync(path.join(outRoot, g.slug), { recursive: true });
