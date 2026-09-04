@@ -36,8 +36,14 @@ class AppStateNotifier extends ChangeNotifier {
   /// Whether the current user has completed onboarding
   bool _onboardingCompleted = false;
   bool get onboardingCompleted => _onboardingCompleted;
+  /// Whether we've actually loaded onboarding status for the logged-in user.
+  /// Until this is true we keep the app in "loading" (splash) rather than
+  /// routing, so a logged-in user is never shown "Let's get started" while
+  /// their onboarding flag is still defaulting to false. See `loading`.
+  bool onboardingLoaded = false;
   set onboardingCompleted(bool value) {
     _onboardingCompleted = value;
+    onboardingLoaded = true;
     notifyListeners();
   }
 
@@ -48,7 +54,11 @@ class AppStateNotifier extends ChangeNotifier {
   /// Otherwise, this will trigger a refresh and interrupt the action(s).
   bool notifyOnAuthChange = true;
 
-  bool get loading => user == null || showSplashImage;
+  // A logged-in user isn't "done loading" until we know their onboarding
+  // status — otherwise the redirect runs with onboardingCompleted still false
+  // and lands them on the welcome page. Logged-out users aren't gated.
+  bool get loading =>
+      user == null || showSplashImage || (loggedIn && !onboardingLoaded);
   bool get loggedIn => user?.loggedIn ?? false;
   bool get initiallyLoggedIn => initialUser?.loggedIn ?? false;
   bool get shouldRedirect => loggedIn && _redirectLocation != null;
@@ -67,6 +77,9 @@ class AppStateNotifier extends ChangeNotifier {
         user?.uid == null || newUser.uid == null || user?.uid != newUser.uid;
     initialUser ??= newUser;
     user = newUser;
+    // New/changed user → wait for their onboarding status before routing
+    // (main.dart loads it right after and sets onboardingCompleted).
+    if (shouldUpdate) onboardingLoaded = false;
     // Refresh the app on auth change unless explicitly marked otherwise.
     // No need to update unless the user has changed.
     if (notifyOnAuthChange && shouldUpdate) {

@@ -322,7 +322,11 @@ class _HelpfulDocsPageState extends State<HelpfulDocsPage> {
   /// Full doc detail view
   void _showDocDetail(BuildContext context, AppContentRecord doc) {
     if (doc.hasPdfUrl()) {
-      _showPdfViewer(context, doc);
+      if (doc.contentType == 'image') {
+        _showImageViewer(context, doc);
+      } else {
+        _showPdfViewer(context, doc);
+      }
       return;
     }
     Navigator.push(
@@ -526,10 +530,13 @@ class _HelpfulDocsPageState extends State<HelpfulDocsPage> {
                     );
                     if (result != null && result.files.isNotEmpty) {
                       final picked = result.files.first;
-                      if (!picked.name.toLowerCase().endsWith('.pdf')) {
+                      final lower = picked.name.toLowerCase();
+                      final ok = lower.endsWith('.pdf') ||
+                          RegExp(r'\.(jpg|jpeg|png|webp|heic|heif|gif)$').hasMatch(lower);
+                      if (!ok) {
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Please select a PDF file')),
+                            const SnackBar(content: Text('Please select a PDF or image')),
                           );
                         }
                         return;
@@ -550,8 +557,13 @@ class _HelpfulDocsPageState extends State<HelpfulDocsPage> {
                     child: Row(
                       children: [
                         Icon(
-                          selectedFile != null ? Icons.picture_as_pdf : Icons.upload_file,
-                          color: selectedFile != null ? Colors.red : Colors.grey.shade500,
+                          selectedFile == null
+                              ? Icons.upload_file
+                              : (RegExp(r'\.(jpg|jpeg|png|webp|heic|heif|gif)$')
+                                      .hasMatch(selectedFile!.name.toLowerCase())
+                                  ? Icons.image
+                                  : Icons.picture_as_pdf),
+                          color: selectedFile != null ? FlutterFlowTheme.of(context).primary : Colors.grey.shade500,
                           size: 28,
                         ),
                         const SizedBox(width: 12),
@@ -560,7 +572,7 @@ class _HelpfulDocsPageState extends State<HelpfulDocsPage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                selectedFile != null ? selectedFile!.name : 'Tap to select a PDF',
+                                selectedFile != null ? selectedFile!.name : 'Tap to select a PDF or image',
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
@@ -607,11 +619,25 @@ class _HelpfulDocsPageState extends State<HelpfulDocsPage> {
                         setSheetState(() => isUploading = false);
                         return;
                       }
+                      final lower = selectedFile!.name.toLowerCase();
+                      final isImage =
+                          RegExp(r'\.(jpg|jpeg|png|webp|heic|heif|gif)$').hasMatch(lower);
+                      final mime = !isImage
+                          ? 'application/pdf'
+                          : lower.endsWith('.png')
+                              ? 'image/png'
+                              : lower.endsWith('.webp')
+                                  ? 'image/webp'
+                                  : lower.endsWith('.gif')
+                                      ? 'image/gif'
+                                      : (lower.endsWith('.heic') || lower.endsWith('.heif'))
+                                          ? 'image/heic'
+                                          : 'image/jpeg';
                       final fileName = '${DateTime.now().millisecondsSinceEpoch}_${selectedFile!.name}';
                       final storageRef = FirebaseStorage.instance.ref().child('helpful_docs/$uid/$fileName');
 
                       final file = File(selectedFile!.path!);
-                      final uploadTask = await storageRef.putFile(file);
+                      final uploadTask = await storageRef.putFile(file, SettableMetadata(contentType: mime));
                       final downloadUrl = await uploadTask.ref.getDownloadURL();
 
                       await AppContentRecord.collection.add(createAppContentRecordData(
@@ -622,7 +648,7 @@ class _HelpfulDocsPageState extends State<HelpfulDocsPage> {
                         isPublished: true,
                         createdAt: DateTime.now(),
                         pdfUrl: downloadUrl,
-                        contentType: 'pdf',
+                        contentType: isImage ? 'image' : 'pdf',
                         // Owner — so anyone (not just creators) can upload and
                         // see their own docs.
                         userRef: currentUserReference,
@@ -674,6 +700,40 @@ class _HelpfulDocsPageState extends State<HelpfulDocsPage> {
       context,
       MaterialPageRoute(
         builder: (_) => _InAppPdfScreen(doc: doc),
+      ),
+    );
+  }
+
+  /// Open an image doc in-app (pinch-to-zoom, dark backdrop).
+  void _showImageViewer(BuildContext context, AppContentRecord doc) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => Scaffold(
+          backgroundColor: Colors.black,
+          appBar: AppBar(
+            backgroundColor: Colors.black,
+            foregroundColor: Colors.white,
+            elevation: 0,
+            title: Text(doc.title,
+                style: const TextStyle(color: Colors.white, fontSize: 16)),
+          ),
+          body: Center(
+            child: InteractiveViewer(
+              minScale: 0.8,
+              maxScale: 4,
+              child: Image.network(
+                doc.pdfUrl,
+                fit: BoxFit.contain,
+                loadingBuilder: (c, child, p) => p == null
+                    ? child
+                    : const CircularProgressIndicator(color: Colors.white),
+                errorBuilder: (c, e, s) => const Text('Could not load image',
+                    style: TextStyle(color: Colors.white70)),
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

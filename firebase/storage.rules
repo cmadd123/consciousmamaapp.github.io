@@ -19,13 +19,14 @@ service firebase.storage {
     // only write under their own folder — prevents one signed-in user from
     // uploading to or deleting another creator's docs. Reads stay public
     // because the download URLs are shared with end-users (the app reads
-    // pdf_url directly from app_content). 10MB cap, application/pdf only.
+    // pdf_url directly from app_content). 10MB cap; PDFs or images.
     match /helpful_docs/{userId}/{allPaths=**} {
       allow read: if true;
       allow write: if request.auth.uid == userId
                    && (request.resource == null
                        || (request.resource.size < 10 * 1024 * 1024
-                           && request.resource.contentType == 'application/pdf'));
+                           && (request.resource.contentType == 'application/pdf'
+                               || request.resource.contentType.matches('image/.*'))));
     }
     // Recipe photos uploaded from the web creator dashboard — OCR scans
     // and recipe-edit photo changes. Owner-write, images only, 5MB cap.

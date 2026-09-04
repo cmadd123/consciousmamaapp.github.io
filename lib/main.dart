@@ -174,6 +174,13 @@ class _MyAppState extends State<MyApp> {
           // before installing. No-op when the user already has a code
           // set (manual entry took precedence). See attribution_claim.dart.
           unawaited(tryClaimDeferredAttribution());
+        } else if (!user.loggedIn) {
+          // Logged out: nothing to load — don't leave the app gated on splash.
+          _appStateNotifier.onboardingLoaded = true;
+        } else {
+          // Logged in but no user reference yet (rare/transient): mark loaded
+          // so routing proceeds; a later auth emission re-fetches the real flag.
+          _appStateNotifier.onboardingCompleted = false;
         }
 
         // Handle pending deep links after user is logged in
