@@ -2336,7 +2336,8 @@ If the image is unclear or doesn't contain a recipe, return:
 {"error": "description of the problem"}`;
 
       const reqBody = JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
+        // claude-sonnet-4-20250514 was retired 2026-06-15; use current Sonnet.
+        model: 'claude-sonnet-5',
         max_tokens: 2048,
         messages: [{
           role: 'user',
