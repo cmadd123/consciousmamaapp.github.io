@@ -20,7 +20,7 @@
 
 const { onCall, HttpsError } = require('firebase-functions/v2/https');
 const { onSchedule } = require('firebase-functions/v2/scheduler');
-const { defineSecret, defineString } = require('firebase-functions/params');
+const { defineSecret } = require('firebase-functions/params');
 const { getFirestore, FieldValue, Timestamp } = require('firebase-admin/firestore');
 const nodemailer = require('nodemailer');
 const { ImapFlow } = require('imapflow');
@@ -28,11 +28,11 @@ const { simpleParser } = require('mailparser');
 
 const GMAIL_USER = defineSecret('GMAIL_USER');
 const GMAIL_APP_PASSWORD = defineSecret('GMAIL_APP_PASSWORD');
-const FROM_EMAIL = defineString('OUTREACH_FROM_EMAIL', { default: 'haley@momrise.app' });
-const FROM_NAME = defineString('OUTREACH_FROM_NAME', { default: 'Haley at MomRise' });
-// CAN-SPAM: commercial email needs a real postal address. Set OUTREACH_POSTAL
-// to MomRise's mailing address; until then a placeholder is used.
-const POSTAL = defineString('OUTREACH_POSTAL', { default: 'MomRise · (set OUTREACH_POSTAL to a mailing address)' });
+const FROM_EMAIL = 'haley@momrise.app';
+const FROM_NAME = 'Haley at MomRise';
+// CAN-SPAM: commercial email needs a real postal address. Replace with
+// MomRise's mailing address when available.
+const POSTAL = 'MomRise · (mailing address pending)';
 
 const CRM_EMAILS = ['collinjmaddox@gmail.com', 'brennanmaddox27@gmail.com', 'haley.hostetter@gmail.com'];
 const DAILY_CAP = 40;   // safety ceiling on sends per day
@@ -44,8 +44,8 @@ function requireCrm(request) {
 
 function footer() {
   return {
-    text: `\n\n—\nNot the right fit? Just reply "no thanks" and I won't follow up.\n${POSTAL.value()}`,
-    html: `<br><br>—<br><span style="color:#888;font-size:12px;">Not the right fit? Just reply "no thanks" and I won't follow up.<br>${POSTAL.value()}</span>`,
+    text: `\n\n—\nNot the right fit? Just reply "no thanks" and I won't follow up.\n${POSTAL}`,
+    html: `<br><br>—<br><span style="color:#888;font-size:12px;">Not the right fit? Just reply "no thanks" and I won't follow up.<br>${POSTAL}</span>`,
   };
 }
 
@@ -80,10 +80,10 @@ exports.sendCreatorEmail = onCall(
     const f = footer();
     const textBody = String(body).trim();
     const htmlBody = textBody.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\n/g, '<br>');
-    const from = `${FROM_NAME.value()} <${FROM_EMAIL.value()}>`;
+    const from = `${FROM_NAME} <${FROM_EMAIL}>`;
     try {
       await transporter().sendMail({
-        from, to: lead.email, replyTo: FROM_EMAIL.value(),
+        from, to: lead.email, replyTo: FROM_EMAIL,
         subject: String(subject).trim(),
         text: textBody + f.text,
         html: htmlBody + f.html,
