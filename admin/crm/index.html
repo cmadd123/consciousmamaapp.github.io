@@ -97,6 +97,11 @@
     .lead-opener { font-size: 13px; margin-top: 8px; padding: 8px 10px; background: #EDFFFD; border: 1px solid #cfe9e4; border-radius: 10px; display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
     .lead-opener-label { font-size: 10px; text-transform: uppercase; letter-spacing: .05em; font-weight: 700; color: var(--teal-dark); }
     .lead-opener-text { flex: 1; min-width: 180px; color: var(--text); }
+    .lead-compose { margin-top: 10px; padding: 10px; background: #F7FBFA; border: 1px solid #cfe9e4; border-radius: 12px; display: flex; flex-direction: column; gap: 8px; }
+    .lead-compose .lc-subject, .lead-compose .lc-body { width: 100%; border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; font-family: inherit; font-size: 14px; box-sizing: border-box; }
+    .lead-compose .lc-body { resize: vertical; min-height: 150px; line-height: 1.5; }
+    .lead-compose .lc-foot { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .lead-compose .lc-hint { flex: 1; min-width: 160px; font-size: 11px; color: var(--muted); }
     .lead-reply { font-size: 13px; margin-top: 8px; padding: 8px 10px; background: #EDE4FF; border: 1px solid #d7c7f5; border-radius: 10px; }
     .lead-reply-label { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: .05em; font-weight: 700; color: #7C3AED; margin-bottom: 3px; }
     .lead-reply-text { color: var(--text); white-space: pre-wrap; word-break: break-word; }
@@ -344,27 +349,6 @@
     </div>
   </div>
 
-  <!-- Email compose modal (approval-gated outreach) -->
-  <div class="backdrop" id="emailModal">
-    <div class="modal">
-      <h2>Send outreach email</h2>
-      <p id="emailTo" style="color:var(--muted); font-size:13px; margin:-6px 0 14px;"></p>
-      <div class="field">
-        <label for="emSubject">Subject</label>
-        <input id="emSubject" type="text">
-      </div>
-      <div class="field">
-        <label for="emBody">Message <span style="font-weight:400;color:var(--muted);">(an unsubscribe footer is added automatically)</span></label>
-        <textarea id="emBody" rows="12" style="font-family:inherit;"></textarea>
-      </div>
-      <p style="font-size:12px; color:var(--muted); margin:4px 0 0;">Sends from <strong>haley@momrise.app</strong>. Review and edit before sending — this goes to a real person.</p>
-      <div class="modal-actions" style="justify-content:flex-end;">
-        <button class="btn ghost" id="emCancelBtn">Cancel</button>
-        <button class="btn" id="emSendBtn">Send email</button>
-      </div>
-    </div>
-  </div>
-
   <div class="toast" id="toast"></div>
 
   <script type="module">
@@ -599,9 +583,19 @@
               ${l.notes ? `<div class="lead-notes">${esc(l.notes)}</div>` : ''}
               ${l.suggested_opener ? `<div class="lead-opener"><span class="lead-opener-label">Suggested opener</span><span class="lead-opener-text">${esc(l.suggested_opener)}</span><button class="btn ghost sm" data-copy="${l.id}">Copy</button></div>` : ''}
               ${l.reply_snippet ? `<div class="lead-reply"><span class="lead-reply-label">↩ Reply${l.reply_subject ? ' · ' + esc(l.reply_subject) : ''}</span><span class="lead-reply-text">${esc(l.reply_snippet)}</span></div>` : ''}
+              ${composingId === l.id ? `
+              <div class="lead-compose">
+                <input class="lc-subject" type="text" value="${esc(composingDraft.subject)}" placeholder="Subject">
+                <textarea class="lc-body" rows="9" placeholder="Message">${esc(composingDraft.body)}</textarea>
+                <div class="lc-foot">
+                  <span class="lc-hint">Sends from haley@momrise.app · unsubscribe footer added automatically</span>
+                  <button class="btn ghost sm" data-compose-cancel="${l.id}">Cancel</button>
+                  <button class="btn sm" data-compose-send="${l.id}">Send email</button>
+                </div>
+              </div>` : ''}
             </div>
             <div class="lead-actions">
-              ${l.email ? `<button class="btn sm" data-email="${l.id}">✉ ${l.emailed ? 'Follow up' : 'Email'}</button>` : ''}
+              ${l.email && composingId !== l.id ? `<button class="btn sm" data-email="${l.id}">✉ ${l.emailed ? 'Follow up' : 'Email'}</button>` : ''}
               <button class="btn ghost sm" data-contacted="${l.id}">Mark contacted</button>
               <button class="btn ghost sm" data-edit="${l.id}">Edit</button>
             </div>
@@ -623,7 +617,17 @@
       list.querySelectorAll('[data-fb]').forEach(b =>
         b.addEventListener('click', () => setFeedback(b.dataset.id, b.dataset.fb)));
       list.querySelectorAll('[data-email]').forEach(b =>
-        b.addEventListener('click', () => openEmail(leads.find(l => l.id === b.dataset.email))));
+        b.addEventListener('click', () => startCompose(leads.find(l => l.id === b.dataset.email))));
+
+      // Inline compose editor (preserve edits across re-renders via composingDraft).
+      const subEl = list.querySelector('.lc-subject');
+      const bodyEl = list.querySelector('.lc-body');
+      if (subEl) subEl.addEventListener('input', (e) => { if (composingDraft) composingDraft.subject = e.target.value; });
+      if (bodyEl) { bodyEl.addEventListener('input', (e) => { if (composingDraft) composingDraft.body = e.target.value; }); bodyEl.style.height = 'auto'; }
+      list.querySelectorAll('[data-compose-cancel]').forEach(b =>
+        b.addEventListener('click', () => { composingId = null; composingDraft = null; render(); }));
+      list.querySelectorAll('[data-compose-send]').forEach(b =>
+        b.addEventListener('click', () => sendCompose(b.dataset.composeSend, b)));
     }
 
     // Learning-loop signal: Haley marks a lead good/bad; toggling off clears it.
@@ -638,8 +642,9 @@
       } catch (e) { toast('Could not save feedback', true); }
     }
 
-    // ── Outreach email (approval-gated) ──
-    let emailingId = null;
+    // ── Outreach email (approval-gated, inline on the card) ──
+    let composingId = null;      // lead id whose inline draft is open
+    let composingDraft = null;   // { subject, body } — preserved across re-renders
     function firstName(l) {
       return (l.name || '').trim().split(/[\s|·—-]/)[0].replace(/[^A-Za-z].*$/, '') || 'there';
     }
@@ -660,30 +665,29 @@ If that sounds interesting, I'd love to send over the details — no pressure ei
 — Haley`;
       return { subject, body };
     }
-    function openEmail(l) {
+    function startCompose(l) {
       if (!l) return;
-      emailingId = l.id;
-      const d = buildDraft(l);
-      $('emailTo').textContent = `To: ${l.name || l.handle || ''} · ${l.email}`;
-      $('emSubject').value = d.subject;
-      $('emBody').value = d.body;
-      $('emailModal').classList.add('open');
+      composingId = l.id;
+      composingDraft = buildDraft(l);
+      render();
+      const body = $('list').querySelector('.lc-body');
+      if (body) body.focus();
     }
-    $('emCancelBtn').addEventListener('click', () => $('emailModal').classList.remove('open'));
-    $('emailModal').addEventListener('click', (e) => { if (e.target === $('emailModal')) $('emailModal').classList.remove('open'); });
-    $('emSendBtn').addEventListener('click', async () => {
-      const subject = $('emSubject').value.trim(), body = $('emBody').value.trim();
+    async function sendCompose(id, btn) {
+      const subject = (composingDraft?.subject || '').trim();
+      const body = (composingDraft?.body || '').trim();
       if (!subject || !body) { toast('Subject and message are required', true); return; }
-      const btn = $('emSendBtn'); btn.disabled = true; const orig = btn.textContent; btn.textContent = 'Sending…';
+      btn.disabled = true; const orig = btn.textContent; btn.textContent = 'Sending…';
       try {
-        await httpsCallable(functions, 'sendCreatorEmail', { timeout: 60000 })({ leadId: emailingId, subject, body });
-        $('emailModal').classList.remove('open');
-        toast('Email sent ✓');
+        await httpsCallable(functions, 'sendCreatorEmail', { timeout: 60000 })({ leadId: id, subject, body });
+        composingId = null; composingDraft = null;
+        toast('Email sent ✓');   // snapshot refreshes the card (→ Contacted)
       } catch (e) {
         console.error(e);
         toast('Send failed: ' + (e.message || 'error'), true);
-      } finally { btn.disabled = false; btn.textContent = orig; }
-    });
+        btn.disabled = false; btn.textContent = orig;
+      }
+    }
 
     // ── Check replies (manual trigger; also runs every 15 min server-side) ──
     $('repliesBtn').addEventListener('click', async () => {
