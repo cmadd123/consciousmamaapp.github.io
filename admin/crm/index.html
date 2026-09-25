@@ -649,8 +649,14 @@
     function firstName(l) {
       return (l.name || '').trim().split(/[\s|·—-]/)[0].replace(/[^A-Za-z].*$/, '') || 'there';
     }
+    // The sender's name must match who actually sends (backend picks the From by
+    // login): Jill sends as jill@momrise.app, everyone else as haley@momrise.app.
+    function senderName() {
+      return (auth.currentUser?.email || '').toLowerCase() === 'jmaddox3902@gmail.com' ? 'Jill' : 'Haley';
+    }
     function buildDraft(l) {
       const fn = firstName(l);
+      const me = senderName();
       const opener = (l.suggested_opener || '').trim() ||
         `I came across your ${l.platform || 'content'} and really liked what you're doing.`;
       const subject = `A partnership idea for you, ${fn}`;
@@ -659,11 +665,11 @@
 
 ${opener}
 
-I'm Haley — I help run MomRise, a family meal-planning + parenting app that a lot of food and family creators are partnering with. We pay creators a share of every subscription their audience brings in (recurring, not a one-time fee), and we turn your recipes into pages that get discovered by parents searching for meal ideas.
+I'm ${me} — I help run MomRise, a family meal-planning + parenting app that a lot of food and family creators are partnering with. We pay creators a share of every subscription their audience brings in (recurring, not a one-time fee), and we turn your recipes into pages that get discovered by parents searching for meal ideas.
 
 If that sounds interesting, I'd love to send over the details — no pressure either way.
 
-— Haley`;
+— ${me}`;
       return { subject, body };
     }
     function startCompose(l) {
