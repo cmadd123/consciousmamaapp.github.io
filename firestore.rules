@@ -404,7 +404,7 @@ service cloud.firestore {
         request.auth.token.email == 'collinjmaddox@gmail.com' ||
         request.auth.token.email == 'brennanmaddox27@gmail.com' ||
         request.auth.token.email == 'haley.hostetter@gmail.com' ||
-        request.auth.token.email == 'jmaddo3902@gmail.com'
+        request.auth.token.email == 'jmaddox3902@gmail.com'
       );
     }
 
