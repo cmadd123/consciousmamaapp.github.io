@@ -34,7 +34,7 @@ const FROM_NAME = 'Haley at MomRise';
 // MomRise's mailing address when available.
 const POSTAL = 'MomRise · (mailing address pending)';
 
-const CRM_EMAILS = ['collinjmaddox@gmail.com', 'brennanmaddox27@gmail.com', 'haley.hostetter@gmail.com'];
+const CRM_EMAILS = ['collinjmaddox@gmail.com', 'brennanmaddox27@gmail.com', 'haley.hostetter@gmail.com', 'jmaddo3902@gmail.com'];
 const DAILY_CAP = 40;   // safety ceiling on sends per day
 
 function requireCrm(request) {

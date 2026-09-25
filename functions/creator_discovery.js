@@ -21,7 +21,7 @@ const INFLUENCERS_CLUB_API_KEY = defineSecret('INFLUENCERS_CLUB_API_KEY');
 const ANTHROPIC_API_KEY = defineSecret('ANTHROPIC_API_KEY');
 const OPENAI_API_KEY = defineSecret('OPENAI_API_KEY');
 const API = 'https://api-dashboard.influencers.club/public/v1';
-const CRM_EMAILS = ['collinjmaddox@gmail.com', 'brennanmaddox27@gmail.com', 'haley.hostetter@gmail.com'];
+const CRM_EMAILS = ['collinjmaddox@gmail.com', 'brennanmaddox27@gmail.com', 'haley.hostetter@gmail.com', 'jmaddo3902@gmail.com'];
 
 function requireCrm(request) {
   const email = (request.auth?.token?.email || '').toLowerCase();
