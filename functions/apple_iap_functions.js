@@ -179,6 +179,17 @@ exports.appleNotification = onRequest(
         ? await v.verifyAndDecodeRenewalInfo(data.signedRenewalInfo)
         : null;
 
+      // Keep users/{uid} entitlement in sync with Apple (server-side source
+      // of truth now that clients can't write subscription_status). Never
+      // let a sync failure block the earnings logic below.
+      if (txInfo) {
+        try {
+          await syncAppleEntitlement(txInfo, notificationType, subtype, envEnv);
+        } catch (e) {
+          console.error('[apple_iap] entitlement sync failed:', e.message);
+        }
+      }
+
       // Earning events: any path where money landed in Apple's
       // coffers. Apple's notification types are surprisingly tangled —
       // these are the ones that represent NEW revenue:
@@ -428,3 +439,80 @@ async function recordAppleRefundClawback(txInfo, environment) {
       `${earning.gross_cents}¢ → reversed`,
   );
 }
+
+// ── Entitlement sync (server-side subscription_status) ───────────────
+// Activation events refresh status + expiry; expiry/refund events are
+// applied only when entitlements.STORE_DOWNGRADE_ON_EXPIRY is true
+// (otherwise logged as a dry run — matches pre-existing behaviour where
+// an iOS user stayed 'active' forever once the client wrote it).
+const APPLE_ACTIVATE_TYPES = new Set(['SUBSCRIBED', 'DID_RENEW', 'OFFER_REDEEMED']);
+const APPLE_DEACTIVATE_TYPES = new Set(['EXPIRED', 'GRACE_PERIOD_EXPIRED', 'REVOKE', 'REFUND']);
+
+async function syncAppleEntitlement(txInfo, notificationType, subtype, environment) {
+  const isActivate = APPLE_ACTIVATE_TYPES.has(notificationType);
+  const isDeactivate = APPLE_DEACTIVATE_TYPES.has(notificationType);
+  if (!isActivate && !isDeactivate) return;
+
+  // Lazy require: entitlements.js lazily requires this file too.
+  const {
+    PRODUCT_PLANS,
+    STORE_DOWNGRADE_ON_EXPIRY,
+    writeStoreEntitlement,
+  } = require('./entitlements');
+
+  if (txInfo.bundleId && txInfo.bundleId !== BUNDLE_ID) return;
+  if (!PRODUCT_PLANS[txInfo.productId]) return;
+  const appAccountToken = txInfo.appAccountToken;
+  if (!appAccountToken) {
+    console.warn(`[apple_iap] ${notificationType}: tx ${txInfo.transactionId} has no appAccountToken — cannot map to a user`);
+    return;
+  }
+
+  const db = getFirestore();
+  const userSnap = await db
+    .collection('users')
+    .where('apple_app_account_token', '==', appAccountToken)
+    .limit(1)
+    .get();
+  if (userSnap.empty) {
+    console.warn(`[apple_iap] ${notificationType}: no user for appAccountToken ${appAccountToken}`);
+    return;
+  }
+  const userDoc = userSnap.docs[0];
+  const user = userDoc.data();
+
+  const expiresAtMs = Number(txInfo.expiresDate || 0);
+  const v = {
+    source: 'apple_iap',
+    productId: txInfo.productId,
+    transactionId: String(txInfo.transactionId || ''),
+    originalTransactionId: String(txInfo.originalTransactionId || txInfo.transactionId || ''),
+    expiresAtMs,
+    active: !txInfo.revocationDate && expiresAtMs > Date.now(),
+    environment,
+  };
+
+  if (isActivate) {
+    if (!v.active) return;
+    await writeStoreEntitlement(userDoc.id, v);
+    console.log(`[apple_iap] entitlement active for ${userDoc.id} until ${new Date(expiresAtMs).toISOString()}`);
+    return;
+  }
+
+  // Deactivation: only touch users whose entitlement came from THIS
+  // Apple subscription (don't clobber Stripe / comp / exempt users).
+  if (user.subscription_source !== 'apple_iap') return;
+  if (user.apple_original_transaction_id &&
+      user.apple_original_transaction_id !== v.originalTransactionId) return;
+  v.active = false;
+  if (!STORE_DOWNGRADE_ON_EXPIRY) {
+    console.log(`[apple_iap] (dry-run) would expire ${userDoc.id} on ${notificationType}${subtype ? '/' + subtype : ''}`);
+    return;
+  }
+  await writeStoreEntitlement(userDoc.id, v, { allowRebind: true });
+  console.log(`[apple_iap] entitlement expired for ${userDoc.id} on ${notificationType}`);
+}
+
+// Shared with entitlements.js (verifyStorePurchase). Not Cloud Functions —
+// index.js only re-exports appleNotification.
+exports.getVerifier = getVerifier;
