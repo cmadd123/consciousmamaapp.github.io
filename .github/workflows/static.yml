@@ -1,7 +1,8 @@
 # Deploy static website to GitHub Pages — with the AEO pipeline baked in.
 #
 # On every push to main this workflow regenerates the data-driven pages
-# (comparison pages from data/comparisons.json) and the sitemap, deploys the
+# (comparison pages from data/comparisons.json, answer pages from
+# data/answers.json) and the sitemap, deploys the
 # fresh site to Pages, then pings IndexNow when content actually changed.
 #
 # Pages are regenerated INTO the deploy artifact (not committed back), so
@@ -53,6 +54,9 @@ jobs:
       - name: Regenerate comparison pages
         run: node scripts/generate-comparison-pages.js
 
+      - name: Regenerate answer pages
+        run: node scripts/generate-answer-pages.js
+
       - name: Rebuild meal-idea generator index (from published recipes)
         run: node scripts/generate-meal-index.js
 
@@ -62,7 +66,7 @@ jobs:
       - name: Stage generated pages so the sitemap sees new slugs
         # gen_sitemap.py enumerates via `git ls-files`; staging (no commit)
         # makes freshly generated pages visible to it.
-        run: git add -A compare/ r/ meal-ideas/ for-creators/ || true
+        run: git add -A compare/ answers/ r/ meal-ideas/ for-creators/ || true
 
       - name: Regenerate sitemap
         run: python scripts/gen_sitemap.py
@@ -109,7 +113,7 @@ jobs:
           else
             FILES=$(git ls-files)
           fi
-          if echo "$FILES" | grep -qE '^(compare/|r/|meal-ideas/|for-creators/|data/(comparisons|creator-guides)\.json|sitemap\.xml)'; then
+          if echo "$FILES" | grep -qE '^(compare/|answers/|r/|meal-ideas/|for-creators/|data/(comparisons|answers|creator-guides)\.json|sitemap\.xml)'; then
             echo "content=true" >> "$GITHUB_OUTPUT"
             echo "Content changed — will ping IndexNow."
           else
