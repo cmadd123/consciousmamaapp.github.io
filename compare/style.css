@@ -131,3 +131,23 @@ a { color: var(--teal-dark); }
   .best-for li { flex-direction: column; gap: 2px; }
   .best-for .pick { white-space: normal; }
 }
+
+/* Trust layer: byline, reviewer, inline citations, related links */
+.byline, .reviewed { font-size: 13px; color: var(--muted); margin: -12px 0 20px; }
+.reviewed { margin-top: -16px; font-weight: 700; color: var(--teal-dark); }
+sup.ref { font-size: 0.7em; line-height: 0; margin-left: 1px; }
+sup.ref a { text-decoration: none; }
+.sources ol { margin: 0; padding-left: 20px; color: var(--muted); font-size: 13px; }
+.sources li { margin-bottom: 4px; }
+.sources li:target { background: #EDFFFD; }
+.related { margin-top: 24px; }
+.related ul { margin: 0; padding-left: 18px; }
+.related li { margin-bottom: 6px; }
+
+/* Answer pages (/answers/) reuse the comparison layout */
+.ans h2 { font-size: 20px; margin: 28px 0 12px; }
+.ans h3 { font-size: 16px; margin: 18px 0 6px; }
+.ans p, .ans li { font-size: 16px; }
+.ans ul, .ans ol { padding-left: 22px; }
+.ans li { margin-bottom: 6px; }
+.ans .cmp-table { min-width: 420px; }
