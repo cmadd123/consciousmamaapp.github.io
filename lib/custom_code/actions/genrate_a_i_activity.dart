@@ -6,7 +6,7 @@ import '/flutter_flow/flutter_flow_util.dart';
 // Begin custom action code
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
-import 'package:http/http.dart' as http;
+import '/backend/cloud_functions/ai_proxy.dart';
 
 Future<List<ActivityModelStruct>> genrateAIActivity(
   DocumentReference? selectedChild,
@@ -16,9 +16,6 @@ Future<List<ActivityModelStruct>> genrateAIActivity(
   if (selectedChild == null || activityLocation == null || noiseLevel == null) {
     throw Exception("Missing required parameters");
   }
-
-  // Get OpenAI key from Firebase Remote Config (secure)
-  final openAiKey = FFAppState().openAiKey;
 
   final prompt = """
 You are an expert in child development and creative learning.
@@ -63,32 +60,14 @@ Example format:
 ]
 """;
 
-  final response = await http.post(
-    Uri.parse("https://api.openai.com/v1/chat/completions"),
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer $openAiKey",
-    },
-    body: jsonEncode({
-      "model": "gpt-4o-mini",
-      "messages": [
-        {"role": "user", "content": prompt}
-      ],
-      "max_tokens": 700,
-    }),
-  ).timeout(
-    const Duration(seconds: 30),
-    onTimeout: () {
-      throw Exception("Request timed out. Please check your internet connection and try again.");
-    },
+  // Server-side model call (aiGenerate / appActivityIdeas: gpt-4o-mini,
+  // max_tokens 700 — same as the old direct OpenAI request).
+  // A timeout surfaces as an Exception from callAiProxy.
+  String content = await callAiProxy(
+    'appActivityIdeas',
+    prompt: prompt,
+    timeout: const Duration(seconds: 60),
   );
-
-  if (response.statusCode != 200) {
-    throw Exception("OpenAI API error: ${response.body}");
-  }
-
-  final data = jsonDecode(response.body);
-  String content = data['choices'][0]['message']['content'];
 
   // ✅ Clean JSON (strip markdown if needed)
   content = content.trim();

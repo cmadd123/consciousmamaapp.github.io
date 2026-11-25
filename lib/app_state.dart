@@ -617,33 +617,22 @@ class FFAppState extends ChangeNotifier {
   }
   // ==================== END GROCERY LIST ====================
 
-  // SECURITY: OpenAI key should be fetched from Firebase Remote Config
-  // DO NOT hardcode API keys in production!
-  String _openAiKey = '';
-  String get openAiKey => _openAiKey;
-  set openAiKey(String value) {
-    _openAiKey = value;
-  }
+  // SECURITY: the app no longer holds an OpenAI key. All model calls go
+  // through the authenticated `aiGenerate` Cloud Function
+  // (lib/backend/cloud_functions/ai_proxy.dart → functions/ai_proxy.js),
+  // which reads the key from Secret Manager. Do NOT re-add a client key.
 
-  /// Initialize OpenAI key from Firebase Remote Config
-  /// Call this in main.dart after Firebase.initializeApp()
-  Future<void> initializeOpenAiKey() async {
+  /// Fetch + activate Firebase Remote Config once at startup. The other
+  /// initialize*ApiKey() methods below read values from the activated
+  /// config, so this must run first (main.dart).
+  Future<void> initializeRemoteConfig() async {
     try {
       final remoteConfig = FirebaseRemoteConfig.instance;
       await remoteConfig.setConfigSettings(RemoteConfigSettings(
         fetchTimeout: const Duration(minutes: 1),
         minimumFetchInterval: Duration.zero, // Always fetch fresh for development
       ));
-      final activated = await remoteConfig.fetchAndActivate();
-      _openAiKey = remoteConfig.getString('openai_api_key');
-
-      // Validate that critical API keys are configured
-      if (_openAiKey.isEmpty) {
-        debugPrint('⚠️ CRITICAL: openai_api_key is empty in Remote Config');
-        debugPrint('   Learning path generation will fail. Set this in Firebase Console → Remote Config.');
-      } else {
-        debugPrint('✓ OpenAI API key configured');
-      }
+      await remoteConfig.fetchAndActivate();
     } catch (e) {
       debugPrint('❌ ERROR: Failed to fetch Remote Config: $e');
     }

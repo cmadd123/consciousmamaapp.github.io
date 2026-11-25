@@ -10,8 +10,8 @@ import '/flutter_flow/flutter_flow_util.dart';
 // Begin custom action code
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
-import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '/backend/cloud_functions/ai_proxy.dart';
 
 Future buildLearningPath(
   String? challengeDescription,
@@ -163,44 +163,16 @@ Example format for the tasks array:
     throw Exception("You recently created a similar learning path for this challenge. Please check your existing learning paths.");
   }
 
-  // Use centralized API key from app state (fetched from Firebase Remote Config)
-  final openAiKey = FFAppState().openAiKey.trim();
-  if (openAiKey.isEmpty) {
-    throw Exception("OpenAI API key not configured. Please add 'openai_api_key' to Firebase Remote Config.");
-  }
-
-  // SAFETY 3: Request Timeout (30 seconds)
-  final response = await http.post(
-    Uri.parse('https://api.openai.com/v1/chat/completions'),
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $openAiKey',
-    },
-    body: jsonEncode({
-      "model": "gpt-4o-mini",
-      "messages": [
-        {
-          "role": "system",
-          "content": "You are an expert early childhood development specialist who creates practical, parent-friendly learning programs. You understand child psychology and create tasks that are age-appropriate, engaging, and achievable. Always respond with valid JSON only."
-        },
-        {"role": "user", "content": prompt}
-      ],
-      "max_tokens": 3000,
-      "temperature": 0.7
-    }),
-  ).timeout(
-    const Duration(seconds: 30),
-    onTimeout: () {
-      throw Exception("Request timed out. Please check your internet connection and try again.");
-    },
+  // Server-side model call via the `aiGenerate` Cloud Function (task
+  // appLearningPath). The server holds the key and pins the same system
+  // prompt + settings this used to send (gpt-4o-mini, max_tokens 3000,
+  // temperature 0.7). Timeout is a little longer than the old 30s to
+  // allow for the function hop.
+  String content = await callAiProxy(
+    'appLearningPath',
+    prompt: prompt,
+    timeout: const Duration(seconds: 60),
   );
-
-  if (response.statusCode != 200) {
-    throw Exception("OpenAI API error: ${response.body}");
-  }
-
-  final data = jsonDecode(response.body);
-  String content = data['choices'][0]['message']['content'];
 
   // 🧩 Step 3 — Clean and Fix JSON if needed
   // New shape (preferred): { path_title, path_summary, tasks: [...] }

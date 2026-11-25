@@ -6,15 +6,14 @@ import 'package:flutter/material.dart';
 // Begin custom action code
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
-import 'package:http/http.dart' as http;
-import 'package:firebase_remote_config/firebase_remote_config.dart';
+import '/backend/cloud_functions/ai_proxy.dart';
 
 /// Generates a personalized skill path curriculum using OpenAI and expert RAG context
 ///
 /// This action:
 /// 1. Loads the expert template for RAG context
 /// 2. Collects all user preferences from the creation flow
-/// 3. Calls OpenAI API with a structured prompt
+/// 3. Calls the aiGenerate Cloud Function (server-side model call)
 /// 4. Parses the generated curriculum JSON
 /// 5. Creates a SkillPathRecord in Firestore with all milestones and sub-steps
 ///
@@ -32,96 +31,22 @@ Future<DocumentReference?> generateSkillCurriculum(
   Map<String, dynamic> expertTemplate,
 ) async {
   try {
-    // Get OpenAI API key from Firebase Remote Config
-    debugPrint('🔵 Fetching Remote Config...');
-    final remoteConfig = FirebaseRemoteConfig.instance;
-    await remoteConfig.fetchAndActivate();
-    final apiKey = remoteConfig.getString('openai_api_key');
-
-    debugPrint('🔵 API key retrieved: ${apiKey.isEmpty ? "EMPTY" : "EXISTS (${apiKey.length} chars)"}');
-
-    if (apiKey.isEmpty) {
-      debugPrint('❌ OpenAI API key not configured in Remote Config');
-      throw Exception('MISSING_API_KEY: OpenAI API key is empty in Firebase Remote Config. Add "openai_api_key" parameter.');
-    }
-
-    // Build the prompt for OpenAI
+    // Build the prompt (unchanged)
     final prompt = _buildPrompt(skillKey, userChoices, expertTemplate);
 
     debugPrint('🔵 Generating skill curriculum for: $skillKey');
     debugPrint('🔵 User choices: ${jsonEncode(userChoices)}');
 
-    // Call OpenAI API
-    final response = await http
-        .post(
-      Uri.parse('https://api.openai.com/v1/chat/completions'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $apiKey',
-      },
-      body: jsonEncode({
-        'model': 'gpt-4o',
-        'messages': [
-          {
-            'role': 'system',
-            'content':
-                'You are an expert curriculum designer creating personalized skill learning paths. You reference real expert methodologies and create high-quality, detailed instructional content.',
-          },
-          {
-            'role': 'user',
-            'content': prompt,
-          },
-        ],
-        'temperature': 0.7,
-        'max_tokens': 4000, // Enough for 15 milestones x 3 steps
-        'response_format': {'type': 'json_object'},
-      }),
-    )
-        .timeout(
-      const Duration(seconds: 60),
-      onTimeout: () {
-        throw Exception('OpenAI API request timed out after 60 seconds');
-      },
+    // Server-side model call via the aiGenerate Cloud Function (task
+    // appSkillCurriculum). The server pins the same system prompt and
+    // settings this used to send: gpt-4o, temperature 0.7, max_tokens
+    // 4000, response_format json_object. The OpenAI key stays server-side.
+    final content = await callAiProxy(
+      'appSkillCurriculum',
+      prompt: prompt,
+      timeout: const Duration(seconds: 180),
     );
-
-    if (response.statusCode != 200) {
-      final errorBody = response.body;
-      debugPrint('❌ OpenAI API error: ${response.statusCode}');
-      debugPrint('❌ Response: $errorBody');
-
-      // Try to parse error message from OpenAI response
-      String errorMessage = 'API_ERROR_${response.statusCode}';
-      try {
-        final errorJson = jsonDecode(errorBody) as Map<String, dynamic>;
-        if (errorJson.containsKey('error')) {
-          final error = errorJson['error'];
-          if (error is Map && error.containsKey('message')) {
-            errorMessage += ': ${error['message']}';
-          } else {
-            errorMessage += ': ${error.toString()}';
-          }
-          // Also include error type if available
-          if (error is Map && error.containsKey('type')) {
-            errorMessage += ' (${error['type']})';
-          }
-        }
-      } catch (e) {
-        // If we can't parse JSON, include raw body (truncated)
-        if (errorBody.length > 200) {
-          errorMessage += ': ${errorBody.substring(0, 200)}...';
-        } else {
-          errorMessage += ': $errorBody';
-        }
-      }
-
-      debugPrint('❌ Formatted error: $errorMessage');
-      throw Exception(errorMessage);
-    }
-
-    final responseData = jsonDecode(response.body);
-    debugPrint('✅ Got OpenAI response');
-
-    final content = responseData['choices'][0]['message']['content'] as String;
+    debugPrint('✅ Got AI response');
     debugPrint('🔵 Content length: ${content.length} characters');
     debugPrint('🔵 First 200 chars: ${content.substring(0, content.length > 200 ? 200 : content.length)}');
 

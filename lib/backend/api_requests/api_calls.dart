@@ -9,19 +9,16 @@ export 'api_manager.dart' show ApiCallResponse;
 
 const _kPrivateApiFunctionName = 'ffPrivateApiCall';
 
-/// Helper function to get OpenAI authorization header from Remote Config
-String _getOpenAiAuthHeader() {
-  return 'Bearer ${FFAppState().openAiKey}';
-}
-
 /// Start OpenAi custom Group Code
+///
+/// SECURITY: these used to call api.openai.com directly with a key shipped
+/// to the app via Remote Config. That key path is gone. The only live
+/// caller (legacy v1 AI chat, ai_chat_completion_widget.dart) now uses the
+/// `aiGenerate` Cloud Function via lib/backend/cloud_functions/ai_proxy.dart.
+/// The classes below are kept as inert stubs (HTTP 410, no network) so the
+/// unrouted legacy assistant widget still compiles.
 
 class OpenAiCustomGroup {
-  static String getBaseUrl() => 'https://api.openai.com/v1';
-  static Map<String, String> get headers => {
-    'Authorization': _getOpenAiAuthHeader(),
-    'Content-Type': 'application/json',
-  };
   static CreateThreadNCall createThreadNCall = CreateThreadNCall();
   static AddMessageToThreidCall addMessageToThreidCall =
       AddMessageToThreidCall();
@@ -32,29 +29,10 @@ class OpenAiCustomGroup {
   static GetRunNCall getRunNCall = GetRunNCall();
 }
 
-class CreateThreadNCall {
-  Future<ApiCallResponse> call() async {
-    final baseUrl = OpenAiCustomGroup.getBaseUrl();
+const ApiCallResponse _kOpenAiRemoved = ApiCallResponse(null, {}, 410);
 
-    return ApiManager.instance.makeApiCall(
-      callName: 'createThreadN',
-      apiUrl: '$baseUrl/threads',
-      callType: ApiCallType.POST,
-      headers: {
-        'Authorization': _getOpenAiAuthHeader(),
-        'Content-Type': 'application/json',
-        'OpenAI-Beta': 'assistants=v2',
-      },
-      params: {},
-      bodyType: BodyType.JSON,
-      returnBody: true,
-      encodeBodyUtf8: false,
-      decodeUtf8: false,
-      cache: false,
-      isStreamingApi: false,
-      alwaysAllowBody: false,
-    );
-  }
+class CreateThreadNCall {
+  Future<ApiCallResponse> call() async => _kOpenAiRemoved;
 
   String? threadID(dynamic response) => castToType<String>(getJsonField(
         response,
@@ -66,127 +44,30 @@ class AddMessageToThreidCall {
   Future<ApiCallResponse> call({
     String? threadId = '',
     String? message = '',
-  }) async {
-    final baseUrl = OpenAiCustomGroup.getBaseUrl();
-
-    final ffApiRequestBody = '''
-{
-  "role": "user",
-  "content": "${escapeStringForJson(message)}"
-}''';
-    return ApiManager.instance.makeApiCall(
-      callName: 'Add message to threid',
-      apiUrl: '$baseUrl/threads/$threadId/messages',
-      callType: ApiCallType.POST,
-      headers: {
-        'Authorization': _getOpenAiAuthHeader(),
-        'Content-Type': 'application/json',
-        'OpenAI-Beta': 'assistants=v2',
-      },
-      params: {},
-      body: ffApiRequestBody,
-      bodyType: BodyType.JSON,
-      returnBody: true,
-      encodeBodyUtf8: false,
-      decodeUtf8: false,
-      cache: false,
-      isStreamingApi: false,
-      alwaysAllowBody: false,
-    );
-  }
+  }) async =>
+      _kOpenAiRemoved;
 }
 
 class CreateRunnCall {
   Future<ApiCallResponse> call({
     String? threadId = '',
     String? assistantId = '',
-  }) async {
-    final baseUrl = OpenAiCustomGroup.getBaseUrl();
-
-    final ffApiRequestBody = '''
-{
-  "assistant_id":"${escapeStringForJson(assistantId)}" 
-}''';
-    return ApiManager.instance.makeApiCall(
-      callName: 'create runn',
-      apiUrl: '$baseUrl/threads/$threadId/runs',
-      callType: ApiCallType.POST,
-      headers: {
-        'Authorization': _getOpenAiAuthHeader(),
-        'Content-Type': 'application/json',
-        'OpenAI-Beta': 'assistants=v2',
-      },
-      params: {},
-      body: ffApiRequestBody,
-      bodyType: BodyType.JSON,
-      returnBody: true,
-      encodeBodyUtf8: false,
-      decodeUtf8: false,
-      cache: false,
-      isStreamingApi: true,
-      alwaysAllowBody: false,
-    );
-  }
+  }) async =>
+      _kOpenAiRemoved;
 }
 
 class GetMessagesCall {
   Future<ApiCallResponse> call({
     String? threadId = '',
-  }) async {
-    final baseUrl = OpenAiCustomGroup.getBaseUrl();
-
-    return ApiManager.instance.makeApiCall(
-      callName: 'get messages',
-      apiUrl: '$baseUrl/threads/$threadId/messages',
-      callType: ApiCallType.GET,
-      headers: {
-        'Authorization': _getOpenAiAuthHeader(),
-        'Content-Type': 'application/json',
-        'OpenAI-Beta': 'assistants=v2',
-      },
-      params: {},
-      returnBody: true,
-      encodeBodyUtf8: false,
-      decodeUtf8: false,
-      cache: false,
-      isStreamingApi: false,
-      alwaysAllowBody: false,
-    );
-  }
+  }) async =>
+      _kOpenAiRemoved;
 }
 
 class ChatCompletionCall {
   Future<ApiCallResponse> call({
     dynamic messagesJson,
-  }) async {
-    final baseUrl = OpenAiCustomGroup.getBaseUrl();
-
-    final messages = _serializeJson(messagesJson, true);
-    final ffApiRequestBody = '''
-{
-  "model": "gpt-4o-mini",
-  "messages": $messages,
-  "stream": true
-}''';
-    return ApiManager.instance.makeApiCall(
-      callName: 'Chat completion ',
-      apiUrl: '$baseUrl/chat/completions',
-      callType: ApiCallType.POST,
-      headers: {
-        'Authorization': _getOpenAiAuthHeader(),
-        'Content-Type': 'application/json',
-      },
-      params: {},
-      body: ffApiRequestBody,
-      bodyType: BodyType.JSON,
-      returnBody: true,
-      encodeBodyUtf8: false,
-      decodeUtf8: false,
-      cache: false,
-      isStreamingApi: true,
-      alwaysAllowBody: false,
-    );
-  }
+  }) async =>
+      _kOpenAiRemoved;
 }
 
 class CreateProgrammesCall {
@@ -196,41 +77,8 @@ class CreateProgrammesCall {
     int? frequency,
     String? preferedTime = '',
     String? currentDate = '',
-  }) async {
-    final baseUrl = OpenAiCustomGroup.getBaseUrl();
-
-    final ffApiRequestBody = '''
-{
-  "model": "gpt-4o",
-  "messages": [
-    {
-      "role": "system",
-      "content": "You are an AI assistant that generates a structured list of activities (tasks), minimum 10 tasks, for parents to do with their children to overcome a specific challenge. You will return a JSON array of tasks following a predefined schema.\\n\\n### Input Data:\\n- **Challenge Description:** ${escapeStringForJson(challengeDescription)}\\n- **Child's Birthdate:** ${escapeStringForJson(childBirthDate)} (format: YYYY-MM-DD)\\n- **Child's Age:** Calculate the child's age based on the birthdate and today's date (${escapeStringForJson(currentDate)}).\\n\\n### Task Schema (Use this format for the response):\\nEach task in the response should follow this structure:\\n\\n\`\`\`json\\n[\\n  {\\n    \\"title\\": \\"Task title\\",\\n    \\"description\\": \\"Detailed explanation of the activity\\",\\n \\"duration\\": ideal duration of the task in hour,\\n   }\\n]\\n\`\`\`\\n\\n### Additional Guidelines:\\n- The **duration** should be reasonable for a child of the given birthdate and age.\\n- **Ensure the activities are age-appropriate** based on the child's calculated age.\\n- Tasks should be engaging, educational, and suited to the challenge described.\\n\\n### Response Format:\\nReturn only the JSON array with tasks, **without extra text or explanations**."
-    }
-  ],
-  "response_format": {
-    "type": "json_object"
-  }
-}''';
-    return ApiManager.instance.makeApiCall(
-      callName: 'Create Programmes',
-      apiUrl: '$baseUrl/chat/completions',
-      callType: ApiCallType.POST,
-      headers: {
-        'Authorization': _getOpenAiAuthHeader(),
-        'Content-Type': 'application/json',
-      },
-      params: {},
-      body: ffApiRequestBody,
-      bodyType: BodyType.JSON,
-      returnBody: true,
-      encodeBodyUtf8: false,
-      decodeUtf8: false,
-      cache: false,
-      isStreamingApi: false,
-      alwaysAllowBody: false,
-    );
-  }
+  }) async =>
+      _kOpenAiRemoved;
 
   String? content(dynamic response) => castToType<String>(getJsonField(
         response,
@@ -242,26 +90,8 @@ class GetRunNCall {
   Future<ApiCallResponse> call({
     String? threadId = '',
     String? runId = '',
-  }) async {
-    final baseUrl = OpenAiCustomGroup.getBaseUrl();
-
-    return ApiManager.instance.makeApiCall(
-      callName: 'get run n',
-      apiUrl: '$baseUrl/threads/$threadId/runs/$runId',
-      callType: ApiCallType.GET,
-      headers: {
-        'Authorization': _getOpenAiAuthHeader(),
-        'Content-Type': 'application/json',
-      },
-      params: {},
-      returnBody: true,
-      encodeBodyUtf8: false,
-      decodeUtf8: false,
-      cache: false,
-      isStreamingApi: false,
-      alwaysAllowBody: false,
-    );
-  }
+  }) async =>
+      _kOpenAiRemoved;
 }
 
 /// End OpenAi custom Group Code

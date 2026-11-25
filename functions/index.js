@@ -1885,6 +1885,10 @@ exports.verifyStorePurchase = entitlements.verifyStorePurchase;
 exports.auditUserEntitlementWrites = entitlements.auditUserEntitlementWrites;
 exports.refreshStoreEntitlements = entitlements.refreshStoreEntitlements;
 
+// Authenticated AI proxy for the app (replaces client-side OpenAI calls).
+const aiProxy = require('./ai_proxy');
+exports.aiGenerate = aiProxy.aiGenerate;
+
 // "Poor man's Branch" — self-hosted deferred deep linking. Web /c/{code}
 // page POSTs a device fingerprint to recordPendingAttribution; the app
 // claims the match on first launch via claimAttribution. See

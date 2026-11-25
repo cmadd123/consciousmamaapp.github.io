@@ -75,7 +75,7 @@ void main() async {
   await appState.initializePersistedState();
 
   // Initialize API keys from Firebase Remote Config (secure)
-  await appState.initializeOpenAiKey();
+  await appState.initializeRemoteConfig();
   await appState.initializeInstacartApiKey();
   await appState.initializeWalmartApiKey();
   await appState.initializeStripeKey();
