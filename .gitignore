@@ -117,3 +117,7 @@ firebase/public/
 json
 remoteconfig.json
 REVIEW-NOTES.md
+
+# Cloud Functions dependencies (installed at deploy from package-lock.json)
+functions/node_modules/
+admin/node_modules/
