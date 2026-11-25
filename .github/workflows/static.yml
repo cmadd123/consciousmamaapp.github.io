@@ -85,7 +85,29 @@ jobs:
             --exclude='lib' --exclude='test' --exclude='functions' \
             --exclude='node_modules' --exclude='.dart_tool' \
             --exclude='scripts' --exclude='data' --exclude='tools' \
+            --exclude='*.md' \
+            --exclude='/admin/*.js' --exclude='/admin/package*.json' \
+            --include='/robots.txt' \
+            --include='/bf949e545e36e8957d88229b8d3d7919.txt' \
+            --exclude='/*.txt' \
+            --exclude='/*.yaml' --exclude='/*.yml' --exclude='/*.lock' \
+            --exclude='/*.rules' --exclude='/firebase.json' \
+            --exclude='/firestore.indexes.json' \
+            --exclude='/remoteconfig.template.json' \
+            --exclude='/check_milestones.js' --exclude='/qa_*.png' \
+            --exclude='/.firebase' --exclude='/.firebaserc' \
+            --exclude='/firebase' --exclude='/.maestro' \
+            --exclude='/app_store_assets/*.py' \
+            --exclude='.gitignore' \
             ./ _site/
+
+      - name: Verify no internal files leaked into the site
+        # Internal notes (strategy, QA, CRM, tester quotes) used to be served
+        # publicly at momrise.app/*.md. Fail the deploy if any come back.
+        run: |
+          LEAKS=$(find _site -name '*.md' -o -name '*.rules' -o -name 'pubspec.*' -o -name 'remote_config_output.txt' | head)
+          if [ -n "$LEAKS" ]; then echo "Internal files in site artifact:"; echo "$LEAKS"; exit 1; fi
+          test -f _site/robots.txt && test -f _site/bf949e545e36e8957d88229b8d3d7919.txt
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

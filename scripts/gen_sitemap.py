@@ -17,6 +17,11 @@ BASE = "https://momrise.app"
 EXCLUDE_PREFIXES = (
     "admin/", "creator/", "auth/", "oauth/", "web/", "s/", "c/",
     "node_modules/", "functions/", ".well-known/",
+    # Adapted third-party recipes are noindex (see generate-recipe-pages.js);
+    # a sitemap must not list pages that ask not to be indexed.
+    "r/",
+    # App Store review redirect, not content.
+    "review/",
 )
 # Individual files to skip.
 EXCLUDE_FILES = {"404.html"}

@@ -185,7 +185,11 @@ function buildSchema(recipe, slug) {
     name: recipe.recipe_name || 'Recipe',
     image: recipe.image_url ? [recipe.image_url] : [],
     description: truncate(recipe.recipe_name + (recipe.meal_typ ? ` — ${recipe.meal_typ}` : ''), 200),
-    author: { '@type': 'Organization', name: 'MomRise' },
+    // Credit the original creator, not MomRise — these recipes are adapted
+    // from third-party sites (see isBasedOn below).
+    author: recipe.source_url
+      ? { '@type': 'Organization', name: sourceDomain(recipe.source_url), url: recipe.source_url }
+      : { '@type': 'Organization', name: 'MomRise' },
     recipeYield: '4 servings',
     recipeCategory: recipe.meal_typ || 'Main Course',
     recipeCuisine: 'American',
@@ -281,6 +285,10 @@ function buildPage(recipe, slug, docId) {
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>${name} — MomRise</title>
   <meta name="description" content="${description}">
+  <!-- Adapted third-party recipes: kept for Pinterest and app deep links, but
+       not indexed (duplicate content + copyright posture). Remove this only
+       for recipes MomRise wrote or substantially rewrote. -->
+  <meta name="robots" content="noindex, follow">
   <link rel="canonical" href="https://momrise.app/r/${slug}/">
 
   <meta property="og:type" content="article">
@@ -507,6 +515,7 @@ ${faqSchemaJson}
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Recipes — MomRise</title>
   <meta name="description" content="Recipes you can save to your MomRise meal plan.">
+  <meta name="robots" content="noindex, follow">
   <link rel="canonical" href="https://momrise.app/r/">
   <link rel="stylesheet" href="/r/style.css">
 </head><body>
