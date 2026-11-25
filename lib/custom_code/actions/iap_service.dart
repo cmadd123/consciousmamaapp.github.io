@@ -13,6 +13,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:uuid/uuid.dart';
 
@@ -25,18 +26,13 @@ import 'package:uuid/uuid.dart';
 ///     Connect and Play Console: `momrise_month` ($6.99/mo) and
 ///     `momrise_year` ($69.99/yr). Both auto-renewable, both with a
 ///     7-day free-trial offer for new subscribers.
-///   - On purchase success, the user's Firestore doc is marked subscribed
-///     using the same fields the web flow writes (subscription_status,
-///     free_trial_start) so the rest of the app doesn't need to know
-///     which path the user came in on. The plan ('monthly' / 'annual')
-///     is recorded too in case future logic needs to differentiate.
-///
-/// Architecture is intentionally minimal — no RevenueCat, no server-side
-/// receipt validation. The stores handle trial/cancel/renew. We just
-/// listen to purchase events and mirror the active state into Firestore
-/// so existing entitlement checks (hasActiveSubscription) keep working.
-/// The Google purchase token is persisted so server-side verification /
-/// RTDN can be added later without asking users to re-buy.
+///   - On purchase success the app sends the store's verification data to
+///     the `verifyStorePurchase` Cloud Function, which verifies it with
+///     Apple / Google and then writes subscription_status etc. on the
+///     user's doc (functions/entitlements.js). The app can NOT write those
+///     fields itself — firestore.rules makes them server-write-only — so
+///     existing entitlement checks (hasActiveSubscription) keep working
+///     off server-verified data.
 
 const String kMonthlyProductId = 'momrise_month';
 const String kAnnualProductId = 'momrise_year';
@@ -178,45 +174,51 @@ Future<void> _handlePurchaseUpdates(
   }
 }
 
-/// Mirror an active store subscription into the user's Firestore doc.
-/// Uses the same fields the web Stripe flow writes so the rest of the
-/// app doesn't have to know which payment path the user took. Records
-/// 'monthly' or 'annual' based on which product the user bought.
+/// Ask the server to verify a store purchase and grant the entitlement.
+/// The `verifyStorePurchase` Cloud Function checks the purchase with
+/// Apple (signed StoreKit 2 transaction, or the app receipt on StoreKit 1)
+/// or Google Play (Android Publisher API) and only then writes
+/// subscription_status / plan / store ids on users/{uid}.
+///
+/// Errors are logged, not thrown: the caller still completes the purchase
+/// with the store (Google refunds unacknowledged purchases after 3 days),
+/// and the user can retry via Restore Purchases, which replays the
+/// purchase through this same path.
 Future<void> _markSubscribed(PurchaseDetails p) async {
   final user = FirebaseAuth.instance.currentUser;
   if (user == null) {
-    debugPrint('[IAP] purchase received but no signed-in user — cannot mirror');
+    debugPrint('[IAP] purchase received but no signed-in user — cannot verify');
     return;
   }
 
-  final plan = p.productID == kAnnualProductId ? 'annual' : 'monthly';
+  final verificationData = p.verificationData.serverVerificationData;
+  if (verificationData.isEmpty) {
+    debugPrint('[IAP] purchase has no serverVerificationData — cannot verify');
+    return;
+  }
 
-  final storeFields = Platform.isIOS
-      ? {
-          'subscription_source': 'apple_iap',
-          'apple_product_id': p.productID,
-          'apple_transaction_id': p.purchaseID,
-        }
-      : {
-          'subscription_source': 'google_play',
-          'google_product_id': p.productID,
-          'google_order_id': p.purchaseID,
-          // The purchase token is Google's durable handle on this
-          // subscription — persist it so server-side verification and
-          // Real-Time Developer Notifications can be added later.
-          'google_purchase_token': p.verificationData.serverVerificationData,
-        };
-
-  final docRef = FirebaseFirestore.instance.collection('users').doc(user.uid);
-  await docRef.set({
-    'subscription_status': 'active',
-    'subscription_plan': plan,
-    'subscription_updated_at': FieldValue.serverTimestamp(),
-    // The store handles the trial natively. If we don't have a trial
-    // start already (existing flow uses this), record one so gating works.
-    'free_trial_start': FieldValue.serverTimestamp(),
-    ...storeFields,
-  }, SetOptions(merge: true));
-
-  debugPrint('[IAP] Firestore marked subscribed ($plan) for ${user.uid}');
+  try {
+    final result = await FirebaseFunctions.instance
+        .httpsCallable(
+          'verifyStorePurchase',
+          options: HttpsCallableOptions(timeout: const Duration(seconds: 60)),
+        )
+        .call(<String, dynamic>{
+      'platform': Platform.isIOS ? 'ios' : 'android',
+      'productId': p.productID,
+      'purchaseId': p.purchaseID ?? '',
+      'verificationData': verificationData,
+    });
+    final data = result.data is Map
+        ? Map<String, dynamic>.from(result.data as Map)
+        : <String, dynamic>{};
+    debugPrint(
+      '[IAP] server verification for ${user.uid}: '
+      'active=${data['active']} plan=${data['plan']}',
+    );
+  } on FirebaseFunctionsException catch (e) {
+    debugPrint('[IAP] server verification failed: ${e.code} ${e.message}');
+  } catch (e) {
+    debugPrint('[IAP] server verification error: $e');
+  }
 }
