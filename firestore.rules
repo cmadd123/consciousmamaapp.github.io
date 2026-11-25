@@ -140,9 +140,61 @@ service cloud.firestore {
 
     // ─── Users collection ─────────────────────────────────────────
 
+    // Entitlement fields are SERVER-WRITE-ONLY (Cloud Functions use the
+    // admin SDK, which bypasses rules). Keep in sync with
+    // PROTECTED_USER_FIELDS in functions/entitlements.js.
+    function entitlementFields() {
+      return [
+        'subscription_status', 'subscription_plan', 'subscription_source',
+        'subscription_id', 'subscription_updated_at', 'subscription_expires_at',
+        'stripe_customer_id', 'current_period_end', 'trial_end', 'cancel_at',
+        'is_comped', 'comped_at', 'comped_by', 'comped_reason', 'comp_revoked_at',
+        'apple_product_id', 'apple_transaction_id', 'apple_original_transaction_id',
+        'google_product_id', 'google_order_id', 'google_purchase_token',
+        'store_environment', 'entitlement_verified_at', 'entitlement_flag'
+      ];
+    }
+
+    // free_trial_start: the app sets it once, at the end of onboarding,
+    // with FieldValue.serverTimestamp() (== request.time in rules). It can
+    // never be changed, back-dated, forward-dated or removed afterwards.
+    function trialStartOkOnCreate() {
+      return !('free_trial_start' in request.resource.data) ||
+        request.resource.data.free_trial_start == request.time;
+    }
+    function trialStartOkOnUpdate() {
+      return !request.resource.data.diff(resource.data).affectedKeys().hasAny(['free_trial_start']) ||
+        (resource.data.get('free_trial_start', null) == null &&
+         request.resource.data.get('free_trial_start', null) == request.time);
+    }
+
+    // apple_app_account_token: purchase-attribution UUID the app generates
+    // once (iap_service.dart _ensureAppAccountToken). Write-once so a user
+    // can't re-point it at someone else's store transactions.
+    function accountTokenOkOnCreate() {
+      return !('apple_app_account_token' in request.resource.data) ||
+        request.resource.data.apple_app_account_token is string;
+    }
+    function accountTokenOkOnUpdate() {
+      return !request.resource.data.diff(resource.data).affectedKeys().hasAny(['apple_app_account_token']) ||
+        (resource.data.get('apple_app_account_token', null) == null &&
+         request.resource.data.get('apple_app_account_token', null) is string);
+    }
+
     match /users/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
-      allow create: if request.auth != null && request.auth.uid == userId;
+      allow read: if isOwner(userId);
+      allow create: if isOwner(userId) &&
+        !request.resource.data.keys().hasAny(entitlementFields()) &&
+        trialStartOkOnCreate() &&
+        accountTokenOkOnCreate();
+      allow update: if isOwner(userId) &&
+        !request.resource.data.diff(resource.data).affectedKeys().hasAny(entitlementFields()) &&
+        trialStartOkOnUpdate() &&
+        accountTokenOkOnUpdate();
+      // The app never deletes its own users doc (Auth deletion triggers the
+      // onUserDeleted function). Blocking client delete also stops a
+      // delete + re-create from resetting free_trial_start.
+      allow delete: if false;
     }
 
     // ─── Milestones ───────────────────────────────────────────────
@@ -379,8 +431,16 @@ service cloud.firestore {
     // account, never from the app. See PREMIUM_EXEMPT.md for the
     // current list + maintenance flow.
 
+    // get-only, and only your own entry (by uid or by your sign-in email).
+    // `list` was previously allowed, which let any signed-in user dump
+    // every exempt email and then register one that has no account yet.
     match /premium_exempt/{docId} {
-      allow read: if isAuthenticated();
+      allow get: if isAuthenticated() && (
+        docId == request.auth.uid ||
+        (request.auth.token.email != null &&
+         docId == request.auth.token.email.lower())
+      );
+      allow list: if false;
       allow write: if false;
     }
 
