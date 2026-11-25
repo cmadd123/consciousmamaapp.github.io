@@ -5,7 +5,7 @@
     "subhead": "The two main ways to start solids, compared side by side — and how to pick (or combine) them.",
     "category": "Starting solids",
     "question": "What's the difference between baby-led weaning and purées, and which is better?",
-    "answer": "Baby-led weaning (BLW) means letting your baby self-feed soft, graspable pieces of food from the start, while the purée approach means spoon-feeding smooth mashed food and gradually thickening the texture. Neither is medically \"better\" — major pediatric groups consider both safe when done with age-appropriate textures and close supervision. Many families combine them. The right choice comes down to your baby's readiness, your comfort with mess and gagging, and what fits your routine.",
+    "answer": "Baby-led weaning (BLW) means letting your baby self-feed soft, graspable pieces of food from the start, while the purée approach means spoon-feeding smooth mashed food and gradually thickening the texture. Neither is proven \"better\" — the NHS, for example, says babies can start with either finger foods or smooth and mashed foods, as long as textures are age-appropriate and an adult supervises every meal [3]. Many families combine them. The right choice comes down to your baby's readiness, your comfort with mess and gagging, and what fits your routine.",
     "cta": {
       "lead": "Feeding a new eater?",
       "body": "MomRise builds <strong>age-appropriate weekly meal plans</strong> and grocery lists as your baby grows — so you're not guessing what to serve next."
@@ -26,8 +26,8 @@
       },
       {
         "dim": "Typical start",
-        "a": "Around 6 months, once baby can sit up with little support, holds their head steady, and reaches for food",
-        "b": "Often 4–6 months depending on readiness and pediatric guidance"
+        "a": "Around 6 months, once baby can sit up with little support, holds their head steady, and reaches for food [3]",
+        "b": "Around 6 months for most babies, based on readiness signs — not before 4 months [1, 2]"
       },
       {
         "dim": "Texture progression",
@@ -46,7 +46,7 @@
       },
       {
         "dim": "Gagging (normal) vs. choking",
-        "a": "Gagging is common early and is a normal protective reflex; requires close supervision and safe textures/shapes",
+        "a": "Gagging is common early and is different from choking [3]; requires close supervision and safe textures/shapes",
         "b": "Smooth textures reduce early gagging; supervision still required as textures advance"
       },
       {
@@ -56,20 +56,35 @@
       }
     ],
     "bestFor": [
-      { "when": "You want your baby to self-feed and explore textures early", "pick": "Baby-led weaning" },
-      { "when": "You want to see exactly how much your baby is eating", "pick": "Purées" },
-      { "when": "Gagging makes you anxious and you'd rather ease in gradually", "pick": "Purées, then finger foods" },
-      { "when": "You want less mess at the start", "pick": "Purées" },
-      { "when": "You want the flexibility of both", "pick": "A combination — many families do purées at some meals and finger foods at others" }
+      {
+        "when": "You want your baby to self-feed and explore textures early",
+        "pick": "Baby-led weaning"
+      },
+      {
+        "when": "You want to see exactly how much your baby is eating",
+        "pick": "Purées"
+      },
+      {
+        "when": "Gagging makes you anxious and you'd rather ease in gradually",
+        "pick": "Purées, then finger foods"
+      },
+      {
+        "when": "You want less mess at the start",
+        "pick": "Purées"
+      },
+      {
+        "when": "You want the flexibility of both",
+        "pick": "A combination — many families do purées at some meals and finger foods at others"
+      }
     ],
     "faqs": [
       {
         "q": "Is baby-led weaning safe?",
-        "a": "Pediatric guidance considers baby-led weaning safe when your baby shows readiness signs, you offer soft age-appropriate textures and shapes, and you supervise every meal. Learn the difference between gagging (normal) and choking, avoid common choking hazards, and check with your pediatrician before starting."
+        "a": "Baby-led weaning can be done safely when your baby shows readiness signs, you offer soft age-appropriate textures and shapes, and you supervise every meal. Learn the difference between gagging (normal) and choking, avoid common choking hazards [4], and check with your pediatrician before starting."
       },
       {
         "q": "Which is better for picky eating later?",
-        "a": "Evidence is mixed and no method is proven to prevent picky eating. Early, repeated exposure to a variety of flavors and textures — which either approach can provide — is the factor most often linked to broader acceptance."
+        "a": "Evidence is mixed and no method is proven to prevent picky eating. Early, repeated exposure to a variety of flavors and textures — which either approach can provide — is what generally helps children accept a wider range of foods."
       },
       {
         "q": "Can I do both baby-led weaning and purées?",
@@ -77,19 +92,53 @@
       },
       {
         "q": "When should we start solids?",
-        "a": "Most guidance points to around 6 months, and readiness signs (sitting with support, steady head control, interest in food, loss of the tongue-thrust reflex) matter more than a fixed date. Your pediatrician can confirm the right time for your baby."
+        "a": "Most guidance points to around 6 months [1, 2, 3], and readiness signs (sitting with support, steady head control, interest in food, loss of the tongue-thrust reflex) matter more than a fixed date. Your pediatrician can confirm the right time for your baby."
       },
       {
         "q": "What foods should we avoid at first?",
-        "a": "Avoid honey before age 1, choking hazards (whole grapes, nuts, hard raw vegetables, chunks of meat/cheese), and added salt and sugar. Introduce common allergens one at a time and watch for reactions, per your pediatrician's guidance."
+        "a": "Avoid honey before age 1 [5], choking hazards (whole grapes, nuts, hard raw vegetables, chunks of meat/cheese), and added salt and sugar. Introduce common allergens one at a time and watch for reactions [1], per your pediatrician's guidance."
       }
     ],
     "disclaimer": "This is general educational information, not medical advice. Feeding readiness and safety vary by child — always follow your pediatrician's guidance, and learn infant choking first aid before starting solids.",
-    "sources": [
-      "American Academy of Pediatrics (HealthyChildren.org) — starting solid foods & choking prevention",
-      "CDC — Infant and Toddler Nutrition"
+    "related": [
+      {
+        "url": "/answers/when-can-babies-have-peanuts-and-eggs/",
+        "title": "When can babies have peanuts and eggs?"
+      },
+      {
+        "url": "/answers/choking-hazards-by-age/",
+        "title": "Which foods are choking hazards, and until what age?"
+      }
     ],
-    "updated": "2026-08-15"
+    "sources": [
+      {
+        "title": "When Can Babies Start Solid Foods? Readiness & Feeding Tips",
+        "publisher": "American Academy of Pediatrics (HealthyChildren.org)",
+        "url": "https://www.healthychildren.org/English/ages-stages/baby/feeding-nutrition/Pages/Starting-Solid-Foods.aspx"
+      },
+      {
+        "title": "When, What, and How to Introduce Solid Foods",
+        "publisher": "Centers for Disease Control and Prevention (CDC)",
+        "url": "https://www.cdc.gov/infant-toddler-nutrition/foods-and-drinks/when-what-and-how-to-introduce-solid-foods.html"
+      },
+      {
+        "title": "Your baby's first solid foods",
+        "publisher": "NHS (UK National Health Service)",
+        "url": "https://www.nhs.uk/baby/weaning-and-feeding/babys-first-solid-foods/"
+      },
+      {
+        "title": "Choking Hazards",
+        "publisher": "Centers for Disease Control and Prevention (CDC)",
+        "url": "https://www.cdc.gov/infant-toddler-nutrition/foods-and-drinks/choking-hazards.html"
+      },
+      {
+        "title": "Is it OK to make my own baby food?",
+        "publisher": "American Academy of Pediatrics (HealthyChildren.org)",
+        "url": "https://www.healthychildren.org/English/tips-tools/ask-the-pediatrician/Pages/Is-it-OK-to-make-my-own-baby-food.aspx"
+      }
+    ],
+    "published": "2026-08-15",
+    "updated": "2026-11-25"
   },
   {
     "slug": "montessori-vs-traditional",
@@ -97,7 +146,7 @@
     "subhead": "Two very different approaches to how young children learn — compared side by side.",
     "category": "Learning & play",
     "question": "What's the difference between Montessori and a traditional approach, and which is better for my child?",
-    "answer": "Montessori is a child-led approach where kids choose hands-on, self-correcting activities at their own pace in mixed-age classrooms, with the adult acting as a guide. A traditional approach is teacher-directed, groups children by age, follows a set curriculum with whole-group instruction, and uses grades or rewards. Neither is universally \"better\" — the right fit depends on your child's temperament, how they focus, and what you value. Many families blend both.",
+    "answer": "Montessori is a child-led approach where kids choose hands-on, self-correcting activities at their own pace in mixed-age classrooms, with the adult acting as a guide [1]. A traditional approach is teacher-directed, groups children by age, follows a set curriculum with whole-group instruction, and uses grades or rewards. Neither is universally \"better\" — the right fit depends on your child's temperament, how they focus, and what you value. Many families blend both.",
     "cta": {
       "lead": "Looking for age-right activities?",
       "body": "MomRise suggests <strong>hands-on activities and learning paths</strong> tuned to your child's age, mood, and energy — Montessori-inspired or not."
@@ -111,32 +160,93 @@
       "blurb": "Teacher-directed and structured. Same-age classes follow a set curriculum with whole-group lessons, and progress is tracked with grades, tests, or rewards."
     },
     "table": [
-      { "dim": "Who leads", "a": "The child chooses activities", "b": "The teacher directs the lesson" },
-      { "dim": "Classroom", "a": "Mixed ages (often 3-year spans)", "b": "Grouped by same age/grade" },
-      { "dim": "Materials", "a": "Hands-on, self-correcting, concrete", "b": "Textbooks, worksheets, whole-class tools" },
-      { "dim": "Pace", "a": "Self-paced, uninterrupted work periods", "b": "Set schedule and shared pace" },
-      { "dim": "Motivation", "a": "Intrinsic — the work itself", "b": "Often external — grades, stars, rewards" },
-      { "dim": "Role of the adult", "a": "Guide and observer", "b": "Instructor and evaluator" }
+      {
+        "dim": "Who leads",
+        "a": "The child chooses activities",
+        "b": "The teacher directs the lesson"
+      },
+      {
+        "dim": "Classroom",
+        "a": "Mixed ages (often 3-year spans) [1]",
+        "b": "Grouped by same age/grade"
+      },
+      {
+        "dim": "Materials",
+        "a": "Hands-on, self-correcting, concrete",
+        "b": "Textbooks, worksheets, whole-class tools"
+      },
+      {
+        "dim": "Pace",
+        "a": "Self-paced, uninterrupted work periods",
+        "b": "Set schedule and shared pace"
+      },
+      {
+        "dim": "Motivation",
+        "a": "Intrinsic — the work itself [1]",
+        "b": "Often external — grades, stars, rewards"
+      },
+      {
+        "dim": "Role of the adult",
+        "a": "Guide and observer",
+        "b": "Instructor and evaluator"
+      }
     ],
     "bestFor": [
-      { "when": "Your child thrives with independence and choice", "pick": "Montessori" },
-      { "when": "Your child likes clear structure and routine", "pick": "Traditional" },
-      { "when": "You want a measurable, standardized curriculum", "pick": "Traditional" },
-      { "when": "You want self-paced, hands-on, sensory learning", "pick": "Montessori" },
-      { "when": "You're unsure", "pick": "Try elements of both at home and watch what your child responds to" }
+      {
+        "when": "Your child thrives with independence and choice",
+        "pick": "Montessori"
+      },
+      {
+        "when": "Your child likes clear structure and routine",
+        "pick": "Traditional"
+      },
+      {
+        "when": "You want a measurable, standardized curriculum",
+        "pick": "Traditional"
+      },
+      {
+        "when": "You want self-paced, hands-on, sensory learning",
+        "pick": "Montessori"
+      },
+      {
+        "when": "You're unsure",
+        "pick": "Try elements of both at home and watch what your child responds to"
+      }
     ],
     "faqs": [
-      { "q": "Is Montessori better than traditional schooling?", "a": "Research is mixed and neither is best for every child. Some studies find benefits from Montessori for executive function and independence; outcomes depend heavily on program quality and the individual child." },
-      { "q": "Can I do Montessori at home?", "a": "Yes — the core ideas (child-height access, real hands-on tasks, letting kids do things themselves, and offering choices) translate well to home without special schooling or expensive materials." },
-      { "q": "Is Montessori good for active or easily distracted kids?", "a": "Many families find the freedom of movement and hands-on work helps kids who struggle to sit still, but it varies by child. A structured environment suits some kids better." },
-      { "q": "Is 'Montessori' a regulated term?", "a": "No — the name isn't trademarked, so quality varies widely between programs. Look at teacher training and whether the classroom truly follows child-led, hands-on principles." }
+      {
+        "q": "Is Montessori better than traditional schooling?",
+        "a": "Research is mixed and neither is best for every child. Some studies find benefits — for example, a 2017 lottery-based study of public Montessori preschools found faster growth in academic achievement and social understanding, while differences in executive function were not clear-cut [2]. Outcomes depend heavily on program quality and the individual child."
+      },
+      {
+        "q": "Can I do Montessori at home?",
+        "a": "Yes — the core ideas (child-height access, real hands-on tasks, letting kids do things themselves, and offering choices) translate well to home without special schooling or expensive materials."
+      },
+      {
+        "q": "Is Montessori good for active or easily distracted kids?",
+        "a": "Many families find the freedom of movement and hands-on work helps kids who struggle to sit still, but it varies by child. A structured environment suits some kids better."
+      },
+      {
+        "q": "Is 'Montessori' a regulated term?",
+        "a": "Not really — in the US the name isn't owned by any single organization, so programs vary widely. Affiliation with an established Montessori organization is one quality signal [1]; also look at teacher training and whether the classroom truly follows child-led, hands-on principles."
+      }
     ],
     "disclaimer": "This is general educational information. Every child is different — the best judge is watching how your own child learns and engages.",
+    "related": [],
     "sources": [
-      "American Montessori Society — Montessori education overview",
-      "Peer-reviewed early-childhood education research (mixed findings)"
+      {
+        "title": "What is Montessori?",
+        "publisher": "American Montessori Society",
+        "url": "https://amshq.org/about-montessori/"
+      },
+      {
+        "title": "Montessori Preschool Elevates and Equalizes Child Outcomes: A Longitudinal Study",
+        "publisher": "Lillard et al., Frontiers in Psychology (2017)",
+        "url": "https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2017.01783/full"
+      }
     ],
-    "updated": "2026-08-15"
+    "published": "2026-08-15",
+    "updated": "2026-11-25"
   },
   {
     "slug": "toddler-bed-vs-crib",
@@ -144,7 +254,7 @@
     "subhead": "When to make the switch — and how to know your child is ready.",
     "category": "Sleep & routines",
     "question": "When should you switch your toddler from a crib to a toddler bed?",
-    "answer": "There's no single right age — most children move from a crib to a toddler bed sometime between about 18 months and 3.5 years. The most important trigger is safety: once your child can climb out of the crib (or reaches roughly 35 inches / the manufacturer's height limit), it's time to switch to prevent falls. If they're still safely contained and sleeping well, there's no rush.",
+    "answer": "There's no single right age — the real trigger is safety. The AAP says that once your toddler can climb out of the crib, it may be time for a \"big kid\" bed [1], and crib-safety guidance says children should stop using a crib by about 35 inches tall (or the manufacturer's height limit) [2]. If they're still safely contained and sleeping well, there's no rush.",
     "cta": {
       "lead": "Smoothing a big transition?",
       "body": "MomRise helps you build <strong>consistent bedtime routines</strong> and track milestones — so changes like the crib-to-bed switch go easier."
@@ -158,31 +268,89 @@
       "blurb": "A low, open bed (often using the crib mattress). Gives independence and easy in-and-out — but the room needs to be fully childproofed."
     },
     "table": [
-      { "dim": "Typical timing", "a": "Birth to when climbing starts", "b": "~18 months to 3.5 years" },
-      { "dim": "Safety", "a": "Contains the child; risk once they climb", "b": "Open — requires a childproofed room + often a rail" },
-      { "dim": "Independence", "a": "Low — needs lifting in/out", "b": "High — child gets in and out alone" },
-      { "dim": "Night potty training", "a": "Harder — can't get out", "b": "Easier — child can reach the bathroom" },
-      { "dim": "Cost", "a": "Already have it", "b": "Low if it uses the crib mattress" },
-      { "dim": "Sleep disruption risk", "a": "Stable", "b": "Possible short-term regressions as they test freedom" }
+      {
+        "dim": "Typical timing",
+        "a": "Birth to when climbing starts",
+        "b": "Once climbing out or ~35 in tall — no fixed age [1, 2]"
+      },
+      {
+        "dim": "Safety",
+        "a": "Contains the child; risk once they climb",
+        "b": "Open — requires a childproofed room + often a rail"
+      },
+      {
+        "dim": "Independence",
+        "a": "Low — needs lifting in/out",
+        "b": "High — child gets in and out alone"
+      },
+      {
+        "dim": "Night potty training",
+        "a": "Harder — can't get out",
+        "b": "Easier — child can reach the bathroom"
+      },
+      {
+        "dim": "Cost",
+        "a": "Already have it",
+        "b": "Low if it uses the crib mattress"
+      },
+      {
+        "dim": "Sleep disruption risk",
+        "a": "Stable",
+        "b": "Possible short-term regressions as they test freedom"
+      }
     ],
     "bestFor": [
-      { "when": "Your child is climbing out of the crib", "pick": "Switch to a toddler bed now (safety)" },
-      { "when": "You're night-potty-training", "pick": "Toddler bed" },
-      { "when": "A new baby needs the crib", "pick": "Transition a bit earlier, ideally weeks ahead" },
-      { "when": "Your child is content and safely contained", "pick": "Keep the crib — no rush" }
+      {
+        "when": "Your child is climbing out of the crib",
+        "pick": "Switch to a toddler bed now (safety)"
+      },
+      {
+        "when": "You're night-potty-training",
+        "pick": "Toddler bed"
+      },
+      {
+        "when": "A new baby needs the crib",
+        "pick": "Transition a bit earlier, ideally weeks ahead"
+      },
+      {
+        "when": "Your child is content and safely contained",
+        "pick": "Keep the crib — no rush"
+      }
     ],
     "faqs": [
-      { "q": "Is it bad to switch too early?", "a": "Switching before a child understands staying in bed can cause bedtime battles and lost sleep. Unless safety (climbing) or a new sibling requires it, many experts suggest waiting until closer to 3." },
-      { "q": "My toddler climbs out of the crib — what should I do?", "a": "Climbing is a fall risk, so it's the clearest sign to move to a toddler or low bed. Lower the mattress first if you can; if they still climb, switch and childproof the room." },
-      { "q": "Toddler bed or floor bed?", "a": "Both are low and safe options. A floor bed (a Montessori-style mattress on the floor) offers the most freedom; a toddler bed with a rail offers a little more containment." },
-      { "q": "Do I need a bed rail?", "a": "A rail helps prevent rolling out for younger toddlers. Many families use one at first and remove it once the child sleeps reliably." }
+      {
+        "q": "Is it bad to switch too early?",
+        "a": "Switching before a child understands staying in bed can cause bedtime battles and lost sleep. Unless safety (climbing) or a new sibling requires it, there's no reason to rush."
+      },
+      {
+        "q": "My toddler climbs out of the crib — what should I do?",
+        "a": "Climbing is a fall risk, so it's the clearest sign to move to a toddler or low bed [1]. Keep the crib mattress at its lowest setting [2]; if they still climb, switch and childproof the room — gate the doorway and stairs and anchor furniture so it can't tip [1]."
+      },
+      {
+        "q": "Toddler bed or floor bed?",
+        "a": "Both are low and safe options. A floor bed (a Montessori-style mattress on the floor) offers the most freedom; a toddler bed with a rail offers a little more containment."
+      },
+      {
+        "q": "Do I need a bed rail?",
+        "a": "A rail helps prevent rolling out for younger toddlers. Many families use one at first and remove it once the child sleeps reliably."
+      }
     ],
     "disclaimer": "General guidance only — follow current safe-sleep recommendations and your pediatrician's advice, and always childproof the room before an open bed.",
+    "related": [],
     "sources": [
-      "American Academy of Pediatrics (HealthyChildren.org) — sleep & safe environments",
-      "Consumer product safety guidance on crib height limits"
+      {
+        "title": "Big Kid Beds: When to Switch From a Crib",
+        "publisher": "American Academy of Pediatrics (HealthyChildren.org)",
+        "url": "https://www.healthychildren.org/English/healthy-living/sleep/Pages/Big-Kid-Beds-When-To-Make-the-Switch.aspx"
+      },
+      {
+        "title": "Cribs and crib safety",
+        "publisher": "MedlinePlus (U.S. National Library of Medicine)",
+        "url": "https://medlineplus.gov/ency/patientinstructions/000542.htm"
+      }
     ],
-    "updated": "2026-08-15"
+    "published": "2026-08-15",
+    "updated": "2026-11-25"
   },
   {
     "slug": "whole-milk-vs-plant-based-milk-toddlers",
@@ -190,45 +358,117 @@
     "subhead": "After age 1, what should go in the cup — and how the options actually compare.",
     "category": "Toddler nutrition",
     "question": "Is whole cow's milk or plant-based milk better for toddlers after age 1?",
-    "answer": "For most toddlers with no allergy, pediatric guidance points to whole cow's milk as the default after age 1 — it delivers protein, the fat young brains need, and calcium plus vitamin D. Most plant-based milks have less protein and fat and vary a lot in fortification; the closest nutritional match is fortified, unsweetened soy milk. Almond, oat, and rice milks are low in protein, so if you use them, protein needs to come from elsewhere. Always choose unsweetened, and check with your pediatrician — especially for allergies or a vegan diet.",
+    "answer": "For most toddlers with no allergy, pediatric guidance points to plain whole cow's milk from 12 to 24 months, then low-fat or skim [1, 3] — it delivers protein, the fat young children need for growth [2], and calcium plus vitamin D. Most plant-based milks have less protein and fat and vary a lot in fortification; the closest nutritional match is fortified, unsweetened soy milk [1, 2]. Almond, oat, and rice milks are low in protein, so if you use them, protein needs to come from elsewhere. Always choose unsweetened, and check with your pediatrician — especially for allergies or a vegan diet.",
     "cta": {
       "lead": "Planning meals for a growing toddler?",
       "body": "MomRise builds <strong>balanced weekly meal plans</strong> and grocery lists for your child's age — so protein, iron, and variety take care of themselves."
     },
     "a": {
       "name": "Whole cow's milk",
-      "blurb": "The common default after age 1: roughly 8g protein per cup, plenty of fat for brain development, and naturally rich in calcium (usually with added vitamin D)."
+      "blurb": "The common default after age 1: roughly 8g protein per cup, the fat young children need for growth [2], and naturally rich in calcium (usually with added vitamin D)."
     },
     "b": {
       "name": "Plant-based milk",
       "blurb": "Ranges widely. Fortified, unsweetened soy is closest to cow's milk in protein; almond, oat, and rice milks are much lower in protein and depend on fortification for calcium and vitamin D."
     },
     "table": [
-      { "dim": "Protein per cup", "a": "~8 g", "b": "Soy ~7 g; oat ~2–4 g; almond/rice ~1 g" },
-      { "dim": "Fat (for brain development)", "a": "Naturally higher (whole)", "b": "Varies; often lower" },
-      { "dim": "Calcium & vitamin D", "a": "Naturally present + often added", "b": "Only if fortified — check the label" },
-      { "dim": "Allergy fit", "a": "Not for dairy allergy/lactose intolerance", "b": "Good for dairy-free/vegan diets" },
-      { "dim": "Added sugar", "a": "None (plain)", "b": "Avoid sweetened/flavored — pick unsweetened" },
-      { "dim": "Closest plant match", "a": "—", "b": "Fortified, unsweetened soy milk" }
+      {
+        "dim": "Protein per cup",
+        "a": "~8 g",
+        "b": "Soy ~7 g; oat ~2–4 g; almond/rice ~1 g"
+      },
+      {
+        "dim": "Fat (for growth)",
+        "a": "Naturally higher (whole)",
+        "b": "Varies; often lower"
+      },
+      {
+        "dim": "Calcium & vitamin D",
+        "a": "Naturally present + often added",
+        "b": "Only if fortified — check the label"
+      },
+      {
+        "dim": "Allergy fit",
+        "a": "Not for dairy allergy/lactose intolerance",
+        "b": "Good for dairy-free/vegan diets"
+      },
+      {
+        "dim": "Added sugar",
+        "a": "None (plain)",
+        "b": "Avoid sweetened/flavored — pick unsweetened"
+      },
+      {
+        "dim": "Closest plant match",
+        "a": "—",
+        "b": "Fortified, unsweetened soy milk"
+      }
     ],
     "bestFor": [
-      { "when": "No allergy or dietary restriction", "pick": "Whole cow's milk" },
-      { "when": "Dairy allergy or a vegan diet", "pick": "Fortified, unsweetened soy milk" },
-      { "when": "Lactose intolerance", "pick": "Lactose-free cow's milk or fortified soy" },
-      { "when": "Using almond/oat milk", "pick": "Okay as a drink, but get protein from other foods — check with your pediatrician" }
+      {
+        "when": "No allergy or dietary restriction",
+        "pick": "Whole cow's milk"
+      },
+      {
+        "when": "Dairy allergy or a vegan diet",
+        "pick": "Fortified, unsweetened soy milk"
+      },
+      {
+        "when": "Lactose intolerance",
+        "pick": "Lactose-free cow's milk or fortified soy"
+      },
+      {
+        "when": "Using almond/oat milk",
+        "pick": "Okay as a drink, but get protein from other foods — check with your pediatrician"
+      }
     ],
     "faqs": [
-      { "q": "Is almond milk okay for toddlers?", "a": "As an occasional drink it's fine, but almond milk is very low in protein and calories, so it shouldn't replace the nutrition of cow's or fortified soy milk for a toddler. Talk to your pediatrician if it's a main milk." },
-      { "q": "Which plant milk has the most protein?", "a": "Soy milk — it's the only common plant milk with protein close to cow's milk (about 7g per cup). Choose a fortified, unsweetened version." },
-      { "q": "When can a toddler start cow's milk?", "a": "Whole cow's milk is generally introduced at age 1 (it's not recommended as a main drink before then). Before 1, breast milk or formula remains the primary milk." },
-      { "q": "How much milk does a toddler need?", "a": "Common guidance is roughly 2 cups (about 16 oz) of milk a day for toddlers — too much can crowd out other foods and iron. Your pediatrician can tailor this." }
+      {
+        "q": "Is almond milk okay for toddlers?",
+        "a": "As an occasional drink it's fine, but almond milk is very low in protein and calories, so it shouldn't replace the nutrition of cow's or fortified soy milk for a toddler. Talk to your pediatrician if it's a main milk."
+      },
+      {
+        "q": "Which plant milk has the most protein?",
+        "a": "Soy milk — it's the only common plant milk with protein close to cow's milk (about 7g per cup), and the AAP considers soy milk an acceptable alternative [1]. Choose a fortified, unsweetened version [2]."
+      },
+      {
+        "q": "When can a toddler start cow's milk?",
+        "a": "Whole cow's milk can be introduced at 12 months — not before [2]. Before 1, breast milk or formula remains the primary milk."
+      },
+      {
+        "q": "How much milk does a toddler need?",
+        "a": "The AAP suggests about 2 cups (16 oz) of whole milk a day from 12 to 24 months [1]; a 2019 expert consensus allows 2–3 cups (16–24 oz) [3]. From age 2, switch to low-fat (1%) or skim, up to about 2–2½ cups a day depending on age [3]. Too much milk can crowd out other foods and make it harder to absorb iron [2]. Your pediatrician can tailor this."
+      }
     ],
     "disclaimer": "This is general nutrition information, not medical advice. Toddler needs, allergies, and growth vary — confirm milk choices and amounts with your pediatrician or a registered dietitian.",
-    "sources": [
-      "American Academy of Pediatrics (HealthyChildren.org) — milk for toddlers",
-      "CDC — Infant and Toddler Nutrition"
+    "related": [
+      {
+        "url": "/answers/how-much-milk-should-a-toddler-drink/",
+        "title": "How much milk should a toddler drink?"
+      },
+      {
+        "url": "/answers/iron-rich-foods-for-babies/",
+        "title": "What are the best iron-rich foods for babies?"
+      }
     ],
-    "updated": "2026-08-15"
+    "sources": [
+      {
+        "title": "Recommended Drinks for Children Age 5 & Younger",
+        "publisher": "American Academy of Pediatrics (HealthyChildren.org)",
+        "url": "https://www.healthychildren.org/English/healthy-living/nutrition/Pages/Recommended-Drinks-for-Young-Children-Ages-0-5.aspx"
+      },
+      {
+        "title": "Cow's Milk and Milk Alternatives",
+        "publisher": "Centers for Disease Control and Prevention (CDC)",
+        "url": "https://www.cdc.gov/infant-toddler-nutrition/foods-and-drinks/cows-milk-and-milk-alternatives.html"
+      },
+      {
+        "title": "Healthy Beverage Consumption in Early Childhood: Recommendations from Key National Health and Nutrition Organizations (2019)",
+        "publisher": "Healthy Eating Research — joint consensus of the AAP, AAPD, Academy of Nutrition and Dietetics, and AHA",
+        "url": "https://healthyeatingresearch.org/research/consensus-statement-healthy-beverage-consumption-in-early-childhood-recommendations-from-key-national-health-and-nutrition-organizations/"
+      }
+    ],
+    "published": "2026-08-15",
+    "updated": "2026-11-25"
   },
   {
     "slug": "high-chair-vs-booster-seat",
@@ -236,7 +476,7 @@
     "subhead": "Which feeding seat your child needs — and when to move from one to the other.",
     "category": "Feeding gear",
     "question": "Does my child need a high chair or a booster seat?",
-    "answer": "A high chair is a standalone seat with its own tray, made for babies starting solids (around 6 months) who can sit up with support. A booster seat straps onto a regular dining chair and suits older toddlers (roughly 18 months and up) who can sit at the table. Most families use a high chair first and move to a booster later; some convertible seats do both. The right pick depends on your child's age, your space, and whether you want them eating at the family table.",
+    "answer": "A high chair is a standalone seat with its own tray, made for babies starting solids (around 6 months) who can sit up with support [1]. A booster seat straps onto a regular dining chair and suits older toddlers (roughly 18 months and up) who can sit at the table. Most families use a high chair first and move to a booster later; some convertible seats do both. The right pick depends on your child's age, your space, and whether you want them eating at the family table.",
     "cta": {
       "lead": "Getting mealtime sorted?",
       "body": "MomRise plans <strong>age-appropriate meals</strong> and builds the grocery list — so once they're in the seat, you know what to serve."
@@ -250,31 +490,98 @@
       "blurb": "Straps to a normal dining chair for toddlers who can sit at the table. Cheaper, portable, and brings the child to family meals — but offers less recline/support for young babies."
     },
     "table": [
-      { "dim": "Typical age", "a": "~6 months to ~3 years", "b": "~18 months and up" },
-      { "dim": "Portability", "a": "Bulky, mostly stays put", "b": "Light; clip-on versions travel well" },
-      { "dim": "Space", "a": "Takes floor space", "b": "Uses an existing chair" },
-      { "dim": "Cost", "a": "Higher", "b": "Lower" },
-      { "dim": "Family-table dining", "a": "Separate tray", "b": "Child eats at the table with everyone" },
-      { "dim": "Support for young babies", "a": "More (recline, straps, footrest)", "b": "Less — best once they sit sturdily" }
+      {
+        "dim": "Typical age",
+        "a": "~6 months to ~3 years",
+        "b": "~18 months and up"
+      },
+      {
+        "dim": "Portability",
+        "a": "Bulky, mostly stays put",
+        "b": "Light; clip-on versions travel well"
+      },
+      {
+        "dim": "Space",
+        "a": "Takes floor space",
+        "b": "Uses an existing chair"
+      },
+      {
+        "dim": "Cost",
+        "a": "Higher",
+        "b": "Lower"
+      },
+      {
+        "dim": "Family-table dining",
+        "a": "Separate tray",
+        "b": "Child eats at the table with everyone"
+      },
+      {
+        "dim": "Support for young babies",
+        "a": "More (recline, straps, footrest)",
+        "b": "Less — best once they sit sturdily"
+      }
     ],
     "bestFor": [
-      { "when": "Your baby is just starting solids", "pick": "High chair" },
-      { "when": "Small kitchen or lots of travel", "pick": "Booster or clip-on seat" },
-      { "when": "You want the child eating at the family table", "pick": "Booster" },
-      { "when": "You want one seat that lasts for years", "pick": "A convertible high-chair-to-booster" }
+      {
+        "when": "Your baby is just starting solids",
+        "pick": "High chair"
+      },
+      {
+        "when": "Small kitchen or lots of travel",
+        "pick": "Booster or clip-on seat"
+      },
+      {
+        "when": "You want the child eating at the family table",
+        "pick": "Booster"
+      },
+      {
+        "when": "You want one seat that lasts for years",
+        "pick": "A convertible high-chair-to-booster"
+      }
     ],
     "faqs": [
-      { "q": "When can a baby use a high chair?", "a": "Once they can sit upright with support and have good head control — usually around 6 months, the same readiness window as starting solids. Always use the harness." },
-      { "q": "When should we switch to a booster?", "a": "Many toddlers move to a booster around 18 months to 3 years, once they can sit steadily at the table and follow basic mealtime routines." },
-      { "q": "Are clip-on / hook-on boosters safe?", "a": "They can be, on a sturdy table that meets the seat's requirements and with the child within the weight limit. Follow the manufacturer's instructions and always buckle the harness." },
-      { "q": "Do I need both?", "a": "Not necessarily. Some families use a high chair first then a booster; others buy a convertible seat that adjusts from one to the other to skip owning both." }
+      {
+        "q": "When can a baby use a high chair?",
+        "a": "Once they can sit upright with support and have good head control — usually around 6 months, the same readiness window as starting solids [1]. Always use the safety straps, including the crotch strap; never let your child stand in the chair; and keep it away from counters and tables they could push off from [2]."
+      },
+      {
+        "q": "When should we switch to a booster?",
+        "a": "Many toddlers move to a booster around 18 months to 3 years, once they can sit steadily at the table and follow basic mealtime routines."
+      },
+      {
+        "q": "Are clip-on / hook-on boosters safe?",
+        "a": "The AAP says hook-on seats aren't a good replacement for a freestanding high chair. If you use one when eating out or traveling, pick one that locks onto the table, make sure the table is heavy and stable enough to hold your child without tipping, and check that your child's feet can't push off a table support [2]. Follow the manufacturer's weight limits."
+      },
+      {
+        "q": "Do I need both?",
+        "a": "Not necessarily. Some families use a high chair first then a booster; others buy a convertible seat that adjusts from one to the other to skip owning both."
+      }
     ],
     "disclaimer": "General guidance only. Always follow the seat manufacturer's age, weight, and installation instructions, use the harness, and supervise your child while eating.",
-    "sources": [
-      "Juvenile Products Manufacturers Association (JPMA) — seat safety",
-      "American Academy of Pediatrics (HealthyChildren.org) — feeding readiness"
+    "related": [
+      {
+        "url": "/answers/choking-hazards-by-age/",
+        "title": "Which foods are choking hazards, and until what age?"
+      },
+      {
+        "url": "/answers/balanced-toddler-plate/",
+        "title": "What does a balanced toddler plate look like?"
+      }
     ],
-    "updated": "2026-08-15"
+    "sources": [
+      {
+        "title": "When Can Babies Start Solid Foods? Readiness & Feeding Tips",
+        "publisher": "American Academy of Pediatrics (HealthyChildren.org)",
+        "url": "https://www.healthychildren.org/English/ages-stages/baby/feeding-nutrition/Pages/Starting-Solid-Foods.aspx"
+      },
+      {
+        "title": "6 Quick High Chair Safety Tips",
+        "publisher": "American Academy of Pediatrics (HealthyChildren.org)",
+        "url": "https://www.healthychildren.org/English/safety-prevention/at-home/Pages/High-Chair-Safety-Tips.aspx"
+      }
+    ],
+    "published": "2026-08-15",
+    "updated": "2026-11-25"
   },
   {
     "slug": "sippy-cup-vs-straw-cup",
@@ -282,45 +589,108 @@
     "subhead": "What to hand your toddler when the bottle goes away — and why it matters for teeth and speech.",
     "category": "Feeding gear",
     "question": "Sippy cup or straw cup — which is better for a toddler?",
-    "answer": "Pediatric dentists and speech-language pathologists generally prefer straw cups (and open cups) over traditional hard-spout sippy cups. Straws encourage a more mature swallow and better oral-motor and tongue development, while heavy, prolonged use of spout sippy cups can affect tongue posture and — with sugary drinks that pool around the teeth — raise the risk of cavities. Spout sippy cups are still handy for spill control; many families use a straw or open cup for everyday drinking and keep a spout cup for the car or stroller.",
+    "answer": "Pediatric guidance favors open cups and straw cups over traditional valved, hard-spout sippy cups. The AAP suggests skipping valved sippy cups — they make a child suck much like a bottle — and working toward an open cup by about age 2 [1], and the NHS notes that open or free-flow cups are better for teeth [2]. Frequent sipping of milk or juice from any bottle or cup raises the risk of cavities [1]. Spout cups are still handy for spill control; many families use a straw or open cup for everyday drinking and keep a spill-resistant cup for the car or stroller.",
     "cta": {
       "lead": "Getting mealtime sorted?",
       "body": "MomRise plans <strong>age-appropriate meals</strong> and builds the grocery list — one less thing to figure out at the table."
     },
     "a": {
       "name": "Sippy cup (hard spout)",
-      "blurb": "Spill-resistant and an easy step from the bottle. But the spout encourages a more immature suck, and prolonged use — especially with juice or milk — can affect oral development and teeth."
+      "blurb": "Spill-resistant and an easy step from the bottle. But valved spouts make a child suck much like a bottle, and sipping milk or juice from one throughout the day is hard on teeth [1]."
     },
     "b": {
       "name": "Straw cup",
-      "blurb": "Promotes a mature swallow and good oral-motor development, and it's the option dentists and speech therapists usually recommend. Still spill-resistant, though it takes a little practice to learn."
+      "blurb": "A common next step that sits closer to open-cup drinking, which the AAP suggests working toward [1]. Can be spill-resistant, though it takes a little practice to learn."
     },
     "table": [
-      { "dim": "How the child drinks", "a": "Sucks from a spout", "b": "Sips through a straw (more mature pattern)" },
-      { "dim": "Oral / speech development", "a": "Can reinforce an immature swallow if overused", "b": "Supports tongue and oral-motor development" },
-      { "dim": "Teeth", "a": "Sugary drinks can pool and cause decay", "b": "Less pooling against front teeth" },
-      { "dim": "Spill resistance", "a": "High", "b": "High (valved straw cups)" },
-      { "dim": "Learning curve", "a": "Easy — familiar from the bottle", "b": "Takes a little practice at first" },
-      { "dim": "Expert preference", "a": "Convenience option", "b": "Dentist / speech-therapist preferred" }
+      {
+        "dim": "How the child drinks",
+        "a": "Sucks from a spout",
+        "b": "Sips through a straw"
+      },
+      {
+        "dim": "Bottle-to-cup progression",
+        "a": "Valved spouts work like a bottle — best as a short learning step [1]",
+        "b": "Closer to open-cup drinking, the goal by about age 2 [1]"
+      },
+      {
+        "dim": "Teeth",
+        "a": "All-day sipping of milk or juice raises cavity risk [1]",
+        "b": "Same rule applies — offer water between meals [1]"
+      },
+      {
+        "dim": "Spill resistance",
+        "a": "High",
+        "b": "Often high (spill-resistant straw cups)"
+      },
+      {
+        "dim": "Learning curve",
+        "a": "Easy — familiar from the bottle",
+        "b": "Takes a little practice at first"
+      },
+      {
+        "dim": "What guidance says",
+        "a": "AAP: avoid valved sippy cups [1]",
+        "b": "AAP: open cups, with or without a straw, are fine [1]"
+      }
     ],
     "bestFor": [
-      { "when": "You want the best option for teeth and speech", "pick": "Straw cup (or open cup)" },
-      { "when": "You need the easiest bottle-to-cup step", "pick": "Spout cup, short-term" },
-      { "when": "Spills in the car or stroller are the concern", "pick": "A valved straw cup" },
-      { "when": "Your child is ready for the next step", "pick": "An open cup with help at meals" }
+      {
+        "when": "You want the option pediatric guidance favors",
+        "pick": "Straw cup (or open cup)"
+      },
+      {
+        "when": "You need the easiest bottle-to-cup step",
+        "pick": "Spout cup, short-term"
+      },
+      {
+        "when": "Spills in the car or stroller are the concern",
+        "pick": "A spill-resistant straw cup"
+      },
+      {
+        "when": "Your child is ready for the next step",
+        "pick": "An open cup with help at meals"
+      }
     ],
     "faqs": [
-      { "q": "When should we switch from a bottle to a cup?", "a": "Common guidance is to introduce a cup around 6 months and aim to be off the bottle by about 12–18 months. Starting a straw or open cup early makes the transition smoother." },
-      { "q": "Are hard-spout sippy cups bad?", "a": "They're not harmful for occasional use, but relying on them heavily and for long periods — especially with sugary drinks — can affect oral development and teeth. Straw and open cups are better for daily drinking." },
-      { "q": "What about open cups?", "a": "Open cups (with help) are excellent for oral development and are recommended early — start with tiny amounts of water at meals. Expect spills while your child learns." },
-      { "q": "What's a good age for a straw cup?", "a": "Many babies can learn to use a straw cup around 9–12 months, and some earlier. It's fine to introduce it as soon as your child shows interest." }
+      {
+        "q": "When should we switch from a bottle to a cup?",
+        "a": "Common guidance is to introduce a cup around 6 months, when solids start, and aim to finish moving off the bottle between 12 and 18 months [1, 2]. Starting a straw or open cup early makes the transition smoother."
+      },
+      {
+        "q": "Are hard-spout sippy cups bad?",
+        "a": "They're fine as a short learning step, but the AAP suggests avoiding valved sippy cups because they make a child suck like a bottle, and all-day sipping of milk or juice from any cup raises cavity risk [1]. Straw and open cups are better for daily drinking."
+      },
+      {
+        "q": "What about open cups?",
+        "a": "Open cups (with help) are where guidance points — the NHS suggests offering sips of water from an open or free-flow cup with meals from around 6 months [2]. Expect spills while your child learns."
+      },
+      {
+        "q": "What's a good age for a straw cup?",
+        "a": "There's no official age — some babies pick up a straw within the first year, others a bit later. It's fine to introduce one as soon as your child shows interest."
+      }
     ],
     "disclaimer": "General guidance only — for concerns about oral development, speech, or your child's teeth, check with your pediatrician, pediatric dentist, or a speech-language pathologist.",
-    "sources": [
-      "American Academy of Pediatric Dentistry — cups & oral health",
-      "American Speech-Language-Hearing Association (ASHA) — feeding & oral-motor development"
+    "related": [
+      {
+        "url": "/answers/how-much-milk-should-a-toddler-drink/",
+        "title": "How much milk should a toddler drink?"
+      }
     ],
-    "updated": "2026-08-15"
+    "sources": [
+      {
+        "title": "From Bottle to Cup: Helping Your Child Make a Healthy Transition",
+        "publisher": "American Academy of Pediatrics (HealthyChildren.org)",
+        "url": "https://www.healthychildren.org/English/ages-stages/baby/feeding-nutrition/Pages/Discontinuing-the-Bottle.aspx"
+      },
+      {
+        "title": "Your baby's first solid foods",
+        "publisher": "NHS (UK National Health Service)",
+        "url": "https://www.nhs.uk/baby/weaning-and-feeding/babys-first-solid-foods/"
+      }
+    ],
+    "published": "2026-08-15",
+    "updated": "2026-11-25"
   },
   {
     "slug": "potty-training-child-led-vs-3-day-method",
@@ -328,7 +698,7 @@
     "subhead": "Slow and steady or a fast, intensive push — how the two approaches compare.",
     "category": "Milestones & routines",
     "question": "Child-led or the 3-day method — which potty training approach actually works?",
-    "answer": "Child-led potty training follows your child's readiness cues and moves at their pace over weeks or months, keeping pressure low. The \"3-day method\" is an intensive, parent-led sprint — you clear the calendar, ditch the diapers, and focus on the potty for a few days. Neither is proven superior; success depends most on whether your child is actually ready. Intensive methods can work quickly for a ready toddler, while child-led tends to be lower-stress and easier to sustain.",
+    "answer": "Child-led potty training follows your child's readiness cues and moves at their pace over weeks or months, keeping pressure low. The \"3-day method\" is an intensive, parent-led sprint — you clear the calendar, ditch the diapers, and focus on the potty for a few days. Neither is proven superior; success depends most on whether your child is actually ready [1]. Intensive methods can work quickly for a ready toddler, while child-led tends to be lower-stress and easier to sustain.",
     "cta": {
       "lead": "Tackling a big milestone?",
       "body": "MomRise helps you build <strong>consistent daily routines</strong> and track milestones — so potty training fits into the rhythm you already have."
@@ -342,31 +712,89 @@
       "blurb": "An intensive few-day push: no diapers, lots of fluids and potty trips, and full focus. Fast when a child is ready, but demands a cleared schedule and consistency."
     },
     "table": [
-      { "dim": "Pace", "a": "Gradual, child sets the speed", "b": "Fast, front-loaded" },
-      { "dim": "Pressure level", "a": "Low", "b": "Higher during the sprint" },
-      { "dim": "Parent time up front", "a": "Spread out", "b": "Intense for a few days" },
-      { "dim": "Works best when", "a": "You're in no rush", "b": "The child is clearly ready" },
-      { "dim": "Accidents / regressions", "a": "Handled gently over time", "b": "Expected during the days, then eases" },
-      { "dim": "Typical duration", "a": "Weeks to months", "b": "A few days to click, longer to master" }
+      {
+        "dim": "Pace",
+        "a": "Gradual, child sets the speed",
+        "b": "Fast, front-loaded"
+      },
+      {
+        "dim": "Pressure level",
+        "a": "Low",
+        "b": "Higher during the sprint"
+      },
+      {
+        "dim": "Parent time up front",
+        "a": "Spread out",
+        "b": "Intense for a few days"
+      },
+      {
+        "dim": "Works best when",
+        "a": "You're in no rush",
+        "b": "The child is clearly ready"
+      },
+      {
+        "dim": "Accidents / regressions",
+        "a": "Handled gently over time",
+        "b": "Expected during the days, then eases"
+      },
+      {
+        "dim": "Typical duration",
+        "a": "Weeks to months",
+        "b": "A few days to click, longer to master"
+      }
     ],
     "bestFor": [
-      { "when": "You have a relaxed timeline", "pick": "Child-led" },
-      { "when": "Your toddler shows clear readiness and you want it done", "pick": "3-day method" },
-      { "when": "Your child is anxious or resistant", "pick": "Child-led" },
-      { "when": "You have a free long weekend and a ready toddler", "pick": "3-day method" }
+      {
+        "when": "You have a relaxed timeline",
+        "pick": "Child-led"
+      },
+      {
+        "when": "Your toddler shows clear readiness and you want it done",
+        "pick": "3-day method"
+      },
+      {
+        "when": "Your child is anxious or resistant",
+        "pick": "Child-led"
+      },
+      {
+        "when": "You have a free long weekend and a ready toddler",
+        "pick": "3-day method"
+      }
     ],
     "faqs": [
-      { "q": "What age should you start potty training?", "a": "Many children show readiness between about 18 months and 3 years. Readiness signs matter more than age — staying dry for stretches, interest in the potty, telling you when they've gone, and being able to pull pants up and down." },
-      { "q": "Does the 3-day method really work?", "a": "It can work well for children who are truly ready, but it isn't magic — plenty of kids need longer, and nighttime dryness comes later regardless of method. If it stalls, it usually means your child needs a bit more time." },
-      { "q": "What if potty training fails?", "a": "Taking a break for a few weeks and trying again later is common and completely fine. Pushing a child who isn't ready tends to backfire; a reset often does the trick." },
-      { "q": "Is daytime the same as nighttime training?", "a": "No. Daytime control usually comes first; staying dry overnight can take months or years longer and depends on physical development, not effort." }
+      {
+        "q": "What age should you start potty training?",
+        "a": "Children often show signs of bladder and bowel control between 18 and 24 months, and in the US training most often begins between ages 2 and 3 [1]. Readiness signs matter more than age — staying dry for a couple of hours, showing cues before they go, following simple instructions, and being able to help pull pants up and down [1]."
+      },
+      {
+        "q": "Does the 3-day method really work?",
+        "a": "It can work well for children who are truly ready, but it isn't magic — plenty of kids need longer, and nighttime dryness can come later regardless of method [2]. If it stalls, it usually means your child needs a bit more time."
+      },
+      {
+        "q": "What if potty training fails?",
+        "a": "Taking a break for a few weeks and trying again later is common and completely fine. Pushing a child who isn't ready tends to backfire — the AAP notes that power struggles, rewards, and punishments can get in the way [1]. A reset often does the trick."
+      },
+      {
+        "q": "Is daytime the same as nighttime training?",
+        "a": "No. Daytime control usually comes first; some children may not stay dry overnight until they are older, and it depends on physical development, not effort [2]."
+      }
     ],
     "disclaimer": "General guidance only. Every child develops on their own timeline — talk to your pediatrician if you have concerns about readiness or setbacks.",
+    "related": [],
     "sources": [
-      "American Academy of Pediatrics (HealthyChildren.org) — toilet training",
-      "CDC — child development milestones"
+      {
+        "title": "The Right Age to Potty Train",
+        "publisher": "American Academy of Pediatrics (HealthyChildren.org)",
+        "url": "https://www.healthychildren.org/English/ages-stages/toddler/toilet-training/Pages/The-Right-Age-to-Toilet-Train.aspx"
+      },
+      {
+        "title": "Bedwetting: 3 Common Reasons & What Families Can Do",
+        "publisher": "American Academy of Pediatrics (HealthyChildren.org)",
+        "url": "https://www.healthychildren.org/English/ages-stages/toddler/toilet-training/Pages/Bedwetting.aspx"
+      }
     ],
-    "updated": "2026-08-15"
+    "published": "2026-08-15",
+    "updated": "2026-11-25"
   },
   {
     "slug": "swaddle-vs-sleep-sack",
@@ -374,7 +802,7 @@
     "subhead": "What the difference is, and the safe-sleep moment you have to switch.",
     "category": "Sleep & routines",
     "question": "Swaddle or sleep sack — what's the difference and when do you switch?",
-    "answer": "A swaddle wraps a newborn's arms snugly to calm the startle (Moro) reflex in the early weeks. A sleep sack is a wearable blanket that leaves the arms free and can be used for many months. The key isn't which is \"better\" — it's the order: swaddle first, then move to a sleep sack the moment your baby shows any sign of rolling, because swaddling must stop then for safe sleep. That transition usually happens around 2–4 months.",
+    "answer": "A swaddle wraps a newborn's arms snugly to calm the startle (Moro) reflex in the early weeks. A sleep sack is a wearable blanket that leaves the arms free and can be used for many months. The key isn't which is \"better\" — it's the order: swaddle first, then move to a sleep sack the moment your baby shows any sign of rolling, because swaddling must stop then for safe sleep [1]. Some babies start trying to roll as early as 2 months, so watch closely from then on [1].",
     "cta": {
       "lead": "Building a bedtime routine?",
       "body": "MomRise helps you set <strong>consistent sleep and bedtime routines</strong> and track milestones — so the early months feel a little more predictable."
@@ -388,31 +816,88 @@
       "blurb": "A wearable blanket with arms free. Safe once a baby starts rolling, keeps them warm without loose bedding, and can be used well into toddlerhood."
     },
     "table": [
-      { "dim": "Arms", "a": "Wrapped snugly", "b": "Free to move" },
-      { "dim": "Best age", "a": "Newborn to first signs of rolling", "b": "From rolling onward, into toddlerhood" },
-      { "dim": "Main purpose", "a": "Calms the startle reflex", "b": "Warmth without loose blankets" },
-      { "dim": "Rolling safety", "a": "Must stop at any sign of rolling", "b": "Safe once rolling begins" },
-      { "dim": "How long usable", "a": "A few weeks to ~2–4 months", "b": "Many months" },
-      { "dim": "Role", "a": "First step", "b": "The transition out of the swaddle" }
+      {
+        "dim": "Arms",
+        "a": "Wrapped snugly",
+        "b": "Free to move"
+      },
+      {
+        "dim": "Best age",
+        "a": "Newborn to first signs of rolling",
+        "b": "From rolling onward, into toddlerhood"
+      },
+      {
+        "dim": "Main purpose",
+        "a": "Calms the startle reflex",
+        "b": "Warmth without loose blankets"
+      },
+      {
+        "dim": "Rolling safety",
+        "a": "Must stop at any sign of rolling",
+        "b": "Safe once rolling begins"
+      },
+      {
+        "dim": "How long usable",
+        "a": "Until the first signs of rolling — for some babies, around 2 months [1]",
+        "b": "Many months"
+      },
+      {
+        "dim": "Role",
+        "a": "First step",
+        "b": "The transition out of the swaddle"
+      }
     ],
     "bestFor": [
-      { "when": "A newborn startles themselves awake", "pick": "Swaddle (until any rolling)" },
-      { "when": "Your baby shows any sign of rolling", "pick": "Stop swaddling — switch to a sleep sack" },
-      { "when": "You want one item that lasts longer", "pick": "Sleep sack" },
-      { "when": "The room runs cool", "pick": "A sleep sack in an appropriate TOG weight" }
+      {
+        "when": "A newborn startles themselves awake",
+        "pick": "Swaddle (until any rolling)"
+      },
+      {
+        "when": "Your baby shows any sign of rolling",
+        "pick": "Stop swaddling — switch to a sleep sack"
+      },
+      {
+        "when": "You want one item that lasts longer",
+        "pick": "Sleep sack"
+      },
+      {
+        "when": "The room runs cool",
+        "pick": "A sleep sack in an appropriate TOG weight"
+      }
     ],
     "faqs": [
-      { "q": "When should you stop swaddling?", "a": "As soon as your baby shows any sign of trying to roll — often around 2–4 months, sometimes earlier. A swaddled baby who rolls to their stomach can't push up safely, so this is a firm safe-sleep rule." },
-      { "q": "Are sleep sacks safe?", "a": "Yes — a correctly sized wearable blanket is considered a safe alternative to loose blankets, which aren't recommended in the crib. Always follow safe-sleep basics: back to sleep, firm flat surface, nothing loose." },
-      { "q": "Can a newborn use a sleep sack instead of a swaddle?", "a": "Yes. Swaddling is optional — some newborns sleep fine in an arms-free sleep sack from the start. Use whichever your baby settles with, and follow safe-sleep rules either way." },
-      { "q": "How do you transition out of a swaddle?", "a": "Many families go arms-out one arm at a time, or use a transitional sack, over a few nights. Once both arms are out, a standard sleep sack is the next step." }
+      {
+        "q": "When should you stop swaddling?",
+        "a": "As soon as your baby shows any sign of trying to roll — which can start around 2 months, though timing varies [1]. A swaddled baby who rolls to their stomach can't push up safely, so this is a firm safe-sleep rule."
+      },
+      {
+        "q": "Are sleep sacks safe?",
+        "a": "Yes — a correctly sized wearable blanket is preferred over loose blankets [1], which aren't recommended in the crib. Always follow safe-sleep basics: back to sleep, firm flat surface, nothing loose."
+      },
+      {
+        "q": "Can a newborn use a sleep sack instead of a swaddle?",
+        "a": "Yes. Swaddling is optional — some newborns sleep fine in an arms-free sleep sack from the start. Use whichever your baby settles with, and follow safe-sleep rules either way."
+      },
+      {
+        "q": "How do you transition out of a swaddle?",
+        "a": "Many families go arms-out one arm at a time, or use a transitional sack, over a few nights. Once both arms are out, a standard sleep sack is the next step."
+      },
+      {
+        "q": "Is swaddling bad for babies’ hips?",
+        "a": "It can be if done too tightly. Wrapping the legs straight and snug can contribute to hip dysplasia, so keep the wrap loose enough that the legs can bend up and out at the hips [1]."
+      }
     ],
     "disclaimer": "Safe sleep is critical. Always place babies on their back on a firm, flat surface with nothing loose in the crib, stop swaddling at the first sign of rolling, and follow the AAP safe-sleep guidelines and your pediatrician's advice.",
+    "related": [],
     "sources": [
-      "American Academy of Pediatrics — safe sleep recommendations",
-      "AAP HealthyChildren.org — swaddling guidance"
+      {
+        "title": "Swaddling: Is It Safe for Your Baby?",
+        "publisher": "American Academy of Pediatrics (HealthyChildren.org)",
+        "url": "https://www.healthychildren.org/English/ages-stages/baby/diapers-clothing/Pages/Swaddling-Is-it-Safe.aspx"
+      }
     ],
-    "updated": "2026-08-15"
+    "published": "2026-08-15",
+    "updated": "2026-11-25"
   },
   {
     "slug": "cloth-vs-disposable-diapers",
@@ -420,7 +905,7 @@
     "subhead": "Cost, effort, and environmental impact — the real trade-offs, compared.",
     "category": "Baby gear",
     "question": "Cloth or disposable diapers — which should you choose?",
-    "answer": "Disposable diapers are convenient, very absorbent, and low-effort, but they cost more over the diapering years and add up to a lot of landfill waste. Cloth diapers have a higher upfront cost but are cheaper over the long run, reusable, and lower-waste — in exchange for regular laundry and more hands-on effort. Neither is clearly \"better\"; it comes down to your budget, time, laundry access, and how much you weigh environmental impact. Plenty of families do a mix — cloth at home, disposable for travel and daycare.",
+    "answer": "Disposable diapers are convenient, very absorbent, and low-effort, but they cost more over the diapering years and add up to a lot of landfill waste [1]. Cloth diapers have a higher upfront cost but are cheaper over the long run, reusable, and lower-waste — in exchange for regular laundry and more hands-on effort. Neither is clearly \"better\"; it comes down to your budget, time, laundry access, and how much you weigh environmental impact. Plenty of families do a mix — cloth at home, disposable for travel and daycare.",
     "cta": {
       "lead": "One app for the whole journey",
       "body": "MomRise plans meals, tracks milestones, and turns everyday parenting challenges into simple, age-appropriate daily steps."
@@ -434,31 +919,89 @@
       "blurb": "Reusable and cheaper over the long run, with lower waste and control over materials. The trade-off is upfront cost plus regular washing and more effort."
     },
     "table": [
-      { "dim": "Upfront cost", "a": "Low (buy as you go)", "b": "Higher (build the stash)" },
-      { "dim": "Lifetime cost", "a": "Higher over the years", "b": "Lower, especially across siblings" },
-      { "dim": "Effort", "a": "Minimal", "b": "Regular laundry + changes" },
-      { "dim": "Convenience / absorbency", "a": "High", "b": "Good, but more frequent changes" },
-      { "dim": "Environmental impact", "a": "More landfill waste", "b": "Less waste (some water/energy for washing)" },
-      { "dim": "Travel & daycare", "a": "Easiest", "b": "Trickier — many use disposables here" }
+      {
+        "dim": "Upfront cost",
+        "a": "Low (buy as you go)",
+        "b": "Higher (build the stash)"
+      },
+      {
+        "dim": "Lifetime cost",
+        "a": "Higher over the years",
+        "b": "Lower, especially across siblings"
+      },
+      {
+        "dim": "Effort",
+        "a": "Minimal",
+        "b": "Regular laundry + changes"
+      },
+      {
+        "dim": "Convenience / absorbency",
+        "a": "High",
+        "b": "Good, but more frequent changes"
+      },
+      {
+        "dim": "Environmental impact",
+        "a": "More landfill waste [1]",
+        "b": "Less solid waste; washing and drying use energy and water [2]"
+      },
+      {
+        "dim": "Travel & daycare",
+        "a": "Easiest",
+        "b": "Trickier — many use disposables here"
+      }
     ],
     "bestFor": [
-      { "when": "You want maximum convenience and minimal effort", "pick": "Disposable" },
-      { "when": "You want long-term savings and lower waste", "pick": "Cloth" },
-      { "when": "Laundry access is limited", "pick": "Disposable" },
-      { "when": "You want a middle ground", "pick": "Hybrid — cloth at home, disposable out and at daycare" }
+      {
+        "when": "You want maximum convenience and minimal effort",
+        "pick": "Disposable"
+      },
+      {
+        "when": "You want long-term savings and lower waste",
+        "pick": "Cloth"
+      },
+      {
+        "when": "Laundry access is limited",
+        "pick": "Disposable"
+      },
+      {
+        "when": "You want a middle ground",
+        "pick": "Hybrid — cloth at home, disposable out and at daycare"
+      }
     ],
     "faqs": [
-      { "q": "Do cloth diapers really save money?", "a": "Usually yes over the full diapering period, and even more if you reuse them for a second child — but the savings depend on how much you spend upfront and your laundry costs. The break-even point is often somewhere in the first year or two." },
-      { "q": "Are cloth diapers better for the environment?", "a": "Cloth creates far less landfill waste, but washing uses water and energy, so the overall footprint depends on how you launder them. Line-drying and full loads improve the math." },
-      { "q": "Are cloth diapers a lot more work?", "a": "They add laundry every few days and slightly more frequent changes, but modern all-in-one cloth diapers are much simpler than the pins-and-folds of the past." },
-      { "q": "Can you use cloth diapers at daycare?", "a": "Some daycares accept them, many don't, and policies vary — check first. A common solution is cloth at home and disposables at daycare and on trips." }
+      {
+        "q": "Do cloth diapers really save money?",
+        "a": "Usually yes over the full diapering period, and even more if you reuse them for a second child — but the savings depend on how much you spend upfront and your laundry costs. The break-even point is often somewhere in the first year or two."
+      },
+      {
+        "q": "Are cloth diapers better for the environment?",
+        "a": "In the US, disposable diapers added up to an estimated 4.1 million tons of waste in 2018, most of it landfilled [1]. Cloth creates far less landfill waste, but washing and drying use energy: a UK government life-cycle study found the carbon footprint of reusable and disposable nappies broadly similar on average — with reusables coming out ahead when washed in fuller loads, line-dried, and reused on a second child, and behind when always tumble-dried [2]."
+      },
+      {
+        "q": "Are cloth diapers a lot more work?",
+        "a": "They add laundry every few days and slightly more frequent changes, but modern all-in-one cloth diapers are much simpler than the pins-and-folds of the past."
+      },
+      {
+        "q": "Can you use cloth diapers at daycare?",
+        "a": "Some daycares accept them, many don't, and policies vary — check first. A common solution is cloth at home and disposables at daycare and on trips."
+      }
     ],
     "disclaimer": "General information to help you weigh the trade-offs — the right choice depends on your family's budget, routine, and priorities.",
+    "related": [],
     "sources": [
-      "Consumer cost analyses of diapering over the diapering years",
-      "Environmental life-cycle comparisons of cloth vs. disposable diapers"
+      {
+        "title": "Nondurable Goods: Product-Specific Data (Disposable Diapers)",
+        "publisher": "U.S. Environmental Protection Agency",
+        "url": "https://www.epa.gov/facts-and-figures-about-materials-waste-and-recycling/nondurable-goods-product-specific-data"
+      },
+      {
+        "title": "An updated lifecycle assessment study for disposable and reusable nappies — science summary (2008)",
+        "publisher": "Environment Agency (UK), with Defra and WRAP",
+        "url": "https://assets.publishing.service.gov.uk/media/5a7c3dc7ed915d76e2ebc06c/scho0808bois-e-e.pdf"
+      }
     ],
-    "updated": "2026-08-15"
+    "published": "2026-08-15",
+    "updated": "2026-11-25"
   },
   {
     "slug": "sensory-play-vs-structured-play",
@@ -466,7 +1009,7 @@
     "subhead": "Two ways kids learn through play — what each builds and when to reach for it.",
     "category": "Learning & play",
     "question": "What's the difference between sensory play and structured play, and which is better?",
-    "answer": "Sensory play is open-ended exploration that engages the senses — think water tables, playdough, or a bin of dried beans — with no set goal. Structured play has a defined objective and steps, like a puzzle, a craft with instructions, or a simple board game. Neither is \"better\": sensory play builds curiosity, creativity, and fine-motor and language skills, while structured play builds focus, following directions, and problem-solving. A good week has both.",
+    "answer": "Sensory play is open-ended exploration that engages the senses — think water tables, playdough, or a bin of dried beans — with no set goal. Structured play has a defined objective and steps, like a puzzle, a craft with instructions, or a simple board game. Neither is \"better\": sensory play builds curiosity, creativity, and fine-motor and language skills, while structured play builds focus, following directions, and problem-solving. The AAP encourages plenty of open-ended, child-led play alongside more structured learning [1]. A good week has both.",
     "cta": {
       "lead": "Looking for age-right activities?",
       "body": "MomRise suggests <strong>sensory and structured activities</strong> tuned to your child's age, mood, and energy — so you always have an idea on hand."
@@ -480,32 +1023,93 @@
       "blurb": "Goal-directed play with steps or rules — puzzles, crafts with a model, simple games. The activity guides the child."
     },
     "table": [
-      { "dim": "Goal", "a": "Open-ended, no set outcome", "b": "Defined objective or end result" },
-      { "dim": "Who leads", "a": "The child explores freely", "b": "The activity (or adult) guides" },
-      { "dim": "Builds most", "a": "Curiosity, creativity, fine-motor, language", "b": "Focus, following directions, problem-solving" },
-      { "dim": "Mess", "a": "Often higher", "b": "Usually lower" },
-      { "dim": "Adult role", "a": "Set it up, then step back", "b": "Introduce and support the steps" },
-      { "dim": "Best moments", "a": "Wind-down, free exploration, big feelings", "b": "Attention-building, skill practice" }
+      {
+        "dim": "Goal",
+        "a": "Open-ended, no set outcome",
+        "b": "Defined objective or end result"
+      },
+      {
+        "dim": "Who leads",
+        "a": "The child explores freely",
+        "b": "The activity (or adult) guides"
+      },
+      {
+        "dim": "Builds most",
+        "a": "Curiosity, creativity, fine-motor, language",
+        "b": "Focus, following directions, problem-solving"
+      },
+      {
+        "dim": "Mess",
+        "a": "Often higher",
+        "b": "Usually lower"
+      },
+      {
+        "dim": "Adult role",
+        "a": "Set it up, then step back",
+        "b": "Introduce and support the steps"
+      },
+      {
+        "dim": "Best moments",
+        "a": "Wind-down, free exploration, big feelings",
+        "b": "Attention-building, skill practice"
+      }
     ],
     "bestFor": [
-      { "when": "Your child needs to decompress or explore freely", "pick": "Sensory play" },
-      { "when": "You're building attention span and following-directions", "pick": "Structured play" },
-      { "when": "You want language and creativity", "pick": "Sensory play" },
-      { "when": "You want a calmer, contained activity", "pick": "Structured play" },
-      { "when": "Planning a week", "pick": "Mix both — they build different skills" }
+      {
+        "when": "Your child needs to decompress or explore freely",
+        "pick": "Sensory play"
+      },
+      {
+        "when": "You're building attention span and following-directions",
+        "pick": "Structured play"
+      },
+      {
+        "when": "You want language and creativity",
+        "pick": "Sensory play"
+      },
+      {
+        "when": "You want a calmer, contained activity",
+        "pick": "Structured play"
+      },
+      {
+        "when": "Planning a week",
+        "pick": "Mix both — they build different skills"
+      }
     ],
     "faqs": [
-      { "q": "Is sensory play just for babies and toddlers?", "a": "No — the materials change with age (dried beans and water for toddlers; slime, building, or science-style exploration for older kids), but open-ended sensory play benefits kids well into the school years." },
-      { "q": "Does structured play limit creativity?", "a": "Not inherently. Structured play builds focus and problem-solving; balancing it with plenty of open-ended play keeps creativity strong." },
-      { "q": "How much of each should my child get?", "a": "There's no strict ratio. A simple approach is to offer both across the week and follow your child's mood — more sensory for exploration and calming, more structured for skill practice." },
-      { "q": "What are easy sensory play ideas at home?", "a": "A water bin, playdough, a texture basket, or dried pasta to scoop and pour — cheap, low-setup, and easy to supervise." }
+      {
+        "q": "Is sensory play just for babies and toddlers?",
+        "a": "No — the materials change with age (dried beans and water for toddlers; slime, building, or science-style exploration for older kids), but open-ended sensory play benefits kids well into the school years."
+      },
+      {
+        "q": "Does structured play limit creativity?",
+        "a": "Not inherently. Structured play builds focus and problem-solving; balancing it with plenty of open-ended play keeps creativity strong [1]."
+      },
+      {
+        "q": "How much of each should my child get?",
+        "a": "There's no strict ratio. A simple approach is to offer both across the week and follow your child's mood — more sensory for exploration and calming, more structured for skill practice."
+      },
+      {
+        "q": "What are easy sensory play ideas at home?",
+        "a": "A water bin, playdough, a texture basket, or large pasta shapes to scoop and pour — cheap, low-setup, and easy to supervise. Skip small items (like dried beans) for young children: anything that fits entirely in a child's mouth is a choking hazard [2]."
+      }
     ],
     "disclaimer": "General educational information. Always supervise play and choose age-appropriate materials (small items are a choking hazard for young children).",
+    "related": [],
     "sources": [
-      "Early-childhood development resources on play-based learning",
-      "American Academy of Pediatrics (HealthyChildren.org) — the power of play"
+      {
+        "title": "The Power of Play: How Fun and Games Help Children Thrive",
+        "publisher": "American Academy of Pediatrics (HealthyChildren.org)",
+        "url": "https://www.healthychildren.org/English/family-life/power-of-play/Pages/The-Power-of-Play-How-Fun-and-Games-Help-Children-Thrive.aspx"
+      },
+      {
+        "title": "Choking Prevention for Babies & Children",
+        "publisher": "American Academy of Pediatrics (HealthyChildren.org)",
+        "url": "https://www.healthychildren.org/English/health-issues/injuries-emergencies/Pages/Choking-Prevention.aspx"
+      }
     ],
-    "updated": "2026-08-15"
+    "published": "2026-08-15",
+    "updated": "2026-11-25"
   },
   {
     "slug": "homemade-vs-store-bought-baby-food",
@@ -513,7 +1117,7 @@
     "subhead": "Cost, nutrition, convenience, and safety — the honest trade-offs.",
     "category": "Starting solids",
     "question": "Is homemade or store-bought baby food better?",
-    "answer": "Both can be healthy. Homemade baby food is usually cheaper, lets you control ingredients and textures, and can expose babies to more variety and family flavors — but it takes time and requires safe prep and storage. Store-bought is convenient, consistent, shelf-stable, and portable, though it costs more per serving and offers less texture variety. Many families do a mix. Whichever you choose, skip added salt and sugar and follow allergen-introduction guidance.",
+    "answer": "Both can be healthy. Homemade baby food can be less expensive [1], lets you control ingredients and textures, and can expose babies to more variety and family flavors — but it takes time and requires safe prep and storage. Store-bought is convenient, consistent, shelf-stable, and portable, though it costs more per serving and offers less texture variety. Many families do a mix. Whichever you choose, skip added salt and sugar and follow allergen-introduction guidance [3].",
     "cta": {
       "lead": "Feeding a new eater?",
       "body": "MomRise builds <strong>age-appropriate meal plans</strong> and grocery lists as your baby grows — so making food at home is one less thing to plan."
@@ -527,32 +1131,117 @@
       "blurb": "Pre-made pouches and jars. Convenient, consistent, shelf-stable, and portable — at a higher cost per serving and with less texture variety."
     },
     "table": [
-      { "dim": "Cost", "a": "Lower per serving", "b": "Higher per serving" },
-      { "dim": "Convenience", "a": "Takes prep + storage", "b": "Grab-and-go" },
-      { "dim": "Ingredient control", "a": "Full control", "b": "Read the label" },
-      { "dim": "Texture variety", "a": "Easy to adjust as baby grows", "b": "Often smoother/uniform" },
-      { "dim": "Flavor variety", "a": "Can match family meals", "b": "Fixed blends" },
-      { "dim": "Shelf life / travel", "a": "Shorter; needs fridge/freezer", "b": "Shelf-stable, travel-friendly" }
+      {
+        "dim": "Cost",
+        "a": "Lower per serving",
+        "b": "Higher per serving"
+      },
+      {
+        "dim": "Convenience",
+        "a": "Takes prep + storage",
+        "b": "Grab-and-go"
+      },
+      {
+        "dim": "Ingredient control",
+        "a": "Full control",
+        "b": "Read the label"
+      },
+      {
+        "dim": "Texture variety",
+        "a": "Easy to adjust as baby grows",
+        "b": "Often smoother/uniform"
+      },
+      {
+        "dim": "Flavor variety",
+        "a": "Can match family meals",
+        "b": "Fixed blends"
+      },
+      {
+        "dim": "Shelf life / travel",
+        "a": "Shorter; needs fridge/freezer",
+        "b": "Shelf-stable, travel-friendly"
+      }
     ],
     "bestFor": [
-      { "when": "You want to save money and control ingredients", "pick": "Homemade" },
-      { "when": "You need convenience or are traveling", "pick": "Store-bought" },
-      { "when": "You want to advance textures quickly", "pick": "Homemade" },
-      { "when": "You want the easiest, most consistent option", "pick": "Store-bought" },
-      { "when": "Most families", "pick": "A mix — homemade at home, pouches on the go" }
+      {
+        "when": "You want to save money and control ingredients",
+        "pick": "Homemade"
+      },
+      {
+        "when": "You need convenience or are traveling",
+        "pick": "Store-bought"
+      },
+      {
+        "when": "You want to advance textures quickly",
+        "pick": "Homemade"
+      },
+      {
+        "when": "You want the easiest, most consistent option",
+        "pick": "Store-bought"
+      },
+      {
+        "when": "Most families",
+        "pick": "A mix — homemade at home, pouches on the go"
+      }
     ],
     "faqs": [
-      { "q": "Is homemade baby food healthier?", "a": "It can be, because you control ingredients and can avoid added salt and sugar — but many store-bought options are also nutritious. The bigger factors are variety, texture progression, and no added salt/sugar, which either can deliver." },
-      { "q": "How do I store homemade baby food safely?", "a": "Refrigerate and use within a couple of days, or freeze in small portions (ice-cube trays work well) and use within a month. Cool cooked food quickly and don't refreeze thawed purée." },
-      { "q": "Are pouches bad for babies?", "a": "Pouches are fine in moderation, but sucking straight from the spout too often can limit spoon and chewing skills and let sugary fruit blends pool on teeth. Spoon pouch contents out when you can." },
-      { "q": "What should I avoid in baby food?", "a": "No honey before age 1, no added salt or sugar, and introduce common allergens one at a time. Watch textures/shapes for choking, and check with your pediatrician." }
+      {
+        "q": "Is homemade baby food healthier?",
+        "a": "It can be, because you control ingredients and can avoid added salt and sugar — but many store-bought options are also nutritious. The bigger factors are variety, texture progression, and no added salt/sugar, which either can deliver."
+      },
+      {
+        "q": "How do I store homemade baby food safely?",
+        "a": "Refrigerate in a covered container and use within 1–2 days, or freeze in small portions (ice-cube trays hold about 1 oz each) labeled with the date [1, 2]. For best quality, freezer guidance ranges from 1–2 months [2] up to 3 months [1]. Refrigerate cooked food within 2 hours [4], and throw out any food left in the dish your baby ate from [2]."
+      },
+      {
+        "q": "Are pouches bad for babies?",
+        "a": "Pouches are fine in moderation. Squeezing them onto a spoon gives your baby spoon practice, and moving on to lumpier and finger-food textures as soon as your baby can manage them helps them learn to chew [5]."
+      },
+      {
+        "q": "What should I avoid in baby food?",
+        "a": "No honey before age 1 [1], no added salt [3] or sugar, and introduce common allergens one at a time [3]. Watch textures and shapes for choking, and check with your pediatrician."
+      }
     ],
     "disclaimer": "General information, not medical or food-safety advice. Follow safe food-prep and storage guidance and your pediatrician's recommendations, especially for allergens and textures.",
-    "sources": [
-      "CDC — Infant and Toddler Nutrition",
-      "American Academy of Pediatrics (HealthyChildren.org) — making baby food & starting solids"
+    "related": [
+      {
+        "url": "/answers/iron-rich-foods-for-babies/",
+        "title": "What are the best iron-rich foods for babies?"
+      },
+      {
+        "url": "/answers/when-can-babies-have-peanuts-and-eggs/",
+        "title": "When can babies have peanuts and eggs?"
+      }
     ],
-    "updated": "2026-08-15"
+    "sources": [
+      {
+        "title": "Is it OK to make my own baby food?",
+        "publisher": "American Academy of Pediatrics (HealthyChildren.org)",
+        "url": "https://www.healthychildren.org/English/tips-tools/ask-the-pediatrician/Pages/Is-it-OK-to-make-my-own-baby-food.aspx"
+      },
+      {
+        "title": "How to Make Homemade Baby Food",
+        "publisher": "Academy of Nutrition and Dietetics (EatRight.org)",
+        "url": "https://www.eatright.org/health/pregnancy/babys-first-foods/how-to-make-homemade-baby-food"
+      },
+      {
+        "title": "When Can Babies Start Solid Foods? Readiness & Feeding Tips",
+        "publisher": "American Academy of Pediatrics (HealthyChildren.org)",
+        "url": "https://www.healthychildren.org/English/ages-stages/baby/feeding-nutrition/Pages/Starting-Solid-Foods.aspx"
+      },
+      {
+        "title": "Preventing Food Poisoning",
+        "publisher": "Centers for Disease Control and Prevention (CDC)",
+        "url": "https://www.cdc.gov/food-safety/prevention/index.html"
+      },
+      {
+        "title": "Your baby's first solid foods",
+        "publisher": "NHS (UK National Health Service)",
+        "url": "https://www.nhs.uk/baby/weaning-and-feeding/babys-first-solid-foods/"
+      }
+    ],
+    "published": "2026-08-15",
+    "updated": "2026-11-25"
   },
   {
     "slug": "two-naps-vs-one-nap",
@@ -560,7 +1249,7 @@
     "subhead": "When toddlers drop to a single nap — and how to know it's time.",
     "category": "Sleep & routines",
     "question": "When do toddlers go from two naps to one, and how do I make the switch?",
-    "answer": "Most toddlers transition from two naps to one sometime between about 15 and 18 months, though the range is wide. The signs it's time: your child regularly fights the morning or afternoon nap, takes a long time to fall asleep, or the second nap pushes bedtime too late. The usual fix is to gradually push the morning nap later until it becomes a single, longer midday nap — expect a bumpy week or two of adjustment.",
+    "answer": "Most toddlers move from two naps to one by about 18 months [1], though the range is wide — some start the switch a few months earlier, others later. The signs it's time: your child regularly fights the morning or afternoon nap, takes a long time to fall asleep, or the second nap pushes bedtime too late. The usual fix is to gradually push the morning nap later until it becomes a single, longer midday nap — expect a bumpy week or two of adjustment.",
     "cta": {
       "lead": "Smoothing a routine change?",
       "body": "MomRise helps you build <strong>consistent daily and nap routines</strong> and track milestones — so transitions like dropping a nap go easier."
@@ -574,31 +1263,93 @@
       "blurb": "A single, longer midday nap — typical once a child resists two. Simpler schedule, better-aligned with preschool and family routines."
     },
     "table": [
-      { "dim": "Typical age", "a": "Up to ~15–18 months", "b": "~15–18 months onward" },
-      { "dim": "Schedule", "a": "Morning + afternoon", "b": "One longer midday nap" },
-      { "dim": "Signs it fits", "a": "Both naps come easily", "b": "Child fights one nap or bedtime slips late" },
-      { "dim": "Total day sleep", "a": "Slightly more", "b": "Slightly less, consolidated" },
-      { "dim": "Transition", "a": "—", "b": "Push the morning nap later over 1–2 weeks" },
-      { "dim": "Watch for", "a": "Short/skipped naps signaling readiness", "b": "Overtiredness during the switch" }
+      {
+        "dim": "Typical age",
+        "a": "Up to ~15–18 months",
+        "b": "~15–18 months onward"
+      },
+      {
+        "dim": "Schedule",
+        "a": "Morning + afternoon",
+        "b": "One longer midday nap"
+      },
+      {
+        "dim": "Signs it fits",
+        "a": "Both naps come easily",
+        "b": "Child fights one nap or bedtime slips late"
+      },
+      {
+        "dim": "Total day sleep",
+        "a": "Slightly more",
+        "b": "Slightly less, consolidated"
+      },
+      {
+        "dim": "Transition",
+        "a": "—",
+        "b": "Push the morning nap later over 1–2 weeks"
+      },
+      {
+        "dim": "Watch for",
+        "a": "Short/skipped naps signaling readiness",
+        "b": "Overtiredness during the switch"
+      }
     ],
     "bestFor": [
-      { "when": "Both naps still happen without a fight", "pick": "Stay on two naps" },
-      { "when": "Your child fights the morning or afternoon nap", "pick": "Move toward one nap" },
-      { "when": "The afternoon nap pushes bedtime too late", "pick": "Move toward one nap" },
-      { "when": "Mid-transition", "pick": "Offer quiet time and an earlier bedtime while adjusting" }
+      {
+        "when": "Both naps still happen without a fight",
+        "pick": "Stay on two naps"
+      },
+      {
+        "when": "Your child fights the morning or afternoon nap",
+        "pick": "Move toward one nap"
+      },
+      {
+        "when": "The afternoon nap pushes bedtime too late",
+        "pick": "Move toward one nap"
+      },
+      {
+        "when": "Mid-transition",
+        "pick": "Offer quiet time and an earlier bedtime while adjusting"
+      }
     ],
     "faqs": [
-      { "q": "What age do toddlers drop to one nap?", "a": "Most commonly between 15 and 18 months, but some are ready earlier and some later. Readiness signs matter more than the exact age." },
-      { "q": "How do I transition from two naps to one?", "a": "Gradually push the morning nap 15–30 minutes later every few days until it lands around midday and becomes one longer nap. An earlier bedtime helps during the adjustment." },
-      { "q": "Is it normal for sleep to get worse during the switch?", "a": "Yes — a week or two of overtiredness, early wake-ups, or rough evenings is common. Consistency and a slightly earlier bedtime usually settle it." },
-      { "q": "What if some days need two naps and some need one?", "a": "That's normal during the transition. Stay flexible, offer a second short nap or an early bedtime on rough days, and let it settle over a couple of weeks." }
+      {
+        "q": "What age do toddlers drop to one nap?",
+        "a": "Most toddlers make the switch by about 18 months [1], but some are ready earlier and some later. Readiness signs matter more than the exact age."
+      },
+      {
+        "q": "How do I transition from two naps to one?",
+        "a": "Gradually push the morning nap 15–30 minutes later every few days until it lands around midday and becomes one longer nap. An earlier bedtime helps during the adjustment."
+      },
+      {
+        "q": "Is it normal for sleep to get worse during the switch?",
+        "a": "Yes — a week or two of overtiredness, early wake-ups, or rough evenings is common. Consistency and a slightly earlier bedtime usually settle it."
+      },
+      {
+        "q": "What if some days need two naps and some need one?",
+        "a": "That's normal during the transition. Stay flexible, offer a second short nap or an early bedtime on rough days, and let it settle over a couple of weeks."
+      },
+      {
+        "q": "How much total sleep does a toddler need?",
+        "a": "Roughly 12–15 hours in 24 hours around age 1, and about 12–14 hours at age 2 — including naps [2]. Every child is a little different."
+      }
     ],
     "disclaimer": "General guidance only — sleep needs vary by child. Talk to your pediatrician about persistent sleep concerns.",
+    "related": [],
     "sources": [
-      "American Academy of Pediatrics (HealthyChildren.org) — toddler sleep & naps",
-      "Pediatric sleep-foundation guidance on nap transitions"
+      {
+        "title": "Naps",
+        "publisher": "Nemours KidsHealth",
+        "url": "https://kidshealth.org/en/parents/naps.html"
+      },
+      {
+        "title": "Your baby's sleep patterns",
+        "publisher": "NHS Best Start in Life",
+        "url": "https://www.nhs.uk/best-start-in-life/baby/baby-basics/newborn-and-baby-sleeping-advice-for-parents/your-babys-sleep-patterns/"
+      }
     ],
-    "updated": "2026-08-15"
+    "published": "2026-08-15",
+    "updated": "2026-11-25"
   },
   {
     "slug": "pacifier-vs-thumb-sucking",
@@ -606,45 +1357,103 @@
     "subhead": "Both soothe — but they differ in habit-breaking, teeth, and control.",
     "category": "Baby basics",
     "question": "Pacifier or thumb sucking — which is better, and does either harm teeth?",
-    "answer": "Both are normal, healthy self-soothing for babies. The practical difference is control: a pacifier can be taken away when it's time to stop, while a thumb is always there and harder to wean. Prolonged, intense sucking of either — generally past about age 2–4, once permanent teeth are on the horizon — can affect the bite and the roof of the mouth. Most kids naturally give up both on their own; if not, gentle, consistent weaning is the goal.",
+    "answer": "Both are normal, healthy self-soothing for babies. The practical difference is control: a pacifier can be taken away when it's time to stop, while a thumb is always there and harder to wean. Prolonged, intense sucking of either — generally past about age 2–4, once permanent teeth are on the horizon — can affect the bite and the roof of the mouth [1, 2]. Most kids naturally give up both on their own [1, 2]; if not, gentle, consistent weaning is the goal.",
     "cta": {
       "lead": "One app for the whole journey",
       "body": "MomRise helps with routines, milestones, and everyday parenting challenges — simple, age-appropriate steps for your child."
     },
     "a": {
       "name": "Pacifier",
-      "blurb": "A soothing tool you control — you can limit it, then remove it when it's time to stop. Linked in early infancy to a lower SIDS risk at sleep."
+      "blurb": "A soothing tool you control — you can limit it, then remove it when it's time to stop. Offered at sleep in infancy, it helps reduce SIDS risk [1]."
     },
     "b": {
       "name": "Thumb sucking",
       "blurb": "Always available and self-directed — great for on-the-spot soothing, but harder to wean since you can't take a thumb away."
     },
     "table": [
-      { "dim": "Control / weaning", "a": "You can remove it", "b": "Harder — always available" },
-      { "dim": "Availability", "a": "Must be found/carried", "b": "Always there" },
-      { "dim": "Dental effect", "a": "Similar if prolonged/intense", "b": "Similar if prolonged/intense" },
-      { "dim": "Sleep", "a": "Pacifier at sleep linked to lower SIDS risk in infancy", "b": "No such association" },
-      { "dim": "Hygiene", "a": "Needs cleaning/replacing", "b": "Wash hands often" },
-      { "dim": "When to curb", "a": "Generally by ~2–4 years", "b": "Generally by ~2–4 years" }
+      {
+        "dim": "Control / weaning",
+        "a": "You can remove it",
+        "b": "Harder — always available"
+      },
+      {
+        "dim": "Availability",
+        "a": "Must be found/carried",
+        "b": "Always there"
+      },
+      {
+        "dim": "Dental effect",
+        "a": "Similar if prolonged/intense",
+        "b": "Similar if prolonged/intense"
+      },
+      {
+        "dim": "Sleep",
+        "a": "Pacifier at sleep helps reduce SIDS risk in infancy [1]",
+        "b": "No such association"
+      },
+      {
+        "dim": "Hygiene",
+        "a": "Needs cleaning/replacing",
+        "b": "Wash hands often"
+      },
+      {
+        "dim": "When to curb",
+        "a": "Generally by ~2–4 years",
+        "b": "Generally by ~2–4 years"
+      }
     ],
     "bestFor": [
-      { "when": "You want to be able to phase it out later", "pick": "Pacifier" },
-      { "when": "Soothing during infant sleep", "pick": "Pacifier (per safe-sleep guidance)" },
-      { "when": "Your baby self-soothes with their thumb already", "pick": "That's fine — plan gentle weaning later" },
-      { "when": "Either habit lingers past preschool", "pick": "Talk to your pediatrician or dentist about weaning" }
+      {
+        "when": "You want to be able to phase it out later",
+        "pick": "Pacifier"
+      },
+      {
+        "when": "Soothing during infant sleep",
+        "pick": "Pacifier (per safe-sleep guidance)"
+      },
+      {
+        "when": "Your baby self-soothes with their thumb already",
+        "pick": "That's fine — plan gentle weaning later"
+      },
+      {
+        "when": "Either habit lingers past preschool",
+        "pick": "Talk to your pediatrician or dentist about weaning"
+      }
     ],
     "faqs": [
-      { "q": "Does a pacifier or thumb ruin teeth?", "a": "Occasional sucking in the early years usually doesn't cause lasting problems. It's frequent, intense sucking that continues past about age 2–4 — as permanent teeth approach — that can affect the bite. Your dentist can advise." },
-      { "q": "Is a pacifier better than the thumb?", "a": "Many experts lean slightly toward pacifiers because you can take them away, making the habit easier to stop. A pacifier at sleep is also linked to lower SIDS risk in infancy. Both are normal, though." },
-      { "q": "When should my child stop?", "a": "Most children give up sucking on their own between ages 2 and 4. If it continues, gentle, consistent, positive weaning — not shaming — works best." },
-      { "q": "How do I wean off a pacifier or thumb?", "a": "Limit it to sleep first, offer comfort alternatives, praise going without, and pick a low-stress time (not during other big changes). For thumbs, reminders and busy hands help; a dentist can suggest more if needed." }
+      {
+        "q": "Does a pacifier or thumb ruin teeth?",
+        "a": "Occasional sucking in the early years usually doesn't cause lasting problems. It's frequent, intense sucking that continues past about age 2–4 — as permanent teeth approach — that can affect the bite. Your dentist can advise."
+      },
+      {
+        "q": "Is a pacifier better than the thumb?",
+        "a": "The American Dental Association notes that pacifiers affect teeth much like thumb sucking but are often an easier habit to break [2]. The AAP also recommends offering a pacifier at naps and bedtime in infancy to help reduce SIDS risk — waiting until breastfeeding is going well [1]. Both are normal, though."
+      },
+      {
+        "q": "When should my child stop?",
+        "a": "Most children give up sucking on their own between ages 2 and 4 [2]. If it continues, gentle, consistent, positive weaning — not shaming or punishment — works best [1]."
+      },
+      {
+        "q": "How do I wean off a pacifier or thumb?",
+        "a": "Limit it to sleep first, offer comfort alternatives, praise going without, and pick a low-stress time (not during other big changes). For thumbs, reminders and busy hands help; a dentist can suggest more if needed [1, 2]."
+      }
     ],
     "disclaimer": "General guidance only. Follow safe-sleep recommendations for pacifier use in infancy, and consult your pediatrician or pediatric dentist about weaning or dental concerns.",
+    "related": [],
     "sources": [
-      "American Academy of Pediatrics (HealthyChildren.org) — pacifiers & thumb sucking",
-      "American Dental Association — thumb sucking and pacifier use"
+      {
+        "title": "Baby Pacifiers & Thumb Sucking: What Parents Need to Know",
+        "publisher": "American Academy of Pediatrics (HealthyChildren.org)",
+        "url": "https://www.healthychildren.org/English/ages-stages/baby/crying-colic/Pages/Pacifiers-and-Thumb-Sucking.aspx"
+      },
+      {
+        "title": "Thumbsucking",
+        "publisher": "American Dental Association (MouthHealthy.org)",
+        "url": "https://www.mouthhealthy.org/all-topics-a-z/thumbsucking"
+      }
     ],
-    "updated": "2026-08-15"
+    "published": "2026-08-15",
+    "updated": "2026-11-25"
   },
   {
     "slug": "meal-prep-vs-cooking-fresh",
@@ -666,30 +1475,97 @@
       "blurb": "Make each meal the day you eat it. Maximum flexibility and freshness — but daily time, cleanup, and the nightly \"what's for dinner\" decision."
     },
     "table": [
-      { "dim": "Weeknight time", "a": "Minimal — reheat/assemble", "b": "Full cook every night" },
-      { "dim": "Up-front time", "a": "A few hours once", "b": "None" },
-      { "dim": "Variety", "a": "Less within a week", "b": "High — cook whatever" },
-      { "dim": "Food waste", "a": "Lower — planned portions", "b": "Higher if plans change" },
-      { "dim": "Decision fatigue", "a": "Low — it's decided", "b": "High — decide nightly" },
-      { "dim": "Freshness/texture", "a": "Good for most dishes", "b": "Best" }
+      {
+        "dim": "Weeknight time",
+        "a": "Minimal — reheat/assemble",
+        "b": "Full cook every night"
+      },
+      {
+        "dim": "Up-front time",
+        "a": "A few hours once",
+        "b": "None"
+      },
+      {
+        "dim": "Variety",
+        "a": "Less within a week",
+        "b": "High — cook whatever"
+      },
+      {
+        "dim": "Food waste",
+        "a": "Lower — planned portions",
+        "b": "Higher if plans change"
+      },
+      {
+        "dim": "Decision fatigue",
+        "a": "Low — it's decided",
+        "b": "High — decide nightly"
+      },
+      {
+        "dim": "Freshness/texture",
+        "a": "Good for most dishes",
+        "b": "Best"
+      }
     ],
     "bestFor": [
-      { "when": "Busy weeknights and decision fatigue", "pick": "Meal prep" },
-      { "when": "You value variety and cooking on a whim", "pick": "Cook fresh" },
-      { "when": "You want to cut food waste and spending", "pick": "Meal prep" },
-      { "when": "Most families", "pick": "Hybrid — prep a couple of meals + components, cook the rest fresh" }
+      {
+        "when": "Busy weeknights and decision fatigue",
+        "pick": "Meal prep"
+      },
+      {
+        "when": "You value variety and cooking on a whim",
+        "pick": "Cook fresh"
+      },
+      {
+        "when": "You want to cut food waste and spending",
+        "pick": "Meal prep"
+      },
+      {
+        "when": "Most families",
+        "pick": "Hybrid — prep a couple of meals + components, cook the rest fresh"
+      }
     ],
     "faqs": [
-      { "q": "Does meal prep actually save money?", "a": "Usually — planned portions mean less waste and fewer takeout nights, and buying for specific recipes curbs impulse spending. The savings depend on planning to what you'll actually eat." },
-      { "q": "How far ahead can I meal prep safely?", "a": "Most cooked dishes keep 3–4 days refrigerated; freeze anything for longer and label the date. Prepping components (chopped veg, cooked grains, proteins) is a flexible middle ground." },
-      { "q": "Is fresh-cooked food more nutritious than prepped?", "a": "The difference is small when prepped food is stored properly. Consistency matters more — the approach that helps you serve balanced meals regularly wins." },
-      { "q": "What's the easiest way to start meal prepping?", "a": "Start with a plan: pick 3–4 dinners, build one grocery list, and prep a couple of components on the weekend. A meal-planning app makes the plan-and-list step painless." }
+      {
+        "q": "Does meal prep actually save money?",
+        "a": "Usually — planned portions mean less waste and fewer takeout nights, and buying for specific recipes curbs impulse spending. The savings depend on planning to what you'll actually eat."
+      },
+      {
+        "q": "How far ahead can I meal prep safely?",
+        "a": "Most cooked leftovers keep 3–4 days in the fridge [1]; freeze anything for longer and label the date. Refrigerate cooked food within 2 hours and reheat leftovers to 165°F [2]. Prepping components (chopped veg, cooked grains, proteins) is a flexible middle ground."
+      },
+      {
+        "q": "Is fresh-cooked food more nutritious than prepped?",
+        "a": "For most dishes the difference is modest when prepped food is stored and reheated properly. Consistency matters more — the approach that helps you serve balanced meals regularly wins."
+      },
+      {
+        "q": "What's the easiest way to start meal prepping?",
+        "a": "Start with a plan: pick 3–4 dinners, build one grocery list, and prep a couple of components on the weekend. A meal-planning app makes the plan-and-list step painless."
+      }
     ],
     "disclaimer": "General guidance to help you weigh the trade-offs. Follow safe food-storage practices (cool, refrigerate/freeze, and reheat properly).",
-    "sources": [
-      "USDA / FoodSafety.gov — safe food storage and leftovers",
-      "Family nutrition and meal-planning guidance"
+    "related": [
+      {
+        "url": "/answers/meal-planning-for-picky-eaters/",
+        "title": "How do you meal plan for a family with a picky eater?"
+      },
+      {
+        "url": "/answers/picky-eater-dinner-ideas/",
+        "title": "What can I make for dinner for a picky eater?"
+      }
     ],
-    "updated": "2026-08-15"
+    "sources": [
+      {
+        "title": "Leftover Food Safety",
+        "publisher": "Nebraska Extension, University of Nebraska–Lincoln",
+        "url": "https://food.unl.edu/article/leftover-food-safety"
+      },
+      {
+        "title": "Preventing Food Poisoning",
+        "publisher": "Centers for Disease Control and Prevention (CDC)",
+        "url": "https://www.cdc.gov/food-safety/prevention/index.html"
+      }
+    ],
+    "published": "2026-08-15",
+    "updated": "2026-11-25"
   }
 ]
