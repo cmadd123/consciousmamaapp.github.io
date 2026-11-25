@@ -1,0 +1,14 @@
+{
+  "name": "momrise-firestore-rules-tests",
+  "private": true,
+  "description": "Firestore security-rules unit tests (users entitlement fields, premium_exempt). Run against the emulator.",
+  "scripts": {
+    "test": "mocha --timeout 20000 *.test.js",
+    "test:emulator": "firebase emulators:exec --only firestore --project demo-momrise \"npm test\""
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "^4.0.1",
+    "firebase": "^11.0.2",
+    "mocha": "^10.8.2"
+  }
+}

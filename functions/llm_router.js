@@ -95,6 +95,49 @@ const TASK_PROFILES = {
     cacheable: true,
     cacheTtlHours: 24 * 30,
   },
+
+  // ── App features moved off the client (ai_proxy.js / aiGenerate) ──
+  // These used to call api.openai.com straight from Dart with a key
+  // shipped in Remote Config. Primary model + params match what the app
+  // sent, so output is unchanged; Anthropic is only the fallback when
+  // OpenAI errors. System prompts live in ai_proxy.js.
+  appLearningPath: {        // build_learning_path.dart
+    primary: 'gpt-4o-mini',
+    fallback: 'haiku',
+    maxTokens: 3000,
+    temperature: 0.7,
+    cacheable: false,
+  },
+  appSkillCurriculum: {     // generate_skill_curriculum.dart (JSON mode)
+    primary: 'gpt-4o',
+    fallback: 'sonnet',
+    maxTokens: 4000,
+    temperature: 0.7,
+    cacheable: false,
+    json: true,
+  },
+  appActivityIdeas: {       // genrate_a_i_activity.dart
+    primary: 'gpt-4o-mini',
+    fallback: 'haiku',
+    maxTokens: 700,
+    temperature: 1,         // client sent no temperature → OpenAI default 1
+    cacheable: false,
+  },
+  appIngredientMatch: {     // check_ingredients_match.dart (grocery merge)
+    primary: 'gpt-4o-mini',
+    fallback: 'haiku',
+    maxTokens: 10,
+    temperature: 0.1,
+    cacheable: true,
+    cacheTtlHours: 24 * 30, // "is X the same ingredient as Y" is stable
+  },
+  appChat: {                // legacy v1 AI chat (ai_chat_completion_widget)
+    primary: 'gpt-4o-mini',
+    fallback: 'haiku',
+    maxTokens: 1500,
+    temperature: 1,
+    cacheable: false,
+  },
 };
 
 // Model → provider mapping. When Anthropic adds a new tier, add it here.
@@ -103,6 +146,7 @@ const MODEL_MAP = {
   sonnet: { provider: 'anthropic', id: 'claude-sonnet-4-6', costPer1MIn: 3, costPer1MOut: 15 },
   opus: { provider: 'anthropic', id: 'claude-opus-4-7', costPer1MIn: 15, costPer1MOut: 75 },
   'gpt-4o-mini': { provider: 'openai', id: 'gpt-4o-mini', costPer1MIn: 0.15, costPer1MOut: 0.6 },
+  'gpt-4o': { provider: 'openai', id: 'gpt-4o', costPer1MIn: 2.5, costPer1MOut: 10 },
   'gpt-4.1': { provider: 'openai', id: 'gpt-4.1', costPer1MIn: 2, costPer1MOut: 8 },
   'gpt-4.1-nano': { provider: 'openai', id: 'gpt-4.1-nano', costPer1MIn: 0.1, costPer1MOut: 0.4 },
 };
@@ -117,6 +161,7 @@ async function generate({
   userId,
   prompt,
   systemPrompt,
+  messages, // optional [{role:'user'|'assistant', content}] for multi-turn chat; overrides prompt
   model,
   maxTokens,
   temperature,
@@ -134,7 +179,11 @@ async function generate({
     temperature: temperature ?? profile.temperature,
     cacheable: profile.cacheable && cacheKey,
     cacheTtlMs: (profile.cacheTtlHours || 0) * 3600 * 1000,
+    json: !!profile.json,
   };
+  const convo = Array.isArray(messages) && messages.length
+    ? messages
+    : [{ role: 'user', content: prompt }];
 
   const finalCacheKey = effective.cacheable
     ? _cacheKey({ task, cacheKey, model: effective.model })
@@ -160,12 +209,12 @@ async function generate({
   const startMs = Date.now();
   let text, used = effective.model, error;
   try {
-    text = await _callModel(effective.model, prompt, systemPrompt, effective.maxTokens, effective.temperature);
+    text = await _callModel(effective.model, convo, systemPrompt, effective.maxTokens, effective.temperature, effective.json);
   } catch (e) {
     console.warn(`[llm] primary ${effective.model} failed: ${e.message}. Trying fallback ${effective.fallbackModel}.`);
     error = e;
     try {
-      text = await _callModel(effective.fallbackModel, prompt, systemPrompt, effective.maxTokens, effective.temperature);
+      text = await _callModel(effective.fallbackModel, convo, systemPrompt, effective.maxTokens, effective.temperature, effective.json);
       used = effective.fallbackModel;
     } catch (e2) {
       console.error(`[llm] fallback ${effective.fallbackModel} also failed: ${e2.message}`);
@@ -187,7 +236,7 @@ async function generate({
   return text;
 }
 
-async function _callModel(modelName, prompt, systemPrompt, maxTokens, temperature) {
+async function _callModel(modelName, convo, systemPrompt, maxTokens, temperature, json) {
   const spec = MODEL_MAP[modelName];
   if (!spec) throw new Error(`Unknown model: ${modelName}`);
   if (spec.provider === 'anthropic') {
@@ -197,9 +246,12 @@ async function _callModel(modelName, prompt, systemPrompt, maxTokens, temperatur
       max_tokens: maxTokens,
       temperature,
       system: systemPrompt || undefined,
-      messages: [{ role: 'user', content: prompt }],
+      messages: convo,
     });
-    return resp.content?.[0]?.text || '';
+    const out = resp.content?.[0]?.text || '';
+    // No JSON mode on this path — strip markdown fences so callers that
+    // JSON.parse the text directly (e.g. skill curriculum) still work.
+    return json ? _stripCodeFences(out) : out;
   }
   if (spec.provider === 'openai') {
     const client = new OpenAI({ apiKey: openaiApiKey.value().trim() });
@@ -209,12 +261,18 @@ async function _callModel(modelName, prompt, systemPrompt, maxTokens, temperatur
       temperature,
       messages: [
         ...(systemPrompt ? [{ role: 'system', content: systemPrompt }] : []),
-        { role: 'user', content: prompt },
+        ...convo,
       ],
+      ...(json ? { response_format: { type: 'json_object' } } : {}),
     });
     return resp.choices?.[0]?.message?.content || '';
   }
   throw new Error(`Unknown provider for model ${modelName}: ${spec.provider}`);
+}
+
+function _stripCodeFences(text) {
+  const m = String(text).trim().match(/^```(?:json)?\s*([\s\S]*?)\s*```$/i);
+  return m ? m[1] : text;
 }
 
 function _cacheKey({ task, cacheKey, model }) {

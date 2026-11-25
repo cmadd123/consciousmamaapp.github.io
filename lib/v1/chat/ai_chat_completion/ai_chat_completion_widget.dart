@@ -1,6 +1,7 @@
 import '/auth/firebase_auth/auth_util.dart';
 import '/backend/api_requests/api_calls.dart';
 import '/backend/api_requests/api_streaming.dart';
+import '/backend/cloud_functions/ai_proxy.dart';
 import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -717,65 +718,42 @@ class _AiChatCompletionWidgetState extends State<AiChatCompletionWidget> {
                                       _model.promtTextFeildTextController.text,
                                 ));
                                 safeSetState(() {});
-                                final streamingApiResult =
-                                    await OpenAiCustomGroup.chatCompletionCall
-                                        .call(
-                                  messagesJson: functions.convertDatatype(
-                                      _model.messages.toList()),
-                                );
-                                if (streamingApiResult.succeeded ?? true) {
-                                  final streamSubscription = streamingApiResult
-                                      .streamedResponse?.stream
-                                      .transform(utf8.decoder)
-                                      .transform(const LineSplitter())
-                                      .transform(
-                                          ServerSentEventLineTransformer())
-                                      .map((m) =>
-                                          ResponseStreamMessage(message: m))
-                                      .listen(
-                                    (onMessageInput) async {
-                                      if (ChatCompletionResultStruct
-                                              .maybeFromMap(onMessageInput
-                                                  .serverSentEvent.jsonData)!
-                                          .choices
-                                          .isNotEmpty) {
-                                        if (_model.isNew) {
-                                          _model.isNew = false;
-                                          _model.addToMessages(
-                                              ChatCompletioninputItemStruct(
-                                            role: 'assistant',
-                                            content: ChatCompletionResultStruct
-                                                    .maybeFromMap(onMessageInput
-                                                        .serverSentEvent
-                                                        .jsonData)
-                                                ?.choices
-                                                .firstOrNull
-                                                ?.delta
-                                                .content,
-                                          ));
-                                          safeSetState(() {});
-                                        } else {
-                                          _model.updateMessagesAtIndex(
-                                            functions.getCurrentIndex(
-                                                _model.messages.toList()),
-                                            (e) => e
-                                              ..role = 'assistant'
-                                              ..content =
-                                                  '${_model.messages.elementAtOrNull(functions.getCurrentIndex(_model.messages.toList()))?.content}${ChatCompletionResultStruct.maybeFromMap(onMessageInput.serverSentEvent.jsonData)?.choices.firstOrNull?.delta.content}',
-                                          );
-                                          safeSetState(() {});
-                                        }
-                                      }
-                                    },
-                                    onError: (onErrorInput) async {
-                                      _model.isloadingData = false;
-                                      safeSetState(() {});
-                                    },
-                                    onDone: () async {
-                                      _model.isloadingData = false;
-                                      safeSetState(() {});
-                                    },
+                                // Model call runs server-side via the
+                                // aiGenerate Cloud Function (task appChat);
+                                // the app no longer holds an OpenAI key.
+                                // The reply arrives in one piece instead of
+                                // streaming token-by-token.
+                                try {
+                                  final reply = await callAiProxy(
+                                    'appChat',
+                                    messages: _model.messages
+                                        .map((m) => <String, String>{
+                                              'role': m.role,
+                                              'content': m.content,
+                                            })
+                                        .toList(),
+                                    timeout: const Duration(seconds: 90),
                                   );
+                                  _model.isNew = false;
+                                  _model.addToMessages(
+                                      ChatCompletioninputItemStruct(
+                                    role: 'assistant',
+                                    content: reply,
+                                  ));
+                                } catch (e) {
+                                  debugPrint('AI chat error: $e');
+                                  if (mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(e
+                                            .toString()
+                                            .replaceFirst('Exception: ', '')),
+                                      ),
+                                    );
+                                  }
+                                } finally {
+                                  _model.isloadingData = false;
+                                  safeSetState(() {});
                                 }
 
                                 await actions.printStaf(

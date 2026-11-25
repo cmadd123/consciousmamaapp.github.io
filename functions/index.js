@@ -1878,6 +1878,17 @@ exports.stripeWebhook = stripeFunctions.stripeWebhook;
 const appleIapFunctions = require('./apple_iap_functions');
 exports.appleNotification = appleIapFunctions.appleNotification;
 
+// Server-side subscription entitlements (verified store purchases) —
+// see entitlements.js and ROLLOUT_SECURITY_FIXES.md.
+const entitlements = require('./entitlements');
+exports.verifyStorePurchase = entitlements.verifyStorePurchase;
+exports.auditUserEntitlementWrites = entitlements.auditUserEntitlementWrites;
+exports.refreshStoreEntitlements = entitlements.refreshStoreEntitlements;
+
+// Authenticated AI proxy for the app (replaces client-side OpenAI calls).
+const aiProxy = require('./ai_proxy');
+exports.aiGenerate = aiProxy.aiGenerate;
+
 // "Poor man's Branch" — self-hosted deferred deep linking. Web /c/{code}
 // page POSTs a device fingerprint to recordPendingAttribution; the app
 // claims the match on first launch via claimAttribution. See
@@ -2636,6 +2647,7 @@ exports.adminAddPremiumExempt = onCall(async (request) => {
     await db.collection('users').doc(user.uid).set(
       {
         subscription_status: 'active',
+        entitlement_verified_at: FieldValue.serverTimestamp(),
         subscription_source: 'exempt',
         subscription_plan: 'lifetime_exempt',
         subscription_updated_at: FieldValue.serverTimestamp(),
@@ -2677,6 +2689,7 @@ exports.adminRemovePremiumExempt = onCall(async (request) => {
       await userRef.set(
         {
           subscription_status: 'inactive',
+          entitlement_verified_at: FieldValue.serverTimestamp(),
           subscription_source: 'none',
           subscription_updated_at: FieldValue.serverTimestamp(),
         },
@@ -2828,6 +2841,7 @@ exports.approveCreatorApplication = onCall(
     is_comped: true,
     subscription_source: 'creator_comp',
     subscription_status: 'active',
+    entitlement_verified_at: FieldValue.serverTimestamp(),
     current_period_end: new Date('2099-12-31T00:00:00Z'),
     comped_at: FieldValue.serverTimestamp(),
     comped_by: request.auth.token.email,
@@ -2971,6 +2985,7 @@ exports.adminCreateCreator = onCall(async (request) => {
     is_comped: true,
     subscription_source: 'creator_comp',
     subscription_status: 'active',
+    entitlement_verified_at: FieldValue.serverTimestamp(),
     current_period_end: new Date('2099-12-31T00:00:00Z'),
     comped_at: FieldValue.serverTimestamp(),
     comped_by: request.auth.token.email,
@@ -3255,6 +3270,7 @@ exports.adminSetCreatorActive = onCall(async (request) => {
           is_comped: true,
           subscription_source: 'creator_comp',
           subscription_status: 'active',
+          entitlement_verified_at: FieldValue.serverTimestamp(),
           current_period_end: new Date('2099-12-31T00:00:00Z'),
           comped_at: FieldValue.serverTimestamp(),
         }, { merge: true });
@@ -3262,6 +3278,7 @@ exports.adminSetCreatorActive = onCall(async (request) => {
         await userRef.set({
           is_comped: false,
           subscription_status: 'canceled',
+          entitlement_verified_at: FieldValue.serverTimestamp(),
           subscription_source: FieldValue.delete(),
           comp_revoked_at: FieldValue.serverTimestamp(),
         }, { merge: true });

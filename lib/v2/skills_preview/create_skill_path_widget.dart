@@ -131,7 +131,7 @@ class _CreateSkillPathWidgetState extends State<CreateSkillPathWidget> {
 
       // Call AI curriculum generator
       setState(() {
-        _debugData['status'] = 'Calling OpenAI API...';
+        _debugData['status'] = 'Calling AI service (aiGenerate)...';
         _debugData['api_call_time'] = DateTime.now().toIso8601String();
       });
 
@@ -186,20 +186,20 @@ class _CreateSkillPathWidgetState extends State<CreateSkillPathWidget> {
 
           // Provide detailed troubleshooting info
           _debugData['possible_causes'] = [
-            '1. OpenAI API key missing in Firebase Remote Config',
-            '2. OpenAI API key invalid or expired',
+            '1. aiGenerate Cloud Function not deployed / OPENAI_API_KEY secret missing',
+            '2. Server-side OpenAI key invalid or expired (check function logs)',
             '3. User not authenticated (currentUserReference is null)',
             '4. Network error during API call',
-            '5. OpenAI API quota exceeded or rate limited',
+            '5. Per-user AI limit reached, or OpenAI quota exceeded',
             '6. Firestore write permissions denied',
             '7. OpenAI returned invalid JSON format',
-            '8. API timeout (exceeded 60 seconds)',
+            '8. AI call timed out (180 seconds)',
           ];
 
           _debugData['next_steps'] = [
             '1. CHECK FLUTTER CONSOLE for red error messages (MOST IMPORTANT)',
-            '2. Verify openai_api_key in Firebase Console → Remote Config',
-            '3. Check if API key has credits remaining',
+            '2. Check aiGenerate logs: firebase functions:log --only aiGenerate',
+            '3. Check the OpenAI account has credits remaining',
             '4. Verify user is logged in (check auth status)',
             '5. Test network connection',
             '6. Look for specific error in console (shows exact failure point)',

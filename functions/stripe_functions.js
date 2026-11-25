@@ -130,6 +130,7 @@ exports.createSubscription = onCall(
 
             await userDoc.ref.update({
               subscription_status: existing.status,
+              entitlement_verified_at: FieldValue.serverTimestamp(),
               current_period_end: new Date(existing.current_period_end * 1000),
             });
 
@@ -181,6 +182,7 @@ exports.createSubscription = onCall(
       await userDoc.ref.update({
         subscription_id: subscription.id,
         subscription_status: subscription.status,
+        entitlement_verified_at: FieldValue.serverTimestamp(),
         subscription_plan: planType,
         trial_end: new Date(subscription.trial_end * 1000),
         current_period_end: new Date(subscription.current_period_end * 1000),
@@ -272,6 +274,7 @@ exports.cancelSubscription = onCall(
       // Update Firestore
       await userDoc.ref.update({
         subscription_status: 'canceling',
+        entitlement_verified_at: FieldValue.serverTimestamp(),
         cancel_at: new Date(subscription.cancel_at * 1000),
       });
 
@@ -326,6 +329,7 @@ exports.restorePurchases = onCall(
       // Update Firestore with latest status
       await userDoc.ref.update({
         subscription_status: subscription.status,
+        entitlement_verified_at: FieldValue.serverTimestamp(),
         current_period_end: new Date(subscription.current_period_end * 1000),
       });
 
@@ -375,7 +379,12 @@ exports.stripeWebhook = onRequest(
         return;
       }
     } else {
-      event = req.body;
+      // SECURITY: never trust an unsigned body. Without signature
+      // verification anyone could POST a fake customer.subscription.*
+      // event and flip subscription_status on any user. Fail closed.
+      console.error('STRIPE_WEBHOOK_SECRET is empty — rejecting unsigned webhook');
+      res.status(500).send('Webhook secret not configured');
+      return;
     }
 
     try {
@@ -404,6 +413,7 @@ exports.stripeWebhook = onRequest(
             const update = {
               subscription_id: subscription.id,
               subscription_status: subscription.status,
+              entitlement_verified_at: FieldValue.serverTimestamp(),
               current_period_end: new Date(subscription.current_period_end * 1000),
             };
             if (subscription.trial_end) {
@@ -430,6 +440,7 @@ exports.stripeWebhook = onRequest(
             const userDoc = usersSnapshot.docs[0];
             await userDoc.ref.update({
               subscription_status: subscription.status,
+              entitlement_verified_at: FieldValue.serverTimestamp(),
               current_period_end: new Date(subscription.current_period_end * 1000),
             });
           }
@@ -454,11 +465,13 @@ exports.stripeWebhook = onRequest(
               await userDoc.ref.update({
                 subscription_id: null,
                 subscription_status: 'active',
+                entitlement_verified_at: FieldValue.serverTimestamp(),
                 subscription_source: 'creator_comp',
               });
             } else {
               await userDoc.ref.update({
                 subscription_status: 'canceled',
+                entitlement_verified_at: FieldValue.serverTimestamp(),
                 subscription_id: null,
               });
             }

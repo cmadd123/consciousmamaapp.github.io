@@ -1,6 +1,15 @@
 {
   "indexes": [
     {
+      "collectionGroup": "users",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "subscription_source", "order": "ASCENDING" },
+        { "fieldPath": "subscription_status", "order": "ASCENDING" },
+        { "fieldPath": "subscription_expires_at", "order": "ASCENDING" }
+      ]
+    },
+    {
       "collectionGroup": "learning_path_tasks",
       "queryScope": "COLLECTION",
       "fields": [
