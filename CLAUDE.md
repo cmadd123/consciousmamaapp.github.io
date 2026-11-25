@@ -62,8 +62,11 @@ Located: `lib/components/puzzle_progress_widget.dart`
 **Status**: Updated to use HomeNavBarWidget with 4 icons (Home, Meals, Calendar, Activities)
 
 ## API Keys
-- OpenAI key stored in `FFAppState().openAiKey`
-- Should be moved to Firebase Remote Config for production
+- The app holds NO OpenAI key. AI calls go through the `aiGenerate` callable
+  (`lib/backend/cloud_functions/ai_proxy.dart` → `functions/ai_proxy.js`);
+  keys live in Secret Manager. See ROLLOUT_SECURITY_FIXES.md.
+- Subscription/entitlement fields on `users/{uid}` are server-write-only
+  (`functions/entitlements.js` + firestore.rules). Never write them from Dart.
 
 ## Common Patterns
 
