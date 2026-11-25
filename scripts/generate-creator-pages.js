@@ -141,6 +141,12 @@ function buildHub(items) {
   <title>Creator Monetization Guides — MomRise for Creators</title>
   <meta name="description" content="How family and recipe creators on Instagram and TikTok grow and monetize their audience — plus how to get found by AI.">
   <link rel="canonical" href="https://momrise.app/for-creators/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="MomRise">
+  <meta property="og:url" content="https://momrise.app/for-creators/">
+  <meta property="og:title" content="Creator Monetization Guides — MomRise for Creators">
+  <meta property="og:description" content="How family and recipe creators on Instagram and TikTok grow and monetize their audience — plus how to get found by AI.">
+  <meta property="og:image" content="https://momrise.app/app_store_assets/brand/momrise-icon-square-512.png">
   <link rel="stylesheet" href="/for-creators/style.css">
 </head><body>
   <header class="page-header"><a href="/" class="brand"><span class="brand-mark">MomRise</span></a>
