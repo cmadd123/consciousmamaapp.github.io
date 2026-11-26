@@ -239,10 +239,54 @@ class _MealFeedbackPanelState extends State<MealFeedbackPanel> {
     final theme = FlutterFlowTheme.of(context);
     final color = child?.selectedColor ?? theme.primary;
 
+    final buttons = MealFeedbackService.ratingOptions
+        .map(
+          (opt) => Padding(
+            padding: const EdgeInsets.only(left: 6.0),
+            child: _buildRatingButton(
+              context,
+              emoji: opt.emoji,
+              label: opt.label,
+              selected: selected == opt.value,
+              dimmed: selected != null && selected != opt.value,
+              onTap: () => _rate(child, opt.value),
+            ),
+          ),
+        )
+        .toList();
+
+    // Avatar + name (+ buttons when there's room). Below ~300px of width the
+    // three 54px buttons leave almost nothing for the name, so they move to
+    // their own line, right-aligned.
     return Padding(
       padding: const EdgeInsets.only(bottom: 10.0),
-      child: Row(
-        children: [
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final narrow = constraints.maxWidth < 300.0;
+          final identity = _buildIdentity(context, child, color, theme);
+          if (!narrow) {
+            return Row(children: [...identity, ...buttons]);
+          }
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(children: identity),
+              const SizedBox(height: 6.0),
+              Row(mainAxisAlignment: MainAxisAlignment.end, children: buttons),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  List<Widget> _buildIdentity(
+    BuildContext context,
+    ChildernRecord? child,
+    Color color,
+    FlutterFlowTheme theme,
+  ) {
+    return [
           // Avatar circle (matches the Home children row: color + initial).
           Container(
             width: 30.0,
@@ -277,22 +321,7 @@ class _MealFeedbackPanelState extends State<MealFeedbackPanel> {
               ),
             ),
           ),
-          ...MealFeedbackService.ratingOptions.map(
-            (opt) => Padding(
-              padding: const EdgeInsets.only(left: 6.0),
-              child: _buildRatingButton(
-                context,
-                emoji: opt.emoji,
-                label: opt.label,
-                selected: selected == opt.value,
-                dimmed: selected != null && selected != opt.value,
-                onTap: () => _rate(child, opt.value),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+    ];
   }
 
   Widget _buildRatingButton(
