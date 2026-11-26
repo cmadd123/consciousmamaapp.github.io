@@ -301,6 +301,7 @@ ${faqSchemaJson}
   </script>
 
   <link rel="stylesheet" href="/r/style.css">
+  <script src="/static/analytics.js" defer></script>
 </head>
 <body>
   <header class="page-header">
@@ -509,6 +510,7 @@ ${faqSchemaJson}
   <meta name="description" content="Recipes you can save to your MomRise meal plan.">
   <link rel="canonical" href="https://momrise.app/r/">
   <link rel="stylesheet" href="/r/style.css">
+  <script src="/static/analytics.js" defer></script>
 </head><body>
   <header class="page-header"><a href="/" class="brand"><span class="brand-mark">MomRise</span></a></header>
   <main class="catalog">

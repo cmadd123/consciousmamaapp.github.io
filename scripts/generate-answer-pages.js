@@ -110,6 +110,7 @@ ${escapeJson(faq)}
   </script>
 
   <link rel="stylesheet" href="/compare/style.css">
+  <script src="/static/analytics.js" defer></script>
 </head>
 <body>
   <header class="page-header">
@@ -170,6 +171,7 @@ function buildCatalog(items) {
   <link rel="canonical" href="${url}">
   ${ogTags({ url, title: 'Parenting Answers: Feeding Babies & Toddlers', description: desc, type: 'website' })}
   <link rel="stylesheet" href="/compare/style.css">
+  <script src="/static/analytics.js" defer></script>
 </head><body>
   <header class="page-header"><a href="/" class="brand"><span class="brand-mark">MomRise</span></a></header>
   <main class="catalog">

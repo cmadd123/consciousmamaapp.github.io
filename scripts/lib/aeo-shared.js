@@ -164,7 +164,7 @@ function ogTags({ url, title, description, type }) {
 }
 
 const FOOTER = `<footer class="page-footer">
-    <a href="/">MomRise</a> · <a href="/meal-ideas/">Meal ideas</a> · <a href="/answers/">Answers</a> · <a href="/compare/">Compare</a> · <a href="/privacy.html">Privacy</a>
+    <a href="/">MomRise</a> · <a href="/meal-ideas/">Meal ideas</a> · <a href="/answers/">Answers</a> · <a href="/compare/">Compare</a> · <a href="/about/">About &amp; editorial standards</a> · <a href="/privacy.html">Privacy</a>
   </footer>`;
 
 module.exports = {
