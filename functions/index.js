@@ -1898,6 +1898,9 @@ exports.unsubscribeCreatorEmails = creatorNotifications.unsubscribeCreatorEmails
 exports.syncCreatorPlanToContent = creatorPlanSync.syncCreatorPlanToContent;
 exports.backfillCreatorPlans = creatorPlanSync.backfillCreatorPlans;
 
+const mealFeedbackAggregate = require('./meal_feedback_aggregate');
+exports.aggregateMealFeedback = mealFeedbackAggregate.aggregateMealFeedback;
+
 const pinterestAutopin = require('./pinterest_autopin');
 exports.pinterestAutoPin = pinterestAutopin.pinterestAutoPin;
 exports.pinterestTestPin = pinterestAutopin.pinterestTestPin;
@@ -2033,6 +2036,14 @@ const functionsV1 = require('firebase-functions/v1');
 exports.onUserDeleted = functionsV1.auth.user().onDelete(async (user) => {
   await getFirestore().collection('users').doc(user.uid).delete();
   console.log(`Deleted user doc for uid ${user.uid}`);
+  // Meal-acceptance ratings (MEAL_FEEDBACK.md). Separate try so a failure
+  // here never blocks the user-doc delete above.
+  try {
+    const n = await mealFeedbackAggregate.deleteMealFeedbackForUser(user.uid);
+    console.log(`Deleted ${n} meal_feedback docs for uid ${user.uid}`);
+  } catch (e) {
+    console.error(`meal_feedback cleanup failed for uid ${user.uid}:`, e);
+  }
 });
 
 // ── Meal tag verifier (Firestore onCreate) ──────────
