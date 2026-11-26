@@ -1899,6 +1899,7 @@ exports.syncCreatorPlanToContent = creatorPlanSync.syncCreatorPlanToContent;
 exports.backfillCreatorPlans = creatorPlanSync.backfillCreatorPlans;
 
 const mealFeedbackAggregate = require('./meal_feedback_aggregate');
+const userDataDeletion = require('./user_data_deletion');
 exports.aggregateMealFeedback = mealFeedbackAggregate.aggregateMealFeedback;
 
 const pinterestAutopin = require('./pinterest_autopin');
@@ -2043,6 +2044,18 @@ exports.onUserDeleted = functionsV1.auth.user().onDelete(async (user) => {
     console.log(`Deleted ${n} meal_feedback docs for uid ${user.uid}`);
   } catch (e) {
     console.error(`meal_feedback cleanup failed for uid ${user.uid}:`, e);
+  }
+  // Everything else the family created (children + milestones, meal plans,
+  // recipes, calendar, todos, routines, learning paths, …). privacy.html
+  // promises this; see functions/user_data_deletion.js for what's kept.
+  try {
+    const { counts, errors } = await userDataDeletion.deleteUserData(user.uid);
+    console.log(`Deleted personal data for uid ${user.uid}:`, JSON.stringify(counts));
+    if (Object.keys(errors).length) {
+      console.error(`Personal-data cleanup errors for uid ${user.uid}:`, JSON.stringify(errors));
+    }
+  } catch (e) {
+    console.error(`Personal-data cleanup failed for uid ${user.uid}:`, e);
   }
 });
 
