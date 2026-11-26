@@ -17,6 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import '/v2/routines/routines_page_widget.dart';
 import '/v2/helpful_docs/helpful_docs_page.dart';
+import '/v2/meal_feedback/meal_feedback_home_card.dart';
 import 'package:flutter/services.dart';
 import 'package:collection/collection.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -200,6 +201,8 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                                   // Meals — full width
                                   _animatedCard(3, _buildMealsCard(context)),
                                   const SizedBox(height: 16.0),
+                                  // 'How did it go?' — most recent unrated past meal (renders nothing otherwise)
+                                  _animatedCard(3, MealFeedbackHomeCard(key: const ValueKey('mealFeedbackHomeCard'), children: sortedChildren)),
                                   // 2-column grid for smaller cards
                                   Row(
                                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -232,6 +235,8 @@ class _HomeHybridWidgetState extends State<HomeHybridWidget>
                               children: [
                                 _animatedCard(3, _buildMealsCard(context)),
                                 const SizedBox(height: 16.0),
+                                // 'How did it go?' — most recent unrated past meal (renders nothing otherwise)
+                                _animatedCard(3, MealFeedbackHomeCard(key: const ValueKey('mealFeedbackHomeCard'), children: sortedChildren)),
                                 _animatedCard(4, _buildScheduleCard(context)),
                                 const SizedBox(height: 16.0),
                                 _animatedCard(5, _buildTodosCard(context)),

@@ -16,6 +16,7 @@ import 'schema/satic_milestones_record.dart';
 import 'schema/children_accomlished_milestones_record.dart';
 import 'schema/activities_record.dart';
 import 'schema/meal_plan_record.dart';
+import 'schema/meal_feedback_record.dart';
 import 'schema/meal_record.dart';
 import 'schema/learning_path_record.dart';
 import 'schema/learning_path_tasks_record.dart';
@@ -52,6 +53,7 @@ export 'schema/satic_milestones_record.dart';
 export 'schema/children_accomlished_milestones_record.dart';
 export 'schema/activities_record.dart';
 export 'schema/meal_plan_record.dart';
+export 'schema/meal_feedback_record.dart';
 export 'schema/meal_record.dart';
 export 'schema/learning_path_record.dart';
 export 'schema/learning_path_tasks_record.dart';
@@ -663,6 +665,43 @@ Future<List<MealPlanRecord>> queryMealPlanRecordOnce({
     queryCollectionOnce(
       MealPlanRecord.collection,
       MealPlanRecord.fromSnapshot,
+      queryBuilder: queryBuilder,
+      limit: limit,
+      singleRecord: singleRecord,
+    );
+
+/// Functions to query MealFeedbackRecords (as a Stream and as a Future).
+Future<int> queryMealFeedbackRecordCount({
+  Query Function(Query)? queryBuilder,
+  int limit = -1,
+}) =>
+    queryCollectionCount(
+      MealFeedbackRecord.collection,
+      queryBuilder: queryBuilder,
+      limit: limit,
+    );
+
+Stream<List<MealFeedbackRecord>> queryMealFeedbackRecord({
+  Query Function(Query)? queryBuilder,
+  int limit = -1,
+  bool singleRecord = false,
+}) =>
+    queryCollection(
+      MealFeedbackRecord.collection,
+      MealFeedbackRecord.fromSnapshot,
+      queryBuilder: queryBuilder,
+      limit: limit,
+      singleRecord: singleRecord,
+    );
+
+Future<List<MealFeedbackRecord>> queryMealFeedbackRecordOnce({
+  Query Function(Query)? queryBuilder,
+  int limit = -1,
+  bool singleRecord = false,
+}) =>
+    queryCollectionOnce(
+      MealFeedbackRecord.collection,
+      MealFeedbackRecord.fromSnapshot,
       queryBuilder: queryBuilder,
       limit: limit,
       singleRecord: singleRecord,

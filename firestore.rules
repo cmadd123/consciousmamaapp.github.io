@@ -42,6 +42,67 @@ service cloud.firestore {
         request.resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
     }
 
+    // ─── Meal-acceptance feedback ("How did it go?") ──────────────
+    // One doc per child (or family) per planned meal. Owner-only; field
+    // types + rating enum validated on every write. Stores child AGE IN
+    // MONTHS, never a birthdate. Aggregated weekly by the admin-SDK
+    // function aggregateMealFeedback into meal_feedback_stats (below).
+    // See MEAL_FEEDBACK.md. Kept as its own block so merges stay clean.
+    match /meal_feedback/{feedbackId} {
+      function myUserRef() {
+        return /databases/$(database)/documents/users/$(request.auth.uid);
+      }
+      function optPath(d, k) { return !(k in d) || d[k] == null || d[k] is path; }
+      function optBool(d, k) { return !(k in d) || d[k] == null || d[k] is bool; }
+      function validFeedback(d) {
+        return d.keys().hasOnly([
+            'user_ref', 'child_ref', 'child_age_months', 'meal_plan_ref',
+            'recipe_ref', 'meal_combo_ref', 'recipe_name', 'meal_type',
+            'tags', 'rating', 'make_again', 'plan_date', 'created_at',
+            'updated_at'])
+          && d.user_ref == myUserRef()
+          && d.rating in ['loved', 'ate_some', 'refused']
+          && optPath(d, 'child_ref')
+          && optPath(d, 'meal_plan_ref')
+          && optPath(d, 'recipe_ref')
+          && optPath(d, 'meal_combo_ref')
+          && optBool(d, 'make_again')
+          && (!('child_age_months' in d) || d.child_age_months == null ||
+              (d.child_age_months is int && d.child_age_months >= 0 &&
+               d.child_age_months <= 240))
+          && (!('recipe_name' in d) ||
+              (d.recipe_name is string && d.recipe_name.size() <= 200))
+          && (!('meal_type' in d) ||
+              d.meal_type in ['Breakfast', 'Lunch', 'Dinner', 'Snacks'])
+          && (!('tags' in d) || (d.tags is list && d.tags.size() <= 20))
+          && (!('plan_date' in d) || d.plan_date is timestamp)
+          && d.created_at is timestamp
+          && (!('updated_at' in d) || d.updated_at is timestamp);
+      }
+
+      allow read, delete: if isAuthenticated() &&
+        resource.data.user_ref == myUserRef();
+      allow create: if isAuthenticated() &&
+        validFeedback(request.resource.data) &&
+        request.resource.data.created_at == request.time;
+      allow update: if isAuthenticated() &&
+        resource.data.user_ref == myUserRef() &&
+        validFeedback(request.resource.data) &&
+        request.resource.data.created_at == resource.data.created_at &&
+        (!('updated_at' in request.resource.data) ||
+          request.resource.data.updated_at == request.time ||
+          request.resource.data.updated_at == resource.data.get('updated_at', null));
+    }
+
+    // Anonymized aggregates (k-anonymity floor) + run metadata — written
+    // only by the admin SDK; no client access for now.
+    match /meal_feedback_stats/{cellId} {
+      allow read, write: if false;
+    }
+    match /meal_feedback_stats_meta/{docId} {
+      allow read, write: if false;
+    }
+
     match /event_and_task/{eventId} {
       allow read, update, delete: if isAuthenticated() &&
         resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
