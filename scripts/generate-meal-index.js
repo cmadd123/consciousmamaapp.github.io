@@ -78,3 +78,54 @@ fs.writeFileSync(outFile, JSON.stringify(items, null, 0) + '\n', 'utf8');
 console.log(`Wrote meal-ideas/recipes.json with ${items.length} recipes.`);
 const byType = items.reduce((a, i) => ((a[i.type] = (a[i.type] || 0) + 1), a), {});
 console.log('By type:', JSON.stringify(byType));
+
+// ── Static, crawlable copy of the ideas ────────────────────────────────
+// The interactive tool renders from recipes.json in the browser, but most AI
+// crawlers (GPTBot, ClaudeBot, PerplexityBot) don't run JavaScript — to them
+// the page was an empty grid. Write a plain-HTML list of every idea, grouped
+// by meal type and cook time, between the STATIC-IDEAS markers in
+// meal-ideas/index.html. Useful to people too (browse without filtering).
+const pageFile = path.join(outDir, 'index.html');
+const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+const TYPE_ORDER = ['Dinner', 'Breakfast', 'Lunch', 'Snack', 'Side', 'Dessert'];
+const TIME_BANDS = [
+  { label: 'Ready in 20 minutes or less', test: (m) => m > 0 && m <= 20 },
+  { label: '21–30 minutes', test: (m) => m > 20 && m <= 30 },
+  { label: '31–45 minutes', test: (m) => m > 30 && m <= 45 },
+  { label: 'Over 45 minutes', test: (m) => m > 45 },
+  { label: 'Time not listed', test: (m) => !m },
+];
+function renderStatic(list) {
+  const out = [];
+  out.push('<section class="all-ideas" id="all-ideas">');
+  out.push(`  <h2>All ${list.length} meal ideas, by meal and cook time</h2>`);
+  for (const type of TYPE_ORDER) {
+    const ofType = list.filter((i) => i.type === type);
+    if (!ofType.length) continue;
+    out.push(`  <h3>${type} ideas (${ofType.length})</h3>`);
+    for (const band of TIME_BANDS) {
+      const inBand = ofType.filter((i) => band.test(i.minutes)).sort((a, b) => (a.minutes - b.minutes) || a.name.localeCompare(b.name));
+      if (!inBand.length) continue;
+      out.push(`  <h4>${band.label}</h4>`);
+      out.push('  <ul>');
+      for (const i of inBand) {
+        const meta = [i.minutes ? `${i.minutes} min` : '', i.ingredients ? `${i.ingredients} ingredients` : ''].filter(Boolean).join(' · ');
+        out.push(`    <li><a href="/r/${esc(i.slug)}/">${esc(i.name)}</a>${meta ? ` <span>— ${meta}</span>` : ''}</li>`);
+      }
+      out.push('  </ul>');
+    }
+  }
+  out.push('</section>');
+  return out.join('\n');
+}
+if (fs.existsSync(pageFile)) {
+  const page = fs.readFileSync(pageFile, 'utf8');
+  const re = /(<!-- STATIC-IDEAS:START[^>]*-->)[\s\S]*?(\s*<!-- STATIC-IDEAS:END -->)/;
+  if (re.test(page)) {
+    const next = page.replace(re, (m, start, end) => `${start}\n${renderStatic(items)}${end}`);
+    if (next !== page) fs.writeFileSync(pageFile, next, 'utf8');
+    console.log('Wrote static idea list into meal-ideas/index.html');
+  } else {
+    console.warn('STATIC-IDEAS markers not found in meal-ideas/index.html — static list skipped.');
+  }
+}

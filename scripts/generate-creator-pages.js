@@ -89,6 +89,7 @@ ${escapeJson(article)}
 ${escapeJson(faq)}
   </script>
   <link rel="stylesheet" href="/for-creators/style.css">
+  <script src="/static/analytics.js" defer></script>
 </head>
 <body>
   <header class="page-header"><a href="/" class="brand"><span class="brand-mark">MomRise</span></a>
@@ -142,6 +143,7 @@ function buildHub(items) {
   <meta name="description" content="How family and recipe creators on Instagram and TikTok grow and monetize their audience — plus how to get found by AI.">
   <link rel="canonical" href="https://momrise.app/for-creators/">
   <link rel="stylesheet" href="/for-creators/style.css">
+  <script src="/static/analytics.js" defer></script>
 </head><body>
   <header class="page-header"><a href="/" class="brand"><span class="brand-mark">MomRise</span></a>
     <a class="nav-cta" href="/apply/">Become a creator →</a>
