@@ -172,6 +172,25 @@ class AnalyticsService {
     );
   }
 
+  /// Track a meal-acceptance rating ("How did it go?" prompt).
+  /// No PII: only the rating value, meal type and whether it was per-child.
+  Future<void> logMealFeedbackSubmitted({
+    required String rating, // loved | ate_some | refused
+    String? mealType, // Breakfast | Lunch | Dinner | Snacks
+    required bool isChild,
+    bool? makeAgain,
+  }) async {
+    await _analytics.logEvent(
+      name: 'meal_feedback_submitted',
+      parameters: {
+        'rating': rating,
+        if (mealType != null) 'meal_type': mealType,
+        'per_child': isChild ? 1 : 0,
+        if (makeAgain != null) 'make_again': makeAgain ? 1 : 0,
+      },
+    );
+  }
+
   /// Track milestone marked
   Future<void> logMilestoneMarked({required String category}) async {
     await _analytics.logEvent(

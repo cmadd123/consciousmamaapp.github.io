@@ -6,6 +6,7 @@ import '/flutter_flow/flutter_flow_widgets.dart';
 import '/custom_code/actions/index.dart' as actions;
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '/v2/meal_feedback/meal_feedback_service.dart';
 
 class NotificationSettingsWidget extends StatefulWidget {
   const NotificationSettingsWidget({super.key});
@@ -43,6 +44,7 @@ class _NotificationSettingsWidgetState
   void initState() {
     super.initState();
     _loadSettings();
+    MealFeedbackService.ensurePrefsLoaded();
   }
 
   Future<void> _loadSettings() async {
@@ -287,6 +289,11 @@ class _NotificationSettingsWidgetState
                           ],
                         ),
                       ),
+
+                    // Meal check-ins (in-app 'How did it go?' prompt). Not a push
+                    // notification, so it stays usable without OS permission.
+                    const SizedBox(height: 8.0),
+                    _buildMealCheckInTile(),
 
                     // All settings wrapped in Opacity when permissions not granted
                     Opacity(
@@ -627,6 +634,57 @@ class _NotificationSettingsWidgetState
             value: value,
             onChanged: _notificationsPermissionGranted ? onChanged : null,
             activeThumbColor: FlutterFlowTheme.of(context).primary,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMealCheckInTile() {
+    return ValueListenableBuilder<bool>(
+      valueListenable: MealFeedbackService.promptsEnabled,
+      builder: (context, enabled, _) => Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+        child: Container(
+          decoration: BoxDecoration(
+            color: FlutterFlowTheme.of(context).secondaryBackground,
+            borderRadius: BorderRadius.circular(14.0),
+          ),
+          child: ListTile(
+            leading: Container(
+              width: 40.0,
+              height: 40.0,
+              decoration: BoxDecoration(
+                color: FlutterFlowTheme.of(context).primary.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(14.0),
+              ),
+              child: Icon(
+                Icons.emoji_food_beverage_outlined,
+                color: FlutterFlowTheme.of(context).primary,
+                size: 22.0,
+              ),
+            ),
+            title: Text(
+              'Meal Check-ins',
+              style: FlutterFlowTheme.of(context).bodyLarge.override(
+                    fontFamily: FFAppState().currentFontFamily,
+                    letterSpacing: 0.0,
+                    fontWeight: FontWeight.w500,
+                  ),
+            ),
+            subtitle: Text(
+              'Ask in the app how planned meals went',
+              style: FlutterFlowTheme.of(context).bodySmall.override(
+                    fontFamily: FFAppState().currentFontFamily,
+                    color: FlutterFlowTheme.of(context).secondaryText,
+                    letterSpacing: 0.0,
+                  ),
+            ),
+            trailing: Switch(
+              value: enabled,
+              onChanged: (v) => MealFeedbackService.setPromptsEnabled(v),
+              activeThumbColor: FlutterFlowTheme.of(context).primary,
+            ),
           ),
         ),
       ),

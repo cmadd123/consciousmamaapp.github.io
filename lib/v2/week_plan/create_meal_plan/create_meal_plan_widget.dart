@@ -24,6 +24,7 @@ import '/components/page_animations.dart';
 import '/custom_code/actions/creator_service.dart';
 import '/v2/creator/creator_meal_plan_card.dart';
 import '/v2/creator/creator_theme_wrapper.dart';
+import '/v2/meal_feedback/meal_feedback_sheet.dart';
 import 'create_meal_plan_model.dart';
 export 'create_meal_plan_model.dart';
 
@@ -4974,6 +4975,8 @@ class _CreateMealPlanWidgetState extends State<CreateMealPlanWidget> {
                   const SizedBox(height: 8.0),
                   // Meal content
                   _buildPlannedMealContent(context, mealPlan, day, mealType),
+                  // 'How did it go?' / 'Rated 😋' — only for past, recipe-backed meals
+                  MealFeedbackInlineChip(key: ValueKey('mf_${mealPlan.reference.id}'), mealPlan: mealPlan),
                 ],
               ),
             )
