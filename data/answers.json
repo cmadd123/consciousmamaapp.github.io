@@ -132,6 +132,10 @@
       {
         "url": "/answers/how-many-snacks-does-a-toddler-need/",
         "title": "How many snacks does a toddler need?"
+      },
+      {
+        "url": "/answers/what-should-a-1-year-old-eat-in-a-day/",
+        "title": "What should a 1-year-old eat in a day?"
       }
     ],
     "sources": [
@@ -263,6 +267,10 @@
       {
         "url": "/answers/how-many-snacks-does-a-toddler-need/",
         "title": "How many snacks does a toddler need?"
+      },
+      {
+        "url": "/answers/toddler-only-eats-snacks/",
+        "title": "My toddler only wants snacks — what should I do?"
       }
     ],
     "sources": [
@@ -450,6 +458,10 @@
       {
         "url": "/answers/toddler-wont-eat-dinner/",
         "title": "My toddler won't eat dinner — what should I do?"
+      },
+      {
+        "url": "/answers/quick-weeknight-dinners-kids-will-eat/",
+        "title": "What are quick weeknight dinners kids will eat?"
       }
     ],
     "sources": [
@@ -607,6 +619,10 @@
       {
         "url": "/answers/iron-rich-foods-for-babies/",
         "title": "What are the best iron-rich foods for babies?"
+      },
+      {
+        "url": "/answers/first-foods-for-a-6-month-old/",
+        "title": "What are the best first foods for a 6-month-old?"
       }
     ],
     "sources": [
@@ -793,6 +809,10 @@
       {
         "url": "/answers/picky-eater-dinner-ideas/",
         "title": "What can I make for dinner for a picky eater?"
+      },
+      {
+        "url": "/answers/can-my-baby-eat-what-we-eat/",
+        "title": "Can my baby eat the same food as the rest of the family?"
       }
     ],
     "sources": [
@@ -975,6 +995,10 @@
       {
         "url": "/answers/how-much-should-a-toddler-eat/",
         "title": "How much should a toddler eat?"
+      },
+      {
+        "url": "/answers/toddler-only-eats-snacks/",
+        "title": "My toddler only wants snacks — what should I do?"
       }
     ],
     "sources": [
@@ -1161,6 +1185,10 @@
       {
         "url": "/answers/iron-rich-foods-for-babies/",
         "title": "What are the best iron-rich foods for babies?"
+      },
+      {
+        "url": "/answers/2-year-old-meal-ideas/",
+        "title": "What should a 2-year-old eat? Meal ideas for a typical day"
       }
     ],
     "sources": [
@@ -1350,6 +1378,14 @@
       {
         "url": "/answers/toddler-wont-eat-dinner/",
         "title": "My toddler won't eat dinner — what should I do?"
+      },
+      {
+        "url": "/answers/how-many-times-to-offer-a-new-food/",
+        "title": "How many times should you offer a new food to a toddler?"
+      },
+      {
+        "url": "/answers/should-i-make-separate-meals-for-my-picky-eater/",
+        "title": "Should I make separate meals for my picky eater?"
       }
     ],
     "sources": [
@@ -1560,6 +1596,10 @@
       {
         "url": "/answers/balanced-toddler-plate/",
         "title": "What does a balanced toddler plate look like?"
+      },
+      {
+        "url": "/answers/first-foods-for-a-6-month-old/",
+        "title": "What are the best first foods for a 6-month-old?"
       }
     ],
     "sources": [
@@ -1721,6 +1761,10 @@
       {
         "url": "/answers/iron-rich-foods-for-babies/",
         "title": "What are the best iron-rich foods for babies?"
+      },
+      {
+        "url": "/answers/when-can-babies-have-cows-milk/",
+        "title": "When can babies have cow’s milk?"
       }
     ],
     "sources": [
