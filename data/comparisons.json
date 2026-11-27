@@ -1591,5 +1591,302 @@
     ],
     "published": "2026-08-15",
     "updated": "2026-11-25"
+  },
+  {
+    "slug": "best-meal-planning-apps-for-moms",
+    "type": "app-roundup",
+    "headline": "Best Meal Planning Apps for Moms and Families (2026)",
+    "subhead": "Nine family meal planners compared on price, devices, grocery lists, recipe import, kid features and sharing, with a pick for each kind of family.",
+    "category": "Meal planning apps",
+    "published": "2026-11-26",
+    "updated": "2026-11-26",
+    "checked": "2026-11-26",
+    "disclosure": {
+      "heading": "Disclosure: MomRise wrote this page, and MomRise is one of the apps on it",
+      "points": [
+        "**We make MomRise, and it's included here.** To keep this fair, we don't rank ourselves first, we list MomRise only under the need it actually fits, and we show its drawbacks the same way we show everyone else's.",
+        "**How we evaluated:** we compared each app's published prices, platforms and features, taken from its own website, help pages or App Store listing on November 26, 2026. We looked at what families ask about most: cost and free options, devices, grocery lists, recipe import, kid and picky-eater features, and sharing with a partner.",
+        "**What we didn't do:** we didn't test every app hands-on, and we don't rate recipe or food quality. If an app's own pages didn't confirm a feature, we show \"—\" instead of guessing.",
+        "No app paid to be included, and this page has no affiliate links. See our [editorial standards](/about/#editorial-standards)."
+      ]
+    },
+    "answer": "No single meal planning app is best for every family. The right one depends on what you need most. Based on each app's published features and prices (checked November 26, 2026): Cozi is the best free option and family organizer. Plan to Eat and Paprika are best if you plan from recipes you already collect. Feeding Littles is built for babies and toddlers starting solids, and Little Lunches for picky eaters and lunchboxes. eMeals writes the weekly menu for you, Eat This Much plans around nutrition targets, and Ollie does it all by text. MomRise, our app, suits iPhone families who want meal planning, a family calendar, milestones and activities in one place. It has no free plan after its 7-day trial and no Android version.",
+    "notice": "**Looking for Mealime?** Mealime was discontinued on October 21, 2026, and its recipes moved to Albertsons' Meals Hub [1]. See [Mealime alternatives](/compare/mealime-alternatives/).",
+    "picksHeading": "Our picks by need",
+    "apps": [
+      {
+        "id": "cozi",
+        "bestFor": "Best free option and best family organizer"
+      },
+      {
+        "id": "plan-to-eat",
+        "bestFor": "Best for planning from recipes you already save"
+      },
+      {
+        "id": "paprika",
+        "bestFor": "Best recipe manager across devices, including Mac and Windows"
+      },
+      {
+        "id": "feeding-littles",
+        "bestFor": "Best for babies and toddlers starting solids"
+      },
+      {
+        "id": "little-lunches",
+        "bestFor": "Best for picky eaters and lunchboxes"
+      },
+      {
+        "id": "momrise",
+        "bestFor": "Best for meal planning plus milestones, activities and a family calendar (iPhone)"
+      },
+      {
+        "id": "emeals",
+        "bestFor": "Best for done-for-you weekly menus with grocery delivery"
+      },
+      {
+        "id": "eat-this-much",
+        "bestFor": "Best for meal plans built around nutrition targets"
+      },
+      {
+        "id": "ollie",
+        "bestFor": "Best hands-off option: plan meals by text"
+      }
+    ],
+    "sectionsAfter": [
+      {
+        "id": "how-to-choose",
+        "heading": "How to choose a meal planning app for your family",
+        "bullets": [
+          "**Decide who writes the menu.** If you want ready-made plans, look at eMeals, Little Lunches or Ollie. If you'd rather plan from your own favorites, Plan to Eat, Paprika, Cozi and MomRise are built around saving recipes. Eat This Much generates plans from nutrition targets.",
+          "**Check everyone's devices.** If a partner uses Android or you like to plan on a laptop, rule out iPhone-only MomRise and Feeding Littles, which has no web version. Paprika also runs on Mac and Windows.",
+          "**Look at what's free after the trial.** Cozi, Paprika, Eat This Much, Feeding Littles and Ollie have free plans, each with limits. Plan to Eat, eMeals, Little Lunches and MomRise are paid once the trial ends.",
+          "**Test recipe import with your real sources.** If your recipes live on TikTok, Instagram or Pinterest, import three of them during the trial. Plan to Eat, Feeding Littles and MomRise list social-media or screenshot import, and Paprika does with Premium.",
+          "**Match it to your kids' stage.** For starting solids, try Feeding Littles or Little Lunches. For a picky eater, try Little Lunches, Feeding Littles or eMeals' Kid Friendly plan. For the feeding side, see [how to meal plan for a picky eater](/answers/meal-planning-for-picky-eaters/).",
+          "**Make sure your partner can use it.** Cozi, Plan to Eat, Paprika Premium, Feeding Littles Premium and Little Lunches let a partner sign in to the same plan. Ollie uses a group text. MomRise only shares plans and recipes by link.",
+          "**Count the grocery step.** A list built from the whole week saves the most time. Cozi adds ingredients one recipe at a time, and Eat This Much's automatic list is Premium-only."
+        ]
+      }
+    ],
+    "cta": {
+      "lead": "On iPhone and want meals and family life in one place?",
+      "body": "MomRise plans the week's meals, builds an aisle-sorted grocery list, imports recipes from websites, TikTok and screenshots, and keeps milestones, activity ideas and the family calendar next to it."
+    },
+    "faqs": [
+      {
+        "q": "What is the best free meal planning app for families?",
+        "a": "Cozi's free plan includes its meal planner, recipe box, shared grocery lists and family calendar {cite:cozi}. Other free options have tighter limits: Paprika's free version holds up to 50 recipes on one device {cite:paprika}, Eat This Much's free plan makes one day's plan at a time {cite:eat-this-much}, Feeding Littles' free plan allows 5 recipe imports {cite:feeding-littles}, and Ollie's free plan caps messages {cite:ollie}. MomRise has no free plan after its 7-day trial."
+      },
+      {
+        "q": "Which meal planning apps are best for picky eaters?",
+        "a": "Little Lunches lists picky-eater feeding support and kid-focused weekly plans from baby to teen {cite:little-lunches}. Feeding Littles includes picky-eating tips and baby-led-weaning-friendly recipes {cite:feeding-littles}, and eMeals offers a Kid Friendly meal plan {cite:emeals}. Most general planners, MomRise included, have no picky-eater-specific tools."
+      },
+      {
+        "q": "Can my partner and I share the same meal plan?",
+        "a": "Yes, in several apps. Cozi and Plan to Eat share one account across the household {cite:cozi}{cite:plan-to-eat}. Paprika and Feeding Littles offer family or household accounts on Premium {cite:paprika}{cite:feeding-littles}, and Little Lunches lets a second parent or caregiver join free {cite:little-lunches}. Ollie works through a family group text {cite:ollie}. MomRise lets you share a week, day, meal or recipe by link but has no shared household login."
+      },
+      {
+        "q": "Which meal planning apps can import recipes from TikTok or Instagram?",
+        "a": "Plan to Eat's Recipe Clipper saves from Instagram, TikTok and Pinterest {cite:plan-to-eat}. Feeding Littles imports from Instagram, TikTok, websites, PDFs and screenshots {cite:feeding-littles}. Paprika imports social media posts with Premium {cite:paprika}. MomRise imports TikTok links directly and Instagram posts from a screenshot {cite:momrise}."
+      },
+      {
+        "q": "Is MomRise available on Android?",
+        "a": "No. As of November 2026, MomRise is iPhone-only {cite:momrise}. If anyone in your household uses Android, Cozi, Plan to Eat, Paprika, eMeals, Eat This Much, Feeding Littles and Little Lunches all list Android apps."
+      },
+      {
+        "q": "What happened to Mealime?",
+        "a": "Mealime was discontinued on October 21, 2026. Its owner, Albertsons Companies, moved its recipes to Meals Hub, and personal data was deleted at shutdown [1]. See our [Mealime alternatives](/compare/mealime-alternatives/) guide."
+      }
+    ],
+    "related": [
+      {
+        "url": "/compare/mealime-alternatives/",
+        "title": "Mealime alternatives after the shutdown"
+      },
+      {
+        "url": "/answers/meal-planning-for-picky-eaters/",
+        "title": "How do you meal plan for a family with a picky eater?"
+      },
+      {
+        "url": "/answers/picky-eater-dinner-ideas/",
+        "title": "What can I make for dinner for a picky eater?"
+      },
+      {
+        "url": "/compare/meal-prep-vs-cooking-fresh/",
+        "title": "Meal Prep vs. Cooking Fresh"
+      },
+      {
+        "url": "/meal-ideas/",
+        "title": "Free meal idea generator"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Mealime is moving to Meals Hub",
+        "publisher": "Mealime",
+        "url": "https://www.mealime.com/closing"
+      }
+    ]
+  },
+  {
+    "slug": "mealime-alternatives",
+    "type": "app-roundup",
+    "headline": "Mealime Alternatives After the Shutdown (2026)",
+    "subhead": "Mealime closed on October 21, 2026. Here's what happened, what to look for in a replacement, seven alternatives, and how to move your recipes.",
+    "category": "Meal planning apps",
+    "published": "2026-11-26",
+    "updated": "2026-11-26",
+    "checked": "2026-11-26",
+    "disclosure": {
+      "heading": "Disclosure: MomRise wrote this page, and MomRise is one of the alternatives",
+      "points": [
+        "**We make MomRise, and it's on this list.** We don't rank it first, and we show its drawbacks alongside everyone else's.",
+        "**How we evaluated:** the shutdown details come from Mealime's own closing notice. Each alternative's prices, platforms and features come from its own website, help pages or App Store listing, checked November 26, 2026. If we couldn't confirm a feature there, we show \"—\".",
+        "We didn't test every app hands-on, and no app paid to be included. There are no affiliate links. See our [editorial standards](/about/#editorial-standards)."
+      ]
+    },
+    "answer": "Mealime was discontinued on October 21, 2026. Its owner, Albertsons Companies, moved Mealime's recipes into Meals Hub, a meal-planning section of Albertsons Companies store apps and websites. Personal data was deleted at shutdown, and Mealime's notice doesn't mention any export [1]. If you want ready-made plans with an automatic grocery list, as Mealime offered, look at eMeals or Eat This Much. Eat This Much can also import recipes shared from Meals Hub [2]. To plan from your own recipes, try Plan to Eat or Paprika. For a free family option, try Cozi. MomRise, our app, suits iPhone families who also want milestones, activities and a family calendar.",
+    "sectionsBefore": [
+      {
+        "id": "what-happened",
+        "heading": "What happened to Mealime",
+        "bullets": [
+          "**Shutdown date:** Mealime was discontinued on October 21, 2026 [1].",
+          "**Owner:** Albertsons Companies, which acquired Mealime in 2021 [1].",
+          "**Subscriptions:** Mealime wound down its paid subscriptions and made all Pro recipes and features free for every user before the shutdown [1].",
+          "**Recipes:** Mealime's recipes continue in Meals Hub, along with more recipes. You find Meals Hub under the \"More\" icon in an Albertsons Companies store app, or on Albertsons Companies store websites [1].",
+          "**Your data:** Mealime said all personal data would be deleted when the app shut down, and that some preferences have to be set up again in Meals Hub. Its notice doesn't mention a way to export saved recipes, plans or lists [1]."
+        ]
+      },
+      {
+        "id": "meals-hub",
+        "heading": "Should you just switch to Meals Hub?",
+        "paras": [
+          "Meals Hub is Mealime's official successor, and it's supported by the same core team that built Mealime [1]. If you already shop at an Albertsons Companies store, it's the most direct continuation. We left it out of the table below because it lives inside grocery store apps, and we couldn't verify its pricing, platforms or features from a standalone listing. If you shop elsewhere or want a dedicated planner, the alternatives below are worth a look."
+        ]
+      },
+      {
+        "id": "what-to-look-for",
+        "heading": "What to look for in a Mealime replacement",
+        "bullets": [
+          "**Who builds the plan.** Mealime handed you a ready-made plan. eMeals, Eat This Much, Little Lunches and Ollie generate plans. Plan to Eat, Paprika, Cozi and MomRise are built around recipes you add.",
+          "**A grocery list built from the whole week.** Plan to Eat, eMeals, Feeding Littles and MomRise build one automatically from the plan. Eat This Much does on Premium. Cozi adds ingredients one recipe at a time.",
+          "**Recipe import, so you can rescue your favorites.** Every alternative on this list can import recipes from a website or link.",
+          "**A free plan, if you used Mealime for free.** Cozi, Paprika, Eat This Much and Feeding Littles have free plans with limits. Plan to Eat, eMeals and MomRise are paid after a trial.",
+          "**Your dietary preferences.** They didn't carry over from Mealime [1], so check that your new app supports the filters you need before you commit."
+        ]
+      }
+    ],
+    "picksHeading": "Mealime alternatives at a glance",
+    "cardsHeading": "The alternatives, one by one",
+    "apps": [
+      {
+        "id": "emeals",
+        "bestFor": "Best for done-for-you weekly menus, like Mealime's",
+        "note": "Like Mealime, eMeals gives you a weekly plan and builds the shopping list for you. It adds a Kid Friendly plan and sends the list to grocery delivery and pickup services {cite:emeals}."
+      },
+      {
+        "id": "eat-this-much",
+        "bestFor": "Best for moving recipes over from Meals Hub",
+        "note": "Eat This Much publishes a switch-from-Mealime guide. It says you can share a recipe from Meals Hub in the Albertsons or Safeway app straight into Eat This Much, and that importing is free [2]."
+      },
+      {
+        "id": "plan-to-eat",
+        "bestFor": "Best for rebuilding your own recipe collection"
+      },
+      {
+        "id": "paprika",
+        "bestFor": "Best free personal recipe box (up to 50 recipes)"
+      },
+      {
+        "id": "cozi",
+        "bestFor": "Best free option for the whole family"
+      },
+      {
+        "id": "momrise",
+        "bestFor": "Best for meal planning plus milestones, activities and a family calendar (iPhone)"
+      },
+      {
+        "id": "feeding-littles",
+        "bestFor": "Best for families with babies and toddlers"
+      }
+    ],
+    "sectionsAfter": [
+      {
+        "id": "move-your-recipes",
+        "heading": "How to move your Mealime recipes",
+        "paras": [
+          "Mealime deleted personal data at shutdown and its notice mentions no export [1], so there's no way to bulk-move an old account. The recipes themselves live on in Meals Hub [1], which gives you a few routes:"
+        ],
+        "bullets": [
+          "**Share them into Eat This Much.** Eat This Much says you can share a recipe from Meals Hub in the Albertsons or Safeway app into its app [2].",
+          "**Paste a link.** If you can get a web link for a recipe, paste it into an app that imports from websites. Plan to Eat, Paprika, Cozi, eMeals, Feeding Littles and MomRise all do.",
+          "**Use a screenshot or photo.** Plan to Eat, Feeding Littles and MomRise import recipes from photos or screenshots. Paprika scans cookbook pages with Premium.",
+          "**Copy the text.** MomRise has a paste-text import, and Paprika Premium pulls recipes from copied text.",
+          "**Re-enter your dietary preferences** in the new app, since they didn't carry over [1]."
+        ],
+        "parasAfter": [
+          "Tip: move the ten recipes you cook most during the new app's free trial. That way you know import works for your recipes before you pay."
+        ]
+      }
+    ],
+    "cta": {
+      "lead": "Replacing Mealime on an iPhone?",
+      "body": "MomRise plans the week's meals and builds the grocery list. It imports recipes from websites, TikTok links, screenshots or pasted text, and keeps milestones, activities and the family calendar in the same app."
+    },
+    "faqs": [
+      {
+        "q": "When did Mealime shut down?",
+        "a": "Mealime was discontinued on October 21, 2026 [1]. Before that, it stopped paid subscriptions and made all Pro recipes and features free for every user [1]."
+      },
+      {
+        "q": "What is Meals Hub?",
+        "a": "Meals Hub is a meal-planning section inside Albertsons Companies store apps and websites. Mealime's recipes moved there, and Mealime says it's supported by the same core team that built Mealime [1]."
+      },
+      {
+        "q": "Can I export my Mealime recipes and meal plans?",
+        "a": "Mealime's notice doesn't mention any export, and it says all personal data would be deleted at shutdown [1]. The recipes are still available in Meals Hub [1]. Eat This Much says you can share Meals Hub recipes into its app [2], and other apps can import a recipe from a link, screenshot or copied text."
+      },
+      {
+        "q": "Which app is most like Mealime?",
+        "a": "If what you liked was a ready-made weekly plan with an automatic grocery list, eMeals {cite:emeals} and Eat This Much {cite:eat-this-much} work most like Mealime did. If you mainly used Mealime as a recipe box, Plan to Eat or Paprika will feel more natural."
+      },
+      {
+        "q": "Is there a free Mealime alternative?",
+        "a": "Cozi's free plan includes a meal planner, recipe box and shared grocery lists {cite:cozi}. Paprika's free version holds up to 50 recipes {cite:paprika}. Eat This Much's free plan makes one day's plan at a time {cite:eat-this-much}, and Feeding Littles has a free plan with 5 recipe imports {cite:feeding-littles}. MomRise is not free after its 7-day trial."
+      },
+      {
+        "q": "Does MomRise work on Android?",
+        "a": "No. MomRise is iPhone-only as of November 2026 {cite:momrise}. If you need Android, Cozi, Plan to Eat, Paprika, eMeals, Eat This Much and Feeding Littles all list Android apps."
+      }
+    ],
+    "related": [
+      {
+        "url": "/compare/best-meal-planning-apps-for-moms/",
+        "title": "Best meal planning apps for moms and families (2026)"
+      },
+      {
+        "url": "/answers/meal-planning-for-picky-eaters/",
+        "title": "How do you meal plan for a family with a picky eater?"
+      },
+      {
+        "url": "/compare/meal-prep-vs-cooking-fresh/",
+        "title": "Meal Prep vs. Cooking Fresh"
+      },
+      {
+        "url": "/meal-ideas/",
+        "title": "Free meal idea generator"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Mealime is moving to Meals Hub",
+        "publisher": "Mealime",
+        "url": "https://www.mealime.com/closing"
+      },
+      {
+        "title": "Switch from Mealime",
+        "publisher": "Eat This Much",
+        "url": "https://www.eatthismuch.com/switch-from-mealime"
+      }
+    ]
   }
 ]

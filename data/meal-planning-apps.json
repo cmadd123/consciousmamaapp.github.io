@@ -1,0 +1,324 @@
+{
+  "_about": "Category graph: meal-planning apps. Facts only, each taken from the app's own website, help docs or App Store listing on `lastVerified`. Never store review text or marketing prose. A null/'—' value means we could not verify it — leave it that way rather than guess. Consumed by scripts/generate-comparison-pages.js for `type: \"app-roundup\"` pages. MomRise facts come from the App Store listing plus the app code in lib/ (see `momriseCodeRefs`).",
+  "apps": [
+    {
+      "id": "momrise",
+      "name": "MomRise",
+      "self": true,
+      "url": "https://momrise.app/",
+      "lastVerified": "2026-11-26",
+      "price": {
+        "freeTier": "No free plan",
+        "trial": "7-day free trial",
+        "monthly": "$6.99/mo",
+        "annual": "$69.99/yr",
+        "summary": "7-day free trial, then $6.99/mo or $69.99/yr"
+      },
+      "platforms": "iPhone only (iOS 14+). No Android or web app.",
+      "groceryList": "Yes — built automatically from the week's plan, sorted by aisle; can be sent to Instacart",
+      "recipeImport": "Recipe websites, TikTok links, photos/screenshots (e.g. Instagram posts, cookbook pages), pasted text; share from Pinterest",
+      "kidFeatures": "Profiles for each child, milestone tracker and age-based activity ideas. No picky-eater-specific meal tools.",
+      "familySharing": "Share a week, day, meal or recipe by link. No shared household login.",
+      "whoFor": "Moms of babies to early-school kids on iPhone who want the weekly meal plan, grocery list, family calendar, milestones and activity ideas in one app instead of several.",
+      "strengths": [
+        "Meal planning, grocery list, family calendar, milestone tracking and activity ideas live in one app",
+        "Imports recipes from websites, TikTok links, screenshots or photos, and pasted text",
+        "Grocery list builds itself from the plan, groups items by aisle and can be sent to Instacart",
+        "Tracks several children in one place"
+      ],
+      "drawbacks": [
+        "iPhone only — no Android or web version",
+        "No free plan once the 7-day trial ends",
+        "New app with few App Store ratings so far (10 ratings when we checked)",
+        "Its built-in recipe collection is still growing, so expect to import your own favorites",
+        "No picky-eater or baby-led-weaning tools, and no shared household login"
+      ],
+      "sources": [
+        { "title": "MomRise on the App Store", "publisher": "Apple App Store", "url": "https://apps.apple.com/us/app/momrise/id6758357382" }
+      ],
+      "momriseCodeRefs": [
+        "lib/v2/week_plan/recipe_from_link/recipe_from_link_widget.dart (URL, TikTok, photo, paste-text import)",
+        "lib/flutter_flow/share_intent_handler.dart (share from Pinterest/browser)",
+        "lib/v2/week_plan/add_to_grocery/add_to_grocery_widget.dart + lib/custom_code/actions/grocery_aisle_categorizer.dart (aisle-sorted list, Instacart)",
+        "lib/custom_code/actions/sharing_service.dart (share week/day/meal/recipe by link)",
+        "lib/components/parent_circle_widget.dart (partner is a display label, not a second login)"
+      ]
+    },
+    {
+      "id": "plan-to-eat",
+      "name": "Plan to Eat",
+      "url": "https://www.plantoeat.com/",
+      "lastVerified": "2026-11-26",
+      "price": {
+        "freeTier": "No free plan",
+        "trial": "14-day free trial, no card required",
+        "monthly": "$5.95/mo",
+        "annual": "$49/yr",
+        "summary": "14-day free trial, then $5.95/mo or $49/yr (website prices; in-app prices can differ)"
+      },
+      "platforms": "iPhone, iPad, Android, web",
+      "groceryList": "Yes — generated from the meal plan, organized by store and aisle, with grocery delivery",
+      "recipeImport": "Any website, Instagram, TikTok and Pinterest via its Recipe Clipper; camera/photo import",
+      "kidFeatures": "—",
+      "familySharing": "Yes — one account can be shared by everyone in the household",
+      "whoFor": "Families who already have favorite recipes scattered across blogs and social media and want to plan the week from their own collection, on any device.",
+      "strengths": [
+        "Built around your own recipes: clip from websites and social media, or import from a photo",
+        "Grocery list comes straight from the plan and is organized by store and aisle",
+        "Works on iPhone, Android and the web",
+        "One account can be shared across the household"
+      ],
+      "drawbacks": [
+        "No free plan after the trial",
+        "No kid-, baby- or picky-eater-specific features listed",
+        "It's a planner for your recipes, not a source of ready-made plans"
+      ],
+      "sources": [
+        { "title": "Plan to Eat pricing", "publisher": "Plan to Eat", "url": "https://www.plantoeat.com/pricing/" },
+        { "title": "Plan to Eat — Meal Planner on the App Store", "publisher": "Apple App Store", "url": "https://apps.apple.com/us/app/plan-to-eat-meal-planner/id1215348056" }
+      ]
+    },
+    {
+      "id": "paprika",
+      "name": "Paprika Recipe Manager",
+      "url": "https://www.paprikaapp.com/",
+      "lastVerified": "2026-11-26",
+      "price": {
+        "freeTier": "Yes — up to 50 recipes on one device, no time limit",
+        "trial": "1-week free trial of Premium",
+        "monthly": "—",
+        "annual": "—",
+        "summary": "Free (up to 50 recipes); Premium is a subscription whose price varies by region and is shown in your app store"
+      },
+      "platforms": "iPhone, iPad, Mac, Android, Windows",
+      "groceryList": "Yes — add a whole week to the list, organized by aisle or recipe (one list on the free version)",
+      "recipeImport": "Recipe websites (free); social media posts, copied text and cookbook-page scans (Premium)",
+      "kidFeatures": "—",
+      "familySharing": "Premium family accounts — family members share the owner's subscription",
+      "whoFor": "Recipe collectors who want a personal cookbook with meal planning and grocery lists across the widest range of devices, including Mac and Windows.",
+      "strengths": [
+        "Free version with no time limit (up to 50 recipes)",
+        "Available on iPhone, iPad, Mac, Android and Windows",
+        "Website import on the free version; social, text and cookbook-page import with Premium",
+        "Premium family accounts share one subscription"
+      ],
+      "drawbacks": [
+        "Free version is limited to 50 recipes, one device and one grocery list",
+        "Premium price isn't published on its website (it varies by region)",
+        "No kid-, baby- or picky-eater-specific features listed"
+      ],
+      "sources": [
+        { "title": "Paprika Recipe Manager", "publisher": "Hindsight Labs", "url": "https://www.paprikaapp.com/" },
+        { "title": "Paprika 4 pricing (help)", "publisher": "Hindsight Labs", "url": "https://www.paprikaapp.com/help/v4/ios/pricing/" }
+      ]
+    },
+    {
+      "id": "cozi",
+      "name": "Cozi Family Organizer",
+      "url": "https://www.cozi.com/",
+      "lastVerified": "2026-11-26",
+      "price": {
+        "freeTier": "Yes — free plan",
+        "trial": "—",
+        "monthly": "—",
+        "annual": "Gold $39/yr · Max $79/yr",
+        "summary": "Free; Cozi Gold $39/yr (ad-free); Cozi Max $79/yr (adds AI meal planner)"
+      },
+      "platforms": "iPhone, Android, web",
+      "groceryList": "Yes — shared shopping lists; add a recipe's ingredients to a list",
+      "recipeImport": "Paste a recipe's web address, or share from Safari/Chrome",
+      "kidFeatures": "Shared family calendar and chore lists. No picky-eater tools.",
+      "familySharing": "Yes — the whole family shares one account, each signing in with their own email",
+      "whoFor": "Families whose main problem is coordination — one shared calendar, shopping list and to-do list for everyone — with meal planning as one part of it.",
+      "strengths": [
+        "Free plan includes the meal planner, recipe box, shared grocery lists and shared calendar",
+        "Everyone in the family signs in to the same account",
+        "Works on iPhone, Android and the web",
+        "Planned meals show up on the family calendar"
+      ],
+      "drawbacks": [
+        "Ingredients go to the list recipe by recipe rather than from the whole week at once",
+        "The free plan isn't ad-free (ad-free is a Gold feature)",
+        "AI meal planning requires the $79/yr Max plan",
+        "No picky-eater or baby-feeding features"
+      ],
+      "sources": [
+        { "title": "Compare Cozi plans", "publisher": "Cozi", "url": "https://www.cozi.com/compare-plans/" },
+        { "title": "Getting started with Cozi Meals", "publisher": "Cozi", "url": "https://www.cozi.com/getting-started-with-cozi-recipe-box/" },
+        { "title": "Cozi Family Organizer on the App Store", "publisher": "Apple App Store", "url": "https://apps.apple.com/us/app/cozi-family-organizer/id407108860" }
+      ]
+    },
+    {
+      "id": "emeals",
+      "name": "eMeals",
+      "url": "https://emeals.com/",
+      "lastVerified": "2026-11-26",
+      "price": {
+        "freeTier": "—",
+        "trial": "14-day free trial",
+        "monthly": "—",
+        "annual": "From $4.99/mo on a 12-month plan",
+        "summary": "14-day free trial; as low as $4.99/mo on a 12-month subscription, or $37.50 for 3 months"
+      },
+      "platforms": "iPhone, Android, web",
+      "groceryList": "Yes — built automatically from the meals you pick; order through Walmart, Kroger, Amazon Fresh, Instacart and others",
+      "recipeImport": "Yes — add family recipes and recipes from the web",
+      "kidFeatures": "A Kid Friendly meal plan aimed at picky eaters",
+      "familySharing": "—",
+      "whoFor": "Busy parents who want someone else to write the weekly menu and want to send the grocery list straight to a delivery or pickup service.",
+      "strengths": [
+        "Ready-made weekly meal plans, including a Kid Friendly plan",
+        "Shopping list is built for you and can go to several grocery delivery and pickup services",
+        "Also lets you add your own and web recipes",
+        "iPhone, Android and web"
+      ],
+      "drawbacks": [
+        "No free plan listed after the trial",
+        "Month-to-month price isn't published on its site",
+        "We couldn't confirm household sharing from its own pages"
+      ],
+      "sources": [
+        { "title": "eMeals", "publisher": "eMeals", "url": "https://emeals.com/" },
+        { "title": "eMeals Kid Friendly meal plan", "publisher": "eMeals", "url": "https://emeals.com/meal-plans/kid-friendly/" }
+      ]
+    },
+    {
+      "id": "ollie",
+      "name": "Ollie",
+      "url": "https://ollie.ai/",
+      "lastVerified": "2026-11-26",
+      "price": {
+        "freeTier": "Yes — 50 messages/mo plus 6 a day",
+        "trial": "—",
+        "monthly": "$25/mo (Everyday) · $100/mo (Always-On)",
+        "annual": "—",
+        "summary": "Free (50 messages/mo + 6/day); Everyday $25/mo; Always-On $100/mo"
+      },
+      "platforms": "Text messages on iPhone or Android — no app needed",
+      "groceryList": "Yes — written automatically from the plan, organized by aisle; can order through Amazon, Instacart or Walmart",
+      "recipeImport": "—",
+      "kidFeatures": "—",
+      "familySharing": "Yes — add family members to a group text; one subscription covers the group",
+      "whoFor": "Parents who want to hand off meal planning entirely by texting an AI assistant, and don't need a recipe app.",
+      "strengths": [
+        "Works over text messages — nothing to install",
+        "Plans meals around your family and writes the grocery list",
+        "Can order groceries through Amazon, Instacart or Walmart",
+        "Partners and helpers can join the same group text"
+      ],
+      "drawbacks": [
+        "Paid plans ($25 and $100 a month) cost more than every other app here",
+        "The free plan is capped by message count",
+        "We couldn't confirm recipe import or kid-specific features on its site"
+      ],
+      "sources": [
+        { "title": "Ollie plans and pricing", "publisher": "Ollie", "url": "https://ollie.ai/pricing/" },
+        { "title": "Ollie", "publisher": "Ollie", "url": "https://ollie.ai/" }
+      ]
+    },
+    {
+      "id": "eat-this-much",
+      "name": "Eat This Much",
+      "url": "https://www.eatthismuch.com/",
+      "lastVerified": "2026-11-26",
+      "price": {
+        "freeTier": "Yes — daily meal plans",
+        "trial": "Free trial (length not stated)",
+        "monthly": "—",
+        "annual": "$5/mo billed annually",
+        "summary": "Free (one day at a time); Premium $5/mo with an annual subscription"
+      },
+      "platforms": "iPhone, iPad, Android, web",
+      "groceryList": "Premium — automatic grocery list with grocery delivery (Instacart, Amazon Fresh)",
+      "recipeImport": "Yes — share recipes from your browser; also accepts recipes shared from Meals Hub (Mealime's successor)",
+      "kidFeatures": "Meal settings for additional family members and family scaling. No picky-eater tools.",
+      "familySharing": "—",
+      "whoFor": "Parents who plan meals around calorie or nutrition targets and want the app to generate plans that hit them.",
+      "strengths": [
+        "Free plan generates daily meal plans",
+        "Lets you set different nutrition targets for each day of the week",
+        "Premium plans a full week and builds the grocery list, with delivery integration",
+        "Imports recipes shared from your browser or from Meals Hub"
+      ],
+      "drawbacks": [
+        "Weekly planning and the automatic grocery list are Premium-only",
+        "Built around nutrition targets more than kids' tastes — no picky-eater features",
+        "We couldn't confirm household sharing from its own pages"
+      ],
+      "sources": [
+        { "title": "Eat This Much pricing", "publisher": "Eat This Much", "url": "https://www.eatthismuch.com/pricing" },
+        { "title": "Eat This Much — Meal Planner on the App Store", "publisher": "Apple App Store", "url": "https://apps.apple.com/us/app/eat-this-much-meal-planner/id981637806" },
+        { "title": "Switch from Mealime", "publisher": "Eat This Much", "url": "https://www.eatthismuch.com/switch-from-mealime" }
+      ]
+    },
+    {
+      "id": "feeding-littles",
+      "name": "Feeding Littles",
+      "url": "https://feedinglittles.com/pages/feeding-littles-app",
+      "lastVerified": "2026-11-26",
+      "price": {
+        "freeTier": "Yes — 75+ recipes, meal planner, grocery list, 5 recipe imports",
+        "trial": "—",
+        "monthly": "$9.99/mo",
+        "annual": "$59.99/yr",
+        "summary": "Free plan; Premium $9.99/mo or $59.99/yr (App Store)"
+      },
+      "platforms": "iPhone, Android. No web or desktop version.",
+      "groceryList": "Yes — created automatically, sorted by aisle",
+      "recipeImport": "Instagram, TikTok, websites, PDFs and screenshots (5 on free, unlimited on Premium)",
+      "kidFeatures": "Baby-led-weaning-friendly recipes with serve-safely photos, picky-eating tips; created by a dietitian",
+      "familySharing": "Premium household of up to 6 people; works with Apple Family Sharing",
+      "whoFor": "Parents of babies and toddlers starting solids or baby-led weaning who want feeding-focused recipes alongside a family meal planner.",
+      "strengths": [
+        "Built for feeding young kids: baby-led-weaning-friendly recipes with serve-safely photos and picky-eating tips",
+        "Usable free plan with a planner, recipes and an automatic grocery list",
+        "Imports from Instagram, TikTok, websites, PDFs and screenshots",
+        "Premium household for up to 6 people"
+      ],
+      "drawbacks": [
+        "Only 5 recipe imports on the free plan",
+        "Premium costs $9.99/mo — more than the other recipe apps here that publish a monthly price",
+        "No web or desktop version"
+      ],
+      "sources": [
+        { "title": "Feeding Littles app", "publisher": "Feeding Littles", "url": "https://feedinglittles.com/pages/feeding-littles-app" },
+        { "title": "Feeding Littles: Meal Planner on the App Store", "publisher": "Apple App Store", "url": "https://apps.apple.com/app/id6746174019" }
+      ]
+    },
+    {
+      "id": "little-lunches",
+      "name": "Little Lunches",
+      "url": "https://www.littlelunches.com/en",
+      "lastVerified": "2026-11-26",
+      "price": {
+        "freeTier": "Free to start (trial; length not stated)",
+        "trial": "Free trial, no credit card required",
+        "monthly": "$7.99/mo",
+        "annual": "$49.99/yr",
+        "summary": "Free to start, then $7.99/mo or $49.99/yr"
+      },
+      "platforms": "iPhone, Android, website",
+      "groceryList": "Yes — created automatically; Instacart and Walmart delivery in the US",
+      "recipeImport": "— (you can create your own recipes)",
+      "kidFeatures": "Weekly plans from baby to teen: baby-led weaning, age-appropriate foods from 6–24 months, toddler meals, lunchbox ideas, picky-eater feeding support",
+      "familySharing": "Yes — add a second parent or caregiver free",
+      "whoFor": "Parents of picky eaters and school-age kids who want ready-made kid-focused weekly plans and lunchbox ideas.",
+      "strengths": [
+        "Weekly meal plans built for kids, from baby to teen",
+        "Picky-eater feeding support and lunchbox ideas",
+        "Automatic grocery lists with Instacart and Walmart delivery in the US",
+        "A second parent or caregiver can join free"
+      ],
+      "drawbacks": [
+        "We couldn't confirm importing recipes from websites",
+        "Trial length isn't stated on its site",
+        "App store prices may differ by location (per its pricing page)"
+      ],
+      "sources": [
+        { "title": "Little Lunches pricing", "publisher": "Little Lunches", "url": "https://www.littlelunches.com/en/pricing" },
+        { "title": "Little Lunches", "publisher": "Little Lunches", "url": "https://www.littlelunches.com/en" },
+        { "title": "Little Lunches: Kids Meals on the App Store", "publisher": "Apple App Store", "url": "https://apps.apple.com/app/id1572670746" }
+      ]
+    }
+  ]
+}

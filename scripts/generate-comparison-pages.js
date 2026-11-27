@@ -11,6 +11,15 @@
 // {name, credentials} that renders only when set. `related` [{url, title}]
 // cross-links to /answers/ pages.
 //
+// App roundups (`type: "app-roundup"`): "best X apps" / "X alternatives"
+// pages built from the app category graph in data/meal-planning-apps.json.
+// The page lists `apps` [{ id, bestFor, note? }] in display order; every
+// price/platform/feature cell comes from the graph (facts checked on each
+// app's `lastVerified` date) and cites that app's own sources. MomRise is a
+// participant here, so these pages carry a required `disclosure` box at the
+// top and never auto-rank MomRise first (self-participant guardrail in
+// COMPARISON_AUTHORITY_ENGINE_SPEC.md). See scripts/lib/app-roundup.js.
+//
 // No Firebase / secrets needed. Run from the repo root:
 //   node scripts/generate-comparison-pages.js            # generate
 //   node scripts/generate-comparison-pages.js --dry-run  # log only
@@ -22,6 +31,7 @@ const {
   escapeHtml, escapeJson, truncate, stripRefs, withRefs,
   bylineHtml, sourcesHtml, articleLd, faqLd, relatedHtml, ogTags,
 } = require('./lib/aeo-shared');
+const { loadAppGraph, buildRoundupPage, validateRoundup } = require('./lib/app-roundup');
 
 const repoRoot = path.resolve(__dirname, '..');
 const dataPath = path.join(repoRoot, 'data', 'comparisons.json');
@@ -153,15 +163,27 @@ ${escapeJson(faq)}
 `;
 }
 
-function buildCatalog(items) {
-  const url = 'https://momrise.app/compare/';
-  const title = 'Parenting Comparisons — MomRise';
-  const desc = 'Neutral, side-by-side parenting comparisons — feeding, sleep, gear, and play choices explained, with sources from pediatric and public-health guidance.';
-  const cards = items.map((c) => `
+function catalogCards(list) {
+  return list.map((c) => `
       <li><a href="/compare/${c.slug}/">
         <span class="c-cat">${escapeHtml(c.category || '')}</span>
         <span class="c-title">${escapeHtml(c.headline)}</span>
       </a></li>`).join('');
+}
+
+function buildCatalog(items) {
+  const url = 'https://momrise.app/compare/';
+  const title = 'Parenting Comparisons — MomRise';
+  const desc = 'Side-by-side parenting comparisons — feeding, sleep, gear and play choices explained with sources from pediatric and public-health guidance, plus meal planning app comparisons.';
+  const roundups = items.filter((c) => c.type === 'app-roundup');
+  const methods = items.filter((c) => c.type !== 'app-roundup');
+  const appsBlock = roundups.length ? `
+    <h2 class="catalog-h2">Meal planning apps</h2>
+    <p class="catalog-sub">These compare apps, including our own (MomRise). Each one says so at the top and lists prices and features checked against every app's own website or App Store listing.</p>
+    <ul class="c-grid">${catalogCards(roundups)}
+    </ul>
+    <h2 class="catalog-h2">Parenting methods &amp; gear</h2>` : '';
+  const cards = catalogCards(methods);
   return `<!DOCTYPE html>
 <html lang="en"><head>
   <meta charset="UTF-8">
@@ -176,7 +198,8 @@ function buildCatalog(items) {
   <header class="page-header"><a href="/" class="brand"><span class="brand-mark">MomRise</span></a></header>
   <main class="catalog">
     <h1>Parenting comparisons</h1>
-    <p class="catalog-sub">Neutral, side-by-side breakdowns to help you decide. Looking for a quick answer instead? See <a href="/answers/">parenting answers</a>.</p>
+    <p class="catalog-sub">Side-by-side breakdowns to help you decide. Looking for a quick answer instead? See <a href="/answers/">parenting answers</a>.</p>
+${appsBlock}
     <ul class="c-grid">${cards}
     </ul>
   </main>
@@ -190,13 +213,21 @@ const raw = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
 const items = Array.isArray(raw) ? raw : [];
 console.log(`${dryRun ? 'DRY RUN — ' : ''}Generating ${items.length} comparison page(s)…`);
 
+const appGraph = items.some((c) => c.type === 'app-roundup') ? loadAppGraph(repoRoot) : null;
+
 let wrote = 0;
 for (const c of items) {
-  if (!c.slug || !c.headline || !c.a || !c.b) {
+  if (c.type === 'app-roundup') {
+    const problems = validateRoundup(c, appGraph);
+    if (problems.length) {
+      console.log(`  · Skip app roundup ${c.slug || '(no slug)'}: ${problems.join('; ')}`);
+      continue;
+    }
+  } else if (!c.slug || !c.headline || !c.a || !c.b) {
     console.log(`  · Skip (missing slug/headline/a/b): ${c.slug || '(no slug)'}`);
     continue;
   }
-  const html = buildPage(c);
+  const html = c.type === 'app-roundup' ? buildRoundupPage(c, appGraph) : buildPage(c);
   if (dryRun) {
     console.log(`  ⇢ would write compare/${c.slug}/index.html (${html.length} bytes)`);
   } else {
