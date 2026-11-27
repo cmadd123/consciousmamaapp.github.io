@@ -155,7 +155,7 @@ ${sections}
 
 function buildCatalog(items) {
   const url = 'https://momrise.app/answers/';
-  const desc = 'Straight answers to the feeding questions parents ask most — portions, picky eating, allergens, choking hazards, iron, and milk — with sources from pediatric and public-health guidance.';
+  const desc = 'Straight answers to the feeding questions parents ask most — meal planning, family dinners, portions, first foods, picky eating, allergens, and drinks — with sources from pediatric and public-health guidance.';
   const cards = items.map((a) => `
       <li><a href="/answers/${a.slug}/">
         <span class="c-cat">${escapeHtml(a.category || '')}</span>
