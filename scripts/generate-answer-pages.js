@@ -134,9 +134,8 @@ ${sections}
       <p>${(a.cta && a.cta.body) || 'MomRise builds a weekly family meal plan and grocery list around your kids’ ages and what they’ll actually eat.'}</p>
       <div class="app-buttons">
         <a class="store-btn" href="${APP_STORE}">App Store</a>
-        <a class="store-btn" href="${PLAY_STORE}">Google Play</a>
       </div>
-      <p class="cta-sub">Free 7-day trial · No credit card · Or try the free <a href="/meal-ideas/">meal-idea generator</a></p>
+      <p class="cta-sub">7-day free trial, then $6.99/mo or $69.99/yr · iPhone · Or try the free <a href="/meal-ideas/">meal-idea generator</a></p>
     </div>
 
     <section class="faq">
@@ -156,7 +155,7 @@ ${sections}
 
 function buildCatalog(items) {
   const url = 'https://momrise.app/answers/';
-  const desc = 'Straight answers to the feeding questions parents ask most — portions, picky eating, allergens, choking hazards, iron, and milk — with sources from pediatric and public-health guidance.';
+  const desc = 'Straight answers to the feeding questions parents ask most — meal planning, family dinners, portions, first foods, picky eating, allergens, and drinks — with sources from pediatric and public-health guidance.';
   const cards = items.map((a) => `
       <li><a href="/answers/${a.slug}/">
         <span class="c-cat">${escapeHtml(a.category || '')}</span>

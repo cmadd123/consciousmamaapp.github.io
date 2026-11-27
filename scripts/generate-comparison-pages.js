@@ -144,9 +144,8 @@ ${escapeJson(faq)}
       <p>${(c.cta && c.cta.body) || 'MomRise plans meals, tracks milestones, and turns everyday parenting challenges into simple, age-appropriate daily steps.'}</p>
       <div class="app-buttons">
         <a class="store-btn" href="${APP_STORE}">App Store</a>
-        <a class="store-btn" href="${PLAY_STORE}">Google Play</a>
       </div>
-      <p class="cta-sub">Free 7-day trial · No credit card</p>
+      <p class="cta-sub">7-day free trial, then $6.99/mo or $69.99/yr · iPhone</p>
     </div>
 
     <section class="faq">

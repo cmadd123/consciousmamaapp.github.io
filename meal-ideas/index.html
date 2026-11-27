@@ -400,7 +400,8 @@
         const start = Date.now();
         setTimeout(() => {
           if (Date.now() - start < 1200 && document.visibilityState === 'visible') {
-            location.href = isAndroid ? PLAY_STORE : APP_STORE;
+            // Google Play listing is not live (404) — send everyone to the App Store until Android ships.
+            location.href = APP_STORE;
           }
         }, 700);
         location.href = deep;
