@@ -1,7 +1,8 @@
 # Deploy static website to GitHub Pages — with the AEO pipeline baked in.
 #
 # On every push to main this workflow regenerates the data-driven pages
-# (comparison pages from data/comparisons.json, answer pages from
+# (comparison pages from data/comparisons.json + the app graph in
+# data/meal-planning-apps.json, answer pages from
 # data/answers.json) and the sitemap, deploys the
 # fresh site to Pages, then pings IndexNow when content actually changed.
 #
@@ -113,7 +114,7 @@ jobs:
           else
             FILES=$(git ls-files)
           fi
-          if echo "$FILES" | grep -qE '^(compare/|answers/|r/|meal-ideas/|for-creators/|data/(comparisons|answers|creator-guides)\.json|sitemap\.xml)'; then
+          if echo "$FILES" | grep -qE '^(compare/|answers/|r/|meal-ideas/|for-creators/|data/(comparisons|answers|creator-guides|meal-planning-apps)\.json|sitemap\.xml)'; then
             echo "content=true" >> "$GITHUB_OUTPUT"
             echo "Content changed — will ping IndexNow."
           else

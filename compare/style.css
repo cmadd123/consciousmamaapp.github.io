@@ -151,3 +151,38 @@ sup.ref a { text-decoration: none; }
 .ans ul, .ans ol { padding-left: 22px; }
 .ans li { margin-bottom: 6px; }
 .ans .cmp-table { min-width: 420px; }
+
+/* App roundups (/compare/best-…-apps/, /compare/…-alternatives/) */
+.disclosure {
+  background: #FFF7E8; border: 1px solid #F1D9A6; border-radius: var(--radius);
+  padding: 14px 18px; margin: 0 0 18px; font-size: 14px;
+}
+.disclosure h2 { font-size: 15px; margin: 0 0 6px; }
+.disclosure ul { margin: 0; padding-left: 18px; }
+.disclosure li { margin: 4px 0; }
+.notice { background: #f6f7f9; border-radius: 12px; padding: 12px 14px; font-size: 15px; margin: 16px 0 0; }
+.ours { font-weight: 400; font-size: 0.85em; color: var(--muted); }
+.roundup .best-for .pick a { color: var(--teal-dark); }
+.roundup .best-for .pick { white-space: normal; text-align: right; }
+.checked { font-size: 13px; color: var(--muted); margin: -4px 0 10px; }
+.apps-table { min-width: 980px; font-size: 13px; }
+.apps-table th[scope="row"] { width: 13%; }
+.apps-table .ours-row { background: #f8fbfb; }
+.rs-section ul { padding-left: 20px; }
+.rs-section li { margin: 6px 0; }
+.app-card {
+  border: 1px solid var(--line); border-radius: var(--radius); background: #fff;
+  padding: 16px 18px; margin: 0 0 14px; scroll-margin-top: 12px;
+}
+.app-card h3 { font-size: 19px; margin: 0 0 8px; }
+.app-card h4 { font-size: 14px; margin: 8px 0 4px; }
+.app-card ul { margin: 0; padding-left: 18px; font-size: 14px; }
+.app-card p { font-size: 15px; margin: 0 0 8px; }
+.app-bestfor { text-transform: uppercase; letter-spacing: 0.05em; font-size: 12px !important; font-weight: 700; color: var(--teal); }
+.pros-cons { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.app-facts { font-size: 13px !important; color: var(--muted); margin-top: 10px !important; }
+.catalog-h2 { font-size: 18px; margin: 26px 0 6px; }
+@media (max-width: 480px) {
+  .pros-cons { grid-template-columns: 1fr; }
+  .roundup .best-for .pick { text-align: left; }
+}
